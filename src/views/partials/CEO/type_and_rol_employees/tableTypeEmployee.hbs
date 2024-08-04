@@ -1,0 +1,33 @@
+
+<table class="table table-hover"> <!--table-bordered-->
+    <colgroup>
+        <col style="width: 25%;">
+        <col style="width: 20%;">
+        <col style="width: 15%;">
+        <col style="width: 20%;">
+        <col style="width: 20%;">
+    </colgroup>
+    <thead>
+    <tr>
+        <th>Nombre</th>
+        <th>Salario</th>
+        <th>% Comisiones</th>
+        <th>% Descuento por producto</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    {{#each typeEmployees}}
+        <tr>
+            <td>{{name_role}}</td>
+            <td>{{salary}}$ {{currency}}/{{type_of_salary}}</td>
+            <td>{{commissions}}%</td>
+            <td>{{discount_for_product}}%</td>
+            <td>
+                <button class="btn btn-danger" id="{{id}}" onclick="delete_role_employee(this.id,{{id_companies}})"><i class="fi-department fi-sr-trash"></i></button>
+                <button class="btn btn-danger" id="{{id}}" onclick="edit_role_employee(this.id,'{{id_companies}}','{{name}}','{{description}}')"><i class="fi-department fi-sr-pencil"></i></button>            
+            </td>
+        </tr>
+    {{/each}}
+    </tbody>
+</table>

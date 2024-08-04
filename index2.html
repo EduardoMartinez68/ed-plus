@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERP de Contabilidad</title>
+    <style>
+        /* Reset de estilos */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #F9F9F9;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: #4A90E2;
+            color: #FFFFFF;
+            padding: 20px;
+            text-align: center;
+            font-size: 28px;
+            font-weight: 500;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        section {
+            background-color: #FFFFFF;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #4A90E2;
+        }
+
+        .employee-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .employee-card {
+            background-color: #F4F4F4;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            width: calc(33.333% - 20px);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s, transform 0.3s;
+            position: relative;
+        }
+
+        .employee-card:hover {
+            background-color: #E0E0E0;
+            transform: translateY(-5px);
+        }
+
+        .employee-photo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+            flex-shrink: 0; /* Prevents the photo from shrinking */
+        }
+
+        .employee-info {
+            flex: 1;
+        }
+
+        .employee-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .employee-schedule, .hours-scheduled, .hours-worked {
+            font-size: 14px;
+            color: #555;
+        }
+
+        .accounting-stats {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            background-color: #FFFFFF;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            flex: 1;
+            text-align: center;
+            min-width: 200px;
+        }
+
+        .stat h3 {
+            font-size: 20px;
+            color: #4A90E2;
+            margin-bottom: 10px;
+        }
+
+        .stat p {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .week-calendar {
+            display: flex;
+            gap: 8px;
+            margin-top: 20px;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .day-box {
+            width: 10%;
+            height: 30px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #FFFFFF;
+            font-weight: 600;
+            opacity: 0.8;
+        }
+
+        .day-box.red {
+            background-color: rgba(233, 79, 79, 0.8);
+        }
+
+        .day-box.green {
+            background-color: rgba(76, 175, 80, 0.8);
+        }
+
+        .day-box.yellow {
+            background-color: rgba(255, 235, 59, 0.8);
+            color: #333;
+        }
+
+        .day-box.blue {
+            background-color: rgba(41, 182, 246, 0.8);
+        }
+
+        .day-box.gray {
+            background-color: rgba(158, 158, 158, 0.8);
+        }
+
+        /* Responsivo */
+        @media (max-width: 768px) {
+            .employee-card {
+                width: calc(50% - 20px);
+            }
+
+            .accounting-stats {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .employee-card {
+                width: 100%;
+            }
+
+            .stat {
+                min-width: 100%;
+            }
+
+            .week-calendar {
+                flex-direction: column;
+            }
+
+            .day-box {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+        }
+
+
+        /*button select*/
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-button {
+            background-color: #4A90E2;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 5px;
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            border-radius: 5px;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown:hover .dropdown-button {
+            background-color: #3e78c9;
+        }
+
+        /*date select*/
+        .date-range-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .date-range-container h2 {
+            margin-bottom: 20px;
+            color: #4A90E2;
+        }
+
+        .date-range {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .date-range-container label {
+            margin: 10px 0;
+            display: block;
+            color: #333;
+        }
+
+        .date-range-container input[type="date"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            width: calc(100% - 12px);
+            margin: 0 6px;
+        }
+
+        .date-range-container input[type="submit"] {
+            margin-top: 20px;
+            background-color: #4A90E2;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .date-range-container input[type="submit"]:hover {
+            background-color: #3e78c9;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        ERP de Contabilidad
+    </header>
+    <main>
+        <div class="container">
+            <br><br>
+            <section class="accounting-measures">
+                <h2>Medición de Contabilidad</h2>
+                <div class="accounting-stats">
+                    <div class="stat">
+                        <h3>Total Ingresos</h3>
+                        <p>$10,000</p>
+                    </div>
+                    <div class="stat">
+                        <h3>Total Gastos</h3>
+                        <p>$7,500</p>
+                    </div>
+                    <div class="stat">
+                        <h3>Ganancias Netas</h3>
+                        <p>$2,500</p>
+                    </div>
+                    <!-- Agregar más estadísticas según sea necesario -->
+                </div>
+            </section>
+            <br>
+            <section class="employee-management">
+                <h2>Gestión de Empleados</h2>
+                <div class="employee-list">
+                    <!-- Ejemplo de empleado -->
+                    <div class="employee-card">
+                        <img src="https://img.freepik.com/fotos-premium/retrato-mujer-dentista-consultorio-dental_10069-4969.jpg" alt="Foto de perfil de empleado" class="employee-photo">
+                        <div class="employee-info">
+                            <div class="employee-name">Ana Pérez</div>
+                            <div class="employee-schedule">Horario: 9 AM - 5 PM</div>
+                            <div class="hours-scheduled">Horas Programadas: 40</div>
+                            <div class="hours-worked">Horas Trabajadas: 38</div>
+                            <div class="week-calendar">
+                                <div class="day-box red">L</div>
+                                <div class="day-box green">M</div>
+                                <div class="day-box yellow">X</div>
+                                <div class="day-box green">J</div>
+                                <div class="day-box green">V</div>
+                                <div class="day-box blue">S</div>
+                                <div class="day-box gray">D</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="employee-card">
+                        <img src="https://previews.123rf.com/images/diawka/diawka1704/diawka170400044/75881656-retrato-de-mujer-dentista-de-la-celebraci%C3%B3n-modelo-de-los-dientes-y-las-herramientas-sobre-la-pared.jpg" alt="Foto de perfil de empleado" class="employee-photo">
+                        <div class="employee-info">
+                            <div class="employee-name">Ana Pérez</div>
+                            <div class="employee-schedule">Horario: 9 AM - 5 PM</div>
+                            <div class="hours-scheduled">Horas Programadas: 40</div>
+                            <div class="hours-worked">Horas Trabajadas: 38</div>
+                            <div class="week-calendar">
+                                <div class="day-box green">L</div>
+                                <div class="day-box green">M</div>
+                                <div class="day-box green">X</div>
+                                <div class="day-box blue">J</div>
+                                <div class="day-box blue">V</div>
+                                <div class="day-box gray">S</div>
+                                <div class="day-box gray">D</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+</body>
+</html>

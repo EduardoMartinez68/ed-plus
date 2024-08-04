@@ -1,0 +1,33 @@
+<div class="col-6">
+    <label for=""><i class="fi-icon fi-sr-user"></i> Empleados</label>
+    <hr>
+    <table class="table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Usuario</th>
+                <th>Nombre</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each employees}}
+            <tr>
+                <td>
+                    {{#if photo}}
+                    <img class="img-info" src="{{photo}}">
+                    {{else}}
+                    <img class="img-info"
+                        src="https://cdn.icon-icons.com/icons2/1572/PNG/512/3592855-business-man-employee-general-human-member-office-tie_107745.png">
+                    {{/if}}
+                    <label class="text-info-employee">{{name_role}}</label>
+                    <label>{{name_departaments}}</label>
+                </td>
+                <td>{{user_name}}</td>
+                <td>{{first_name}} {{second_name}} {{last_name}}</td>
+                <td onclick="activate_schedule_employee('{{id_employee}}','{{first_name}} {{second_name}} {{last_name}}')"><i class="fi-icon fi-br-angle-right td-icon fi-button"></i></td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>

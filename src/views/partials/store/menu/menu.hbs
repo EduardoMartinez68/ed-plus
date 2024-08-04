@@ -1,0 +1,575 @@
+<link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
+<style>
+    .offert-price {
+        text-decoration: line-through;
+        /* Tachar el texto */
+    }
+
+    .btn-comprar {
+        background-color: #1473E6;
+        /* Color verde */
+        color: white;
+        /* Color del texto */
+        border-radius: 15px;
+        /* Bordes redondeados */
+        font-weight: bold;
+        /* Texto en negrita */
+        font-size: 0.8rem;
+        right: 30px;
+    }
+
+    .btn-comprar:hover {
+        background-color: #1267cf;
+        /* Color verde más oscuro al pasar el mouse */
+    }
+
+    .icon-product-price {
+        width: 50px;
+        height: 50px;
+        border-radius: 15px;
+        margin: .5rem;
+    }
+</style>
+<style>
+    /* Personalización del estilo de las pestañas */
+    .nav-tabs .nav-link {
+        color: #495057c0;
+        border: none;
+        border-bottom: 2px solid transparent;
+    }
+
+    .nav-tabs .nav-link:hover {
+        color: #495057;
+        border: none;
+        border-bottom: 2px solid transparent;
+    }
+
+    .nav-tabs .nav-link.active {
+        color: var(--color-company);
+        background-color: #fff;
+        border: none;
+        border-bottom: 2px solid var(--color-company);
+        ;
+    }
+
+    .tab-content {
+        border: 1px solid #dee2e6;
+        border-top: none;
+        padding: 20px;
+        background: #F5F5F5;
+    }
+
+    .card {
+        border-radius: 22px;
+        /*width: 24rem;*/
+    }
+
+    .info-label {
+        display: none;
+        margin-top: 10px;
+    }
+
+    .info-link {
+        cursor: pointer;
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    .info-link:hover {
+        cursor: pointer;
+        color: #036fe2;
+    }
+
+    .input-search-menu{
+        border-radius: 15px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .li-link{
+        cursor: pointer;
+    }
+
+    /*MENUUUUUUUU*/
+    .card-menu {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .card-img-menu-top{
+        width: 100%;
+        height: 200px; /* Ajustar la altura para mantener las imágenes uniformes */
+        object-fit: cover; /* Ajusta la imagen para cubrir el contenedor */
+    }
+
+    .button-card{
+        width: 150px;
+    }
+
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+        .card-menu-top{
+            margin-bottom: 15px;
+        }
+
+        .button-card{
+            width: 100px;
+        }
+    }
+</style>
+<div class="title-home-store">
+    <br>
+    <label for=""><button class="btn" onclick="showTutorial()">💡 <label for="">Repetir Tutorial</label></button></label>
+    <h5><b>EXPLORA NUESTRO MENÚ<i class="fi fi-ss-book-alt"></i></b></h5>
+    <div class="card" id="table-order" style="display: none; width:100%; height: 130px;">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table>
+                    <tr><th><label for="">Informacion de envio</label></th></tr>
+                    <tr>
+                        <th><label for="customer-name">Nombre</label></th>
+                        <th><label for="customer-cellphone">Celular</label></th>
+                        <th><label for="customer-phone">Teléfono</label></th>
+                        <th><label for="customer-address">Dirección</label></th>
+                        <th><label for="customer-comment">Comentario</label></th>
+                    </tr>
+                    <tr>
+                        <th><input type="text" name="customer-name" id="customer-name" readonly placeholder=""></th>
+                        <th><input type="text" name="customer-cellphone" id="customer-cellphone" readonly placeholder=""></th>
+                        <th><input type="text" name="customer-phone" id="customer-phone" readonly placeholder=""></th>
+                        <th><input type="text" name="customer-address" id="customer-address" readonly placeholder=""></th>
+                        <th><input type="text" name="customer-comment" id="customer-comment" readonly placeholder=""></th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-4">
+            <label for="">Impresora</label>
+            <select name="" id="dataPrinter" class="form-select">
+                <option value="">No imprimir Ticket</option>
+                {{#each boxes}}
+                    <option value="{{ip_printer}}">{{num_box}}</option>
+                {{/each}}
+            </select>
+        </div>
+        <div class="col-8">
+            <label for=""></label>
+            <div class="dropdown">
+                <button class="btn btn-primary button-spacing dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Funciones
+                </button>
+                <ul class="dropdown-menu">
+                    <!--
+                    <li><a class="dropdown-item" href="#">Orden Rapida</a></li>
+                    <li><a class="dropdown-item" href="#">Comandas</a></li>
+                    --->
+                    {{#each dataEmployee}}
+                        <input type="text" value="{{id_branches}}" style="display: none;" id="id_branch">
+                        <li class="li-link"><a class="dropdown-item" id="emailClient" email="" idClient="null" onclick="select_customer('{{id_companies}}')"><i class="fi-icon fi-sr-following"></i> Buscar Cliente</a></li>
+                        <li class="li-link"><a class="dropdown-item" onclick="create_new_order()" ><i class="fi-icon fi-br-biking-mountain"></i> Delivery</a></li>
+                        <li class="li-link"><a class="dropdown-item" onclick="cash_movement('{{id}}','{{id_branches}}')"><i class="fi-icon fi-sr-hand-holding-usd"></i> Movimiento de caja</a></li>
+                        <!---
+                        <li class="li-link"><a class="dropdown-item" id="emailClient" email="" idClient="null" onclick="nextWeb('{{id_companies}}/{{id_branches}}/{{id}}/create-invoice')"><i class="fi-icon fi-sr-file-invoice-dollar"></i> Nueva Factura</a></li>
+                        -->
+                    {{/each}}
+                </ul>
+            </div>
+        </div>
+        <!---
+        <div class="col">
+            <label for=""></label><br>
+            {{#each dataEmployee}}
+                <input type="text" value="{{id_branches}}" style="display: none;" id="id_branch">
+                <button class="btn btn-primary button-spacing" id="emailClient" email="" idClient="null"
+                onclick="select_customer('{{id_companies}}')"><i class="fi-icon fi-sr-following"></i> Buscar Cliente</button>
+            {{/each}}
+        </div>
+        --->
+    </div>
+    <hr>
+</div>
+<div class="container-menu-store px-3 py-3">
+    <div class="row">
+        <div class="col-8">
+            <!--this is the search-->
+            <table class="" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th> 
+                            <!--
+                            <input type="text" placeholder="Escribe un código de barras..." class="form-control input-search-menu"
+                                name="usernameSearch" autofocus id="search">
+                            --->
+                            
+                            <div class="search-container">
+                                <input type="text" class="search-input" placeholder="Escribe un código de barras..." id="search" autofocus name="usernameSearch">
+                                <i class="fi fi-br-search search-icon"></i>
+                            </div>
+                        </th>
+                        <!--
+                        🔍︎ | 
+                        <th class="td2">
+                            {{#each dataEmployee}}
+                            <button class="btn btn-primary button-spacing" onclick="search_browser_div()"><i
+                                    class="fi fi-rs-search"></i></button>
+                            <button class="btn" onclick="car_returns('{{id}}','{{id_branches}}')"><img src="https://cdn-icons-png.flaticon.com/512/3176/3176255.png" alt="" class="img-icon"></button>
+                            -->
+                        {{/each}}
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+    <div class="row pc">
+        <div class="col-8">
+            <div class="row container-menu" name="container-menu" id="container-div" step="menuStore">
+                
+                {{#if dishAndCombo}}
+                    {{#each dishAndCombo}}
+                    <!--
+                            <div class="col-lg-3 col-md-3 col-sm-6">pc</div>
+                            <div class="col-lg-4 col-md-3 col-sm-6">tablet</div>
+                    --->
+                            <div class="col-lg-4 col-md-3 col-sm-6">
+                                <div class="card-menu">
+                                    {{#if img}}
+                                        <img class="card-img-menu-top" alt="Dish Image" src="{{img}}">
+                                    {{else}}
+                                        <img class="card-img-menu-top" alt="Dish Image" src="https://cdn-icons-png.flaticon.com/512/1695/1695572.png">
+                                    {{/if}}
+                                    <div class="card-body">
+                                        <center>
+                                            <h5 class="card-title">{{name}}</h5>
+                                            <p class="card-text">${{price_1}}</p>
+                                            <p class="card-text">{{barcode}}</p>
+                                            <button class="button-card" onclick="addFish('{{id}}','{{name}}','{{price_1}}','{{price_2}}','{{price_3}}')">Comprar</button>
+                                        </center>
+                                    </div>
+                                </div>
+                            </div>
+                        <!---
+                        <div class="card container-combo col-3"
+                            style="padding-right: 0.5rem; background:transparent; margin:0;border: none" id="{{barcode}}">
+                            <div class="card" id="{{barcode}}">
+                                <div class="image-content">
+                                    <span class="overlay">
+
+                                    </span>
+                                    <div class="card-image" style="width: 80%;">
+                                        {{#if img}}
+                                        <img class="card-img" src="{{img}}" alt="">
+                                        {{else}}
+                                        <img class="card-img" src="https://cdn-icons-png.flaticon.com/512/1695/1695572.png"
+                                            alt="">
+                                        {{/if}}
+                                    </div>
+                                </div>
+
+                                <div class="card-content">
+                                    <h2 class="name">{{name}}</h2>
+                                    <h1 class="name">${{price_1}}</h1>
+                                    <p class="description">{{barcode}}</p>
+                                    <button class="button-card"
+                                        onclick="addFish('{{id}}','{{name}}','{{price_1}}','{{price_2}}','{{price_3}}')"><i
+                                            class="fi-icon-card fi-ss-cart-arrow-down"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        -->
+                    {{/each}}
+                {{else}}
+                <div class="col-3 ">
+                    <div class="card">
+                        <img class="card-img-top" src="https://cdn-icons-png.flaticon.com/512/3159/3159196.png"
+                            alt="Card image cap">
+                        <div class="card-body">
+                            <p class="card-text">Oh, esta sucursal aún no tiene inventario de productos.</p>
+                        </div>
+                    </div>
+                </div>
+                {{/if}}
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="row">
+                {{#each dataEmployee}}
+                    <div class="table-container">
+                        <table id="table-car-home" border="1" class="table-menu">
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Precio</th>
+                                    <th>Cantidad</th>
+                                    <th>Total</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                    <br>
+                    <button class="btn-container-cart card-menu" id="btn-total-home" onclick="buy_my_car(this)">Pagar $0<i
+                            class="fi-icon fi-sr-shopping-cart"></i></button>
+                {{/each}}
+            </div>
+        </div>
+    </div>
+
+    <br>
+    
+    <div class="row cellphone">
+        <ul class="nav nav-tabs justify-content-center" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" id="tab1-tab" data-toggle="tab" href="#tab1" role="tab" aria-controls="tab1"
+                    aria-selected="true">
+                    <i class="fi fi-sr-apps"></i> Menu
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="tab2-tab" data-toggle="tab" href="#tab2" role="tab" aria-controls="tab2"
+                    aria-selected="false">
+                    <i class="fi fi-sr-shopping-cart"></i> Carrito
+                </a>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="tab1" role="tabpanel" aria-labelledby="tab1-tab">
+                <div class="col">
+                    <hr>
+                    <div class="row" name="container-menu" id="container-div" step="menuStore-cellphone">
+                        {{#if dishAndCombo}}
+                        {{#each dishAndCombo}}
+                        <div class="row card-cellphone card container-combo" id="{{barcode}}"
+                            onclick="addFish('{{id}}','{{name}}','{{price_1}}','{{price_2}}','{{price_3}}')">
+                            <!--container-combo-->
+                            <div class="col-4">
+                                {{#if img}}
+                                <img src="{{img}}" alt="" class="card-img-cellphone">
+                                {{else}}
+                                <img src="https://cdn-icons-png.flaticon.com/512/1695/1695572.png" alt=""
+                                    class="card-img-cellphone">
+                                {{/if}}
+                            </div>
+                            <div class="col-8 character-cellphone">
+                                <h2 class="name">{{name}}</h2>
+                                <h1 class="name">${{price_1}}</h1>
+                                <p class="description">{{barcode}}</p>
+                            </div>
+                        </div>
+                        {{/each}}
+                        {{else}}
+                        <div class="col-3 ">
+                            <div class="card">
+                                <img class="card-img-top" src="https://cdn-icons-png.flaticon.com/512/3159/3159196.png"
+                                    alt="Card image cap">
+                                <div class="card-body">
+                                    <p class="card-text">Oh, esta sucursal aún no tiene inventario de productos.</p>
+                                </div>
+                            </div>
+                        </div>
+                        {{/if}}
+
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
+                <div class="col col-table-cellphone">
+                    {{#each dataEmployee}}
+                        <div class="table-container">
+                            <table id="table-car-home-cellphone" border="1" class="table-menu">
+                                <thead>
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>Precio</th>
+                                        <th>Cantidad</th>
+                                        <th>Total</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                        <br>
+                        <button class="btn-container-cart card-menu" id="btn-total-home-cellphone"
+                            onclick="buy_my_car(this)">Pagar $0<i class="fi-icon fi-sr-shopping-cart"></i></button>
+                    {{/each}}
+                </div>
+            </div>
+        </div>
+        <br><br><br><br>
+    </div>
+</div>
+<br><br><br><br>
+
+
+<!---this is the information for orden of send--->
+<script>
+    function get_data_order() {
+        const idBranch = parseInt(document.getElementById('id_branch').value);
+        const customerName = document.getElementById('customer-name').value || "";
+        const customerCellphone = document.getElementById('customer-cellphone').value || "";
+        const customerPhone = document.getElementById('customer-phone').value || "";
+        const customerAddress = document.getElementById('customer-address').value || "";
+        const customerComment = document.getElementById('customer-comment').value || "";
+
+        return {
+            idBranch: idBranch,
+            name: customerName,
+            cellphone: customerCellphone,
+            phone: customerPhone,
+            address: customerAddress,
+            comment: customerComment
+        };
+    }
+
+    function update_input_order(dataOrder){
+        document.getElementById('customer-name').value = dataOrder[0];
+        document.getElementById('customer-cellphone').value = dataOrder[1];
+        document.getElementById('customer-phone').value = dataOrder[2];
+        document.getElementById('customer-address').value = dataOrder[3];
+        document.getElementById('customer-comment').value = dataOrder[4];
+
+        //show the information of send
+        var table = document.getElementById('table-order');
+        table.style.display = 'block';
+    }
+
+    function reset_input_order(){
+        document.getElementById('customer-name').value = "";
+        document.getElementById('customer-cellphone').value = "";
+        document.getElementById('customer-phone').value = "";
+        document.getElementById('customer-address').value = "";
+        document.getElementById('customer-comment').value = "";
+
+        //delete the information of send
+        var table = document.getElementById('table-order');
+        table.style.display = 'none';
+    }
+
+    async function create_new_order(){
+        //we will get the data of the order
+        const oldDataOrder=get_data_order()
+        const dataOrder=await show_create_new_order(oldDataOrder);
+        //we will if the user not delete the data 
+        if(dataOrder!=null){
+            //we will see if the data is complete 
+            if(dataOrder[0]!='' && dataOrder[3]!=''){
+                update_input_order(dataOrder); //update the value of the inpus of the send 
+            }else{
+                reset_input_order();
+                warningMessage('Error al guardar los datos', 'Asegúrate de que el envío tenga nombre del cliente y su dirección 👀');
+            }
+        }else{
+            if(await questionMessage('Borrar datos del envío', '¿Estás seguro de borrar los datos del envío? 🤔')){
+                reset_input_order();
+                confirmationMessage('Datos del envío Borrados', 'Los datos del pedido para el repartidor han sido borrados exitosamente 👍');
+            }
+        }
+    }
+</script>
+<script>
+
+    //this is for update the input that is selected in the sweet alert of teh car
+  function selectInput(input) {
+    var inputs = document.querySelectorAll('.input-buy'); //get all the input of the sweet
+    inputs.forEach(function(el) {
+      el.classList.remove('selected'); //delete the classe <selected>
+    });
+    input.classList.add('selected'); //add the classe <selected> in the input that the user did click
+  }
+</script>
+
+
+<!---this is for load the image if not exist a image in the card of the menu--->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const defaultImage = 'https://cdn-icons-png.flaticon.com/512/1695/1695572.png';
+    
+    // Get all card images
+    const cardImages = document.querySelectorAll('.card-img-top');
+    
+    cardImages.forEach(img => {
+        if (!img.src || img.src === '') {
+            img.src = defaultImage;
+        }
+    });
+});
+</script>
+
+
+
+
+
+
+
+<!---this is the information for orden of send--->
+<script src="/js/menu.js"></script>
+<script src="/js/store/search.js"></script>
+<script src="/js/search.js"></script>
+<script src="/js/store/cashMovement.js"></script>
+<script src="/js/store/return.js"></script>
+<script>
+
+    // Función para ajustar dinámicamente la clase de los elementos con la clase "container-combo"
+    function adjustDivClass() {
+        // Obtén todos los elementos con la clase "container-combo"
+        const divElements = document.querySelectorAll('.container-combo');
+
+        // Itera sobre cada elemento
+        divElements.forEach(function (element) {
+            if (window.innerWidth <= 1500) { // Si el ancho de la ventana es menor o igual a 500px
+                element.classList.remove('col-3'); // Elimina la clase col-3
+                element.classList.add('col-5'); // Agrega la clase col-5
+            } else {
+                element.classList.remove('col-5'); // Elimina la clase col-5
+                element.classList.add('col-3'); // Agrega la clase col-3
+            }
+        });
+    }
+
+    // Llama a la función al cargar la página y cuando se redimensione la ventana
+    window.onload = adjustDivClass;
+    window.onresize = adjustDivClass;
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('search');
+        const cards = document.querySelectorAll('.card.container-combo');
+
+        searchInput.addEventListener('input', () => {
+            const query = searchInput.value.toLowerCase();
+            cards.forEach(card => {
+                const barcode = card.id.toLowerCase();
+                if (barcode.includes(query) || query === '') {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
+
+
+
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>

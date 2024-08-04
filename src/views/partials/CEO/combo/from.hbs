@@ -1,0 +1,63 @@
+<link rel="stylesheet" href="/css/manager/supplies_products.css">
+<div class="row">
+    <label for="">Descripcion del Combo</label>
+    <div class="col">
+        <div class="form-group">
+            <center>
+                <img src="https://cdn.pixabay.com/photo/2017/01/25/17/35/picture-2008484_1280.png" id="imgEmployee"
+                    class="icon-combo">
+            </center>
+        </div>
+        <div class="form-group">
+            <center>
+                <label for="inputImg" class="custom-file-upload">
+                    <input type="file" name="image" accept="image/*" id="inputImg" style="display: none;">
+                    <i class="fas fa-upload"></i> Subir imagen
+                </label>
+            </center>
+        </div>
+    </div>
+    <div class="col">
+        <div class="form-group">
+            <label for="">Barcode</label>
+            <input type="text" class="form-control" placeholder="Barcode" name="barcode" required>
+        </div>
+        <div class="form-group">
+            <label for="">Nombre</label>
+            <input type="text" class="form-control" placeholder="Nombre" name="name" required>
+        </div>
+        <div class="form-group">
+            <label>Descripcion</label><br>
+            <textarea type="tex" class="form-control" name="description" placeholder="Description"></textarea>
+        </div>
+        <div class="row">
+            <div class="col">
+                <label for="">Categoria</label>
+                <select class="form-control" name="category">
+                    {{#each category}}
+                    <option value="{{id}}">{{name}}</option>
+                    {{/each}}
+                </select>
+            </div>
+            <div class="col">
+                <label for="">Departamento</label>
+                <select class="form-control" name="department">
+                    {{#each departments}}
+                    <option value="{{id}}">{{name}}</option>
+                    {{/each}}
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="/js/manager/addEmployee.js"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
+<script src="js/chosen.jquery.js" type="text/javascript"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+    $(".chosen-select").chosen({no_results_text:'No hay resultados para '});
+});
+</script>

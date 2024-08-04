@@ -1,0 +1,38 @@
+<link rel="stylesheet" href="/css/addUser/addUser.css">
+<link rel="stylesheet" href="/css/manager/supplies_products.css">
+<div class="container p-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <center><h5>Agrega un nuevo combo/Platillo</h5></center>
+            <hr>
+            <div class="card">
+                <div class="card-body">
+                    {{#each branchFree}}
+                    <form action="/fud/{{id_companies}}/add-company-combo" method="POST" enctype="multipart/form-data" id="comboForm">
+                    {{/each}}
+                        {{>free/combo/form}}
+                        <hr>
+                        {{>CEO/combo/table}}
+                        <div class="form-group">
+                            <div class="d-flex">
+                                <button type="submit" class="btn btn-primary ms-auto" id="btn-send">Siguiente</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/manager/combo/fromCombo.js"></script>
+<script>
+    //this script is for not send the from when the user do make on button
+    document.getElementById("comboForm").addEventListener("submit", function (event){
+        if (event.submitter && event.submitter.id === "btn-send"){
+            get_id_products_and_supplies();
+        } else {
+            event.preventDefault();
+        }
+    });
+</script>

@@ -1,0 +1,41 @@
+
+<table class="table table-hover"> <!--table-bordered-->
+    <colgroup>
+        <col style="width: 40%;">
+        <col style="width: 10%;">
+        <col style="width: 40%;">
+        <col style="width: 10%;">
+    </colgroup>
+    <thead>
+        <tr>
+            <td><label>selecciona un producto</label></td>
+            <td></td>
+            <td>
+                <label> selecciona un insumo</label>
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>
+                <select class="form-control">
+                    {{#each products}}
+                        <option value="{{id}}" id="{{barcode}}">{{name}}</option>
+                    {{/each}}
+                </select>
+            </td>
+            <td><button class="btn btn-danger" onclick="addButtonClick(event, 'Product')" type="button">+</button></td>
+            <td>
+                <select class="form-control">
+                    {{#each supplies}}
+                        <option value="{{id}}" id="{{barcode}}">{{name}}</option>
+                    {{/each}}
+                </select>
+            </td>
+            <td><button class="btn btn-danger" onclick="addButtonClick(event, 'Supply')" type="button">+</button></td>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+<br>
+

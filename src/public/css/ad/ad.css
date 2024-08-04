@@ -1,0 +1,17 @@
+.img-ad{
+    width: 200px;
+    height: 200px;
+}
+
+.img-carousel{
+    max-height: 200px;
+    min-height: 200px;
+    width:auto;
+}
+
+@media (max-width: 1100px) {
+    .img-carousel {
+        max-height: 150px;
+        min-height: 150px; 
+    }
+}

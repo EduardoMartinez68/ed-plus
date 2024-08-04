@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarjeta de Orden</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+    <style>
+        .icon-profile-order {
+            height: 50%;
+            max-height: 200px;
+            width: auto;
+            border-radius: 50%;
+        }
+
+        .card-order-profile {
+            border-color: aliceblue;
+            border-radius: 15px;
+            border-width: 1rem;
+            background-color: rgba(0, 0, 0, .01);
+        }
+
+        .container {
+            padding: 10px;
+        }
+
+        .form-control[readonly] {
+            background-color: #e9ecef;
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .row {
+                flex-direction: column;
+            }
+
+            .col-7, .col-5 {
+                width: 100%;
+            }
+
+            .col-4, .col {
+                flex: 1 0 100%;
+                max-width: 100%;
+            }
+
+            .card-order-profile {
+                margin-top: 20px;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .row {
+                display: flex;
+            }
+
+            .col-7 {
+                flex: 0 0 58.333333%;
+                max-width: 58.333333%;
+            }
+
+            .col-5 {
+                flex: 0 0 41.666667%;
+                max-width: 41.666667%;
+            }
+
+            .col-4 {
+                flex: 0 0 33.333333%;
+                max-width: 33.333333%;
+            }
+
+            .col {
+                flex: 1;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <br>
+    <div class="container">
+        <div class="card p-4">
+            <div class="card-body p-4">
+                <label for=""><i class="fi-icon fi-sr-rectangle-list"></i> Tarjeta de Orden</label>
+                <hr>
+                <form action="/fud/edit-order" method="post">
+                <input type="text" value="{{dataOrder.order_id}}" style="display: none;" name="id_order" id="id_order">
+                {{#each employees}}
+                    <input type="text" value="{{id}}" style="display: none;" name="delivery_driver" >
+                {{/each}}
+                <div class="row">
+                    <div class="col-7">
+                        <div class="row">
+                            <div class="row">
+                                <div class="col">
+                                    <label>{{timeago dataOrder.commander_date}}</label>
+                                </div>
+                                <div class="col-8">
+                                    <select id="" value="{{dataOrder.order_status}}" class="form-select" name="statusOrder" required>
+                                        <option value="en-progreso">en-progreso</option>
+                                        <option value="enviado">enviado</option>
+                                        <option value="entregado">entregado</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="mb-3">
+                                        <label for="customer_name" class="form-label">Cliente:</label>
+                                        <input type="text" class="form-control" id="customer_name" name="customer_name" value="{{dataOrder.customer_name}}" required readonly>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="mb-3">
+                                        <label for="order_address" class="form-label">Dirección:</label>
+                                        <input type="text" class="form-control" id="order_address" name="address" value="{{dataOrder.order_address}}" required readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="mb-3">
+                                        <label for="order_phone" class="form-label">Teléfono:</label>
+                                        <input type="text" class="form-control" id="order_phone" name="phone" value="{{dataOrder.order_phone}}" readonly>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="mb-4">
+                                        <label for="order_phone" class="form-label">Celular:</label>
+                                        <input type="text" class="form-control" id="order_phone" name="cellphone" value="{{dataOrder.customer_cellphone}}" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    Comentario:
+                                    <textarea name="comment" id="" class="form-control" readonly>{{dataOrder.order_comment}}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Actualizar</button>
+                </form>
+                <div class="container">
+                    <hr>
+                    <label for="">Informacion del Pedido</label>
+                    <center>
+                    <table class="table" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Cantidad</th>
+                                <th>Precio</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each dataOrder.commander_order_details}}
+                            <tr>
+                                <td>{{this.name}}</td>
+                                <td>{{this.amount}}</td>
+                                <td>${{this.price}}</td>
+                                <td>${{this.total}}</td>
+                            </tr>
+                            {{/each}}
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td><b>Total</b></td>
+                                <td>{{dataOrder.commander_total}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    </center>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    {{>updateSelects}}
+    <script>
+        function updateProfileIcon() {
+            const selectElement = document.getElementById('delivery_driver');
+            const selectedOption = selectElement.options[selectElement.selectedIndex];
+            const photoUrl = selectedOption.getAttribute('data-photo');
+
+            const profileIcon = document.getElementById('icon-profile-order');
+            if (photoUrl) {
+                profileIcon.src = photoUrl;
+            } else {
+                profileIcon.src = 'https://cdn-icons-png.flaticon.com/512/2830/2830305.png';
+            }
+        }
+
+        updateProfileIcon();
+    </script>
+    <script>
+        async function delete_order(id_company, id_branch) {
+            const id_order = document.getElementById('id_order').value;
+            if (await questionMessage('Eliminar Orden 😳', '¿Estás seguro de que deseas eliminar esta orden?')) {
+                window.location.href = `/fud/${id_company}/${id_branch}/${id_order}/delete-order`;
+            }
+        }
+    </script>
+</body>
+
+</html>

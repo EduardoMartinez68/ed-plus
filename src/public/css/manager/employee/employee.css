@@ -1,0 +1,143 @@
+/*this is for the card of the data employee*/
+.disabled{
+    display: none;
+}
+
+
+/*this is for fit to cellphone*/
+.card-employee-cellphone{
+    display: none;
+}
+
+.btn-return-table {
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    left: 10px;
+    top: 10px; 
+    align-items: center;
+    text-align: center;
+    color: black;
+    font-size: 4rem;
+}
+
+/*this is for when the user not is in a cellphone show all*/
+@media (min-width: 769px) {
+    .card-employee-cellphone{
+        display: block;
+    }
+    
+    .btn-return-table{
+        display: none;
+    }
+}
+
+
+.img-info{
+    border-radius: 50%; /* Uso de porcentaje para asegurar un borde circular */
+    max-height: 50px;
+    min-height: 50px;
+
+    max-width: 50px;
+    min-width: 50px;
+}
+
+.img-description{
+    border-radius: 3rem;
+    max-width: 300px;
+    min-width: 300px;
+    max-height: 300px;
+    min-height: 300px;    
+}
+
+.btn-add{
+    background-color: rgb(55,167,84);
+    color: white;
+    width: 100%;
+    height: 100%;
+    border-radius: .3rem;
+    font-size: 1.4rem;
+}
+
+.btn-table-employee-edit{
+    background:var(--color-confirmation);
+    width: 40px;
+    height: 30px;
+    border-radius: 15%;
+    color: white;
+}
+
+.btn-table-employee-edit:hover{
+    background:var(--color-confirmation-hover);
+}
+
+.btn-table-employee-delete{
+    background:var(--color-cancel);
+    width: 40px;
+    height: 30px;
+    border-radius: 15%;
+    color: white;
+}
+
+.btn-table-employee-delete:hover{
+    background:var(--color-cancel-hover);
+}
+
+.text-info-employee{
+    color: var(--color-company);
+}
+
+.card-btn-description{
+    border-radius: .4rem;
+    width: 16.66%;
+    height: 6.5%;
+    background-color: var(--color-wallpaper);
+    color: white;
+    align-items: center;
+}
+
+.img-card-description{
+    width: 25%;
+    height: 25%;
+}
+
+.card-information{
+    overflow: auto;
+    height: 700px;
+}
+
+.fi-item{
+    font-size: 1rem;
+    padding-top: 0px;
+    margin-top: 0px;
+    margin-right: .5rem;
+}
+
+/*TABLE*/
+.card-table{
+    width: 100%;
+}
+
+.card-table th:first-child {
+    width: 85%; 
+}
+
+.card-table th:last-child {
+    width: 15%; 
+}
+
+.card-table th, .card-table td {
+    padding: 4px; 
+}
+
+.my-table-price{
+    width: 100%;
+}
+
+.my-table-price th:first-child {
+    width: 50%; 
+}
+
+.my-table-price th:last-child {
+    width: 50%; 
+}

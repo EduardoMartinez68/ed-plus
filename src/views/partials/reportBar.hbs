@@ -1,0 +1,131 @@
+<br><br>
+<div class="content">
+    <section>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-9">
+                    <h1 class="font-weight-bold mb-0">Hola bienvenido {{user.user_name}}!</h1>
+                    {{#each company}}
+                        <p class="lead text-muted">Consulta los últimos informes de tus negocios {{alias}}</p>
+                    {{/each}}
+                    {{#each branch}}
+                        <p class="lead text-muted">Consulta los últimos informes de tus negocios {{name}}</p>
+                    {{/each}}
+                </div>
+                <!--
+                <div class="col-lg-3 d-flex">
+                    <button class="btn btn-primary w-100 align-self-center" id="downloadButton" onclick="generate_PDF()">
+                        <i class="fi-download fi-sr-down-to-line"></i>
+                        Descargar reporte
+                    </button>
+                </div>
+                -->
+            </div>
+
+            <section>
+                <div class="container">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-lg-3 d-flex stat my-2 div-button" id="salesDiv1">
+                                    <div class="mx-auto">
+                                        <h6 class="text-muted" id="day">27 June</h6>
+                                        <h3 class="font-weight-bold">${{total}}</h3>
+                                        <h6 class="text-success" id="percentageDay">
+                                            <i class="fi-success fi-sr-angle-small-down"></i>
+                                            {{percentageDay}}%
+                                        </h6>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 d-flex stat my-2 div-button" id="salesDiv2">
+                                    <div class="mx-auto">
+                                        <h6 class="text-muted" id="month">June 2023</h6>
+                                        <h3 class="font-weight-bold">${{totalMonth}}</h3>
+                                        <h6 class="text-success" id="percentageMonth">
+                                            <i class="fi-success fi-sr-angle-small-down"></i>
+                                            {{percentageMonth}}%
+                                        </h6>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 d-flex stat my-2 div-button" id="salesDiv3">
+                                    <div class="mx-auto">
+                                        <h6 class="text-muted" id="year">2023</h6>
+                                        <h3 class="font-weight-bold">${{totalYear}}</h3>
+                                        <h6 class="text-success" id="percentageYear">
+                                            <i class="fi-success fi-sr-angle-small-down"></i>
+                                            {{percentageYear}}%
+                                        </h6>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 d-flex my-2 div-button" id="salesDiv4">
+                                    <div class="mx-auto">
+                                        <h6 class="text-muted">All</h6>
+                                        <h3 class="font-weight-bold">${{totalCompany}}</h3>
+                                        <h6 class="text-success" id="percentageAll">
+                                            <i class="fi-success fi-sr-angle-small-down"></i>
+                                            50.50%
+                                        </h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </section>
+</div>
+
+<script>
+    // get all the element  HTML with the class 'text-success'
+    const percentageElements = document.querySelectorAll(".text-success");
+
+    // Iterar about each element
+    percentageElements.forEach(function(element) {
+    // Get the percentage value as a string
+    const percentageValueString = element.textContent.trim();
+
+    // Convert percentage value to a number
+    const percentageValue = parseFloat(percentageValueString);
+
+    // Check if the percentage is negative
+    if (percentageValue < 0) {
+        // if the value is negative, we going to choose the style of the color
+        element.classList.add("text-danger");
+    }
+});
+</script>
+
+<script>
+    // get the component html for his id
+    const yearElement = document.getElementById("year");
+    const monthElement = document.getElementById("month");
+    const dayElement = document.getElementById("day");
+
+    // get the data
+    const currentYear = new Date().getFullYear();
+    const currentDay = new Date().getDate();
+    const currentMonth = new Date().getMonth() + 1;
+
+    // choose the year, month and day
+    const month=get_month_name(currentMonth);
+    yearElement.textContent = "January--"+month+" "+currentYear;
+    monthElement.textContent = month;
+    dayElement.textContent = currentDay+" "+month;
+
+
+    function get_month_name(monthNumber) {
+        const months = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+
+        // Verificar si el número de mes está dentro del rango válido (1-12)
+        if (monthNumber >= 1 && monthNumber <= 12) {
+            return months[monthNumber - 1]; // Restamos 1 porque los meses están indexados desde 0
+        } else {
+            return "Invalid month number";
+        }
+    }
+</script>
+

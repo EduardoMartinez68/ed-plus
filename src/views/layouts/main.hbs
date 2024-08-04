@@ -1,0 +1,76 @@
+<!--
+    ED CLOUD 
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/img/logo.png" type="image/png">
+    <title> Füd</title>
+
+    <script type="application/ld+json">
+    {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "url": "https://fud-tech.cloud/",
+    "logo": "https://fud-tech.cloud/src/public/img/logo.png"
+    }
+    </script>
+
+    <!--font-->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans">
+    <!-- BOX ICONS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'> 
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.4.2/uicons-solid-straight/css/uicons-solid-straight.css'>
+
+    <!-- my CSS -->
+    <link rel="stylesheet" href="/css/menu.css">
+    <link rel="stylesheet" href="/css/Styles.css">
+    <style>
+        .alert-transparent {
+            background-color: var(--color-company);
+        }
+    </style> 
+    <!-- CUSTOM JS -->
+    <script src="/js/menu.js" defer></script>
+
+    <!--select-->
+    <link href="https://cdn.jsdelivr.net/npm/chosen-js@1.8.7/dist/css/chosen.min.css" rel="stylesheet" />
+    <!--tutorial -->
+    <link src="https://unpkg.com/intro.js/introjs.css"></link>
+    <link rel="stylesheet" href="https://unpkg.com/intro.js/minified/introjs.min.css">
+    <link rel="stylesheet" href="/css/tutorial.css">
+
+    {{{head}}}
+</head>
+<body>
+    <!--title-->
+    {{>titleBar}}
+    {{{body}}}
+    {{>message}}
+
+    <!--footer-->
+    <script src="/js/store/other.js"></script>
+    <script src="/js/design.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/js/sweetAlert.js"></script>
+
+    <!--select search Enlaces CDN para jQuery y Select2 -->
+    <script src="https://cdn.jsdelivr.net/npm/chosen-js@1.8.7/dist/chosen.jquery.min.js"></script>
+    
+    <!--boobstrap -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function() {
+        $('.menu-toggle').click(function() {
+            $('.navbar-collapse').toggleClass('show');
+        });
+        });
+    </script>
+
+</body>
+</html>

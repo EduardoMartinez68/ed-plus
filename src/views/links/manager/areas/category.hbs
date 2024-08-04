@@ -1,0 +1,116 @@
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-md-7">
+            <table class="table table-hover"> <!--table-bordered-->
+                <colgroup>
+                    <col style="width: 20%;">
+                    <col style="width: 60%;">
+                    <col style="width: 20%;">
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th><label>Name</label></th>
+                        <th><label>Description</label></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!--this is the for of the categories-->
+                    {{#each categories}}
+                        <tr>
+                            <td><label>{{name}}</label></td>
+                            <td><label>{{description}}</label></td>
+                            <td>
+                                <button class="btn btn-danger" id="{{id}}" onclick="delate_department(this.id,{{id_companies}})"><i class="fi-department fi-sr-trash"></i></button>
+                                <button class="btn btn-danger" id="{{id}}" onclick="edit_department({{id}},{{id_companies}},'{{name}}','{{description}}')"><i class="fi-department fi-sr-pencil"></i></button>
+                            </td>
+                        </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-body">
+                <br>
+                {{#each company}}
+                    <form action="/fud/{{id}}/add-category" method="POST" enctype="multipart/form-data">
+                        <center><h5><i class="fi-icon fi-sr-ballot"></i>Add a new Category</h5></center>
+                        <hr>
+                        <div class="form-group">
+                            <input type="text" placeholder="Name" name="name" class="from-control" required maxlength="20" style="width: 100%;">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" placeholder="Description" name="description" class="from-control" style="width: 100%;">
+                        </div>
+                        <hr>
+                        <button type="submit" class="btn btn-success btn-block" id="">Save</button>
+                    </form>
+                {{/each}}
+                {{#each branchFree}}
+                    <form action="/fud/{{id_companies}}/add-category" method="POST" enctype="multipart/form-data">
+                        <input type="hidden" placeholder="Name" name="id_branch" id="id_branch" class="from-control" required value="{{id}}">
+                        <center><h5><i class="fi-icon fi-sr-ballot"></i>Agregar una nueva categoría</h5></center>
+                        <hr>
+                        <div class="form-group">
+                            <input type="text" placeholder="Nombre" name="name" class="from-control" required maxlength="20" style="width: 100%;">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" placeholder="Descripcion" name="description" class="from-control" style="width: 100%;">
+                        </div>
+                        <hr>
+                        <button type="submit" class="btn btn-success btn-block" id="">Guardar</button>
+                    </form>
+                {{/each}}
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+
+<script>
+    async function delate_department(id,id_company){
+        if(await questionMessage('Eliminar departamento 😳','¿Quieres eliminar este departamento?')){
+            //we will see if the user have a count of fud one
+            const id_branch=document.getElementById('id_branch').value;
+            if(id_branch){
+                window.location.href = `/fud/${id_company}/${id_branch}/${id}/delete-food-category`;
+            }else{
+                window.location.href = `/fud/${id_company}/${id}/delete-food-category`;
+            }
+        }
+    }
+
+    async function edit_department(id,id_company,nameDepartment,descriptionDepartment){
+        //we will to delate the space in 
+        if(descriptionDepartment=="-"){
+            descriptionDepartment=""
+        }
+
+        //we will to get the data of the new department
+        const data=await edit_data_departments('Edit department',nameDepartment,descriptionDepartment);
+        if(data){
+            //get the data of the from 
+            var name = data[0];
+            var description = data[1];
+
+            //we will to see if be a name
+            if(name!=""){
+                if(description==""){
+                    description="-";
+                }              
+
+                //we will see if the user have a count of fud one
+                const id_branch=document.getElementById('id_branch').value;
+                if(id_branch){
+                    window.location.href = `/fud/${id_company}/${id_branch}/${id}/${name}/${description}/edit-food-category-free`;
+                }else{
+                    window.location.href = `/fud/${id_company}/${id}/${name}/${description}/edit-food-category`;
+                }
+            }
+            else{
+                warningMessage('Department','Debes agregar un nombre al departamento');
+            }
+        }
+    }
+</script>

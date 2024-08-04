@@ -1,0 +1,80 @@
+<div class="navigation navigation-back"></div>
+<div class="navigation" step="step1">
+    <ul>
+        <li class="list">
+            <a>
+                <span class="icon-menu-home"><i class="fi-icon fi-sr-home"></i></span>
+                <span class="text-menu-home">Inicio</span>
+            </a>
+        </li>
+        <li class="list" step="btn-new">
+            <a>
+                <span class="icon-menu-home"><i class="fi-icon fi-sr-restaurant"></i></span>
+                <span class="text-menu-home">Lo nuevo</span>
+            </a>
+        </li>
+        <li class="list active">
+            <a>
+                <span class="icon-menu-home"><i class="fi-icon fi-ss-book-alt"></i></span>
+                <span class="text-menu-home">Menú</span>
+            </a>
+        </li>
+        <li class="list">
+            <a>
+                <!---we will see if the user is the admin or a employee-->
+                {{#if branchFree}}
+                    <span class="icon-menu-home"><i class="fi-icon fi-sr-apps"></i></span>
+                    <span class="text-menu-home">Aplicaciones</span>
+                {{else}}
+                    <span class="icon-menu-home"><i class="fi-icon fi-sr-user"></i></span>
+                    <span class="text-menu-home">Perfil</span>
+                {{/if}}
+            </a>
+        </li>
+        <div class="indicator"></div>
+    </ul>
+</div>
+
+<!--
+<script>
+    const list=document.querySelectorAll('.list');
+    function activeLink(){
+        list.forEach((item)=>
+            item.classList.remove('active'));
+            this.classList.add('active');
+    }
+    list.forEach((item)=>
+    item.addEventListener('click',activeLink))
+</script>
+-->
+<script>
+    function setCookie(name, value, days) {
+        let expires = "";
+        if (days) {
+            const date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    }
+
+    const list = document.querySelectorAll('.list');
+    const menuNavBar = document.querySelectorAll('.navbar-menu');
+
+    function activeLink() {
+        list.forEach((item, index) => {
+            item.classList.remove('active');
+            menuNavBar[index].classList.remove('active'); // Remueve 'active' de menuNavBar también
+            if (item === this) {
+                item.classList.add('active');
+                menuNavBar[index].classList.add('active'); // Agrega 'active' a menuNavBar también
+                setCookie('positionMenu', index + 1, 1); //we going to create a cookie with the value of the new position of the user that expire in one day 
+                console.log(`Se activó el ítem número ${index + 1}`);
+            }
+        });
+    }
+
+    list.forEach((item) => {
+        item.addEventListener('click', activeLink);
+    });
+</script>

@@ -1,0 +1,46 @@
+  <table class="table table-hover" id="table-container">
+    <colgroup>
+        <col style="width: 30%;">
+        <col style="width: 30%;">
+        <col style="width: 20%;">
+        <col style="width: 10%;">
+        <col style="width: 10%;">
+    </colgroup>
+    <thead>
+      <tr>
+        <th>Name <i class="fi-icon fi-sr-restaurant"></i></th>
+        <th>email <i class="fi-icon fi-sr-envelope"></i></th>
+        <th>cellphone/phone <i class="fi-icon fi-br-smartphone"></i></th>
+        <th>point<i class="fi-icon fi-sr-coins"></i></th>
+        <th></th>
+      </tr>
+    </thead>
+
+    <tbody>
+    {{#each customers}}
+      <tr id="{{email}}">
+        <td>{{first_name}} {{second_name}} {{last_name}}</td>
+        <td>{{email}}</td>
+        <td>{{cell_phone}}/{{phone}}</td>
+        <td>{{points}}</td>
+        <td>
+            <button class="btn btn-danger" id="{{id}}" onclick="delete_customer(this.id,'{{id_companies}}','{{email}}')"><i class="fi-department fi-sr-trash"></i></button>
+            <button class="btn btn-danger" id="{{id}}" onclick="edit_customer(this.id,'{{id_companies}}')"><i class="fi-department fi-sr-pencil"></i></button>
+        </td>     
+      </tr>
+    {{/each}}
+    </tbody>
+  </table>
+
+
+<script>
+  async function delete_customer(idCustomer,idCompany,email){
+      if(await questionMessage(`Delete to ${email}`,'Do you want to delete to this customer?')){
+        window.location.href = "/fud/"+idCompany+"/"+idCustomer+"/delete-customer";
+      }
+  }
+
+  async function edit_customer(idCustomer,idCompany){
+    window.location.href = "/fud/"+idCompany+"/"+idCustomer+"/edit-customer";
+  }
+</script>

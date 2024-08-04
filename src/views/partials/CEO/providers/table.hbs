@@ -1,0 +1,47 @@
+<head>
+<style>
+    table {
+        border-collapse: separate;
+        border-spacing: 0 10px;
+    }
+</style>
+
+<div class="card">
+    <div class="card-body">
+        <table width="100%" border="1" class="table-information" id="table-container">
+            <thead>
+                <tr>
+                    <th><label>Nombre/Representante</label></th>
+                    <th><label>E-mail</label></th>
+                    <th><label>Celular/Telefono</label></th>
+                    <th><label>Dirección</label></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each providers}}
+                    {{#each this}}
+                        <tr id="{{name}}">
+                            <td><label><strong>{{name}}/{{representative}}</strong></label></td>
+                            <td><label>{{email}}</label></th>
+                            <td><label>{{cell_phone}}/{{phone}}</label></td>
+                            <td><label>{{business_address}}</label></td>
+                            <td>
+                                <button id="{{id}}" onclick="nextWeb('{{id_companies}}/{{id}}/edit-provider')" class="btn-table-employee-edit"><i class="fi-department fi-sr-pencil"></i></button>
+                                <button id="{{id}}" onclick="delete_provider('{{id_companies}}','{{id}}','{{name}}')" class="btn-table-employee-delete"><i class="fi-department fi-sr-trash"></i></button>
+                            </td>
+                        </tr>
+                    {{/each}}
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+  async function delete_provider(idCompany,idProvider,name){
+      if(await questionMessage(`Eliminar a ${name} 😳`,'¿Quieres eliminar a este provedor?')){
+        window.location.href = "/fud/"+idCompany+'/'+idProvider+"/delete-provider";
+      }
+  }
+</script>

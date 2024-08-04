@@ -1,0 +1,147 @@
+<!--the most sale-->
+<div class="title-home-store pc">
+    <br>
+    <h3><b>LOS MAS VENDIDOS</b></h3>
+    <hr>
+</div>
+
+<div class="body-card-product pc">
+    <div class="slide-container swiper">
+        <div class="slide-content">
+            <div class="card-wrapper swiper-wrapper">
+
+                <!---
+                    we will waching if exist a sale in the branch
+                    if not exist a sale, we will use to <newCombos>
+                --->
+                {{#if mostSold}}
+                    <!---this is repeat three times for that tha carousel is fine--->
+                    {{#each mostSold}}
+                        <div class="card swiper-slide">
+                            <div class="image-content">
+                                <span class="overlay">
+
+                                </span>
+                                <div class="card-image">
+                                    {{#if img}}
+                                        <img class="card-img" src="{{img}}" alt="">
+                                    {{else}}
+                                        <img class="card-img" src="https://cdn-icons-png.flaticon.com/512/1695/1695572.png" alt="">
+                                    {{/if}}
+                                </div>
+                            </div>
+
+                            <div class="card-content">
+                                <h2 class="name">{{name}}</h2>
+                                <p class="description">${{price_1}}</p>
+                                <button class="button-card" onclick="addFish('{{id}}','{{name}}','{{price_1}}','{{price_2}}','{{price_3}}')"><i class="fi-icon-card fi-ss-cart-arrow-down"></i></button>
+                            </div>
+                        </div>
+                    {{/each}}
+   
+                {{else}}
+                    <!---if not exist a sale, we will to show the new combos--->
+                    {{#each newCombos}}
+                        <div class="card swiper-slide">
+                            <div class="image-content">
+                                <span class="overlay">
+
+                                </span>
+                                <div class="card-image">
+                                    {{#if img}}
+                                        <img class="card-img" src="{{img}}" alt="">
+                                    {{else}}
+                                        <img class="card-img" src="https://cdn-icons-png.flaticon.com/512/1695/1695572.png" alt="">
+                                    {{/if}}
+                                </div>
+                            </div>
+
+                            <div class="card-content">
+                                <h2 class="name">{{name}}</h2>
+                                <p class="description">${{price_1}}</p>
+                                <button class="button-card" onclick="addFish('{{id}}','{{name}}','{{price_1}}','{{price_2}}','{{price_3}}')"><i class="fi-icon-card fi-ss-cart-arrow-down"></i></button>
+                            </div>
+                        </div>
+                    {{/each}}
+                {{/if}}
+            </div>
+        </div>
+
+        <!--buttons-->
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-button-pagination"></div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--///////////////////////Card Slider//////////////////////-->
+<!-- Initialize Swiper -->
+<script src="/js/jsOther/swiper-bundle.min.js"></script> <!--Card Slider-->
+<script>
+    function updateSwiper() {
+        var widthScreen = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+        
+        if (widthScreen > 1174) {
+            var swiper = new Swiper(".slide-content", {
+                slidesPerView: 5,
+                spaceBetween: 10,
+                loop: true,
+                canterSlide: 'true',
+                fade: 'true',
+                grabCursor: 'true',
+                centeredSlides: true,
+                grabCursor: true,
+                pagination: {
+                    el: ".swiper-pagination",
+                    clickable: true,
+                    dynamicBullets: true,
+                },
+                navigation: {
+                    nextEl: ".swiper-button-next",
+                    prevEl: ".swiper-button-prev",
+                }
+            });
+        } else {
+            var swiper = new Swiper(".slide-content", {
+                slidesPerView: 3,
+                spaceBetween: 25,
+                loop: true,
+                canterSlide: 'true',
+                fade: 'true',
+                grabCursor: 'true',
+                centeredSlides: true,
+                grabCursor: true,
+                pagination: {
+                    el: ".swiper-pagination",
+                    clickable: true,
+                    dynamicBullets: true,
+                },
+                navigation: {
+                    nextEl: ".swiper-button-next",
+                    prevEl: ".swiper-button-prev",
+                }
+            });
+        }
+    }
+
+    updateSwiper();
+    window.addEventListener('resize', function() {
+        var widthScreen = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+        updateSwiper();
+    });
+</script>

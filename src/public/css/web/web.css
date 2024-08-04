@@ -1,0 +1,251 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Black&display=swap');
+
+.img-info{
+    width: 100%;
+}
+
+.title-main-2{
+    color: var(--color-footer);
+    font-size: 3rem;
+    font-family: 'Archivo Black', sans-serif;
+}
+
+.title-main{
+    color: var(--color-company);
+    font-size: 3rem;
+    font-family: 'Archivo Black', sans-serif;
+}
+
+.li-main{
+    font-size: 1rem;
+    font-family:'Lato', sans-serif;
+}
+
+.li-main::marker {
+    color: var(--color-company);
+}
+
+.btn-company{
+    background-color: var(--color-company);
+    border-radius: .5rem;
+    color: white;
+    width: 140px;
+    height: 50px;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 1rem;
+    transition: all .4s;
+}
+
+.btn-company:hover{
+    border-radius: .4rem;
+    width: 145px;
+    height: 55px;
+    font-size: 1.2rem;
+    transition: all .4s;
+}
+
+.div-separator-main{
+    background-color: rgba(0,0,0,.1);
+}
+
+.separator-text-main{
+    font-family:'Lato', sans-serif;
+}
+
+.container-2-main{
+    background-color: var(--color-company);
+}
+
+.title-white{
+    color: white;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 4.5rem;
+}
+
+.text-white{
+    color: white;
+    font-size: 1.1rem;
+}
+
+.card-price{
+    position: relative;
+    max-width: 80%;
+    height: 195px;
+    background-color: var(--color-company);
+    color: white;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+    text-align: left;
+    padding-left: 70px;
+    z-index: 1;
+}
+/*
+.card-price::before {
+    content: ""; 
+    position: absolute; 
+    top: 35px; 
+    left: 85%; 
+    width: 240px; 
+    height: 240px; 
+    border-radius: 50%; 
+    background-color: rgba(255,255,255,0.1); 
+    z-index: 1;
+}*/
+
+.btn-card-price {
+    border-radius: 1rem;
+    background-color: var(--color-company);
+    box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.6);
+    color: white;
+    width: 200px;
+    height: 50px;
+    z-index: 2;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: background-color 0.3s ease, color 0.3s ease; 
+}
+
+.btn-card-price:hover {
+    background-color: white;
+    color: var(--color-company);
+}
+
+/*this is for create the subtitle with the subrayado*/
+.subTitleText {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    /* Centra horizontalmente el contenido */
+    align-items: center;
+    /* Centra verticalmente el contenido */
+    height: 200px;
+    /* Altura de la imagen de fondo */
+    background-image: url('/web/assets/images/wallpaperText.png');
+    /* Establece la imagen de fondo */
+    background-size: cover;
+    /* Ajusta el tamaño de la imagen de fondo */
+    color: white;
+    /* Color del texto */
+}
+
+.subTitleText h2 {
+    margin: 0;
+    /* Elimina el margen por defecto del h2 */
+}
+
+@media (max-width: 1100px) {
+    .subTitleText {
+        height: 145px;
+    }
+
+    .subTitleText h2 {
+        font-size: 1.5rem;
+    }
+}
+
+
+@media screen and (max-width: 1300px){
+    .card-price{
+        max-width: 80%;
+        height: 210px;
+    }
+
+    .btn-card-price {
+        border-radius: 1rem;
+        width: 200px;
+        top: 75px;
+        position: absolute;
+    }
+
+    .title-main-2{
+        font-size: 2.1rem;
+    }
+}
+
+@media (max-width: 720px) {
+    .card-price{
+        max-width: 80%;
+        height: 105px;
+        display: none;
+    }
+
+    .btn-card-price {
+        border-radius: .25rem;
+        width: 100px;
+        top: 35px;
+        position: absolute;
+    }
+
+    .title-main-2, .btn-card-price{
+        font-size: .8rem;
+    }
+    
+    p{
+        font-size: .9rem;
+    }
+
+    .title-main{
+        font-size: 1.4rem;
+    }
+
+    .subTitleText, .title-home, .h-subtitle, .cellphone-not-container, .card-price{
+        display: none;
+    }
+
+    .cellphone-container{
+        display: block;
+    }
+
+    .banner-img{
+        top: -30px;
+        width: 110%;
+        position: relative;
+        padding: 0px;
+    }
+
+
+
+    /* Estilos para el botón de hamburguesa */
+    .hamburger-btn {
+        display: none; /* Ocultar por defecto en pantallas grandes */
+        cursor: pointer;
+        background: none;
+        border: none;
+        padding: 10px;
+    }
+
+    /* Estilos para las barras del botón de hamburguesa */
+    .bar {
+        display: block;
+        width: 25px;
+        height: 3px;
+        background-color: #333;
+        margin: 5px auto;
+        transition: all 0.3s ease-in-out;
+    }
+
+    /* Estilos para el menú desplegable */
+    .navbar-menu {
+        display: none; /* Ocultar por defecto en pantallas grandes */
+    }
+
+    /* Mostrar el menú desplegable cuando el botón de hamburguesa es clickeado */
+    .navbar-menu.active {
+        display: block;
+    }
+
+    .banner-area{
+        height: 800px;
+    }
+}
+
+@media (min-width: 721px) {
+    .cellphone-container{
+        display: none;
+    } 
+    /*
+
+    .banner-img, .subTitleText, .title-home, .h-subtitle, .cellphone-not-container, .card-price{
+        display: block;
+    }*/
+}

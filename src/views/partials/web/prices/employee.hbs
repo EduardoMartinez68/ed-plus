@@ -1,0 +1,605 @@
+<div class="container mt-5">
+    <div class="row mb-4 justify-content-end">
+        <div class="col-5">
+            <div class="d-flex">
+                <input type="text" id="search-input" class="form-control me-2" placeholder="Buscar aplicaciones..."
+                    style="background-color: white;">
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col container-marketplace" id="nueva terminal restaurante">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3616/3616856.png" alt=""
+                        class="icon-product-price">
+                    <br>
+                    <h7 class="card-title"><b>Nueva Terminal</b></h7>
+                    <br>
+                    <label class="offert-price"><s>MXN $79/mes</s></label>
+                    <h3>MXN $59.00/mes</h3>
+                    <p class="card-text">
+                        ¡Adquiere ahora terminales adicionales para tu restaurante! Amplía tu capacidad de servicio con
+                        múltiples puntos de venta.
+                    </p>
+                    <hr>
+                    <div class="d-flex justify-content-end">
+                        {{#each branchFree}}
+                        <button id="checkout-and-portal-button" type="submit" class="btn btn-comprar"
+                            onclick="nextWeb('{{id_companies}}/{{id}}/marketplace')">Instalar</button>
+                        {{/each}}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--
+        <div class="col container-marketplace" id="ia predictiva reportes analisis">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <img src="https://cdn-icons-png.flaticon.com/512/5230/5230492.png" alt=""
+                        class="icon-product-price">
+                    <br>
+                    <h7 class="card-title"><b>IA Predictiva</b></h7>
+                    <br>
+                    <label class="offert-price"><s>MXN $180.00/mes</s></label>
+                    <h3>MXN $59.00/mes</h3>
+                    <p class="card-text">
+                        Utilizando análisis de
+                        big data, anticipamos tendencias, demanda de clientes y comportamiento del mercado para ayudarte
+                        a tomar decisiones informadas y maximizar tu éxito. ¡El futuro de tu restaurante comienza hoy!
+                    </p>
+                    <label for="" class="info-label">
+                        ✔️ Reportes y Graficos
+                        <br>
+                        ✔️ Prediccion de ventas
+                        <br>
+                        ✔️ Prediccion de Ganancias
+                        <br>
+                        ✔️ Prediccion de Perdidas
+                        <br><br>
+                    </label>
+                    <a class="info-link">Más información</a>
+                    <hr>
+                    <div class="d-flex justify-content-end">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        -->
+
+        <div class="col container-marketplace" id="creación de página web digital">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3190/3190497.png" alt=""
+                        class="icon-product-price">
+                    <br>
+                    <h7 class="card-title"><b>Creación de Página Web</b></h7>
+                    <br>
+                    <label class="offert-price"><s>MXN $499.00/mes</s></label>
+                    <h3>MXN $399.00/mes</h3>
+                    <p class="card-text">
+                        Una herramienta poderosa y fácil de usar que te permite diseñar y lanzar una presencia en línea
+                        profesional para tu restaurante en minutos. Personaliza tu sitio hazlo interactivo,
+                        crea tu galería de fotos y testimonios de clientes. Incluyendo tu menu digital interactivo.
+                    </p>
+                    <label for="" class="info-label">
+                        ✔️ Editor de pagina Web
+                        <br>
+                        ✔️ Presencia en en línea.
+                        <br>
+                        ✔️ Mostrar ofertas y publicidad.
+                        <br>
+                        ✔️ Incluye Menu Digital
+                        <br><br>
+                    </label>
+                    <a class="info-link">Más información</a>
+                    <hr>
+                    <div class="d-flex justify-content-end">
+                        {{#each branchFree}}
+                        <button id="checkout-and-portal-button" type="submit" class="btn btn-comprar"
+                            onclick="nextWeb('{{id_companies}}/{{id}}/marketplace')">Instalar</button>
+                        {{/each}}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col container-marketplace" id="menu digital web">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <img src="https://cdn-icons-png.flaticon.com/256/2180/2180060.png" alt=""
+                        class="icon-product-price">
+                    <br>
+                    <h7 class="card-title"><b>Menu Digital</b></h7>
+                    <br>
+                    <label class="offert-price"><s>MXN $250.00/mes</s></label>
+                    <h3>MXN $200.00/mes</h3>
+                    <p class="card-text">
+                        ¡Moderniza tu restaurante con nuestro innovador menú digital! Ofrece una experiencia
+                        gastronómica única a tus clientes, permitiéndoles explorar tu delicioso menú de forma
+                        interactiva y visual. Simplifica la gestión de pedidos y maximiza la eficiencia de tu negocio.
+                    </p>
+                    <label for="" class="info-label">
+                        ✔️ Interacción y Personalización
+                        <br>
+                        ✔️ Pedidos en Línea
+                        <br>
+                        ✔️ Pagos Electrónicos
+                        <br>
+                        ✔️ Códigos QR
+                        <br><br>
+                    </label>
+                    <a class="info-link">Más información</a>
+                    <hr>
+                    <div class="d-flex justify-content-end">
+                        {{#each branchFree}}
+                        <button id="checkout-and-portal-button" type="submit" class="btn btn-comprar"
+                            onclick="nextWeb('{{id_companies}}/{{id}}/marketplace')">Instalar</button>
+                        {{/each}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!--
+        <div class="col container-marketplace" id="whatsapp marketing restaurante publicidad cliente">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2504/2504957.png" alt=""
+                        class="icon-product-price">
+                    <br>
+                    <h7 class="card-title"><b>Whatsapp Marketing</b></h7>
+                    <br>
+                    <label class="offert-price"><s>MXN $120.00/mes</s></label>
+                    <h3>MXN $59.99/mes</h3>
+                    <p class="card-text">
+                        La solución perfecta para comunicarte directamente con tus clientes. Envía mensajes
+                        personalizados, segmenta tu audiencia y automatiza tus campañas. Con nuestra herramienta, puedes
+                        analizar el rendimiento en tiempo real y optimizar tu estrategia para maximizar el impacto.
+                    </p>
+                    <label for="" class="info-label">
+                        ✔️ Automatización de Mensajes.
+                        <br>
+                        ✔️ Personalización de Mensajes.
+                        <br>
+                        ✔️ Interacción y Respuesta.
+                        <br><br>
+                    </label>
+                    <a class="info-link">Más información</a>
+                    <hr>
+                    <div class="d-flex justify-content-end">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col container-marketplace" id="email marketing publicidad clientes">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <img src="https://i.pinimg.com/564x/82/30/4a/82304a4a4bde2325b2e1822dc0eea21e.jpg" alt=""
+                        class="icon-product-price">
+                    <br>
+                    <h7 class="card-title"><b>Email Marketing</b></h7>
+                    <br>
+                    <label class="offert-price"><s>MXN $120.00/mes</s></label>
+                    <h3>MXN $59.99/mes</h3>
+                    <p class="card-text">
+                        La herramienta definitiva para conectar con tus
+                        clientes. Crea campañas personalizadas, segmenta tu audiencia y automatiza el envío de correos.
+                        Analiza el rendimiento en tiempo real y optimiza tu estrategia para maximizar la efectividad.
+                        ¡Impulsa tus ventas y fideliza a tus clientes con facilidad!
+                    </p>
+                    <label for="" class="info-label">
+                        ✔️ Editor de Emails
+                        <br>
+                        ✔️ Segmentación de Audiencia
+                        <br>
+                        ✔️ Automatización de Campañas
+                        <br>
+                        ✔️ Integración con CRM de Füd 
+                        <br><br>
+                    </label>
+                    <a class="info-link">Más información</a>
+                    <hr>
+                    <div class="d-flex justify-content-end">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        -->
+        <div class="col container-marketplace" id="horarios de empleados gestion de restaurante">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <img src="https://cdn-icons-png.flaticon.com/512/566/566632.png" alt="" class="icon-product-price">
+                    <br>
+                    <h7 class="card-title"><b>Horarios de Empleados</b></h7>
+                    <br>
+                    <label class="offert-price"><s>MXN $220.00/mes</s></label>
+                    <h3>MXN $199.00/mes</h3>
+                    <p class="card-text">
+                        Optimiza la gestión del horario de tus empleados con nuestro software especializado. Programa
+                        turnos, asigna tareas y ajusta rápidamente horarios según la demanda. Simplifica la
+                        planificación y maximiza la eficiencia laboral.
+                    </p>
+                    <label for="" class="info-label">
+                        ✔️ Diferentes tipos de Horarios.
+                        <br>
+                        ✔️ Historial de Horarios.
+                        <br>
+                        ✔️ Actualización Automática de los Horarios cada semana.
+                        <br>
+                        ✔️ Gestión de entrada y salida de empleados.
+                        <br>
+                        ✔️ Calcular la nomina de los empleados.
+                        <br>
+                        ✔️ Calcular horas extras de los empleados.
+                        <br><br>
+                    </label>
+                    <a class="info-link">Más información</a>
+                    <hr>
+                    <div class="d-flex justify-content-end">
+                        {{#each branchFree}}
+                        <button id="checkout-and-portal-button" type="submit" class="btn btn-comprar"
+                            onclick="nextWeb('{{id_companies}}/{{id}}/marketplace')">Instalar</button>
+                        {{/each}}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col" id="empleados gratis">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <img src="https://cdn-icons-png.flaticon.com/512/5188/5188850.png" alt=""
+                        class="icon-product-price">
+                    <br>
+                    <h7 class="card-title"><b>Empleados</b></h7>
+                    <br>
+                    <label class="offert-price"><s>MXN $0.00/mes</s></label>
+                    <h3>GRATIS</h3>
+                    <p class="card-text">
+                        Es una herramienta intuitiva y eficiente diseñada para simplificar la creación y administración
+                        de empleados dentro de una organización. Con esta aplicación, los administradores pueden
+                        gestionar fácilmente el ciclo de vida de los empleados, desde su incorporación hasta su salida.
+                    </p>
+                    <label for="" class="info-label">
+                        ✔️ Registro de Empleados.
+                        <br>
+                        ✔️ Administración de Roles y Departamentos.
+                        <br>
+                        ✔️ Gestión de Sucursales.
+                        <br>
+                        ✔️ Actualización de Información.
+                        <br>
+                        ✔️ Historial de Movimientos.
+                        <br>
+                        ✔️ Acceso rapido con PIN de registro.
+                        <br><br>
+                    </label>
+                    <a class="info-link">Más información</a>
+                    <hr>
+                    <div class="d-flex justify-content-end">
+                        {{#each branchFree}}
+                        <button id="checkout-and-portal-button" type="submit" class="btn btn-comprar"
+                            onclick="nextWeb('{{id_companies}}/{{id}}/employees-branch')">Usar</button>
+                        {{/each}}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col" id="combos insumos inventario gratis">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <img src="https://cdn-icons-png.flaticon.com/512/6626/6626465.png" alt=""
+                        class="icon-product-price">
+                    <br>
+                    <h7 class="card-title"><b>Combos</b></h7>
+                    <br>
+                    <label class="offert-price"><s>MXN $0.00/mes</s></label>
+                    <h3>GRATIS</h3>
+                    <p class="card-text">
+                        Es una herramienta dinámica diseñada para restaurantes y negocios de alimentos que desean
+                        ofrecer combos personalizados a sus clientes. Con esta aplicación, los administradores pueden
+                        crear y gestionar combos de manera eficiente, combinando diferentes platos, bebidas y
+                        complementos en ofertas atractivas y rentables.
+                    </p>
+                    <label for="" class="info-label">
+                        ✔️ Creación de Combos Personalizados.
+                        <br>
+                        ✔️ Gestión de Ingredientes y Productos.
+                        <br>
+                        ✔️ Personalización de Combos.
+                        <br>
+                        ✔️ Promociones y Ofertas Especiales.
+                        <br>
+                        ✔️ Integración con el Punto de Venta (POS Füd).
+                        <br>
+                        ✔️ Crear departamento de comida.
+                        <br>
+                        ✔️ Crear area de comida.
+                        <br>
+                        ✔️ Reportes y Análisis.
+                        <br><br>
+                    </label>
+                    <a class="info-link">Más información</a>
+                    <hr>
+                    <div class="d-flex justify-content-end">
+                        {{#each branchFree}}
+                        <button id="checkout-and-portal-button" type="submit" class="btn btn-comprar"
+                            onclick="nextWeb('{{id_companies}}/{{id}}/combos-free')">Usar</button>
+                        {{/each}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!--
+        <div class="col container-marketplace" id="whatsapp marketing restaurante publicidad cliente">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2504/2504957.png" alt=""
+                        class="icon-product-price">
+                    <br>
+                    <h7 class="card-title"><b>Whatsapp Marketing</b></h7>
+                    <br>
+                    <label class="offert-price"><s>MXN $120.00/mes</s></label>
+                    <h3>MXN $59.99/mes</h3>
+                    <p class="card-text">
+                        La solución perfecta para comunicarte directamente con tus clientes. Envía mensajes
+                        personalizados, segmenta tu audiencia y automatiza tus campañas. Con nuestra herramienta, puedes
+                        analizar el rendimiento en tiempo real y optimizar tu estrategia para maximizar el impacto.
+                    </p>
+                    <label for="" class="info-label">
+                        ✔️ Automatización de Mensajes.
+                        <br>
+                        ✔️ Personalización de Mensajes.
+                        <br>
+                        ✔️ Interacción y Respuesta.
+                        <br><br>
+                    </label>
+                    <a class="info-link">Más información</a>
+                    <hr>
+                    <div class="d-flex justify-content-end">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col container-marketplace" id="email marketing publicidad clientes">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <img src="https://i.pinimg.com/564x/82/30/4a/82304a4a4bde2325b2e1822dc0eea21e.jpg" alt=""
+                        class="icon-product-price">
+                    <br>
+                    <h7 class="card-title"><b>Email Marketing</b></h7>
+                    <br>
+                    <label class="offert-price"><s>MXN $120.00/mes</s></label>
+                    <h3>MXN $59.99/mes</h3>
+                    <p class="card-text">
+                        La herramienta definitiva para conectar con tus
+                        clientes. Crea campañas personalizadas, segmenta tu audiencia y automatiza el envío de correos.
+                        Analiza el rendimiento en tiempo real y optimiza tu estrategia para maximizar la efectividad.
+                        ¡Impulsa tus ventas y fideliza a tus clientes con facilidad!
+                    </p>
+                    <label for="" class="info-label">
+                        ✔️ Editor de Emails
+                        <br>
+                        ✔️ Segmentación de Audiencia
+                        <br>
+                        ✔️ Automatización de Campañas
+                        <br>
+                        ✔️ Integración con CRM de Füd 
+                        <br><br>
+                    </label>
+                    <a class="info-link">Más información</a>
+                    <hr>
+                    <div class="d-flex justify-content-end">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        -->
+        <div class="col container-marketplace" id="füd go! delivery gratis">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2830/2830305.png" alt=""
+                        class="icon-product-price">
+                    <br>
+                    <h7 class="card-title"><b>Füd Go!</b></h7>
+                    <br>
+                    <label class="offert-price"><s>MXN $0.00/mes</s></label>
+                    <h3>GRATIS</h3>
+                    <p class="card-text">
+                        Füd Go! es una plataforma integral diseñada para restaurantes y negocios de alimentos que desean
+                        ofrecer
+                        servicios de entrega a domicilio de manera eficiente y profesional. Con esta aplicación, los
+                        usuarios pueden realizar pedidos en línea, rastrear sus entregas en tiempo real y disfrutar de
+                        una experiencia de compra cómoda y segura desde la comodidad de sus hogares.
+                    </p>
+                    <label for="" class="info-label">
+                        ✔️ Interfaz de Usuario Intuitiva.
+                        <br>
+                        ✔️ Integración con Menú Digital.
+                        <br>
+                        ✔️ Rastreo en Tiempo Real.
+                        <br>
+                        ✔️ Control de Inventario.
+                        <br>
+                        ✔️ Promociones y Descuentos.
+                        <br>
+                        ✔️ Soporte y Atención al Cliente.
+                        <br><br>
+                    </label>
+                    <a class="info-link">Más información</a>
+                    <hr>
+                    <div class="d-flex justify-content-end">
+                        {{#each branchFree}}
+                        <button id="checkout-and-portal-button" type="submit" class="btn btn-comprar"
+                            onclick="nextWeb('{{id_companies}}/{{id}}/marketplace')">Instalar</button>
+                        {{/each}}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col" id="füd ads anuncios marketing gratis">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <img src="https://cdn-icons-png.flaticon.com/512/6165/6165633.png" alt=""
+                        class="icon-product-price">
+                    <br>
+                    <h7 class="card-title"><b>Füd Ads</b></h7>
+                    <br>
+                    <label class="offert-price"><s>MXN $0.00/mes</s></label>
+                    <h3>GRATIS</h3>
+                    <p class="card-text">
+                        La Aplicación de Anuncios para Restaurantes es una herramienta innovadora diseñada para ayudar a
+                        los restaurantes a mostrar anuncios y promociones directamente en sus sucursales. Esta
+                        aplicación permite a los restaurantes gestionar y exhibir contenido publicitario de manera
+                        eficiente, captando la atención de los clientes y aumentando el interés en ofertas especiales,
+                        eventos y nuevos productos.
+                    </p>
+                    <label for="" class="info-label">
+                        ✔️ Interfaz de Usuario Intuitiva.
+                        <br>
+                        ✔️ Gestión de Contenido Publicitario.
+                        <br>
+                        ✔️ Pantallas Digitales en el Restaurante.
+                        <br>
+                        ✔️ Segmentación y Personalización.
+                        <br>
+                        ✔️ Actualización en Tiempo Real.
+                        <br>
+                        ✔️ Integración con el Sistema de Punto de Venta (Füd POS).
+                        <br><br>
+                    </label>
+                    <a class="info-link">Más información</a>
+                    <hr>
+                    <div class="d-flex justify-content-end">
+                        {{#each branchFree}}
+                        <button id="checkout-and-portal-button" type="submit" class="btn btn-comprar"
+                            onclick="nextWeb('{{id_companies}}/{{id}}/employees-branch')">Usar</button>
+                        {{/each}}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col" id="combos insumos inventario gratis">
+
+        </div>
+    </div>
+
+
+    <!--
+    <div class="row">
+        <div class="col container-marketplace" id="gestion de mesas">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <img src="https://cdn-icons-png.flaticon.com/512/4001/4001021.png" alt=""
+                        class="icon-product-price">
+                    <br>
+                    <h7 class="card-title"><b>Gestión de Mesas</b></h7>
+                    <br>
+                    <label class="offert-price"><s>MXN $159.99/mes</s></label>
+                    <h3>MXN $120.00/mes</h3>
+                    <p class="card-text">
+                        La herramienta ideal para optimizar la organización y asignación de mesas. Facilita la
+                        administración de reservas, asigna mesas de manera eficiente y reduce tiempos de espera. Mejora
+                        la experiencia de tus clientes.
+                    </p>
+                    <label for="" class="info-label">
+                        ✔️ Mapa del Restaurante
+                        <br>
+                        ✔️ Asignación de mesas
+                        <br><br>
+                    </label>
+                    <a class="info-link">Más información</a>
+                    <hr>
+                    <div class="d-flex justify-content-end">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+
+        <div class="col container-marketplace" id="contabilidad y finanzas empleados">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <img src="https://cdn-icons-png.flaticon.com/512/1469/1469963.png" alt=""
+                        class="icon-product-price">
+                    <br>
+                    <h7 class="card-title"><b>Contabilidad y Finanzas</b></h7>
+                    <br>
+                    <label class="offert-price"><s>MXN $120.00/mes</s></label>
+                    <h3>MXN $59.99/mes</h3>
+                    <p class="card-text">
+                        Diseñada para simplificar y automatizar tus tareas financieras. Con esta solución, puedes
+                        gestionar de manera eficiente tus ingresos y gastos, generar informes financieros detallados, y
+                        automatizar procesos contables cruciales.
+                    </p>
+                    <label for="" class="info-label">
+                        ✔️ Gestión de ingresos y gastos.
+                        <br>
+                        ✔️ Generación de informes financieros.
+                        <br>
+                        ✔️ Automatización de procesos contables.
+                        <br>
+                        ✔️ Horas extras de los empleados.
+                        <br><br>
+                    </label>
+                    <a class="info-link">Más información</a>
+                    <hr>
+                    <div class="d-flex justify-content-end">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    --->
+    <br>
+    <center>
+        <label for="">👁️
+            Todas las suscripciones del software Füd Technology se venden por única sucursal.
+            <br>
+            Cada sucursal de tu negocio necesita una licencia individual de Füd Technology para poder operar y
+            conectarse con los servicios de la nube.
+            <br>
+            Suponiendo que tienes 5 restaurantes, deberás tener 5 licencias del software para poder conectar todas tus
+            sucursales bajo la misma empresa.
+        </label>
+    </center>
+    <br>
+</div>
+
+
+<script>
+    document.getElementById('search-input').addEventListener('input', function () {
+        let filter = this.value.toLowerCase();
+        let cards = document.querySelectorAll('.container-marketplace');
+
+        cards.forEach(function (card) {
+            let id = card.id.toLowerCase();
+            if (id.includes(filter)) {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
+</script>

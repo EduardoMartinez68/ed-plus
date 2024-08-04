@@ -1,0 +1,685 @@
+<!--
+{{>web/filesOldWeb/styles}}
+--->
+{{>web/filesOldWeb/styles}}
+
+
+
+<link rel="stylesheet" href="/css/cart/cart.css">
+<link rel="stylesheet" href="/css/cssOther/swiper-bundle.min.css">
+</link><!--Card Slider-->
+<link rel="stylesheet" href="/css/store/homeStore.css">
+</link>
+<link rel="stylesheet" href="/css/store/navigationHome.css">
+</link>
+</link>
+<style>
+    .offert-price {
+        text-decoration: line-through;
+        /* Tachar el texto */
+    }
+
+    .btn-comprar {
+        background-color: #1473E6;
+        /* Color verde */
+        color: white;
+        /* Color del texto */
+        border-radius: 15px;
+        /* Bordes redondeados */
+        font-weight: bold;
+        /* Texto en negrita */
+        font-size: 0.8rem;
+        right: 30px;
+    }
+
+    .btn-comprar:hover {
+        background-color: #1267cf;
+        /* Color verde más oscuro al pasar el mouse */
+    }
+
+    .icon-product-price {
+        width: 50px;
+        height: 50px;
+        border-radius: 15px;
+        margin: .5rem;
+    }
+</style>
+<style>
+    /* Personalización del estilo de las pestañas */
+    .nav-tabs .nav-link {
+        color: #495057c0;
+        border: none;
+        border-bottom: 2px solid transparent;
+    }
+
+    .nav-tabs .nav-link:hover {
+        color: #495057;
+        border: none;
+        border-bottom: 2px solid transparent;
+    }
+
+    .nav-tabs .nav-link.active {
+        color: var(--color-company);
+        background-color: #fff;
+        border: none;
+        border-bottom: 2px solid var(--color-company);
+        ;
+    }
+
+    .tab-content {
+        border: 1px solid #dee2e6;
+        border-top: none;
+        padding: 20px;
+        background: #F5F5F5;
+    }
+
+    .card {
+        border-radius: 22px;
+        /*width: 24rem;*/
+    }
+
+    .info-label {
+        display: none;
+        margin-top: 10px;
+    }
+
+    .info-link {
+        cursor: pointer;
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    .info-link:hover {
+        cursor: pointer;
+        color: #036fe2;
+    }
+</style>
+<style>
+    .menu-item {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+
+    .menu-item img {
+        width: 100%;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+    }
+
+    .menu-item .card-body {
+        padding: 15px;
+    }
+
+    .menu-item .card-title {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .menu-item .card-text {
+        margin-bottom: 5px;
+    }
+
+    .menu-item .price {
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: black;
+    }
+
+    .menu-item .btn-add {
+        background-color: #3EC072;
+        color: #fff;
+        border: none;
+        padding: 8px 16px;
+        font-size: 0.9rem;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .menu-item .btn-add:hover {
+        background-color: #319458;
+    }
+
+    .img-combo {
+        height: 200px;
+        /* Ajuste de altura para imágenes */
+        object-fit: cover;
+        /* Ajuste para cubrir completamente el espacio */
+    }
+
+    @media (max-width: 768px) {
+        .menu-item {
+            margin-bottom: 15px;
+        }
+    }
+
+
+    /* Personalización del estilo de las pestañas */
+    .nav-tabs .nav-link {
+        color: #495057c0;
+        border: none;
+        border-bottom: 2px solid transparent;
+    }
+
+    .nav-tabs .nav-link:hover {
+        color: #495057;
+        border: none;
+        border-bottom: 2px solid transparent;
+    }
+
+    .nav-tabs .nav-link.active {
+        color: var(--color-company);
+        background-color: #fff;
+        border: none;
+        border-bottom: 2px solid var(--color-company);
+        ;
+    }
+
+    .tab-content {
+        border: 1px solid #dee2e6;
+        border-top: none;
+        padding: 20px;
+        background: #F5F5F5;
+    }
+
+    .card {
+        border-radius: 22px;
+        /*width: 24rem;*/
+    }
+
+    .info-label {
+        display: none;
+        margin-top: 10px;
+    }
+
+    .info-link {
+        cursor: pointer;
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    .info-link:hover {
+        cursor: pointer;
+        color: #036fe2;
+    }
+
+    .img-carousel-promo, .box-carousel-promo{
+        width: 100%;
+        height: auto;
+    }
+</style>
+<style>
+    .tab-content {
+        border: 1px solid #dee2e6;
+        border-top: none;
+        padding: 20px;
+        background: #F5F5F5;
+    }
+
+    .nav-tabs .nav-link {
+        color: #495057c0;
+        border: none;
+        border-bottom: 2px solid transparent;
+    }
+
+    .nav-tabs .nav-link:hover {
+        color: #495057;
+        border: none;
+        border-bottom: 2px solid transparent;
+    }
+
+    .nav-tabs .nav-link.active {
+        color: #007bff;
+        background-color: #fff;
+        border: none;
+        border-bottom: 2px solid #007bff;
+    }
+</style>
+<style>
+
+    /*navbar*/
+    .navbar-store{
+        background-color: var(--color-company);
+        color: white;
+    }
+
+    .img-icon-store {
+        width: 50%;
+        height: auto;
+        border-radius: 25px;
+        object-fit: cover; /* Hace que la imagen se ajuste y recorte lo que sobresalga */
+    }
+
+    .item-img{
+        display: flex;
+        justify-content: right;
+        align-items: center;
+    }
+
+    .title-company{
+        font-size: 2rem;
+        color: white;
+        font-family:Arial, Helvetica, sans-serif;
+        font-weight: bold;
+    }
+
+    .address-company{
+        font-size: 0.8rem;
+        font-family:Arial, Helvetica, sans-serif;
+        color: white;       
+    }
+
+    .address-company:hover{
+        font-size: 0.8rem;
+        font-family:Arial, Helvetica, sans-serif;
+        color: white;       
+    }
+    /*search*/
+    .search-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .btn-address{
+        border-color: white;
+        color: white;
+    }
+
+    .btn-address:hover{
+        background-color: rgba(255,255,255,0.5);
+        border-color: white;
+        color: white;
+    }
+
+    .text-right{
+        display: flex;
+        justify-content: right;
+        align-items: center;
+        padding-right: 2rem; 
+    }
+</style>
+<style>
+    .footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        background-color: rgba(255,255,255,0.3);
+        color: #333;
+        text-align: center;
+        padding: 10px 0;
+    }
+</style>
+<title>KFC MEXICO</title>
+{{>loading}}
+<!-- Navbar -->
+    <div class="row navbar-store">
+        {{#each dataCompany}}
+            <div class="col-1 item-img">
+                {{#if path_logo}}
+                    <img src="{{path_logo}}" class="img-icon-store">
+                {{else}}
+                    <img src="https://cdn.pixabay.com/photo/2017/01/25/17/35/picture-2008484_1280.png" class="img-icon-store">
+                {{/if}}
+            </div>
+        {{/each}}
+        {{#each branchFree}}
+            <div class="col-5">
+                <br>
+                <h1 class="title-company">{{name_branch}}</h1>
+                <a href="#" target="_blank" class="address-company" id="address-company">
+                    {{address}}
+                </a>
+                <i class="fi-icon fi-rs-marker"></i>
+            </div>
+            <div class="col text-right">
+                <br><br>
+                <button class="btn button-spacing btn-address" onclick="create_new_order()"><i
+                                        class="fi fi-ss-biking-mountain"></i> Agregar Dirección de entrega</button>
+            </div>
+        {{/each}}
+    </div>
+
+<br>
+<div class="container">
+    {{>store/new/carouselNew}}
+</div>
+
+<div class="container mt-5">
+    <div class="row">
+        {{#each branchFree}}
+        <input type="text" value="{{cell_phone}}" id="cellphone" style="display: none;">
+        <input type="text" id="emailClient" style="display: none;">
+        <button class="btn btn-primary button-spacing" id="emailClient" email="" idClient="null"
+            onclick="select_customer('{{id_companies}}')" style="display: none;"><i class="fi-icon fi-sr-following"></i>
+            Client</button>
+        <input type="text" value="{{id}}" style="display: none;" id="id_branch">
+        {{/each}}
+        <div class="card" id="table-order" style="display: none; width:100%; height: 130px;">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table>
+                        <tr>
+                            <th><label for="">Informacion de envio</label></th>
+                        </tr>
+                        <tr>
+                            <th><label for="customer-name">Nombre</label></th>
+                            <th><label for="customer-cellphone">Celular</label></th>
+                            <th><label for="customer-phone">Teléfono</label></th>
+                            <th><label for="customer-address">Dirección</label></th>
+                            <th><label for="customer-comment">Comentario</label></th>
+                        </tr>
+                        <tr>
+                            <th><input type="text" name="customer-name" id="customer-name" readonly placeholder=""></th>
+                            <th><input type="text" name="customer-cellphone" id="customer-cellphone" readonly
+                                    placeholder=""></th>
+                            <th><input type="text" name="customer-phone" id="customer-phone" readonly placeholder="">
+                            </th>
+                            <th><input type="text" name="customer-address" id="customer-address" readonly
+                                    placeholder=""></th>
+                            <th><input type="text" name="customer-comment" id="customer-comment" readonly
+                                    placeholder=""></th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="container mt-5">
+        <ul class="nav nav-tabs justify-content-center" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" id="tab1-tab" data-toggle="tab" href="#tab1" role="tab" aria-controls="tab1"
+                    aria-selected="true">
+                    Menú Digital
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="tab2-tab" data-toggle="tab" href="#tab2" role="tab" aria-controls="tab2"
+                    aria-selected="false">
+                    Carrito
+                </a>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="tab1" role="tabpanel" aria-labelledby="tab1-tab">
+                <div class="row">
+                    {{#each dishAndCombo}}
+                    <div class="col-lg-4 col-md-6 col-sm-6 col-12 mt-4">
+                        <div class="menu-item">
+                            {{#if img}}
+                            <img src="{{img}}" class="card-img-top img-combo" alt="{{name}}">
+                            {{else}}
+                            <img src="https://cdn-icons-png.flaticon.com/512/6626/6626465.png"
+                                class="card-img-top img-combo" alt="{{name}}">
+                            {{/if}}
+                            <div class="card-body">
+                                {{#if img}}
+                                <button class="btn"
+                                    onclick="show_description_dish('{{name}}', '{{description}}', '{{price_1}}', '{{img}}')"
+                                    style="opacity: .5;"><i class="fi fi-sr-info"></i> Ver información</button>
+                                {{else}}
+                                <button class="btn"
+                                    onclick="show_description_dish('{{name}}', '{{description}}', '{{price_1}}', 'https://cdn-icons-png.flaticon.com/512/6626/6626465.png')"
+                                    style="opacity: .5;"><i class="fi fi-sr-info"></i> Ver información</button>
+                                {{/if}}
+                                <h5 class="card-title">{{name}}</h5>
+                                <p class="card-text price">$ {{price_1}}</p>
+                                <button class="btn btn-add btn-block"
+                                    onclick="addFish('{{id}}','{{name}}','{{price_1}}','{{price_2}}','{{price_3}}')"><i
+                                        class="fi-icon fi-sr-cart-arrow-down"></i> Agregar al
+                                    carrito</button>
+                            </div>
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+            <div class="tab-pane fade" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
+                <div class="table-container">
+                    <table id="table-car-home-cellphone" border="1" class="table-menu">
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Precio</th>
+                                <th>Cantidad</th>
+                                <th>Total</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <br>
+                <br>
+                <center>
+                    <!--
+                    <button class="btn-container-cart card-menu" id="btn-total-home-cellphone"
+                        onclick="buy_my_car_store(this)" style="width: 50%;">Buy
+                        $0<i class="fi-icon fi-sr-shopping-cart"></i></button>
+                    --->
+
+                    <button class="btn-container-cart card-menu" id="btn-total-home-cellphone"
+                        onclick="send_message_to_whatssapp()" style="width: 50%;">
+                        Enviar
+                        <i class="fi-icon  fi-brands-whatsapp"></i>
+                    </button>
+                </center>
+            </div>
+        </div>
+    </div>
+
+
+
+
+</div>
+
+
+
+<footer class="footer">
+    Powered by <a href="https://fud-tech.cloud" target="_blank"  style="color: var(--color-company); text-decoration: none;">fud-tech.cloud</a>
+</footer>
+
+
+
+
+
+{{>web/filesOldWeb/js}}
+<script src="/js/store/car-store.js"></script>
+<script src="/js/menu.js"></script>
+<script src="/js/store/search.js"></script>
+<script src="/js/search.js"></script>
+<script src="/js/store/cashMovement.js"></script>
+<script src="/js/store/return.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+<script>
+    function get_data_order() {
+        const idBranch = parseInt(document.getElementById('id_branch').value);
+        const customerName = document.getElementById('customer-name').value || "";
+        const customerCellphone = document.getElementById('customer-cellphone').value || "";
+        const customerPhone = document.getElementById('customer-phone').value || "";
+        const customerAddress = document.getElementById('customer-address').value || "";
+        const customerComment = document.getElementById('customer-comment').value || "";
+
+        return {
+            idBranch: idBranch,
+            name: customerName,
+            cellphone: customerCellphone,
+            phone: customerPhone,
+            address: customerAddress,
+            comment: customerComment
+        };
+    }
+
+    function update_input_order(dataOrder) {
+        document.getElementById('customer-name').value = dataOrder[0];
+        document.getElementById('customer-cellphone').value = dataOrder[1];
+        document.getElementById('customer-phone').value = dataOrder[2];
+        document.getElementById('customer-address').value = dataOrder[3];
+        document.getElementById('customer-comment').value = dataOrder[4];
+
+        //show the information of send
+        var table = document.getElementById('table-order');
+        table.style.display = 'block';
+    }
+
+    function reset_input_order() {
+        document.getElementById('customer-name').value = "";
+        document.getElementById('customer-cellphone').value = "";
+        document.getElementById('customer-phone').value = "";
+        document.getElementById('customer-address').value = "";
+        document.getElementById('customer-comment').value = "";
+
+        //delete the information of send
+        var table = document.getElementById('table-order');
+        table.style.display = 'none';
+    }
+
+    async function create_new_order() {
+        //we will get the data of the order
+        const oldDataOrder = get_data_order()
+        const dataOrder = await show_create_new_order(oldDataOrder);
+        //we will if the user not delete the data 
+        if (dataOrder != null) {
+            //we will see if the data is complete 
+            if (dataOrder[0] != '' && dataOrder[3] != '') {
+                update_input_order(dataOrder); //update the value of the inpus of the send 
+            } else {
+                reset_input_order();
+                warningMessage('Error al guardar los datos', 'Asegúrate de que el envío tenga nombre del cliente y su dirección 👀');
+            }
+        } else {
+            if (await questionMessage('Borrar datos del envío', '¿Estás seguro de borrar los datos del envío? 🤔')) {
+                reset_input_order();
+                confirmationMessage('Datos del envío Borrados', 'Los datos del pedido para el repartidor han sido borrados exitosamente 👍');
+            }
+        }
+    }
+
+    function send_message_to_whatssapp() {
+        var dataOrder = document.getElementById('customer-name').value;
+        if (dataOrder === ""){
+            warningMessage('ERROR 👁️', 'Necesitamos que ingreses información del envío')
+            return;      
+        }
+
+        //we will get the combos 
+        const combos = get_all_combo('total', 'moneyReceived', 'exchange', 'comment');
+        const listCombos=combo_format_message_for_whatsApp(combos)
+
+        //we will get the 
+        const dataOrderSend=get_data_order();
+        const messageOrder=create_message_order(dataOrderSend)
+
+        // Número de teléfono y mensaje
+        const numberElement  = document.getElementById('cellphone');
+        let number = numberElement.value;
+        number = number.replace(/\+/g, '').replace(/\s+/g, ''); //delete the simbolo <+> and the space
+        const mensaje = messageOrder+"\n\n"+listCombos;
+
+        // Formatear el mensaje para URL
+        const mensajeCodificado = encodeURIComponent(mensaje);
+
+        // Construir el enlace de WhatsApp
+        const url = `https://wa.me/${number}?text=${mensajeCodificado}`;
+
+        // Abrir enlace en una nueva pestaña
+        window.open(url, '_blank');
+        delete_all_fish();
+    }
+
+    function create_message_order(dataOrder){
+        var message = "*------Datos de la orden:------*\n";
+        message += `Nombre del Cliente: ${dataOrder.name}\n`;
+        message += `Celular: ${dataOrder.cellphone}\n`;
+        message += `Telefono: ${dataOrder.phone}\n`;
+        message += `Dirección: ${dataOrder.address}\n`;
+        message += `Comentario: ${dataOrder.comment}\n`;
+        return message;
+    }
+
+    function combo_format_message_for_whatsApp(combos) {
+        var message = "*------Pedido------*\n";
+        combos.forEach((combo, index) => {
+            message += `////////producto  ${index}////////\n`;
+            message += `Nombre: ${combo.name}\n`;
+            message += `Precio: ${combo.price}\n`;
+            message += `Cantidad: ${combo.amount}\n`;
+            message += `Total: ${combo.total}\n`;
+        });
+        return message;
+    }
+</script>
+
+
+<script>
+    // Función para ajustar dinámicamente la clase de los elementos con la clase "container-combo"
+    function adjustDivClass() {
+        // Obtén todos los elementos con la clase "container-combo"
+        const divElements = document.querySelectorAll('.container-combo');
+
+        // Itera sobre cada elemento
+        divElements.forEach(function (element) {
+            if (window.innerWidth <= 1500) { // Si el ancho de la ventana es menor o igual a 500px
+                element.classList.remove('col-3'); // Elimina la clase col-3
+                element.classList.add('col-5'); // Agrega la clase col-5
+            } else {
+                element.classList.remove('col-5'); // Elimina la clase col-5
+                element.classList.add('col-3'); // Agrega la clase col-3
+            }
+        });
+    }
+
+    // Llama a la función al cargar la página y cuando se redimensione la ventana
+    window.onload = adjustDivClass;
+    window.onresize = adjustDivClass;
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('search');
+        const cards = document.querySelectorAll('.card.container-combo');
+
+        searchInput.addEventListener('input', () => {
+            const query = searchInput.value.toLowerCase();
+            cards.forEach(card => {
+                const barcode = card.id.toLowerCase();
+                if (barcode.includes(query) || query === '') {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
+
+
+<script>
+    //this script is for create the link of google maps
+    function encodeAddress(address) {
+        return encodeURIComponent(address);
+    }
+
+    function convertAddressToLink() {
+        const addressElement = document.getElementById('address-company');
+        const addressText = addressElement.textContent.trim();
+
+        if (addressText) {
+            const encodedAddress = encodeAddress(addressText);
+            const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
+            
+            addressElement.href = googleMapsUrl;
+        }
+    }
+
+    convertAddressToLink();
+</script>

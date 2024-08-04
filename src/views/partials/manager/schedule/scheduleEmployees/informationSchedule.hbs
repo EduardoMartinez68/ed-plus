@@ -1,0 +1,32 @@
+<label for=""><i class="fi-icon fi-sr-clock-three"></i> Horario</label>
+<hr>
+<div class="row">
+    <div class="col-3">
+        <label for="" id="nameEmployee">Nombre Empleado</label>
+    </div>
+    <div class="col-6">
+        <select class="form-select" aria-label="Default select example" id="selectSchedule">
+            {{#each schedules}}
+                <option value="{{id}}">{{name}}</option>
+            {{/each}}
+        </select>
+    </div>
+    {{#each branch}}
+        <div class="col">
+            <button class="btn-update" onclick="update_schedule('{{id_companies}}','{{id}}')">Actualizar <i class="fi-icon fi-br-refresh"></i></button>
+        </div>
+    {{/each}}
+</div>
+<div class="row">
+    <div class="col">
+        <label for="fecha">fecha inicio:</label>
+        <input type="date" id="date-start" name="fecha" class="form-control" readonly>
+    </div>
+    <div class="col">
+        <label for="fecha">fecha final:</label>
+        <input type="date" id="date-finish" name="fecha" class="form-control" readonly>
+    </div>
+</div>
+
+
+

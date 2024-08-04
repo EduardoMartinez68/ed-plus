@@ -1,0 +1,151 @@
+<style>
+    .database-info {
+        background-color: #60C6F1;
+        color: white;
+        width: 55px;
+        height: 25px;
+        border-radius: 25px;
+        text-align: center;
+        right: 40%;
+    }
+
+    .tachado {
+        text-decoration: line-through;
+    }
+
+    .fud-name-pack-title {
+        font-size: 1.25rem;
+        color: black;
+        font-weight: bold;
+    }
+
+    .fud-pack-title {
+        font-size: 2.25rem;
+    }
+
+    .fud-mini-title {
+        color: #FF9300;
+    }
+
+    .fud-pro-title {
+        color: #FF5236;
+    }
+
+    .fud-bussiner-title {
+        color: #E635CE;
+    }
+
+    .price-table-fud-one {
+        text-align: right;
+        align-items: right;
+    }
+</style>
+<style>
+    .pricing-header {
+        margin: 20px 0;
+        text-align: center;
+        align-items: center;
+        padding-left: 25%;
+    }
+
+    .btn-group-toggle .btn {
+        width: 150px;
+    }
+
+    .data-prices{
+        display: none;
+    }
+
+    .active-prices{
+        display: block;
+    }
+
+    .btn-select{
+        cursor: pointer;
+        width: 30%;
+    }
+
+    .btn-prices-show{
+        cursor: pointer;
+        background-color: #0D6EFD;
+        border-color: #0D6EFD;
+    }
+
+    .btn-prices-show:hover{
+        background-color: #0A58CA;
+    }
+
+    .btn-active-desactivate{
+        cursor: pointer;
+        background-color: rgb(153, 153, 153);
+        border-color: rgb(153, 153, 153);
+    }
+
+    .btn-active-desactivate:hover{
+        background-color: rgb(153, 153, 153);
+        border-color: rgb(153, 153, 153);
+    }
+
+    .btn-select-price{
+        color: white;
+    }
+</style>
+<div class="container mt-5">
+    <br><br><br>
+    <div class="section-title">
+        <center>
+            <h5 class="title-main-2">Más facil de usar, invertir y mejorar tu negocio</h5>
+        </center>
+    </div>
+
+    <div class="pricing-header" style="width: 100%;">
+        
+        <div class="btn-group btn-group-toggle" data-toggle="buttons" style="width: 100%;">
+            <label class="btn-select btn-prices-show" id="monthlyBtn" onclick="show_prices_plan('monthly')">
+                <label  class="btn-select-price"> Mes</label>
+            </label>
+            <label class="btn-select btn-active-desactivate" id="yearlyBtn" onclick="show_prices_plan('yearly')">
+                <label class="btn-select-price"> Año</label>
+            </label>
+        </div>
+        
+    </div>
+
+    <div id="monthlyPrices" class="data-prices active-prices">
+        {{>web/prices/individualMonth}}
+    </div>
+
+    <div id="yearlyPrices" class="data-prices">
+        {{>web/prices/individualYear}}
+    </div>
+    <br>
+    <br>
+</div>
+
+<script>
+    function show_prices_plan(plan) {
+        let monthlyPrices = document.getElementById('monthlyPrices');
+        let yearlyPrices = document.getElementById('yearlyPrices');
+        let monthlyBtn = document.getElementById('monthlyBtn');
+        let yearlyBtn = document.getElementById('yearlyBtn');
+
+        monthlyBtn.classList.remove('btn-active-desactivate');
+        yearlyBtn.classList.remove('btn-active-desactivate');
+
+        monthlyBtn.classList.remove('btn-prices-show');
+        yearlyBtn.classList.remove('btn-prices-show');
+
+        monthlyPrices.classList.remove('active-prices');
+        yearlyPrices.classList.remove('active-prices');
+
+        if (plan === 'monthly') {
+            monthlyPrices.classList.add('active-prices');
+            yearlyBtn.classList.add('btn-active-desactivate');
+            monthlyBtn.classList.add('btn-prices-show');
+        } else if (plan === 'yearly') {
+            yearlyPrices.classList.add('active-prices');
+            monthlyBtn.classList.add('btn-active-desactivate');
+            yearlyBtn.classList.add('btn-prices-show');
+        }
+    }
+</script>

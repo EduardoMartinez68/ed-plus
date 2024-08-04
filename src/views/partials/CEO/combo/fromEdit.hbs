@@ -1,0 +1,74 @@
+{{#each combo}}
+<div class="form-group">
+    <div class="container">
+        <label><i class="fi-icon fi-ss-hamburger-soda"></i> Informacion del Combo</label>
+        <hr>
+        <div class="row">
+            <div class="col-5">
+                {{#if img}}
+                    <img src="{{img}}"
+                        class="icon-combo" id="imgEmployee">
+                {{else}}
+                    <img src="https://cdn.pixabay.com/photo/2017/01/25/17/35/picture-2008484_1280.png"
+                        class="icon-combo" id="imgEmployee">
+                {{/if}}
+                <div class="form-group">
+                    <label for="inputImg" class="custom-file-upload">
+                        <input type="file" name="image" accept="image/*" id="inputImg" style="display: none;">
+                        <i class="fas fa-upload"></i> Subir imagen
+                    </label>
+                </div>
+            </div>
+            <div class="col">
+                <div class="col">
+                    <label for="">Barcode</label>
+                    <input type="text" class="form-control" placeholder="Barcode" name="barcode" required value="{{barcode}}">
+                </div>
+                <div class="col">
+                    <label for="">Nombre</label>
+                    <input type="text" class="form-control" placeholder="Nombre" name="name" required value="{{name}}">
+                </div>
+
+                <div class="form-group">
+                    <label>Description</label><br>
+                    <textarea type="tex" class="form-control" name="description"  placeholder="Description">{{description}}</textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{{/each}}
+<br><br>
+<div class="row">
+    <div class="col">
+        <label for="">Categoria</label>
+        <select class="form-control" name="category">
+            {{#each category}}
+                <option value="{{id}}">{{name}}</option>
+            {{/each}}
+        </select>
+    </div>
+    <div class="col">
+        <label for="">Departamento</label>
+        <select class="form-control"  name="department">
+            {{#each departments}}
+                <option value="{{id}}">{{name}}</option>
+            {{/each}}
+        </select>
+    </div>
+</div>
+<br>
+<label><i class="fi-icon fi-ss-pot "></i> Receta</label>
+
+
+<script src="/js/manager/addEmployee.js"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
+<script src="js/chosen.jquery.js" type="text/javascript"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+    $(".chosen-select").chosen({no_results_text:'No hay resultados para '});
+});
+</script>

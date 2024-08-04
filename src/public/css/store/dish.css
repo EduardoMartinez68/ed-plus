@@ -1,0 +1,132 @@
+.img-info{
+    border-radius: 5rem;
+    max-width: 50px;
+    min-width: 50px;
+    max-height: 50px;
+    min-height: 50px;
+}
+
+.img-description{
+    border-radius: 3rem;
+    max-width: 300px;
+    min-width: 300px;
+    max-height: 300px;
+    min-height: 300px;    
+}
+
+.btn-add{
+    background-color: rgb(55,167,84);
+    color: white;
+    width: 100%;
+    height: 100%;
+    border-radius: .3rem;
+    font-size: 1.4rem;
+}
+
+.card-btn-description{
+    border-radius: .4rem;
+    width: 16.66%;
+    height: 6.5%;
+    background-color: var(--color-company);
+    color: white;
+    align-items: center;
+}
+
+.img-card-description{
+    width: 25%;
+    height: 25%;
+}
+
+.card-information{
+    overflow: auto;
+    height: 700px;
+}
+
+.fi-item{
+    font-size: 1rem;
+    padding-top: 0px;
+    margin-top: 0px;
+    margin-right: .5rem;
+}
+
+/*TABLE*/
+.card-table{
+    width: 100%;
+}
+
+.card-table th:first-child {
+    width: 85%; 
+}
+
+.card-table th:last-child {
+    width: 15%; 
+}
+
+.card-table th, .card-table td {
+    padding: 4px; 
+}
+
+.my-table-price{
+    width: 100%;
+}
+
+.my-table-price th:first-child {
+    width: 50%; 
+}
+
+.my-table-price th:last-child {
+    width: 50%; 
+}
+
+
+/**/
+.card-menu {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.card-img-menu-top{
+    width: 100%;
+    height: 10px; /* Ajustar la altura para mantener las imágenes uniformes */
+    object-fit: cover; /* Ajusta la imagen para cubrir el contenedor */
+}
+
+
+
+.card-title {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+}
+
+.card-text {
+    font-size: 1em;
+    margin-bottom: 5px;
+}
+
+.button-card {
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    color: #fff;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.button-card:hover {
+    background-color: #0056b3;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .card-menu {
+        margin-bottom: 15px;
+    }
+}

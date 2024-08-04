@@ -1,0 +1,55 @@
+<link rel="stylesheet" href="/css/manager/supplies_products.css">
+<br>
+<div class="container">
+  <label><i class="fi-icon fi-sr-apple-whole"></i> Supplies</label>
+    <hr>
+    <div class="row mt-5">
+        <div class="col-md-12">
+          {{#each branch}}
+            <button class="btn btn-danger" onclick=recharge_supplies('{{id_companies}}','{{id}}')><i class="fi-department fi-br-refresh"></i></button>  Recharge all the supllies of the company
+          {{/each}}
+            <br><br>
+            {{>manager/supplies/table}}
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+  function recharge_supplies(id_company,id_branch){
+    window.location.href = "/fud/"+id_company+"/"+id_branch+"/recharge-supplies";
+  }
+</script>
+
+<script>
+    async function delate_supplies(id,id_company){
+        if(await questionMessage('Eliminar suministros','¿Deseas eliminar estos insumo?')){
+            window.location.href = "/fud/"+id_company+"/"+id+"/delate-company-supplies_product";
+        }
+    }
+
+    function edit_supplies(id,id_company,description){
+      await new_company_supplies('Agrega un nuevo insumo')
+      //window.location.href = "/fud/"+id_company+"/"+id+"/edit-company-supplies_product";
+    }
+
+    function add_supplies(id_company){
+      console.log(id_company)
+      //await new_company_supplies('Add a new supplies')
+    }
+</script>
+
+<script>
+  async function show_message_edit(id_supplies,id_company,id_branch,img,barcode,nameDepartment,existence,purchaseAmount){
+      //we will to get the data of the new department
+      const data=await edit_supplies_branch('Edita '+nameDepartment,img,barcode,nameDepartment,existence,purchaseAmount);
+      if(data){
+          //get the data of the from 
+          var newExistence = parseFloat(data[0]);
+          if(newExistence>0){
+              window.location.href = `/fud/${id_company}/${id_branch}/${id_supplies}/${newExistence}/update-supplies-branch`;
+          }
+      }
+  }
+</script>

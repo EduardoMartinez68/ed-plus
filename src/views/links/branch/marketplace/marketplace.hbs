@@ -1,0 +1,560 @@
+<link rel="stylesheet" href="/css/web/web.css">
+<style>
+    .offert-price {
+        text-decoration: line-through;
+        /* Tachar el texto */
+    }
+
+    .btn-comprar {
+        background-color: #1473E6;
+        /* Color verde */
+        color: white;
+        /* Color del texto */
+        border-radius: 15px;
+        /* Bordes redondeados */
+        font-weight: bold;
+        /* Texto en negrita */
+        font-size: 0.8rem;
+        right: 30px;
+    }
+
+    .btn-comprar:hover {
+        background-color: #1267cf;
+        /* Color verde más oscuro al pasar el mouse */
+    }
+
+    .icon-product-price {
+        width: 50px;
+        height: 50px;
+        border-radius: 15px;
+        margin: .5rem;
+    }
+</style>
+<style>
+    /* Personalización del estilo de las pestañas */
+    .nav-tabs .nav-link {
+        color: #495057c0;
+        border: none;
+        border-bottom: 2px solid transparent;
+    }
+
+    .nav-tabs .nav-link:hover {
+        color: #495057;
+        border: none;
+        border-bottom: 2px solid transparent;
+    }
+
+    .nav-tabs .nav-link.active {
+        color: var(--color-company);
+        background-color: #fff;
+        border: none;
+        border-bottom: 2px solid var(--color-company);
+        ;
+    }
+
+    .tab-content {
+        border: 1px solid #dee2e6;
+        border-top: none;
+        padding: 20px;
+        background: #F5F5F5;
+    }
+
+    .card {
+        border-radius: 22px;
+        /*width: 24rem;*/
+    }
+
+    .info-label {
+        display: none;
+        margin-top: 10px;
+    }
+
+    .info-link {
+        cursor: pointer;
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    .info-link:hover {
+        cursor: pointer;
+        color: #036fe2;
+    }
+
+    .title-fud-individual {
+        color: #1D1D1F;
+        font-size: 4rem;
+    }
+
+    .btn-fud-one {
+        width: 50%;
+        height: 50px;
+        color: white;
+        background-color: var(--color-company);
+        text-align: center;
+        border-radius: 25px;
+        font-size: 1rem;
+    }
+
+    .btn-fud-one:hover {
+        border-color: var(--color-company);
+    }
+
+    .backgournd-individual {
+        background-color: #F5F5F7;
+    }
+
+
+    @media (max-width: 767px) {
+        .title-fud-individual {
+            font-size: 2rem;
+            /* Reduce el tamaño de la fuente */
+        }
+
+        .btn-fud-one {
+            width: 50%;
+            /* Ajusta el ancho del botón al 100% */
+            height: 45px;
+            /* Ajusta la altura del botón */
+            font-size: 0.7rem;
+            /* Ajusta el tamaño de la fuente del botón */
+        }
+
+        .tab-content {
+            padding: 15px;
+            /* Reduce el padding del contenido de las pestañas */
+        }
+
+        .card {
+            border-radius: 15px;
+            /* Ajusta el radio de la esquina de la tarjeta */
+            /* width: 100%; */
+            /* Ajusta el ancho de la tarjeta al 100% */
+        }
+
+        .info-label {
+            font-size: 0.875rem;
+            /* Ajusta el tamaño de la fuente de las etiquetas de información */
+        }
+
+        .nav-tabs .nav-link {
+            font-size: 0.875rem;
+            /* Ajusta el tamaño de la fuente de los enlaces de las pestañas */
+        }
+
+        h4 {
+            font-size: 0.9rem;
+        }
+
+        .container-products {
+            display: none;
+        }
+    }
+</style>
+
+{{#each branchFree}}
+<div class="container mt-5">
+    <div class="row mb-4 justify-content-end">
+        <div class="col-5">
+            <div class="d-flex">
+                <input type="text" id="search-input" class="form-control me-2" placeholder="Buscar aplicaciones..."
+                    style="background-color: white;">
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col container-marketplace" id="nueva terminal restaurante">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3616/3616856.png" alt=""
+                        class="icon-product-price">
+                    <br>
+                    <h7 class="card-title"><b>Nueva Terminal</b></h7>
+                    <br>
+                    <label class="offert-price"><s>MXN $79/mes</s></label>
+                    <h3>MXN $59.00/mes</h3>
+                    <p class="card-text">
+                        ¡Adquiere ahora terminales adicionales para tu restaurante! Amplía tu capacidad de servicio con
+                        múltiples puntos de venta.
+                    </p>
+                    <hr>
+                    <div class="d-flex justify-content-end">
+                        <form action="/fud/add-app-fud" method="POST">
+                            <!---
+                                <input type="hidden" name="price_id" value="price_1PX6PXRofynVwfKYFbVzc8G0" />
+                                <input type="hidden" name="price_id" value="price_1PYuUJRofynVwfKY9SaJLXxZ" typePrice="tester"/>
+                            -->
+                            <input type="hidden" name="price_id" value="price_1PX6PXRofynVwfKYFbVzc8G0" />
+                            <input type="hidden" name="app" value="new_terminal"/>
+                            <input type="hidden" name="id_company" value="{{id_companies}}"/>
+                            <input type="hidden" name="id_branch" value="{{id}}"/>
+                            <button id="checkout-and-portal-button" type="submit" class="btn btn-comprar">Instalar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col container-marketplace" id="creación de página web digital">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3190/3190497.png" alt=""
+                        class="icon-product-price">
+                    <br>
+                    <h7 class="card-title"><b>Creación de Página Web</b></h7>
+                    <br>
+                    <label class="offert-price"><s>MXN $499.00/mes</s></label>
+                    <h3>MXN $399.00/mes</h3>
+                    <p class="card-text">
+                        Una herramienta poderosa y fácil de usar que te permite diseñar y lanzar una presencia en línea
+                        profesional para tu restaurante en minutos. Personaliza tu sitio hazlo interactivo,
+                        crea tu galería de fotos y testimonios de clientes. Incluyendo tu menu digital interactivo. 
+                    </p>
+                    <label for="" class="info-label">
+                        ✔️ Editor de pagina Web
+                        <br>
+                        ✔️ Presencia en en línea.
+                        <br>
+                        ✔️ Mostrar ofertas y publicidad.
+                        <br>
+                        ✔️ Incluye Menu Digital
+                        <br><br>
+                    </label>
+                    <a class="info-link">Más información</a>
+                    <hr>
+                    <div class="d-flex justify-content-end">
+                        {{#if website_creation}}
+                            <a href="/fud/home" class="btn btn-comprar">Usar</a>
+                        {{else}}
+                            <form action="/fud/add-app-fud" method="POST">
+                                <!---
+                                <input type="hidden" name="price_id" value="price_1PX6LRRofynVwfKY13PlCgiF" />
+                                <input type="hidden" name="price_id" value="price_1PYuUJRofynVwfKY9SaJLXxZ" typePrice="tester"/>
+                                --->
+                                <input type="hidden" name="price_id" value="price_1PX6LRRofynVwfKY13PlCgiF" />
+                                <input type="hidden" name="app" value="website_creation"/>
+                                <input type="hidden" name="id_company" value="{{id_companies}}"/>
+                                <input type="hidden" name="id_branch" value="{{id}}"/>
+                                <button id="checkout-and-portal-button" type="submit" class="btn btn-comprar">Instalar</button>
+                            </form>
+                        {{/if}}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col container-marketplace" id="menu digital web">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <img src="https://cdn-icons-png.flaticon.com/256/2180/2180060.png" alt=""
+                        class="icon-product-price">
+                    <br>
+                    <h7 class="card-title"><b>Menu Digital</b></h7>
+                    <br>
+                    <label class="offert-price"><s>MXN $250.00/mes</s></label>
+                    <h3>MXN $200.00/mes</h3>
+                    <p class="card-text">
+                        ¡Moderniza tu restaurante con nuestro innovador menú digital! Ofrece una experiencia
+                        gastronómica única a tus clientes, permitiéndoles explorar tu delicioso menú de forma
+                        interactiva y visual. Simplifica la gestión de pedidos y maximiza la eficiencia de tu negocio.
+                    </p>
+                    <label for="" class="info-label">
+                        ✔️ Interacción y Personalización
+                        <br>
+                        ✔️ Pedidos en Línea
+                        <br>
+                        ✔️ Pagos Electrónicos
+                        <br>
+                        ✔️ Códigos QR
+                        <br><br>
+                    </label>
+                    <a class="info-link">Más información</a>
+                    <hr>
+                    <div class="d-flex justify-content-end">
+                        {{#if digital_menu}}
+                            <a href="/fud/home" class="btn btn-comprar">Usar</a>
+                        {{else}}
+                            <form action="/fud/add-app-fud" method="POST">
+                                <!---
+                                <input type="hidden" name="price_id" value="price_1PX6NgRofynVwfKYbP0VwyZB" />
+                                <input type="hidden" name="price_id" value="price_1PYuUJRofynVwfKY9SaJLXxZ" typePrice="tester"/>
+                                --->
+                                <input type="hidden" name="price_id" value="price_1PX6NgRofynVwfKYbP0VwyZB" />
+                                <input type="hidden" name="app" value="digital_menu"/>
+                                <input type="hidden" name="id_company" value="{{id_companies}}"/>
+                                <input type="hidden" name="id_branch" value="{{id}}"/>
+                                <button id="checkout-and-portal-button" type="submit" class="btn btn-comprar">Instalar</button>
+                            </form>
+                        {{/if}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col container-marketplace" id="horarios de empleados gestion de restaurante">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <img src="https://cdn-icons-png.flaticon.com/512/566/566632.png" alt="" class="icon-product-price">
+                    <br>
+                    <h7 class="card-title"><b>Horarios de Empleados</b></h7>
+                    <br>
+                    <label class="offert-price"><s>MXN $220.00/mes</s></label>
+                    <h3>MXN $199.00/mes</h3>
+                    <p class="card-text">
+                        Optimiza la gestión del horario de tus empleados con nuestro software especializado. Programa
+                        turnos, asigna tareas y ajusta rápidamente horarios según la demanda. Simplifica la
+                        planificación y maximiza la eficiencia laboral.
+                    </p>
+                    <label for="" class="info-label">
+                        ✔️ Diferentes tipos de Horarios.
+                        <br>
+                        ✔️ Historial de Horarios.
+                        <br>
+                        ✔️ Actualización Automática de los Horarios cada semana.
+                        <br>
+                        ✔️ Gestión de entrada y salida de empleados.
+                        <br>
+                        ✔️ Calcular la nomina de los empleados.
+                        <br>
+                        ✔️ Calcular horas extras de los empleados.
+                        <br><br>
+                    </label>
+                    <a class="info-link">Más información</a>
+                    <hr>
+                    <div class="d-flex justify-content-end">
+                        {{#if employee_schedules}}
+                            <a href="/fud/home" class="btn btn-comprar">Usar</a>
+                        {{else}}
+                        <form action="/fud/add-app-fud" method="POST">
+                                <!---
+                                    <input type="hidden" name="price_id" value="price_1PX6OCRofynVwfKYcpxvrS86" typePrice="good"/>
+                                    <input type="hidden" name="price_id" value="price_1PYuUJRofynVwfKY9SaJLXxZ" typePrice="tester"/>
+                                --->
+                                <input type="hidden" name="price_id" value="price_1PX6OCRofynVwfKYcpxvrS86" typePrice="good"/>
+                                <input type="hidden" name="app" value="employee_schedules"/>
+                                <input type="hidden" name="id_company" value="{{id_companies}}"/>
+                                <input type="hidden" name="id_branch" value="{{id}}"/>
+                                <button id="checkout-and-portal-button" type="submit" class="btn btn-comprar">Instalar</button>
+                            </form>
+                        {{/if}}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col" id="empleados gratis">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <img src="https://cdn-icons-png.flaticon.com/512/5188/5188850.png" alt=""
+                        class="icon-product-price">
+                    <br>
+                    <h7 class="card-title"><b>Empleados</b></h7>
+                    <br>
+                    <label class="offert-price"><s>MXN $0.00/mes</s></label>
+                    <h3>GRATIS</h3>
+                    <p class="card-text">
+                        Es una herramienta intuitiva y eficiente diseñada para simplificar la creación y administración
+                        de empleados dentro de una organización. Con esta aplicación, los administradores pueden
+                        gestionar fácilmente el ciclo de vida de los empleados, desde su incorporación hasta su salida.
+                    </p>
+                    <label for="" class="info-label">
+                        ✔️ Registro de Empleados.
+                        <br>
+                        ✔️ Administración de Roles y Departamentos.
+                        <br>
+                        ✔️ Gestión de Sucursales.
+                        <br>
+                        ✔️ Actualización de Información.
+                        <br>
+                        ✔️ Historial de Movimientos.
+                        <br>
+                        ✔️ Acceso rapido con PIN de registro.
+                        <br><br>
+                    </label>
+                    <a class="info-link">Más información</a>
+                    <hr>
+                    <div class="d-flex justify-content-end">
+                        
+                        <button id="checkout-and-portal-button" type="submit" class="btn btn-comprar"
+                            onclick="nextWeb('{{id_companies}}/{{id}}/employees-branch')">Usar</button>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col" id="combos insumos inventario gratis">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <img src="https://cdn-icons-png.flaticon.com/512/6626/6626465.png" alt=""
+                        class="icon-product-price">
+                    <br>
+                    <h7 class="card-title"><b>Combos</b></h7>
+                    <br>
+                    <label class="offert-price"><s>MXN $0.00/mes</s></label>
+                    <h3>GRATIS</h3>
+                    <p class="card-text">
+                        Es una herramienta dinámica diseñada para restaurantes y negocios de alimentos que desean
+                        ofrecer combos personalizados a sus clientes. Con esta aplicación, los administradores pueden
+                        crear y gestionar combos de manera eficiente, combinando diferentes platos, bebidas y
+                        complementos en ofertas atractivas y rentables.
+                    </p>
+                    <label for="" class="info-label">
+                        ✔️ Creación de Combos Personalizados.
+                        <br>
+                        ✔️ Gestión de Ingredientes y Productos.
+                        <br>
+                        ✔️ Personalización de Combos.
+                        <br>
+                        ✔️ Promociones y Ofertas Especiales.
+                        <br>
+                        ✔️ Integración con el Punto de Venta (POS Füd).
+                        <br>
+                        ✔️ Crear departamento de comida.
+                        <br>
+                        ✔️ Crear area de comida.
+                        <br>
+                        ✔️ Reportes y Análisis.
+                        <br><br>
+                    </label>
+                    <a class="info-link">Más información</a>
+                    <hr>
+                    <div class="d-flex justify-content-end">
+                        
+                        <button id="checkout-and-portal-button" type="submit" class="btn btn-comprar"
+                            onclick="nextWeb('{{id_companies}}/{{id}}/combos-free')">Usar</button>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col container-marketplace" id="füd go! delivery gratis">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2830/2830305.png" alt=""
+                        class="icon-product-price">
+                    <br>
+                    <h7 class="card-title"><b>Füd Go!</b></h7>
+                    <br>
+                    <label class="offert-price"><s>MXN $0.00/mes</s></label>
+                    <h3>GRATIS</h3>
+                    <p class="card-text">
+                        Füd Go! es una plataforma integral diseñada para restaurantes y negocios de alimentos que desean
+                        ofrecer
+                        servicios de entrega a domicilio de manera eficiente y profesional. Con esta aplicación, los
+                        usuarios pueden realizar pedidos en línea, rastrear sus entregas en tiempo real y disfrutar de
+                        una experiencia de compra cómoda y segura desde la comodidad de sus hogares.
+                    </p>
+                    <label for="" class="info-label">
+                        ✔️ Interfaz de Usuario Intuitiva.
+                        <br>
+                        ✔️ Integración con Menú Digital.
+                        <br>
+                        ✔️ Rastreo en Tiempo Real.
+                        <br>
+                        ✔️ Control de Inventario.
+                        <br>
+                        ✔️ Promociones y Descuentos.
+                        <br>
+                        ✔️ Soporte y Atención al Cliente.
+                        <br><br>
+                    </label>
+                    <a class="info-link">Más información</a>
+                    <hr>
+                    <div class="d-flex justify-content-end">
+                        <button id="checkout-and-portal-button" type="submit" class="btn btn-comprar"
+                            onclick="nextWeb('{{id_companies}}/{{id}}/order-free')">Usar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col" id="füd ads anuncios marketing gratis">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <img src="https://cdn-icons-png.flaticon.com/512/6165/6165633.png" alt=""
+                        class="icon-product-price">
+                    <br>
+                    <h7 class="card-title"><b>Füd Ads</b></h7>
+                    <br>
+                    <label class="offert-price"><s>MXN $0.00/mes</s></label>
+                    <h3>GRATIS</h3>
+                    <p class="card-text">
+                        La Aplicación de Anuncios para Restaurantes es una herramienta innovadora diseñada para ayudar a
+                        los restaurantes a mostrar anuncios y promociones directamente en sus sucursales. Esta
+                        aplicación permite a los restaurantes gestionar y exhibir contenido publicitario de manera
+                        eficiente, captando la atención de los clientes y aumentando el interés en ofertas especiales,
+                        eventos y nuevos productos.
+                    </p>
+                    <label for="" class="info-label">
+                        ✔️ Interfaz de Usuario Intuitiva.
+                        <br>
+                        ✔️ Gestión de Contenido Publicitario.
+                        <br>
+                        ✔️ Pantallas Digitales en el Restaurante.
+                        <br>
+                        ✔️ Segmentación y Personalización.
+                        <br>
+                        ✔️ Actualización en Tiempo Real.
+                        <br>
+                        ✔️ Integración con el Sistema de Punto de Venta (Füd POS).
+                        <br><br>
+                    </label>
+                    <a class="info-link">Más información</a>
+                    <hr>
+                    <div class="d-flex justify-content-end">
+                        <button id="checkout-and-portal-button" type="submit" class="btn btn-comprar"
+                            onclick="nextWeb('{{id_companies}}/{{id}}/ad')">Usar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col" id="combos insumos inventario gratis">
+
+        </div>
+    </div>
+
+
+
+    <br>
+    <center>
+        <label for="">👁️
+            Todas las suscripciones del software Füd Technology se venden por única sucursal.
+            <br>
+            Cada sucursal de tu negocio necesita una licencia individual de Füd Technology para poder operar y
+            conectarse con los servicios de la nube.
+            <br>
+            Suponiendo que tienes 5 restaurantes, deberás tener 5 licencias del software para poder conectar todas tus
+            sucursales bajo la misma empresa.
+        </label>
+    </center>
+    <br>
+</div>
+{{/each}}
+
+<script>
+    document.getElementById('search-input').addEventListener('input', function () {
+        let filter = this.value.toLowerCase();
+        let cards = document.querySelectorAll('.container-marketplace');
+
+        cards.forEach(function (card) {
+            let id = card.id.toLowerCase();
+            if (id.includes(filter)) {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
+</script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>

@@ -1,0 +1,57 @@
+<style>
+    .circle-checkbox{
+        width: 100%;
+        height: 100%;
+    }
+    .card{
+        width: 100%;
+    }
+</style>
+<div class="form-group">
+    {{>CEO/combo/browser}}
+    <table class="table table-hover" id="table-supplies-products" name="table-combo"> <!--table-bordered-->
+        <colgroup>
+            <col style="width: 30%;">
+            <col style="width: 30%;">
+            <col style="width: 10%;">
+            <col style="width: 10%;">
+            <col style="width: 10%;">
+            <col style="width: 10%;">
+        </colgroup>
+        <thead>
+        <tr>
+            <th><label>Barcode</label></th>
+            <th><label>Nombre</label></th>
+            <th><label>Cant.</label></th>
+            <th><label>Merma.</label></th>
+            <th><label>Unidad</label></th>
+            <th><label>Adicional</label></th>
+            <th><label></label></th>
+        </tr>
+        </thead>
+        <tbody>
+            {{#each suppliesCombo}}
+                <tr id="{{id_products_and_supplies}}">
+                    <td><label>{{product_barcode}}</label></td>
+                    <td><label>{{product_name}}</label></td>
+                    <td><button class="btn" onclick="edit_cant(this)" type="button">{{amount}}</button></td>
+                    <td><button class="btn" onclick="edit_food_waste(this)" type="button">{{food_waste}}</button></td>
+                    <td>
+                        <select class="form-control" value="{{unity}}">
+                            {{>unity/unitOfMeasure}}
+                        </select>
+                    </td>
+                    <td>
+                        {{#if additional}}
+                            <input type="checkbox" id="circle-checkbox" class="circle-checkbox" checked>
+                        {{else}}
+                            <input type="checkbox" id="circle-checkbox" class="circle-checkbox">
+                        {{/if}}
+                    </td>
+                    <td><button class="btn btn-danger" onclick="delete_row(this)" type="button"><i class="fi-icon fi-sr-trash"></i></button></td>
+                </tr>
+            {{/each}}
+        </tbody>
+    </table>
+    <input type="text" name="barcodeProducts" id="barcodeProducts" hidden>
+</div>

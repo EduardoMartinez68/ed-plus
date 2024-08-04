@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="/css/report/report.css">
+    </link>
+</head>
+
+<body>
+    {{>reportBar}}
+
+    <div class="container" id="graphics-day">
+        <table class="table-report" border="1px">
+            <tr>
+                <th colspan="3">Dashboard</th>
+            </tr>
+            <tr>
+                <td><i class="fi-icon fi-ss-hamburger"></i> Productos mas vendidos</td>
+                <td><i class="fi-icon fi-sr-label"></i> Distribucion de mi negocio</td>
+                <td><i class="fi-icon fi-sr-store-alt"></i> Ganancia de Sucursales</td>
+            </tr>
+            <tr>
+                <td class="td-report">
+                    <div>
+                        <canvas id="MostSaleForDay"></canvas>
+                    </div>
+                </td>
+                <td class="td-report">
+                    <div>
+                        <canvas id="salesByCombosDay"></canvas>
+                    </div>
+                </td>
+                <td class="td-report">
+                    <div>
+                        <canvas id="saleBranchDay"></canvas>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+
+        <div class="row">
+            <div class="col">
+                <label for="">Reporte de mis ganancias</label>
+                <div class="card">
+                    <canvas id="salesDay"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container div-disabled" id="graphics-month">
+        <table class="table-report" border="1px">
+            <tr>
+                <th colspan="3">Dashboard</th>
+            </tr>
+            <tr>
+                <td><i class="fi-icon fi-ss-hamburger"></i> Productos mas vendidos</td>
+                <td><i class="fi-icon fi-sr-label"></i> Distribucion de mi negocio</td>
+                <td><i class="fi-icon fi-sr-store-alt"></i> Ganancia de Sucursales</td>
+            </tr>
+            <tr>
+                <td class="td-report">
+                    <div>
+                        <canvas id="MostSaleForMonth"></canvas>
+                    </div>
+                </td>
+                <td class="td-report">
+                    <div>
+                        <canvas id="salesByCombosMonth"></canvas>
+                    </div>
+                </td>
+                <td class="td-report">
+                    <div>
+                        <canvas id="saleBranchMonth"></canvas>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+
+        <div class="row">
+            <div class="col">
+                <label for="">Reporte de mis ganancias</label>
+                <div class="card">
+                    <canvas id="salesMonth"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container div-disabled" id="graphics-year">
+        <table class="table-report" border="1px">
+            <tr>
+                <th colspan="3">Dashboard</th>
+            </tr>
+            <tr>
+                <td><i class="fi-icon fi-ss-hamburger"></i> Productos mas vendidos</td>
+                <td><i class="fi-icon fi-sr-label"></i> Distribucion de mi negocio</td>
+                <td><i class="fi-icon fi-sr-store-alt"></i> Ganancia de Sucursales</td>
+            </tr>
+            <tr>
+                <td class="td-report">
+                    <div>
+                        <canvas id="MostSaleForYear"></canvas>
+                    </div>
+                </td>
+                <td class="td-report">
+                    <div>
+                        <canvas id="salesByCombosYear"></canvas>
+                    </div>
+                </td>
+                <td class="td-report">
+                    <div>
+                        <canvas id="saleBranchYear"></canvas>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+
+        <div class="row">
+            <div class="col">
+                <label for="">Reporte de mis ganancias</label>
+                <div class="card">
+                    <canvas id="salesYear"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container div-disabled" id="graphics-all">
+        <table class="table-report" border="1px">
+            <tr>
+                <th colspan="3">Dashboard</th>
+            </tr>
+            <tr>
+                <td><i class="fi-icon fi-ss-hamburger"></i> Productos mas vendidos</td>
+                <td><i class="fi-icon fi-sr-label"></i> Distribucion de mi negocio</td>
+                <td><i class="fi-icon fi-sr-store-alt"></i> Ganancia de Sucursales</td>
+            </tr>
+            <tr>
+                <td class="td-report">
+                    <div>
+                        <canvas id="myPortfolio"></canvas>
+                    </div>
+                </td>
+                <td class="td-report">
+                    <div>
+                        <canvas id="companyExpenses3"></canvas>
+                    </div>
+                </td>
+                <td class="td-report">
+                    <div>
+                        <canvas id="companyExpenses1"></canvas>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+
+        <div class="row">
+            <div class="col">
+                <label for="">Reporte de mis ganancias</label>
+                <div class="card">
+                    <canvas id="companyExpenses"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!--DASHBOARD-->
+    <div class="container">
+        <br>
+        <label for=""><i class="fi-icon fi-sr-chart-pie-alt"></i> Reportes del dia actual</label>
+        <hr>
+    </div>
+    <section>
+        <div class="container">
+            <div class="">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-3 d-flex card-dashboard">
+                            <div class="mx-auto">
+                                <h6 class="text-success">
+                                    <i class="fi-success fi-sr-tags"></i>
+                                    Sales
+                                </h6>
+                                <h3 class="font-weight-bold">{{unity}}(${{total}})</h3>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 d-flex card-dashboard">
+                            <div class="mx-auto">
+                                <h6 class="text-danger">
+                                    <i class="fi-success fi-sr-tags"></i>
+                                    Salidas
+                                </h6>
+                                <h3 class="font-weight-bold text-danger">${{moveNegative}}</h3>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 d-flex card-dashboard">
+                            <div class="mx-auto">
+                                <h6 class="text-success">
+                                    <i class="fi-success fi-sr-ticket-alt"></i>
+                                    Entradas
+                                </h6>
+                                <h3 class="font-weight-bold">${{movePositive}}</h3>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 d-flex card-dashboard">
+                            <div class="mx-auto">
+                                <h6 class="text-success">
+                                    <i class="fi-success fi-sr-ticket-alt"></i>
+                                    Combo Sales
+                                </h6>
+                                <h3 class="font-weight-bold">{{unity}}</h3>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 d-flex card-dashboard">
+                            <div class="mx-auto">
+                                <h6 class="text-success">
+                                    <i class="fi-success fi-br-percentage"></i>
+                                    Total de movimiento
+                                </h6>
+                                <h3 class="font-weight-bold">${{totalMovimientos}}</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    </div>
+    <br>
+    <br>
+</body>
+
+</html>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/js/report/company_report.js"></script>
+<script>
+    // Datos recibidos del servidor
+    const arrayYears=[{{years}}]
+    const arrayMonths=[{{months}}]
+    const arrayDays=[{{days}}]
+    const arrayServerLabel=[]
+
+    for (var i = 0; i < arrayYears.length; i++) {
+        const date = arrayDays[i] + '/' + arrayMonths[i] + '/' + arrayYears[i];
+        arrayServerLabel.push(date);
+    }
+        
+    const chartData = {{chartData}};
+    var ctx = document.getElementById('companyExpenses');
+    draw_graph(ctx,'line','My Portfolio',arrayServerLabel,chartData,'Ganancias')
+
+</script>
+<script>
+    const text=JSON.stringify('{{ distributeLabels}}');
+    const arrayDistributeLabels = text.split(',');
+    var ctx2 = document.getElementById('myPortfolio');
+    draw_graph(ctx2,'doughnut','My Portfolio',arrayDistributeLabels,{{distributeData}},'Ventas')
+</script>
+
+<script>
+    var ctx3 = document.getElementById('companyExpenses1');
+    const text2=JSON.stringify('{{ salesBranchesLabels}}');
+    const salesBranchesLabels=text2.split(',');
+    
+    draw_graph(ctx3,'bar','My Portfolio',salesBranchesLabels,[{{salesBranchesData}}],'Ganancias')
+</script>
+
+<script>
+    var ctx4 = document.getElementById('companyExpenses3');
+    const text3=JSON.stringify('{{ salesByCombosLabels}}');
+    const salesByCombosLabels=text3.split(',');
+    
+    draw_graph(ctx4,'doughnut','My Portfolio',salesByCombosLabels,{{salesByCombosData}},'Ganancias por combos')
+</script>
+
+<script>
+    //
+    var ctxSales = document.getElementById('salesDay');
+    var textServer=JSON.stringify('{{ salesDayLabels}}');
+    var salesLabels=textServer.split(',');
+    
+    draw_graph(ctxSales,'line','My Portfolio',salesLabels,[{{salesDayData}}],'Ganancias del dia')
+
+    ctxSales = document.getElementById('salesMonth');
+    textServer=JSON.stringify('{{ salesMonthLabels}}');
+    salesLabels=textServer.split(',');
+    draw_graph(ctxSales,'line','My Portfolio',salesLabels,[{{salesMonthData}}],'Ganancias del mes')
+
+    ctxSales = document.getElementById('salesYear');
+    textServer=JSON.stringify('{{ salesYearLabels}}');
+    salesLabels=textServer.split(',');
+    draw_graph(ctxSales,'line','My Portfolio',salesLabels,[{{salesYearData}}],'Ganancias del año')
+</script>
+
+<script>
+    ctxSales = document.getElementById('saleBranchDay');
+    textServer=JSON.stringify('{{ salesBranchesLabelsDay}}');
+    salesLabels=textServer.split(',');
+    draw_graph(ctxSales,'bar','My Portfolio',salesLabels,[{{salesBranchesDataDay}}],'Ganancias del dia por sucursal')
+
+    ctxSales = document.getElementById('saleBranchMonth');
+    textServer=JSON.stringify('{{ salesBranchesLabelsMonth}}');
+    salesLabels=textServer.split(',');
+    draw_graph(ctxSales,'bar','My Portfolio',salesLabels,[{{salesBranchesDataMonth}}],'Ganancias del dia por mes')
+
+    ctxSales = document.getElementById('saleBranchYear');
+    textServer=JSON.stringify('{{ salesBranchesLabelsYear}}');
+    salesLabels=textServer.split(',');
+    draw_graph(ctxSales,'bar','My Portfolio',salesLabels,[{{salesBranchesDataYear}}],'Ganancias del dia por año')
+</script>
+
+<script>
+    ctxSales = document.getElementById('salesByCombosDay');
+    textServer=JSON.stringify('{{ salesByCombosLabelsDay}}');
+    salesLabels=textServer.split(',');
+    draw_graph(ctxSales,'doughnut','My Portfolio',salesLabels,[{{salesBranchesDataDay}}],'Ganancias por combos')
+
+    ctxSales = document.getElementById('salesByCombosMonth');
+    textServer=JSON.stringify('{{ salesByCombosLabelsMonth}}');
+    salesLabels=textServer.split(',');
+    draw_graph(ctxSales,'doughnut','My Portfolio',salesLabels,[{{salesByCombosDataYear}}],'Ganancias por combos')
+
+    ctxSales = document.getElementById('salesByCombosYear');
+    textServer=JSON.stringify('{{ salesByCombosLabelsYear}}');
+    salesLabels=textServer.split(',');
+    draw_graph(ctxSales,'doughnut','My Portfolio',salesLabels,[{{salesByCombosDataYear}}],'Ganancias por combos')
+</script>
+
+
+<script>
+    ctxSales = document.getElementById('MostSaleForDay');
+    textServer=JSON.stringify('{{ comboMostSaleForDayLabels}}');
+    salesLabels=textServer.split(',');
+    draw_graph(ctxSales,'doughnut','My Portfolio',salesLabels,[{{comboMostSaleForDayData}}],'Ganancias por combos')
+
+    ctxSales = document.getElementById('MostSaleForMonth');
+    textServer=JSON.stringify('{{ comboMostSaleForMonthLabels}}');
+    salesLabels=textServer.split(',');
+    draw_graph(ctxSales,'doughnut','My Portfolio',salesLabels,[{{comboMostSaleForMonthData}}],'Ganancias por combos')
+
+    ctxSales = document.getElementById('MostSaleForYear');
+    textServer=JSON.stringify('{{ comboMostSaleForYearLabels}}');
+    salesLabels=textServer.split(',');
+    draw_graph(ctxSales,'doughnut','My Portfolio',salesLabels,[{{comboMostSaleForYearData}}],'Ganancias por combos')
+</script>
+
+<script>
+    // get the div for his id
+    const salesDiv1 = document.getElementById('salesDiv1');
+    const salesDiv2 = document.getElementById('salesDiv2');
+    const salesDiv3 = document.getElementById('salesDiv3');
+    const salesDiv4 = document.getElementById('salesDiv4');
+
+    //get the container of the graphs 
+    const graphicsAll = document.getElementById('graphics-all');
+    const graphicsDay = document.getElementById('graphics-day');
+    const graphicsMonth = document.getElementById('graphics-month');
+    const graphicsYear = document.getElementById('graphics-year');
+
+    function remove_active_class_from_all() {
+        graphicsAll.classList.remove('div-disabled');
+        graphicsAll.classList.add('div-disabled');
+
+        graphicsDay.classList.remove('div-disabled');
+        graphicsDay.classList.add('div-disabled');
+
+        graphicsMonth.classList.remove('div-disabled');
+        graphicsMonth.classList.add('div-disabled');
+
+        graphicsYear.classList.remove('div-disabled');
+        graphicsYear.classList.add('div-disabled');
+    }
+
+
+    // add a event listener for the click
+    salesDiv1.addEventListener('click', function() {
+        remove_active_class_from_all();
+        graphicsDay.classList.remove('div-disabled');
+    });
+
+    salesDiv2.addEventListener('click', function() {
+        remove_active_class_from_all();
+        graphicsMonth.classList.remove('div-disabled');
+    });
+
+    salesDiv3.addEventListener('click', function() {
+        remove_active_class_from_all();
+        graphicsYear.classList.remove('div-disabled');
+    });
+
+    salesDiv4.addEventListener('click', function() {
+        remove_active_class_from_all();
+        graphicsAll.classList.remove('div-disabled');
+    });
+</script>
+
+
+
+
+<!--this is for get the PDF-->
+<script>
+    /*
+// Función para generar el PDF cuando se hace clic en el botón
+async function generate_PDF() {
+  // Llama a la API de Puppeteer
+  const response = await fetch('/fud/create-pdf', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ url: window.location.href })
+  });
+
+  if (response.ok) {
+    // Descarga el archivo PDF generado
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'reporte.pdf'); // Nombre sugerido para el archivo
+    link.innerHTML = 'Descargar PDF'; // Texto del enlace
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url); // Libera la memoria
+  } else {
+    console.error('Error al generar el PDF');
+  }
+}*/
+</script>
+
+<!-- jsPDF library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/vfs_fonts.js"></script>
+
+<script>
+    async function generate_PDF(){
+        var documentDefinition = {
+        content: [
+            { text: 'Ejemplo de Reporte', style: 'header' },
+            { text: 'Esta es una tabla de ejemplo:', margin: [0, 10, 0, 10] }, // Espaciado
+            {
+            table: {
+                body: [
+                ['Nombre', 'Edad', 'País'], // Encabezados de la tabla
+                ['Juan', 30, 'España'], // Datos de la primera fila
+                ['María', 25, 'México'], // Datos de la segunda fila
+                ['Pedro', 40, 'Argentina'], // Datos de la tercera fila
+                ]
+            }
+            }
+        ],
+        styles: {
+            header: {
+            fontSize: 18,
+            bold: true
+            },
+            table: {
+            margin: [0, 5, 0, 15] // Margen superior, derecho, inferior e izquierdo respectivamente
+            }
+        }
+        };
+
+        // Compila el objeto de definición de documento en un archivo PDF
+        var pdfDocGenerator = pdfmake.createPdf(documentDefinition);
+        
+        // Descarga el PDF generado
+        pdfDocGenerator.download('reporte.pdf');
+    }
+</script>

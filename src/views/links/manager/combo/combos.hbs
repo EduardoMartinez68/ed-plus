@@ -1,0 +1,79 @@
+<link rel="stylesheet" href="/css/manager/supplies_products.css">
+<br>
+<div class="container">
+    {{#each company}}
+    <div class="row">
+        <div class="col-sm-10">
+            <input type="text" class="form-control" placeholder="Search for barcode..." id="search">
+        </div>
+        <div class="col-sm-1">
+            <button class="btn" id="{{id}}" onclick="search_combo()"><i class="fi-icon fi-rs-search"></i></button>
+        </div>
+        <div class="col-sm-1">
+            <button class="btn-add" id="{{id}}" onclick="nextWeb('{{id}}/add-combos')">+<i class="fi-icon fi-ss-hamburger-soda"></i></button>
+        </div>
+    </div>
+    {{/each}}
+</div>
+<br>
+<div class="container">
+    <div style="height: 700px; overflow-y: scroll;">
+        <table class="table table-hover" id="table-container"> <!--table-bordered-->
+            <colgroup>
+                <col style="width: 10%;">
+                <col style="width: 10%;">
+                <col style="width: 15%;">
+                <col style="width: 30%;">
+                <col style="width: 10%;">
+                <col style="width: 10%;">
+                <col style="width: 15%;">
+            </colgroup>
+            <thead>
+            <tr>
+                <th></th>
+                <th>Barcode</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Department</th>
+                <th>Category</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {{#each combos}}
+                <tr id="{{barcode}}">
+                    {{#if img}}
+                        <td><img src="{{img}}" class="img-s-p"></td>
+                    {{else}}
+                        <td><img src="https://cdn-icons-png.flaticon.com/512/6626/6626465.png" class="img-s-p"></td>
+                    {{/if}}
+
+                    <td>{{barcode}}</td>
+                    <td>{{name}}</td>
+                    <td>{{description}}</td>
+                    <td>{{department_name}}</td>
+                    <td>{{category_name}}</td>
+                    <td>
+                        <button class="btn btn-danger" id="{{id}}" onclick="delete_combo(this.id,{{id_companies}})"><i class="fi-department fi-sr-trash"></i></button>
+                        <button class="btn btn-danger" id="{{id}}" onclick="edit_supplies(this.id,{{id_companies}},'{{img}}','{{barcode}}','{{name}}','{{description}}','{{use_inventory}}')"><i class="fi-department fi-sr-pencil"></i></button>
+                    </td>           
+                </tr>
+            {{/each}}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    async function delete_combo(id,id_company){
+        if(await questionMessage('Eliminar combo  😳','¿Quieres eliminar este combo?')){
+            window.location.href = "/fud/"+id_company+"/"+id+"/delate-combo-company";
+        }
+    }
+
+    function edit_supplies(id,id_company){
+        window.location.href = "/fud/"+id_company+"/"+id+"/edit-combo-company";
+    }
+</script>
+
+<script src="/js/search.js"></script>

@@ -1,0 +1,166 @@
+<style>
+    .star-checkbox {
+        position: relative;
+        display: inline-block;
+        width: 45px;
+        height: 45px;
+        cursor: pointer;
+    }
+
+    .star-checkbox:hover {
+        cursor: pointer;
+    }
+
+    .star-checkbox input[type="checkbox"] {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .star-checkbox label::before {
+        content: '\2605';
+        /* Código Unicode para una estrella rellena */
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        font-size: 45px;
+
+        /* Tamaño de la estrella */
+        color: transparent;
+        -webkit-text-stroke: 1px gold;
+        /* Contorno dorado */
+    }
+
+    .star-checkbox input[type="checkbox"]:checked+label::before {
+        color: gold;
+        -webkit-text-stroke: 1px gold;
+        
+    }
+
+    .container-start {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .hidden {
+        display: none;
+    }
+</style>
+
+<br>
+<div class="container">
+    <div class="row">
+        <div class="card">
+            <div class="card-body">
+                {{#each comboFeactures}}
+                <form action="/fud/{{id_companies}}/{{id_branches}}/{{id}}/update-combo-branch" method="POST" id="myForm">
+                    <label for=""><i class="fi-icon fi-ss-hamburger-soda"></i>Informacion del Combo</label>
+                    <hr>
+                    
+                    <div class="row">
+                        <div class="col-4">
+                            {{#if dish_img}}
+                                <img src="{{dish_img}}" alt="" class="icon-combo">
+                            {{else}}
+                                <img src="https://cdn-icons-png.flaticon.com/512/6626/6626465.png" alt="" class="icon-combo">
+                            {{/if}}
+                        </div>
+                        <div class="col">
+                            <h4>Nombre: {{dish_name}}</h4>
+                            <h5>Codigo de Barras: {{dish_barcode}}</h5>
+                            <label for="">Description:</label>
+                            <label for="">{{dish_description}}</label>
+                            <br><br>
+                            <a class="btn btn-primary" href="/fud/{{id_companies}}/{{id_branches}}/{{id_dishes_and_combos}}/edit-data-combo-free">✏️ Editar informacion del combo</a>
+                            <button class="btn btn-danger" id="{{id}}" onclick="delete_combo('{{id_dishes_and_combos}}','{{id_companies}}','{{id_branches}}')" type="button">🗑️ Eliminar combo</button>
+                        </div>
+                    </div>
+
+                    <!---this is the start favorites--->
+                    <div class="container-start">
+                        <div class="star-checkbox">
+                            <input class="form-check-input" type="checkbox" {{#if favorites}}checked{{/if}} id="invalidCheck"
+                                onclick="read_check_box()" name="favorites">
+                            <label for="invalidCheck"></label>
+                        </div>
+                    </div>
+                    <label for=""><i class="fi fi-sr-ballot-check"></i> Información de facturación</label>
+                    <hr>
+
+                    <!---navbar--->
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home"
+                                aria-selected="true"><i class="fi-icon fi-sr-usd-circle"></i> Precios de venta</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile"
+                                aria-selected="false"><i class="fi-icon fi-ss-apple-whole"></i> Suministros</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#other" role="tab" aria-controls="profile"
+                                aria-selected="false"><i class="fi-icon fi-ss-settings"></i> Otro</a>
+                        </li>
+                    </ul>
+
+                    <!---container navbar--->
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                            {{>manager/combo/prices}}
+                        </div>
+                    {{/each}}
+                        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                            {{>manager/combo/supplies}}
+                        </div>
+                    {{#each comboFeactures}}
+                        <div class="tab-pane fade" id="other" role="tabpanel" aria-labelledby="profile-tab">
+                            {{>manager/combo/other}}
+                        </div>
+                    </div>
+                    <br>
+                    <button class="btn btn-success" id="myForm" type="submit">Guardar</button>
+                </form>
+                {{/each}}
+                <br><br>
+            </div>
+        </div>
+    </div>
+</div>
+<br><br><br>
+
+<script src="https://kit.fontawesome.com/a076d05399.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+<script>
+    function read_check_box() {
+        const title = 'Favoritos'
+        var checkBox = document.getElementById("invalidCheck");
+        var text = checkBox.checked ? 'Este Combo fue agregado a favoritos ⭐' : 'Este Combo fue removido de favoritos 👍';
+        notificationMessage(title, text)
+    }
+</script>
+
+<script>
+    function toggleDiv(divId) {
+        var div = document.getElementById('div' + divId);
+        var otherDiv = document.getElementById('div' + (3 - divId)); // Obtiene el otro div (el que no se ha seleccionado)
+
+        if (div.classList.contains('hidden')) {
+            div.classList.remove('hidden'); // Muestra el div seleccionado
+            otherDiv.classList.add('hidden'); // Oculta el otro div
+        } else {
+            div.classList.add('hidden'); // Oculta el div seleccionado si ya está visible
+        }
+    }
+
+
+    async function delete_combo(id_combo,id_company,id_branch){
+        if(await questionMessage('Eliminar combo  😳','¿Quieres eliminar este combo?')){
+            window.location.href = `/fud/${id_company}/${id_branch}/${id_combo}/delete-combo-free`
+        }
+    }
+</script>

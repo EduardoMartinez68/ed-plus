@@ -1,0 +1,76 @@
+
+<table class="table table-hover"> <!--table-bordered-->
+    <colgroup>
+        <col style="width: 40%;">
+        <col style="width: 40%;">
+        <col style="width: 20%;">
+    </colgroup>
+    <thead>
+    <tr>
+        <th>Nombre</th>
+        <th>Descripcion</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    {{#each departments}}
+        <tr>
+            <td>{{name_departaments}}</td>
+            <td>{{description}}</td>
+            <td>
+                <button class="btn btn-danger" id="{{id}}" onclick="delete_departament(this.id,'{{id_companies}}')"><i class="fi-department fi-sr-trash"></i></button>
+                <button class="btn btn-danger" id="{{id}}" onclick="edit_departament(this.id,'{{id_companies}}','{{name_departaments}}','{{description}}')"><i class="fi-department fi-sr-pencil"></i></button>            
+            </td>
+        </tr>
+    {{/each}}
+    </tbody>
+</table>
+
+
+
+
+
+<script>
+    const id_branch=document.getElementById('id_branch').value;
+    async function delete_departament(id,id_company){
+        if(await questionMessage('Eliminar departamento','¿Quieres eliminar este departamento? 🤔')){
+            //we will see if exist a subscription to fud one 
+            if(id_branch){
+                window.location.href = `/fud/${id_company}/${id_branch}/${id}/delete_departament`;
+            }else{
+                window.location.href = `/fud/${id_company}/${id}/delete_departament`;
+            }
+        }
+    }
+
+    async function edit_departament(id,id_company,nameDepartment,descriptionDepartment){
+        //we will to delate the space in 
+        if(descriptionDepartment=="-"){
+            descriptionDepartment=""
+        }
+        //we will to get the data of the new department
+        const data=await edit_data_departments('Edit department',nameDepartment,descriptionDepartment);
+        if(data){
+            //get the data of the from 
+            var name = data[0];
+            var description = data[1];
+
+            //we will to see if be a name
+            if(name!=""){
+                if(description==""){
+                    description="-";
+                }         
+
+                //we will see if exist a subscription to fud one 
+                if(id_branch){
+                    window.location.href = `/fud/${id_company}/${id_branch}/${id}/${name}/${description}/edit-department-employee`;
+                }else{
+                    window.location.href = `/fud/${id_company}/${id}/${name}/${description}/edit-department-employee`;
+                }
+            }
+            else{
+                warningMessage('Error 👁️','Necesitas agregar un nombre a tu departamento');
+            }
+        }
+    }
+</script>

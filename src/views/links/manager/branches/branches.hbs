@@ -1,0 +1,110 @@
+<link rel="stylesheet" href="/css/cart/cart.css">
+<div class="container">
+    <div class="row mt-5">
+        <label>Filter for:</label>
+        <table>
+            <colgroup>
+                <col style="width: 15%;">
+                <col style="width: 30%;">
+                <col style="width: 15%;">
+                <col style="width: 30%;">
+                <col style="width: 5%;">
+                <col style="width: 10%;">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th><center><label>Country</label></center></th>
+                    <th>
+                        <select id="country" class="form-control" name="country">
+                            <option value="all">All</option>
+                            {{#each country}}
+                                <option value="{{id}}">{{name}}</option>
+                            {{/each}}
+                        </select>
+                    </th>
+                    <th><center><label>Manager</label></center></th>
+                    <th>
+                        <select id="country" class="form-control" name="country">
+                            {{#each branches}}
+                                <option value="{{id}}">{{representative}}</option>
+                            {{/each}}
+                        </select>
+                    </th>
+                    <th>
+                        <button class="btn-search-browser"><i class="fi-browser fi-rr-search" onclick="searchBarCode()"></i></button>
+                    </th>
+                    <th>
+                        {{#each company}}
+                            <button class="btn-add" id="{{id}}" onclick="nextWeb(this.id+'/add-branches')">+</button>
+                        {{/each}}
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <td>
+                </td>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+<div class="container">
+    <div class="row mt-4">
+        <div class="col-md">
+            <table class="table table-hover"> <!--table-bordered-->
+                <colgroup>
+                    <col style="width: 10%;">
+                    <col style="width: 25%;">
+                    <col style="width: 10%;">
+                    <col style="width: 30%;">
+                    <col style="width: 10%;">
+                    <col style="width: 15%;">
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th><label>Name</label></th>
+                        <th><label>Manager</label></th>
+                        <th><label>Country</label></th>
+                        <th><label>Direction</label></th>
+                        <th><label>Cell phone</label></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each branches}}
+                        <tr>
+                            <td><label>{{name_branch}}</label></td>
+                            <td><label>{{representative}}</label></td>
+                            <td><label>{{country_name}}</label></td>
+                            <td><label>{{municipality}}, {{city}}, {{cologne}}, {{address}}, {{num_int}}, {{num_ext}}</label></td>
+                            <td><label>{{cell_phone}}</label></td>
+                            <td>
+                                <button class="btn btn-danger" id="{{id}}" onclick="delete_branch({{id}},{{id_companies}},'{{name_branch}}')"><i class="fi-department fi-sr-trash"></i></button>
+                                <button class="btn btn-danger" id="{{id}}" onclick="edit_branch({{id}},{{id_companies}})"><i class="fi-department fi-sr-pencil"></i></button>
+                                <button class="btn btn-danger" id="{{id}}" onclick="visit_branch({{id}},{{id_companies}})"><i class="fi-department fi-ss-store-alt"></i></button>
+                            </td>
+                        </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    function edit_branch(idBranch,idCompany){
+        window.location.href = `/fud/${idBranch}/${idCompany}/edit-branch`;
+    }
+
+    function visit_branch(idBranch,idCompany){
+        window.location.href = `/fud/${idCompany}/${idBranch}/visit-branch`;
+    }
+
+    async function delete_branch(idBranch,idCompany,nameBranch){
+        if(await questionMessage('⚠️ Eliminar sucursal ⚠️','👁️ ¿Deseas eliminar la sucursal '+nameBranch+'? Se borraran todos los empleados, ventas, platillos, provedores y todos los datos relacionados con esta sucursal.👁️')){
+            window.location.href = `/fud/${idBranch}/${idCompany}/delete-branch`;
+        }
+    }
+</script>
