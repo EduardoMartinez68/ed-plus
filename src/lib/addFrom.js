@@ -654,7 +654,6 @@ async function update_supplies_company(newSupplies) {
     }
 }
 
-
 async function get_new_data_supplies_img_company(req) {
     const { id, id_company } = req.params;
     const { image, barcode, name, inventory, description } = req.body;
@@ -670,7 +669,6 @@ async function get_new_data_supplies_img_company(req) {
     }
     return newSupplies;
 }
-
 
 async function update_supplies_company_img(newSupplies) {
     try {
@@ -696,10 +694,10 @@ async function this_provider_exists(provider) {
 
 async function add_provider_to_database(provider, req) {
     if (await addDatabase.add_provider_company(provider)) {
-        req.flash('success', 'the provider was add with supplies 😄')
+        req.flash('success', 'El provedor fue agregado con exito 😄')
     }
     else {
-        req.flash('message', 'the provider not was add 😰')
+        req.flash('message', 'El provedor no fue agregado 😰')
     }
 }
 
@@ -791,7 +789,6 @@ async function update_provider_to_database(id_provider, provider, req) {
         req.flash('message', 'El proveedor no fue actualizado con éxito 👉👈')
     }
 }
-
 
 //add branches
 router.post('/fud/:id_company/add-new-branch', isLoggedIn, async (req, res) => {
@@ -1497,7 +1494,14 @@ router.post('/fud/:id_company/:id_branch/add-providers', isLoggedIn, async (req,
     } else {
         await add_provider_to_database(provider, req);
     }
-    res.redirect('/fud/' + id_company + '/' + id_branch + '/providers');
+
+
+    //we will see if the user is use ed one 
+    if(req.user.rol_user==rolFree){
+        res.redirect(`/fud/${id_company}/${id_branch}/providers-free`);
+    }else{
+        res.redirect(`/fud/${id_company}/${id_branch}/providers`);
+    }
 })
 
 //edit products branch 
@@ -1530,7 +1534,12 @@ router.post('/fud/:id_company/:id_branch/:id_provider/edit-providers-branch', is
         await update_provider_to_database(id_provider, provider, req);
     }
 
-    res.redirect('/fud/' + id_company + '/' + id_branch + '/providers');
+    //we will see if the user is use ed one 
+    if(req.user.rol_user==rolFree){
+        res.redirect(`/fud/${id_company}/${id_branch}/providers-free`);
+    }else{
+        res.redirect(`/fud/${id_company}/${id_branch}/providers`);
+    }
 })
 
 router.post('/fud/:id_company/:id_branch/:id_combo/update-combo-branch', isLoggedIn, async (req, res) => {

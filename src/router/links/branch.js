@@ -540,8 +540,15 @@ router.get('/:id_company/:id_branch/providers', isLoggedIn, async (req, res) => 
 router.get('/:id_company/:id_branch/add-providers', isLoggedIn, async (req, res) => {
     if(await validate_subscription(req,res)){
         const { id_company } = req.params;
-        const branch = await get_data_branch(req)
-        res.render('links/branch/providers/addProviders', { branch });
+
+        //we will see if the user is use ed one
+        if(req.user.rol_user==rolFree){
+            const branchFree = await get_data_branch(req);
+            res.render('links/branch/providers/addProviders', { branchFree });
+        }else{
+            const branch = await get_data_branch(req);
+            res.render('links/branch/providers/addProviders', { branch });
+        }
     }
 })
 
@@ -549,8 +556,15 @@ router.get('/:id_company/:id_branch/:id_provider/edit-provider', isLoggedIn, asy
     if(await validate_subscription(req,res)){
         const { id_provider } = req.params;
         const provider = await search_provider(id_provider);
-        const branch = await get_data_branch(req);
-        res.render('links/manager/providers/editProviders', { provider, branch });
+
+        //we will see if the user is use ed one
+        if(req.user.rol_user==rolFree){
+            const branchFree = await get_data_branch(req);
+            res.render('links/manager/providers/editProviders', { provider, branchFree });
+        }else{
+            const branch = await get_data_branch(req);
+            res.render('links/manager/providers/editProviders', { provider, branch });
+        }
     }
 })
 
@@ -1287,8 +1301,9 @@ router.get('/:id_company/:id_branch/:id_provider/edit-prover', isLoggedIn, async
     }
 })
 
-router.get('/:id_company/:id_provider/delete-provider', isLoggedIn, async (req, res) => {
-    const { id_provider, id_company } = req.params;
+router.get('/:id_company/:id_branch/:id_provider/delete-provider', isLoggedIn, async (req, res) => {
+    //we will see if the company is of the user 
+    const { id_provider, id_company, id_branch} = req.params;
     if (await delete_provider(id_provider)) {
         req.flash('success', 'El proveedor fue eliminado con éxito 😉')
     }
@@ -1296,8 +1311,12 @@ router.get('/:id_company/:id_provider/delete-provider', isLoggedIn, async (req, 
         req.flash('message', 'El proveedor no fue eliminado 😮')
     }
 
-    res.redirect('/fud/' + id_company + '/providers');
-    
+    //we will see if the user have a subscription in ed one 
+    if(req.user.rol_user==rolFree){
+        res.redirect(`/fud/${id_company}/${id_branch}/providers-free`);
+    }else{
+        res.redirect(`/fud/${id_company}/${id_branch}/providers`);
+    }
 })
 
 /*store online*/

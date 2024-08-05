@@ -334,4 +334,12 @@ router.get('/:id_company/:id_branch/type-user', isLoggedIn, async (req, res) => 
 })
 
 
+//------------------------------------providers 
+router.get('/:id_company/:id_branch/providers-free', isLoggedIn, async (req, res) => {
+    const { id_company, id_branch } = req.params;
+    const providers = await search_providers(id_branch);
+    const branchFree = await get_data_branch(id_branch);
+    res.render('links/branch/providers/providers', { providers, branchFree });
+})
+
 module.exports = router;

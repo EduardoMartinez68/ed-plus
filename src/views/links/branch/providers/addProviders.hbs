@@ -40,6 +40,20 @@
                                         </div>        
                                     </div>
                                 {{/each}}
+                                {{#each branchFree}}
+                                <form action="/fud/{{id_companies}}/{{id}}/add-providers" method="POST">
+
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <label>Sucursal *</label><br>
+                                                <select class="form-select" aria-label="Default select example" name="branch">
+                                                        <option value="{{id}}">{{name_branch}}</option>
+                                                </select>
+                                            </div>
+                                        </div>        
+                                    </div>
+                                {{/each}}
                                     <table width="100%">
                                         <tr>
                                             <td>

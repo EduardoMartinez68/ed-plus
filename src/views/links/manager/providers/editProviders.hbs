@@ -32,7 +32,11 @@
                                 {{#if branch}}
                                     {{>manager/providers/form-edit}}
                                 {{else}}
-                                    {{>CEO/providers/form-edit}}
+                                    {{#if branchFree}}
+                                        {{>manager/providers/form-edit}}
+                                    {{else}}
+                                        {{>CEO/providers/form-edit}}
+                                    {{/if}}
                                 {{/if}}
                             </div>
                         </div>

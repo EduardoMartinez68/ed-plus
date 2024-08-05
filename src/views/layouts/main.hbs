@@ -8,7 +8,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="/img/logo.png" type="image/png">
-    <title> Füd</title>
+    <title>ED PLUS</title>
 
     <script type="application/ld+json">
     {
@@ -34,8 +34,6 @@
             background-color: var(--color-company);
         }
     </style> 
-    <!-- CUSTOM JS -->
-    <script src="/js/menu.js" defer></script>
 
     <!--select-->
     <link href="https://cdn.jsdelivr.net/npm/chosen-js@1.8.7/dist/css/chosen.min.css" rel="stylesheet" />
@@ -47,9 +45,28 @@
     {{{head}}}
 </head>
 <body>
-    <!--title-->
-    {{>titleBar}}
-    {{{body}}}
+
+    <!--this is for draw the navbar-->
+    {{#if user}}
+        <!--this is for knnow if the user would like have the navbar 3-->
+        {{#if navbar3}}
+            <link rel="stylesheet" href="/css/web/navbar-3.css">
+            <div class="navbar-3">
+                <div class="navbar-3-sidebar">
+                    {{>navbar/navbar3}}
+                </div>
+                <div class="navbar-3-content">
+                    {{{body}}}
+                </div>
+            </div>
+        {{else}}
+            {{>titleBar}}
+            {{{body}}}
+        {{/if}}
+    {{else}}
+        {{{body}}}
+    {{/if}}
+
     {{>message}}
 
     <!--footer-->

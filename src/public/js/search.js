@@ -8,22 +8,25 @@ function search_combo(){
 }
 
 function toggleRows(barcode) {
-       // Get all the rows of the table
-       const rows = document.querySelectorAll('#table-container tbody tr');
+    // Convert the barcode value to lowercase
+    const lowerCaseBarcode = barcode.toLowerCase();
+    
+    // Get all the rows of the table
+    const rows = document.querySelectorAll('#table-container tbody tr');
 
-       // Iterate over the rows and hide or show based on the barcode value
-       rows.forEach(row => {
-           const rowText = row.textContent.toLowerCase();
-           // Check if the row text includes the barcode value
-           row.style.display = rowText.includes(barcode) ? '' : 'none';
-       });
+    // Iterate over the rows and hide or show based on the barcode value
+    rows.forEach(row => {
+        const rowText = row.textContent.toLowerCase();
+        // Check if the row text includes the barcode value
+        row.style.display = rowText.includes(lowerCaseBarcode) ? '' : 'none';
+    });
 }
 
-//this function is for search for name/email and country
-function search_browser(){
-    //get the value of the input
+// This function is for searching by name/email and country
+function search_browser() {
+    // Get the value of the input
     const barcodeValue = document.getElementById('search').value;
-    // search the value in the table
+    // Search the value in the table
     toggleRows(barcodeValue);
 }
 

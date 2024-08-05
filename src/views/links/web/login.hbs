@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/session.css">
 </head>
-
+    <center>
     <section class="body-session">
         <div class="container">
             <div class="row justify-content-center">
@@ -24,11 +24,13 @@
                             <div class="form-group">
                                 <div class="input-group">
                                     <input type="password" id="password" name="password" placeholder="Contraseña" class="form-control" required>
+                                    <!--
                                     <div class="input-group-append">
                                         <button type="button" id="showPasswordBtn" onclick="togglePasswordVisibility()">
                                             <i class="fi-session fi-rr-eye"></i>
                                         </button>
                                     </div>
+                                    --->
                                 </div>
                             </div>
                             <button type="submit" class="btn btn-primary btn-block">Iniciar sesión</button>
@@ -44,7 +46,7 @@
             </div>
         </div>
     </section>
-
+    </center>
     <script>
         function togglePasswordVisibility() {
             var passwordInput = document.getElementById("password");

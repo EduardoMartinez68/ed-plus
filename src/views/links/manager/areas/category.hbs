@@ -9,8 +9,8 @@
                 </colgroup>
                 <thead>
                     <tr>
-                        <th><label>Name</label></th>
-                        <th><label>Description</label></th>
+                        <th><label>Nombre</label></th>
+                        <th><label>Descripción</label></th>
                         <th></th>
                     </tr>
                 </thead>
@@ -22,7 +22,7 @@
                             <td><label>{{description}}</label></td>
                             <td>
                                 <button class="btn btn-danger" id="{{id}}" onclick="delate_department(this.id,{{id_companies}})"><i class="fi-department fi-sr-trash"></i></button>
-                                <button class="btn btn-danger" id="{{id}}" onclick="edit_department({{id}},{{id_companies}},'{{name}}','{{description}}')"><i class="fi-department fi-sr-pencil"></i></button>
+                                <button class="btn btn-edit" id="{{id}}" onclick="edit_department({{id}},{{id_companies}},'{{name}}','{{description}}')"><i class="fi-department fi-sr-pencil"></i></button>
                             </td>
                         </tr>
                     {{/each}}
