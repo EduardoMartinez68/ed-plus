@@ -7,7 +7,7 @@
     <div class="container p-4">
         <div class="row">
             <div class="col-md-8 mx-auto">
-                <label><i class="fi-icon fi-sr-hat-chef"></i> Añadir un nuevo empleado</label>
+                <label><i class="fi fi-sr-user"></i> Editar un empleado</label>
                 <hr>
                 <div class="card">
                     <div class="card-body">
@@ -22,151 +22,172 @@
                                         {{/if}}
                                     </center>
                                 </div>
+                                <!---
                                 <div class="form-group">
                                     <input type="file" name="image" accept="image/*" class="form-control" id="inputImg">
-                                </div>  
-                                <div class="form-group">
-                                    <label>Nombre de usuario *</label><br>
-                                    <input type="tex" class="form-control" name="user_name" placeholder="Nombre de usuario" required value="{{user_name}}">
-                                </div>
-                                <div class="form-group">
-                                    <label>E-mail *</label><br>
-                                    <input type="email" class="form-control" name="email" placeholder="E-mail" required value="{{email}}" readonly>
-                                </div>
-                            {{/each}}
-
-
-                                <div class="form-group">
-                                    <div class="row">
-                                        <div class="col">
-                                            <label>Rol de empleado</label><br>
-                                            {{#each employee}}
-                                            <select class="form-select" aria-label="Default select example" name="role_employee" value="{{id_roles_employees}}">
-                                            {{/each}}
-                                                {{#each roles}}
-                                                    <option value="{{id}}">{{name_role}}</option>
-                                                {{/each}}
-                                            </select>
-                                        </div>
-
-                                        <div class="col">
-                                            <label>Departamentos de empleados</label><br>
-                                            {{#each employee}}
-                                            <select class="form-select" aria-label="Default select example" name="departament_employee" value="{{id_departments_employees}}">
-                                            {{/each}}
-                                                {{#each departments}}
-                                                    <option value="{{id}}">{{name_departaments}}</option>
-                                                {{/each}}
-                                            </select>
-                                        </div>
-                                    </div>        
-                                </div>
-
-                                <div class="form-group">
-                                    <div class="row">
-                                        <div class="col-10">
-                                            <label>Sucursal *</label><br>
-                                            {{#each employee}}
-                                            <select class="form-select" aria-label="Default select example" name="branch" value="{{id_branches}}">
-                                            {{/each}}
-                                                {{#each branches}}
-                                                    <option value="{{id}}">{{name_branch}}</option>
-                                                {{/each}}
-                                            </select>
-                                        </div>
-                                        <div class="col-2">
-                                            <div class="row">
-                                                <label>.</label>
-                                                {{#each company}}
-                                                    <button class="btn-add" onclick="nextWeb('{{id}}/add-branches')"><i class="fi-icon fi-sr-store-alt"></i> +</button>
-                                                {{/each}}
-                                            </div>
-                                        </div>
-                                    </div>        
-                                </div>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <div class="col-10">
-                                            <label>Vista de interface *</label><br>
-                                            {{#each employee}}
-                                            <select class="form-select" aria-label="Default select example" name="rol_user" value="{{rol_user}}">
-                                                <option value="2">Empleado</option>
-                                                <option value="1">Gerente</option>
-                                            </select>
-                                            {{/each}}
-                                        </div>
-                                    </div>        
-                                </div>
-                                <hr>
-                                {{#each employee}}
-                                <label>Información personal</label>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <div class="col">
-                                            <label>Nombre *</label><br>
-                                            <input type="text" class="form-control" name="first_name" placeholder="Nombre" autofocus required value="{{first_name}}">
-                                        </div>
-                                        <div class="col">
-                                            <label>Segundo Nombre</label><br>
-                                            <input type="text" class="form-control" name="second_name" placeholder="Segundo nombre" value="{{second_name}}">
-                                        </div>
-                                    </div>        
-                                </div>
-                                <div class="form-group">
-                                    <label>Apellido *</label><br>
-                                    <input type="tex" class="form-control" name="last_name" placeholder="Apellido" required value="{{last_name}}">
-                                </div>
+                                </div>  -->
                                 
                                 <div class="form-group">
-                                    <div class="row">
-                                        <div class="col">
-                                            <label>Teléfono</label><br>
-                                            <input type="tex" class="form-control" name="phone" placeholder="Teléfono" value="{{phone}}">
-                                        </div>
-                                        <div class="col">
-                                            <label>Teléfono celular</label><br>
-                                            <input type="tex" class="form-control" name="cell_phone" placeholder="Teléfono celular" value="{{cell_phone}}">
-                                        </div>
-                                    </div>        
-                                </div>
+                                    <center>
+                                    <label for="inputImg" class="custom-file-upload">
+                                        <input type="file" name="image" accept="image/*" id="inputImg" style="display: none;">
+                                        <i class="fas fa-upload"></i> Subir imagen
+                                    </label>
+                                    </center>
+                                </div>    
                                 {{/each}}
 
-                                <div class="form-group">
-                                    <label>País *</label><br>
+                                <div class="btn-group">
+                                    <button class="btn-select btn-active" onclick="showSection('select-1', this)" type="button">Información de la Empresa</button>
+                                    <button class="btn-select" onclick="showSection('select-2', this)" type="button">Información Personal</button>
+                                </div>
+                                
+                                <div id="select-1" class="content-section active">
                                     {{#each employee}}
-                                    <select class="form-select" aria-label="Default select example" name="country" value="{{id_country}}">
+                                    <div class="form-group">
+                                        <label>Nombre de usuario *</label><br>
+                                        <input type="tex" class="form-control" name="user_name" placeholder="Nombre de usuario" required value="{{user_name}}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>E-mail *</label><br>
+                                        <input type="email" class="form-control" name="email" placeholder="E-mail" required value="{{email}}" readonly>
+                                    </div>
                                     {{/each}}
-                                        {{#each country}}
-                                            <option value="{{id}}">{{name}}</option>
-                                        {{/each}}
-                                    </select>
-                                </div>         
 
-                                {{#each employee}}
-                                <div class="form-group">
-                                    <div class="row">
-                                        <div class="col">
-                                            <label for="city">Ciudad</label>
-                                            <input type="text" id="city" name="city" class="form-control" placeholder="City" value="{{city}}">
-                                        </div>
-                                        <div class="col">
-                                            <label>Calle</label><br>
-                                            <input type="tex" class="form-control" name="street" placeholder="Street" value="{{street}}">
-                                        </div>
-                                    </div>        
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col">
+                                                <label>Rol de empleado</label><br>
+                                                {{#each employee}}
+                                                <select class="form-select" aria-label="Default select example" name="role_employee" value="{{id_roles_employees}}">
+                                                {{/each}}
+                                                    {{#each roles}}
+                                                        <option value="{{id}}">{{name_role}}</option>
+                                                    {{/each}}
+                                                </select>
+                                            </div>
+
+                                            <div class="col">
+                                                <label>Departamentos de empleados</label><br>
+                                                {{#each employee}}
+                                                <select class="form-select" aria-label="Default select example" name="departament_employee" value="{{id_departments_employees}}">
+                                                {{/each}}
+                                                    {{#each departments}}
+                                                        <option value="{{id}}">{{name_departaments}}</option>
+                                                    {{/each}}
+                                                </select>
+                                            </div>
+                                        </div>        
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-10">
+                                                <label>Sucursal *</label><br>
+                                                {{#each employee}}
+                                                <select class="form-select" aria-label="Default select example" name="branch" value="{{id_branches}}">
+                                                {{/each}}
+                                                    {{#each branches}}
+                                                        <option value="{{id}}">{{name_branch}}</option>
+                                                    {{/each}}
+                                                </select>
+                                            </div>
+                                            <div class="col-2">
+                                                <div class="row">
+                                                    <label>.</label>
+                                                    {{#each company}}
+                                                        <button class="btn-add" onclick="nextWeb('{{id}}/add-branches')"><i class="fi-icon fi-sr-store-alt"></i> +</button>
+                                                    {{/each}}
+                                                </div>
+                                            </div>
+                                        </div>        
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-10">
+                                                <label>Vista de interface *</label><br>
+                                                {{#each employee}}
+                                                <select class="form-select" aria-label="Default select example" name="rol_user" value="{{rol_user}}">
+                                                    <option value="2">Empleado</option>
+                                                    <option value="1">Gerente</option>
+                                                </select>
+                                                {{/each}}
+                                            </div>
+                                        </div>        
+                                    </div>
                                 </div>
 
-                                <div class="form-group">
-                                    <div class="row">
-                                        <div class="col">
-                                            <label>No. Ext</label><br>
-                                            <input type="tex" class="form-control" name="num_ext" placeholder="No. Ext" value="{{num_ext}}">
-                                        </div>
-                                        <div class="col">
-                                            <label>No. Int</label><br>
-                                            <input type="tex" class="form-control" name="num_int" placeholder="No. Int" value="{{num_int}}">
-                                        </div>
-                                    </div>        
+                                <div id="select-2" class="content-section">
+                                    {{#each employee}}
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col">
+                                                <label>Nombre *</label><br>
+                                                <input type="text" class="form-control" name="first_name" placeholder="Nombre" autofocus required value="{{first_name}}">
+                                            </div>
+                                            <div class="col">
+                                                <label>Segundo Nombre</label><br>
+                                                <input type="text" class="form-control" name="second_name" placeholder="Segundo nombre" value="{{second_name}}">
+                                            </div>
+                                        </div>        
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Apellido *</label><br>
+                                        <input type="tex" class="form-control" name="last_name" placeholder="Apellido" required value="{{last_name}}">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col">
+                                                <label>Teléfono</label><br>
+                                                <input type="tex" class="form-control" name="phone" placeholder="Teléfono" value="{{phone}}">
+                                            </div>
+                                            <div class="col">
+                                                <label>Teléfono celular</label><br>
+                                                <input type="tex" class="form-control" name="cell_phone" placeholder="Teléfono celular" value="{{cell_phone}}">
+                                            </div>
+                                        </div>        
+                                    </div>
+                                    {{/each}}
+
+                                    <div class="form-group">
+                                        <label>País *</label><br>
+                                        {{#each employee}}
+                                        <select class="form-select" aria-label="Default select example" name="country" value="{{id_country}}">
+                                        {{/each}}
+                                            {{#each country}}
+                                                <option value="{{id}}">{{name}}</option>
+                                            {{/each}}
+                                        </select>
+                                    </div>         
+
+                                    {{#each employee}}
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col">
+                                                <label for="city">Ciudad</label>
+                                                <input type="text" id="city" name="city" class="form-control" placeholder="City" value="{{city}}">
+                                            </div>
+                                            <div class="col">
+                                                <label>Calle</label><br>
+                                                <input type="tex" class="form-control" name="street" placeholder="Street" value="{{street}}">
+                                            </div>
+                                        </div>        
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col">
+                                                <label>No. Ext</label><br>
+                                                <input type="tex" class="form-control" name="num_ext" placeholder="No. Ext" value="{{num_ext}}">
+                                            </div>
+                                            <div class="col">
+                                                <label>No. Int</label><br>
+                                                <input type="tex" class="form-control" name="num_int" placeholder="No. Int" value="{{num_int}}">
+                                            </div>
+                                        </div>        
+                                    </div>
                                 </div>
 
                                 <div class="form-group">

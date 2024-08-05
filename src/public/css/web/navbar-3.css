@@ -6,7 +6,7 @@
 
 .navbar-3-sidebar {
     width: 250px; /* Ancho de la barra lateral */
-    background-color: #2c3e50; /* Color de fondo */
+    background-color: #111926; /* Color de fondo */
     color: #ecf0f1; /* Color del texto */
     display: flex;
     flex-direction: column;
@@ -39,14 +39,14 @@
     font-family: 'Arial', sans-serif;
     display: block;
     padding: 15px 20px;
-    color: #ecf0f1;
+    color: white;
     text-decoration: none;
     font-size: 13px;
     transition: background-color 0.3s, color 0.3s;
 }
 
 .navbar-3-sidebar ul li a:hover {
-    background-color: #34495e;
+    background-color: #23344e;
     color: #fff;
 }
 

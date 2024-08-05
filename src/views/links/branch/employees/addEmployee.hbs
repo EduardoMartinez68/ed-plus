@@ -7,7 +7,7 @@
     <div class="container p-4">
         <div class="row">
             <div class="col-md-8 mx-auto">
-                <label><i class="fi-icon fi-sr-hat-chef"></i> Añadir un nuevo empleado</label>
+                <label><i class="fi fi-sr-user"></i> Añadir un nuevo empleado</label>
                 <hr>
                 <div class="card">
                     <div class="card-body">
@@ -23,152 +23,163 @@
                                 </center>
                             </div>
                             <div class="form-group">
-                                <input type="file" name="image" accept="image/*" class="form-control" id="inputImg">
-                            </div>  
-                            <div class="form-group">
-                                <label>Nombre de usuario *</label><br>
-                                <input type="text" class="form-control" name="user_name" placeholder="Nombre de usuario" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Correo electrónico *</label><br>
-                                <input type="email" class="form-control" name="email" placeholder="Correo electrónico" required>
-                            </div>
+                                <center>
+                                <label for="inputImg" class="custom-file-upload">
+                                    <input type="file" name="image" accept="image/*" id="inputImg" style="display: none;">
+                                    <i class="fas fa-upload"></i> Subir imagen
+                                </label>
+                                </center>
+                            </div>    
 
-                            <div class="form-group">
-                                <div class="row">
-                                    <div class="col">
-                                        <label>Contraseña *</label><br>
-                                        <input type="password" class="form-control" name="password1" placeholder="Contraseña" required>
-                                    </div>
-                                    <div class="col">
-                                        <label>Confirmar contraseña *</label><br>
-                                        <input type="password" class="form-control" name="password2" placeholder="Contraseña" required>
-                                    </div>
-                                </div>        
+                            <div class="btn-group">
+                                <button class="btn-select btn-active" onclick="showSection('select-1', this)" type="button">Información de la Empresa</button>
+                                <button class="btn-select" onclick="showSection('select-2', this)" type="button">Información Personal</button>
                             </div>
 
+                            <div id="select-1" class="content-section active">
+                                <div class="form-group">
+                                    <label>Nombre de usuario *</label><br>
+                                    <input type="text" class="form-control" name="user_name" placeholder="Nombre de usuario" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Correo electrónico *</label><br>
+                                    <input type="email" class="form-control" name="email" placeholder="Correo electrónico" required>
+                                </div>
 
-                            <div class="form-group">
-                                <div class="row">
-                                    <div class="col">
-                                        <label>Rol de empleado</label><br>
-                                        <select class="form-select" aria-label="Rol de empleado" name="role_employee">
-                                            {{#each roles}}
-                                                <option value="{{id}}">{{name_role}}</option>
-                                            {{/each}}
-                                        </select>
-                                    </div>
-                                    <div class="col">
-                                        <label>Departamento del empleado</label><br>
-                                        <select class="form-select" aria-label="Departamento del empleado" name="departament_employee">
-                                            {{#each departments}}
-                                                <option value="{{id}}">{{name_departaments}}</option>
-                                            {{/each}}
-                                        </select>
-                                    </div>
-                                </div>        
-                            </div>
-
-                            <div class="form-group">
-                                <div class="row">
-                                    <div class="col-10">
-                                        <label>Sucursal *</label><br>
-                                        <select class="form-select" aria-label="Sucursal" name="branch">
-                                            {{#each branches}}
-                                                <option value="{{id}}">{{name_branch}}</option>
-                                            {{/each}}
-                                        </select>
-                                    </div>
-                                    <div class="col-2">
-                                        <div class="row">
-                                            <label>.</label>
-                                            {{#each company}}
-                                                <button class="btn-add" onclick="nextWeb('{{id}}/add-branches')"><i class="fi-icon fi-sr-store-alt"></i> +</button>
-                                            {{/each}}
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col">
+                                            <label>Contraseña *</label><br>
+                                            <input type="password" class="form-control" name="password1" placeholder="Contraseña" required>
                                         </div>
-                                    </div>
-                                </div>        
-                            </div>
-                            
-                            <div class="form-group">
-                                <div class="row">
-                                    <div class="col-10">
-                                        <label>Vista de interface *</label><br>
-                                        <select class="form-select" aria-label="Default select example" name="rol_user">
-                                            <option value="2">Empleado</option>
-                                            <option value="1">Gerente</option>
-                                        </select>
-                                    </div>
-                                </div>        
-                            </div>
+                                        <div class="col">
+                                            <label>Confirmar contraseña *</label><br>
+                                            <input type="password" class="form-control" name="password2" placeholder="Contraseña" required>
+                                        </div>
+                                    </div>        
+                                </div>
 
-                            <hr>
-                            <label>Información personal</label>
-                            <div class="form-group">
-                                <div class="row">
-                                    <div class="col">
-                                        <label>Nombre *</label><br>
-                                        <input type="text" class="form-control" name="first_name" placeholder="Nombre" autofocus required>
-                                    </div>
-                                    <div class="col">
-                                        <label>Segundo nombre</label><br>
-                                        <input type="text" class="form-control" name="second_name" placeholder="Segundo nombre">
-                                    </div>
-                                </div>        
-                            </div>
-                            <div class="form-group">
-                                <label>Apellido *</label><br>
-                                <input type="text" class="form-control" name="last_name" placeholder="Apellido" required>
-                            </div>
-                            
-                            <div class="form-group">
-                                <div class="row">
-                                    <div class="col">
-                                        <label>Teléfono</label><br>
-                                        <input type="text" class="form-control" name="phone" placeholder="Teléfono">
-                                    </div>
-                                    <div class="col">
-                                        <label>Teléfono celular</label><br>
-                                        <input type="text" class="form-control" name="cell_phone" placeholder="Teléfono celular">
-                                    </div>
-                                </div>        
-                            </div>
 
-                            <div class="form-group">
-                                <label>País *</label><br>
-                                <select class="form-select" aria-label="País" name="country">
-                                    {{#each country}}
-                                        <option value="{{id}}">{{name}}</option>
-                                    {{/each}}
-                                </select>
-                            </div>             
-                            
-                            <div class="form-group">
-                                <div class="row">
-                                    <div class="col">
-                                        <label for="city">Ciudad</label>
-                                        <input type="text" id="city" name="city" class="form-control" placeholder="Ciudad">
-                                    </div>
-                                    <div class="col">
-                                        <label>Calle</label><br>
-                                        <input type="text" class="form-control" name="street" placeholder="Calle">
-                                    </div>
-                                </div>        
-                            </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col">
+                                            <label>Rol de empleado</label><br>
+                                            <select class="form-select" aria-label="Rol de empleado" name="role_employee">
+                                                {{#each roles}}
+                                                    <option value="{{id}}">{{name_role}}</option>
+                                                {{/each}}
+                                            </select>
+                                        </div>
+                                        <div class="col">
+                                            <label>Departamento del empleado</label><br>
+                                            <select class="form-select" aria-label="Departamento del empleado" name="departament_employee">
+                                                {{#each departments}}
+                                                    <option value="{{id}}">{{name_departaments}}</option>
+                                                {{/each}}
+                                            </select>
+                                        </div>
+                                    </div>        
+                                </div>
 
-                            <div class="form-group">
-                                <div class="row">
-                                    <div class="col">
-                                        <label>No. Ext</label><br>
-                                        <input type="text" class="form-control" name="num_ext" placeholder="No. Ext">
-                                    </div>
-                                    <div class="col">
-                                        <label>No. Int</label><br>
-                                        <input type="text" class="form-control" name="num_int" placeholder="No. Int">
-                                    </div>
-                                </div>        
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-10">
+                                            <label>Sucursal *</label><br>
+                                            <select class="form-select" aria-label="Sucursal" name="branch">
+                                                {{#each branches}}
+                                                    <option value="{{id}}">{{name_branch}}</option>
+                                                {{/each}}
+                                            </select>
+                                        </div>
+                                        <div class="col-2">
+                                            <div class="row">
+                                                <label>.</label>
+                                                {{#each company}}
+                                                    <button class="btn-add" onclick="nextWeb('{{id}}/add-branches')"><i class="fi-icon fi-sr-store-alt"></i> +</button>
+                                                {{/each}}
+                                            </div>
+                                        </div>
+                                    </div>        
+                                </div>
+                                
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-10">
+                                            <label>Vista de interface *</label><br>
+                                            <select class="form-select" aria-label="Default select example" name="rol_user">
+                                                <option value="2">Empleado</option>
+                                                <option value="1">Gerente</option>
+                                            </select>
+                                        </div>
+                                    </div>        
+                                </div>
                             </div>
+                            <div id="select-2" class="content-section">
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col">
+                                            <label>Nombre *</label><br>
+                                            <input type="text" class="form-control" name="first_name" placeholder="Nombre" autofocus required>
+                                        </div>
+                                        <div class="col">
+                                            <label>Segundo nombre</label><br>
+                                            <input type="text" class="form-control" name="second_name" placeholder="Segundo nombre">
+                                        </div>
+                                    </div>        
+                                </div>
+                                <div class="form-group">
+                                    <label>Apellido *</label><br>
+                                    <input type="text" class="form-control" name="last_name" placeholder="Apellido" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col">
+                                            <label>Teléfono</label><br>
+                                            <input type="text" class="form-control" name="phone" placeholder="Teléfono">
+                                        </div>
+                                        <div class="col">
+                                            <label>Teléfono celular</label><br>
+                                            <input type="text" class="form-control" name="cell_phone" placeholder="Teléfono celular">
+                                        </div>
+                                    </div>        
+                                </div>
 
+                                <div class="form-group">
+                                    <label>País *</label><br>
+                                    <select class="form-select" aria-label="País" name="country">
+                                        {{#each country}}
+                                            <option value="{{id}}">{{name}}</option>
+                                        {{/each}}
+                                    </select>
+                                </div>             
+                                
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col">
+                                            <label for="city">Ciudad</label>
+                                            <input type="text" id="city" name="city" class="form-control" placeholder="Ciudad">
+                                        </div>
+                                        <div class="col">
+                                            <label>Calle</label><br>
+                                            <input type="text" class="form-control" name="street" placeholder="Calle">
+                                        </div>
+                                    </div>        
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col">
+                                            <label>No. Ext</label><br>
+                                            <input type="text" class="form-control" name="num_ext" placeholder="No. Ext">
+                                        </div>
+                                        <div class="col">
+                                            <label>No. Int</label><br>
+                                            <input type="text" class="form-control" name="num_int" placeholder="No. Int">
+                                        </div>
+                                    </div>        
+                                </div>
+                            </div>
                             <div class="form-group">
                                 <button class="btn btn-success btn-block">Guardar</button>
                             </div>

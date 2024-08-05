@@ -1,7 +1,7 @@
-const color_company='#0A74CC'//'rgb(204,3,40)' rgb(255,0,42);
-const color_hover='#004080;'
-const color_session1='#0A74CC';
-const color_session2='#0A74CC';
+const color_company='#171C3A'//'rgb(204,3,40)' rgb(255,0,42);
+const color_hover='#2D3972;'
+const color_session1='#2D3972';
+const color_session2='#2D3972';
 
 ///
 function set_color_company(rgb){
@@ -45,7 +45,7 @@ if (elementLink) {
 
     // change the style of the root:{}
     styleSheet.cssRules[0].style.setProperty('--color-company', get_color_company());
-    styleSheet.cssRules[0].style.setProperty('--color-hover', get_color_company());
+    styleSheet.cssRules[0].style.setProperty('--color-hover', get_hover());
     styleSheet.cssRules[0].style.setProperty('--color-session1', get_color_company());
     styleSheet.cssRules[0].style.setProperty('--color-session2', get_color_company());
 }

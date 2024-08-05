@@ -86,7 +86,7 @@
                                     <a href="/fud/{{id_companies}}/{{id}}/combos-free"><i class="fi-icon fi-sr-restaurant"> Combos</i></a>
                                 </li>
                                 <li>
-                                    <a href="/fud/{{id_companies}}/{{id}}/employees-branch"><i class="fi-icon fi-ss-user-chef"> Empleados</i></a>
+                                    <a href="/fud/{{id_companies}}/{{id}}/employees-branch"><i class="fi-icon fi-sr-user"> Empleados</i></a>
                                 </li>
                                 <li>
                                     <a href="/fud/{{id_companies}}/{{id}}/order-free"><i class="fi-icon fi-ss-biking-mountain"> Repartidor</i></a>
@@ -119,24 +119,12 @@
 
                 <!--this is for add the name of the company or the branch-->
                 <ul class="titleDesciption">
-                    {{#if company}}
-                        {{#each company}}
-                            <span><a href="/fud/{{id}}/company-home" class="des" id="des"
-                                    style="text-decoration: none;">Company</i></a></span>
-                            <i class="fi-des fi-sr-hat-chef"></i>
-                        {{/each}}
+                    <span class="color-name-navbar">{{user.email}}</span>
+                    {{#if user.photo}}
+                        <img src="{{user.photo}}" class="img-profile-navbar">
                     {{else}}
-                    {{#if branch}}
-                            {{#each branch}}
-                                <span><a href="/fud/{{id_companies}}/{{id}}/visit-branch" class="des" id="des"
-                                        style="text-decoration: none;">Company</i></a></span>
-                                <i class="fi-des fi-sr-hat-chef"></i>
-                            {{/each}}
-                        {{else}}
-                            <span><a href="/fud/home" class="des" id="des" style="text-decoration: none;">Company</i></a></span>
-                            <i class="fi-des fi-sr-hat-chef"></i>
-                        {{/if}}
-                    {{/if}}
+                        <img src="https://cdn-icons-png.flaticon.com/512/3177/3177440.png" class="img-profile-navbar">
+                    {{/if}}  
                 </ul>
             </div>
         </head>

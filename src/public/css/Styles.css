@@ -1,15 +1,15 @@
 /**/
 :root {
-    --color-company: #0A74CC;
+    --color-company: white;
     --color-footer:  #131313;
     /*rgb(57,78,194);*/
-    --color-hover: rgb(131, 2, 26);
+    --color-hover: #2D3972;
     /*rgb(46, 62, 151);*/
-    --color-body: rgb(246, 245, 248);
+    --color-body: #F5F6FA; /*rgb(246, 245, 248);*/
     
-    --color-session1: #0A74CC;
+    --color-session1: white;
     /* rgb(57,78,194);*/
-    --color-session2: #0A74CC;
+    --color-session2: white;
     /* rgb(97, 53, 253);*/
 
     --color-confirmation: rgb(25, 135, 84);
@@ -26,6 +26,19 @@ a {
     color: var(--color-company);
 }
 
+.img-profile-navbar {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-top: -4px; 
+}
+
+.color-name-navbar{
+    color: white;
+}
+
+
 .btn-edit{
     background-color: var(--color-session1);
     color: white;
@@ -35,6 +48,12 @@ a {
     font-size: 1rem;
     font-family: 'Open Sans', sans-serif;
     font-size: 1.2rem;
+}
+
+.btn-success:active, .btn-success:active:focus, .btn-success.active {
+    background-color: var(--color-hover);
+    border-color: white; 
+    box-shadow: none; 
 }
 
 .container-message {
@@ -204,6 +223,7 @@ body {
 .ul-footer{
     list-style-type: none;
 }
+
 .ul-footer li {
     content: "";
 }
@@ -557,4 +577,46 @@ label #btn-navbar-cancel{
 
 .search-icon:hover {
     color: #0273FF;
+}
+
+/*--------------------------select div-------------------*/
+.btn-group{
+    padding-top: 1rem;
+}
+
+.btn-select {
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    color: var(--color-company);
+    position: relative;
+    outline: none;
+    background-color: transparent;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.btn-active {
+    background-color: var(--color-company);
+    color: white;
+}
+
+.btn-select:hover::after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 2px;
+    background-color: var(--color-company);
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+}
+
+.content-section {
+    display: none;
+    margin-top: 20px;
+}
+
+.content-section.active {
+    display: block;
 }
