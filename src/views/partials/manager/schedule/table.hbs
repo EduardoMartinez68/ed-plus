@@ -11,6 +11,7 @@
             <th>Nombre</th>
             <th>Horario</th>
             <th></th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -28,8 +29,8 @@
                     Sunday:{{sus}}--{{suf}}<br>
                 </td>
                 <td>
-                    <button class="btn btn-danger" onclick="delete_schedule('{{id}}','{{name}}','{{id_companies}}','{{id_branches}}')"><i class="fi-department fi-sr-trash"></i></button>
-                    <button class="btn btn-danger" onclick="edit_schedule('{{id}}','{{id_companies}}','{{id_branches}}')"><i class="fi-department fi-sr-pencil"></i></button>            
+                    <button class="btn btn-edit" onclick="edit_schedule('{{id}}','{{id_companies}}','{{id_branches}}')"><i class="fi-department fi-sr-pencil"></i></button>     
+                    <button class="btn btn-danger" onclick="delete_schedule('{{id}}','{{name}}','{{id_companies}}','{{id_branches}}')"><i class="fi-department fi-sr-trash"></i></button>       
                 </td>
             </tr>
         {{/each}}
@@ -39,8 +40,8 @@
 
 <script>
     async function delete_schedule(idSchedule,nameSchedule,idCompany,idBranch){
-        if(await questionMessage('Borrar horario','¿Quieres borrar el horario '+nameSchedule+' ?')){
-            window.location.href = '/fud/'+idCompany+'/'+idBranch+'/'+idSchedule+'/delete-schedule';
+        if(await questionMessage('😱 Borrar horario',`¿Quieres borrar el horario '${nameSchedule}'?`)){
+            window.location.href = `/fud/${idCompany}/${idBranch}/${idSchedule}/delete-schedule`;
         }
     }
 

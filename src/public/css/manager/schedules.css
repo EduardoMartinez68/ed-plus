@@ -115,3 +115,54 @@
         width: 120%;
     }
 }
+
+
+
+/*---------------------------------------------------------------------------------------------------*/
+/* Mobile styles */
+@media (max-width: 768px) {
+    .table-data-schedules, .my-schedules {
+        width: 100%;
+        display: block;
+        overflow-x: auto;
+        margin: 0 auto;
+    }
+
+    .table-data-schedules th, .table-data-schedules td,
+    .my-schedules th, .my-schedules td {
+        font-size: 14px;
+        padding: 8px;
+        white-space: nowrap;
+        text-align: center; /* Centrar el texto */
+    }
+}
+
+/* Extra small devices (phones, 600px and down) */
+@media (max-width: 600px) {
+    .table-data-schedules th, .table-data-schedules td,
+    .my-schedules th, .my-schedules td {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        text-align: center; /* Centrar el texto */
+    }
+
+    .table-data-schedules tr, .my-schedules tr {
+        display: block;
+        margin-bottom: 10px;
+        text-align: center; /* Centrar el contenido */
+    }
+
+    .hrs-schedule, .m-schedule {
+        display: block;
+        margin-left: 0;
+        margin-top: 5px;
+        text-align: center; /* Centrar el contenido */
+    }
+
+    .btn-add-schedules, .btn-delate-schedules {
+        width: 100%;
+        margin-top: 10px;
+        text-align: center; /* Centrar el contenido */
+    }
+}

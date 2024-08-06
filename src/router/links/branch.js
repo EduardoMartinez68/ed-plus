@@ -1016,9 +1016,15 @@ router.get('/:id_comopany/:id_branch/schedules', isLoggedIn, async (req, res) =>
         const { id_company, id_branch, id_ad } = req.params;
         const branch = await get_data_branch(req);
         const schedules = await get_schedule_branch(id_branch);
-        res.render("links/manager/employee/scheduleHome", { branch, schedules });
+
+        //this is when the user have a branch
+        if(req.user.rol_user==rolFree){
+            const branchFree=branch;
+            res.render("links/manager/employee/scheduleHome", { branchFree, schedules });
+        }else{
+            res.render("links/manager/employee/scheduleHome", { branch, schedules });
+        }
     }
-    //res.render("links/manager/employee/schedule");
 })
 
 async function get_schedule_branch(idBranch) {
@@ -1070,7 +1076,13 @@ router.get('/:id_company/:id_branch/:id_schedule/edit-schedule', isLoggedIn, asy
         const { id_company, id_branch, id_schedule } = req.params;
         const branch = await get_data_branch(req);
         const schedule = await get_data_schedule(id_schedule);
-        res.render(companyName + '/manager/employee/editSchedule', { branch, schedule });
+        //this is when the user have a branch
+        if(req.user.rol_user==rolFree){
+            const branchFree=branch;
+            res.render(companyName + '/manager/employee/editSchedule', { branchFree, schedule });
+        }else{
+            res.render(companyName + '/manager/employee/editSchedule', { branch, schedule });
+        }
     }
 })
 
@@ -1092,8 +1104,15 @@ router.get('/:id_company/:id_branch/schedules-employees', isLoggedIn, async (req
             const employees = await search_employees_branch(id_branch);
             await create_new_schedule_of_the_week(id_branch, employees, schedules[0].id); //create the new schedule of the week 
             const schedulesEmployees = await get_schedule_employees(id_branch);
+
+            //we will see if the user have ed one
             console.log(schedulesEmployees)
-            res.render("links/manager/employee/scheduleEmployees", { branch, schedules, employees, schedulesEmployees });
+            if(req.user.rol_user==rolFree){
+                const branchFree = branch;
+                res.render("links/manager/employee/scheduleEmployees", { branchFree, schedules, employees, schedulesEmployees });
+            }else{
+                res.render("links/manager/employee/scheduleEmployees", { branch, schedules, employees, schedulesEmployees });
+            }
         } else {
             //if not exist a schedule, the user go to tha web of schedule for add a schedule
             req.flash('message', 'Primero necesitas agregar un horario 👁️')

@@ -118,6 +118,18 @@ router.get('/:id/:id_branch/supplies-free', isLoggedIn, async (req, res) => {
     }
 });
 
+router.get('/:id/:id_branch/products-free', isLoggedIn, async (req, res) => {
+    const {id_branch } = req.params;
+    const branchFree = await get_data_branch(id_branch);
+    if (branchFree != null) {
+        //const supplies_products = await search_company_supplies_or_products(req, true);
+        const supplies = await get_supplies_or_features(id_branch, false)
+        res.render('links/free/supplies/supplies', { branchFree, supplies});
+    } else {
+        res.render('links/store/branchLost');
+    }
+});
+
 
 //------------------------------------combo
 router.get('/:id/:id_branch/combos-free', isLoggedIn, async (req, res) => {

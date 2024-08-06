@@ -25,112 +25,15 @@
 <br>
 
 <div class="container">
-    <div class="row">
-        {{>manager/schedule/scheduleEmployees/tableEmployees}}
-        <div class="col">
-            {{>manager/schedule/scheduleEmployees/informationSchedule}}
-            <br>
-
-            {{#each schedulesEmployees}}
-                <div class="container-schedule-employee desactive" idEmployee={{id_employees}} idSchedule="{{id_history_schedule}}">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th>Dia</th>
-                                <th>Horario</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <!--this is for know if the employee work this day-->
-                                    {{#if monday}}
-                                        <i class="fi-icon fi-sr-check-circle fi-success"></i>
-                                    {{else}}
-                                        <i class="fi-icon fi-sr-circle-xmark fi-error"></i>
-                                    {{/if}}
-                                </td>
-                                <td>Lunes</td>
-                                <td>{{ms}}--{{mf}}</td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <!--this is for know if the employee work this day-->
-                                    {{#if tuesday}}
-                                        <i class="fi-icon fi-sr-check-circle fi-success"></i>
-                                    {{else}}
-                                        <i class="fi-icon fi-sr-circle-xmark fi-error"></i>
-                                    {{/if}}
-                                </td>
-                                <td>Martes</td>
-                                <td>{{ts}}--{{tf}}</td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <!--this is for know if the employee work this day-->
-                                    {{#if wednesday}}
-                                        <i class="fi-icon fi-sr-check-circle fi-success"></i>
-                                    {{else}}
-                                        <i class="fi-icon fi-sr-circle-xmark fi-error"></i>
-                                    {{/if}}
-                                </td>
-                                <td>Miercoles</td>
-                                <td>{{ws}}--{{wf}}</td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <!--this is for know if the employee work this day-->
-                                    {{#if thursday}}
-                                        <i class="fi-icon fi-sr-check-circle fi-success"></i>
-                                    {{else}}
-                                        <i class="fi-icon fi-sr-circle-xmark fi-error"></i>
-                                    {{/if}}
-                                </td>
-                                <td>Jueves</td>
-                                <td>{{ths}}--{{thf}}</td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <!--this is for know if the employee work this day-->
-                                    {{#if friday}}
-                                        <i class="fi-icon fi-sr-check-circle fi-success"></i>
-                                    {{else}}
-                                        <i class="fi-icon fi-sr-circle-xmark fi-error"></i>
-                                    {{/if}}
-                                </td>
-                                <td>Viernes</td>
-                                <td>{{fs}}--{{ff}}</td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <!--this is for know if the employee work this day-->
-                                    {{#if saturday}}
-                                        <i class="fi-icon fi-sr-check-circle fi-success"></i>
-                                    {{else}}
-                                        <i class="fi-icon fi-sr-circle-xmark fi-error"></i>
-                                    {{/if}}
-                                </td>
-                                <td>Sabado</td>
-                                <td>{{sas}}--{{saf}}</td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <!--this is for know if the employee work this day-->
-                                    {{#if sunday}}
-                                        <i class="fi-icon fi-sr-check-circle fi-success"></i>
-                                    {{else}}
-                                        <i class="fi-icon fi-sr-circle-xmark fi-error"></i>
-                                    {{/if}}
-                                </td>
-                                <td>Domingo</td>
-                                <td>{{sus}}--{{suf}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            {{/each}}
-        </div>
+    <div class="btn-group">
+        <button class="btn-select btn-active" onclick="showSection('select-1', this)" type="button">Historial de Horario</button>
+        <button class="btn-select" onclick="showSection('select-2', this)" type="button">Horarios de empleados</button>
+    </div>
+    <div id="select-1" class="content-section active">
+        {{>manager/schedule/cardSchedule}}
+    </div>
+    <div id="select-2" class="content-section">
+        {{>manager/schedule/schedulesEmployees}}
     </div>
 </div>
 

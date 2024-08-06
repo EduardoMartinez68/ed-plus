@@ -43,9 +43,10 @@ const pgPool = new pg.Pool({
     database: APP_PG_DATABASE,
     password: APP_PG_PASSWORD,
     port: APP_PG_PORT,
+    /*
     ssl: {
         rejectUnauthorized: false,
-    }
+    }*/
     
 });
 app.use(session({
