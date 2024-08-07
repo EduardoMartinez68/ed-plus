@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarjetas de Precios</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .card-container-p1 {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .card-p1 {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 250px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-p1:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+        .card-p1 h2 {
+            margin: 0 0 10px;
+            font-size: 24px;
+        }
+        .price-p {
+            font-size: 24px; /* Tamaño grande para el precio */
+            font-weight: bold;
+            color: white; /* Color del precio */
+        }
+
+        .duration {
+            font-size: 14px; /* Tamaño más pequeño para los días */
+            color: white; /* Color del texto de los días */
+        }
+
+        .price {
+            font-size: 24px; /* Tamaño grande para el precio */
+            font-weight: bold;
+            color: #3B4ED6; /* Color del precio */
+        }
+
+        .duration {
+            font-size: 14px; /* Tamaño más pequeño para los días */
+            color: #3B4ED6; /* Color del texto de los días */
+        }
+
+        .duration-p{
+            font-size: 14px; /* Tamaño más pequeño para los días */
+            color: white; /* Color del texto de los días */
+        }
+        .card-p1 p {
+            margin: 0;
+            font-size: 10px;
+            font-weight: bold;
+            color: #333;
+        }
+        .card-p1 p samp {
+            margin: 0;
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .card-p1 ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 20px 0 0;
+        }
+        .card-p1 ul li {
+            margin-bottom: 10px;
+            font-size: 16px;
+            text-align: left;
+        }
+        .card-p1 ul li i {
+            margin-right: 10px;
+            color: #3B4ED6;
+
+        }
+        .card-p1 ul .p i {
+            margin-right: 10px;
+            color: white;
+        }
+
+        .gratis-p1 {
+            border: 1px solid #ddd;
+        }
+        .premium-p1 {
+            background: linear-gradient(135deg, #3B4ED6, #6779ff);
+            color: #ffffff;
+            border: 1px solid #3B4ED6;
+        }
+        .individual-p1 {
+            border: 1px solid #ddd;
+        }
+        .premium-p1 ul li {
+            color: #ffffff;
+            text-align: left;
+        }
+
+        .card-p1 button {
+            background-color: #3B4ED6;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+        .card-p1 button:hover {
+            background-color: #2a3b7c;
+        }
+
+        .icon-pricing{
+            width: 50%;
+            height: auto;
+            padding-bottom: 3rem;
+        }
+    </style>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.5.1/uicons-solid-rounded/css/uicons-solid-rounded.css'>
+</head>
+<body>
+    <div class="card-container-p1">
+        <!-- Tarjeta Gratis -->
+        <div class="card-p1 gratis-p1">
+            <img src="https://cdn-icons-png.flaticon.com/512/3902/3902021.png" alt=""  class="icon-pricing">
+            <hr>
+            <h2>Gratis</h2>
+            <p><span class="price">30 dias GRATIS</span><span class="duration"></span></p>
+            <ul>
+                <li><i class="fi fi-sr-check-circle"></i> Cualquier App GRATIS</li>
+                <li><i class="fi fi-sr-check-circle"></i> 1 Empresa</li>
+                <li><i class="fi fi-sr-check-circle"></i> Acceso 100% a una App</li>
+                <li><i class="fi fi-sr-check-circle"></i> 1 Dispositivo</li>
+            </ul>
+            <button>Comprar</button>
+        </div>
+
+        <!-- Tarjeta Premium -->
+        <div class="card-p1 premium-p1">
+            <img src="https://cdn-icons-png.flaticon.com/512/10273/10273278.png" alt="" class="icon-pricing">
+            <hr>
+            <h2>Premium</h2>
+            <p><span class="price-p">399$</span><span class="duration-p">/mes</span></p>
+            <ul>
+                <li class="p"><i class="fi fi-sr-check-circle"></i> 1 Empresa</li>
+                <li class="p"><i class="fi fi-sr-check-circle"></i> Todas las Apps</li>
+                <li class="p"><i class="fi fi-sr-check-circle"></i> Soporte Técnico</li>
+                <li class="p"><i class="fi fi-sr-check-circle"></i> Personalizacion 100%</li>
+                <li class="p"><i class="fi fi-sr-check-circle"></i> Dispositivos ilimitados</li>
+            </ul>
+            <button>Comprar</button>
+        </div>
+
+        <!-- Tarjeta Individual -->
+        <div class="card-p1 individual-p1">
+            <img src="https://cdn-icons-png.flaticon.com/512/3902/3902021.png" alt=""  class="icon-pricing">
+            <hr>
+            <h2>Individual</h2>
+            <p><span class="price">299$</span><span class="duration">/mes</span></p>
+            <ul>
+                <li><i class="fi fi-sr-check-circle"></i> 1 Empresa</li>
+                <li><i class="fi fi-sr-check-circle"></i> Soporte Técnico</li>
+                <li><i class="fi fi-sr-check-circle"></i> Acceso 100% a una App</li>
+                <li><i class="fi fi-sr-check-circle"></i> Comprar otra App a solo 199$</li>
+                <li><i class="fi fi-sr-check-circle"></i> 1 Dispositivo</li>
+            </ul>
+            <button>Comprar</button>
+        </div>
+    </div>
+</body>
+</html>

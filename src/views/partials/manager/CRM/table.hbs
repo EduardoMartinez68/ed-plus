@@ -1,0 +1,118 @@
+<div class="add-column-form">
+    <button id="addColumnBtn" class="btn btn-confirm-message">Añadir nueva columna <i
+            class="fi-icon fi-sr-square-plus"></i></button>
+    <button id="addColumnBtn" class="btn btn-edit">Guardar cambios<i class="fi-icon fi-sr-disk"></i></button>
+</div>
+<div class="board-wrapper">
+    <div class="board">
+        <div class="column" id="nuevo">
+            <div class="title-column">
+                <h4>Nuevo</h4>
+                <button class="dropdown-btn"><i class="fi fi-br-menu-dots"></i></button>
+                <div class="dropdown-menu">
+                    <ul>
+                        <li><a href="#" class="dropdown-item">Cambiar nombre</a></li>
+                        <li><a href="#" class="dropdown-item">Mover adelante</a></li>
+                        <li><a href="#" class="dropdown-item">Mover atrás</a></li>
+                        <li><a href="#" class="dropdown-item">Eliminar</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr>
+            <div class="task">
+                <div class="task-header">
+                    <span class="task-name">Eduardo Antonio Martinez Ortiz</span>
+                    <button class="edit-btn">Editar</button>
+                </div>
+                <div class="task-date">Fecha: 2024-08-05</div>
+                <div class="task-progress">Completado: 50%</div>
+            </div>
+            <div class="task">
+                <div class="task-header">
+                    <span class="task-name">Miguel Alexander</span>
+                    <button class="edit-btn">Editar</button>
+                </div>
+                <div class="task-date">Fecha: 2024-08-05</div>
+                <div class="task-progress">Completado: 50%</div>
+            </div>
+            <div class="task">
+                <div class="task-header">
+                    <span class="task-name">Omar Sebastian Martinez</span>
+                    <button class="edit-btn">Editar</button>
+                </div>
+                <div class="task-date">Fecha: 2024-08-05</div>
+                <div class="task-progress">Completado: 50%</div>
+            </div>
+        </div>
+        <div class="column" id="calificado">
+            <h3>Calificado</h3>
+            <hr>
+        </div>
+        <div class="column" id="propuesta">
+            <h3>Propuesta</h3>
+            <hr>
+        </div>
+        <div class="column" id="ganado">
+            <h3>Ganado</h3>
+            <hr>
+        </div>
+        <div class="column" id="ganado">
+            <h3>Ganado</h3>
+            <hr>
+        </div>
+        <div class="column" id="ganado">
+            <h3>Ganado</h3>
+            <hr>
+        </div>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+<script>
+    const columns = document.querySelectorAll('.column');
+
+    columns.forEach(column => {
+        new Sortable(column, {
+            group: 'shared',
+            animation: 150,
+            onEnd: function (evt) {
+                console.log('Elemento movido:', evt.item);
+            }
+        });
+    });
+
+    document.getElementById('addColumnBtn').addEventListener('click', function () {
+        const columnName = document.getElementById('newColumnName').value.trim();
+        if (columnName) {
+            const newColumn = document.createElement('div');
+            newColumn.classList.add('column');
+            newColumn.innerHTML = `<h3>${columnName}</h3><hr>`;
+            document.querySelector('.board').appendChild(newColumn);
+
+            new Sortable(newColumn, {
+                group: 'shared',
+                animation: 150,
+                onEnd: function (evt) {
+                    console.log('Elemento movido:', evt.item);
+                }
+            });
+
+            document.getElementById('newColumnName').value = '';
+        }
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.dropdown-btn').forEach(button => {
+            button.addEventListener('click', function (e) {
+                e.stopPropagation();
+                this.classList.toggle('active');
+            });
+        });
+
+        document.addEventListener('click', function () {
+            document.querySelectorAll('.dropdown-btn.active').forEach(button => {
+                button.classList.remove('active');
+            });
+        });
+    });
+</script>

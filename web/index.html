@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promoción CRM</title>
+
+    <!---icons-->
+    <link rel='stylesheet'
+        href='https://cdn-uicons.flaticon.com/2.5.1/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.5.1/uicons-bold-rounded/css/uicons-bold-rounded.css'>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.5.1/uicons-regular-straight/css/uicons-regular-straight.css'>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.5.1/uicons-solid-rounded/css/uicons-solid-rounded.css'>
+
+    <!---font-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Zain:wght@200;300;400;700;800;900&display=swap" rel="stylesheet">
+
+    <!---my styles-->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/navbar.css">
+    <link rel="stylesheet" href="css/apps.css">
+    <link rel="stylesheet" href="css/pricing.css">
+</head>
+
+<body>
+    <div class="navbar-navbar">
+        <div class="logo-navbar">
+            <img src="img/icon.png" alt="Logo">
+        </div>
+        <div class="menu-navbar">
+            <div class="dropdown-navbar">
+                <a href="#">Aplicaciones <i class="fi fi-rr-angle-down"></i></a>
+                <div class="dropdown-content-navbar">
+                    <div class="submenu-navbar">
+                        <a href="#">Grupo 1 <i class="fi fi-rs-angle-right"></i></a>
+                        <div class="submenu-content-navbar">
+                            <a href="#">Aplicación 1.1</a>
+                            <a href="#">Aplicación 1.2</a>
+                        </div>
+                    </div>
+                    <div class="submenu-navbar">
+                        <a href="#">Grupo 2 <i class="fi fi-rs-angle-right"></i></a>
+                        <div class="submenu-content-navbar">
+                            <a href="#">Aplicación 2.1</a>
+                            <a href="#">Aplicación 2.2</a>
+                        </div>
+                    </div>
+                    <div class="submenu-navbar">
+                        <a href="#">Grupo 3 <i class="fi fi-rs-angle-right"></i></a>
+                        <div class="submenu-content-navbar">
+                            <a href="#">Aplicación 3.1</a>
+                            <a href="#">Aplicación 3.2</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <a href="#" class="empresa-navbar">Empresa</a>
+            <a href="#" class="precios-navbar">Precios</a>
+            <a href="#" class="iniciar-sesion-navbar">Iniciar sesión</a>
+            <a href="#" class="contact-sales-navbar-2">Empezar Gratis</a>
+        </div>
+    </div>
+
+    <br><br><br><br><br>
+    <div class="body-title">
+        <div class="container">
+            <div class="title"><b>TODO TU NEGOCIO EN UNA SOLA PLATAFORMA</b></div>
+            <div class="subtitle">
+                <p style="font-family: 'Zain', sans-serif; font-size: 2rem;"><span style="color: #6161FF; font-family: 'Zain', sans-serif; font-size: 2rem;"><i class="fi fi-br-plus"></i> Más de 30 apps</span> para tu empresa</p>
+            </div>
+            
+            
+            <div class="container">
+            <div class="menu active">
+                <div class="container-app">
+                    <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/CRM')">
+                        <img src="https://cdn-icons-png.flaticon.com/512/747/747563.png" alt="">
+                        <span>CRM</span>
+                    </div>
+                    <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/reports')">
+                        <img src="https://cdn-icons-png.flaticon.com/512/12448/12448233.png" alt="Departamentos">
+                        <span>Contabilidad</span>
+                    </div>
+                    <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/products-free')">
+                        <img src="https://cdn-icons-png.flaticon.com/512/7021/7021224.png" alt="Insumos">
+                        <span>Inventarios</span>
+                    </div>
+                    <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/products-free')">
+                        <img src="https://cdn-icons-png.flaticon.com/512/679/679922.png" alt="Insumos">
+                        <span>Productos</span>
+                    </div>
+                    <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/marketplace')">
+                        <img src="https://cdn-icons-png.flaticon.com/512/4372/4372862.png" alt="Áreas">
+                        <span>ERP</span>
+                    </div>
+                    <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/combos-free')">
+                        <img src="https://cdn-icons-png.flaticon.com/512/4682/4682602.png" alt="Combos">
+                        <span>Restaurantes</span>
+                    </div>
+                    <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/providers-free')">
+                        <img src=" https://cdn-icons-png.flaticon.com/512/2554/2554978.png" alt="Combos">
+                        <span>Provedores</span>
+                    </div>
+                    <div class="app-icon" onclick="nextWeb('/home')">
+                        <img src="https://cdn-icons-png.flaticon.com/512/6712/6712868.png" alt="Insumos">
+                        <span>Punto de Venta</span>
+                    </div>
+                    <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/employees-branch')">
+                        <img src="https://cdn-icons-png.flaticon.com/512/9187/9187532.png" alt="">
+                        <span>Empleados</span>
+                    </div>
+                    <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/schedules-employees')">
+                        <img src="https://cdn-icons-png.flaticon.com/512/5246/5246231.png" alt="Insumos">
+                        <span>Citas y Reuiniones</span>
+                    </div>
+                    <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/employee-department')">
+                        <img src="https://cdn-icons-png.flaticon.com/512/5957/5957016.png" alt="Departamentos">
+                        <span>Recursos Humanos</span>
+                    </div>
+                    <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/0/movements')">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2535/2535556.png" alt="Departamentos">
+                        <span>Gestion de Tarreas</span>
+                    </div>
+                    <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/employees-branch')">
+                        <img src="https://cdn-icons-png.flaticon.com/512/11815/11815356.png" alt="">
+                        <span>Clientes</span>
+                    </div>
+                    <div class="app-icon" onclick="nextWeb('myrestaurant/{{id_companies}}/{{id}}')">
+                        <img src="https://cdn-icons-png.flaticon.com/512/3176/3176363.png" alt="Repartidores">
+                        <span>Ecommerce</span>
+                    </div>
+                    <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/ad')">
+                        <img src="https://cdn-icons-png.flaticon.com/512/6165/6165633.png" alt="Movimientos">
+                        <span>Marketing</span>
+                    </div>
+                    <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/0/sales')">
+                        <img src="https://cdn-icons-png.flaticon.com/512/5305/5305244.png" alt="Departamentos">
+                        <span>Ventas</span>
+                    </div>
+                    <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/supplies-free')">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1147/1147832.png" alt="Insumos">
+                        <span>Insumos</span>
+                    </div>
+                    <div class="app-icon" onclick="nextWeb('/home')">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1198/1198348.png" alt="Insumos">
+                        <span>ED Cloud</span>
+                    </div>
+                </div>
+            </div>
+            </div>
+            
+            
+            
+            
+            
+            
+            
+            <br><br><br>
+            <div class="buttons">
+                <a href="#">Empieza ahora <i class="fi fi-rr-arrow-right"></i></a>
+            </div>
+            <center><label for="">Obtén acceso completo ✦ No se necesita tarjeta de crédito</label></center>
+        </div>
+    </div>
+
+    <div class="container">
+        <br><br><br><br>
+        <div class="container area">
+            <h4 class="area-title">Imagina una gran variedad de aplicaciones empresariales a tu alcance.</h4>
+            <p class="description">
+                ¿Quieres mejorar algo? Hay una aplicación justo para eso.
+                <b>Sin complicaciones, sin costo y puedes instalarla con un solo clic <i class="fi fi-sr-interactive"></i><b></b>
+            </p>
+        </div>
+    </div>
+
+    <div class="body-2">
+        <br><br><br>
+        <div class="card-object">
+            <div class="card-content">
+              <h4 class="card-title">Gestiona todo, desde la estrategia hasta las tareas, para superar tus objetivos</h4>
+              <hr>
+              <p>Funciones principales</p>
+              <ul>
+                <li><i class="fi fi-sr-check-circle"></i> Gestión de proyectos</li>
+                <li><i class="fi fi-sr-check-circle"></i> Gestión de recursos</li>
+                <li><i class="fi fi-sr-check-circle"></i> Solicitudes y aprobaciones</li>
+                <li><i class="fi fi-sr-check-circle"></i> Flujos de trabajo personalizados</li>
+              </ul>
+            </div>
+            <div class="card-image" style="background-image: url(https://dapulse-res.cloudinary.com/image/upload/f_auto,q_auto/remote_mondaycom_static/uploads/wm-card-img-card-full2_ES.png);"></div>
+        </div>
+        <div class="card-object">
+            <div class="card-content">
+              <h4 class="card-title">Crea tu propia interfaz, totalmente personalizada</h4>
+              <hr>
+              <p>Funciones principales</p>
+              <ul>
+                <li><i class="fi fi-sr-check-circle"></i> Personalizacion de colores</li>
+                <li><i class="fi fi-sr-check-circle"></i> Eleguir tu navbar</li>
+                <li><i class="fi fi-sr-check-circle"></i> Eligue las aplicaciones que necesitas</li>
+                <li><i class="fi fi-sr-check-circle"></i> Crea una interfaz para cada empleado</li>
+              </ul>
+            </div>
+            <div class="card-image" style="background-image: url(https://dapulse-res.cloudinary.com/image/upload/f_auto,q_auto/remote_mondaycom_static/uploads/wm-card-img-card-full2_ES.png);"></div>
+        </div>
+        <div class="card-object">
+            <div class="card-image" style="background-image: url(https://dapulse-res.cloudinary.com/image/upload/f_auto,q_auto/remote_mondaycom_static/uploads/wm-card-img-card-full2_ES.png);"></div>
+            <div class="card-content">
+              <h4 class="card-title">Gestiona todo, desde la estrategia hasta las tareas, para superar tus objetivos</h4>
+              <hr>
+              <p>Funciones principales</p>
+              <ul>
+                <li><i class="fi fi-sr-check-circle"></i> Gestión de proyectos</li>
+                <li><i class="fi fi-sr-check-circle"></i> Gestión de recursos</li>
+                <li><i class="fi fi-sr-check-circle"></i> Solicitudes y aprobaciones</li>
+                <li><i class="fi fi-sr-check-circle"></i> Flujos de trabajo personalizados</li>
+              </ul>
+            </div>
+        </div>
+        <br><br><br>
+    </div>
+    <br><br>
+
+
+    <div class="card-2">
+        <div class="card-2-content">
+          <h4>Realiza ventas más fácil que nunca</h4>
+          <p>Con una interfaz amigable y diseñada para la máxima eficiencia, llevar a cabo tus transacciones nunca ha sido tan sencillo y rápido. Cada paso se simplifica para que puedas centrarte en lo que realmente importa: tu negocio.</p>
+          <hr>
+          <ul>
+            <li><i class="fi fi-sr-check-circle"></i>  <strong>Conecta Periféricos:</strong> Conecta lectores, básculas e impresoras para simplificar tu labor y mejorar tu servicio.</li>
+            <li><i class="fi fi-sr-check-circle"></i>  <strong>Multiservicios:</strong> Ofrece recarga de saldo y pago de servicios básicos a tus clientes.</li>
+          </ul>
+          <button>Contactar con un asesor</button>
+        </div>
+        <div class="card-2-image">
+          <img src="https://via.placeholder.com/300" alt="Imagen descriptiva">
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="subtitle">
+            <p>¿Listo para comenzar?  <span style="color: #6161FF;">Empieza gratis.</span></p>
+        </div>
+        <label>
+            Tableros y flujos de trabajo ilimitados.<b>No se necesita tarjeta de crédito.</b>
+        </label>
+        <br><br>
+        <div class="card-container-p1">
+            <!-- Tarjeta Gratis -->
+            <div class="card-p1 gratis-p1">
+                <img src="https://cdn-icons-png.flaticon.com/512/3902/3902021.png" alt=""  class="icon-pricing">
+                <hr>
+                <h2>Gratis</h2>
+                <p><span class="price">30 dias GRATIS</span><span class="duration"></span></p>
+                <ul>
+                    <li><i class="fi fi-sr-check-circle"></i> Cualquier App GRATIS</li>
+                    <li><i class="fi fi-sr-check-circle"></i> 1 Empresa</li>
+                    <li><i class="fi fi-sr-check-circle"></i> Acceso 100% a una App</li>
+                    <li><i class="fi fi-sr-check-circle"></i> 1 Dispositivo</li>
+                </ul>
+                <button>Comprar</button>
+            </div>
+
+            <!-- Tarjeta Premium -->
+            <div class="card-p1 premium-p1">
+                <img src="https://cdn-icons-png.flaticon.com/512/10273/10273278.png" alt="" class="icon-pricing">
+                <hr>
+                <h2>Premium</h2>
+                <p><span class="price-p">399$</span><span class="duration-p">/mes</span></p>
+                <ul>
+                    <li class="p"><i class="fi fi-sr-check-circle"></i> 1 Empresa</li>
+                    <li class="p"><i class="fi fi-sr-check-circle"></i> Todas las Apps</li>
+                    <li class="p"><i class="fi fi-sr-check-circle"></i> Soporte Técnico</li>
+                    <li class="p"><i class="fi fi-sr-check-circle"></i> Personalizacion 100%</li>
+                    <li class="p"><i class="fi fi-sr-check-circle"></i> Dispositivos ilimitados</li>
+                </ul>
+                <button>Comprar</button>
+            </div>
+
+            <!-- Tarjeta Individual -->
+            <div class="card-p1 individual-p1">
+                <img src="https://cdn-icons-png.flaticon.com/512/3902/3902021.png" alt=""  class="icon-pricing">
+                <hr>
+                <h2>Individual</h2>
+                <p><span class="price">299$</span><span class="duration">/mes</span></p>
+                <ul>
+                    <li><i class="fi fi-sr-check-circle"></i> 1 Empresa</li>
+                    <li><i class="fi fi-sr-check-circle"></i> Soporte Técnico</li>
+                    <li><i class="fi fi-sr-check-circle"></i> Acceso 100% a una App</li>
+                    <li><i class="fi fi-sr-check-circle"></i> Comprar otra App a solo 199$</li>
+                    <li><i class="fi fi-sr-check-circle"></i> 1 Dispositivo</li>
+                </ul>
+                <button>Comprar</button>
+            </div>
+        </div>
+    </div>
+
+    <br><br><br><br>
+
+
+    <footer class="footer-p1">
+        <p>❤️ Tecnología con un toque de magia</p>
+    </footer>
+    <script src="js/pricing.js"></script>
+</body>
+
+</html>

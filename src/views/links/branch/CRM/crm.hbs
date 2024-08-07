@@ -1,0 +1,18 @@
+
+<link rel="stylesheet" href="/css/task/tablet.css">
+
+
+<div class="btn-group">
+    <button class="btn-select btn-active" onclick="showSection('select-1', this)" type="button"><i class="fi-icon fi-sr-life-ring"></i> CRM</button>
+    <button class="btn-select" onclick="showSection('select-2', this)" type="button"><i class="fi-icon fi-sr-user-add"></i> Añadir nuevo cliente Potencial</button>
+    <button class="btn-select" onclick="showSection('select-3', this)" type="button"><i class="fi-icon fi-sr-calendar-clock"></i> Añadir nueva reunion</button>
+</div>
+<div id="select-1" class="content-section active">
+    {{>manager/CRM/table}}
+</div>
+<div id="select-2" class="content-section">
+    {{>manager/CRM/formCustomer}}
+</div>
+<div id="select-3" class="content-section">
+    {{>manager/CRM/formDate}}
+</div>

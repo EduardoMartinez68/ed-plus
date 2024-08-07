@@ -1,0 +1,93 @@
+<!---
+<style>
+    .form-container {
+        max-width: 50%;
+        margin: 50px auto;
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e3e3e3;
+    }
+
+    .form-header {
+        margin-bottom: 20px;
+        text-align: center;
+        font-weight: bold;
+        color: #333;
+        border-bottom: 2px solid var(--color-company);
+        padding-bottom: 10px;
+    }
+
+    .form-group label {
+        font-weight: bold;
+        color: #555;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        border-radius: 8px;
+        border: 1px solid #e3e3e3;
+        padding: 10px;
+    }
+
+    .form-group textarea {
+        resize: none;
+    }
+</style>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/css/bootstrap.min.css">
+-->
+<style>
+    .div-container-right{
+        text-align: right;
+    }
+</style>
+<div class="container">
+<div class="card">
+    <div class="card-body">
+        <h2 class="form-header">Nueva oportunidad</h2>
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home"
+                    aria-selected="true">Información Personal</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#follow" role="tab" aria-controls="follow"
+                    aria-selected="false">Seguimiento</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile"
+                    aria-selected="false">Información Adicional</a>
+            </li>
+        </ul>
+        <form action="" method="post">
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                    {{>manager/CRM/formCustomer1}}
+                </div>
+                <div class="tab-pane fade" id="follow" role="tabpanel" aria-labelledby="profile-tab">
+                    {{>manager/CRM/formCustomer3}}
+                </div>
+                <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                    {{>manager/CRM/formCustomer2}}
+                </div>
+            </div>
+            <div class="div-container-right">
+                <button type="submit" class="btn btn-confirm-message">Guardar</button>
+            </div>
+        </form>
+    </div>
+</div>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#myTab a').on('click', function (e) {
+            e.preventDefault();
+            $(this).tab('show');
+        });
+    });
+</script>

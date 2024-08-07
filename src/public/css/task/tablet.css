@@ -1,0 +1,144 @@
+.board-wrapper {
+    overflow-x: auto;
+    white-space: nowrap;
+    height: 100vh;
+    width: 100%;
+}
+
+.board {
+    display: inline-flex;
+    margin: 20px;
+    height: 100%;
+}
+.title-column {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+
+.title-column h4 {
+    margin: 0;
+}
+
+.title-column button {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    padding: 10px;
+    list-style: none;
+}
+
+.dropdown-menu ul {
+    padding: 0;
+    margin: 0;
+}
+
+.dropdown-menu li {
+    padding: 5px 0;
+}
+
+.dropdown-menu a {
+    color: #333;
+    text-decoration: none;
+}
+
+.dropdown-menu a:hover {
+    text-decoration: underline;
+}
+
+.title-column .dropdown-btn.active + .dropdown-menu {
+    display: block;
+}
+
+
+.column {
+    background-color: transparent;
+    border-radius: 5px;
+    width: 400px;
+    padding: 10px;
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 10px;
+}
+
+.column h3 {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.task {
+    background-color: white;
+    color: black;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    text-align: left;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.task:hover {
+    background-color: rgb(228, 226, 226);
+}
+
+.task-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.task-name {
+    font-weight: bold;
+    text-align: left;
+}
+
+.task-date {
+    text-align: left;
+    margin-top: 5px;
+    font-size: 0.9em;
+}
+
+.task-progress {
+    text-align: left;
+    margin-top: 5px;
+    font-size: 0.9em;
+}
+
+.edit-btn {
+    background-color: #ffc107;
+    color: black;
+    border: none;
+    border-radius: 3px;
+    padding: 2px 5px;
+    cursor: pointer;
+}
+
+.edit-btn:hover {
+    background-color: #e0a800;
+}
+
+.add-column-form {
+    text-align: right;
+    margin: 20px 0;
+}
+
+.add-column-form input {
+    margin-right: 10px;
+}
+
+.board hr {
+    margin-bottom: 15px;
+}

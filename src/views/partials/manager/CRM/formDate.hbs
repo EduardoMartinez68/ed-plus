@@ -1,0 +1,46 @@
+<div class="container">
+    <div class="card">
+        <div class="card-body">
+            <form>
+                <h2 class="form-header">Nueva Cita</h2>
+                <div class="form-group">
+                    <label for="meetingSubject">Asunto *</label>
+                    <input type="text" class="form-control" id="meetingSubject" placeholder="Asunto de la reunión" required>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col">
+                            <label for="meetingDate">Fecha y Hora *</label>
+                            <input type="datetime-local" class="form-control" id="meetingDate" required>
+                        </div>
+                        <div class="col">
+                            <label for="meetingDate">Duración en minutos *</label>
+                            <input type="number" class="form-control" id="meetingDate" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="clientName">Nombre del Cliente *</label>
+                    <input type="text" class="form-control" id="clientName" placeholder="Nombre del cliente" required>
+                </div>
+                <div class="form-group">
+                    <label for="clientEmail">Correo Electrónico *</label>
+                    <input type="email" class="form-control" id="clientEmail"
+                        placeholder="Correo electrónico del cliente" required>
+                </div>
+                <div class="form-group">
+                    <label for="meetingLocation">Ubicación</label>
+                    <input type="text" class="form-control" id="meetingLocation" placeholder="Ubicación de la reunión">
+                </div>
+                <div class="form-group">
+                    <label for="meetingNotes">Notas</label>
+                    <textarea class="form-control" id="meetingNotes" rows="5"
+                        placeholder="Notas adicionales..."></textarea>
+                </div>
+                <div class="div-container-right">
+                    <button type="submit" class="btn btn-confirm-message">Guardar Reunión</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
