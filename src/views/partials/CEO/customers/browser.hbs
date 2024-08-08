@@ -1,82 +1,57 @@
-<!--
-<center>
-  <table class="table">
-    <colgroup>
-        <col style="width: 40%;">
-        <col style="width: 40%;">
-        <col style="width: 5%;">
-        <col style="width: 8%;">
-        <col style="width: 10%;">
-    </colgroup>
-    <thead>
-      <tr>
-        <th>
-            <label for=""><i class="fi-icon fi-sr-envelope"></i> customer email</label>
-            <input type="text" class="form-control" placeholder="customer email" name="email" id="search">
-        </th>
-        <th>
-            <label for=""><i class="fi-icon fi-ss-flag"></i> Country</label>
-            <select class="form-control" id="select-country">
-                <option value="-1" id="-1">All</option>
-                {{#each country}}
-                    <option value="{{id}}" id="{{id}}">{{name}}</option>
-                {{/each}}
-            </select>
-        </th> 
-        <th>
-            <br>
-            <button class="btn" onclick="search_combo()"><i class="fi-icon fi-rr-search"></i></button>
-        </th>
-        <th>
-            <br>
-            {{#each company}}
-              <button class="btn-add" id="{{id}}" onclick="nextWeb(this.id+'/add-customer')">+</button>
-            {{/each}}
-        </th>
-        <th></th>
-      </tr>
-    </thead>
-
-    <tbody>
-      <tr>
-      </tr>
-    </tbody>
-  </table>
-</center>
--->
-
-
-
-<center>
-  <table class="table">
-    <colgroup>
-        <col style="width: 50%;">
-        <col style="width: 5%;">
-        <col style="width: 8%;">
-    </colgroup>
-    <thead>
-      <tr>
-        <th>
-            <label for=""><i class="fi-icon fi-sr-envelope"></i> customer email</label>
-            <input type="text" class="form-control" placeholder="customer email" name="email" id="search">
-        </th>
-        <th>
-            <br>
-            <button class="btn" onclick="search_browser()"><i class="fi-icon fi-rr-search"></i></button>
-        </th>
-        <th>
-            <br>
-            {{#each company}}
-              <button class="btn-add" id="{{id}}" onclick="nextWeb(this.id+'/add-customer')">+</button>
-            {{/each}}
-        </th>
-        <th></th>
-      </tr>
-    </thead>
-
-    <tbody>
-      <tr>
-      </tr>
-    </tbody>
-  </table>
-</center>
+<style>
+        .search-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: #f5f5f5;
+        }
+        .search-input {
+            border: none;
+            outline: none;
+            background: none;
+            width: 100%;
+        }
+        .search-button {
+            background: none;
+            border: none;
+            color: #636F76;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        .search-button i {
+            font-size: 20px;
+        }
+        .add-client-btn {
+          top: -10px;
+            height: 50%;
+            margin-left: 10px;
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .add-client-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+<div class="container mt-5">
+    <div class="d-flex justify-content-between">
+        <div class="search-container">
+            <button class="search-button"><i class="fi-icon fi-rr-search"></i></button>
+            <input type="text" class="search-input" placeholder="Buscar por email...">
+            <button class="search-button"><i class="fi-icon fi-rr-search"></i></button>
+        </div>
+        {{#each company}}
+          <button class="btn btn-confirm-message" id="{{id}}" onclick="nextWeb(this.id+'/add-customer')">+</button>
+        {{/each}}
+        {{#each branchFree}}
+          <button class="add-client-btn" onclick="nextWeb('{{id_companies}}/add-customer')">+</button>
+        {{/each}}
+    </div>
+</div>
+<br><br>

@@ -36,7 +36,7 @@
     border: 1px solid #ddd;
     border-radius: 4px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    z-index: 1;
+    z-index: 2;
     padding: 10px;
     list-style: none;
 }
@@ -117,7 +117,117 @@
     font-size: 0.9em;
 }
 
+/**/
+.task {
+    height: 150px;
+    background-color: white;
+    color: black;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    text-align: left;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    position: relative; /* Necesario para el posicionamiento de la etiqueta */
+}
+
+.task:hover {
+    background-color: rgb(228, 226, 226);
+}
+
+.task-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1;
+}
+
+.task-name {
+    font-weight: bold;
+    text-align: left;
+    z-index: 1;
+}
+
+.task-date {
+    text-align: left;
+    margin-top: 5px;
+    font-size: 0.9em;
+    z-index: 1;
+}
+
+.task-progress {
+    text-align: left;
+    margin-top: 5px;
+    font-size: 0.9em;
+    z-index: 1;
+}
+
+.task-badge {
+    position: absolute; /* Posicionamiento absoluto dentro del contenedor */
+    top: 0px; /* Ajusta según el espacio que desees desde la parte superior */
+    right: 0; /* Ajusta para posicionar la etiqueta a la derecha del contenedor */ /* Color azul */
+    color: white;
+    padding: 5px 10px;
+    font-size: 0.8em;
+    white-space: nowrap; /* Evita que el texto se rompa en varias líneas */
+    width: 100%;
+    height: 10px;
+    z-index: 0;
+}
+
+.appointment{
+    position: absolute;
+    top: 70%; /* Ajusta según el espacio que desees desde la parte superior */
+    right: 100px; /* Ajusta para posicionar la etiqueta a la derecha del contenedor */ /* Color azul */
+    color: rgb(0, 0, 0);
+    font-size: 0.8em;
+}
+
+.img-employee {
+    position: absolute;
+    top: 40%; /* Ajusta según el espacio que desees desde la parte superior */
+    right: 2px; /* Ajusta para posicionar la etiqueta a la derecha del contenedor */
+    border-radius: 50%; /* Hace que el contenedor sea circular */
+    overflow: hidden; /* Oculta cualquier contenido que sobresalga del borde circular */
+    display: flex; /* Centra la imagen dentro del contenedor */
+    justify-content: center;
+    align-items: center;
+}
+
+.img-employee img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+.stark{
+    position: absolute; /* Posicionamiento absoluto dentro del contenedor */
+    top: 70%; /* Ajusta según el espacio que desees desde la parte superior */
+    right: 75%; /* Ajusta para posicionar la etiqueta a la derecha del contenedor */ /* Color azul */
+    color: #ffc107;
+    padding: 5px 10px;
+    font-size: 0.8em;
+    text-align: left;
+}
+
+.products{
+    background-color: rgba(6, 255, 118, 0.377);
+    border-radius: 25px;
+    color: rgba(0, 0, 0, 0.4);
+    text-align: center;
+    width: 20%;
+    font-size: 0.8rem;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+/**/
 .edit-btn {
+    position: absolute;
+    top: 15px;
+    right: 5%;
     background-color: #ffc107;
     color: black;
     border: none;

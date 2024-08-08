@@ -8,10 +8,10 @@
     </colgroup>
     <thead>
       <tr>
-        <th>Name <i class="fi-icon fi-sr-restaurant"></i></th>
-        <th>email <i class="fi-icon fi-sr-envelope"></i></th>
-        <th>cellphone/phone <i class="fi-icon fi-br-smartphone"></i></th>
-        <th>point<i class="fi-icon fi-sr-coins"></i></th>
+        <th>Nombre <i class="fi-icon fi-sr-restaurant"></i></th>
+        <th>correo electronico <i class="fi-icon fi-sr-envelope"></i></th>
+        <th>celular/telefono <i class="fi-icon fi-br-smartphone"></i></th>
+        <th>puntos<i class="fi-icon fi-sr-coins"></i></th>
         <th></th>
       </tr>
     </thead>
@@ -24,8 +24,8 @@
         <td>{{cell_phone}}/{{phone}}</td>
         <td>{{points}}</td>
         <td>
+            <button class="btn btn-edit" id="{{id}}" onclick="edit_customer(this.id,'{{id_companies}}')"><i class="fi-department fi-sr-pencil"></i></button>
             <button class="btn btn-danger" id="{{id}}" onclick="delete_customer(this.id,'{{id_companies}}','{{email}}')"><i class="fi-department fi-sr-trash"></i></button>
-            <button class="btn btn-danger" id="{{id}}" onclick="edit_customer(this.id,'{{id_companies}}')"><i class="fi-department fi-sr-pencil"></i></button>
         </td>     
       </tr>
     {{/each}}
@@ -35,7 +35,7 @@
 
 <script>
   async function delete_customer(idCustomer,idCompany,email){
-      if(await questionMessage(`Delete to ${email}`,'Do you want to delete to this customer?')){
+      if(await questionMessage(`😱 Eliminar a ${email}`,'¿Quieres eliminar a este cliente?')){
         window.location.href = "/fud/"+idCompany+"/"+idCustomer+"/delete-customer";
       }
   }

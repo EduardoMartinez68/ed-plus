@@ -56,6 +56,13 @@ const {
     update_ad
 } = require('../../services/ad');
 
+
+//functions customers
+const {
+    searc_all_customers,
+} = require('../../services/customers');
+
+
 //functions food department
 const {
     get_department,
@@ -625,7 +632,14 @@ router.get('/:id_company/:id_branch/customer', isLoggedIn, async (req, res) => {
         const { id_company } = req.params;
         const branch = await get_data_branch(req);
         const customers = await searc_all_customers(id_company)
-        res.render('links/branch/customers/customers', { customers, branch });
+
+        //we will see if the user have a subscription one 
+        if(req.user.rol_user==rolFree){
+            const branchFree=branch;
+            res.render('links/branch/customers/customers', { customers, branchFree });
+        }else{
+            res.render('links/branch/customers/customers', { customers, branch });
+        }
     }
 })
 
@@ -1338,7 +1352,7 @@ router.get('/:id_company/:id_branch/:id_provider/delete-provider', isLoggedIn, a
     }
 })
 
-/*store online*/
+/*store online customers*/ 
 router.get('/myrestaurant/:id_company/:id_branch', async (req, res) => {
     const { id_company, id_branch } = req.params;
     const dataCompany=await get_data_company_with_id(id_company);
