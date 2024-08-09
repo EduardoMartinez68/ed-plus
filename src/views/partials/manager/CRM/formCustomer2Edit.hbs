@@ -1,0 +1,57 @@
+{{#each customer}}
+
+<!--if type_customer is true, the customer is a company else the customer is individual--->
+{{#if type_customer}}
+    <div class="form-group" data-toggle="buttons">
+    <label class="btn">
+        <input type="radio" name="userType" id="individual" autocomplete="on" value="0"> Individual
+    </label>
+    <label class="btn">
+        <input type="radio" name="userType" id="company" autocomplete="off" value="1" checked> Compañía
+    </label>
+    </div>
+{{else}}
+    <div class="form-group" data-toggle="buttons">
+    <label class="btn">
+        <input type="radio" name="userType" id="individual" autocomplete="on" value="0" checked> Individual
+    </label>
+    <label class="btn">
+        <input type="radio" name="userType" id="company" autocomplete="off" value="1"> Compañía
+    </label>
+    </div>
+{{/if}}
+
+
+<div class="form-group">
+    <label for="customerName">Nombre de la empresa</label>
+    <input type="text" class="form-control" id="customerName" placeholder="Nombre de la empresa" maxlength="255" name="company_name" value="{{company_name}}">
+</div>
+<div class="form-group">
+    <label for="email">Dirección</label>
+    <input type="email" class="form-control" id="email" placeholder="Dirección de la empresa" name="company_address" value="{{company_address}}">
+</div>
+<div class="form-group">
+    <div class="row">
+        <div class="col">
+            <label for="website">Sitio web</label>
+            <input type="text" class="form-control" id="website" placeholder="Sitio web" name="website" value="{{website}}">
+        </div>
+        <div class="col">
+            <label for="contactName">Nombre del contacto</label>
+            <input type="text" class="form-control" id="contactName" placeholder="Nombre del contacto" maxlength="255" name="contact_name" value="{{contact_name}}">
+        </div>
+    </div>
+</div>
+<div class="form-group">
+    <div class="row">
+        <div class="col">
+            <label for="closurePercentage">Celular</label>
+            <input type="number" class="form-control" id="closurePercentage" placeholder="Celular de la empresa" maxlength="20" name="company_cellphone" value="{{company_cellphone}}">
+        </div>
+        <div class="col">
+            <label for="phone">Teléfono</label>
+            <input type="tel" class="form-control" id="phone" placeholder="Teléfono de la empresa" maxlength="20" name="company_phone" value="{{company_phone}}">
+        </div>
+    </div>
+</div>
+{{/each}}

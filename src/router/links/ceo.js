@@ -64,8 +64,6 @@ const {
     delate_product_category,
 } = require('../../services/foodCategory');
 
-
-
 //functions combos
 const {
     get_all_combos,
@@ -128,6 +126,9 @@ const {
     this_company_is_of_this_user,
 } = require('../../services/company');
 
+const {
+    search_customers,
+} = require('../../services/customers');
 /* 
 *----------------------links-----------------*/
 const rolFree=0
@@ -1386,7 +1387,7 @@ router.get('/:id_company/:id_provider/delete-provider', isLoggedIn, async (req, 
 //----------------------------------------------------------------customers
 router.get('/:id/customers-company', isLoggedIn, async (req, res) => {
     const { id } = req.params;
-    const customers = await searc_all_customers(id)
+    const customers = await search_all_customers(id)
     const country = await get_country()
     const company = [{ id }]
     res.render("links/manager/customers/customers", { company, customers, country });
@@ -1420,7 +1421,7 @@ router.get('/:id/:idCustomer/edit-customer', isLoggedIn, async (req, res) => {
     const { idCustomer } = req.params;
     const company = await check_company(req);
     const country = await get_country()
-    const customer = await searc_customers(idCustomer)
+    const customer = await search_customers(idCustomer)
     res.render("links/manager/customers/editCustomer", { customer, country, company });
 })
 

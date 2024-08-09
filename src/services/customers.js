@@ -2,7 +2,7 @@ const database = require('../database');
 const addDatabase = require('../router/addDatabase');
 const rolFree=0
 
-async function searc_all_customers(idCompany) {
+async function search_all_customers(idCompany) {
     //we will search the company of the user 
     var queryText = 'SELECT * FROM "Company".customers WHERE id_companies= $1';
     var values = [idCompany];
@@ -11,7 +11,7 @@ async function searc_all_customers(idCompany) {
     return result.rows;
 }
 
-async function searc_customers(idCustomer) {
+async function search_customers(idCustomer) {
     //we will search the company of the user 
     var queryText = 'SELECT * FROM "Company".customers WHERE id= $1';
     var values = [idCustomer];
@@ -33,7 +33,7 @@ async function delete_customer(idCustomer) {
 }
 
 module.exports = {
-    searc_all_customers,
-    searc_customers,
+    search_all_customers,
+    search_customers,
     delete_customer
 };

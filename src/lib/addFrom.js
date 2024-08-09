@@ -936,19 +936,30 @@ router.post('/fud/:id_company/addCustomer', isLoggedIn, async (req, res) => {
 
 router.post('/fud/:id_company/:id_customer/editCustomer', isLoggedIn, async (req, res) => {
     const { id_company, id_customer } = req.params;
+    const {id_branch}=req.body;
+
     const newCustomer = create_new_customer(req);
     if (await update.update_customer(id_customer, newCustomer)) {
-        req.flash('success', 'the customer was upload with supplies ❤️')
+        req.flash('success', 'El cliente fue actualizado con exito ❤️')
     }
     else {
-        req.flash('message', 'the customer not was upload 😰')
+        req.flash('message', 'El cliente no fue actualizado 😰')
     }
-    res.redirect('/fud/' + id_company + '/customers-company');
+
+    //we will see if the user have a UI CEO or Branch
+    if(id_branch){
+        res.redirect(`/fud/${id_company}/${id_branch}/customers-company`);
+    }else{
+        res.redirect(`/fud/${id_company}/customers-company`);
+    }
 })
 
 function create_new_customer(req) {
     const { id_company } = req.params;
-    const { firstName, secondName, lastName, cellPhone, phone, email, states, city, street, num_o, num_i, postal_code, birthday } = req.body
+    const { firstName, secondName, lastName, cellPhone, phone, email, states, city, street, num_o, num_i, postal_code, birthday,
+        userType, company_name, company_address, website, contact_name, company_cellphone, company_phone, 
+     } = req.body
+
     const newCustomer = {
         id_company,
         firstName,
@@ -965,8 +976,16 @@ function create_new_customer(req) {
         phone,
         cellPhone,
         points: 0,
-        birthday
+        birthday: birthday || null,  // If birthday is empty, assign null; otherwise, use the provided value
+        userType,
+        company_name, 
+        company_address, 
+        website, 
+        contact_name, 
+        company_cellphone, 
+        company_phone
     }
+
     return newCustomer
 }
 
@@ -2445,12 +2464,16 @@ async function delete_order_by_id(id_order) {
 router.post('/fud/:id_company/:id_branch/addCustomer', isLoggedIn, async (req, res) => {
     const { id_company, id_branch} = req.params;
     const newCustomer = create_new_customer(req);
+
+    //we will see if can added the new customer to the database
     if (await addDatabase.add_customer(newCustomer)) {
         req.flash('success', 'El clienta fue agregada con exito ❤️')
     }
     else {
-        req.flash('message', 'El clienta no fue agregada 👉👈')
+        req.flash('message', 'El cliente no fue agregado 👉👈')
     }
+
+
     res.redirect(`/fud/${id_company}/${id_branch}/customers-company`);
 })
 

@@ -3,46 +3,6 @@ const express=require('express');
 //const router=express.Router();
 const database=require('../database');
 const addDatabase={}
-
-//add user
-/*
-router.post('/addUser',async (req,res)=>{
-    const {Name,userName,email,password,confirmPassword,birthday,acceptTerms} = req.body;
-    
-    //we will watch if the user on the terms and conditions
-    if(acceptTerms==undefined){
-        //errorMessage('Terms and Conditions','You must accept the terms and conditions to continue');
-        console.log('You must accept the terms and conditions to continue');
-        res.send('You must accept the terms and conditions to continue');
-    }
-    else{
-        //we will watch if the passwords are equal
-        if (compare_password(password,confirmPassword)){
-            if (birthday==''){
-                res.send('You need to add your date of birth');
-            }
-            else{
-                //create a new user 
-                const newUser={
-                    user_name: userName,
-                    name: Name,
-                    email:email,
-                    password:password,
-                    birthday:birthday
-                };
-                add_user(newUser);
-                res.send('add user');
-            }   
-        }
-        else{
-            //console.log('Double check your passwords');
-            //errorMessage('wrong password','Double check your passwords');
-            console.log('Double check your passwords');
-            res.send('Double check your passwords');   
-        }
-    }
-});*/
-
 function compare_password(P1,P2){
     if (P1==''){
         return false;
@@ -121,7 +81,6 @@ async function add_company(company) {
         return null;
     }
 }
-
 
 async function add_product_department(department){
     var queryText = 'INSERT INTO "Kitchen".product_department (id_companies, name, description)'
@@ -228,7 +187,6 @@ async function save_combo_company(combo) {
         return null;
     }
 }
-
 
 async function save_all_supplies_combo_company(id_combo,supplies){
     try{
@@ -343,7 +301,6 @@ async function save_branch(branch){
     }
 }
 
-
 async function this_branch_exists(id_company,name){
     //we will search the company of the user 
     var queryText = `SELECT * FROM "Company".branches WHERE id_companies = $1 AND name_branch = $2`;
@@ -362,18 +319,25 @@ async function this_customer_exists(id_company,email){
 }
 
 async function save_customer(customer){
-    var queryText = 'INSERT INTO "Company".customers(id_companies, first_name, second_name, last_name, id_country, states, city, street, num_ext, num_int, postal_code, email, phone, cell_phone, points, birthday)'
-    +'VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)';
-    var values = Object.values(customer);
+    const queryText = `
+        INSERT INTO "Company".customers(
+            id_companies, first_name, second_name, last_name, id_country, states, city, street, num_ext, num_int, postal_code, email, phone, cell_phone, points, birthday,
+            type_customer, company_name, company_address, website, contact_name, company_cellphone, company_phone
+        )
+        VALUES (
+            $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, 
+            $17, $18, $19, $20, $21, $22, $23
+        );
+    `;
+    const values = Object.values(customer); //this is for create the format of save
     try{
         await database.query(queryText, values);
         return true;
     } catch (error) {
-        console.error('Error al insertar en la base de datos customer:', error);
+        console.error('Error inserting into customer database:', error);
         return false;
     }
 }
-
 
 async function add_customer(customer){
     if(await this_customer_exists(customer.id_company,customer.email)){
@@ -383,6 +347,7 @@ async function add_customer(customer){
         return await save_customer(customer)
     }
 }
+
 //department employees
 async function this_department_employees_exists(department){
     //we will search the department employees of the user 
@@ -406,7 +371,6 @@ async function save_department_employees(department) {
         return null;
     }
 }
-
 
 async function add_department_employees(department){
     if(await this_department_employees_exists(department)){
@@ -518,6 +482,7 @@ async function add_commanders(data) {
         return null;
     }
 }
+
 async function add_box(idBranch,number,idPrinter,idBox){
     var queryText = 'INSERT INTO "Branch".boxes(id_branches, num_box, ip_printer)'
     + ' VALUES ($1, $2,$3)';

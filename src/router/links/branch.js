@@ -59,7 +59,9 @@ const {
 
 //functions customers
 const {
-    searc_all_customers,
+    search_all_customers,
+    search_customers,
+    delete_customer
 } = require('../../services/customers');
 
 
@@ -114,7 +116,6 @@ router.get('/:id_company/:id_branch/supplies', isLoggedIn, async (req, res) => {
         res.render('links/branch/supplies/supplies', { branch, supplies });
     }
 })
-
 
 router.get('/:id_company/:id_branch/:id_supplies/edit-supplies-branch', isLoggedIn, async (req, res) => {
     if(await validate_subscription(req,res)){
@@ -1355,7 +1356,7 @@ router.get('/:id_company/:id_branch/:id_provider/delete-provider', isLoggedIn, a
 //----------------------------------------------------------------customers
 router.get('/:id_company/:id_branch/customers-company', isLoggedIn, async (req, res) => {
     const { id_company , id_branch} = req.params;
-    const customers = await searc_all_customers(id_company)
+    const customers = await search_all_customers(id_company)
     const country = await get_country()
     
     //we will see if the user have a branch or more branch
@@ -1382,29 +1383,33 @@ router.get('/:id_company/:id_branch/add-customer', isLoggedIn, async (req, res) 
     }
 })
 
-router.get('/:id/:idCustomer/delete-customer', isLoggedIn, async (req, res) => {
-    const { idCustomer, id } = req.params;
-    const company = await check_company(req);
-    if (company.length > 0) {
-        if (await delete_customer(idCustomer)) {
-            req.flash('success', 'El cliente fue eliminado con éxito 😉')
-        } else {
-            req.flash('message', 'El cliente no fue eliminado 😰')
-        }
-    }
-    else {
-        res.redirect('/fud/home');
+router.get('/:id_company/:id_branch/:idCustomer/delete-customer', isLoggedIn, async (req, res) => {
+    const { idCustomer, id_company, id_branch} = req.params;
+
+    //we will see if can delete to the customer
+    if (await delete_customer(idCustomer)) {
+        req.flash('success', 'El cliente fue eliminado con éxito 😉')
+    } else {
+        req.flash('message', 'El cliente no fue eliminado 😰')
     }
 
-    res.redirect("/fud/" + id + '/customers-company');
+    res.redirect(`/fud/${id_company}/${id_branch}/customers-company`);
 })
 
-router.get('/:id/:idCustomer/edit-customer', isLoggedIn, async (req, res) => {
+router.get('/:id_company/:id_branch/:idCustomer/edit-customer', isLoggedIn, async (req, res) => {
     const { idCustomer } = req.params;
-    const company = await check_company(req);
+    
     const country = await get_country()
-    const customer = await searc_customers(idCustomer)
-    res.render("links/manager/customers/editCustomer", { customer, country, company });
+    const customer = await search_customers(idCustomer)
+
+    //we will see if the user have a branch or more branch
+    if(req.user.rol_user==rolFree){
+        const branchFree=await get_data_branch(req);
+        res.render("links/manager/customers/editCustomer", { customer, country, branchFree });
+    }else{
+        const branch=await get_data_branch(req);
+        res.render("links/manager/customers/editCustomer", { customer, country, branch });
+    }
 })
 
 /*store online customers*/ 

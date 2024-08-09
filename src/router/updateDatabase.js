@@ -44,7 +44,6 @@ function get_query_edit_supplies_company(supplies) {
     return queryText;
 }
 
-
 async function update_combo(idCombo,combo) {
     var queryText = get_query_edit_combo_company(idCombo,combo);
     try {
@@ -166,48 +165,38 @@ async function update_token_uber_eat_branch(id_branch, token_uber) {
     }
 }
 
-
 async function update_customer(customerId, newCustomer) {
+    console.log(newCustomer)
     var queryText = `
         UPDATE "Company".customers
         SET 
-            first_name=$1,
-            second_name=$2,
-            last_name=$3,
-            id_country=$4,
-            states=$5,
-            city=$6,
-            street=$7,
-            num_ext=$8,
-            num_int=$9,
-            postal_code=$10,
-            email=$11,
-            phone=$12,
-            cell_phone=$13,
-            points=$14,
-            birthday=$15
+            id_companies=$1,
+            first_name=$2,
+            second_name=$3,
+            last_name=$4,
+            id_country=$5,
+            states=$6,
+            city=$7,
+            street=$8,
+            num_ext=$9,
+            num_int=$10,
+            postal_code=$11,
+            email=$12,
+            phone=$13,
+            cell_phone=$14,
+            points=$15,
+            birthday=$16,
+            type_customer=$17,
+            company_name=$18,
+            company_address=$19,
+            website=$20,
+            contact_name=$21,
+            company_cellphone=$22,
+            company_phone=$23
         WHERE 
-            id=$16
+            id=${customerId}
     `;
-
-    const values = [
-        newCustomer.firstName,
-        newCustomer.secondName,
-        newCustomer.lastName,
-        newCustomer.country,
-        newCustomer.states,
-        newCustomer.city,
-        newCustomer.street,
-        newCustomer.num_o,
-        newCustomer.num_i,
-        newCustomer.postal_code,
-        newCustomer.email,
-        newCustomer.phone,
-        newCustomer.cellPhone,
-        newCustomer.points,
-        newCustomer.birthday,
-        customerId
-    ];
+    const values = Object.values(newCustomer); //this is for create the format of save
 
     try {
         await database.query(queryText, values);

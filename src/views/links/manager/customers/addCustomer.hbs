@@ -12,7 +12,9 @@
             <div class="card">
                 <div class="card-body">
                     <label><i class="fi-icon fi-sr-user"></i> Agregar un nuevo cliente</label>
-                    <hr>
+                    <hr>     
+
+                    <!--this is a for the form for one, manager or ceo-->
                     {{#each company}}
                     <form action="/fud/{{id}}/addCustomer" method="POST" id="myForm">
                     {{/each}}
@@ -22,95 +24,30 @@
                     {{#each branch}}
                     <form action="/fud/{{id_companies}}/{{id}}/addCustomer" method="POST" id="myForm">
                     {{/each}}
-                        <div class="content_box">
-                            <div class="content-sales active">
-                                <div class="row">
-                                    <div class="col">
-                                        <label>Primer nombre *</label><br>
-                                        <input type="text" class="form-control" placeholder="Primer nombre" name="firstName" required>
-                                    </div>
-                                    <div class="col">
-                                        <label>Segundo nombre</label><br>
-                                        <input type="text" class="form-control" placeholder="Segundo nombre" name="secondName">
-                                    </div>
-                                </div>
 
-                                <div class="row">
-                                    <div class="col">
-                                        <label>Apellido</label><br>
-                                        <input type="text" class="form-control" name="lastName" placeholder="Apellido">
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <label>Fecha de nacimiento *</label><br>
-                                        <input type="date" id="birthday" name="birthday">
-                                    </div>
-                                </div>
-                                
-                                <div class="row">
-                                    <div class="col">
-                                        <label>Teléfono celular</label><br>
-                                        <input type="text" class="form-control" placeholder="Teléfono celular" name="cellPhone">
-                                    </div>
-                                    <div class="col">
-                                        <label>Teléfono</label><br>
-                                        <input type="text" class="form-control" placeholder="Teléfono" name="phone">
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col">
-                                        <label>Correo electrónico *</label><br>
-                                        <input type="email" class="form-control" name="email" placeholder="Correo electrónico" required>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col">
-                                        <label>País</label>
-                                        <select class="form-control" name="country">
-                                            {{#each country}}
-                                                <option value={{id}}>{{name}}</option>
-                                            {{/each}}
-                                        </select>
-                                    </div>
-                                    <div class="col">
-                                        <label>Estado *</label><br>
-                                        <input type="text" class="form-control" name="states" placeholder="Estado" required>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col">
-                                        <label>Ciudad *</label><br>
-                                        <input type="text" class="form-control" name="city" placeholder="Ciudad" required>
-                                    </div>
-                                    <div class="col">
-                                        <label>Calle *</label><br>
-                                        <input type="text" class="form-control" name="street" placeholder="Calle" maxlength="20" required>
-                                    </div>
-                                </div>
-
-
-                                <div class="row">
-                                    <div class="col">
-                                        <label>Número exterior</label><br>
-                                        <input type="text" class="form-control" name="num_o" placeholder="Número exterior" maxlength="5">
-                                    </div>
-                                    <div class="col">
-                                        <label>Número interior</label><br>
-                                        <input type="text" class="form-control" name="num_i" placeholder="Número interior" maxlength="5">
-                                    </div>
-                                    <div class="col">
-                                        <label>Código postal</label><br>
-                                        <input type="text" class="form-control" name="postal_code" placeholder="Código postal">
-                                    </div>
-                                </div>
-
+                        <!---this is for choose the form to create-->
+                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home"
+                                    aria-selected="true">Información Personal</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile"
+                                    aria-selected="false">Información Adicional</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content" id="myTabContent">
+                            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                                {{>CEO/customers/form1}}
                             </div>
-                            <br>
-                            
+                            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                                {{>manager/CRM/formCustomer2}}
+                            </div>
+                        </div>
+
+                        <!--this is the button for save-->
+                        <div class="content_box">
+                            <br>                  
                             <div class="form-group">
                                 <button class="btn btn-success btn-block" id="my-btn-from" type="submit">Guardar</button>
                             </div>
@@ -121,3 +58,6 @@
         </div>
     </div>
 </div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

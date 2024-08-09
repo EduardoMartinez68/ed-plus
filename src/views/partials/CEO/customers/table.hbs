@@ -1,3 +1,11 @@
+  <!--this is for when the user is from the UI of <one> or <branch>-->
+  {{#each branchFree}}
+    <input type="hidden" value="{{id}}" id="id_branch">
+  {{/each}}
+  {{#each branchFree}}
+    <input type="hidden" value="{{id}}" id="id_branch">
+  {{/each}}
+
   <table class="table table-hover" id="table-container">
     <colgroup>
         <col style="width: 30%;">
@@ -24,8 +32,8 @@
         <td>{{cell_phone}}/{{phone}}</td>
         <td>{{points}}</td>
         <td>
-            <button class="btn btn-edit" id="{{id}}" onclick="edit_customer(this.id,'{{id_companies}}')"><i class="fi-department fi-sr-pencil"></i></button>
-            <button class="btn btn-danger" id="{{id}}" onclick="delete_customer(this.id,'{{id_companies}}','{{email}}')"><i class="fi-department fi-sr-trash"></i></button>
+            <button class="btn btn-edit" onclick="edit_customer('{{id}}','{{id_companies}}')"><i class="fi-department fi-sr-pencil"></i></button>
+            <button class="btn btn-danger" onclick="delete_customer('{{id}}','{{id_companies}}','{{first_name}}')"><i class="fi-department fi-sr-trash"></i></button>
         </td>     
       </tr>
     {{/each}}
@@ -34,13 +42,25 @@
 
 
 <script>
-  async function delete_customer(idCustomer,idCompany,email){
-      if(await questionMessage(`😱 Eliminar a ${email}`,'¿Quieres eliminar a este cliente?')){
-        window.location.href = "/fud/"+idCompany+"/"+idCustomer+"/delete-customer";
+  async function delete_customer(idCustomer,idCompany,first_name){
+      if(await questionMessage(`Eliminar a '${first_name}' 😳`,'¿Quieres eliminar a este cliente?')){
+        //get the id of the branch
+        const id_branch=document.getElementById('id_branch').value;
+        if(id_branch){ //if exist the id branch, send the user to link of the branch
+          window.location.href = `/fud/${idCompany}/${id_branch}/${idCustomer}/delete-customer`;
+        }else{ //if not exist the id branch, means that the user is in the ui CEO
+          window.location.href = `/fud/${idCompany}/${idCustomer}/delete-customer`;
+        }
       }
   }
 
   async function edit_customer(idCustomer,idCompany){
-    window.location.href = "/fud/"+idCompany+"/"+idCustomer+"/edit-customer";
+    //get the id of the branch
+    const id_branch=document.getElementById('id_branch').value;
+    if(id_branch){ //if exist the id branch, send the user to link of the branch
+      window.location.href = `/fud/${idCompany}/${id_branch}/${idCustomer}/edit-customer`;
+    }else{ //if not exist the id branch, means that the user is in the ui CEO
+      window.location.href = `/fud/${idCompany}/${idCustomer}/edit-customer`;
+    }
   }
 </script>

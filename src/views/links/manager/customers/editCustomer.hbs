@@ -1,6 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-
 <head>
     <link rel="stylesheet" href="/css/addUser/addUser.css">
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-bold-straight/css/uicons-bold-straight.css'>
@@ -19,110 +16,71 @@
                 <div class="card-body">
                     <label><i class="fi-icon fi-sr-user"></i> Edit customer</label>
                     <hr>
+                    <!---this is for get the data of the customer to edit-->
                     {{#each customer}}
                     <form action="/fud/{{id_companies}}/{{id}}/editCustomer" method="POST" id="myForm">
+                    {{/each}}
+
+                    <!--this is a for that when the form be send, we can see if the user is use the UI <one> or <branch>-->
+                    {{#each branchFree}}
+                        <input type="hidden" value="{{id}}" name="id_branch">
+                    {{/each}}
+                    {{#each branch}}
+                        <input type="hidden" value="{{id}}" name="id_branch">
+                    {{/each}}
+
+
+                        <!---this is for choose the form to create-->
+                        
+                            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home"
+                                        aria-selected="true">Información Personal</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile"
+                                        aria-selected="false">Información Adicional</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content" id="myTabContent">
+                                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                                    {{>CEO/customers/formEdit1}}
+                                </div>
+                                <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                                    {{>manager/CRM/formCustomer2Edit}}
+                                </div>
+                            </div>
+                        <!--this is the button for save-->
                         <div class="content_box">
-                            <div class="content-sales active">
-                                <div class="row">
-                                    <div class="col">
-                                        <label>First name *</label><br>
-                                        <input type="text" class="form-control" placeholder="First name" name="firstName" required value="{{first_name}}">
-                                    </div>
-                                    <div class="col">
-                                        <label>Second name</label><br>
-                                        <input type="text" class="form-control" placeholder="Second name" name="secondName" value="{{second_name}}">
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col">
-                                        <label>Last name</label><br>
-                                        <input type="tex" class="form-control" name="lastName" placeholder="lastName" value="{{last_name}}">
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <label>Birthday</label><br>
-                                        <input type="date" id="birthday" name="birthday" value="{{birthday}}">
-                                    </div>
-                                </div>
-                                
-                                <div class="row">
-                                    <div class="col">
-                                        <label>Cell Phone</label><br>
-                                        <input type="text" class="form-control" placeholder="Cell Phone" name="cellPhone" value="{{cell_phone}}">
-                                    </div>
-                                    <div class="col">
-                                        <label>Phone</label><br>
-                                        <input type="text" class="form-control" placeholder="Phone" name="phone" value="{{phone}}">
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col">
-                                        <label>E-mail *</label><br>
-                                        <input type="email" class="form-control" name="email" placeholder="E-mail" required value="{{email}}">
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col">
-                                        <label>Country</label>
-                                        <select id="country" class="form-control" name="country" value="{{id_country}}">
-                                        {{/each}}
-                                            {{#each country}}
-                                            <option value={{id}}>{{name}}</option>
-                                            {{/each}}
-                                        </select>
-                                    </div>
-
-                                    {{#each customer}}
-                                    <div class="col">
-                                        <label>states *</label><br>
-                                        <input type="tex" class="form-control" name="states"  placeholder="states" required value="{{states}}">
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col">
-                                        <label>City *</label><br>
-                                        <input type="tex" class="form-control" name="city" placeholder="City"  required value="{{city}}">
-                                    </div>
-                                    <div class="col">
-                                        <label>Street *</label><br>
-                                        <input type="tex" class="form-control" name="street" placeholder="Street"  maxlength="20"  required value="{{street}}">
-                                    </div>
-                                </div>
-
-
-                                <div class="row">
-                                    <div class="col">
-                                        <label>Outer Numbers</label><br>
-                                        <input type="tex" class="form-control" name="num_o" placeholder="Outer Number"  maxlength="5" value="{{num_ext}}">
-                                    </div>
-                                    <div class="col">
-                                        <label>Interior Number</label><br>
-                                        <input type="tex" class="form-control" name="num_i" placeholder="Interior Number"  maxlength="5" value="{{num_int}}">
-                                    </div>
-                                    <div class="col">
-                                        <label>Postal Code</label><br>
-                                        <input type="tex" class="form-control" name="postal_code" placeholder="Postal Code" value="{{postal_code}}">
-                                    </div>
-                                </div>
-                                {{/each}}
-
-                            </div>
-                            <br>
-                            
+                            <br>                  
                             <div class="form-group">
-                                <button class="btn btn-success btn-block" id="my-btn-from" type="submit">Save</button>
+                                <button class="btn btn-success btn-block" id="my-btn-from" type="submit">Guardar</button>
                             </div>
+                        </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
 {{>updateCountry}}
 <script>
     ///------------------this is for update the date for birthday

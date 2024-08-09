@@ -1,0 +1,114 @@
+<div class="content-sales active">
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <label>Primer nombre *</label><br>
+                <input type="text" class="form-control" placeholder="Primer nombre" name="firstName" required maxlength="50">
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-group">
+                <label>Segundo nombre</label><br>
+                <input type="text" class="form-control" placeholder="Segundo nombre" name="secondName" maxlength="50">
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <label>Apellido</label><br>
+                <input type="text" class="form-control" name="lastName" placeholder="Apellido" maxlength="300">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <label>Fecha de nacimiento *</label><br>
+                <input type="date" id="birthday" name="birthday">
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <label>Teléfono celular</label><br>
+                <input type="text" class="form-control" placeholder="Teléfono celular" name="cellPhone" maxlength="20">
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-group">
+                <label>Teléfono</label><br>
+                <input type="text" class="form-control" placeholder="Teléfono" name="phone" maxlength="20">
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <label>Correo electrónico *</label><br>
+                <input type="email" class="form-control" name="email" placeholder="Correo electrónico" required>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <label>País</label>
+                <select class="form-control" name="country">
+                    {{#each country}}
+                    <option value={{id}}>{{name}}</option>
+                    {{/each}}
+                </select>
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-group">
+                <label>Estado *</label><br>
+                <input type="text" class="form-control" name="states" placeholder="Estado" required>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <label>Ciudad *</label><br>
+                <input type="text" class="form-control" name="city" placeholder="Ciudad" required>
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-group">
+                <label>Calle *</label><br>
+                <input type="text" class="form-control" name="street" placeholder="Calle" maxlength="20" required>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <label>Número exterior</label><br>
+                <input type="text" class="form-control" name="num_o" placeholder="Número exterior" maxlength="5">
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-group">
+                <label>Número interior</label><br>
+                <input type="text" class="form-control" name="num_i" placeholder="Número interior" maxlength="5">
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-group">
+                <label>Código postal</label><br>
+                <input type="text" class="form-control" name="postal_code" placeholder="Código postal" maxlength="10">
+            </div>
+        </div>
+    </div>
+
+</div>
