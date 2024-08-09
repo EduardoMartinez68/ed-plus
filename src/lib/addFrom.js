@@ -920,6 +920,7 @@ function create_new_branch(req) {
 
     return newBranch;
 }
+
 //customer
 router.post('/fud/:id_company/addCustomer', isLoggedIn, async (req, res) => {
     const { id_company } = req.params;
@@ -2437,5 +2438,42 @@ async function delete_order_by_id(id_order) {
         return false;
     }
 }
+
+
+
+//-------------------------------------------------------customer
+router.post('/fud/:id_company/:id_branch/addCustomer', isLoggedIn, async (req, res) => {
+    const { id_company, id_branch} = req.params;
+    const newCustomer = create_new_customer(req);
+    if (await addDatabase.add_customer(newCustomer)) {
+        req.flash('success', 'El clienta fue agregada con exito ❤️')
+    }
+    else {
+        req.flash('message', 'El clienta no fue agregada 👉👈')
+    }
+    res.redirect(`/fud/${id_company}/${id_branch}/customers-company`);
+})
+
+router.post('/fud/:id_company/:id_customer/editCustomer', isLoggedIn, async (req, res) => {
+    const { id_company, id_customer } = req.params;
+    const newCustomer = create_new_customer(req);
+    if (await update.update_customer(id_customer, newCustomer)) {
+        req.flash('success', 'the customer was upload with supplies ❤️')
+    }
+    else {
+        req.flash('message', 'the customer not was upload 😰')
+    }
+    res.redirect('/fud/' + id_company + '/customers-company');
+})
+
+
+
+
+
+
+
+
+
+
 
 module.exports = router;

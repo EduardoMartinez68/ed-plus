@@ -38,19 +38,23 @@
         .add-client-btn:hover {
             background-color: #0056b3;
         }
-    </style>
+</style>
 <div class="container mt-5">
     <div class="d-flex justify-content-between">
         <div class="search-container">
-            <button class="search-button"><i class="fi-icon fi-rr-search"></i></button>
             <input type="text" class="search-input" placeholder="Buscar por email...">
             <button class="search-button"><i class="fi-icon fi-rr-search"></i></button>
         </div>
+        <!--this is for when the user have more of two branch-->
         {{#each company}}
-          <button class="btn btn-confirm-message" id="{{id}}" onclick="nextWeb(this.id+'/add-customer')">+</button>
+          <button class="btn btn-confirm-message" onclick="nextWeb('{{id}}/add-customer')">Agregar cliente</button>
         {{/each}}
+        <!--this is for when the user have only a branch-->
         {{#each branchFree}}
-          <button class="add-client-btn" onclick="nextWeb('{{id_companies}}/add-customer')">+</button>
+          <button class="btn btn-confirm-message" onclick="nextWeb('{{id_companies}}/{{id}}/add-customer')">Agregar cliente</button>
+        {{/each}}
+        {{#each branch}}
+          <button class="btn btn-confirm-message" onclick="nextWeb('{{id_companies}}/{{id}}/add-customer')">Agregar cliente</button>
         {{/each}}
     </div>
 </div>

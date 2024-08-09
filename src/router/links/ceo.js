@@ -234,7 +234,6 @@ router.get('/:id/:idEmployee/edit-employees', isLoggedIn, async (req, res) => {
     }
 })
 
-
 router.get('/:id_company/:idUser/delete-employee', isLoggedIn, async (req, res) => {
     if (await this_company_is_of_this_user(req, res)) {
         const { id_company } = req.params;
@@ -334,7 +333,6 @@ router.get('/:id/:id_branch/:idTypeEmployee/delete-role-user', isLoggedIn, async
     }
 })
 
-
 router.get('/:id/:idRoleEmployee/edit-role-user', isLoggedIn, async (req, res) => {
     const company = await check_company(req);
     if (company.length > 0) {
@@ -379,7 +377,6 @@ router.get('/:id_company/:id_branch/employee-department', isLoggedIn, async (req
     const branchFree=await get_data_branch(id_branch)
     res.render('links/manager/role_type_employees/departmentEmployees', { branchFree, departments });
 })
-
 
 router.get('/:id/:idDepartament/delete_departament', isLoggedIn, async (req, res) => {
     const company = await check_company(req);

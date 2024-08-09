@@ -1,0 +1,135 @@
+<style>
+    .email-form {
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 600px;
+        text-align: left;
+    }
+
+    .email-form h2 {
+        margin-top: 0;
+        font-size: 24px;
+    }
+
+    .email-form label {
+        font-weight: bold;
+        margin-top: 10px;
+        display: block;
+    }
+
+    .email-form input,
+    .email-form select,
+    .email-form textarea {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    .email-form button {
+        background-color: #28a745;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        width: 100%;
+    }
+
+    .email-form button:hover {
+        background-color: #218838;
+    }
+
+    .email-form .send-all {
+        background-color: #007bff;
+        margin-top: 10px;
+    }
+
+    .email-form .send-all:hover {
+        background-color: #0056b3;
+    }
+</style>
+<center>
+<div class="email-form">
+    <h2>Enviar Correo a Clientes</h2>
+    <form action="#" method="post">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="home-tab" data-toggle="tab" href="#formemail" role="tab" aria-controls="home"
+                    aria-selected="true">Información email</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#formEditEmail" role="tab" aria-controls="follow"
+                    aria-selected="false">Editor Email</a>
+            </li>
+        </ul>
+        
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="formemail" role="tabpanel" aria-labelledby="home-tab">
+                <label for="subject">Correo electronico:</label>
+                <input type="email" id="email" name="email" required placeholder="Email">
+
+                <div class="preview-container">
+                    <h2>Vista Previa del Email</h2>
+                    <div id="emailPreview"></div>
+                </div>
+
+                <button type="submit">Enviar Correo</button>
+                <button type="submit" class="send-all">Enviar a Todos los Clientes</button>
+            </div>
+            <div class="tab-pane fade" id="formEditEmail" role="tabpanel" aria-labelledby="profile-tab">
+                {{>manager/CRM/formEmailEdit}}
+            </div>
+        </div>
+    </form>
+</div>
+</center>
+
+
+<script>
+    function generateEmail() {
+        const title = document.getElementById('title').value;
+        const subtitle = document.getElementById('subtitle').value;
+        const description = document.getElementById('description').value;
+        const link = document.getElementById('link').value;
+        const buttonText = document.getElementById('buttonText').value;
+        const footerText = document.getElementById('footerText').value;
+        const headerColor = document.getElementById('headerColor').value;
+        const headerTextColor = document.getElementById('headerTextColor').value;
+        const buttonColor = document.getElementById('buttonColor').value;
+        const buttonTextColor = document.getElementById('buttonTextColor').value;
+        const footerColor = document.getElementById('footerColor').value;
+        const footerTextColor = document.getElementById('footerTextColor').value;
+
+        const emailTemplate = `
+            <div style="width: 100%; max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                <div style="background-color: ${headerColor}; color: ${headerTextColor}; padding: 20px; text-align: center;">
+                    <h1 style="margin: 0; font-size: 28px;">${title}</h1>
+                </div>
+                <div style="padding: 20px; text-align: center;">
+                    <h2 style="color: #333333; font-size: 24px;">${subtitle}</h2>
+                    <p style="font-size: 16px; line-height: 1.5; margin-bottom: 20px;">
+                        ${description}
+                    </p>
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <a href="${link}" target="_blank" style="background-color: ${buttonColor}; color: ${buttonTextColor}; padding: 15px 30px; text-decoration: none; font-size: 18px; border-radius: 5px;">
+                            ${buttonText}
+                        </a>
+                    </div>
+                </div>
+                <div style="background-color: ${footerColor}; color: ${footerTextColor}; padding: 10px; text-align: center; font-size: 14px;">
+                    <p>${footerText}</p>
+                </div>
+            </div>
+        `;
+
+        document.getElementById('emailPreview').innerHTML = emailTemplate;
+    }
+</script>

@@ -1,113 +1,197 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SortableJS and InteractJS Example</title>
+    <title>Editor de Email Füd Mejorado</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f4f4;
             margin: 0;
             padding: 0;
-            font-family: Arial, sans-serif;
-        }
-        #container {
             display: flex;
-            flex-wrap: wrap;
-            padding: 10px;
-            list-style: none;
-            margin: 0;
-        }
-        .grid-item {
-            width: 150px;
-            height: 150px;
-            margin: 10px;
-            background-color: #3498db;
-            color: #fff;
-            display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            font-size: 16px;
+            justify-content: center;
+            color: #333;
+        }
+        .editor-container, .preview-container {
+            width: 90%;
+            max-width: 800px;
+            margin: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        .editor-container h2, .preview-container h2 {
+            text-align: center;
+            color: #333333;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        .editor-container label {
+            display: flex;
+            align-items: center;
+            margin: 10px 0 5px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .editor-container label i {
+            margin-right: 10px;
+            color: #ff7f50;
+        }
+        .editor-container input, .editor-container textarea, .editor-container select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
             border-radius: 5px;
-            position: relative;
+            font-size: 14px;
             box-sizing: border-box;
         }
-        .resize-handle {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background: #fff;
-            border: 1px solid #3498db;
-            bottom: 0;
-            right: 0;
-            cursor: se-resize;
+        .editor-container textarea {
+            resize: vertical;
+        }
+        .preview-container {
+            padding: 20px;
+            background-color: #f9f9f9;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+        }
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .button-container button {
+            background-color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        .button-container button:hover {
+            background-color: #e76f5e;
+        }
+        .color-picker {
+            display: flex;
+            align-items: center;
+        }
+        .color-picker input[type="color"] {
+            border: none;
+            padding: 0;
+            width: 50px;
+            height: 30px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <div id="container">
-        <div class="grid-item">
-            <div class="resize-handle"></div>
-            Item 1
+    <div class="editor-container">
+        <h2>Personaliza tu Email de Füd</h2>
+
+        <label for="title"><i class="fas fa-heading"></i>Título</label>
+        <input type="text" id="title" value="¡Bienvenido a Füd!">
+
+        <label for="subtitle"><i class="fas fa-subtitles"></i>Subtítulo</label>
+        <input type="text" id="subtitle" value="Descubre cómo llevar tu restaurante al siguiente nivel">
+
+        <label for="description"><i class="fas fa-align-left"></i>Descripción</label>
+        <textarea id="description" rows="4">En Füd, estamos dedicados a ayudarte a mejorar y optimizar tu negocio gastronómico con estrategias innovadoras, consejos útiles y las mejores prácticas de la industria.</textarea>
+
+        <label for="link"><i class="fas fa-link"></i>Enlace del Botón</label>
+        <input type="url" id="link" value="https://www.tupaginafud.com">
+
+        <label for="buttonText"><i class="fas fa-text"></i>Texto del Botón</label>
+        <input type="text" id="buttonText" value="Visita nuestra página">
+
+        <label for="footerText"><i class="fas fa-info-circle"></i>Texto del Footer</label>
+        <textarea id="footerText" rows="2">Síguenos en nuestras redes sociales para más actualizaciones y contenido exclusivo: Instagram | Facebook</textarea>
+
+        <label for="headerColor"><i class="fas fa-palette"></i>Color del Header</label>
+        <div class="color-picker">
+            <input type="color" id="headerColor" value="#333333">
         </div>
-        <div class="grid-item">
-            <div class="resize-handle"></div>
-            Item 2
+
+        <label for="headerTextColor"><i class="fas fa-palette"></i>Color del Texto del Header</label>
+        <div class="color-picker">
+            <input type="color" id="headerTextColor" value="#ffffff">
         </div>
-        <div class="grid-item">
-            <div class="resize-handle"></div>
-            Item 3
+
+        <label for="buttonColor"><i class="fas fa-palette"></i>Color del Botón</label>
+        <div class="color-picker">
+            <input type="color" id="buttonColor" value="#ff7f50">
         </div>
-        <div class="grid-item">
-            <div class="resize-handle"></div>
-            Item 4
+
+        <label for="buttonTextColor"><i class="fas fa-palette"></i>Color del Texto del Botón</label>
+        <div class="color-picker">
+            <input type="color" id="buttonTextColor" value="#ffffff">
         </div>
-        <div class="grid-item">
-            <div class="resize-handle"></div>
-            Item 5
+
+        <label for="footerColor"><i class="fas fa-palette"></i>Color del Footer</label>
+        <div class="color-picker">
+            <input type="color" id="footerColor" value="#333333">
+        </div>
+
+        <label for="footerTextColor"><i class="fas fa-palette"></i>Color del Texto del Footer</label>
+        <div class="color-picker">
+            <input type="color" id="footerTextColor" value="#ffffff">
+        </div>
+
+        <div class="button-container">
+            <button onclick="generateEmail()">Generar Email</button>
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sortable/1.14.0/Sortable.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/interact.js/1.10.11/interact.min.js"></script>
+    <div class="preview-container">
+        <h2>Vista Previa del Email</h2>
+        <div id="emailPreview"></div>
+    </div>
+
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Inicializa SortableJS
-            var container = document.getElementById('container');
-            Sortable.create(container, {
-                animation: 150,
-                ghostClass: 'sortable-ghost'
-            });
+        function generateEmail() {
+            const title = document.getElementById('title').value;
+            const subtitle = document.getElementById('subtitle').value;
+            const description = document.getElementById('description').value;
+            const link = document.getElementById('link').value;
+            const buttonText = document.getElementById('buttonText').value;
+            const footerText = document.getElementById('footerText').value;
+            const headerColor = document.getElementById('headerColor').value;
+            const headerTextColor = document.getElementById('headerTextColor').value;
+            const buttonColor = document.getElementById('buttonColor').value;
+            const buttonTextColor = document.getElementById('buttonTextColor').value;
+            const footerColor = document.getElementById('footerColor').value;
+            const footerTextColor = document.getElementById('footerTextColor').value;
 
-            // Inicializa InteractJS
-            interact('.grid-item').resizable({
-                edges: { left: true, right: true, bottom: true, top: true },
-                listeners: {
-                    move (event) {
-                        var target = event.target;
-                        var x = (parseFloat(target.getAttribute('data-x')) || 0);
-                        var y = (parseFloat(target.getAttribute('data-y')) || 0);
+            const emailTemplate = `
+                <div style="width: 100%; max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                    <div style="background-color: ${headerColor}; color: ${headerTextColor}; padding: 20px; text-align: center;">
+                        <h1 style="margin: 0; font-size: 28px;">${title}</h1>
+                    </div>
+                    <div style="padding: 20px; text-align: center;">
+                        <h2 style="color: #333333; font-size: 24px;">${subtitle}</h2>
+                        <p style="font-size: 16px; line-height: 1.5; margin-bottom: 20px;">
+                            ${description}
+                        </p>
+                        <div style="text-align: center; margin-bottom: 20px;">
+                            <a href="${link}" target="_blank" style="background-color: ${buttonColor}; color: ${buttonTextColor}; padding: 15px 30px; text-decoration: none; font-size: 18px; border-radius: 5px;">
+                                ${buttonText}
+                            </a>
+                        </div>
+                    </div>
+                    <div style="background-color: ${footerColor}; color: ${footerTextColor}; padding: 10px; text-align: center; font-size: 14px;">
+                        <p>${footerText}</p>
+                    </div>
+                </div>
+            `;
 
-                        // Actualiza el tamaño del elemento
-                        target.style.width = event.rect.width + 'px';
-                        target.style.height = event.rect.height + 'px';
-
-                        // Traduce el elemento para mantener la posición correcta
-                        x += event.deltaRect.left;
-                        y += event.deltaRect.top;
-
-                        target.style.transform = 'translate(' + x + 'px,' + y + 'px)';
-
-                        target.setAttribute('data-x', x);
-                        target.setAttribute('data-y', y);
-                    }
-                }
-            }).on('resizeend', function (event) {
-                var target = event.target;
-                target.style.transform = '';
-                target.removeAttribute('data-x');
-                target.removeAttribute('data-y');
-            });
-        });
+            document.getElementById('emailPreview').innerHTML = emailTemplate;
+        }
     </script>
 </body>
 </html>

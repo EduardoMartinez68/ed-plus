@@ -1352,6 +1352,61 @@ router.get('/:id_company/:id_branch/:id_provider/delete-provider', isLoggedIn, a
     }
 })
 
+//----------------------------------------------------------------customers
+router.get('/:id_company/:id_branch/customers-company', isLoggedIn, async (req, res) => {
+    const { id_company , id_branch} = req.params;
+    const customers = await searc_all_customers(id_company)
+    const country = await get_country()
+    
+    //we will see if the user have a branch or more branch
+    if(req.user.rol_user==rolFree){
+        const branchFree=await get_data_branch(req);
+        res.render("links/manager/customers/customers", { branchFree, customers, country });
+    }else{
+        const branch=await get_data_branch(req);
+        res.render("links/manager/customers/customers", { branch, customers, country });
+    }
+})
+
+router.get('/:id_company/:id_branch/add-customer', isLoggedIn, async (req, res) => {
+    const { id_company, id_branch} = req.params;
+    const country = await get_country();
+
+    //we will see if the user have a branch or more branch
+    if(req.user.rol_user==rolFree){
+        const branchFree=await get_data_branch(req);
+        res.render("links/manager/customers/addCustomer", { branchFree, country });
+    }else{
+        const branch=await get_data_branch(req);
+        res.render("links/manager/customers/addCustomer", { branch, country });
+    }
+})
+
+router.get('/:id/:idCustomer/delete-customer', isLoggedIn, async (req, res) => {
+    const { idCustomer, id } = req.params;
+    const company = await check_company(req);
+    if (company.length > 0) {
+        if (await delete_customer(idCustomer)) {
+            req.flash('success', 'El cliente fue eliminado con éxito 😉')
+        } else {
+            req.flash('message', 'El cliente no fue eliminado 😰')
+        }
+    }
+    else {
+        res.redirect('/fud/home');
+    }
+
+    res.redirect("/fud/" + id + '/customers-company');
+})
+
+router.get('/:id/:idCustomer/edit-customer', isLoggedIn, async (req, res) => {
+    const { idCustomer } = req.params;
+    const company = await check_company(req);
+    const country = await get_country()
+    const customer = await searc_customers(idCustomer)
+    res.render("links/manager/customers/editCustomer", { customer, country, company });
+})
+
 /*store online customers*/ 
 router.get('/myrestaurant/:id_company/:id_branch', async (req, res) => {
     const { id_company, id_branch } = req.params;

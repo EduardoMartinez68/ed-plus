@@ -1,10 +1,8 @@
 <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.5.1/uicons-brands/css/uicons-brands.css'>
 <div class="add-column-form">
-    <button id="addColumnBtn" class="btn btn-confirm-message">Añadir nueva columna <i
+    <button id="addColumnBtn" class="btn btn-confirm-message" onclick="add_table_crm(0,0)">Añadir nueva columna <i
             class="fi-icon fi-sr-square-plus"></i></button>
     <button id="addColumnBtn" class="btn btn-edit">Guardar cambios <i class="fi-icon fi-sr-disk"></i></button>
-    <button id="addColumnBtn" class="btn btn-edit">Enviar correo <i class="fi-icon fi-sr-envelope"></i></button>
-    <button id="addColumnBtn" class="btn btn-confirm-message">Enviar Whatsapp <i class="fi-icon fi-brands-whatsapp"></i></button>
 </div>
 <div class="board-wrapper">
     <div class="board">
@@ -26,7 +24,15 @@
                 <div class="task-badge" style="background-color: #007bff;"></div>
                 <div class="task-header">
                     <span class="task-name">Eduardo Antonio Martinez Ortiz</span>
-                    <button class="edit-btn">Editar</button>
+                    <button class="edit-btn"><i class="fi fi-br-menu-dots"></i></button>
+                    <div class="dropdown-menu-2">
+                        <ul>
+                            <li><a href="#" class="dropdown-item"><i class="fi-icon fi-ss-pencil"></i> Editar</a></li>
+                            <li><a href="#" class="dropdown-item"><i class="fi-icon fi-rs-clock-three"></i> Agendar cita</a></li>
+                            <li><a href="#" class="dropdown-item"><i class="fi-icon fi-rr-envelope"></i> Enviar mensaje</a></li>
+                            <li><a href="#" class="dropdown-item"><i class="fi-icon fi-brands-whatsapp"></i> Enviar Whatsapp</a></li>
+                        </ul>
+                    </div>
                 </div>
                 <div class="task-date">Contacto: 2024-08-05 Cierre: 2024-09-05</div>
                 <div class="task-progress">Ingresos Estimados: <b>$50,000</b></div>
@@ -35,157 +41,7 @@
                 <div class="appointment"><i class="fi-icon fi-rr-clock-three"></i></div>
                 <div class="img-employee"><img src="https://img.freepik.com/fotos-premium/retrato-mujer-dentista-consultorio-dental_10069-4969.jpg" alt=""></div>
             </div>
-            <div class="task">
-                <div class="task-badge" style="background-color: #ffee00;"></div>
-                <div class="task-header">
-                    <span class="task-name">Eduardo Antonio Martinez Ortiz</span>
-                    <button class="edit-btn">Editar</button>
-                </div>
-                <div class="task-date">Contacto: 2024-08-05 Cierre: 2024-09-05</div>
-                <div class="task-progress">Ingresos Estimados: <b>$50,000</b></div>
-                <div class="products" style="background-color: rgba(246, 33, 68, 0.377)">Füd</div>
-                <div class="stark"><i class="fi fi-sr-star"></i><i class="fi fi-sr-star"></i><i class="fi fi-sr-star"></i></div>
-                <div class="appointment"><i class="fi-icon fi-rr-clock-three"></i></div>
-                <div class="img-employee"><img src="https://img.freepik.com/foto-gratis/retrato-mujer-feliz-tableta-digital_329181-11681.jpg" alt=""></div>
-            </div>
-            <div class="task">
-                <div class="task-badge" style="background-color: #e100ff;"></div>
-                <div class="task-header">
-                    <span class="task-name">Eduardo Antonio Martinez Ortiz</span>
-                    <button class="edit-btn">Editar</button>
-                </div>
-                <div class="task-date">Contacto: 2024-08-05 Cierre: 2024-09-05</div>
-                <div class="task-progress">Ingresos Estimados: <b>$50,000</b></div>
-                <div class="products" style="background-color: rgba(246, 33, 68, 0.377)">Füd</div>
-                <div class="stark"><i class="fi fi-sr-star"></i><i class="fi fi-sr-star"></i><i class="fi fi-sr-star"></i></div>
-                <div class="appointment"><i class="fi-icon fi-rr-clock-three"></i></div>
-                <div class="img-employee"><img src="https://img.freepik.com/fotos-premium/bella-empresaria-oficina-ropa-elegante_141188-6102.jpg" alt=""></div>
-            </div>
-        </div>
-        <div class="column" id="calificado">
-            <div class="title-column">
-                <h4>Calificado</h4>
-                <button class="dropdown-btn"><i class="fi fi-br-menu-dots"></i></button>
-                <div class="dropdown-menu">
-                    <ul>
-                        <li><a href="#" class="dropdown-item">Cambiar nombre</a></li>
-                        <li><a href="#" class="dropdown-item">Mover adelante</a></li>
-                        <li><a href="#" class="dropdown-item">Mover atrás</a></li>
-                        <li><a href="#" class="dropdown-item">Eliminar</a></li>
-                    </ul>
-                </div>
-            </div>
-            <hr>
-        </div>
-        <div class="column" id="propuesta">
-            <div class="title-column">
-                <h4>Propuesta</h4>
-                <button class="dropdown-btn"><i class="fi fi-br-menu-dots"></i></button>
-                <div class="dropdown-menu">
-                    <ul>
-                        <li><a href="#" class="dropdown-item">Cambiar nombre</a></li>
-                        <li><a href="#" class="dropdown-item">Mover adelante</a></li>
-                        <li><a href="#" class="dropdown-item">Mover atrás</a></li>
-                        <li><a href="#" class="dropdown-item">Eliminar</a></li>
-                    </ul>
-                </div>
-            </div>       
-            <hr> 
-        </div>
-        <div class="column" id="ganado">
-            <div class="title-column">
-                <h4>Ganado</h4>
-                <button class="dropdown-btn"><i class="fi fi-br-menu-dots"></i></button>
-                <div class="dropdown-menu">
-                    <ul>
-                        <li><a href="#" class="dropdown-item">Cambiar nombre</a></li>
-                        <li><a href="#" class="dropdown-item">Mover adelante</a></li>
-                        <li><a href="#" class="dropdown-item">Mover atrás</a></li>
-                        <li><a href="#" class="dropdown-item">Eliminar</a></li>
-                    </ul>
-                </div>
-            </div>        
-            <hr>
-        </div>
-        <div class="column" id="ganado">
-            <div class="title-column">
-                <h4>Ganado</h4>
-                <button class="dropdown-btn"><i class="fi fi-br-menu-dots"></i></button>
-                <div class="dropdown-menu">
-                    <ul>
-                        <li><a href="#" class="dropdown-item">Cambiar nombre</a></li>
-                        <li><a href="#" class="dropdown-item">Mover adelante</a></li>
-                        <li><a href="#" class="dropdown-item">Mover atrás</a></li>
-                        <li><a href="#" class="dropdown-item">Eliminar</a></li>
-                    </ul>
-                </div>
-            </div>
-            <hr>
-        </div>
-        <div class="column" id="ganado">
-            <div class="title-column">
-                <h4>Ganado</h4>
-                <button class="dropdown-btn"><i class="fi fi-br-menu-dots"></i></button>
-                <div class="dropdown-menu">
-                    <ul>
-                        <li><a href="#" class="dropdown-item">Cambiar nombre</a></li>
-                        <li><a href="#" class="dropdown-item">Mover adelante</a></li>
-                        <li><a href="#" class="dropdown-item">Mover atrás</a></li>
-                        <li><a href="#" class="dropdown-item">Eliminar</a></li>
-                    </ul>
-                </div>
-            </div>
-            <hr>
         </div>
     </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
-<script>
-    const columns = document.querySelectorAll('.column');
-
-    columns.forEach(column => {
-        new Sortable(column, {
-            group: 'shared',
-            animation: 150,
-            onEnd: function (evt) {
-                console.log('Elemento movido:', evt.item);
-            }
-        });
-    });
-
-    document.getElementById('addColumnBtn').addEventListener('click', function () {
-        const columnName = document.getElementById('newColumnName').value.trim();
-        if (columnName) {
-            const newColumn = document.createElement('div');
-            newColumn.classList.add('column');
-            newColumn.innerHTML = `<h3>${columnName}</h3><hr>`;
-            document.querySelector('.board').appendChild(newColumn);
-
-            new Sortable(newColumn, {
-                group: 'shared',
-                animation: 150,
-                onEnd: function (evt) {
-                    console.log('Elemento movido:', evt.item);
-                }
-            });
-
-            document.getElementById('newColumnName').value = '';
-        }
-    });
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('.dropdown-btn').forEach(button => {
-            button.addEventListener('click', function (e) {
-                e.stopPropagation();
-                this.classList.toggle('active');
-            });
-        });
-
-        document.addEventListener('click', function () {
-            document.querySelectorAll('.dropdown-btn.active').forEach(button => {
-                button.classList.remove('active');
-            });
-        });
-    });
-</script>
