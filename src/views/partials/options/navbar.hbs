@@ -1,0 +1,70 @@
+<style>
+    .container {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .form-section {
+        flex: 1;
+        margin-right: 20px;
+    }
+
+    .image-section {
+        flex: 1;
+    }
+
+    .image-section img {
+        width: 80%;
+        height: 80%;
+        object-fit: contain; 
+    }
+</style>
+<div class="container">
+    <!-- Formulario de selección de navbar -->
+    <div class="form-section">
+        <form action="/fud/{{id_companies}}/{{id}}/change-navbar" method="post">
+            <div class="mb-3">
+                <label for="navbarSelect" class="form-label">Selecciona un navbar</label>
+                <select class="form-select" id="navbarSelect" aria-label="Selecciona una opción" name="navbar">
+                    <option value="1">Opción 1</option>
+                    <option value="2">Opción 2</option>
+                    <option value="3">Opción 3</option>
+                </select>
+                <button class="btn btn-primary mt-2">Guardar</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Sección de imagen -->
+    <div class="image-section">
+        <img id="navbarImage" src="/img/navbar/1.webp" alt="Imagen del navbar">
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const navbarSelect = document.getElementById('navbarSelect');
+        const navbarImage = document.getElementById('navbarImage');
+
+        navbarSelect.addEventListener('change', function () {
+            const selectedValue = navbarSelect.value;
+            let imageUrl = '';
+
+            switch (selectedValue) {
+                case '1':
+                    imageUrl = '/img/navbar/1.webp';
+                    break;
+                case '2':
+                    imageUrl = '/img/navbar/2.webp';
+                    break;
+                case '3':
+                    imageUrl = '/img/navbar/3.webp';
+                    break;
+                default:
+                    imageUrl = '/img/navbar/1.webp';
+            }
+
+            navbarImage.src = imageUrl;
+        });
+    });
+</script>

@@ -362,5 +362,12 @@ router.get('/:id_company/:id_branch/CRM', isLoggedIn, async (req, res) => {
     res.render('links/branch/CRM/CRM', { branchFree });
 })
 
+//------------------------------------options 
+router.get('/:id_company/:id_branch/options', isLoggedIn, async (req, res) => {
+    const { id_company, id_branch } = req.params;
+    const branchFree = await get_data_branch(id_branch);
+    res.render('links/options/options', { branchFree });
+})
+
 
 module.exports = router;

@@ -1377,6 +1377,64 @@ function new_data_employee(req) {
 
     return new_employee;
 }
+//---------------------------------------------------------------------------------------------------------OPTIONS---------------------------------------------------------------
+router.post('/fud/:id_company/:id_branch/change-navbar', isLoggedIn, async (req, res) => {
+    const { id_company, id_branch } = req.params;
+    const {navbar}=req.body;
+    await update_navbar(id_company, navbar);
+    res.redirect(`/fud/${id_company}/${id_branch}/options`);
+})
+
+router.post('/fud/:id_company/change-navbar', isLoggedIn, async (req, res) => {
+    const { id_company } = req.params;
+    const {navbar}=req.body;
+    await update_navbar(id_company, navbar);
+    res.redirect(`/fud/${id_company}/options`);
+})
+
+
+async function update_navbar(id_companies, navbar) {
+    // get all the IDs of the users that work in the company
+    var queryText = `
+        SELECT id_users
+        FROM "Company".employees
+        WHERE id_companies = $1
+    `;
+    var values = [id_companies];
+    const result = await database.query(queryText, values);
+
+    if (result.rows.length > 0) {
+        // get all the IDs of the users 
+        const userIds = result.rows.map(row => row.id_users);
+
+        // update the navbar of all the employees for unclock all the navbar
+        var updateQueryText = `
+            UPDATE "Fud".users
+            SET navbar_1 = $1,
+                navbar_2 = $2,
+                navbar_3 = $3
+            WHERE id = ANY($4::bigint[])
+        `;
+        var updateValues = [null, null, null, userIds];
+        await database.query(updateQueryText, updateValues);
+
+        // update the navbar of all the employees
+        var updateQueryText = `
+            UPDATE "Fud".users
+            SET navbar_${navbar} = $1
+            WHERE id = ANY($2::bigint[])
+        `;
+        var updateValues = [navbar, userIds];
+        await database.query(updateQueryText, updateValues);
+
+
+        return `Updated navbar field for ${userIds.length} users.`;
+    } else {
+        return 'No employees found for the given company.';
+    }
+}
+
+
 //---------------------------------------------------------------------------------------------------------BRANCHES---------------------------------------------------------------
 router.post('/fud/:id/:id_branch/add-supplies-free', isLoggedIn, async (req, res) => {
     const { id, id_branch } = req.params;

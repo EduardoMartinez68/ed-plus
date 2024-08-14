@@ -51,7 +51,7 @@
     <!--this is for draw the navbar-->
     {{#if user}}
         <!--this is for knnow if the user would like have the navbar 3-->
-        {{#if navbar3}}
+        {{#if user.navbar_3}}
             <link rel="stylesheet" href="/css/web/navbar-3.css">
             <div class="navbar-3">
                 <div class="navbar-3-sidebar">
@@ -61,8 +61,6 @@
                     {{{body}}}
                 </div>
             </div>
-            {{>titleBar}}
-            {{{body}}}
         {{else}}
             {{>titleBar}}
             {{{body}}}

@@ -1477,14 +1477,11 @@ router.get('/:idBranch/:id_company/delete-branch', isLoggedIn, async (req, res) 
 //-----------------------------------------------------------options 
 router.get('/:id_company/options', isLoggedIn, async (req, res) => {
     const company = await this_company_is_of_this_user(req, res);
-    const country=await get_country()
     if (company != null) {
-        res.render('links/manager/options/options', { company,country });
+        res.render('links/options/options', { company });
+        //res.render('links/manager/options/options', { company,country });
     }
 })
-
-
-
 
 
 module.exports = router;
