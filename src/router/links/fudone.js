@@ -46,7 +46,8 @@ const {
 const {
     get_data_tabla_with_id_company,
     get_pack_database,
-    check_company_other
+    check_company_other,
+    get_data_company_with_id
 } = require('../../services/company');
 
 //functions supplies
@@ -366,7 +367,9 @@ router.get('/:id_company/:id_branch/CRM', isLoggedIn, async (req, res) => {
 router.get('/:id_company/:id_branch/options', isLoggedIn, async (req, res) => {
     const { id_company, id_branch } = req.params;
     const branchFree = await get_data_branch(id_branch);
-    res.render('links/options/options', { branchFree });
+    const dataCompany = await get_data_company_with_id(id_company);
+    const country=await get_country();
+    res.render('links/options/options', { branchFree, dataCompany, country });
 })
 
 

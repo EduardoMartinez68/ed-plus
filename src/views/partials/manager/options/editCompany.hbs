@@ -1,18 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
     <link rel="stylesheet" href="/css/addUser/addUser.css">
-</head>
-
-<body>
-    <div class="container p-4">
         <div class="row">
-            <div class="col-md-8 mx-auto">
+            <div class="mx-auto">
                 <div class="card">
                     <div class="card-body">
-                        {{#each company}}
-                        <form action="/fud/{{id}}/editCompany" method="POST" enctype="multipart/form-data" id="myForm">
+                        {{#each dataCompany}}
+                        <form action="/fud/{{id}}/edit-company" method="POST" enctype="multipart/form-data" id="myForm">
+                        {{/each}}
+
+                        <!--this is for when the user have a subscription to ONE-->
+                        {{#each branchFree}}
+                        <input type="hidden" value="{{id}}" name="id_branch">
+                        {{/each}}
+
+
+                        {{#each dataCompany}}
                             <div class="form-group">
                                 <center>
                                     {{#if path_logo}}
@@ -58,7 +59,7 @@
 
                             {{>country}}
 
-                            {{#each company}}
+                            {{#each dataCompany}}
                                 <div class="form-group">
                                     <lable>Municipality *</lable><br>
                                     <input type="tex" class="form-control" name="municipality" value="{{municipality}}" placeholder="Municipality" required>
@@ -96,7 +97,6 @@
                 </div>
             </div>
         </div>
-    </div>
 
     <script src="/js/manager/addEmployee.js"></script>
 
@@ -129,6 +129,3 @@
             });
         });
     </script>
-</body>
-
-</html>

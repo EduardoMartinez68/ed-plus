@@ -60,7 +60,7 @@ async function delete_image_upload(pathImg) {
 
     try {
         await s3.deleteObject(params).promise();
-        console.log(`Image ${objectName} delete with success`);
+        console.log(`Image delete with success`);
         return true;
     } catch (err) {
         console.error('Error to delete the image:', err);
@@ -211,6 +211,7 @@ async function get_image(id) {
 router.post('/fud/:id_company/edit-company', async (req, res) => {
     const { id_company } = req.params;
     const newCompany = await get_new_company(req);
+    const {id_branch}=req.body;
 
     //we will waching if exist a new icon for the company 
     if (newCompany.path_logo != "") {
@@ -218,13 +219,18 @@ router.post('/fud/:id_company/edit-company', async (req, res) => {
         await delete_image_upload(pathImg)
     }
 
-
+    //this is for show a message to the user
     if (await update.update_company(newCompany, id_company)) {
         req.flash('success', 'La compañía fue actualizada con exito 💗')
-        res.redirect('/fud/' + id_company + '/options');
     } else {
         req.flash('message', 'La compañía no fue actualizada 🥺')
-        res.redirect('/fud/' + id_company + '/edit-company');
+    }
+
+    //we will see if the user have a subscription to ONE or is the CEO
+    if(id_branch){
+        res.redirect(`/fud/${id_company}/${id_branch}/options`);
+    }else{
+        res.redirect(`/fud/${id_company}/options`);
     }
 });
 
@@ -254,7 +260,6 @@ router.post('/fud/:id/add-department', async (req, res) => {
         res.redirect(`/fud/${id}/food-department`);
     }
 });
-
 
 function get_new_department(req) {
     //get the data of the new department
@@ -2038,9 +2043,6 @@ router.post('/fud/:id_customer/:ipPrinter/car-post', isLoggedIn, async (req, res
     }
 })
 
-
-
-
 router.post('/fud/car-customer-post', async (req, res) => {
     var commander = ''
     var text = ''
@@ -2354,7 +2356,6 @@ async function update_inventory(idBranch, idCombo, newAmount) {
     }
 }
 
-
 async function get_data_combo_features(idCombo) {
     const queryText = `
     SELECT dc.name, df.id_companies, df.id_branches, df.id_dishes_and_combos
@@ -2373,7 +2374,6 @@ async function get_data_combo_features(idCombo) {
         return null;
     }
 }
-
 
 async function search_supplies_combo(id_dishes_and_combos) {
     var queryText = `
@@ -2402,7 +2402,6 @@ router.post('/fud/:id_branch/:id_employee/:id_box/move', isLoggedIn, async (req,
     }
 })
 
-
 function create_move(req) {
     //get the data of the server
     const { id_branch, id_employee, id_box } = req.params;
@@ -2423,7 +2422,6 @@ function create_move(req) {
     return move;
 }
 
-
 router.post('/fud/add-order-post', async (req, res) => {
     console.log('bodyyy')
     console.log(req.body)
@@ -2437,7 +2435,6 @@ router.post('/fud/add-order-post', async (req, res) => {
         res.status(500).json({ error: 'Hubo un error al procesar la solicitud de la orden' });
     }
 })
-
 
 router.post('/fud/:id_company/:id_branch/edit-order', async (req, res) => {
     const { id_company, id_branch } = req.params;
