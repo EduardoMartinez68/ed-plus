@@ -1,0 +1,246 @@
+
+    
+    <!--home--->
+    {{#each branch}}
+        <li><a href="/fud/{{id_companies}}/{{id}}/visit-branch"><i class="fi-icon fi-sr-apps"> Inicio</i></a></li>
+    {{/each}}
+    {{#each company}}
+        <li><a href="company-home"><i class="fi-icon fi-sr-apps"> Inicio</i></a></li>
+    {{/each}}
+    {{#each branchFree}}
+        <li><a href="/fud/{{id_companies}}/{{id}}/visit-branch"><i class="fi-icon fi-sr-apps"> Inicio</i></a></li>
+    {{/each}}
+
+
+    <!--APPS--->
+    {{#if user.point_sales}}
+        {{#each branchFree}}
+            <li>
+                <a href="/fud/{{id_companies}}/{{id}}/home"><i class="fi-icon fi-sr-shop"> POS</i></a>
+            </li>
+        {{/each}}
+        {{#each branch}}
+            <li><a href="/fud/{{id_companies}}/{{id}}/visit-branch"><i class="fi-icon fi-sr-apps"> Dashboard</i></a></li>
+        {{/each}}
+        {{#each company}}
+            <li><a href="company-home"><i class="fi-icon fi-sr-apps"> Dashboard</i></a></li>
+        {{/each}}
+    {{/if}}
+
+    {{#if user.supplies}}
+        {{#each branchFree}}
+            <li>
+                <a href="/fud/{{id_companies}}/{{id}}/supplies-free"><i class="fi-icon fi-sr-apple-whole"> Insumos</i></a>
+            </li>
+        {{/each}}
+        {{#each branch}}
+            <li><a href="/fud/{{id_companies}}/{{id}}/supplies"><i class="fi-icon fi-sr-apple-whole"> Insumos</i></a></li>
+        {{/each}}
+        {{#each company}}
+            <li><a href="/fud/{{id}}/company-supplies"><i class="fi-icon fi-sr-apple-whole"> Insumos</i></a></li>
+        {{/each}}
+    {{/if}}
+
+    {{#if user.products}}
+        {{#each branchFree}}
+            <li>
+                <a href="/fud/{{id_companies}}/{{id}}/products-free"><i class="fi-icon fi-sr-package"> Productos</i></a>
+            </li>
+        {{/each}}
+        {{#each branch}}
+            <li><a href="/fud/{{id_companies}}/{{id}}/products"><i class="fi-icon fi-ss-hamburger"> Products</i></a></li>
+        {{/each}}
+        {{#each company}}
+            <li><a href="/fud/{{id}}/company-products"><i class="fi-icon fi-ss-hamburger"> Products</i></a></li>
+        {{/each}}
+    {{/if}}
+
+    {{#if user.combos}}
+        {{#each branchFree}}
+            <li>
+                <a href="/fud/{{id_companies}}/{{id}}/combos-free"><i class="fi-icon fi-sr-restaurant"> Combos</i></a>
+            </li>
+        {{/each}}
+        {{#each branch}}
+            <li><a href="/fud/{{id_companies}}/{{id}}/combos"><i class="fi-icon fi-sr-restaurant"> Combos</i></a></li>
+        {{/each}}
+        {{#each company}}
+            <li><a href="/fud/{{id}}/combos"><i class="fi-icon fi-sr-restaurant"> Combos</i></a></li>
+        {{/each}}
+    {{/if}}
+
+    {{#if user.product_department}}
+        {{#each branchFree}}
+            <li>
+                <a href="/fud/{{id_companies}}/{{id}}/food-department-free"><i class="fi-icon fi-sr-building"> Departamento</i></a>
+            </li>
+        {{/each}}
+    {{/if}}
+
+    {{#if user.product_area}}
+        {{#each branchFree}}
+            <li>
+                <a href="/fud/{{id_companies}}/{{id}}/food-area-free"><i class="fi-icon fi-sr-building"> Áreas</i></a>
+            </li>
+        {{/each}}
+    {{/if}}
+
+    {{#if user.providers}}
+        {{#each branchFree}}
+            <li><a href="/fud/{{id_companies}}/{{id}}/providers-free"><i class="fi-icon fi-sr-handshake"> Proveedores</i></a></li>
+        {{/each}}
+        {{#each branch}}
+            <li><a href="/fud/{{id_companies}}/{{id}}/providers-free"><i class="fi-icon fi-sr-handshake"> Proveedores</i></a></li>
+        {{/each}}
+        {{#each company}}
+            <li><a href="/fud/{{id}}/providers"><i class="fi-icon fi-ss-truck-side"> Providers</i></a></li>
+        {{/each}}
+    {{/if}}
+
+    {{#if user.employees}}
+        {{#each branchFree}}
+            <li><a href="/fud/{{id_companies}}/{{id}}/employees-branch"><i class="fi-icon fi-sr-user"> Empleados</i></a></li>
+        {{/each}}
+        {{#each branch}}
+            <li><a href="/fud/{{id_companies}}/{{id}}/employees-branch"><i class="fi-icon fi-sr-hat-chef"> Empleados</i></a></li>
+        {{/each}}
+        {{#each company}}
+            <li><a href="/fud/{{id}}/employees"><i class="fi-icon fi-sr-hat-chef"> Empleados</i></a></li>
+        {{/each}}
+    {{/if}}
+
+
+    {{#if user.schedules}}
+        {{#each branchFree}}
+            <li><a href="/fud/{{id_companies}}/{{id}}/schedules"><i class="fi-icon fi-sr-calendar"> Crear Horario</i></a></li>
+        {{/each}}
+        {{#each branch}}
+            <li><a href="/fud/{{id_companies}}/{{id}}/schedules"><i class="fi-icon fi-sr-clock-three"> Crear Horario</i></a></li>
+        {{/each}}
+    {{/if}}
+
+    {{#if user.employees_schedules}}
+        {{#each branchFree}}
+            <li><a href="/fud/{{id_companies}}/{{id}}/schedules-employees"><i class="fi-icon fi-sr-user-clock"> Horarios</i></a></li>
+        {{/each}}
+        {{#each branch}}
+            <li><a href="/fud/{{id_companies}}/{{id}}/schedules-employees"><i class="fi-icon fi-sr-clock-three"> Horarios</i></a></li>
+        {{/each}}
+    {{/if}}
+
+    {{#if user.employee_department}}
+        {{#each branchFree}}
+            <li><a href="/fud/{{id_companies}}/{{id}}/employee-department"><i class="fi-icon fi-sr-building"> Unidad RH</i></a></li>
+        {{/each}}
+    {{/if}}
+    {{#if user.employee_roles}}
+        {{#each branchFree}}
+            <li><a href="/fud/{{id_companies}}/{{id}}/type-employees-free"><i class="fi-icon fi-sr-id-card"> Roles RH</i></a></li>
+        {{/each}}
+    {{/if}}
+    {{#if user.customers}}
+        {{#each branchFree}}
+            <li>
+                <a href="/fud/{{id_companies}}/{{id}}/customers-company"><i class="fi-icon fi-sr-users"> Clientes</i></a>
+            </li>
+        {{/each}}
+    {{/if}}
+    {{#if user.crm}}
+        {{#each branchFree}}
+            <li>
+                <a href="/fud/{{id_companies}}/{{id}}/CRM"><i class="fi-icon fi-sr-chart-network"> CRM</i></a>
+            </li>
+        {{/each}}
+    {{/if}}
+    {{#if user.ecommerce}}
+        {{#each branchFree}}
+            <li>
+                <a href="/fud/myrestaurant/{{id_companies}}/{{id}}" target="_blank"><i class="fi-icon fi-sr-cart"> Ecommerce</i></a>
+            </li>
+        {{/each}}
+    {{/if}}
+    {{#if user.ads}}
+        {{#each branchFree}}
+            <li>
+                <a href="/fud/{{id_companies}}/{{id}}/ad"><i class="fi-icon fi-sr-bullhorn"> Anuncios</i></a>
+            </li>
+        {{/each}}
+    {{/if}}
+
+    {{#if user.dealer}}
+        {{#each branchFree}}
+            <li>
+                <a href="/fud/{{id_companies}}/{{id}}/order-free"><i class="fi-icon fi-sr-biking-mountain"> Repartidor</i></a>
+            </li>
+        {{/each}}
+    {{/if}}
+
+    {{#if user.computer_equipment}}
+        {{#each branchFree}}
+            <li>
+                <a href="/fud/{{id_companies}}/{{id}}/box"><i class="fi-icon fi-sr-print"> Impresoras</i></a>
+            </li>
+        {{/each}}
+    {{/if}}
+
+    {{#if user.sales}}
+        {{#each branchFree}}
+            <li>
+                <a href="/fud/{{id_companies}}/{{id}}/0/sales"><i class="fi-icon fi-sr-cash-register"> Ventas</i></a>
+            </li>
+        {{/each}}
+    {{/if}}
+
+    {{#if user.movements}}
+        {{#each branchFree}}
+            <li>
+                <a href="/fud/{{id_companies}}/{{id}}/0/movements"><i class="fi-icon fi-sr-arrow-right-left"> Movimientos</i></a>
+            </li>
+        {{/each}}
+    {{/if}}
+
+    {{#if user.accounting}}
+        {{#each branchFree}}
+            <li>
+                <a href="/fud/{{id_companies}}/{{id}}/reports"><i class="fi-icon fi-sr-receipt"> Contabilidad</i></a>
+            </li>
+        {{/each}}
+    {{/if}}
+
+    {{#if user.edit_branch}}
+        {{#each branchFree}}
+            <li>
+                <a href="/fud/{{id}}/{{id_companies}}/edit-branch-free"><i class="fi-icon fi-sr-edit"> Sucursal</i></a>
+            </li>
+        {{/each}}
+    {{/if}}
+
+    {{#if user.settings}}
+        {{#each branchFree}}
+            <li>
+                <a href="/fud/{{id_companies}}/{{id}}/options"><i class="fi-icon fi-sr-settings"> Configuración</i></a>
+            </li>
+        {{/each}}
+    {{/if}}
+
+
+    <!--Employees--->
+    {{#if branch}}
+        <li><a href="/fud/my-order"><i class="fi-icon fi-sr-ballot">
+                    Mis Pedidos</i></a></li>
+    {{/if}}
+
+    <!--subscriptions--->
+    {{#each branchFree}}
+        <li rolUser="{{user.rol_user}}" id="roleUser"><a href="/fud/subscription"><i
+                    class="fi-icon fi-sr-credit-card"> Licencias</i></a></li>
+    {{/each}}
+    {{#each company}}
+        <li rolUser="{{user.rol_user}}" id="roleUser"><a href="/fud/subscription"><i
+                    class="fi-icon fi-sr-credit-card"> Licencias</i></a></li>
+    {{/each}}
+
+    
+
+    <!--logout--->
+    <li><a href="/fud/logout"><i class="fi-icon fi-br-exit"> Cerrar sesión</i></a></li>

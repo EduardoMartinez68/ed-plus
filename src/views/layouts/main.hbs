@@ -50,20 +50,23 @@
 
     <!--this is for draw the navbar-->
     {{#if user}}
-        <!--this is for knnow if the user would like have the navbar 3-->
-        {{#if user.navbar_3}}
-            <link rel="stylesheet" href="/css/web/navbar-3.css">
-            <div class="navbar-3">
-                <div class="navbar-3-sidebar">
-                    {{>navbar/navbar3}}
-                </div>
-                <div class="navbar-3-content">
-                    {{{body}}}
-                </div>
-            </div>
+        {{#if dataBranch}}
         {{else}}
-            {{>titleBar}}
-            {{{body}}}
+            <!--this is for knnow if the user would like have the navbar 3-->
+            {{#if user.navbar_3}}
+                <link rel="stylesheet" href="/css/web/navbar-3.css">
+                <div class="navbar-3">
+                    <div class="navbar-3-sidebar">
+                        {{>navbar/navbar3}}
+                    </div>
+                    <div class="navbar-3-content">
+                        {{{body}}}
+                    </div>
+                </div>
+            {{else}}
+                {{>titleBar}}
+                {{{body}}}
+            {{/if}}
         {{/if}}
     {{else}}
         {{{body}}}

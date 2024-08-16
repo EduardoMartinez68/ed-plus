@@ -56,11 +56,11 @@ const {
     get_type_employees
 } = require('../../services/employees');
 
-
 const {
     get_category,
     delate_product_category,
 } = require('../../services/foodCategory');
+
 const {
     get_department,
     update_product_department,
@@ -369,6 +369,7 @@ router.get('/:id_company/:id_branch/options', isLoggedIn, async (req, res) => {
     const branchFree = await get_data_branch(id_branch);
     const dataCompany = await get_data_company_with_id(id_company);
     const country=await get_country();
+    console.log(req.user.point_sales==true)
     res.render('links/options/options', { branchFree, dataCompany, country });
 })
 

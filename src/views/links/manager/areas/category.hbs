@@ -1,5 +1,41 @@
 <div class="container">
     <div class="row mt-5">
+        <div class="col-md-5">
+            <div class="card">
+                <div class="card-body">
+                    <br>
+                    {{#each company}}
+                        <form action="/fud/{{id}}/add-category" method="POST" enctype="multipart/form-data">
+                            <center><h5><i class="fi-icon fi-sr-ballot"></i>Add a new Category</h5></center>
+                            <hr>
+                            <div class="form-group">
+                                <input type="text" placeholder="Name" name="name" class="from-control" required maxlength="20" style="width: 100%;">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" placeholder="Description" name="description" class="from-control" style="width: 100%;">
+                            </div>
+                            <hr>
+                            <button type="submit" class="btn btn-success btn-block" id="">Save</button>
+                        </form>
+                    {{/each}}
+                    {{#each branchFree}}
+                        <form action="/fud/{{id_companies}}/add-category" method="POST" enctype="multipart/form-data">
+                            <input type="hidden" placeholder="Name" name="id_branch" id="id_branch" class="from-control" required value="{{id}}">
+                            <center><h5><i class="fi-icon fi-sr-ballot"></i>Agregar una nueva categoría</h5></center>
+                            <hr>
+                            <div class="form-group">
+                                <input type="text" placeholder="Nombre" name="name" class="from-control" required maxlength="20" style="width: 100%;">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" placeholder="Descripcion" name="description" class="from-control" style="width: 100%;">
+                            </div>
+                            <hr>
+                            <button type="submit" class="btn btn-success btn-block" id="">Guardar</button>
+                        </form>
+                    {{/each}}
+                </div>
+            </div>
+        </div>
         <div class="col-md-7">
             <table class="table table-hover"> <!--table-bordered-->
                 <colgroup>
@@ -29,42 +65,6 @@
                 </tbody>
             </table>
         </div>
-    <div class="col-md-5">
-        <div class="card">
-            <div class="card-body">
-                <br>
-                {{#each company}}
-                    <form action="/fud/{{id}}/add-category" method="POST" enctype="multipart/form-data">
-                        <center><h5><i class="fi-icon fi-sr-ballot"></i>Add a new Category</h5></center>
-                        <hr>
-                        <div class="form-group">
-                            <input type="text" placeholder="Name" name="name" class="from-control" required maxlength="20" style="width: 100%;">
-                        </div>
-                        <div class="form-group">
-                            <input type="text" placeholder="Description" name="description" class="from-control" style="width: 100%;">
-                        </div>
-                        <hr>
-                        <button type="submit" class="btn btn-success btn-block" id="">Save</button>
-                    </form>
-                {{/each}}
-                {{#each branchFree}}
-                    <form action="/fud/{{id_companies}}/add-category" method="POST" enctype="multipart/form-data">
-                        <input type="hidden" placeholder="Name" name="id_branch" id="id_branch" class="from-control" required value="{{id}}">
-                        <center><h5><i class="fi-icon fi-sr-ballot"></i>Agregar una nueva categoría</h5></center>
-                        <hr>
-                        <div class="form-group">
-                            <input type="text" placeholder="Nombre" name="name" class="from-control" required maxlength="20" style="width: 100%;">
-                        </div>
-                        <div class="form-group">
-                            <input type="text" placeholder="Descripcion" name="description" class="from-control" style="width: 100%;">
-                        </div>
-                        <hr>
-                        <button type="submit" class="btn btn-success btn-block" id="">Guardar</button>
-                    </form>
-                {{/each}}
-            </div>
-        </div>
-    </div>
     </div>
 </div>
 

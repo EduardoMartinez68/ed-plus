@@ -103,7 +103,7 @@
 
 
 
-                {{#each branchFree}}
+                
                     <div class="container-app">
                         <!--
                         <div class="app-icon" onclick="nextWeb('/home')">
@@ -111,108 +111,203 @@
                             <span>Menu</span>
                         </div>
                         --->
-                        <div class="app-icon" onclick="nextWeb('/home')">
-                            <img src="https://cdn-icons-png.flaticon.com/512/6712/6712868.png" alt="Insumos">
-                            <span>Punto de Venta</span>
-                        </div>
-                        <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/supplies-free')">
-                            <img src="https://cdn-icons-png.flaticon.com/512/1147/1147832.png" alt="Insumos">
-                            <span>Insumos</span>
-                        </div>
-                        <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/products-free')">
-                            <img src="https://cdn-icons-png.flaticon.com/512/679/679922.png" alt="Insumos">
-                            <span>Productos</span>
-                        </div>
-                        <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/combos-free')">
-                            <img src="https://cdn-icons-png.flaticon.com/512/6626/6626465.png" alt="Combos">
-                            <span>Combos</span>
-                        </div>
-                        <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/food-department-free')">
-                            <img src="https://cdn-icons-png.flaticon.com/512/3974/3974868.png" alt="Departamentos">
-                            <span>Departamento de productos</span>
-                        </div>
-                        <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/food-area-free')">
-                            <img src="https://cdn-icons-png.flaticon.com/512/3974/3974868.png" alt="Departamentos">
-                            <span>Area de productos</span>
-                        </div>
-                        <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/providers-free')">
-                            <img src=" https://cdn-icons-png.flaticon.com/512/2554/2554978.png" alt="Combos">
-                            <span>Provedores</span>
-                        </div>
-                        <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/employees-branch')">
-                            <img src="https://cdn-icons-png.flaticon.com/512/9187/9187532.png" alt="">
-                            <span>Empleados</span>
-                        </div>
-                        <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/schedules')">
-                            <img src="https://cdn-icons-png.flaticon.com/512/566/566632.png" alt="Insumos">
-                            <span>Horarios</span>
-                        </div>
-                        <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/schedules-employees')">
-                            <img src="https://cdn-icons-png.flaticon.com/512/5246/5246231.png" alt="Insumos">
-                            <span>Horarios de empleados</span>
-                        </div>
-                        <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/employee-department')">
-                            <img src="https://cdn-icons-png.flaticon.com/512/5957/5957016.png" alt="Departamentos">
-                            <span>Departamento de empleados</span>
-                        </div>
-                        <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/type-employees-free')">
-                            <img src="https://cdn-icons-png.flaticon.com/512/3652/3652287.png" alt="Departamentos">
-                            <span>Roles de empleados</span>
-                        </div>
-                        <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/customers-company')">
-                            <img src="https://cdn-icons-png.flaticon.com/512/11815/11815356.png" alt="">
-                            <span>Clientes</span>
-                        </div>
-                        <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/CRM')">
-                            <img src="https://cdn-icons-png.flaticon.com/512/747/747563.png" alt="">
-                            <span>CRM</span>
-                        </div>
-                        <div class="app-icon" onclick="nextWeb('myrestaurant/{{id_companies}}/{{id}}')">
-                            <img src="https://cdn-icons-png.flaticon.com/512/3176/3176363.png" alt="Repartidores">
-                            <span>Ecommerce</span>
-                        </div>
-                        <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/ad')">
-                            <img src="https://cdn-icons-png.flaticon.com/512/6165/6165633.png" alt="Movimientos">
-                            <span>Anuncios</span>
-                        </div>
-                        <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/order-free')">
-                            <img src="https://cdn-icons-png.flaticon.com/512/2830/2830305.png" alt="Ofertas">
-                            <span>Repartidor</span>
-                        </div>
-                        <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/box')">
-                            <img src="https://cdn-icons-png.flaticon.com/512/3355/3355395.png" alt="Departamentos">
-                            <span>Impresoras</span>
-                        </div>
-                        <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/0/sales')">
-                            <img src="https://cdn-icons-png.flaticon.com/512/5305/5305244.png" alt="Departamentos">
-                            <span>Ventas</span>
-                        </div>
-                        <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/0/movements')">
-                            <img src="https://cdn-icons-png.flaticon.com/512/9226/9226528.png" alt="Departamentos">
-                            <span>Movimientos</span>
-                        </div>
-                        <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/reports')">
-                            <img src="https://cdn-icons-png.flaticon.com/512/12448/12448233.png" alt="Departamentos">
-                            <span>Contabilidad</span>
-                        </div>
-                        <div class="app-icon" onclick="nextWeb('{{id}}/{{id_companies}}/edit-branch-free')">
-                            <img src="https://cdn-icons-png.flaticon.com/512/3733/3733132.png" alt="Departamentos">
-                            <span>Editar Sucursal</span>
-                        </div>
-                        <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/options')">
-                            <img src="https://cdn-icons-png.flaticon.com/512/2052/2052698.png" alt="Departamentos">
-                            <span>Configuracion</span>
-                        </div>
-                        <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/marketplace')">
-                            <img src="https://cdn-icons-png.flaticon.com/512/4372/4372862.png" alt="Áreas">
-                            <span>Marketplace</span>
-                        </div>
+                        {{#if user.point_sales}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('/home')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/6712/6712868.png" alt="Insumos">
+                                    <span>Punto de Venta</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+                        {{#if user.supplies}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/supplies-free')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/1147/1147832.png" alt="Insumos">
+                                    <span>Insumos</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+                        {{#if user.products}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/products-free')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/679/679922.png" alt="Productos">
+                                    <span>Productos</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+                        {{#if user.combos}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/combos-free')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/6626/6626465.png" alt="Combos">
+                                    <span>Combos</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+                        {{#if user.product_department}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/food-department-free')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/3974/3974868.png" alt="Departamentos">
+                                    <span>Departamento de productos</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+                        {{#if user.product_area}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/food-area-free')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/3974/3974868.png" alt="Departamentos">
+                                    <span>Área de productos</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+                        {{#if user.providers}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/providers-free')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/2554/2554978.png" alt="Proveedores">
+                                    <span>Proveedores</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+                        {{#if user.employees}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/employees-branch')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/9187/9187532.png" alt="Empleados">
+                                    <span>Empleados</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+                        {{#if user.schedules}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/schedules')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/566/566632.png" alt="Horarios">
+                                    <span>Horarios</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+
+                        {{#if user.employees_schedules}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/schedules-employees')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/5246/5246231.png" alt="Horarios de empleados">
+                                    <span>Horarios de empleados</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+
+                        {{#if user.employee_department}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/employee-department')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/5957/5957016.png" alt="Departamento de empleados">
+                                    <span>Departamento de empleados</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+                        {{#if user.employee_roles}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/type-employees-free')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/3652/3652287.png" alt="Roles de empleados">
+                                    <span>Roles de empleados</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+                        {{#if user.customers}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/customers-company')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/11815/11815356.png" alt="Clientes">
+                                    <span>Clientes</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+                        {{#if user.crm}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/CRM')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/747/747563.png" alt="CRM">
+                                    <span>CRM</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+                        {{#if user.ecommerce}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('myrestaurant/{{id_companies}}/{{id}}')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/3176/3176363.png" alt="Ecommerce">
+                                    <span>Ecommerce</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+                        {{#if user.ads}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/ad')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/6165/6165633.png" alt="Anuncios">
+                                    <span>Anuncios</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+                        {{#if user.dealer}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/order-free')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/2830/2830305.png" alt="Repartidor">
+                                    <span>Repartidor</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+                        {{#if user.computer_equipment}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/box')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/3355/3355395.png" alt="Impresoras">
+                                    <span>Impresoras</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+                        {{#if user.sales}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/0/sales')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/5305/5305244.png" alt="Ventas">
+                                    <span>Ventas</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+                        {{#if user.movements}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/0/movements')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/9226/9226528.png" alt="Movimientos">
+                                    <span>Movimientos</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+                        {{#if user.accounting}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/reports')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/12448/12448233.png" alt="Contabilidad">
+                                    <span>Contabilidad</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+                        {{#if user.edit_branch}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id}}/{{id_companies}}/edit-branch-free')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/3733/3733132.png" alt="Editar Sucursal">
+                                    <span>Editar Sucursal</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+                        {{#if user.settings}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/options')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/2052/2052698.png" alt="Departamentos">
+                                    <span>Configuracion</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+                        {{#each branchFree}}
+                            <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/marketplace')">
+                                <img src="https://cdn-icons-png.flaticon.com/512/4372/4372862.png" alt="Áreas">
+                                <span>Marketplace</span>
+                            </div>
+                        {{/each}}
                         <div class="app-icon" onclick="nextWeb('logout')">
                             <img src="https://cdn-icons-png.flaticon.com/512/3596/3596136.png" alt="Áreas">
                             <span>Cerrar Sesion</span>
                         </div>
                     </div>
-                {{/each}}
             </div>
 
             <!--this is for add the name of the company or the branch-->

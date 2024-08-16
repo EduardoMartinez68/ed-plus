@@ -1,5 +1,42 @@
 <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css'>
+<!--
+{{#each company}}
+    <li><a href="company-home"><i class="fi-icon fi-sr-apps"> Dashboard</i></a></li>
+    <li><a href="/fud/{{id}}/branches"><i class="fi-icon fi-sr-store-alt"> Branches</i></a></li>
+    <li><a href="/fud/{{id}}/employees"><i class="fi-icon fi-sr-hat-chef"> Employees</i></a></li>
+    <li><a href="/fud/{{id}}/customers-company"><i class="fi-icon fi-sr-user"> Customers</i></a>
+    </li>
+    <li><a href="/fud/{{id}}/company-supplies"><i class="fi-icon fi-sr-apple-whole">
+                Supplies</i></a></li>
+    <li><a href="/fud/{{id}}/company-products"><i class="fi-icon fi-ss-hamburger"> Products</i></a>
+    </li>
+    <li><a href="/fud/{{id}}/combos"><i class="fi-icon fi-sr-restaurant"> Combos</i></a></li>
+    <li><a href="/fud/{{id}}/providers"><i class="fi-icon fi-ss-truck-side"> Providers</i></a></li>
+    <li><a href="/fud/{{id}}/reports"><i class="fi-icon fi-ss-files-medical"> Reports</i></a></li>
+    <li><a href="/fud/{{id}}/options"><i class="fi-icon fi-sr-settings"> Options</i></a></li>
+    <li><a href="/fud/home"><i class="fi-icon fi-sr-undo"> Exit</i></a></li>
+{{/each}}
 
+
+{{#each branch}}
+<li><a href="/fud/{{id_companies}}/{{id}}/visit-branch"><i class="fi-icon fi-sr-apps">
+            Dashboard</i></a></li>
+<li><a href="/fud/{{id_companies}}/{{id}}/employees-branch"><i class="fi-icon fi-sr-hat-chef">
+            Employees</i></a></li>
+<li><a href="/fud/{{id_companies}}/{{id}}/schedules-employees"><i
+            class="fi-icon fi-sr-clock-three"> Schedules</i></a></li>
+<li><a href="/fud/{{id_companies}}/{{id}}/supplies"><i class="fi-icon fi-sr-apple-whole">
+            Supplies</i></a></li>
+<li><a href="/fud/{{id_companies}}/{{id}}/products"><i class="fi-icon fi-ss-hamburger">
+            Products</i></a></li>
+<li><a href="/fud/{{id_companies}}/{{id}}/combos"><i class="fi-icon fi-sr-restaurant">
+            Combos</i></a></li>
+<li><a href="/fud/{{id_companies}}/{{id}}/providers"><i class="fi-icon fi-ss-truck-side">
+            Providers</i></a></li>
+<li><a href="/fud/{{id_companies}}/{{id}}/ad"><i class="fi-icon fi-sr-ad"> Ad</i></a></li>
+<li><a href="/fud/{{id_companies}}/company-home"><i class="fi-icon fi-sr-undo"> Exit</i></a></li>
+{{/each}}
+-->
 <!--this is the navbar-->
 {{#if digitalMenu}}
 {{else}}
@@ -30,89 +67,9 @@
                             <ul class="scroll-navbar">
 
                                 <!---this is for see the subscriptions-->
-                                <li rolUser="{{user.rol_user}}" id="roleUser"><a href="/fud/subscription"><i
-                                            class="fi-icon fi-sr-credit-card"> Licencias</i></a></li>
 
+                            {{>navbar/linksNavBarRigth}}
 
-                                {{#each company}}
-                                    <li><a href="company-home"><i class="fi-icon fi-sr-apps"> Dashboard</i></a></li>
-                                    <li><a href="/fud/{{id}}/branches"><i class="fi-icon fi-sr-store-alt"> Branches</i></a></li>
-                                    <li><a href="/fud/{{id}}/employees"><i class="fi-icon fi-sr-hat-chef"> Employees</i></a></li>
-                                    <li><a href="/fud/{{id}}/customers-company"><i class="fi-icon fi-sr-user"> Customers</i></a>
-                                    </li>
-                                    <li><a href="/fud/{{id}}/company-supplies"><i class="fi-icon fi-sr-apple-whole">
-                                                Supplies</i></a></li>
-                                    <li><a href="/fud/{{id}}/company-products"><i class="fi-icon fi-ss-hamburger"> Products</i></a>
-                                    </li>
-                                    <li><a href="/fud/{{id}}/combos"><i class="fi-icon fi-sr-restaurant"> Combos</i></a></li>
-                                    <li><a href="/fud/{{id}}/providers"><i class="fi-icon fi-ss-truck-side"> Providers</i></a></li>
-                                    <li><a href="/fud/{{id}}/reports"><i class="fi-icon fi-ss-files-medical"> Reports</i></a></li>
-                                    <li><a href="/fud/{{id}}/options"><i class="fi-icon fi-sr-settings"> Options</i></a></li>
-                                    <li><a href="/fud/home"><i class="fi-icon fi-sr-undo"> Exit</i></a></li>
-                                {{/each}}
-
-
-                            {{#each branch}}
-                                <li><a href="/fud/{{id_companies}}/{{id}}/visit-branch"><i class="fi-icon fi-sr-apps">
-                                            Dashboard</i></a></li>
-                                <li><a href="/fud/{{id_companies}}/{{id}}/employees-branch"><i class="fi-icon fi-sr-hat-chef">
-                                            Employees</i></a></li>
-                                <li><a href="/fud/{{id_companies}}/{{id}}/schedules-employees"><i
-                                            class="fi-icon fi-sr-clock-three"> Schedules</i></a></li>
-                                <li><a href="/fud/{{id_companies}}/{{id}}/supplies"><i class="fi-icon fi-sr-apple-whole">
-                                            Supplies</i></a></li>
-                                <li><a href="/fud/{{id_companies}}/{{id}}/products"><i class="fi-icon fi-ss-hamburger">
-                                            Products</i></a></li>
-                                <li><a href="/fud/{{id_companies}}/{{id}}/combos"><i class="fi-icon fi-sr-restaurant">
-                                            Combos</i></a></li>
-                                <li><a href="/fud/{{id_companies}}/{{id}}/providers"><i class="fi-icon fi-ss-truck-side">
-                                            Providers</i></a></li>
-                                <li><a href="/fud/{{id_companies}}/{{id}}/ad"><i class="fi-icon fi-sr-ad"> Ad</i></a></li>
-                                <li><a href="/fud/{{id_companies}}/company-home"><i class="fi-icon fi-sr-undo"> Exit</i></a></li>
-                            {{/each}}
-
-                            <!----->
-                            {{#each branchFree}}
-                                <li>
-                                    <a href="/fud/home"><i class="fi-icon fi-sr-apps"> Menu</i></a>
-                                </li>
-                                <li>
-                                    <a href="/fud/{{id_companies}}/{{id}}/marketplace"><i class="fi-icon fi-ss-shopping-bag"> Marketplace</i></a>
-                                </li>
-                                <li step="btn-navbar-supplies">
-                                    <a href="/fud/{{id_companies}}/{{id}}/supplies-free"> <i class="fi-icon fi-sr-apple-whole"> Insumos</i></a>
-                                </li>
-                                <li>
-                                    <a href="/fud/{{id_companies}}/{{id}}/combos-free"><i class="fi-icon fi-sr-restaurant"> Combos</i></a>
-                                </li>
-                                <li>
-                                    <a href="/fud/{{id_companies}}/{{id}}/employees-branch"><i class="fi-icon fi-sr-user"> Empleados</i></a>
-                                </li>
-                                <li>
-                                    <a href="/fud/{{id_companies}}/{{id}}/order-free"><i class="fi-icon fi-ss-biking-mountain"> Repartidor</i></a>
-                                </li>
-                                <li>
-                                    <a href="/fud/myrestaurant/{{id_companies}}/{{id}}" target="_blank"><i class="fi-icon fi-ss-window-alt"> Menu Digital</i></a>
-                                </li>
-                                <li>
-                                    <a href="/fud/{{id_companies}}/{{id}}/ad"><i class="fi-icon fi-sr-ad"> Anuncios</i></a>
-                                </li>
-                                <li>
-                                    <a href="/fud/{{id_companies}}/{{id}}/0/sales"><i class="fi-icon fi-sr-ticket"> Ventas</i></a>
-                                </li>
-                                <li>
-                                    <a href="/fud/{{id_companies}}/{{id}}/0/movements"><i class="fi-icon fi-sr-hand-holding-usd"> Movimientos</i></a>
-                                </li>
-                                <li>
-                                    <a href="/fud/{{id}}/{{id_companies}}/edit-branch-free"><i class="fi-icon fi-sr-store-alt"> Sucursal</i></a>
-                                </li>
-                            {{/each}}
-
-
-                            <!--this is for logout-->
-                            <li><a href="/fud/my-order"><i class="fi-icon fi-sr-ballot">
-                                        Mis Pedidos</i></a></li>
-                            <li><a href="/fud/logout"><i class="fi-icon fi-br-exit"> Cerrar sesión</i></a></li>
                         </ul>
                     </div>
                 </ul>

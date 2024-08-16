@@ -1,25 +1,18 @@
+<style>
+    .ul-navbar-3 {
+        max-height: 100%;
+        overflow-y: auto;
+        overflow-x: hidden;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+</style>
+
 <div class="navbar-3-logo">
     <img src="/img/logo.png" alt="Logo" />
 </div>
 
-<ul class="">
-    {{#each branchFree}}
-        <li><a href="/fud/home" class="navbar-3"><i class="fi fi-sr-apps"></i> Menu</a></li>
-        <li><a href="/fud/{{id_companies}}/{{id}}/marketplace" class="navbar-3"><i class="fi fi-ss-shopping-bag"></i> Marketplace</a></li>
-        <li><a href="/fud/{{id_companies}}/{{id}}/supplies-free" class="navbar-3"><i class="fi fi-sr-apple-whole"></i> Insumos</a></li>
-        <li><a href="/fud/{{id_companies}}/{{id}}/combos-free" class="navbar-3"><i class="fi fi-sr-restaurant"></i> Combos</a></li>
-        <li><a href="/fud/{{id_companies}}/{{id}}/employees-branch" class="navbar-3"><i class="fi fi-ss-user-chef"></i> Empleados</a></li>
-        <li><a href="/fud/{{id_companies}}/{{id}}/order-free" class="navbar-3"><i class="fi fi-ss-biking-mountain"></i> Repartidor</a></li>
-        <li><a href="/fud/myrestaurant/{{id_companies}}/{{id}}" target="_blank" class="navbar-3"><i class="fi fi-ss-window-alt"></i> Menu Digital</a></li>
-        <li><a href="/fud/{{id_companies}}/{{id}}/ad" class="navbar-3"><i class="fi fi-sr-ad"></i> Anuncios</a></li>
-        <li><a href="/fud/{{id_companies}}/{{id}}/0/sales" class="navbar-3"><i class="fi fi-sr-ticket"></i> Ventas</a></li>
-        <li><a href="/fud/{{id_companies}}/{{id}}/0/movements" class="navbar-3"><i class="fi fi-sr-hand-holding-usd"></i> Movimientos</a></li>
-        <li><a href="/fud/{{id}}/{{id_companies}}/edit-branch-free" class="navbar-3"><i class="fi fi-sr-store-alt"></i> Sucursal</a></li>
-    {{/each}}
-
-
-
-    <li><a href="/fud/my-order"><i class="fi-icon fi-sr-ballot">
-                Mis Pedidos</i></a></li>
-    <li><a href="/fud/logout"><i class="fi-icon fi-br-exit"> Cerrar sesión</i></a></li>
+<ul class="ul-navbar-3">
+    {{>navbar/linksNavBarRigth}}
 </ul>
