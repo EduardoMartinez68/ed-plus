@@ -2,20 +2,27 @@
 <div class="add-column-form">
     <button id="addColumnBtn" class="btn btn-confirm-message" onclick="add_table_crm(0,0)">Añadir nueva columna <i
             class="fi-icon fi-sr-square-plus"></i></button>
-    <button id="addColumnBtn" class="btn btn-edit">Guardar cambios <i class="fi-icon fi-sr-disk"></i></button>
+    <button id="addColumnBtn" class="btn btn-edit" onclick="updateOrderInBackend()">Guardar cambios <i class="fi-icon fi-sr-disk"></i></button>
 </div>
+
+<!--this is for the form of edit-->
+{{#each branchFree}}
+    <input type="hidden" value="{{id}}" id="id_branch">
+    <input type="hidden" value="{{id_companies}}" id="id_company">
+{{/each}}
+
 <div class="board-wrapper">
     <div class="board" id="container-column">
         {{#each salesStage}}
-            <div class="column" id="stage-{{name}}" position="{{position}}">
+            <div class="column" id="stage-{{id}}" position="{{position}}" idStage="{{id}}" nameStage="{{name}}">
                 <div class="title-column">
-                    <h4>{{name}}</h4>
+                    <h4 id="h4-name-{{id}}">{{name}}</h4>
                     <button class="dropdown-btn"><i class="fi fi-br-menu-dots"></i></button>
                     <div class="dropdown-menu">
                         <ul>
-                            <li><a href="#" class="dropdown-item">Cambiar nombre</a></li>
-                            <li><a onclick="nextStage('{{name}}')" class="dropdown-item">Mover adelante</a></li>
-                            <li><a onclick="nextStage('{{name}}')" class="dropdown-item">Mover atrás</a></li>
+                            <li><a onclick="edit_name('{{id}}')" class="dropdown-item">Cambiar nombre</a></li>
+                            <li><a onclick="nextStage('{{id}}')" class="dropdown-item">Mover adelante</a></li>
+                            <li><a onclick="backStage('{{id}}')" class="dropdown-item">Mover atrás</a></li>
                             <li><a href="#" class="dropdown-item">Eliminar</a></li>
                         </ul>
                     </div>
@@ -51,6 +58,39 @@
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
 <script>
+    async function edit_name(id){
+        const nameH=document.getElementById('h4-name-'+id); //get the h4 of the column
+        const newName=await edit_name_table_crm(nameH.textContent); 
+
+        //we will see if the new name no is null
+        if (newName) {
+            const columnId=document.getElementById('stage-'+id); //get the id of the column
+
+            //we will see if this name not exist in the database
+            const container = document.getElementById('container-column'); //get the container column
+            const columns = Array.from(container.children);
+            const order = columns.map(col => col.getAttribute('nameStage'));
+            let repeat=false;
+            for(var i=0;i<order.length;i++){
+                if(order[i]==newName){
+                    repeat=true;
+                    break; 
+                }
+            }
+
+            //if the new name not exist in the database, we will update
+            if(!repeat){
+                nameH.textContent = newName;
+                columnId.setAttribute('nameStage', newName); //update the name
+                await updateOrderInBackend() //update the information in the database
+            }else{
+                warningMessage('Error al actualizar el nombre','El nombre que intentaste ingresar ya existe en alguna tabla');
+            }
+        }else{
+            warningMessage('Error al actualizar el nombre','El nombre que intentaste ingresar no es correcto');
+        }
+    }
+
     function nextStage(id){
         const columnId=document.getElementById('stage-'+id); //get the id of the column
         const container = document.getElementById('container-column'); //get the container column
@@ -61,37 +101,64 @@
         //we will see if can move the column 
         if (newIndex < columns.length) {
             //save both columns for use after
-            const oldColumn=columns[index]
-            const newColumn=columns[newIndex]
-            
-            columns[index]=newColumn;
-            columns[newIndex]=oldColumn;
+            container.insertBefore(columns[newIndex], columns[index]);
         }
-
-        console.log(columns)
     }
 
-    function backStage(){
+    function backStage(id){
         const columnId=document.getElementById('stage-'+id); //get the id of the column
         const container = document.getElementById('container-column'); //get the container column
         const columns = Array.from(container.children); //get all the columns of the column column
         const index = columns.indexOf(columnId); //get the index of the column in the array
         const newIndex = index - 1; 
-        
+ 
         //we will see if can move the column 
-        if (newIndex > -1) {
+        if (newIndex >-1) {
             //save both columns for use after
-            const oldColumn=columns[index]
-            const newColumn=columns[newIndex]
-            
-            columns[index]=newColumn;
-            columns[newIndex]=oldColumn;
+            container.insertBefore(columns[index], columns[newIndex]);
         }    
     }
 
-    async function updateOrderInBackend(container) {
-        // Obtén el nuevo orden de las columnas
-        const order = Array.from(container.children).map(col => col.getAttribute('id').replace('stage-', ''));
+    async function updateOrderInBackend() {
+        //this is for get the new name of the columns
+        const container = document.getElementById('container-column');
+        const columns = Array.from(container.children);
+        const order = columns.map(col => col.getAttribute('nameStage'));
+
+        //this is for get the id of the columns
+        const ids = columns.map(col => col.getAttribute('idStage'));
+
+        //create the body that send to the server
+        const requestBody = {
+            order: order,
+            ids: ids
+        };
+
+        //show the load window
+        document.getElementById('loading-screen').style.display = 'flex';
+
+        try {
+            const response = await fetch('/fud/update-stage-columns', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            });
+
+            //we will see if the answer of th server
+            if (response.ok) {
+                const responseData = await response.json();
+                notificationMessage('CRM actualizado con éxito', 'Tus propuestas fueron actualizadas con éxito');
+            } else {
+                errorMessage('Error al actualizar CRM', 'Hubo un error al intentar actualizar tus propuestas');
+            }
+        } catch (error) {
+            errorMessage('Error al actualizar CRM', 'Hubo un error al intentar actualizar tus propuestas');
+        } finally {
+            // hidden the load window
+            document.getElementById('loading-screen').style.display = 'none';
+        }
     }
 
 </script>

@@ -2542,8 +2542,45 @@ router.post('/fud/:id_company/:id_customer/editCustomer', isLoggedIn, async (req
     res.redirect('/fud/' + id_company + '/customers-company');
 })
 
+//-------------------------------------------------------CRM
+router.post('/fud/update-stage-columns', isLoggedIn, async (req, res) => {
+    const { order,ids } = req.body;
+    for(var i=0;i<=ids.length;i++){
+        const id=ids[i];
+        const newName=order[i];
+
+        //we will see if can update all the position and the name of stage
+        if(!await update_position_stage(id,newName,i)){
+            res.json({ success: false, message: 'Error al actualizar Orden' });
+        }
+    }
+
+    res.json({ success: true, message: 'Orden actualizada correctamente' });
+})
 
 
+async function update_position_stage(id,name,position){
+    const queryText = `
+    UPDATE "CRM".sales_stage
+    SET 
+        name=$1,
+        position=$2
+    WHERE 
+        id=$3
+    `;
+
+    //create the array of the new data
+    var values = [name, position, id];
+
+    //update the stage sales in the database
+    try {
+        await database.query(queryText, values);
+        return true;
+    } catch (error) {
+        console.error('Error updating provider:', error);
+        return false;
+    }
+}
 
 
 
