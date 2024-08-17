@@ -4,365 +4,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Promoción CRM</title>
+    <title>Administrador de Tareas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body{
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            background-color: white;
+        body {
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
         }
 
-        .body-title{
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: white;
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
         }
 
-        /*------------------------navbar---------------------------*/
-        .navbar {
-            border: 2px solid #F5F6F8;
-            color: #636F76;
-            padding: 0.75rem 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: relative;
+        .task-column {
+            background-color: #e9ecef;
+            border-radius: 5px;
+            min-height: 400px;
+            padding: 20px;
+            box-shadow: 04px6pxrgba(0, 0, 0, 0.1);
         }
 
-        .navbar .logo {
-            display: flex;
-            align-items: center;
-        }
-
-        .navbar .logo img {
-            height: 40px;
-            margin-right: 1rem;
-        }
-
-        .navbar .menu {
-            display: flex;
-            align-items: center;
-        }
-
-        .navbar .menu a {
-            font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-            color: #636F76;
-            text-decoration: none;
-            padding: 0.75rem 1rem;
-            font-size: 1rem;
-            transition: background-color 0.3s;
-            border-radius: 25px;
-            margin: 0 0.5rem;
-        }
-
-        .navbar .menu a:hover {
-            background-color: rgba(97, 97, 255, 0.2);
-            color: #6879f8;
-        }
-
-        .dropdown {
-            position: relative;
-        }
-
-        .dropdown-content {
-            display: none;
-            position: absolute;
+        .task-card {
             background-color: #fff;
-            color: #333;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            border-radius: 0.5rem;
-            top: 100%;
-            left: 0;
-            width: 200px;
-            z-index: 1;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 02px4pxrgba(0, 0, 0, 0.1);
+            cursor: move;
         }
 
-        .dropdown-content a {
-            display: block;
-            padding: 0.75rem 1rem;
-            color: #333;
-            text-decoration: none;
+        .task-cardh5 {
+            margin-bottom: 10px;
         }
 
-        .dropdown-content a:hover {
-            background-color: #f4f4f4;
-        }
-
-        .dropdown:hover .dropdown-content {
-            display: block;
-        }
-
-        .submenu {
-            position: relative;
-        }
-
-        .submenu-content {
-            display: none;
-            position: absolute;
-            background-color: #f4f4f4;
-            color: #333;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            border-radius: 0.5rem;
-            top: 0;
-            left: 100%;
-            width: 180px;
-            z-index: 1;
-        }
-
-        .submenu-content a {
-            padding: 0.75rem 1rem;
-            color: #333;
-            text-decoration: none;
-        }
-
-        .submenu-content a:hover {
-            background-color: #e0e0e0;
-        }
-
-        .submenu:hover .submenu-content {
-            display: block;
-        }
-
-        .contact-sales{
-            background-color: transparent;
-            border: 1px solid #3b4ed6;
-        }
-
-        .contact-sales:hover{
-            color: white;
-            background-color: #3b4ed6;
-            border: 1px solid transparent;
-            border-radius: 25px;
-        }
-
-        .sig-user{
-            color: white;
-            background-color: #3b4ed6;
-            border: 1px solid transparent;
-        }
-
-        .sig-user:hover{
-            background-color: #2c399b;
-            border: 1px solid #3b4ed6;
-        }
-
-
-        /**/
-        .container {
-            text-align: center;
-            max-width: 1200px;
-            width: 100%;
-        }
-
-        .title {
-            font-family: 'Roboto', sans-serif;
-            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-            font-size: 4.5rem;
-            margin-bottom: 0.5rem;
-            color: black;
-        }
-
-        .subtitle {
-            font-size: 1.5rem;
-            color: #555;
-            margin-bottom: 2rem;
-        }
-
-        .buttons {
-            margin-bottom: 2rem;
-        }
-
-        .buttons a {
-            display: inline-block;
-            margin: 0 1rem;
-            padding: 0.75rem 2rem;
-            font-size: 1rem;
-            text-decoration: none;
-            color: #fff;
-            background-color: #4356FE;
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            transition: background-color 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .buttons a:hover {
-            background-color: #3c4cdf;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-        }
-
-        .cards {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 1.5rem;
-            padding: 0 1rem;
-        }
-
-        .card {
-            width: 120px;
-            height: 90px;
-            background: #fff;
-            border: 1px solid #ddd;
-            border-radius: 1rem;
-            /* Más elegante */
-            text-align: center;
-            padding: 1rem;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            margin: 0 auto;
-        }
-
-        .card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-            cursor: pointer;
-        }
-
-        .card img {
-            width: 50%;
-            /* Tamaño más pequeño */
-            height: auto;
-            /* Tamaño más pequeño */
-            margin-bottom: 0.5rem;
-            /* Menos margen */
-        }
-
-        .card p {
+        .task-cardp {
             margin: 0;
-            font-size: 0.875rem;
-            /* Tamaño de fuente más pequeño */
-            color: #000;
+            color: #555;
         }
 
-        label {
-            color: rgba(0, 0, 0, 0.5);
+        .profile-pic {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            vertical-align: middle;
+            margin-right: 5px;
         }
     </style>
-    <link rel='stylesheet'
-        href='https://cdn-uicons.flaticon.com/2.5.1/uicons-regular-rounded/css/uicons-regular-rounded.css'>
-    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.5.1/uicons-bold-rounded/css/uicons-bold-rounded.css'>
 </head>
 
 <body>
-    <div class="navbar">
-        <div class="logo">
-            <img src="https://via.placeholder.com/150x40?text=Logo" alt="Logo">
-        </div>
-        <div class="menu">
-            <div class="dropdown">
-                <a href="#">Aplicaciones</a>
-                <div class="dropdown-content">
-                    <div class="submenu">
-                        <a href="#">Grupo 1</a>
-                        <div class="submenu-content">
-                            <a href="#">Aplicación 1.1</a>
-                            <a href="#">Aplicación 1.2</a>
-                        </div>
+    <div class="container mt-5">
+        <h1 class="text-center">Administrador de Tareas</h1>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="task-column" id="todo">
+                    <h2 class="text-center">Por Hacer</h2>
+                    <div class="task-card">
+                        <h5>Diseñar la página web</h5>
+                        <p>Fecha Límite: 2024-08-25</p>
+                        <p>Área: Web</p>
+                        <p>Encargado: <img src="https://i.pinimg.com/736x/57/f8/3f/57f83f808660bad8349674b7744a2659.jpg"alt="Encargado"
+                            class="profile-pic"> Angela White</p>
                     </div>
-                    <div class="submenu">
-                        <a href="#">Grupo 2</a>
-                        <div class="submenu-content">
-                            <a href="#">Aplicación 2.1</a>
-                            <a href="#">Aplicación 2.2</a>
-                        </div>
-                    </div>
-                    <div class="submenu">
-                        <a href="#">Grupo 3</a>
-                        <div class="submenu-content">
-                            <a href="#">Aplicación 3.1</a>
-                            <a href="#">Aplicación 3.2</a>
-                        </div>
+                    <div class="task-card">
+                        <h5>Redactar el contenido</h5>
+                        <p>Fecha Límite: 2024-08-30</p>
+                        <p>Área: Marketing</p>
+                        <p>Encargado: <img src="https://i.pinimg.com/736x/57/f8/3f/57f83f808660bad8349674b7744a2659.jpg"alt="Encargado"
+                            class="profile-pic"> Angela White</p>
                     </div>
                 </div>
             </div>
-            <a href="#">Empresa</a>
-            <a href="#">Precios</a>
-            <a href="#">Iniciar sesión</a>
-            <a href="#" class="contact-sales">Contactar a ventas</a>
-            <a href="#" class="sig-user" style="color: white;">Empezar Gratis</a>
+            <div class="col-md-4">
+                <div class="task-column" id="in-progress">
+                    <h2 class="text-center">En Progreso</h2><!-- Tareas en progreso aquí -->
+                    <div class="task-card">
+                        <h5>Configurar base de datos</h5>
+                        <p>Fecha Límite: 2024-08-20</p>
+                        <p>Área: Database</p>
+                        <p>Encargado: <img src="https://i.pinimg.com/736x/57/f8/3f/57f83f808660bad8349674b7744a2659.jpg"alt="Encargado"
+                            class="profile-pic"> Angela White</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="task-column" id="done">
+                    <h2 class="text-center">Hecho</h2><!-- Tareas completadas aquí -->
+                    <div class="task-card">
+                        <h5>Planificación del proyecto</h5>
+                        <p>Fecha Límite: 2024-08-15</p>
+                        <p>Área: Management</p>
+                        <p>Encargado: <img src="https://i.pinimg.com/736x/57/f8/3f/57f83f808660bad8349674b7744a2659.jpg"alt="Encargado"
+                                class="profile-pic"> Angela White</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-<div class="body-title">
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.14.0/Sortable.min.js"></script>
+    <script>// Hacer las columnas de tareas arrastrables y 
+    tablesnewSortable(document.getElementById('todo'), {
+        group: 'shared',
+            animation: 150
+            });
 
+        newSortable(document.getElementById('in-progress'), {
+            group: 'shared',
+            animation: 150
+        });
 
-    <div class="container">
-        <div class="title"><b>TODO TU NEGOCIO EN UNA SOLA PLATAFORMA</b></div>
-        <div class="subtitle"><i class="fi fi-br-plus"></i> Más de 30 apps para tu empresa</div>
-        <div class="cards">
-            <!-- Card 1 -->
-            <div class="card">
-                <img src="https://cdn-icons-png.flaticon.com/512/747/747563.png" alt="App Icon">
-                <p>CRM</p>
-            </div>
-            <!-- Card 2 -->
-            <div class="card">
-                <img src="https://cdn-icons-png.flaticon.com/512/6712/6712868.png" alt="App Icon">
-                <p>POS</p>
-            </div>
-            <!-- Card 3 -->
-            <div class="card">
-                <img src="https://cdn-icons-png.flaticon.com/512/12448/12448233.png" alt="App Icon">
-                <p>Finanzas</p>
-            </div>
-            <!-- Card 4 -->
-            <div class="card">
-                <img src="https://cdn-icons-png.flaticon.com/512/11815/11815356.png" alt="App Icon">
-                <p>Clientes</p>
-            </div>
-            <!-- Card 5 -->
-            <div class="card">
-                <img src="https://cdn-icons-png.flaticon.com/512/9187/9187532.png" alt="App Icon">
-                <p>Empleados</p>
-            </div>
-            <!-- Card 6 -->
-            <div class="card">
-                <img src="https://cdn-icons-png.flaticon.com/512/5957/5957016.png" alt="App Icon">
-                <p>Recursos Humanos</p>
-            </div>
-            <!-- Card 7 -->
-            <div class="card">
-                <img src="https://cdn-icons-png.flaticon.com/512/3176/3176363.png" alt="App Icon">
-                <p>Ecomers</p>
-            </div>
-            <!-- Card 8 -->
-            <div class="card">
-                <img src="https://cdn-icons-png.flaticon.com/512/5305/5305244.png" alt="App Icon">
-                <p>Ventas</p>
-            </div>
-            <!-- Card 9 -->
-            <div class="card">
-                <img src="https://cdn-icons-png.flaticon.com/512/6165/6165633.png" alt="App Icon">
-                <p>Marketing</p>
-            </div>
-            <!-- Card 10 -->
-            <div class="card">
-                <img src="https://cdn-icons-png.flaticon.com/512/8276/8276278.png" alt="App Icon">
-                <p>Reportes</p>
-            </div>
-            <!-- Card 11 -->
-            <div class="card">
-                <img src="https://cdn-icons-png.flaticon.com/512/4372/4372862.png" alt="App Icon">
-                <p>ERP</p>
-            </div>
-            <!-- Card 12 -->
-            <div class="card">
-                <img src="https://cdn-icons-png.flaticon.com/512/679/679922.png" alt="App Icon">
-                <p>Inventario</p>
-            </div>
-        </div>
-        <br><br><br>
-        <div class="buttons">
-            <a href="#">Empieza ahora <i class="fi fi-rr-arrow-right"></i></a>
-        </div>
-        <center><label for="">Obtén acceso completo ✦ No se necesita tarjeta de crédito</label></center>
-    </div>
-</div>
+        newSortable(document.getElementById('done'), {
+            group: 'shared',
+            animation: 150
+        });
+    </script>
 </body>
 
 </html>

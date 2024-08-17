@@ -1605,7 +1605,6 @@ router.post('/fud/:id_company/:id_branch/:id_supplies/update-products-branch', i
     res.redirect(`/fud/${id_company}/${id_branch}/product`);
 })
 
-
 router.post('/fud/:id_company/:id_branch/:id_provider/edit-providers-branch', isLoggedIn, async (req, res) => {
     const { id_company, id_provider, id_branch } = req.params;
     const provider = create_new_provider(req);
@@ -1828,7 +1827,6 @@ async function create_ad(req, id_branch, type) {
 
     return ad;
 }
-
 
 router.post('/fud/:id_company/:id_branch/add-schedule', isLoggedIn, async (req, res) => {
     const { id_company, id_branch } = req.params;

@@ -357,11 +357,38 @@ router.get('/:id_company/:id_branch/providers-free', isLoggedIn, async (req, res
 
 
 //------------------------------------CRM 
+//functions CRM
+const {
+    get_sales_stage_with_company_id,
+    add_the_new_sales_stage_in_my_company
+} = require('../../services/CRM');
+
 router.get('/:id_company/:id_branch/CRM', isLoggedIn, async (req, res) => {
     const { id_company, id_branch } = req.params;
     const branchFree = await get_data_branch(id_branch);
-    res.render('links/branch/CRM/CRM', { branchFree });
+
+    
+    // we will see if exist sales stage in the company
+    //if not exist data in the database, we going to add (new, qualified, proposition, won)
+    var salesStage=await get_sales_stage_with_company_id(id_company);
+    if(salesStage.length === 0 || salesStage==null){
+        await add_the_new_sales_stage_in_my_company(id_company) //this is for add the 
+        salesStage=await get_sales_stage_with_company_id(id_company); //we get the new groups we added again
+    }
+
+
+    res.render('links/branch/CRM/CRM', { branchFree, salesStage });
 })
+
+
+
+
+
+
+
+
+
+
 
 //------------------------------------options 
 router.get('/:id_company/:id_branch/options', isLoggedIn, async (req, res) => {

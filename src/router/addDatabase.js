@@ -555,6 +555,56 @@ async function add_order(dataOrder){
     }
 }
 
+
+
+
+//-------------------------------------------------------------------CRM-------------------------------------------------//
+async function add_new_sales_stage(salesStage){
+    console.log(salesStage)
+    //update the position of all the sales stage
+    if(!await update_sales_stage_positions(salesStage.id_company)){
+        //if not can update the sales stage, no can add a new sales stage to the database\
+        return false;
+    }
+
+    const queryText = `
+        INSERT INTO "CRM".sales_stage(
+        id_companies, name)
+        VALUES ($1, $2)
+    `;
+    const values = Object.values(salesStage); //this is for create the format of save
+    try{
+        await database.query(queryText, values);
+        return true;
+    } catch (error) {
+        console.error('Error inserting into new_sales_stage database:', error);
+        return false;
+    }
+}
+
+async function update_sales_stage_positions(id_company) {
+    const queryText = `
+        UPDATE "CRM".sales_stage
+        SET position = position + 1
+        WHERE id_companies = $1
+    `;
+    try {
+        await database.query(queryText, [id_company]);
+        return true;
+    } catch (error) {
+        console.error('Error updating sales_stage positions:', error);
+        return false;
+    }
+}
+
+
+
+
+
+
+
+
+
 module.exports={
     add_company,
     add_product_department,
@@ -579,5 +629,6 @@ module.exports={
     add_ad,
     add_schedule,
     save_branch,
-    add_order
+    add_order,
+    add_new_sales_stage
 };
