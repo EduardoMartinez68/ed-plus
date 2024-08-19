@@ -1,7 +1,13 @@
 <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.5.1/uicons-brands/css/uicons-brands.css'>
 <div class="add-column-form">
-    <button id="addColumnBtn" class="btn btn-confirm-message" onclick="add_table_crm(0,0)">Añadir nueva columna <i
+    {{#each branchFree}}
+    <button id="addColumnBtn" class="btn btn-confirm-message" onclick="add_table_crm('{{id_companies}}','{{id}}')">Añadir nueva columna <i
             class="fi-icon fi-sr-square-plus"></i></button>
+    {{/each}}
+    {{#each company}}
+    <button id="addColumnBtn" class="btn btn-confirm-message" onclick="add_table_crm('{{id}}')">Añadir nueva columna <i
+            class="fi-icon fi-sr-square-plus"></i></button>
+    {{/each}}
     <button id="addColumnBtn" class="btn btn-edit" onclick="updateOrderInBackend()">Guardar cambios <i class="fi-icon fi-sr-disk"></i></button>
 </div>
 
@@ -23,7 +29,7 @@
                             <li><a onclick="edit_name('{{id}}')" class="dropdown-item">Cambiar nombre</a></li>
                             <li><a onclick="nextStage('{{id}}')" class="dropdown-item">Mover adelante</a></li>
                             <li><a onclick="backStage('{{id}}')" class="dropdown-item">Mover atrás</a></li>
-                            <li><a href="#" class="dropdown-item">Eliminar</a></li>
+                            <li><a onclick="deleteStage('{{id}}','{{id_companies}}','{{name}}')" class="dropdown-item">Eliminar</a></li>
                         </ul>
                     </div>
                 </div>
@@ -118,6 +124,20 @@
             container.insertBefore(columns[index], columns[newIndex]);
         }    
     }
+
+    async function deleteStage(id,id_company,name){
+        if(await questionMessage('Eliminar etapa de venta',`¿Deseas eliminar la etapa de venta '${name}'?`)){
+            const id_branch=document.getElementById('id_branch');
+
+            //we will see if the user would like delete the stage
+            if(id_branch){
+                window.location.href = `/fud/${id_company}/${id_branch}/${id}/delete-table-crm`;
+            }else{
+                window.location.href = `/fud/${id_company}/${id}/delete-table-crm`;
+            }
+        }
+    }
+
 
     async function updateOrderInBackend() {
         //this is for get the new name of the columns

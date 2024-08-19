@@ -560,7 +560,6 @@ async function add_order(dataOrder){
 
 //-------------------------------------------------------------------CRM-------------------------------------------------//
 async function add_new_sales_stage(salesStage){
-    console.log(salesStage)
     //update the position of all the sales stage
     if(!await update_sales_stage_positions(salesStage.id_company)){
         //if not can update the sales stage, no can add a new sales stage to the database\

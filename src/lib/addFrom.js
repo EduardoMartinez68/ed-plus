@@ -2543,6 +2543,43 @@ router.post('/fud/:id_company/:id_customer/editCustomer', isLoggedIn, async (req
 })
 
 //-------------------------------------------------------CRM
+router.post('/fud/:id_company/add-table-crm', isLoggedIn, async (req, res) => {
+    const { id_company} = req.params;
+    const {table_name, id_branch} = req.body;
+    const salesStage={
+        id_company,
+        table_name
+    }
+
+    //we will see if can added the new sales stage to the database
+    if (await addDatabase.add_new_sales_stage(salesStage)) {
+        req.flash('success', 'La etapa de venta fue agregada con éxito ❤️')
+    }
+    else {
+        req.flash('message', 'La etapa de venta no fue agregado 👉👈')
+    }
+
+    //we will see if the user have the subscription ONE or is in a branch
+    if(id_branch){
+        res.redirect(`/fud/${id_company}/${id_branch}/CRM`);
+    }else{
+        res.redirect(`/fud/${id_company}/CRM`);
+    }
+})
+
+router.post('/fud/:id_company/:id_branch/delete-table-crm', isLoggedIn, async (req, res) => {
+    const { id_company} = req.params;
+    const {table_name, id_branch} = req.body;
+    
+    //we will see if can added the new sales stage to the database
+    if (true) {
+        req.flash('success', 'La etapa de venta fue eliminada con éxito 😊')
+    }
+    else {
+        req.flash('message', 'La etapa de venta no fue eliminada 👉👈')
+    }
+})
+
 router.post('/fud/update-stage-columns', isLoggedIn, async (req, res) => {
     const { order,ids } = req.body;
     for(var i=0;i<=ids.length;i++){
@@ -2557,7 +2594,6 @@ router.post('/fud/update-stage-columns', isLoggedIn, async (req, res) => {
 
     res.json({ success: true, message: 'Orden actualizada correctamente' });
 })
-
 
 async function update_position_stage(id,name,position){
     const queryText = `

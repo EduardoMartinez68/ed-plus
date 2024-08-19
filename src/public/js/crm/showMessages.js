@@ -15,8 +15,9 @@ async function add_table_crm(id_company, id_branch) {
                 background-color: #45a049; /* Color de fondo al pasar */
             }
         </style>
-        <form action="/fud/${id_company}/${id_branch}/add-table-crm" method="post" enctype="multipart/form-data">
+        <form action="/fud/${id_company}/add-table-crm" method="post" enctype="multipart/form-data">
             <label for="table_name">Nombre de la tabla *</label>
+            <input id="table_name" class="swal2-input" name="id_branch" type="hidden" value="${id_branch}" required>
             <input id="table_name" class="swal2-input" placeholder="Nombre de la tabla" name="table_name" type="text" required>
             <br><br>
             <button type="submit" class="save-button">Guardar</button>
