@@ -2543,6 +2543,11 @@ router.post('/fud/:id_company/:id_customer/editCustomer', isLoggedIn, async (req
 })
 
 //-------------------------------------------------------CRM
+//functions CRM
+const {
+    delete_sale_stage_in_my_company
+} = require('../services/CRM');
+
 router.post('/fud/:id_company/add-table-crm', isLoggedIn, async (req, res) => {
     const { id_company} = req.params;
     const {table_name, id_branch} = req.body;
@@ -2567,17 +2572,18 @@ router.post('/fud/:id_company/add-table-crm', isLoggedIn, async (req, res) => {
     }
 })
 
-router.post('/fud/:id_company/:id_branch/delete-table-crm', isLoggedIn, async (req, res) => {
-    const { id_company} = req.params;
-    const {table_name, id_branch} = req.body;
+router.get('/fud/:id_company/:id_branch/:id_sales_stage/delete-table-crm', isLoggedIn, async (req, res) => {
+    const { id_company, id_branch, id_sales_stage} = req.params;
     
     //we will see if can added the new sales stage to the database
-    if (true) {
+    if(await delete_sale_stage_in_my_company(id_sales_stage)){
         req.flash('success', 'La etapa de venta fue eliminada con éxito 😊')
     }
     else {
         req.flash('message', 'La etapa de venta no fue eliminada 👉👈')
     }
+
+    res.redirect(`/fud/${id_company}/${id_branch}/CRM`);
 })
 
 router.post('/fud/update-stage-columns', isLoggedIn, async (req, res) => {

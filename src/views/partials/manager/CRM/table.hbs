@@ -127,7 +127,7 @@
 
     async function deleteStage(id,id_company,name){
         if(await questionMessage('Eliminar etapa de venta',`¿Deseas eliminar la etapa de venta '${name}'?`)){
-            const id_branch=document.getElementById('id_branch');
+            const id_branch=document.getElementById('id_branch').value;
 
             //we will see if the user would like delete the stage
             if(id_branch){

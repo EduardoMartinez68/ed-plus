@@ -360,7 +360,8 @@ router.get('/:id_company/:id_branch/providers-free', isLoggedIn, async (req, res
 //functions CRM
 const {
     get_sales_stage_with_company_id,
-    add_the_new_sales_stage_in_my_company
+    add_the_new_sales_stage_in_my_company,
+    delete_sale_stage_in_my_company
 } = require('../../services/CRM');
 
 router.get('/:id_company/:id_branch/CRM', isLoggedIn, async (req, res) => {
@@ -379,10 +380,6 @@ router.get('/:id_company/:id_branch/CRM', isLoggedIn, async (req, res) => {
 
     res.render('links/branch/CRM/CRM', { branchFree, salesStage });
 })
-
-
-
-
 
 
 
