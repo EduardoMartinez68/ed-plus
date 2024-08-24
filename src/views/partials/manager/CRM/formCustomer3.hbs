@@ -1,12 +1,26 @@
 <div class="form-group">
     <div class="row">
+        <div class="col-1">
+            <label for="exampleFormControlInput1" class="form-label">Etiqueta</label>
+            <input type="color" class="form-control" id="exampleFormControlInput1" placeholder="Etiqueta">
+        </div>
+        <div class="col">
+        </div>
+    </div>
+</div>
+<div class="form-group">
+    <div class="row">
         <div class="col">
             <label for="closureDate">Cierre previsto</label>
             <input type="date" class="form-control" id="closureDate">
         </div>
         <div class="col">
             <label for="salesTeam">Equipo de ventas</label>
-            <input type="text" class="form-control" id="salesTeam" placeholder="Nombre del Cliente">
+            <select name="" id="" class="form-select" aria-label="Default select example">
+                {{#each salesTeam}}
+                    <option value="{{id}}">{{name}}</option>
+                {{/each}}
+            </select>
         </div>
     </div>
 </div>
@@ -15,6 +29,14 @@
         <div class="col">
             <label for="closurePercentage">Porcentaje de Cierre Previsto %</label>
             <input type="number" class="form-control" id="closurePercentage" placeholder="Porcentaje de Cierre Previsto">
+        </div>
+        <div class="col">
+            <label for="salesTeam">Producto/Servicio a vender</label>
+            <select name="" id="" class="form-select" aria-label="Default select example">
+                {{#each productToSell}}
+                    <option value="{{id}}">{{name}}</option>
+                {{/each}}
+            </select>
         </div>
     </div>
 </div>
@@ -30,4 +52,14 @@
         </div>
     </div>
 </div>
+<div class="form-group">
+    <div class="row">
+        <div class="col">
+            <label for="exampleFormControlInput1" class="form-label">Prioridad *</label>
+            <input type="number" class="form-control" id="exampleFormControlInput1" placeholder="Prioridad" required>
+        </div>
+        <div class="col">
 
+        </div>
+    </div>
+</div>

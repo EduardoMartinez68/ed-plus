@@ -1,3 +1,57 @@
+    <style>
+        #searchInput {
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            padding: 10px;
+            font-size: 1rem;
+            outline: none;
+            box-shadow: none;
+            transition: border-color 0.3s ease;
+        }
+        #searchInput:focus {
+            border-color: #6c757d;
+        }
+        
+        select {
+            width: 100%;
+            max-height: 200px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            font-size: 1rem;
+            color: #495057;
+            background-color: #ffffff;
+            background-clip: padding-box;
+            box-shadow: none;
+            transition: border-color 0.3s ease;
+        }
+
+        select option {
+            padding: 8px;
+        }
+
+        select:focus {
+            border-color: #6c757d;
+        }
+
+        .display{
+            display: none;
+        }
+    </style>
+
+<div class="form-group">
+    <label for="customerName">Buscar un Cliente</label>
+    <div class="search-container">
+        <input type="text" id="searchInput" class="form-control" placeholder="Buscar por email...">
+        <select id="clientSelect" size="8" class="form-select display">
+            {{#each customers}}
+                <option value="id" email="{{email}}" nameCustomer="{{first_name}} {{second_name}} {{last_name}}" phone="{{phone}}" cellPhone="{{cell_phone}}" companyName="{{company_name}}" companyAddress="{{company_address}}" website="{{website}}" contactName="{{contact_name}}" companyCellphone="{{company_cellphone}}" companyPhone="{{company_phone}}" typeCustomer="{{type_customer}}">{{email}}</option>
+            {{/each}}
+        </select>
+    </div>
+</div>
+
+
 <div class="form-group">
     <label for="customerName">Nombre del Cliente *</label>
     <input type="text" class="form-control" id="customerName" placeholder="Nombre del Cliente" required maxlength="255">
@@ -34,3 +88,65 @@
     <label for="notes">Notas</label>
     <textarea class="form-control" id="notes" rows="5" placeholder="Agregar notas..."></textarea>
 </div>
+
+
+
+
+
+
+<script>
+    const searchInput = document.getElementById('searchInput');
+    const clientSelect = document.getElementById('clientSelect');
+
+    searchInput.addEventListener('keyup', function() {
+        const filter = searchInput.value.toLowerCase();
+        const options = clientSelect.options;
+
+        for (let i = 0; i < options.length; i++) {
+            const optionText = options[i].text.toLowerCase();
+            if (optionText.includes(filter)) {
+                options[i].style.display = '';
+            } else {
+                options[i].style.display = 'none';
+            }
+        }
+    });
+
+    // get the value of the option that the user selected
+    clientSelect.addEventListener('change', function() {
+        searchInput.textContent="";
+        clientSelect.classList.add('display');
+
+        //<option value="id"  phone="{{phone}}" cellPhone="{{cell_phone}}" companyName="{{company_name}}" companyAddress="{{company_address}}" website="{{website}}" contactName="{{contact_name}}" companyCellphone="{{company_cellphone}}" companyPhone="{{company_phone}}" typeCustomer="{{type_customer}}">{{email}}</option>
+
+        const selectedOption = clientSelect.options[clientSelect.selectedIndex];
+        const idCustomer = selectedOption.value;
+        const emailCustomer = selectedOption.getAttribute('email');
+        const nameCustomer = selectedOption.getAttribute('nameCustomer');
+        
+        //change the name of the input with the that the user search 
+        const inputName=document.getElementById('customerName')
+        inputName.value =nameCustomer;
+
+        const inputEmail=document.getElementById('email')
+        inputEmail.value =emailCustomer;
+    })
+
+    //this is for know if the user is in the search
+    searchInput.addEventListener('focus', function() {
+        clientSelect.classList.remove('display');
+    });
+
+    //this is for know if the user no is in the search 
+    searchInput.addEventListener('blur', function() {
+        // Esperar 1 segundo antes de ejecutar otra función
+        setTimeout(function() {
+            //we will see if the user not would like search a customer
+            if (!clientSelect.classList.contains('display')){
+                clientSelect.classList.add('display');
+            }
+        }, 250); // 1000 milisegundos = 1 segundo
+    });
+
+    
+</script>

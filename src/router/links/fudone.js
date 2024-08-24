@@ -364,6 +364,12 @@ const {
     delete_sale_stage_in_my_company
 } = require('../../services/CRM');
 
+//functions customers
+const {
+    search_all_customers,
+} = require('../../services/customers');
+
+
 router.get('/:id_company/:id_branch/CRM', isLoggedIn, async (req, res) => {
     const { id_company, id_branch } = req.params;
     const branchFree = await get_data_branch(id_branch);
@@ -377,8 +383,9 @@ router.get('/:id_company/:id_branch/CRM', isLoggedIn, async (req, res) => {
         salesStage=await get_sales_stage_with_company_id(id_company); //we get the new groups we added again
     }
 
-
-    res.render('links/branch/CRM/CRM', { branchFree, salesStage });
+    const customers = await search_all_customers(id_company)
+    console.log(customers)
+    res.render('links/branch/CRM/CRM', { branchFree, salesStage , customers});
 })
 
 
