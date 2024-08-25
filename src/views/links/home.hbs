@@ -62,11 +62,14 @@
         {{#if path_logo}}
             <img src="{{path_logo}}" class="icon">
         {{else}}
-            <img src="https://cdn-icons-png.flaticon.com/512/3177/3177440.png" class="icon">
+            <img src="/img/logo.png" class="icon">
         {{/if}}
     {{/each}}
     <br><br>
-    <button class="explore-button" onclick="open_menu()"> Comenzar <i class="fi fi-ss-rocket-lunch"></i> </button>
+
+    {{#if user.navbar_2}}
+        <button class="explore-button" onclick="open_menu()"> Comenzar <i class="fi fi-ss-rocket-lunch"></i> </button>
+    {{/if}}
     <br><br><br>
     <div class="clock">
         <span id="time"></span>

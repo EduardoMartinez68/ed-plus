@@ -13,18 +13,28 @@
     </div>
 </div>
 
-
 <div class="container">
-    {{#each branchFree}}
+    <label>Buscar un Combo</label>
     <div class="row">
-        <div class="col-8">
+        <div class="col-5">
             <input type="text" class="form-control" placeholder="Buscar código de barras..." id="search">
         </div>
-        <div class="col-3">
-            <button class="btn-add" id="{{id}}" onclick="nextWeb('{{id_companies}}/{{id}}/add-combos-free')">+ <i class="fi-icon fi-ss-hamburger-soda"></i></button>
-        </div>
+        {{#each company}}
+            <div class="col">
+                <button class="btn btn-confirm-message" onclick="nextWeb('{{id}}/add-combos-free')">Agregar combo +</button>
+            </div>
+        {{/each}}
+        {{#each branch}}
+            <div class="col">
+                <button class="btn btn-confirm-message" onclick="nextWeb('{{id_companies}}/{{id}}/add-combos-free')">Agregar combo +</button>
+            </div>
+        {{/each}}
+        {{#each branchFree}}
+            <div class="col">
+                <button class="btn btn-confirm-message" onclick="nextWeb('{{id_companies}}/{{id}}/add-combos-free')">Agregar combo +</button>
+            </div>
+        {{/each}}
     </div>
-    {{/each}}
 </div>
 <br>
 <div class="container">

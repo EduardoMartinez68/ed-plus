@@ -1,60 +1,23 @@
-<style>
-        .search-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px;
-            border-radius: 8px;
-            background-color: #f5f5f5;
-        }
-        .search-input {
-            border: none;
-            outline: none;
-            background: none;
-            width: 100%;
-        }
-        .search-button {
-            background: none;
-            border: none;
-            color: #636F76;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-        }
-        .search-button i {
-            font-size: 20px;
-        }
-        .add-client-btn {
-          top: -10px;
-            height: 50%;
-            margin-left: 10px;
-            background-color: #007bff;
-            color: #ffffff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-        .add-client-btn:hover {
-            background-color: #0056b3;
-        }
-</style>
-<div class="container mt-5">
-    <div class="d-flex justify-content-between">
-        <div class="search-container">
-            <input type="text" class="search-input" placeholder="Buscar por email...">
-            <button class="search-button"><i class="fi-icon fi-rr-search"></i></button>
+<div class="container">
+    <label>Buscar un Cliente</label>
+    <div class="row">
+        <div class="col-5">
+            <input type="text" class="form-control" placeholder="Buscar por email..." id="search">
         </div>
-        <!--this is for when the user have more of two branch-->
         {{#each company}}
-          <button class="btn btn-confirm-message" onclick="nextWeb('{{id}}/add-customer')">Agregar cliente</button>
-        {{/each}}
-        <!--this is for when the user have only a branch-->
-        {{#each branchFree}}
-          <button class="btn btn-confirm-message" onclick="nextWeb('{{id_companies}}/{{id}}/add-customer')">Agregar cliente</button>
+            <div class="col">
+                <button class="btn btn-confirm-message" onclick="nextWeb('{{id}}/add-customer')">+</button>
+            </div>
         {{/each}}
         {{#each branch}}
-          <button class="btn btn-confirm-message" onclick="nextWeb('{{id_companies}}/{{id}}/add-customer')">Agregar cliente</button>
+            <div class="col">
+                <button class="btn btn-confirm-message" onclick="nextWeb('{{id_companies}}/{{id}}/add-customer')">Agregar cliente +</button>
+            </div>
+        {{/each}}
+        {{#each branchFree}}
+            <div class="col">
+                <button class="btn btn-confirm-message" onclick="nextWeb('{{id_companies}}/{{id}}/add-customer')">Agregar cliente +</button>
+            </div>
         {{/each}}
     </div>
 </div>

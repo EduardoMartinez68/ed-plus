@@ -1,25 +1,22 @@
 <div class="container">
     <label>Buscar proveedores</label>
     <div class="row">
-        <div class="col-sm-10">
+        <div class="col-sm-5">
             <input type="text" class="form-control" placeholder="Buscar por nombre..." id="search">
         </div>
-        <div class="col-sm-1">
-            <button class="btn" onclick="search_browser()"><i class="fi-icon fi-rs-search"></i></button>
-        </div>
         {{#each company}}
-            <div class="col-sm-1">
-                <button class="btn-table-employee-edit" onclick="nextWeb('/{{id}}/add-providers')">+</button>
+            <div class="col">
+                <button class="btn btn-confirm-message" onclick="nextWeb('{{id}}/add-providers')">Agregar provedor +</button>
             </div>
         {{/each}}
         {{#each branch}}
-            <div class="col-sm-1">
-                <button class="btn-table-employee-edit" onclick="nextWeb('/{{id_companies}}/{{id}}/add-providers')">+</button>
+            <div class="col">
+                <button class="btn btn-confirm-message" onclick="nextWeb('{{id_companies}}/{{id}}/add-providers')">Agregar provedor +</button>
             </div>
         {{/each}}
         {{#each branchFree}}
-            <div class="col-sm-1">
-                <button class="btn-table-employee-edit" onclick="nextWeb('/{{id_companies}}/{{id}}/add-providers')">+</button>
+            <div class="col">
+                <button class="btn btn-confirm-message" onclick="nextWeb('{{id_companies}}/{{id}}/add-providers')">Agregar provedor +</button>
             </div>
         {{/each}}
     </div>

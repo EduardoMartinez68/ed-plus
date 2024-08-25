@@ -12,4 +12,6 @@ closeMenu.addEventListener('click', () => {
 
 function open_menu(){
     menu.classList.add('active');
+    var wallpaperNavbar = document.getElementById("wallpaper-navbar");
+    wallpaperNavbar.classList.add("active");
 }
