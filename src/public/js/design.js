@@ -1,4 +1,4 @@
-const color_company='#171C3A'//'rgb(204,3,40)' rgb(255,0,42);
+const color_company='#075DA8'//'rgb(204,3,40)' rgb(255,0,42); 171C3A
 const color_hover='#2D3972;'
 const color_session1='#2D3972';
 const color_session2='#2D3972';

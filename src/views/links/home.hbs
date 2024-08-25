@@ -1,0 +1,101 @@
+<style>
+.welcome-message {
+    margin-top: 20px;
+    font-size: 24px;
+    color: #333;
+}
+
+.footer {
+    padding: 10px;
+    text-align: center;
+    font-size: 16px;
+    color: rgba(0,0,0,.4);
+    background-color: rgba(255,255,255,.4);
+    width: 100%;
+}
+
+.company-name {
+    color: var(--color-company);
+    font-weight: bold;
+}
+
+.icon {
+    width: 300px;
+    height: 300px; /* Define la altura para que sea igual al ancho */
+    object-fit: cover; /* Ajusta la imagen para cubrir el área sin distorsionar */
+    border-radius: 50%; /* Bordes redondeados */
+}
+
+.explore-button {
+    padding: 10px 20px;
+    font-size: 18px;
+    color: #FFFFFF;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.explore-button:hover {
+    background-color: #45A049;
+}
+
+
+.clock {
+    font-size: 5rem;
+    font-weight: bold;
+    background: transparent;
+    padding: 20px;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+    color: var(--color-company);
+}
+</style>
+<div style="text-align: right;  padding: 1rem;">
+    <h5>{{user.user_name}}</h5>
+    <label>{{user.first_name}} {{user.second_name}} {{user.last_name}}</label><br>
+    <label>{{user.email}}</label>
+</div>
+<div class="container" style="text-align: center;">
+    {{#each dataCompany}}
+        <h1 class="welcome-message">¡Bienvenido a {{name}}! ❤️</h1>
+        {{#if path_logo}}
+            <img src="{{path_logo}}" class="icon">
+        {{else}}
+            <img src="https://cdn-icons-png.flaticon.com/512/3177/3177440.png" class="icon">
+        {{/if}}
+    {{/each}}
+    <br><br>
+    <button class="explore-button" onclick="open_menu()"> Comenzar <i class="fi fi-ss-rocket-lunch"></i> </button>
+    <br><br><br>
+    <div class="clock">
+        <span id="time"></span>
+    </div>
+</div>
+
+<br><br><br><br><br><br>
+<footer class="footer">
+    Power by <span class="company-name">{ED} Software</span>
+</footer>
+
+
+
+
+
+
+
+
+<script>
+    function updateClock() {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        const timeString = `${hours}:${minutes}:${seconds}`;
+
+        document.getElementById('time').textContent = timeString;
+    }
+
+    setInterval(updateClock, 1000); // Actualiza el reloj cada segundo
+    updateClock(); // Inicializa el reloj
+</script>

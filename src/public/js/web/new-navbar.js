@@ -9,3 +9,7 @@ menuToggle.addEventListener('click', () => {
 closeMenu.addEventListener('click', () => {
     menu.classList.remove('active');
 });
+
+function open_menu(){
+    menu.classList.add('active');
+}

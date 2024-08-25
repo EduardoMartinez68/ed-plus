@@ -25,6 +25,7 @@ const rolFree=0
 //////////////////////
 const {
     get_data_company_with_id,
+    get_data_company,
 } = require('../services/company');
 
 //packs 
@@ -227,7 +228,6 @@ router.post('/confirm-restart-password', isNotLoggedIn, async (req, res) => {
         res.redirect('/fud/confirm-restart-password');
     }
 });
-
 
 async function get_id_user_for_email(email){
     try{
@@ -474,9 +474,10 @@ async function home_company(req, res) {
 const {
     get_data_employee
 } = require('../services/employees');
-
+const { get_data_branch } = require('../services/branch.js');
 
 async function home_free(req, res) {
+
     const employee = await get_data_employee(req);
     const data = employee[0]
     const id_user = data.id_users
@@ -485,9 +486,25 @@ async function home_free(req, res) {
     const id_employee = data.id
     const id_role = data.id_roles_employees
 
+    const branchFree=await get_data_branch(id_branch)
+    const dataCompany=await get_data_company_with_id(id_company)
+    res.render('links/home', {branchFree, dataCompany})
+
+    //const link = `/fud/${id_user}/${id_company}/${id_branch}/${id_employee}/${id_role}/store-home`;
+    //res.redirect(link);
+}
+
+router.get('/point-sales', isLoggedIn, async (req, res) => {
+    const employee = await get_data_employee(req);
+    const data = employee[0]
+    const id_user = data.id_users
+    const id_company = data.id_companies
+    const id_branch = data.id_branches
+    const id_employee = data.id
+    const id_role = data.id_roles_employees
     const link = `/fud/${id_user}/${id_company}/${id_branch}/${id_employee}/${id_role}/store-home`;
     res.redirect(link);
-}
+});
 
 async function the_user_can_add_most_combo(comboLength,packCombo){
     const limits = {
