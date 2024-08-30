@@ -1,0 +1,46 @@
+.div-container-right{
+    text-align: right;
+}
+
+
+/**--------------------------starts--------------------------**/
+.rating-container {
+    text-align: right;
+    height: 25px;
+}
+
+.priorities {
+    display: flex;
+    justify-content: right;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.priority {
+    transform: translateY(-25px);
+    font-size: 50px;
+    color: #ccc;
+    cursor: pointer;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.priority.active,
+.priority:hover,
+.priority:hover ~ .priority {
+    color: #ffc107;
+    transform: scale(1.2);
+    transform: translateY(-23px);
+}
+
+.message-priority {
+    font-size: 15px;
+    color: #666;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1000;
+    transform: translateY(-48px);
+}
+
+.message-priority.show {
+    opacity: 1;
+}

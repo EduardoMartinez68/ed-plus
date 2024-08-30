@@ -3,118 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calificación con Estrellas</title>
+    <title>Selector de Etiquetas</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
+        .label {
+            font-size: 20px;
+            padding: 10px 20px;
+            border-radius: 5px;
+            color: white;
+            display: inline-block;
+            margin-bottom: 20px;
         }
 
-        .rating-container {
-            text-align: center;
-        }
-
-        .stars {
+        .color-picker {
             display: flex;
-            justify-content: center;
             gap: 10px;
-            margin-bottom: 10px;
         }
 
-        .star {
-            font-size: 50px;
-            color: #ccc;
+        .color-picker button {
+            width: 40px;
+            height: 40px;
+            border: none;
             cursor: pointer;
-            transition: color 0.3s ease, transform 0.3s ease;
+            border-radius: 50%;
+            transition: transform 0.2s;
         }
 
-        .star.active,
-        .star:hover,
-        .star:hover ~ .star {
-            color: #ffc107;
-            transform: scale(1.2);
-        }
-
-        .message {
-            font-size: 18px;
-            color: #666;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .message.show {
-            opacity: 1;
+        .color-picker button:hover {
+            transform: scale(1.1);
         }
     </style>
 </head>
 <body>
 
-<div class="rating-container">
-    <div class="stars">
-        <span class="star" data-value="1" data-message="Prioridad Baja">★</span>
-        <span class="star" data-value="2" data-message="Prioridad Media">★</span>
-        <span class="star" data-value="3" data-message="Prioridad Alta">★</span>
+    <div class="label" id="label" style="background-color: #ccc;">Etiqueta</div>
+
+    <div class="color-picker">
+        <button style="background-color: #f44336;" onclick="changeLabelColor('#f44336')"></button>
+        <button style="background-color: #4CAF50;" onclick="changeLabelColor('#4CAF50')"></button>
+        <button style="background-color: #2196F3;" onclick="changeLabelColor('#2196F3')"></button>
+        <button style="background-color: #FFEB3B;" onclick="changeLabelColor('#FFEB3B')"></button>
+        <button style="background-color: #9C27B0;" onclick="changeLabelColor('#9C27B0')"></button>
     </div>
-    <div class="message" id="ratingMessage">Seleccione una prioridad</div>
-</div>
 
-<script>
-    const stars = document.querySelectorAll('.star');
-    const message = document.getElementById('ratingMessage');
-
-    stars.forEach(star => {
-        star.addEventListener('mouseover', function() {
-            // Mostrar el mensaje correspondiente
-            message.textContent = this.getAttribute('data-message');
-            message.classList.add('show');
-            
-            // Activar la estrella y todas las anteriores
-            stars.forEach(s => s.classList.remove('hover'));
-            this.classList.add('hover');
-            let previousSibling = this.previousElementSibling;
-            while (previousSibling) {
-                previousSibling.classList.add('hover');
-                previousSibling = previousSibling.previousElementSibling;
-            }
-        });
-
-        star.addEventListener('mouseleave', function() {
-            stars.forEach(s => s.classList.remove('hover'));
-            if (!this.classList.contains('active')) {
-                message.classList.remove('show');
-            }
-        });
-
-        star.addEventListener('click', function() {
-            // Si la estrella ya está activa, desactivar todas las estrellas
-            if (this.classList.contains('active')) {
-                stars.forEach(s => s.classList.remove('active'));
-                message.textContent = "Seleccione una prioridad";
-                message.classList.remove('show');
-            } else {
-                // Limpiar la clase 'active' de todas las estrellas
-                stars.forEach(s => s.classList.remove('active'));
-
-                // Agregar la clase 'active' a la estrella seleccionada y a todas las anteriores (hacia la izquierda)
-                this.classList.add('active');
-                let previousSibling = this.previousElementSibling;
-                while (previousSibling) {
-                    previousSibling.classList.add('active');
-                    previousSibling = previousSibling.previousElementSibling;
-                }
-
-                // Mostrar el mensaje correspondiente
-                message.textContent = `Calificaste con ${this.getAttribute('data-value')} estrellas (${this.getAttribute('data-message')})`;
-                message.classList.add('show');
-            }
-        });
-    });
-</script>
+    <script>
+        function changeLabelColor(color) {
+            document.getElementById('label').style.backgroundColor = color;
+        }
+    </script>
 
 </body>
 </html>
