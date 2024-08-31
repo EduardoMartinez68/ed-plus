@@ -87,6 +87,13 @@
 --->
 
 <link rel="stylesheet" href="/css/web/new-navbar.css">
+<style>
+    .container-app{
+        height: 80%;
+        width: 70%;
+        overflow-y: auto;
+    }
+</style>
 <section class="descriptionWindow">
 
     <head class="headDescription">
@@ -99,6 +106,7 @@
             </ul>
 
             <div class="menu">
+                <input type="text" placeholder="Busca una App" class="form-control" style="width: 25%;" id="search-app">
                 <button class="close-menu">×</button>
 
 
@@ -119,14 +127,6 @@
                                 </div>
                             {{/each}}
                         {{/if}}
-                        {{#if user.supplies}}
-                            {{#each branchFree}}
-                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/supplies-free')">
-                                    <img src="https://cdn-icons-png.flaticon.com/512/1147/1147832.png" alt="Insumos">
-                                    <span>Insumos</span>
-                                </div>
-                            {{/each}}
-                        {{/if}}
                         {{#if user.products}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/products-free')">
@@ -135,11 +135,11 @@
                                 </div>
                             {{/each}}
                         {{/if}}
-                        {{#if user.combos}}
+                        {{#if user.providers}}
                             {{#each branchFree}}
-                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/combos-free')">
-                                    <img src="https://cdn-icons-png.flaticon.com/512/6626/6626465.png" alt="Combos">
-                                    <span>Combos</span>
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/providers-free')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/2554/2554978.png" alt="Proveedores">
+                                    <span>Proveedores</span>
                                 </div>
                             {{/each}}
                         {{/if}}
@@ -159,14 +159,15 @@
                                 </div>
                             {{/each}}
                         {{/if}}
-                        {{#if user.providers}}
+                        {{#if user.computer_equipment}}
                             {{#each branchFree}}
-                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/providers-free')">
-                                    <img src="https://cdn-icons-png.flaticon.com/512/2554/2554978.png" alt="Proveedores">
-                                    <span>Proveedores</span>
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/box')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/3355/3355395.png" alt="Impresoras">
+                                    <span>Impresoras</span>
                                 </div>
                             {{/each}}
                         {{/if}}
+
                         {{#if user.employees}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/employees-branch')">
@@ -209,6 +210,15 @@
                                 </div>
                             {{/each}}
                         {{/if}}
+                        {{#if user.accounting}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/reports')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/7067/7067947.png" alt="Contabilidad">
+                                    <span>Nomina</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+
                         {{#if user.customers}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/customers-company')">
@@ -222,6 +232,14 @@
                                 <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/CRM')">
                                     <img src="https://cdn-icons-png.flaticon.com/512/747/747563.png" alt="CRM">
                                     <span>CRM</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+                        {{#if user.crm}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/CRM')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/6352/6352845.png" alt="CRM">
+                                    <span>Oportunidades</span>
                                 </div>
                             {{/each}}
                         {{/if}}
@@ -241,19 +259,11 @@
                                 </div>
                             {{/each}}
                         {{/if}}
-                        {{#if user.dealer}}
+                        {{#if user.customers}}
                             {{#each branchFree}}
-                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/order-free')">
-                                    <img src="https://cdn-icons-png.flaticon.com/512/2830/2830305.png" alt="Repartidor">
-                                    <span>Repartidor</span>
-                                </div>
-                            {{/each}}
-                        {{/if}}
-                        {{#if user.computer_equipment}}
-                            {{#each branchFree}}
-                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/box')">
-                                    <img src="https://cdn-icons-png.flaticon.com/512/3355/3355395.png" alt="Impresoras">
-                                    <span>Impresoras</span>
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/customers-company')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/6176/6176257.png" alt="Clientes">
+                                    <span>Agenda</span>
                                 </div>
                             {{/each}}
                         {{/if}}
@@ -273,11 +283,118 @@
                                 </div>
                             {{/each}}
                         {{/if}}
+                        {{#if user.movements}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/0/movements')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/5163/5163814.png" alt="Movimientos">
+                                    <span>Devoluciones</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
                         {{#if user.accounting}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/reports')">
                                     <img src="https://cdn-icons-png.flaticon.com/512/12448/12448233.png" alt="Contabilidad">
                                     <span>Contabilidad</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+                        {{#if user.accounting}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/reports')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/2257/2257295.png" alt="Contabilidad">
+                                    <span>Reportes</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+                        {{#if user.accounting}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/reports')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/809/809423.png" alt="Contabilidad">
+                                    <span>Analizis</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+                        {{#if user.supplies}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/supplies-free')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/1147/1147832.png" alt="Insumos">
+                                    <span>Insumos</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+                        {{#if user.combos}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/combos-free')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/6626/6626465.png" alt="Combos">
+                                    <span>Combos</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+                        {{#if user.ecommerce}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('myrestaurant/{{id_companies}}/{{id}}')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/5643/5643764.png" alt="Ecommerce">
+                                    <span>Pedidos</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+                        {{#if user.ecommerce}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('myrestaurant/{{id_companies}}/{{id}}')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/2180/2180060.png" alt="Ecommerce">
+                                    <span>Menú Digital</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+
+                        {{#if user.edit_branch}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id}}/{{id_companies}}/edit-branch-free')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/1198/1198348.png" alt="Editar Sucursal">
+                                    <span>Franquicias</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+                        {{#if user.dealer}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/order-free')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/2830/2830305.png" alt="Repartidor">
+                                    <span>Repartidores</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+
+                        {{#if user.accounting}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/reports')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/4245/4245736.png" alt="Contabilidad">
+                                    <span>Gestion de Tarreas</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+                        {{#if user.accounting}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/reports')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/427/427735.png" alt="Contabilidad">
+                                    <span>Gestion de Proyectos</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+                        {{#if user.accounting}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/reports')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/4593/4593047.png" alt="Contabilidad">
+                                    <span>Dead Line</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+
+                        {{#if user.accounting}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/reports')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/3253/3253853.png" alt="Contabilidad">
+                                    <span>Comunicacion</span>
                                 </div>
                             {{/each}}
                         {{/if}}
@@ -299,8 +416,8 @@
                         {{/if}}
                         {{#each branchFree}}
                             <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/marketplace')">
-                                <img src="https://cdn-icons-png.flaticon.com/512/4372/4372862.png" alt="Áreas">
-                                <span>Marketplace</span>
+                                <img src="https://cdn-icons-png.flaticon.com/512/3904/3904299.png" alt="Áreas">
+                                <span>ED Estudios</span>
                             </div>
                         {{/each}}
                         <div class="app-icon" onclick="nextWeb('logout')">
@@ -326,3 +443,23 @@
 
 
 <script src="/js/web/new-navbar.js"></script>
+<script>
+    // Selecciona el input de búsqueda
+    const searchInput = document.getElementById('search-app');
+
+    // Función para filtrar las apps
+    searchInput.addEventListener('input', function () {
+        const filter = searchInput.value.toLowerCase(); // Obtiene el valor del input en minúsculas
+        const apps = document.querySelectorAll('.app-icon'); // Selecciona todas las apps
+
+        // Itera sobre cada app para mostrar u ocultar
+        apps.forEach(app => {
+            const appName = app.querySelector('span').textContent.toLowerCase(); // Obtiene el nombre de la app
+            if (appName.includes(filter)) {
+                app.style.display = ''; // Muestra la app
+            } else {
+                app.style.display = 'none'; // Oculta la app
+            }
+        });
+    });
+</script>

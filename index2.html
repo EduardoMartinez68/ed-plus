@@ -3,53 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Selector de Etiquetas</title>
+    <title>Pestañas Tipo Bandera</title>
     <style>
-        .label {
-            font-size: 20px;
-            padding: 10px 20px;
-            border-radius: 5px;
-            color: white;
-            display: inline-block;
-            margin-bottom: 20px;
-        }
-
-        .color-picker {
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            margin: 0;
+            padding: 0;
             display: flex;
-            gap: 10px;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
 
-        .color-picker button {
-            width: 40px;
-            height: 40px;
-            border: none;
+        .tabs-container {
+            max-width: 800px;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 14px 20px;
+            text-align: center;
             cursor: pointer;
-            border-radius: 50%;
-            transition: transform 0.2s;
+            background: #e9ecef;
+            color: #495057;
+            border: 2px solid transparent;
+            border-bottom: 2px solid transparent;
+            position: relative;
+            font-weight: bold;
+            transition: background-color 0.3s, color 0.3s;
         }
 
-        .color-picker button:hover {
-            transform: scale(1.1);
+        .tab::before {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 40%;
+            transform: translateX(300%);
+            width: 0;
+            height: 0;
+            border: 10px solid transparent;
+            border-top: 10px solid #e9ecef;
+            transition: border-top-color 0.3s;
+        }
+
+        .tab.active {
+            background-color: #007bff;
+            color: white;
+            border-bottom-color: #007bff;
+        }
+
+        .tab.active::before {
+            border-top-color: #007bff;
+        }
+
+        .tab:hover {
+            background-color: #d6d6d6;
+        }
+
+        .content {
+            padding: 20px;
+            background-color: #fff;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
         }
     </style>
 </head>
 <body>
 
-    <div class="label" id="label" style="background-color: #ccc;">Etiqueta</div>
+    <div class="tabs-container">
+        <div class="tabs">
+            <div class="tab active" data-target="nuevo">Nuevo</div>
+            <div class="tab" data-target="calificado">Calificado</div>
+            <div class="tab" data-target="ganado">Ganado</div>
+        </div>
 
-    <div class="color-picker">
-        <button style="background-color: #f44336;" onclick="changeLabelColor('#f44336')"></button>
-        <button style="background-color: #4CAF50;" onclick="changeLabelColor('#4CAF50')"></button>
-        <button style="background-color: #2196F3;" onclick="changeLabelColor('#2196F3')"></button>
-        <button style="background-color: #FFEB3B;" onclick="changeLabelColor('#FFEB3B')"></button>
-        <button style="background-color: #9C27B0;" onclick="changeLabelColor('#9C27B0')"></button>
+        
+        <div class="content">
+            <div class="tab-content active" id="nuevo">
+                <h2>Contenido de la pestaña Nuevo</h2>
+                <p>Detalles sobre las oportunidades nuevas.</p>
+            </div>
+            <div class="tab-content" id="calificado">
+                <h2>Contenido de la pestaña Calificado</h2>
+                <p>Detalles sobre las oportunidades calificadas.</p>
+            </div>
+            <div class="tab-content" id="ganado">
+                <h2>Contenido de la pestaña Ganado</h2>
+                <p>Detalles sobre las oportunidades ganadas.</p>
+            </div>
+            <!-- Agrega más contenidos aquí -->
+        </div>
     </div>
-
-    <script>
-        function changeLabelColor(color) {
-            document.getElementById('label').style.backgroundColor = color;
-        }
-    </script>
 
 </body>
 </html>

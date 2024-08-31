@@ -1,44 +1,42 @@
-<!---
-<style>
-    .form-container {
-        max-width: 50%;
-        margin: 50px auto;
-        background: white;
-        padding: 30px;
-        border-radius: 15px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        border: 1px solid #e3e3e3;
-    }
+<br><br>
+<div class="container">
+    <div class="card">
+        <div class="card-body">
+            <br>     
+            <label>Nueva oportunidad</label>
+            <hr>
+            <div class="tabs-container-step">
+                <div class="tabs-step">
+                    {{#each salesStage}}
+                        <div class="tab-step active" data-target="nuevo">{{name}}</div>
+                    {{/each}}
+                </div>
+            </div>
+            <br>
+            <div class="btn-group">
+                <button class="btn-select btn-active" onclick="showSection('select-1', this)" type="button">Información Personal</button>
+                <button class="btn-select" onclick="showSection('select-2', this)" type="button">Seguimiento</button>
+                <button class="btn-select" onclick="showSection('select-3', this)" type="button">Información Adicional</button>
+            </div>
+            <div id="select-1" class="content-section active">
+                {{>manager/CRM/formCustomer1}}
+            </div>
+            <div id="select-2" class="content-section">
+                {{>manager/CRM/formCustomer3}}
+            </div>
+            <div id="select-3" class="content-section">
+                {{>manager/CRM/formCustomer2}}
+            </div>
 
-    .form-header {
-        margin-bottom: 20px;
-        text-align: center;
-        font-weight: bold;
-        color: #333;
-        border-bottom: 2px solid var(--color-company);
-        padding-bottom: 10px;
-    }
+            <div class="div-container-right">
+                <button type="submit" class="btn btn-confirm-message">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-    .form-group label {
-        font-weight: bold;
-        color: #555;
-    }
 
-    .form-group input,
-    .form-group textarea {
-        border-radius: 8px;
-        border: 1px solid #e3e3e3;
-        padding: 10px;
-    }
-
-    .form-group textarea {
-        resize: none;
-    }
-</style>
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/css/bootstrap.min.css">
--->
-<link rel="stylesheet" href="/css/CRM/crm.css">
+<!--
 <div class="container">
 <div class="card">
     <div class="card-body">
@@ -77,6 +75,9 @@
     </div>
 </div>
 </div>
+--->
+
+
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
