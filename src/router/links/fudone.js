@@ -392,6 +392,13 @@ router.get('/:id_company/:id_branch/CRM', isLoggedIn, async (req, res) => {
 
 
 
+//------------------------------------ED STUDIOS 
+router.get('/:id_company/:id_branch/ed-studios', isLoggedIn, async (req, res) => {
+    const { id_company, id_branch } = req.params;
+    const branchFree = await get_data_branch(id_branch);
+    res.render('links/studios/studios', { branchFree});
+})
+
 
 
 //------------------------------------options 
@@ -400,7 +407,6 @@ router.get('/:id_company/:id_branch/options', isLoggedIn, async (req, res) => {
     const branchFree = await get_data_branch(id_branch);
     const dataCompany = await get_data_company_with_id(id_company);
     const country=await get_country();
-    console.log(req.user.point_sales==true)
     res.render('links/options/options', { branchFree, dataCompany, country });
 })
 

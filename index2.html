@@ -3,114 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pestañas Tipo Bandera</title>
+    <title>Editor de Tablas - PostgreSQL</title>
     <style>
+        /* Estilos CSS */
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f5f5f5;
-            color: #333;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
         }
 
-        .tabs-container {
+        #app {
             max-width: 800px;
+            margin: auto;
+            background-color: white;
+            padding: 20px;
             border-radius: 8px;
-            overflow: hidden;
-            background-color: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
-        .tabs {
-            display: flex;
-            justify-content: space-around;
-        }
-
-        .tab {
-            flex: 1;
-            padding: 14px 20px;
+        h1 {
             text-align: center;
-            cursor: pointer;
-            background: #e9ecef;
-            color: #495057;
-            border: 2px solid transparent;
-            border-bottom: 2px solid transparent;
-            position: relative;
-            font-weight: bold;
-            transition: background-color 0.3s, color 0.3s;
+            color: #333;
         }
 
-        .tab::before {
-            content: '';
-            position: absolute;
-            top: 100%;
-            left: 40%;
-            transform: translateX(300%);
-            width: 0;
-            height: 0;
-            border: 10px solid transparent;
-            border-top: 10px solid #e9ecef;
-            transition: border-top-color 0.3s;
+        .table-settings {
+            margin-bottom: 20px;
         }
 
-        .tab.active {
+        #table-name {
+            padding: 5px;
+            margin-right: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
+        .add-row-btn {
+            margin-top: 10px;
+            padding: 8px 16px;
             background-color: #007bff;
             color: white;
-            border-bottom-color: #007bff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
         }
 
-        .tab.active::before {
-            border-top-color: #007bff;
+        .add-row-btn:hover {
+            background-color: #0056b3;
         }
 
-        .tab:hover {
-            background-color: #d6d6d6;
+        input[type="text"], select {
+            padding: 5px;
+            margin: 5px;
         }
 
-        .content {
-            padding: 20px;
-            background-color: #fff;
+        .right {
+            text-align: right;
+            margin-left: 80%;
+            background-color: #28a745; /* Color verde */
+            color: white;
+            cursor: pointer;
         }
 
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
+        .right:hover {
+            background-color: #218838; /* Color verde más oscuro al pasar el ratón */
         }
     </style>
 </head>
 <body>
-
-    <div class="tabs-container">
-        <div class="tabs">
-            <div class="tab active" data-target="nuevo">Nuevo</div>
-            <div class="tab" data-target="calificado">Calificado</div>
-            <div class="tab" data-target="ganado">Ganado</div>
-        </div>
-
-        
-        <div class="content">
-            <div class="tab-content active" id="nuevo">
-                <h2>Contenido de la pestaña Nuevo</h2>
-                <p>Detalles sobre las oportunidades nuevas.</p>
-            </div>
-            <div class="tab-content" id="calificado">
-                <h2>Contenido de la pestaña Calificado</h2>
-                <p>Detalles sobre las oportunidades calificadas.</p>
-            </div>
-            <div class="tab-content" id="ganado">
-                <h2>Contenido de la pestaña Ganado</h2>
-                <p>Detalles sobre las oportunidades ganadas.</p>
-            </div>
-            <!-- Agrega más contenidos aquí -->
-        </div>
+    <div id="app">
+        <h1>Base de Datos</h1>
+        <hr>
+        <div id="table-editor-container"></div>
     </div>
 
+    <script>
+        crearTabla();
+        // JavaScript para el Editor de Tablas
+        function crearTabla() {
+            // Crear contenedor de la tabla
+            const tablaContainer = document.createElement("div");
+            tablaContainer.className = "tabla-container";
+
+            // Botón para agregar filas
+            const botonAgregarFila = document.createElement("button");
+            botonAgregarFila.textContent = "Agregar Fila";
+            botonAgregarFila.className = "add-row-btn";
+            botonAgregarFila.onclick = () => agregarFila(tbody);
+            tablaContainer.appendChild(botonAgregarFila);
+
+
+            // Crear tabla
+            const tabla = document.createElement("table");
+            const thead = document.createElement("thead");
+            const tbody = document.createElement("tbody");
+
+            // Cabecera de la tabla
+            thead.innerHTML = `
+                <tr>
+                    <th>Nombre de la columna</th>
+                    <th>Tipo de dato</th>
+                    <th>Acciones</th>
+                </tr>
+            `;
+
+            tabla.appendChild(thead);
+            tabla.appendChild(tbody);
+            tablaContainer.appendChild(tabla);
+
+            // Botón para guardar la base de datos
+            const btnSaveDatabase = document.createElement("button");
+            btnSaveDatabase.textContent = "Crear Base de Datos";
+            btnSaveDatabase.className = "add-row-btn right";
+            btnSaveDatabase.onclick = () => agregarFila(tbody);
+
+            tablaContainer.appendChild(btnSaveDatabase);
+            document.getElementById("table-editor-container").innerHTML = ""; // Limpiar el contenedor
+            document.getElementById("table-editor-container").appendChild(tablaContainer);
+        }
+
+        function agregarFila(tbody) {
+            const fila = document.createElement("tr");
+
+            const columnaNombre = document.createElement("td");
+            const inputNombre = document.createElement("input");
+            inputNombre.type = "text";
+            inputNombre.placeholder = "Nombre de la columna";
+            columnaNombre.appendChild(inputNombre);
+
+            const columnaTipo = document.createElement("td");
+            const selectTipo = document.createElement("select");
+            const tipos = ["TEXT", "VARCHAR", "INT", "BOOLEAN"];
+            tipos.forEach(tipo => {
+                const option = document.createElement("option");
+                option.value = tipo;
+                option.textContent = tipo;
+                selectTipo.appendChild(option);
+            });
+            columnaTipo.appendChild(selectTipo);
+
+            const columnaAcciones = document.createElement("td");
+            const botonEliminar = document.createElement("button");
+            botonEliminar.textContent = "Eliminar";
+            botonEliminar.onclick = () => fila.remove();
+            columnaAcciones.appendChild(botonEliminar);
+
+            fila.appendChild(columnaNombre);
+            fila.appendChild(columnaTipo);
+            fila.appendChild(columnaAcciones);
+            tbody.appendChild(fila);
+        }
+    </script>
 </body>
 </html>
