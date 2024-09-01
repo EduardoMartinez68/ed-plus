@@ -2628,6 +2628,34 @@ async function update_position_stage(id,name,position){
 
 
 
+//-----------------------------------------------apps
+router.post('/fud/:id_company/:id_branch/app/create-database', isLoggedIn, async (req, res) => {
+    const { id_company, id_branch} = req.params;
+    const answer=req.body;
+
+    //get the schema of the user for create the database
+    const schema=`_company_${id_company}`;
+    const tableName=answer.name_app;
+
+    //get the rows of the table
+    const rows = Object.keys(answer);
+    var queryText = `
+    CREATE SCHEMA IF NOT EXISTS ${schema};
+    CREATE TABLE IF NOT EXISTS ${schema}.${tableName} (
+        id SERIAL PRIMARY KEY,`
+        for(let i=1;i<rows.length;i+=2){
+            const name = rows[i];
+            const valueVariable = rows[i+1];
+            queryText+=`\n${name} ${answer[valueVariable]},`;
+        }
+    queryText+=`\n);`;
+
+    console.log(queryText)
+
+
+    res.redirect(`/fud/${id_company}/${id_branch}/ed-studios`);
+})
+
 
 
 

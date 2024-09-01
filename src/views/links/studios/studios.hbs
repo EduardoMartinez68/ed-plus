@@ -1,110 +1,116 @@
+<style>
+    #app {
+        max-width: 800px;
+        margin: auto;
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
 
-    <style>
-        #app {
-            max-width: 800px;
-            margin: auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
+    h1 {
+        text-align: center;
+        color: #333;
+    }
 
-        h1 {
-            text-align: center;
-            color: #333;
-        }
+    .table-settings {
+        margin-bottom: 20px;
+    }
 
-        .table-settings {
-            margin-bottom: 20px;
-        }
+    #table-name {
+        padding: 5px;
+        margin-right: 10px;
+    }
 
-        #table-name {
-            padding: 5px;
-            margin-right: 10px;
-        }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
+    th,
+    td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
 
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
+    th {
+        background-color: #f4f4f4;
+    }
 
-        th {
-            background-color: #f4f4f4;
-        }
+    .add-row-btn {
+        margin-top: 10px;
+        padding: 8px 16px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
 
-        .add-row-btn {
-            margin-top: 10px;
-            padding: 8px 16px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
+    .add-row-btn:hover {
+        background-color: #0056b3;
+    }
 
-        .add-row-btn:hover {
-            background-color: #0056b3;
-        }
+    input[type="text"],
+    select {
+        padding: 5px;
+        margin: 5px;
+    }
 
-        input[type="text"], select {
-            padding: 5px;
-            margin: 5px;
-        }
+    .right {
+        text-align: right;
+        margin-left: 90%;
+        background-color: #28a745;
+        /* Color verde */
+        color: white;
+        cursor: pointer;
+    }
 
-        .right {
-            text-align: right;
-            margin-left: 90%;
-            background-color: #28a745; /* Color verde */
-            color: white;
-            cursor: pointer;
-        }
+    .right:hover {
+        background-color: #218838;
+        /* Color verde más oscuro al pasar el ratón */
+    }
+</style>
 
-        .right:hover {
-            background-color: #218838; /* Color verde más oscuro al pasar el ratón */
-        }
-    </style>
-
-    <br><br>
-    <div id="app">
-        <h5>Base de Datos</h5>
-        <hr>
-        <form action="" id="myForm">
+<br><br>
+<div id="app">
+    <h5>Base de Datos</h5>
+    <hr>
+    {{#each branchFree}}
+        <form action="/fud/{{id_companies}}/{{id}}/app/create-database" id="myForm" method="post">
+            <input type="text" name="name_app" placeholder="Escribe el nombre de tu aplicacion" class="form-control" required id="name_app">
             <div id="table-editor-container"></div>
         </form>
-    </div>
+    {{/each}}
+</div>
 
-    <script>
-        create_table();
-        
-
-        function create_table() {
-            // we will create the container of the table
-            const tableContainer = document.createElement("div");
-            tableContainer.className = "tabla-container";
-
-            // button for add the row
-            const buttonAddRow = document.createElement("button");
-            buttonAddRow.type = "button";
-            buttonAddRow.textContent = "Agregar Fila";
-            buttonAddRow.className = "add-row-btn";
-            buttonAddRow.onclick = () => create_row(tbody);
-            tableContainer.appendChild(buttonAddRow);
+<script>
+    create_table();
 
 
-            //we will create the table
-            const table = document.createElement("table");
-            const thead = document.createElement("thead");
-            const tbody = document.createElement("tbody");
+    function create_table() {
+        // we will create the container of the table
+        const tableContainer = document.createElement("div");
+        tableContainer.className = "tabla-container";
 
-            //we will create the body table
-            thead.innerHTML = `
+        // button for add the row
+        const buttonAddRow = document.createElement("button");
+        buttonAddRow.type = "button";
+        buttonAddRow.textContent = "Agregar Fila";
+        buttonAddRow.className = "add-row-btn";
+        buttonAddRow.onclick = () => create_row(tbody);
+        tableContainer.appendChild(buttonAddRow);
+
+
+        //we will create the table
+        const table = document.createElement("table");
+        const thead = document.createElement("thead");
+        const tbody = document.createElement("tbody");
+
+        //we will create the body table
+        thead.innerHTML = `
                 <tr>
                     <th>Nombre de la columna</th>
                     <th>Tipo de dato</th>
@@ -112,160 +118,184 @@
                 </tr>
             `;
 
-            table.appendChild(thead);
-            table.appendChild(tbody);
-            tableContainer.appendChild(table);
+        table.appendChild(thead);
+        table.appendChild(tbody);
+        tableContainer.appendChild(table);
 
-            // button for save the database
-            const btnSaveDatabase = document.createElement("button");
-            btnSaveDatabase.type = "button";
-            btnSaveDatabase.textContent = "Crear";
-            btnSaveDatabase.className = "add-row-btn right";
-            btnSaveDatabase.onclick = () => send_form(tbody);
+        // button for save the database
+        const btnSaveDatabase = document.createElement("button");
+        btnSaveDatabase.type = "button";
+        btnSaveDatabase.textContent = "Crear";
+        btnSaveDatabase.className = "add-row-btn right";
+        btnSaveDatabase.onclick = () => send_form(tbody);
 
-            tableContainer.appendChild(btnSaveDatabase);
-            document.getElementById("table-editor-container").innerHTML = ""; // clean the container 
-            document.getElementById("table-editor-container").appendChild(tableContainer);
-        }
+        tableContainer.appendChild(btnSaveDatabase);
+        document.getElementById("table-editor-container").innerHTML = ""; // clean the container 
+        document.getElementById("table-editor-container").appendChild(tableContainer);
+    }
+
+    function create_row(tbody) {
+        const row = document.createElement("tr");
+
+        //this is for create the input of the name of the database
+        const columnName = document.createElement("td");
+        const inputName = document.createElement("input");
+        inputName.type = "text";
+        inputName.className = "form-control input_name_table";
+        inputName.placeholder = "Nombre de la columna";
+        inputName.name = "name_column";
+        inputName.required = true;
         
-        function create_row(tbody) {
-            const row = document.createElement("tr");
+        columnName.appendChild(inputName);
 
-            //this is for create the input of the name of the database
-            const columnName = document.createElement("td");
-            const inputName = document.createElement("input");
-            inputName.type = "text";
-            inputName.className = "form-control input_name_table";
-            inputName.placeholder = "Nombre de la columna";
-            inputName.name = "name_column";
-            inputName.required = true; 
-            inputName.addEventListener("input", change_name);
-            columnName.appendChild(inputName);
+        //this is for create the select of the database
+        const columnType = document.createElement("td");
+        const selectType = document.createElement("select");
+        selectType.className = "form-select";
+        inputName.name = "select_name_column";
+        const types = [
+            "TEXT",
+            "VARCHAR", // Con capacidad para definir longitud, por ejemplo, VARCHAR(255)
+            "CHAR",    // Con capacidad para definir longitud, por ejemplo, CHAR(10)
+            "INT",     // Para valores enteros
+            "INT2",    // Pequeños enteros (16 bits)
+            "INT4",    // Enteros (32 bits)
+            "INT8",    // Grandes enteros (64 bits)
+            "SMALLINT", // Similar a INT2
+            "SERIAL",  // Entero autoincremental
+            "BIGSERIAL", // Grande entero autoincremental
+            "FLOAT",   // Flotantes (precisión simple)
+            "DOUBLE PRECISION", // Flotantes (precisión doble)
+            "NUMERIC", // Con capacidad para definir precisión, por ejemplo, NUMERIC(10, 2)
+            "BOOLEAN", // Valores verdaderos/falsos
+            "DATE",    // Fecha (sin hora)
+            "TIME",    // Hora (sin fecha)
+            "TIMESTAMP", // Fecha y hora
+            "TIMESTAMPTZ", // Fecha y hora con zona horaria
+            "INTERVAL", // Intervalos de tiempo
+            "UUID",    // Identificador único universal
+            "JSON",    // Datos en formato JSON
+            "JSONB",   // Datos en formato JSON binario (mejor rendimiento)
+            "BYTEA"    // Datos binarios
+        ];
 
-            //this is for create the select of the database
-            const columnType = document.createElement("td");
-            const selectType = document.createElement("select");
-            selectType.className = "form-select";
-            const types = [
-                "TEXT", 
-                "VARCHAR", // Con capacidad para definir longitud, por ejemplo, VARCHAR(255)
-                "CHAR",    // Con capacidad para definir longitud, por ejemplo, CHAR(10)
-                "INT",     // Para valores enteros
-                "INT2",    // Pequeños enteros (16 bits)
-                "INT4",    // Enteros (32 bits)
-                "INT8",    // Grandes enteros (64 bits)
-                "SMALLINT", // Similar a INT2
-                "SERIAL",  // Entero autoincremental
-                "BIGSERIAL", // Grande entero autoincremental
-                "FLOAT",   // Flotantes (precisión simple)
-                "DOUBLE PRECISION", // Flotantes (precisión doble)
-                "NUMERIC", // Con capacidad para definir precisión, por ejemplo, NUMERIC(10, 2)
-                "BOOLEAN", // Valores verdaderos/falsos
-                "DATE",    // Fecha (sin hora)
-                "TIME",    // Hora (sin fecha)
-                "TIMESTAMP", // Fecha y hora
-                "TIMESTAMPTZ", // Fecha y hora con zona horaria
-                "INTERVAL", // Intervalos de tiempo
-                "UUID",    // Identificador único universal
-                "JSON",    // Datos en formato JSON
-                "JSONB",   // Datos en formato JSON binario (mejor rendimiento)
-                "BYTEA"    // Datos binarios
-            ];
+        types.forEach(tipo => {
+            const option = document.createElement("option");
+            option.value = tipo;
+            option.textContent = tipo;
+            selectType.appendChild(option);
+        });
+        columnType.appendChild(selectType);
 
-            types.forEach(tipo => {
-                const option = document.createElement("option");
-                option.value = tipo;
-                option.textContent = tipo;
-                selectType.appendChild(option);
-            });
-            columnType.appendChild(selectType);
+        //this is for add the function for change the name of the input and the select
+        inputName.addEventListener("input", (event) => change_name(event, selectType));
 
-            //button for delete the row
-            const columnAction = document.createElement("td");
-            const buttonDelete = document.createElement("button");
-            buttonDelete.textContent = "Eliminar";
-            buttonDelete.type = "button";
-            buttonDelete.className = "btn btn-danger";
-            buttonDelete.onclick = () => delete_row(row);
-            columnAction.appendChild(buttonDelete);
+        //button for delete the row
+        const columnAction = document.createElement("td");
+        const buttonDelete = document.createElement("button");
+        buttonDelete.textContent = "Eliminar";
+        buttonDelete.type = "button";
+        buttonDelete.className = "btn btn-danger";
+        buttonDelete.onclick = () => delete_row(row);
+        columnAction.appendChild(buttonDelete);
 
-            row.appendChild(columnName);
-            row.appendChild(columnType);
-            row.appendChild(columnAction);
-            tbody.appendChild(row);
+        row.appendChild(columnName);
+        row.appendChild(columnType);
+        row.appendChild(columnAction);
+        tbody.appendChild(row);
+    }
+
+    async function delete_row(row) {
+        if (await questionMessage('Eliminar fila 😱', '¿Deseas eliminar esta fila?')) {
+            row.remove();
+        }
+    }
+
+    function change_name(event,select) {
+        const input = event.target;
+        const newName = event.target.value.trim().replace(/\s+/g, "_"); // get the record of the value of the input
+        input.name = newName ? newName : "name_column"; // Cambia el 'name' del input, o usa un nombre predeterminado si está vacío
+        if(input.name=='name_app'){
+            input.name='name_column';
+            input.value=''
+            warningMessage('⚠️ Error ⚠️','Este nombre esta reservado')
         }
 
-        async function delete_row(row){
-            if(await questionMessage('Eliminar fila 😱','¿Deseas eliminar esta fila?')){
-                row.remove();
-            }
-        }
+        select.name='select_'+input.name
+    }
 
-        function change_name(event){
-            const input = event.target; 
-            const newName = event.target.value.trim(); // get the record of the value of the input
-            input.name = newName ? newName : "name_column"; // Cambia el 'name' del input, o usa un nombre predeterminado si está vacío
-        }
-
-        function send_form(tbody){
-            // get the form for his id
-            const form = document.getElementById("myForm");
-
-            if (form) {
-                if(are_allInputs_filled()){
-                    if(!check_duplicate_names()){
-                        form.submit(); // send the form
-                    }else{
-                        errorMessage('Error al crear la base de datos','No puedes tener 2 filas con el mismo nombre 🧐')
-                    }
-                }else{
-                    errorMessage('Error al crear la base de datos','Todas las filas necesitan tener un nombre 👁️')
-                }
-            }
-        }
-
-        function check_duplicate_names() {
-            // Obtiene todos los inputs que tienen la clase 'input_name_table'
-            const inputs = document.querySelectorAll(".input_name_table");
-
-            // Crea un conjunto para almacenar nombres únicos
-            const namesSet = new Set();
-
-            // Itera sobre los inputs
-            for (const input of inputs) {
-                const name = input.name; // Obtén el atributo 'name' del input
-                console.log(name)
-                // Verifica si el nombre ya está en el conjunto
-                if (namesSet.has(name)) {
-                    // Si el nombre ya existe en el conjunto, hay un duplicado
-                    return true; // Devuelve true si encuentra un duplicado
-                }
-
-                // Si no es un duplicado, agrega el nombre al conjunto
-                namesSet.add(name);
+    function send_form(tbody) {
+        // get the form for his id
+        const form = document.getElementById("myForm");
+        if (form) {
+            const inputNameApp=document.getElementById('name_app').value;
+            if (inputNameApp.trim() == "") {
+                errorMessage('Error al crear la base de datos', 'Ingresa un nombre valido para la App 👁️')
+                return;
             }
 
-            // Si no se encontraron duplicados, devuelve false
-            return false;
-        }
-    
-        function are_allInputs_filled() {
-            // Obtiene todos los inputs con la clase 'input_name_table'
+            // get all the inputs with the class todos 'input_name_table'
             const inputs = document.querySelectorAll(".input_name_table");
 
             //we will see if exist inputs in the table
-            if(inputs.length == 0){
-                return false;
+            if (inputs.length == 0) {
+                errorMessage('Error al crear la base de datos', 'No existe ninguna fila en la base de datos 👁️')
+                return;
             }
-
-            // Itera sobre los inputs y verifica si alguno está vacío
-            for (const input of inputs) {
-                if (input.required && !input.value.trim()) {
-                    return false; // Retorna false si algún input requerido está vacío
+            
+            if (are_allInputs_filled()) {
+                if (!check_duplicate_names()) {
+                    form.submit(); // send the form
+                } else {
+                    errorMessage('Error al crear la base de datos', 'No puedes tener 2 filas con el mismo nombre 🧐')
                 }
+            } else {
+                errorMessage('Error al crear la base de datos', 'Todas las filas necesitan tener un nombre 👁️')
+            }
+        }
+    }
+
+    function check_duplicate_names() {
+        // Obtiene todos los inputs que tienen la clase 'input_name_table'
+        const inputs = document.querySelectorAll(".input_name_table");
+
+        // Crea un conjunto para almacenar nombres únicos
+        const namesSet = new Set();
+
+        // Itera sobre los inputs
+        for (const input of inputs) {
+            const name = input.name; // Obtén el atributo 'name' del input
+            // Verifica si el nombre ya está en el conjunto
+            if (namesSet.has(name)) {
+                // Si el nombre ya existe en el conjunto, hay un duplicado
+                return true; // Devuelve true si encuentra un duplicado
             }
 
-            return true; // Retorna true si todos los inputs requeridos tienen valor
+            // Si no es un duplicado, agrega el nombre al conjunto
+            namesSet.add(name);
         }
 
-    </script>
+        // Si no se encontraron duplicados, devuelve false
+        return false;
+    }
+
+    function are_allInputs_filled() {
+        // Obtiene todos los inputs con la clase 'input_name_table'
+        const inputs = document.querySelectorAll(".input_name_table");
+
+        //we will see if exist inputs in the table
+        if (inputs.length == 0) {
+            return false;
+        }
+
+        // Itera sobre los inputs y verifica si alguno está vacío
+        for (const input of inputs) {
+            if (input.required && !input.value.trim()) {
+                return false; // Retorna false si algún input requerido está vacío
+            }
+        }
+
+        return true; // Retorna true si todos los inputs requeridos tienen valor
+    }
+
+</script>
