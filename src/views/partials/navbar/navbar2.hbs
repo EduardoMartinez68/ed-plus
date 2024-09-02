@@ -119,6 +119,18 @@
                             <span>Menu</span>
                         </div>
                         --->
+                        {{#each apps}}
+                            <div class="app-icon" onclick="nextWeb('/{{id_companies}}/{{id_branch}}/app/{{name}}')">
+                                {{#if icon}}
+                                    <img src="{{icon}}" alt="Insumos">
+                                {{else}}
+                                    <img src="https://cdn-icons-png.flaticon.com/512/3902/3902021.png" alt="Insumos">
+                                {{/if}}
+                                <span>{{name}}</span>
+                            </div>
+                        {{/each}}
+
+
                         {{#if user.point_sales}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('/point-sales')">
@@ -415,7 +427,7 @@
                             {{/each}}
                         {{/if}}
                         {{#each branchFree}}
-                            <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/marketplace')">
+                            <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/ed-studios')">
                                 <img src="https://cdn-icons-png.flaticon.com/512/3904/3904299.png" alt="Áreas">
                                 <span>ED Estudios</span>
                             </div>

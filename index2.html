@@ -1,171 +1,74 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editor de Tablas - PostgreSQL</title>
+    <title>Tabla en Card</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* Estilos CSS */
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            padding: 20px;
+            background-color: #f8f9fa;
+            padding: 30px;
+            font-family: 'Arial', sans-serif;
         }
-
-        #app {
-            max-width: 800px;
-            margin: auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-
-        .table-settings {
-            margin-bottom: 20px;
-        }
-
-        #table-name {
-            padding: 5px;
-            margin-right: 10px;
-        }
-
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            border-spacing: 0;
         }
-
         th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
+            padding: 10px;
             text-align: left;
+            font-size: 16px;
         }
-
         th {
-            background-color: #f4f4f4;
+            border-bottom: 2px solid #ddd;
+            font-weight: normal;
         }
-
-        .add-row-btn {
-            margin-top: 10px;
-            padding: 8px 16px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
+        td {
+            border-bottom: 1px solid #eee;
         }
-
-        .add-row-btn:hover {
-            background-color: #0056b3;
-        }
-
-        input[type="text"], select {
-            padding: 5px;
-            margin: 5px;
-        }
-
-        .right {
-            text-align: right;
-            margin-left: 80%;
-            background-color: #28a745; /* Color verde */
-            color: white;
-            cursor: pointer;
-        }
-
-        .right:hover {
-            background-color: #218838; /* Color verde más oscuro al pasar el ratón */
+        tr:hover td {
+            background-color: #f5f5f5;
+            transition: background-color 0.2s ease;
         }
     </style>
 </head>
 <body>
-    <div id="app">
-        <h1>Base de Datos</h1>
-        <hr>
-        <div id="table-editor-container"></div>
+    <div class="card mx-auto" style="max-width: 600px;">
+        <div class="card-body">
+            <h5 class="card-title">Tabla Minimalista</h5>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Encabezado 1</th>
+                        <th>Encabezado 2</th>
+                        <th>Encabezado 3</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Fila 1, Columna 1</td>
+                        <td>Fila 1, Columna 2</td>
+                        <td>Fila 1, Columna 3</td>
+                    </tr>
+                    <tr>
+                        <td>Fila 2, Columna 1</td>
+                        <td>Fila 2, Columna 2</td>
+                        <td>Fila 2, Columna 3</td>
+                    </tr>
+                    <tr>
+                        <td>Fila 3, Columna 1</td>
+                        <td>Fila 3, Columna 2</td>
+                        <td>Fila 3, Columna 3</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
-    <script>
-        crearTabla();
-        // JavaScript para el Editor de Tablas
-        function crearTabla() {
-            // Crear contenedor de la tabla
-            const tablaContainer = document.createElement("div");
-            tablaContainer.className = "tabla-container";
-
-            // Botón para agregar filas
-            const botonAgregarFila = document.createElement("button");
-            botonAgregarFila.textContent = "Agregar Fila";
-            botonAgregarFila.className = "add-row-btn";
-            botonAgregarFila.onclick = () => agregarFila(tbody);
-            tablaContainer.appendChild(botonAgregarFila);
-
-
-            // Crear tabla
-            const tabla = document.createElement("table");
-            const thead = document.createElement("thead");
-            const tbody = document.createElement("tbody");
-
-            // Cabecera de la tabla
-            thead.innerHTML = `
-                <tr>
-                    <th>Nombre de la columna</th>
-                    <th>Tipo de dato</th>
-                    <th>Acciones</th>
-                </tr>
-            `;
-
-            tabla.appendChild(thead);
-            tabla.appendChild(tbody);
-            tablaContainer.appendChild(tabla);
-
-            // Botón para guardar la base de datos
-            const btnSaveDatabase = document.createElement("button");
-            btnSaveDatabase.textContent = "Crear Base de Datos";
-            btnSaveDatabase.className = "add-row-btn right";
-            btnSaveDatabase.onclick = () => agregarFila(tbody);
-
-            tablaContainer.appendChild(btnSaveDatabase);
-            document.getElementById("table-editor-container").innerHTML = ""; // Limpiar el contenedor
-            document.getElementById("table-editor-container").appendChild(tablaContainer);
-        }
-
-        function agregarFila(tbody) {
-            const fila = document.createElement("tr");
-
-            const columnaNombre = document.createElement("td");
-            const inputNombre = document.createElement("input");
-            inputNombre.type = "text";
-            inputNombre.placeholder = "Nombre de la columna";
-            columnaNombre.appendChild(inputNombre);
-
-            const columnaTipo = document.createElement("td");
-            const selectTipo = document.createElement("select");
-            const tipos = ["TEXT", "VARCHAR", "INT", "BOOLEAN"];
-            tipos.forEach(tipo => {
-                const option = document.createElement("option");
-                option.value = tipo;
-                option.textContent = tipo;
-                selectTipo.appendChild(option);
-            });
-            columnaTipo.appendChild(selectTipo);
-
-            const columnaAcciones = document.createElement("td");
-            const botonEliminar = document.createElement("button");
-            botonEliminar.textContent = "Eliminar";
-            botonEliminar.onclick = () => fila.remove();
-            columnaAcciones.appendChild(botonEliminar);
-
-            fila.appendChild(columnaNombre);
-            fila.appendChild(columnaTipo);
-            fila.appendChild(columnaAcciones);
-            tbody.appendChild(fila);
-        }
-    </script>
+    <!-- Bootstrap JS (opcional) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -2629,33 +2629,53 @@ async function update_position_stage(id,name,position){
 
 
 //-----------------------------------------------apps
+const {
+    insert_app_in_my_list
+} = require('../services/apps');
+
 router.post('/fud/:id_company/:id_branch/app/create-database', isLoggedIn, async (req, res) => {
     const { id_company, id_branch} = req.params;
     const answer=req.body;
 
-    //get the schema of the user for create the database
-    const schema=`_company_${id_company}`;
-    const tableName=answer.name_app;
-
-    //get the rows of the table
-    const rows = Object.keys(answer);
-    var queryText = `
-    CREATE SCHEMA IF NOT EXISTS ${schema};
-    CREATE TABLE IF NOT EXISTS ${schema}.${tableName} (
-        id SERIAL PRIMARY KEY,`
-        for(let i=1;i<rows.length;i+=2){
-            const name = rows[i];
-            const valueVariable = rows[i+1];
-            queryText+=`\n${name} ${answer[valueVariable]},`;
-        }
-    queryText+=`\n);`;
-
-    console.log(queryText)
-
+    if(await create_the_database_of_my_app(answer,id_company,id_branch)){
+        req.flash('success', 'Tu aplicacion fue creada con éxito ❤️')
+    }else{
+        req.flash('message', 'Hubo un error al crear tu base de datos 👉👈')
+    }
 
     res.redirect(`/fud/${id_company}/${id_branch}/ed-studios`);
 })
 
+
+async function create_the_database_of_my_app(answer,id_company,id_branch){
+    //get the schema of the user for create the database
+    const schema=`_company_${id_company}_branch_${id_branch}`;
+    const tableNameForm = answer.name_app;
+    const tableName = tableNameForm.replace(/\s+/g, '_'); // Replace whitespace with underscores
+
+    //get the rows of the table
+    const rows = Object.keys(answer);
+    var queryText = `
+    CREATE TABLE IF NOT EXISTS ${schema}.${tableName} (
+        id SERIAL PRIMARY KEY`
+        for(let i=1;i<rows.length;i+=3){
+            const name = rows[i];
+            const valueVariable = rows[i+1];
+            const requeride = rows[i+2];
+            queryText+=`\n,${name} ${answer[valueVariable]} ${answer[requeride]}`;
+        }
+    queryText+=`\n);`;
+
+    try {
+        //this is for create the table
+        await database.query(queryText);
+        await insert_app_in_my_list(id_company, id_branch, tableName, '', tableNameForm, '', '', queryText) //if we can create the tabla, save the code in the list of my apps
+        return true;
+    } catch (error) {
+        console.error('Error to create the database apps in addfrom: ', error);
+        return false;
+    }
+}
 
 
 

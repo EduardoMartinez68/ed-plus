@@ -114,6 +114,7 @@
                 <tr>
                     <th>Nombre de la columna</th>
                     <th>Tipo de dato</th>
+                    <th>¿Es obilgatorio?</th>
                     <th>Acciones</th>
                 </tr>
             `;
@@ -152,7 +153,7 @@
         const columnType = document.createElement("td");
         const selectType = document.createElement("select");
         selectType.className = "form-select";
-        inputName.name = "select_name_column";
+        selectType.name = "select_name_column";
         const types = [
             "TEXT",
             "VARCHAR", // Con capacidad para definir longitud, por ejemplo, VARCHAR(255)
@@ -179,16 +180,35 @@
             "BYTEA"    // Datos binarios
         ];
 
-        types.forEach(tipo => {
+        types.forEach(type => {
             const option = document.createElement("option");
-            option.value = tipo;
-            option.textContent = tipo;
+            option.value = type;
+            option.textContent = type;
             selectType.appendChild(option);
         });
         columnType.appendChild(selectType);
 
+        //this is for create the select Required
+        const columnTypeRequired = document.createElement("td");
+        const selectTypeRequired = document.createElement("select");
+        selectTypeRequired.className = "form-select";
+        selectTypeRequired.name = "select_required_column";
+
+        const option2 = document.createElement("option");
+        option2.value = 'NULL';
+        option2.textContent = 'No';
+        selectTypeRequired.appendChild(option2);
+
+        const option1 = document.createElement("option");
+        option1.value = 'NOT NULL';
+        option1.textContent = 'Si';
+        selectTypeRequired.appendChild(option1);
+
+        columnTypeRequired.appendChild(selectTypeRequired);
+
+
         //this is for add the function for change the name of the input and the select
-        inputName.addEventListener("input", (event) => change_name(event, selectType));
+        inputName.addEventListener("input", (event) => change_name(event, selectType, selectTypeRequired));
 
         //button for delete the row
         const columnAction = document.createElement("td");
@@ -201,6 +221,7 @@
 
         row.appendChild(columnName);
         row.appendChild(columnType);
+        row.appendChild(columnTypeRequired);
         row.appendChild(columnAction);
         tbody.appendChild(row);
     }
@@ -211,10 +232,11 @@
         }
     }
 
-    function change_name(event,select) {
+    function change_name(event,select,selectRequired) {
         const input = event.target;
         const newName = event.target.value.trim().replace(/\s+/g, "_"); // get the record of the value of the input
         input.name = newName ? newName : "name_column"; // Cambia el 'name' del input, o usa un nombre predeterminado si está vacío
+        
         if(input.name=='name_app'){
             input.name='name_column';
             input.value=''
@@ -222,6 +244,7 @@
         }
 
         select.name='select_'+input.name
+        selectRequired.name='select_requeride_'+input.name
     }
 
     function send_form(tbody) {

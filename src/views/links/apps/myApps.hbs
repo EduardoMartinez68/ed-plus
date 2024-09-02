@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Gallery</title>
+    <style>
+        /* Contenedor principal */
+        .container-my-apps {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        /* Estilo de las tarjetas */
+        .card-my-apps {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            width: calc(16.666% - 40px); /* Tres tarjetas por fila, adaptado al margen */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .card-my-apps:hover {
+            transform: scale(1.05);
+            cursor: pointer;
+        }
+
+        .card-my-apps img {
+            width: 80%;
+            height: auto;
+            display: block;
+            padding-left: 25%;
+        }
+
+        .card-my-apps-content {
+            padding: 15px;
+        }
+
+        .card-my-apps-title {
+            font-size: 1.25rem;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .card-my-apps-description {
+            font-size: 1rem;
+            color: #666;
+        }
+
+        /* Estilo para pantallas pequeñas */
+        @media (max-width: 768px) {
+            .card-my-apps {
+                width: calc(50% - 40px); /* Dos tarjetas por fila */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card-my-apps {
+                width: calc(100% - 40px); /* Una tarjeta por fila */
+            }
+        }
+    </style>
+</head>
+<body>
+    <br><br>
+    <div class="container">
+        <label for=""><i class="fi-icon fi-sr-apps"></i> Mis aplicaciones</label>
+        <hr>
+        
+        <div class="container-my-apps">
+            {{#each branchFree}}
+                <div class="card-my-apps" onclick="nextWeb('/{{id_companies}}/{{id}}/ed-studios/create-database')">
+                    <br>
+                    <img src="https://cdn-icons-png.flaticon.com/512/4713/4713424.png" alt="Sample Image">
+                    <div class="card-my-apps-content">
+                        <center><h2 class="card-my-apps-title">Agregar nueva APP</h2></center>
+                    </div>
+                </div>
+            {{/each}}
+            <!-- Tarjeta 1 -->
+            {{#each apps}}
+                <div class="card-my-apps" onclick="nextWeb('/{{id_company}}/{{id_branch}}/{{id}}/edit-app')">
+                    <br>
+                    {{#if icon}}
+                        <img src="{{icon}}" alt="Sample Image">
+                    {{else}}
+                        <img src="https://cdn-icons-png.flaticon.com/512/3902/3902021.png" alt="Sample Image">
+                    {{/if}}
+                    <div class="card-my-apps-content">
+                        <center><h2 class="card-my-apps-title">{{name}}</h2></center>
+                    </div>
+                </div>
+            {{/each}}
+        </div>
+    </div>
+</body>
+</html>

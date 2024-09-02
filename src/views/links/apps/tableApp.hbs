@@ -1,0 +1,32 @@
+<br><br>
+<div class="container">
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        {{#each dataTableMyApp}}
+                            <th>{{column_name}}</th>
+                        {{/each}}
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        {{#each items}}
+                            <td>{{this}}</td>
+
+                            <!--buttons for edit and delete item-->
+                            <td>
+                                <button class="btn btn-edit" onclick="edit_inventory('{{id}}')"><i class="fi-department fi-ss-truck-loading"></i></button>
+                            </td>
+                            <td>
+                                <button class="btn btn-edit" onclick="edit_supplies('{{id}}')"><i class="fi-department fi-sr-pencil"></i></button>
+                            </td>
+                        {{/each}}
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

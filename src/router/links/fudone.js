@@ -393,10 +393,60 @@ router.get('/:id_company/:id_branch/CRM', isLoggedIn, async (req, res) => {
 
 
 //------------------------------------ED STUDIOS 
+const {
+    get_all_apps_of_this_company,
+    create_my_list_app,
+    get_the_data_of_the_table_of_my_app,
+    get_data_of_my_app,
+    get_character_of_my_app
+} = require('../../services/apps');
+
 router.get('/:id_company/:id_branch/ed-studios', isLoggedIn, async (req, res) => {
     const { id_company, id_branch } = req.params;
     const branchFree = await get_data_branch(id_branch);
-    res.render('links/studios/studios', { branchFree});
+    await create_my_list_app(id_company,id_branch)
+    const apps=await get_all_apps_of_this_company(id_company,id_branch)
+    res.render("links/apps/myApps",{branchFree, apps});
+});
+
+router.get('/:id_company/:id_branch/:id_app/add', isLoggedIn, async (req, res) => {
+    const { id_app, id_company, id_branch } = req.params;
+    const branchFree = await get_data_branch(id_branch);
+    const apps=await get_all_apps_of_this_company(id_company,id_branch)
+
+    const dataTable=await get_the_data_of_the_table_of_my_app(id_company, id_branch, id_app)
+    const characterApp=await get_character_of_my_app(id_company, id_branch, id_app)
+
+    
+    res.render("links/apps/editApp",{branchFree, apps, dataTable, characterApp});
+});
+
+
+router.get('/:id_company/:id_branch/:id_app/table', isLoggedIn, async (req, res) => {
+    const { id_app, id_company, id_branch } = req.params;
+    const branchFree = await get_data_branch(id_branch);
+    const apps=await get_all_apps_of_this_company(id_company,id_branch)
+
+    const characterApp=await get_character_of_my_app(id_company, id_branch, id_app)
+    const dataTableMyApp=await get_the_data_of_the_table_of_my_app(id_company, id_branch, id_app)
+    const items=await get_data_of_my_app(id_company, id_branch, id_app)
+
+    res.render("links/apps/tableApp",{branchFree,apps, characterApp, items, dataTableMyApp});
+});
+
+router.get('/:id_company/:id_branch/:id_app/edit-app', isLoggedIn, async (req, res) => {
+    const { id_app, id_company, id_branch } = req.params;
+    const branchFree = await get_data_branch(id_branch);
+    const apps=await get_all_apps_of_this_company(id_company,id_branch)
+
+    const dataTable=await get_the_data_of_the_table_of_my_app(id_company, id_branch, id_app)
+    res.render("links/apps/editApp",{branchFree,apps, dataTable});
+});
+
+router.get('/:id_company/:id_branch/ed-studios/create-database', isLoggedIn, async (req, res) => {
+    const { id_company, id_branch } = req.params;
+    const branchFree = await get_data_branch(id_branch);
+    res.render('links/apps/studios', { branchFree});
 })
 
 
