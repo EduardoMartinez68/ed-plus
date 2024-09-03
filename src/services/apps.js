@@ -132,11 +132,70 @@ async function get_the_data_of_the_table_of_my_app(id_company,id_branch,nameApp)
     }
 }
 
+
+
+
+async function get_primary_keys_of_schema(id_company, id_branch) {
+    const schema = `_company_${id_company}_branch_${id_branch}`;
+
+    // Consulta para obtener las llaves primarias y sus tipos de datos
+    const queryPrimaryKeysWithTypes = `
+        SELECT
+            kcu.table_name,
+            kcu.column_name,
+            c.data_type
+        FROM
+            information_schema.table_constraints tc
+        JOIN
+            information_schema.key_column_usage kcu
+        ON
+            tc.constraint_name = kcu.constraint_name
+            AND tc.table_schema = kcu.table_schema
+        JOIN
+            information_schema.columns c
+        ON
+            c.table_name = kcu.table_name
+            AND c.column_name = kcu.column_name
+        WHERE
+            tc.constraint_type = 'PRIMARY KEY'
+            AND tc.table_schema = $1;
+    `;
+
+    try {
+        // Obtener las llaves primarias con sus tipos de datos
+        const result = await database.query(queryPrimaryKeysWithTypes, [schema]);
+
+        const primaryKeysWithTypes = {};
+
+        // Agrupar por tablas y excluir la tabla especificada
+        result.rows.forEach(row => {
+            if (row.table_name !== 'apps') {
+                if (!primaryKeysWithTypes[row.table_name]) {
+                    primaryKeysWithTypes[row.table_name] = [];
+                }
+                primaryKeysWithTypes[row.table_name].push({
+                    name: [row.table_name],
+                    column_name: row.column_name,
+                    data_type: row.data_type
+                });
+            }
+        });
+
+        return primaryKeysWithTypes;
+
+    } catch (error) {
+        console.error('Error fetching primary keys with types:', error.message);
+        return {};
+    }
+}
+
+
 module.exports = {
     get_all_apps_of_this_company,
     create_my_list_app,
     insert_app_in_my_list,
     get_the_data_of_the_table_of_my_app,
     get_data_of_my_app,
-    get_character_of_my_app
+    get_character_of_my_app,
+    get_primary_keys_of_schema
 };

@@ -398,7 +398,8 @@ const {
     create_my_list_app,
     get_the_data_of_the_table_of_my_app,
     get_data_of_my_app,
-    get_character_of_my_app
+    get_character_of_my_app,
+    get_primary_keys_of_schema
 } = require('../../services/apps');
 
 router.get('/:id_company/:id_branch/ed-studios', isLoggedIn, async (req, res) => {
@@ -446,7 +447,9 @@ router.get('/:id_company/:id_branch/:id_app/edit-app', isLoggedIn, async (req, r
 router.get('/:id_company/:id_branch/ed-studios/create-database', isLoggedIn, async (req, res) => {
     const { id_company, id_branch } = req.params;
     const branchFree = await get_data_branch(id_branch);
-    res.render('links/apps/studios', { branchFree});
+    const apps=await get_all_apps_of_this_company(id_company,id_branch)
+    const myApps=await get_primary_keys_of_schema(id_company,id_branch)
+    res.render('links/apps/studios', { branchFree, apps, myApps});
 })
 
 

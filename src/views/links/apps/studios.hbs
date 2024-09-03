@@ -1,6 +1,6 @@
 <style>
     #app {
-        max-width: 800px;
+        max-width: 80%;
         margin: auto;
         background-color: white;
         padding: 20px;
@@ -47,10 +47,19 @@
         border: none;
         border-radius: 4px;
         cursor: pointer;
+        margin-right: 25px;
     }
 
     .add-row-btn:hover {
         background-color: #0056b3;
+    }
+
+    .relation-btn {
+        background-color: #326499;
+    }
+
+    .relation-btn:hover {
+        background-color: #17518f;
     }
 
     input[type="text"],
@@ -72,24 +81,193 @@
         background-color: #218838;
         /* Color verde más oscuro al pasar el ratón */
     }
+
+    .btn-add {
+        background-color: #28a745;
+    }
+
+    .btn-add:hover {
+        background-color: #218838;
+    }
+</style>
+<style>
+    /* Fondo oscuro con opacidad */
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 10;
+        transition: opacity 0.3s;
+    }
+
+    /* Contenedor de cards */
+    .card-selector {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        z-index: 11;
+        transition: all 0.3s ease;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 15px;
+        max-width: 80%;
+    }
+
+    /* Estilo de las cards */
+    .card-relation {
+        border: 2px solid #ddd;
+        padding: 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: transform 0.2s, border-color 0.2s, background-color 0.2s;
+        font-weight: 500;
+        color: #333;
+    }
+
+    .card-relation:hover {
+        transform: scale(1.05);
+        border-color: #007bff;
+        background-color: #f0f8ff;
+    }
+
+    /* Ocultar elementos */
+    .hidden {
+        display: none;
+    }
+
+    /* Card seleccionada */
+    .selected {
+        border-color: #007bff;
+        background-color: #e6f0ff;
+    }
+
+    /* Animaciones para la aparición de elementos */
+    .overlay,
+    .card-selector {
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    .overlay.show,
+    .card-selector.show {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .icon-app-relation {
+        width: 50px;
+        height: auto;
+    }
 </style>
 
+
 <br><br>
+<!-- Botón para mostrar las cards -->
+
+<!-- Fondo oscuro con opacidad -->
+<div id="overlay" class="overlay"></div>
+
+<!-- Contenedor de cards -->
+<div id="cardSelector" class="card-selector hidden">
+    {{#each myApps}}
+        {{#each this}}
+            <div class="card-relation" data-name="Card 1" nameTable="{{name}}" typeData="{{data_type}}" onclick="select_relation(this)">
+                <center>
+                    <img src="https://cdn-icons-png.flaticon.com/512/3904/3904303.png" alt="" class="icon-app-relation">
+                    <br>
+                    {{name}}
+                </center>
+            </div>
+        {{/each}}
+    {{/each}}
+
+    <button id="createButton" class="hidden btn btn-add" style="height: 40px;">Crear</button>
+    <button id="cancelButton" class="btn btn-danger" style="height: 40px;">Cancelar</button>
+</div>
+
 <div id="app">
     <h5>Base de Datos</h5>
     <hr>
     {{#each branchFree}}
-        <form action="/fud/{{id_companies}}/{{id}}/app/create-database" id="myForm" method="post">
-            <input type="text" name="name_app" placeholder="Escribe el nombre de tu aplicacion" class="form-control" required id="name_app">
-            <div id="table-editor-container"></div>
-        </form>
+    <form action="/fud/{{id_companies}}/{{id}}/app/create-database" id="myForm" method="post">
+        <label for="">Escribe el nombre de tu App *</label>
+        <input type="text" name="name_app" placeholder="Escribe el nombre de tu aplicacion" class="form-control"
+            required id="name_app">
+        <div id="table-editor-container"></div>
+    </form>
     {{/each}}
 </div>
 
+
+
+
+
+
 <script>
+    const showCardsButton = document.getElementById("showCardsButton");
+    const cardSelector = document.getElementById("cardSelector");
+    const overlay = document.getElementById("overlay");
+    const createButton = document.getElementById("createButton");
+    const cancelButton = document.getElementById("cancelButton");
+    let selectedCard = null;
+
+
+    function show_card_relation() {
+        overlay.classList.add("show");
+        overlay.classList.remove("hidden");
+        cardSelector.classList.add("show");
+        cardSelector.classList.remove("hidden");
+    }
+
+
+    function select_relation(card){
+        if (selectedCard) {
+            //selectedCard.classList.remove("selected");
+            //createButton.classList.add("hidden");
+        }
+
+        selectedCard = card;
+        selectedCard.classList.add("selected");
+        createButton.classList.remove("hidden");
+    }
+
+    // Crear la card seleccionada y ocultar el selector
+    createButton.addEventListener("click", () => {
+        if (selectedCard) {
+            console.log("Card seleccionada:", selectedCard.dataset.name);
+            create_relation(selectedCard);
+            ocultarSelector();
+        }
+    });
+
+    // Ocultar el selector y el fondo oscuro
+    cancelButton.addEventListener("click", () => {
+        ocultarSelector();
+    });
+
+    function ocultarSelector() {
+        overlay.classList.remove("show");
+        cardSelector.classList.remove("show");
+        setTimeout(() => {
+            overlay.classList.add("hidden");
+            cardSelector.classList.add("hidden");
+            createButton.classList.add("hidden");
+            selectedCard = null; // Limpiar la selección
+            document.querySelectorAll(".card-relation").forEach(card => card.classList.remove("selected"));
+        }, 300); // Tiempo para permitir la transición de ocultación
+    }
+
+ 
+
     create_table();
-
-
     function create_table() {
         // we will create the container of the table
         const tableContainer = document.createElement("div");
@@ -103,21 +281,34 @@
         buttonAddRow.onclick = () => create_row(tbody);
         tableContainer.appendChild(buttonAddRow);
 
+        // button for add a relation
+        const buttonAddRowRelation = document.createElement("button");
+        buttonAddRowRelation.type = "button";
+        buttonAddRowRelation.id = 'showCardsButton'
+        buttonAddRowRelation.textContent = "Agregar Relacion";
+        buttonAddRowRelation.className = "add-row-btn relation-btn";
+        buttonAddRowRelation.onclick = () => show_card_relation();
+        tableContainer.appendChild(buttonAddRowRelation);
+
 
         //we will create the table
         const table = document.createElement("table");
         const thead = document.createElement("thead");
         const tbody = document.createElement("tbody");
+        tbody.id="id-tbody";
 
         //we will create the body table
         thead.innerHTML = `
-                <tr>
-                    <th>Nombre de la columna</th>
-                    <th>Tipo de dato</th>
-                    <th>¿Es obilgatorio?</th>
-                    <th>Acciones</th>
-                </tr>
-            `;
+                    <tr>
+                        <th>Nombre de la Tabla *</th>
+                        <th>Tipo de Dato</th>
+                        <th>¿Es obilgatorio?</th>
+                        <th>¿Es la clave de busqueda?</th>
+                        <th>¿Es irepetible?</th>
+                        <th>Valor predeterminado</th>
+                        <th>Acciones</th>
+                    </tr>
+                `;
 
         table.appendChild(thead);
         table.appendChild(tbody);
@@ -146,7 +337,7 @@
         inputName.placeholder = "Nombre de la columna";
         inputName.name = "name_column";
         inputName.required = true;
-        
+
         columnName.appendChild(inputName);
 
         //this is for create the select of the database
@@ -206,6 +397,53 @@
 
         columnTypeRequired.appendChild(selectTypeRequired);
 
+        //this is the primary key
+        const columnPrimaryKey = document.createElement("td");
+        const selectPrimaryKey = document.createElement("select");
+        selectPrimaryKey.className = "form-select";
+        selectPrimaryKey.name = "select_primary_key";
+
+        const option3 = document.createElement("option");
+        option3.value = 'NULL';
+        option3.textContent = 'No';
+        selectPrimaryKey.appendChild(option3);
+
+        const option4 = document.createElement("option");
+        option4.value = 'NOT NULL';
+        option4.textContent = 'Si';
+        selectPrimaryKey.appendChild(option4);
+
+        columnPrimaryKey.appendChild(selectPrimaryKey);
+
+        //this is for know if this data is unique
+        const columnUnique = document.createElement("td");
+        const selectUnique = document.createElement("select");
+        selectUnique.className = "form-select";
+        selectUnique.name = "select_primary_key";
+
+        const option5 = document.createElement("option");
+        option5.value = '';
+        option5.textContent = 'Si';
+        selectUnique.appendChild(option5);
+
+        const option6 = document.createElement("option");
+        option6.value = 'Unique';
+        option6.textContent = 'No';
+        selectUnique.appendChild(option6);
+
+        columnUnique.appendChild(selectUnique);
+
+        //this is for add a value for default to the table
+        const columnValueDefault = document.createElement("td");
+        const inputDefault = document.createElement("input");
+        inputDefault.type = "text";
+        inputDefault.className = "form-control input_name_table";
+        inputDefault.placeholder = "Valor por defecto";
+        inputDefault.name = "name_column";
+        inputDefault.required = true;
+
+        columnValueDefault.appendChild(inputDefault);
+
 
         //this is for add the function for change the name of the input and the select
         inputName.addEventListener("input", (event) => change_name(event, selectType, selectTypeRequired));
@@ -222,6 +460,138 @@
         row.appendChild(columnName);
         row.appendChild(columnType);
         row.appendChild(columnTypeRequired);
+        row.appendChild(columnPrimaryKey);
+        row.appendChild(columnUnique);
+        row.appendChild(columnValueDefault);
+        row.appendChild(columnAction);
+        tbody.appendChild(row);
+    }
+
+    function create_relation(relation) {
+        const primaryKeyRelationName="id_" + relation.getAttribute('nameTable')
+        if(check_duplicate_names_with_the_relation(primaryKeyRelationName)){
+            warningMessage('Error al crear relación 👀', 'Esta relación ya existe en la tabla')
+            return;
+        }
+
+
+        const tbody=document.getElementById('id-tbody')
+        const row = document.createElement("tr");
+
+        //this is for create the input of the name of the database
+        const columnName = document.createElement("td");
+        const inputName = document.createElement("input");
+        inputName.type = "text";
+        inputName.className = "form-control input_name_table";
+        inputName.placeholder = "Nombre de la columna";
+        inputName.value =primaryKeyRelationName
+        inputName.name = primaryKeyRelationName;
+        inputName.required = true;
+        inputName.readOnly = true
+
+        columnName.appendChild(inputName);
+
+        //this is for create the select of the database
+        const columnType = document.createElement("td");
+        const selectType = document.createElement("select");
+        selectType.className = "form-select";
+        selectType.name = "select_"+primaryKeyRelationName;
+        const types = [
+        relation.getAttribute('typeData')
+        ];
+
+        types.forEach(type => {
+            const option = document.createElement("option");
+            option.value = type;
+            option.textContent = type;
+            selectType.appendChild(option);
+        });
+        columnType.appendChild(selectType);
+
+        //this is for create the select Required
+        const columnTypeRequired = document.createElement("td");
+        const selectTypeRequired = document.createElement("select");
+        selectTypeRequired.className = "form-select";
+        selectTypeRequired.name = "select_required_"+primaryKeyRelationName;
+
+        const option2 = document.createElement("option");
+        option2.value = 'NULL';
+        option2.textContent = 'No';
+        selectTypeRequired.appendChild(option2);
+
+        const option1 = document.createElement("option");
+        option1.value = 'NOT NULL';
+        option1.textContent = 'Si';
+        selectTypeRequired.appendChild(option1);
+
+        columnTypeRequired.appendChild(selectTypeRequired);
+
+        //this is the primary key
+        const columnPrimaryKey = document.createElement("td");
+        const selectPrimaryKey = document.createElement("select");
+        selectPrimaryKey.className = "form-select";
+        selectPrimaryKey.name = "select_primary_key"+primaryKeyRelationName;
+
+        const option3 = document.createElement("option");
+        option3.value = 'NULL';
+        option3.textContent = 'No';
+        selectPrimaryKey.appendChild(option3);
+
+        const option4 = document.createElement("option");
+        option4.value = 'NOT NULL';
+        option4.textContent = 'Si';
+        selectPrimaryKey.appendChild(option4);
+
+        columnPrimaryKey.appendChild(selectPrimaryKey);
+
+        //this is for know if this data is unique
+        const columnUnique = document.createElement("td");
+        const selectUnique = document.createElement("select");
+        selectUnique.className = "form-select";
+        selectUnique.name = "select_primary_key"+primaryKeyRelationName;
+
+        const option5 = document.createElement("option");
+        option5.value = '';
+        option5.textContent = 'Si';
+        selectUnique.appendChild(option5);
+
+        const option6 = document.createElement("option");
+        option6.value = 'Unique';
+        option6.textContent = 'No';
+        selectUnique.appendChild(option6);
+
+        columnUnique.appendChild(selectUnique);
+
+        //this is for add a value for default to the table
+        const columnValueDefault = document.createElement("td");
+        const inputDefault = document.createElement("input");
+        inputDefault.type = "text";
+        inputDefault.className = "form-control input_name_table";
+        inputDefault.placeholder = "Valor por defecto";
+        inputDefault.name = 'value_deafault_'+primaryKeyRelationName;
+        inputDefault.required = true;
+
+        columnValueDefault.appendChild(inputDefault);
+
+
+        //this is for add the function for change the name of the input and the select
+        inputName.addEventListener("input", (event) => change_name(event, selectType, selectTypeRequired));
+
+        //button for delete the row
+        const columnAction = document.createElement("td");
+        const buttonDelete = document.createElement("button");
+        buttonDelete.textContent = "Eliminar";
+        buttonDelete.type = "button";
+        buttonDelete.className = "btn btn-danger";
+        buttonDelete.onclick = () => delete_row(row);
+        columnAction.appendChild(buttonDelete);
+
+        row.appendChild(columnName);
+        row.appendChild(columnType);
+        row.appendChild(columnTypeRequired);
+        row.appendChild(columnPrimaryKey);
+        row.appendChild(columnUnique);
+        row.appendChild(columnValueDefault);
         row.appendChild(columnAction);
         tbody.appendChild(row);
     }
@@ -232,28 +602,28 @@
         }
     }
 
-    function change_name(event,select,selectRequired) {
+    function change_name(event, select, selectRequired) {
         const input = event.target;
         const newName = event.target.value.trim().replace(/\s+/g, "_"); // get the record of the value of the input
         input.name = newName ? newName : "name_column"; // Cambia el 'name' del input, o usa un nombre predeterminado si está vacío
-        
-        if(input.name=='name_app'){
-            input.name='name_column';
-            input.value=''
-            warningMessage('⚠️ Error ⚠️','Este nombre esta reservado')
+
+        if (input.name == 'name_app') {
+            input.name = 'name_column';
+            input.value = ''
+            warningMessage('⚠️ Error ⚠️', 'Este nombre está reservado');
         }
 
-        select.name='select_'+input.name
-        selectRequired.name='select_requeride_'+input.name
+        select.name = 'select_' + input.name
+        selectRequired.name = 'select_requeride_' + input.name
     }
 
     function send_form(tbody) {
         // get the form for his id
         const form = document.getElementById("myForm");
         if (form) {
-            const inputNameApp=document.getElementById('name_app').value;
+            const inputNameApp = document.getElementById('name_app').value;
             if (inputNameApp.trim() == "") {
-                errorMessage('Error al crear la base de datos', 'Ingresa un nombre valido para la App 👁️')
+                errorMessage('Error al crear la base de datos', 'Ingresa un nombre válido para la App 👁️');
                 return;
             }
 
@@ -262,18 +632,18 @@
 
             //we will see if exist inputs in the table
             if (inputs.length == 0) {
-                errorMessage('Error al crear la base de datos', 'No existe ninguna fila en la base de datos 👁️')
+                errorMessage('Error al crear la base de datos', 'No existe ninguna fila en la base de datos 👁️');
                 return;
             }
-            
+
             if (are_allInputs_filled()) {
                 if (!check_duplicate_names()) {
                     form.submit(); // send the form
                 } else {
-                    errorMessage('Error al crear la base de datos', 'No puedes tener 2 filas con el mismo nombre 🧐')
+                    errorMessage('Error al crear la base de datos', 'No puedes tener dos filas con el mismo nombre 🧐');
                 }
             } else {
-                errorMessage('Error al crear la base de datos', 'Todas las filas necesitan tener un nombre 👁️')
+                errorMessage('Error al crear la base de datos', 'Todas las filas deben tener un nombre 👁️');
             }
         }
     }
@@ -301,6 +671,37 @@
         // Si no se encontraron duplicados, devuelve false
         return false;
     }
+
+    function check_duplicate_names_with_the_relation(primaryKeyRelationName) {
+        // Obtiene todos los inputs que tienen la clase 'input_name_table'
+        const inputs = document.querySelectorAll(".input_name_table");
+
+        // Crea un conjunto para almacenar nombres únicos
+        const namesSet = new Set();
+
+        // Itera sobre los inputs
+        for (const input of inputs) {
+            const name = input.value; // Obtén el valor del input
+
+            // Verifica si el nombre ya está en el conjunto
+            if (namesSet.has(name)) {
+                // Si el nombre ya existe en el conjunto, hay un duplicado
+                return true; // Devuelve true si encuentra un duplicado
+            }
+
+            // Si no es un duplicado, agrega el nombre al conjunto
+            namesSet.add(name);
+        }
+
+        // Verifica si el nombre que se quiere agregar ya existe
+        if (namesSet.has(primaryKeyRelationName)) {
+            return true; // Devuelve true si el nombre ya existe
+        }
+
+        // Si no se encontraron duplicados, devuelve false
+        return false;
+    }
+
 
     function are_allInputs_filled() {
         // Obtiene todos los inputs con la clase 'input_name_table'

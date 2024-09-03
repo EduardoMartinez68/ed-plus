@@ -119,16 +119,6 @@
                             <span>Menu</span>
                         </div>
                         --->
-                        {{#each apps}}
-                            <div class="app-icon" onclick="nextWeb('/{{id_companies}}/{{id_branch}}/app/{{name}}')">
-                                {{#if icon}}
-                                    <img src="{{icon}}" alt="Insumos">
-                                {{else}}
-                                    <img src="https://cdn-icons-png.flaticon.com/512/3902/3902021.png" alt="Insumos">
-                                {{/if}}
-                                <span>{{name}}</span>
-                            </div>
-                        {{/each}}
 
 
                         {{#if user.point_sales}}
@@ -401,7 +391,6 @@
                                 </div>
                             {{/each}}
                         {{/if}}
-
                         {{#if user.accounting}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/reports')">
@@ -410,6 +399,32 @@
                                 </div>
                             {{/each}}
                         {{/if}}
+                        {{#if user.accounting}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/reports')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/10256/10256085.png" alt="Contabilidad">
+                                    <span>Documentos</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+
+                        {{#each branchFree}}
+                            <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/ed-studios')">
+                                <img src="https://cdn-icons-png.flaticon.com/512/3904/3904299.png" alt="Áreas">
+                                <span>ED Estudios</span>
+                            </div>
+                        {{/each}}
+                        {{#each apps}}
+                            <div class="app-icon" onclick="nextWeb('/{{id_companies}}/{{id_branch}}/app/{{name}}')">
+                                {{#if icon}}
+                                    <img src="{{icon}}" alt="Insumos">
+                                {{else}}
+                                    <img src="https://cdn-icons-png.flaticon.com/512/3902/3902021.png" alt="Insumos">
+                                {{/if}}
+                                <span>{{name}}</span>
+                            </div>
+                        {{/each}}
+
                         {{#if user.edit_branch}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('{{id}}/{{id_companies}}/edit-branch-free')">
@@ -426,12 +441,6 @@
                                 </div>
                             {{/each}}
                         {{/if}}
-                        {{#each branchFree}}
-                            <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/ed-studios')">
-                                <img src="https://cdn-icons-png.flaticon.com/512/3904/3904299.png" alt="Áreas">
-                                <span>ED Estudios</span>
-                            </div>
-                        {{/each}}
                         {{#each branchFree}}
                             <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/marketplace')">
                                 <img src="https://cdn-icons-png.flaticon.com/512/4372/4372862.png" alt="Áreas">
