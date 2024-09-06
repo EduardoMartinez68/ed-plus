@@ -1,23 +1,20 @@
 <br><br>
+
 <div class="container">
     <div class="card">
         <div class="card-body">
             <br>     
-            <label>Nueva oportunidad</label>
+            <label><i class="fi-icon fi-ss-trophy"></i> Nueva oportunidad</label>
             <hr>
-            <div class="tabs-container-step">
-                <div class="tabs-step">
-                    {{#each salesStage}}
-                        <div class="tab-step active" data-target="nuevo">{{name}}</div>
-                    {{/each}}
-                </div>
-            </div>
             <br>
             <div class="btn-group">
                 <button class="btn-select btn-active" onclick="showSection('select-1', this)" type="button">Información Personal</button>
                 <button class="btn-select" onclick="showSection('select-2', this)" type="button">Seguimiento</button>
                 <button class="btn-select" onclick="showSection('select-3', this)" type="button">Información Adicional</button>
             </div>
+
+            {{>manager/CRM/tabsSalesStage}}
+
             <div id="select-1" class="content-section active">
                 {{>manager/CRM/formCustomer1}}
             </div>
@@ -34,6 +31,19 @@
         </div>
     </div>
 </div>
+
+
+
+
+<br><br><br>
+
+
+
+
+
+
+
+
 
 
 <!--

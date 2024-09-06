@@ -620,3 +620,28 @@ label #btn-navbar-cancel{
 .content-section.active {
     display: block;
 }
+
+
+/* Specific styles for tablets and mobile devices */
+@media (max-width: 768px) {
+    .btn-select {
+        padding: 8px 15px;
+        font-size: 14px;
+    }
+
+    .content-section {
+        margin-top: 15px;
+    }
+}
+
+/* Mobile-specific styles */
+@media (max-width: 480px) {
+    .btn-select {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+
+    .content-section {
+        margin-top: 10px;
+    }
+}

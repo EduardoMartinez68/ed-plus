@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscador Minimalista</title>
+    <style>
+        /* Estilos generales para el contenedor del buscador */
+        .search-container {
+            position: relative;
+            max-width: 300px;
+            margin: 0 auto;
+            padding: 5px;
+        }
+
+        /* Estilos para el campo de búsqueda (input) */
+        .search-input-select{
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #555;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+
+        /* Estilo del campo de búsqueda cuando está enfocado */
+        .search-input-select:focus {
+            border-color: var(--color-company);
+            outline: none;
+        }
+
+        /* Estilos para el select */
+        .search-select {
+            position: absolute;
+            top: calc(100% + 5px);
+            left: 0;
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #fff;
+            z-index: 10;
+            max-height: 150px;
+            overflow-y: auto;
+            box-sizing: border-box;
+            display: none; /* Oculto por defecto, se muestra cuando hay opciones filtradas */
+        }
+
+        /* Estilo cuando hay opciones en el select */
+        .search-select.show {
+            display: block;
+        }
+
+        /* Estilos para las opciones del select */
+        .search-select option {
+            padding: 8px 12px;
+            font-size: 14px;
+            color: #555;
+            background-color: #fff;
+            border-bottom: 1px solid #eee;
+        }
+
+        .search-select option:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* Estilos para el primer item para que se vea bien */
+        .search-select option:first-child {
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+        }
+
+        /* Estilos para el último item para que se vea bien */
+        .search-select option:last-child {
+            border-bottom-left-radius: 4px;
+            border-bottom-right-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="search-container">
+        <input type="text" class="search-input-select" placeholder="Buscar...">
+        <select class="search-select" size="5">
+            <option value="1">Opción 1</option>
+            <option value="2">Opción 2</option>
+            <option value="3">Opción 3</option>
+            <option value="4">Opción 4</option>
+            <option value="5">Opción 5</option>
+        </select>
+    </div>
+</body>
+</html>

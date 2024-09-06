@@ -1,0 +1,52 @@
+<nav class="crm-list-navbar">
+    {{#each salesStage}}
+        <div class="crm-list-navbar-item" onclick="change_sales_stage('{{id}}')">
+            <div class="box" id="box-{{id}}">
+                <span>{{name}}</span>
+            </div>
+        </div>
+    {{/each}}
+    <input type="hidden" name="positionSalesStage" id="positionSalesStage" required>
+</nav>
+<script>
+    /*--------
+        this is for that the user can change and activate
+        the sales stage that the would like on
+    -------*/
+    function change_sales_stage(id){
+        // get all the divs with the class 'box'
+        const boxes = document.querySelectorAll('div.box');
+
+        // Iterate over each div and remove the 'box-activate' class
+        boxes.forEach(box => {
+            box.classList.remove('box-activate');
+            console.log(box)
+        });
+        
+        //add the class box-activate to the div that the user on
+        const div=document.getElementById('box-'+id)
+        div.classList.add('box-activate');
+
+        //change the value of the input positionSalesStage
+        document.getElementById('positionSalesStage').value=id
+    }
+
+
+    /*--------
+        this is for that when the user inside to the web, 
+        the first sales stage will activate
+    -------*/
+    //get all the divs with the class 'box'
+    const boxes = document.querySelectorAll('div.box');
+
+    // get the first div of the list
+    const firstBox = boxes[0];
+
+    //if exist a divs, we will add the class box-activate
+    if (firstBox) {
+        firstBox.classList.add('box-activate');
+    }
+</script>
+
+
+

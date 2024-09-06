@@ -1,186 +1,156 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Selector de Card</title>
-  <style>
-    /* Estilos generales */
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      padding: 20px;
-      text-align: center;
-      background-color: #f4f4f8;
-      color: #333;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor de Tareas</title>
+    <style>
+        /* Estilos CSS */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
 
-    /* Estilo del botón */
-    button {
-      padding: 12px 24px;
-      font-size: 16px;
-      font-weight: 600;
-      color: #fff;
-      background-color: #007bff;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s, transform 0.2s;
-      margin: 5px;
-    }
+        .task-manager {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-    button:hover {
-      background-color: #0056b3;
-      transform: scale(1.05);
-    }
+        .task-input {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-    /* Fondo oscuro con opacidad */
-    .overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.6);
-      z-index: 10;
-      transition: opacity 0.3s;
-    }
+        .task-input input,
+        .task-input textarea {
+            margin: 5px 0;
+            padding: 10px;
+            width: 300px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
 
-    /* Contenedor de cards */
-    .card-selector {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: white;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-      z-index: 11;
-      transition: all 0.3s ease;
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 15px;
-      max-width: 80%;
-    }
+        .task-input button {
+            padding: 10px 20px;
+            background-color: #5c67f2;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
 
-    /* Estilo de las cards */
-    .card-relation {
-      border: 2px solid #ddd;
-      padding: 20px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: transform 0.2s, border-color 0.2s, background-color 0.2s;
-      font-weight: 500;
-      color: #333;
-    }
+        .task-columns {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+        }
 
-    .card-relation:hover {
-      transform: scale(1.05);
-      border-color: #007bff;
-      background-color: #f0f8ff;
-    }
+        .task-column {
+            width: 30%;
+            padding: 10px;
+            border: 2px dashed #ddd;
+            border-radius: 5px;
+            min-height: 200px;
+            background-color: #fff;
+            transition: background-color 0.3s;
+        }
 
-    /* Ocultar elementos */
-    .hidden {
-      display: none;
-    }
+        .task-column h3 {
+            text-align: center;
+            color: #444;
+        }
 
-    /* Card seleccionada */
-    .selected {
-      border-color: #007bff;
-      background-color: #e6f0ff;
-    }
+        .task-column:hover {
+            background-color: #f1f1f1;
+        }
 
-    /* Animaciones para la aparición de elementos */
-    .overlay,
-    .card-selector {
-      opacity: 0;
-      visibility: hidden;
-    }
+        .task-item {
+            background-color: #eef;
+            border: 1px solid #bbb;
+            border-radius: 5px;
+            margin: 10px 0;
+            padding: 10px;
+            cursor: grab;
+        }
 
-    .overlay.show,
-    .card-selector.show {
-      opacity: 1;
-      visibility: visible;
-    }
-  </style>
+        .task-item p {
+            margin: 0;
+            font-size: 14px;
+            color: #333;
+        }
+    </style>
 </head>
 <body>
-  <!-- Botón para mostrar las cards -->
-  <button id="showCardsButton">Seleccionar Card</button>
+    <div class="task-manager">
+        <div class="task-input">
+            <input type="text" id="task-title" placeholder="Título de la tarea">
+            <textarea id="task-desc" placeholder="Descripción de la tarea"></textarea>
+            <button onclick="addTask()">Agregar Tarea</button>
+        </div>
+        <div class="task-columns">
+            <div class="task-column" id="planned" ondragover="allowDrop(event)" ondrop="drop(event)">
+                <h3>Planeada</h3>
+            </div>
+            <div class="task-column" id="in-progress" ondragover="allowDrop(event)" ondrop="drop(event)">
+                <h3>En Progreso</h3>
+            </div>
+            <div class="task-column" id="completed" ondragover="allowDrop(event)" ondrop="drop(event)">
+                <h3>Terminado</h3>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Script JavaScript
+        function addTask() {
+            const title = document.getElementById('task-title').value;
+            const description = document.getElementById('task-desc').value;
+            
+            if (!title) return alert('Por favor, ingrese un título para la tarea.');
 
-  <!-- Fondo oscuro con opacidad -->
-  <div id="overlay" class="overlay"></div>
+            const taskItem = document.createElement('div');
+            taskItem.className = 'task-item';
+            taskItem.draggable = true;
+            taskItem.ondragstart = drag;
 
-  <!-- Contenedor de cards -->
-  <div id="cardSelector" class="card-selector hidden">
-    <div class="card-relation" data-name="Card 1">Card 1</div>
-    <div class="card-relation" data-name="Card 2">Card 2</div>
-    <div class="card-relation" data-name="Card 3">Card 3</div>
-    <div class="card-relation" data-name="Card 4">Card 4</div>
-    <div class="card-relation" data-name="Card 5">Card 5</div>
-    <div class="card-relation" data-name="Card 6">Card 6</div>
-    <div class="card-relation" data-name="Card 7">Card 7</div>
-    <div class="card-relation" data-name="Card 8">Card 8</div>
-    <div class="card-relation" data-name="Card 9">Card 9</div>
-    <div class="card-relation" data-name="Card 10">Card 10</div>
-    <button id="createButton" class="hidden">Crear</button>
-    <button id="cancelButton">Cancelar</button>
-  </div>
+            const taskTitle = document.createElement('h4');
+            taskTitle.textContent = title;
 
-  <script>
-    const showCardsButton = document.getElementById("showCardsButton");
-    const cardSelector = document.getElementById("cardSelector");
-    const overlay = document.getElementById("overlay");
-    const createButton = document.getElementById("createButton");
-    const cancelButton = document.getElementById("cancelButton");
-    let selectedCard = null;
+            const taskDesc = document.createElement('p');
+            taskDesc.textContent = description;
+            taskDesc.style.display = 'none';
 
-    // Mostrar las cards y el fondo oscuro
-    showCardsButton.addEventListener("click", () => {
-      overlay.classList.add("show");
-      overlay.classList.remove("hidden");
-      cardSelector.classList.add("show");
-      cardSelector.classList.remove("hidden");
-    });
+            taskItem.appendChild(taskTitle);
+            taskItem.appendChild(taskDesc);
+            taskItem.onclick = () => taskDesc.style.display = taskDesc.style.display === 'none' ? 'block' : 'none';
 
-    // Seleccionar una card
-    document.querySelectorAll(".card-relation").forEach((card) => {
-      card.addEventListener("click", (event) => {
-        if (selectedCard) {
-          selectedCard.classList.remove("selected");
+            document.getElementById('planned').appendChild(taskItem);
+
+            // Limpiar los campos de entrada
+            document.getElementById('task-title').value = '';
+            document.getElementById('task-desc').value = '';
         }
-        selectedCard = event.target;
-        selectedCard.classList.add("selected");
-        createButton.classList.remove("hidden");
-      });
-    });
 
-    // Crear la card seleccionada y ocultar el selector
-    createButton.addEventListener("click", () => {
-      if (selectedCard) {
-        console.log("Card seleccionada:", selectedCard.dataset.name);
-        ocultarSelector();
-      }
-    });
+        function allowDrop(event) {
+            event.preventDefault();
+        }
 
-    // Ocultar el selector y el fondo oscuro
-    cancelButton.addEventListener("click", () => {
-      ocultarSelector();
-    });
+        function drag(event) {
+            event.dataTransfer.setData('text', event.target.id);
+        }
 
-    function ocultarSelector() {
-      overlay.classList.remove("show");
-      cardSelector.classList.remove("show");
-      setTimeout(() => {
-        overlay.classList.add("hidden");
-        cardSelector.classList.add("hidden");
-        createButton.classList.add("hidden");
-        selectedCard = null; // Limpiar la selección
-        document.querySelectorAll(".card-relation").forEach(card => card.classList.remove("selected"));
-      }, 300); // Tiempo para permitir la transición de ocultación
-    }
-  </script>
+        function drop(event) {
+            event.preventDefault();
+            const task = document.createElement('div');
+            task.className = 'task-item';
+            task.innerHTML = event.dataTransfer.getData('text');
+            event.target.appendChild(task);
+        }
+    </script>
 </body>
 </html>

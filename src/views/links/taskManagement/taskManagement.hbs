@@ -1,0 +1,154 @@
+<head>
+    <style>
+        .task-board {
+            display: flex;
+            gap: 20px;
+            justify-content: space-between;
+        }
+
+        .task-column {
+            flex: 1;
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-height: 400px;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .task-column:hover {
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .task-column h2 {
+            text-align: center;
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+
+        .task {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            cursor: grab;
+            transition: transform 0.2s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .task:active {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .task.planned {
+            background-color: #f8f9fa;
+        }
+
+        .task.inProgress {
+            background-color: #d1e7fd;
+            border-color: #a6d4fa;
+        }
+
+        .task.completed {
+            background-color: #d4edda;
+            border-color: #a3d7a5;
+        }
+
+        .task h3 {
+            font-size: 1rem;
+            font-weight: 500;
+            margin: 0;
+        }
+
+        .task small {
+            color: #888;
+            font-size: 0.75rem;
+        }
+    </style>
+</head>
+<br><br>
+
+    <div class="container">
+        <label><i class="fi-icon fi-ss-memo-circle-check"></i> Gestor de Tareas</label>
+        <hr>
+        <div class="row">
+            <div class="col-9">
+                <input type="text" id="taskTitle" placeholder="Agregar nueva tarea..." class="form-control"/>
+            </div>
+            <div class="col-3">
+                <button onclick="addTask()" class="btn btn-success">Agregar Tarea</button>
+            </div>
+        </div>
+        <br><br>
+        <div class="task-board">
+            <div class="task-column" id="planned" ondrop="drop(event)" ondragover="allowDrop(event)">
+                <h2>Planeada</h2>
+            </div>
+            <div class="task-column" id="inProgress" ondrop="drop(event)" ondragover="allowDrop(event)">
+                <h2>En Progreso</h2>
+            </div>
+            <div class="task-column" id="completed" ondrop="drop(event)" ondragover="allowDrop(event)">
+                <h2>Terminado</h2>
+            </div>
+        </div>
+    </div>
+    <script>
+        function allowDrop(event) {
+            event.preventDefault();
+        }
+
+        function drag(event) {
+            event.dataTransfer.setData("text", event.target.id);
+        }
+
+        function drop(event) {
+            event.preventDefault();
+            const data = event.dataTransfer.getData("text");
+            const task = document.getElementById(data);
+
+            const columnId = event.target.id;
+            if (columnId === "inProgress") {
+                task.className = "task inProgress";
+            } else if (columnId === "completed") {
+                task.className = "task completed";
+            } else {
+                task.className = "task planned";
+            }
+
+            event.target.appendChild(task);
+        }
+
+        function addTask() {
+            const taskTitle = document.getElementById("taskTitle").value;
+            if (taskTitle.trim() === "") return;
+
+            const taskId = "task" + new Date().getTime();
+            const task = document.createElement("div");
+            task.className = "task planned";
+            task.id = taskId;
+            task.draggable = true;
+            task.ondragstart = drag;
+
+            const title = document.createElement('h3');
+            title.textContent = taskTitle;
+
+            const timestamp = document.createElement('small');
+            timestamp.textContent = new Date().toLocaleDateString();
+
+            task.appendChild(title);
+            task.appendChild(timestamp);
+
+            document.getElementById("planned").appendChild(task);
+            document.getElementById("taskTitle").value = "";
+        }
+    </script>

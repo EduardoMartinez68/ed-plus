@@ -385,11 +385,18 @@ router.get('/:id_company/:id_branch/CRM', isLoggedIn, async (req, res) => {
 
     const customers = await search_all_customers(id_company)
     console.log(customers)
-    res.render('links/branch/CRM/CRM', { branchFree, salesStage , customers});
+    res.render('links/branch/CRM/crm', { branchFree, salesStage , customers});
 })
 
 
 
+//------------------------------------task management
+router.get('/:id_company/:id_branch/task-management', isLoggedIn, async (req, res) => {
+    const { id_company, id_branch } = req.params;
+    const branchFree = await get_data_branch(id_branch);
+    const apps=await get_all_apps_of_this_company(id_company,id_branch)
+    res.render("links/taskManagement/taskManagement",{branchFree, apps});
+});
 
 
 //------------------------------------ED STUDIOS 
