@@ -42,11 +42,15 @@ const {
     search_all_customers,
 } = require('../../services/customers');
 
+//------------------------------------ED STUDIOS 
+const {
+    get_all_apps_of_this_company
+} = require('../../services/apps');
 
 router.get('/:id_company/:id_branch/CRM', isLoggedIn, async (req, res) => {
     const { id_company, id_branch } = req.params;
     const branchFree = await get_data_branch(id_branch);
-
+    const apps=await get_all_apps_of_this_company(id_company,id_branch)
     
     // we will see if exist sales stage in the company
     //if not exist data in the database, we going to add (new, qualified, proposition, won)
@@ -57,8 +61,7 @@ router.get('/:id_company/:id_branch/CRM', isLoggedIn, async (req, res) => {
     }
 
     const prospects=await get_all_prospects_of_my_company(id_company);
-    console.log(prospects)
-    res.render('links/branch/CRM/crm', { branchFree, salesStage, prospects});
+    res.render('links/branch/CRM/crm', { branchFree, apps, salesStage, prospects});
 })
 
 

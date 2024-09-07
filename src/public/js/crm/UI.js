@@ -6,7 +6,11 @@
             group: 'shared',
             animation: 150,
             onEnd: function (evt) {
-                console.log('Elemento movido:', evt.item);
+                const destinationColumn = evt.to;
+                const idStage=destinationColumn.getAttribute('idStage');
+
+                const tanks=evt.item;
+                tanks.setAttribute('stageId', idStage)
             }
         });
     });

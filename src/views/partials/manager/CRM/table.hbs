@@ -40,7 +40,7 @@
             </div>
         {{/each}}
         {{#each prospects}}
-            <div class="task" stageId="{{id_sales_stage}}" priority="{{priority}}">
+            <div class="task" idTask="{{id}}" stageId="{{id_sales_stage}}" priority="{{priority}}">
                 <div class="task-badge" style="background-color: {{color}};"></div>
                 <div class="task-header">
                     <span class="task-name">{{name}}</span>
@@ -150,6 +150,17 @@
     }
 
     async function deleteStage(id,id_company,name){
+        // get all the prospects
+        const divTasks = document.querySelectorAll('.task');
+
+        // we will see if a prospect have the equal `stageId` that the `id` of the stage you want to remove
+        const hasTasks = Array.from(divTasks).some(task => task.getAttribute('stageId') === id.toString());
+
+        if (hasTasks) {
+            errorMessage('MUCHO OJO 👁️',`No se puede eliminar la etapa de venta '${name}' porque tiene tareas asociadas.`);
+            return; // Stop function if there are associated tasks
+        }
+
         if(await questionMessage('Eliminar etapa de venta 😱',`¿Deseas eliminar la etapa de venta '${name}'?`)){
             const id_branch=document.getElementById('id_branch').value;
 
@@ -171,10 +182,21 @@
         //this is for get the id of the columns
         const ids = columns.map(col => col.getAttribute('idStage'));
 
+        //get all the task for update 
+        const divTasks = document.querySelectorAll('.task');
+        let prospects=[]
+        for(var i=0;i<divTasks.length;i++){
+            const divTank=divTasks[i]
+            const idProspects=divTank.getAttribute('idTask');
+            const idStage=divTank.getAttribute('stageId');
+            prospects.push([idProspects,idStage]);
+        }
+
         //create the body that send to the server
         const requestBody = {
             order: order,
-            ids: ids
+            ids: ids,
+            dataProspects: prospects
         };
 
         //show the load window
@@ -186,7 +208,7 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(requestBody)
+                body: JSON.stringify(requestBody),
             });
 
             //we will see if the answer of th server

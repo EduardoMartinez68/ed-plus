@@ -2587,18 +2587,37 @@ router.get('/fud/:id_company/:id_branch/:id_sales_stage/delete-table-crm', isLog
 })
 
 router.post('/fud/update-stage-columns', isLoggedIn, async (req, res) => {
-    const { order,ids } = req.body;
+    const { order,ids, dataTanks, dataProspects} = req.body;
+
+    let answer=true;
+
+    //this is for update the columns 
     for(var i=0;i<=ids.length;i++){
         const id=ids[i];
         const newName=order[i];
 
         //we will see if can update all the position and the name of stage
         if(!await update_position_stage(id,newName,i)){
-            res.json({ success: false, message: 'Error al actualizar Orden' });
+            answer=false;
+            break;
         }
     }
 
-    res.json({ success: true, message: 'Orden actualizada correctamente' });
+    //this is for update the prospects 
+    for(var j=0;j<dataProspects.length;j++){
+        const prospect=dataProspects[j]
+        if(!await update_task(prospect[0],prospect[1])){
+            answer=false;
+            break;
+        }
+    }
+
+    //we will see if can update all the data in the columsn and the thanks
+    if(answer){
+        res.json({ success: true, message: 'Orden actualizada correctamente' });
+    }else{
+        res.json({ success: false, message: 'Error al actualizar Orden' });
+    }
 })
 
 async function update_position_stage(id,name,position){
@@ -2615,6 +2634,28 @@ async function update_position_stage(id,name,position){
     var values = [name, position, id];
 
     //update the stage sales in the database
+    try {
+        await database.query(queryText, values);
+        return true;
+    } catch (error) {
+        console.error('Error updating provider:', error);
+        return false;
+    }
+}
+
+async function update_task(idTask,idColumn){
+    const queryText = `
+    UPDATE "CRM".prospects
+    SET 
+        id_sales_stage=$1
+    WHERE 
+        id=$2
+    `;
+
+    //create the array of the new data
+    var values = [idColumn, idTask];
+
+    //update the prospect in the database
     try {
         await database.query(queryText, values);
         return true;
