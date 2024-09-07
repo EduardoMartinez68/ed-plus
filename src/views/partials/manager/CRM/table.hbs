@@ -1,4 +1,7 @@
 <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.5.1/uicons-brands/css/uicons-brands.css'>
+<link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.5.1/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+<link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.5.1/uicons-bold-rounded/css/uicons-bold-rounded.css'>
+
 <div class="add-column-form">
     {{#each branchFree}}
     <button id="addColumnBtn" class="btn btn-confirm-message" onclick="add_table_crm('{{id_companies}}','{{id}}')">Añadir nueva columna <i
@@ -34,30 +37,37 @@
                     </div>
                 </div>
                 <hr>
-
-                {{#each prospects}}
-                    <div class="task">
-                        <div class="task-badge" style="background-color: #007bff;"></div>
-                        <div class="task-header">
-                            <span class="task-name">Eduardo Antonio Martinez Ortiz</span>
-                            <button class="edit-btn"><i class="fi fi-br-menu-dots"></i></button>
-                            <div class="dropdown-menu-2">
-                                <ul>
-                                    <li><a href="#" class="dropdown-item"><i class="fi-icon fi-ss-pencil"></i> Editar</a></li>
-                                    <li><a href="#" class="dropdown-item"><i class="fi-icon fi-rs-clock-three"></i> Agendar cita</a></li>
-                                    <li><a href="#" class="dropdown-item"><i class="fi-icon fi-rr-envelope"></i> Enviar mensaje</a></li>
-                                    <li><a href="#" class="dropdown-item"><i class="fi-icon fi-brands-whatsapp"></i> Enviar Whatsapp</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="task-date">Contacto: 2024-08-05 Cierre: 2024-09-05</div>
-                        <div class="task-progress">Ingresos Estimados: <b>$50,000</b></div>
-                        <div class="products">ED Plus</div>
-                        <div class="stark"><i class="fi fi-sr-star"></i><i class="fi fi-sr-star"></i><i class="fi fi-sr-star"></i></div>
-                        <div class="appointment"><i class="fi-icon fi-rr-clock-three"></i></div>
-                        <div class="img-employee"><img src="https://img.freepik.com/fotos-premium/retrato-mujer-dentista-consultorio-dental_10069-4969.jpg" alt=""></div>
+            </div>
+        {{/each}}
+        {{#each prospects}}
+            <div class="task" stageId="{{id_sales_stage}}" priority="{{priority}}">
+                <div class="task-badge" style="background-color: {{color}};"></div>
+                <div class="task-header">
+                    <span class="task-name">{{name}}</span>
+                    <button class="edit-btn"><i class="fi fi-br-menu-dots"></i></button>
+                    <div class="dropdown-menu-2">
+                        <ul>
+                            <li><a href="#" class="dropdown-item"><i class="fi-icon fi-ss-pencil"></i> Editar</a></li>
+                            <li><a href="#" class="dropdown-item"><i class="fi-icon fi-rs-clock-three"></i> Agendar cita</a></li>
+                            <li><a href="#" class="dropdown-item"><i class="fi-icon fi-rr-envelope"></i> Enviar mensaje</a></li>
+                            <li><a href="#" class="dropdown-item"><i class="fi-icon fi-brands-whatsapp"></i> Enviar Whatsapp</a></li>
+                        </ul>
                     </div>
-                {{/each}}
+                </div>
+                <div class="task-date">Contacto: {{timeago  creation_date}} Cierre: {{timeago planned_closure}}</div>
+                <div class="task-progress">Ingresos Estimados: <b>${{estimated_income}}</b></div>
+                <div class="products">{{product_name}}</div>
+                <div class="stark"  priority="{{priority}}">
+                    
+                </div>
+                <div class="appointment"><i class="fi-icon fi-rr-clock-three"></i></div>
+                <div class="img-employee">
+                    {{#if user_photo}}
+                        <img src="{{user_photo}}" alt="">
+                    {{else}}
+                        <img src="https://cdn-icons-png.flaticon.com/512/3177/3177440.png" alt="">
+                    {{/if}}
+                </div>
             </div>
         {{/each}}
     </div>
@@ -181,4 +191,62 @@
         }
     }
 
+</script>
+<script>
+function organizeTasksIntoStages() {
+    // Obtén todas las tareas
+    const tasks = document.querySelectorAll('.task');
+    
+    // Recorre cada tarea
+    tasks.forEach(task => {
+        // Obtén el stageId de la tarea
+        const stageId = task.getAttribute('stageId');
+        
+        // Busca la columna correspondiente usando el id del stage
+        const column = document.querySelector(`#stage-${stageId}`);
+        
+        // Si encontramos la columna, mueve la tarea dentro de la columna
+        if (column) {
+            column.appendChild(task);
+        }
+    });
+}
+
+// Llama a la función para organizar las tareas después de que el contenido esté completamente cargado
+document.addEventListener('DOMContentLoaded', () => {
+    organizeTasksIntoStages();
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Obtén todos los contenedores de estrellas
+    const starsContainers = document.querySelectorAll('.stark');
+
+    starsContainers.forEach(container => {
+        // Obtén el valor de prioridad del atributo data-priority
+        const priority = parseInt(container.getAttribute('priority'), 10);
+        console.log(container)
+        // Limita el valor de priority a 3 si es mayor
+        const starCount = Math.min(priority, 3);
+
+        // Limpia el contenedor de estrellas
+        container.innerHTML = '';
+
+        // Añade el número adecuado de estrellas
+        for (let i = 0; i < starCount; i++) {
+            const star = document.createElement('i');
+            star.className = 'fi fi-sr-star';
+            container.appendChild(star);
+        }
+
+        const startOff=starCount-3;
+        if(startOff<0){
+            for (let i = 0; i > startOff; i--) {
+                const star = document.createElement('i');
+                star.className = 'fi fi-rr-star';
+                container.appendChild(star);
+            }
+        }
+    });
+});
 </script>

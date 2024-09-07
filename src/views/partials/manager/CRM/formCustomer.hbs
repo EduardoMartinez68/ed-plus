@@ -13,21 +13,25 @@
                 <button class="btn-select" onclick="showSection('select-3', this)" type="button">Información Adicional</button>
             </div>
 
-            {{>manager/CRM/tabsSalesStage}}
+            {{#each branchFree}}
+            <form action="/fud/{{id_companies}}/{{id}}/add-chance" method="post">
+            {{/each}}
+                {{>manager/CRM/tabsSalesStage}}
 
-            <div id="select-1" class="content-section active">
-                {{>manager/CRM/formCustomer1}}
-            </div>
-            <div id="select-2" class="content-section">
-                {{>manager/CRM/formCustomer3}}
-            </div>
-            <div id="select-3" class="content-section">
-                {{>manager/CRM/formCustomer2}}
-            </div>
+                <div id="select-1" class="content-section active">
+                    {{>manager/CRM/formCustomer1}}
+                </div>
+                <div id="select-2" class="content-section">
+                    {{>manager/CRM/formCustomer3}}
+                </div>
+                <div id="select-3" class="content-section">
+                    {{>manager/CRM/formCustomer2}}
+                </div>
 
-            <div class="div-container-right">
-                <button type="submit" class="btn btn-confirm-message">Guardar</button>
-            </div>
+                <div class="div-container-right">
+                    <button type="submit" class="btn btn-confirm-message">Guardar</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

@@ -596,9 +596,41 @@ async function update_sales_stage_positions(id_company) {
     }
 }
 
+async function add_new_sales_team_in_my_company(id_company,name,commision){
+    const queryText = `
+        INSERT INTO "CRM".sales_team(
+        name, commission, id_companies)
+        VALUES ($1, $2, $3)
+    `;
+    const values = [name,commision, id_company] //this is for create the format of save
+    try{
+        await database.query(queryText, values);
+        return true;
+    } catch (error) {
+        console.error('Error inserting into add_new_sales_team_in_my_company database:', error);
+        return false;
+    }
+}
 
-
-
+async function add_new_prospects(prospects){
+    const queryText = `
+        INSERT INTO "CRM".prospects(
+            id_sales_stage, name, email, estimated_income, probability, phone, cellphone, notes,
+            color, priority, id_companies, id_branches, id_employees, planned_closure, id_sales_team, expected_closing_percentage, id_product_to_sell, category, salesrep,
+            type_customer, company_name, address, website, contact_name, company_cellphone, company_phone
+        )
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26)
+    `;
+    const values = Object.values(prospects); //this is for create the format of save
+    console.log(values)
+    try{
+        await database.query(queryText, values);
+        return true;
+    } catch (error) {
+        console.error('Error inserting into add_new_prospects database:', error);
+        return false;
+    }
+}
 
 
 
@@ -629,5 +661,7 @@ module.exports={
     add_schedule,
     save_branch,
     add_order,
-    add_new_sales_stage
+    add_new_sales_stage,
+    add_new_sales_team_in_my_company,
+    add_new_prospects
 };

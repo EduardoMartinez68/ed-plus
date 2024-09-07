@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col-1">
             <label for="exampleFormControlInput1" class="form-label">Etiqueta</label>
-            <input type="color" class="form-control" id="exampleFormControlInput1" placeholder="Etiqueta">
+            <input type="color" class="form-control" id="exampleFormControlInput1" placeholder="Etiqueta" name="label">
         </div>
         <div class="col" style="text-align: right;">
             <label for="" class="form-label" style="text-align: right;" id="label-priority">Prioridad</label>
@@ -13,22 +13,29 @@
                     <span class="priority" data-value="1" data-message="Prioridad Baja">★</span>
                 </div>
                 <div class="message-priority" id="ratingMessage">Seleccione una prioridad</div>
-                <input type="hidden" name="priority">
+                <input type="hidden" name="priority" id="priority" value="0">
             </div>
         </div>
     </div>
 </div>
 <div class="form-group">
+    {{#each dataCompany}}
+        <input type="hidden" value="{{id}}" name="id_company">
+    {{/each}}
     <div class="row">
         <div class="col">
-            <label for="closureDate">Cierre previsto</label>
-            <input type="date" class="form-control" id="closureDate">
+            <label for="closureDate">Sucursal *</label>
+            <select name="id_branch" id="" class="form-select" aria-label="Default select example">
+                {{#each branches}}
+                    <option value="{{id}}">{{name_branch}}</option>
+                {{/each}}
+            </select>
         </div>
         <div class="col">
-            <label for="salesTeam">Equipo de ventas</label>
-            <select name="" id="" class="form-select" aria-label="Default select example">
-                {{#each salesTeam}}
-                    <option value="{{id}}">{{name}}</option>
+            <label for="closureDate">Empleado encargado de la venta *</label>
+            <select name="id_employee" id="" class="form-select" aria-label="Default select example">
+                {{#each employees}}
+                    <option value="{{id}}">{{username}}</option>
                 {{/each}}
             </select>
         </div>
@@ -37,12 +44,32 @@
 <div class="form-group">
     <div class="row">
         <div class="col">
-            <label for="closurePercentage">Porcentaje de Cierre Previsto %</label>
-            <input type="number" class="form-control" id="closurePercentage" placeholder="Porcentaje de Cierre Previsto">
+            <label for="closureDate">Cierre previsto</label>
+            <input type="date" class="form-control" id="closureDate" name="closureDate" required>
         </div>
         <div class="col">
-            <label for="salesTeam">Producto/Servicio a vender</label>
-            <select name="" id="" class="form-select" aria-label="Default select example">
+            <label for="salesTeam">Equipo de ventas</label>
+            <select name="id_sales_team" id="" class="form-select" aria-label="Default select example">
+                {{#each salesTeam}}
+                    <option value="{{id}}">{{name}}</option>
+                {{/each}}
+            </select>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="form-group">
+    <div class="row">
+        <div class="col">
+            <label for="closurePercentage">Porcentaje de Cierre Previsto %</label>
+            <input type="number" class="form-control" id="closurePercentage" placeholder="Porcentaje de Cierre Previsto" name="expectedClosing" value="0">
+        </div>
+        <div class="col">
+            <label for="id_product_to_sell">Producto/Servicio a vender</label>
+            <select name="id_product_to_sell" id="" class="form-select" aria-label="Default select example">
+                <option value="1">Ninguno</option>
                 {{#each productToSell}}
                     <option value="{{id}}">{{name}}</option>
                 {{/each}}
@@ -54,11 +81,11 @@
     <div class="row">
         <div class="col">
             <label for="category">Categoría</label>
-            <input type="text" class="form-control" id="category" placeholder="Categoría">
+            <input type="text" class="form-control" id="category" placeholder="Categoría" name="category">
         </div>
         <div class="col">
             <label for="salesRep">Comercial</label>
-            <input type="text" class="form-control" id="salesRep" placeholder="Comercial">
+            <input type="text" class="form-control" id="salesRep" placeholder="Comercial" name="salesRep">
         </div>
     </div>
 </div>

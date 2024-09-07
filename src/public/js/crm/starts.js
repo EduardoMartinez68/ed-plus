@@ -1,6 +1,6 @@
 const stars = document.querySelectorAll('.priority');
 const message = document.getElementById('label-priority');
-
+const inputPriority=document.getElementById('priority');
 stars.forEach(star => {
     star.addEventListener('mouseover', function() {
         //show the message of the priority
@@ -27,6 +27,7 @@ stars.forEach(star => {
         const hasActive = Array.from(stars).some(s => s.classList.contains('active'));
         if(!hasActive){
             message.textContent = "Prioridad *";
+            inputPriority.value=0;
         }
     });
 
@@ -35,7 +36,7 @@ stars.forEach(star => {
         if (this.classList.contains('active')) {
             stars.forEach(s => s.classList.remove('active'));
             message.textContent = "Prioridad";
-            document.getElementById('priority').value=0;
+            inputPriority.value=0;
         } else {
             // clean the class 'active' of all the starts
             stars.forEach(s => s.classList.remove('active'));
@@ -49,12 +50,13 @@ stars.forEach(star => {
             }
 
             // show the message
-            let priorityValue=this.getAttribute('data-message')
-            message.textContent = `Calificaste con ${this.getAttribute('data-value')} estrellas (${priorityValue})`;
+            let priorityValueMessage=this.getAttribute('data-message')
+            let priorityValue=this.getAttribute('data-value')
+            message.textContent = `Calificaste con ${priorityValue} estrellas (${priorityValueMessage})`;
             message.classList.add('show');
 
             //update the input of priority 
-            document.getElementById('priority').value=priorityValue;
+            inputPriority.value=priorityValue;
         }
     });
 });

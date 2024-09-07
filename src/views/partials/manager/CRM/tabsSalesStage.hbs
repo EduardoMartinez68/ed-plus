@@ -1,12 +1,12 @@
 <nav class="crm-list-navbar">
     {{#each salesStage}}
         <div class="crm-list-navbar-item" onclick="change_sales_stage('{{id}}')">
-            <div class="box" id="box-{{id}}">
+            <div class="box" id="box-{{id}}" idSalesStage="{{id}}">
                 <span>{{name}}</span>
             </div>
         </div>
     {{/each}}
-    <input type="hidden" name="positionSalesStage" id="positionSalesStage" required>
+    <input type="hidden" name="id_sales_stage" id="positionSalesStage" required>
 </nav>
 <script>
     /*--------
@@ -20,7 +20,6 @@
         // Iterate over each div and remove the 'box-activate' class
         boxes.forEach(box => {
             box.classList.remove('box-activate');
-            console.log(box)
         });
         
         //add the class box-activate to the div that the user on
@@ -28,7 +27,8 @@
         div.classList.add('box-activate');
 
         //change the value of the input positionSalesStage
-        document.getElementById('positionSalesStage').value=id
+        const input = document.getElementById('positionSalesStage');
+        input.value=id;
     }
 
 
@@ -44,6 +44,8 @@
 
     //if exist a divs, we will add the class box-activate
     if (firstBox) {
+        const idSalesStage = firstBox.getAttribute('idSalesStage');
+        change_sales_stage(idSalesStage)
         firstBox.classList.add('box-activate');
     }
 </script>

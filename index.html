@@ -3,91 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buscador Minimalista</title>
+    <title>Creación de Personaje - D&D</title>
     <style>
-        /* Estilos generales para el contenedor del buscador */
-        .search-container {
-            position: relative;
-            max-width: 300px;
-            margin: 0 auto;
-            padding: 5px;
+        body {
+            background-color: #1c1c1c;
+            color: #e0e0e0;
+            font-family: 'Garamond', serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
         }
-
-        /* Estilos para el campo de búsqueda (input) */
-        .search-input-select{
+        .form-container {
+            background: linear-gradient(145deg, #2b2b2b, #3c3c3c);
+            border-radius: 15px;
+            box-shadow: 10px 10px 20px #000000, -10px -10px 20px #3f3f3f;
+            padding: 40px;
             width: 100%;
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-            color: #555;
-            box-sizing: border-box;
-            transition: border-color 0.3s ease;
+            max-width: 800px;
+            text-align: center;
         }
-
-        /* Estilo del campo de búsqueda cuando está enfocado */
-        .search-input-select:focus {
-            border-color: var(--color-company);
-            outline: none;
+        h1 {
+            color: #f5a623;
+            font-size: 2.5em;
+            margin-bottom: 20px;
         }
-
-        /* Estilos para el select */
-        .search-select {
-            position: absolute;
-            top: calc(100% + 5px);
-            left: 0;
-            width: 100%;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            background-color: #fff;
-            z-index: 10;
-            max-height: 150px;
-            overflow-y: auto;
-            box-sizing: border-box;
-            display: none; /* Oculto por defecto, se muestra cuando hay opciones filtradas */
+        fieldset {
+            border: 2px solid #444;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: #333;
         }
-
-        /* Estilo cuando hay opciones en el select */
-        .search-select.show {
+        legend {
+            font-size: 1.5em;
+            color: #f5a623;
+            padding: 0 10px;
+            border-bottom: 2px solid #444;
+        }
+        label {
             display: block;
+            margin: 10px 0 5px;
+            font-size: 1.1em;
+            color: #e0e0e0;
         }
-
-        /* Estilos para las opciones del select */
-        .search-select option {
-            padding: 8px 12px;
-            font-size: 14px;
-            color: #555;
-            background-color: #fff;
-            border-bottom: 1px solid #eee;
+        input[type="text"],
+        input[type="number"],
+        select,
+        textarea {
+            width: calc(100% - 22px);
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #444;
+            background-color: #333;
+            color: #fff;
+            font-size: 1em;
+            margin-bottom: 20px;
         }
-
-        .search-select option:hover {
-            background-color: #f0f0f0;
+        textarea {
+            height: 100px;
+            resize: vertical;
         }
-
-        /* Estilos para el primer item para que se vea bien */
-        .search-select option:first-child {
-            border-top-left-radius: 4px;
-            border-top-right-radius: 4px;
+        input[type="submit"] {
+            background-color: #f5a623;
+            color: #1c1c1c;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
-
-        /* Estilos para el último item para que se vea bien */
-        .search-select option:last-child {
-            border-bottom-left-radius: 4px;
-            border-bottom-right-radius: 4px;
+        input[type="submit"]:hover {
+            background-color: #e08919;
         }
     </style>
 </head>
 <body>
-    <div class="search-container">
-        <input type="text" class="search-input-select" placeholder="Buscar...">
-        <select class="search-select" size="5">
-            <option value="1">Opción 1</option>
-            <option value="2">Opción 2</option>
-            <option value="3">Opción 3</option>
-            <option value="4">Opción 4</option>
-            <option value="5">Opción 5</option>
-        </select>
+    <div class="form-container">
+        <h1>Creación de Personaje</h1>
+        <form action="#" method="post">
+            <fieldset>
+                <legend>Información Básica</legend>
+                <label for="name">Nombre del Personaje:</label>
+                <input type="text" id="name" name="name" required>
+
+                <label for="race">Raza:</label>
+                <select id="race" name="race" required>
+                    <option value="humano">Humano</option>
+                    <option value="elfo">Elfo</option>
+                    <option value="enano">Enano</option>
+                    <option value="orco">Orco</option>
+                    <option value="mediano">Mediano</option>
+                </select>
+
+                <label for="class">Clase:</label>
+                <select id="class" name="class" required>
+                    <option value="guerrero">Guerrero</option>
+                    <option value="mago">Mago</option>
+                    <option value="picaro">Pícaro</option>
+                    <option value="clérigo">Clérigo</option>
+                    <option value="hechicero">Hechicero</option>
+                </select>
+
+                <label for="level">Nivel:</label>
+                <input type="number" id="level" name="level" min="1" max="20" required>
+            </fieldset>
+
+            <fieldset>
+                <legend>Detalles Adicionales</legend>
+                <label for="bio">Biografía:</label>
+                <textarea id="bio" name="bio" required></textarea>
+
+                <label for="skills">Habilidades:</label>
+                <input type="text" id="skills" name="skills" placeholder="Ej. Arquería, Magia, Sigilo">
+
+                <label for="equipment">Equipo:</label>
+                <input type="text" id="equipment" name="equipment" placeholder="Ej. Espada, Escudo, Pociones">
+
+                <label for="background">Antecedentes:</label>
+                <textarea id="background" name="background" placeholder="Ej. Nobleza, Campesino, Aventura anterior"></textarea>
+            </fieldset>
+
+            <input type="submit" value="Crear Personaje">
+        </form>
     </div>
 </body>
 </html>

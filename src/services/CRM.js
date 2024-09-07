@@ -95,10 +95,63 @@ async function get_all_proposals_in_this_sale_stage(id_sale_stage){
     }
 }
 
+async function get_all_sales_teams_with_company_id(id_company){
+    const queryText = `
+        select * from "CRM".sales_team WHERE id_companies=$1
+    `;
+    const values = [id_company];
 
+    try {
+        const result = await database.query(queryText, values);
+        return result.rows; 
+    } catch (error) {
+        console.log('ERROR to get the sales stage in get_sales_sales_team, File services/CRM.js '+error)
+        return null;
+    }
+}
+
+async function add_new_sales_team_in_my_company(id_company){
+    return await addDatabase.add_new_sales_team_in_my_company(id_company,'Ventas',0)
+}
+
+async function get_all_prospects_of_my_company(id_company){
+    const queryText = `
+        SELECT 
+            p.*, 
+            p2s.name AS product_name,
+            p2s.color AS product_color,
+            st.name AS sales_team_name,
+            ss.id AS sales_stage_id,
+            u.photo AS user_photo,
+            u.user_name AS user_name,
+            u.email AS user_email,
+            u.first_name AS user_first_name,
+            u.second_name AS user_second_name,
+            u.last_name AS user_last_name
+        FROM "CRM".prospects p
+        LEFT JOIN "CRM".product_to_sell p2s ON p.id_product_to_sell = p2s.id
+        LEFT JOIN "CRM".sales_team st ON p.id_sales_team = st.id
+        LEFT JOIN "CRM".sales_stage ss ON p.id_sales_stage = ss.id
+        LEFT JOIN "Company".employees e ON p.id_employees = e.id
+        LEFT JOIN "Fud".users u ON e.id_users = u.id
+        WHERE p.id_companies = $1
+    `;
+    const values = [id_company];
+
+    try {
+        const result = await database.query(queryText, values);
+        return result.rows; 
+    } catch (error) {
+        console.log('ERROR to get the prospects in get_all_prospects_of_my_company, File services/CRM.js '+error)
+        return null;
+    }
+}
 
 module.exports = {
     get_sales_stage_with_company_id,
     add_the_new_sales_stage_in_my_company,
-    delete_sale_stage_in_my_company
+    delete_sale_stage_in_my_company,
+    get_all_sales_teams_with_company_id,
+    add_new_sales_team_in_my_company,
+    get_all_prospects_of_my_company
 };

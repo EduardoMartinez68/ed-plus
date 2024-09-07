@@ -21,11 +21,11 @@
     }
 
     .search-input:focus {
-        border-color: #007bff;
+        border-color: var(--color-company);
         outline: none;
     }
 
-    .form-select {
+    .form-select-search{
         position: absolute;
         top: calc(100% + 5px);
         left: 0;
@@ -40,12 +40,12 @@
         display: block;
     }
 
-    .form-select.display {
+    .form-select-search.display {
         display: none;
     }
 
 
-    .form-select option {
+    .form-select-search option {
         padding: 8px 12px;
         font-size: 14px;
         color: #555;
@@ -53,7 +53,7 @@
         border-bottom: 1px solid #eee;
     }
 
-    .form-select option:hover {
+    .form-select-search option:hover {
         background-color: #f0f0f0;
     }
 </style>
@@ -62,7 +62,7 @@
     <label for="customerName">Buscar un Cliente</label>
     <div class="search-container">
         <input type="text" id="searchInputSelect" class="form-control" placeholder="Buscar por email...">
-        <select id="clientSelect" size="8" class="form-select display">
+        <select id="clientSelect" size="8" class="form-select-search display">
             {{#each customers}}
                 <option value="id" email="{{email}}" nameCustomer="{{first_name}} {{second_name}} {{last_name}}" phone="{{phone}}" cellPhone="{{cell_phone}}" companyName="{{company_name}}" companyAddress="{{company_address}}" website="{{website}}" contactName="{{contact_name}}" companyCellphone="{{company_cellphone}}" companyPhone="{{company_phone}}" typeCustomer="{{type_customer}}">{{email}}</option>
             {{/each}}
@@ -73,21 +73,21 @@
 
 <div class="form-group">
     <label for="customerName">Nombre del Cliente *</label>
-    <input type="text" class="form-control" id="customerName" placeholder="Nombre del Cliente" required maxlength="255">
+    <input type="text" class="form-control" id="customerName" name="customerName" placeholder="Nombre del Cliente" required maxlength="255">
 </div>
 <div class="form-group">
     <label for="email">Correo Electrónico *</label>
-    <input type="email" class="form-control" id="email" placeholder="Correo Electrónico" required>
+    <input type="email" class="form-control" id="email" name="email" placeholder="Correo Electrónico" required>
 </div>
 <div class="form-group">
     <div class="row">
         <div class="col">
             <label for="estimatedRevenue">Ingresos Estimados $</label>
-            <input type="number" class="form-control" id="estimatedRevenue" placeholder="Ingresos Estimados">
+            <input type="number" class="form-control" id="estimatedRevenue" name="estimatedRevenue" placeholder="Ingresos Estimados" value="0">
         </div>
         <div class="col">
             <label for="probability">Probabilidad %</label>
-            <input type="number" class="form-control" id="probability" placeholder="Probabilidad">
+            <input type="number" class="form-control" id="probability" name="probability" placeholder="Probabilidad" value="0">
         </div>
     </div>
 </div>
@@ -95,22 +95,18 @@
     <div class="row">
         <div class="col">
             <label for="closurePercentage">Celular</label>
-            <input type="tel" class="form-control" id="phone" placeholder="Celular del cliente" maxlength="20">
+            <input type="tel" class="form-control" id="phone" name="phone" placeholder="Celular del cliente" maxlength="20">
         </div>
         <div class="col">
             <label for="phone">Teléfono</label>
-            <input type="tel" class="form-control" id="cellPhone" placeholder="Teléfono del cliente" maxlength="20">
+            <input type="tel" class="form-control" id="cellPhone" name="cellPhone" placeholder="Teléfono del cliente" maxlength="20">
         </div>
     </div>
 </div>
 <div class="form-group">
     <label for="notes">Notas</label>
-    <textarea class="form-control" id="notes" rows="5" placeholder="Agregar notas..."></textarea>
+    <textarea class="form-control" id="notes" name="notes" rows="5" placeholder="Agregar notas..."></textarea>
 </div>
-
-
-
-
 
 
 <script>

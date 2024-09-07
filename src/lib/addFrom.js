@@ -2625,6 +2625,18 @@ async function update_position_stage(id,name,position){
 }
 
 
+router.post('/fud/:id_company/:id_branch/add-chance', isLoggedIn, async (req, res) => {
+    const { id_company, id_branch} = req.params;
+    if(await addDatabase.add_new_prospects(req.body)){
+        req.flash('success', 'La oportunidad de venta fue agregada con éxito ❤️');
+    }else{
+        req.flash('message', 'La oportunidad de venta no fue agregada 👉👈');
+    }
+
+    res.redirect(`/fud/${id_company}/${id_branch}/CRM`);
+})
+
+
 
 
 
