@@ -1,3 +1,3 @@
 function nextWeb(url){
-    window.location.href = "/fud/"+url; 
+    window.location.href = "/links/"+url; 
 }

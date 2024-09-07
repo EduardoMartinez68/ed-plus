@@ -96,7 +96,7 @@ app.use((req,res,next)=>{
 
 
 //------------------routes
-const companyName='/fud' //Füd
+const companyName='/links' //links
 app.use(require('./router'))
 app.use(require('./router/authentication'))
 app.use(companyName,require('./router/links'))
@@ -107,6 +107,7 @@ app.use(companyName,require('./router/links/subscription'))
 app.use(companyName,require('./router/links/store'))
 app.use(companyName,require('./router/links/delivery'))
 app.use(companyName,require('./router/links/app'))
+app.use(companyName,require('./router/links/CRM'))
 
 app.use(require('./lib/addFrom'));
 

@@ -60,3 +60,27 @@ stars.forEach(star => {
         }
     });
 });
+
+
+function update_start(){
+    // Obtener el valor de prioridad
+    const priority = parseInt(inputPriority.value);
+
+    // Limpiar cualquier clase 'active' existente
+    stars.forEach(star => star.classList.remove('active'));
+
+    // Si la prioridad es mayor a 0, encender las estrellas correspondientes
+    if (priority > 0) {
+        for (let i = 0; i < priority; i++) {
+            stars[i].classList.add('active');
+        }
+
+        // Actualizar el mensaje de prioridad
+        const selectedStar = stars[priority - 1]; // Obtener la última estrella seleccionada
+        const priorityValueMessage = selectedStar.getAttribute('data-message');
+        message.textContent = `Calificaste con ${priority} estrellas (${priorityValueMessage})`;
+        message.classList.add('show');
+    }
+}
+
+update_start();

@@ -2566,9 +2566,9 @@ router.post('/fud/:id_company/add-table-crm', isLoggedIn, async (req, res) => {
 
     //we will see if the user have the subscription ONE or is in a branch
     if(id_branch){
-        res.redirect(`/fud/${id_company}/${id_branch}/CRM`);
+        res.redirect(`/links/${id_company}/${id_branch}/CRM`);
     }else{
-        res.redirect(`/fud/${id_company}/CRM`);
+        res.redirect(`/links/${id_company}/CRM`);
     }
 })
 
@@ -2583,7 +2583,7 @@ router.get('/fud/:id_company/:id_branch/:id_sales_stage/delete-table-crm', isLog
         req.flash('message', 'La etapa de venta no fue eliminada 👉👈')
     }
 
-    res.redirect(`/fud/${id_company}/${id_branch}/CRM`);
+    res.redirect(`/links/${id_company}/${id_branch}/CRM`);
 })
 
 router.post('/fud/update-stage-columns', isLoggedIn, async (req, res) => {
@@ -2624,7 +2624,6 @@ async function update_position_stage(id,name,position){
     }
 }
 
-
 router.post('/fud/:id_company/:id_branch/add-chance', isLoggedIn, async (req, res) => {
     const { id_company, id_branch} = req.params;
     if(await addDatabase.add_new_prospects(req.body)){
@@ -2633,9 +2632,73 @@ router.post('/fud/:id_company/:id_branch/add-chance', isLoggedIn, async (req, re
         req.flash('message', 'La oportunidad de venta no fue agregada 👉👈');
     }
 
-    res.redirect(`/fud/${id_company}/${id_branch}/CRM`);
+    res.redirect(`/links/${id_company}/${id_branch}/CRM`);
 })
 
+
+router.post('/fud/:id_company/:id_branch/:id_prospect/update-prospect', isLoggedIn, async (req, res) => {
+    const { id_company, id_branch, id_prospect} = req.params;
+
+    //we will see if fan update the prospect
+    console.log(req.body)
+    if(await update_prospect(req.body,id_prospect)){
+        req.flash('success', 'La oportunidad de venta fue actualizada con éxito ❤️');
+    }else{
+        req.flash('message', 'La oportunidad de venta no fue actualizada 😮');
+    }
+
+    res.redirect(`/links/${id_company}/${id_branch}/CRM`);
+})
+
+
+
+async function update_prospect(prospects, id_prospect){
+    const queryText = `
+        UPDATE "CRM".prospects
+        SET 
+            id_sales_stage = $1, name = $2, email = $3, estimated_income = $4, probability = $5, phone = $6, cellphone = $7, notes = $8,
+            color = $9, priority = $10, id_companies = $11, id_branches = $12, id_employees = $13, planned_closure = $14, id_sales_team = $15, 
+            expected_closing_percentage = $16, id_product_to_sell = $17, category = $18, salesrep = $19, type_customer = $20, 
+            company_name = $21, address = $22, website = $23, contact_name = $24, company_cellphone = $25, company_phone = $26
+        WHERE id = $27;
+    `;
+    const values = [
+        prospects.id_sales_stage,     // $1
+        prospects.customerName,       // $2
+        prospects.email,              // $3
+        prospects.estimatedRevenue,   // $4
+        prospects.probability,        // $5
+        prospects.phone,              // $6
+        prospects.cellPhone,          // $7
+        prospects.notes,              // $8
+        prospects.label,              // $9
+        prospects.priority,           // $10
+        prospects.id_company,         // $11
+        prospects.id_branch,          // $12
+        prospects.id_employee,        // $13
+        prospects.closureDate,        // $14
+        prospects.id_sales_team,      // $15
+        prospects.expectedClosing,    // $16
+        prospects.id_product_to_sell, // $17
+        prospects.category,           // $18
+        prospects.salesRep,           // $19
+        prospects.userType,           // $20
+        prospects.company_name,       // $21
+        prospects.company_address,    // $22
+        prospects.website,            // $23
+        prospects.contact_name,       // $24
+        prospects.company_cellphone,  // $25
+        prospects.company_phone,      // $26
+        id_prospect
+      ];
+    try{
+        await database.query(queryText, values);
+        return true;
+    } catch (error) {
+        console.error('Error update prospects in update_prospect in the file addFrom: ', error);
+        return false;
+    }
+}
 
 
 
@@ -2655,7 +2718,7 @@ router.post('/fud/:id_company/:id_branch/app/create-database', isLoggedIn, async
         req.flash('message', 'Hubo un error al crear tu base de datos 👉👈')
     }
 
-    res.redirect(`/fud/${id_company}/${id_branch}/ed-studios`);
+    res.redirect(`/links/${id_company}/${id_branch}/ed-studios`);
 })
 
 

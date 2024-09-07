@@ -1,13 +1,33 @@
-<nav class="crm-list-navbar">
-    {{#each salesStage}}
-        <div class="crm-list-navbar-item" onclick="change_sales_stage('{{id}}')">
-            <div class="box" id="box-{{id}}" idSalesStage="{{id}}">
-                <span>{{name}}</span>
+<!---
+    we will see if the user is edit a prospect or is create a new prospect.
+    if exist {{prospect}}, we know that the user is edit a prospect,
+    if not exist {{prospect}}, we know that the user is create a new prospect
+--->
+{{#if customer}}
+    <nav class="crm-list-navbar">
+        {{#each salesStage}}
+            <div class="crm-list-navbar-item" onclick="change_sales_stage('{{id}}')">
+                <div class="box" id="box-{{id}}" idSalesStage="{{id}}">
+                    <span>{{name}}</span>
+                </div>
             </div>
-        </div>
-    {{/each}}
-    <input type="hidden" name="id_sales_stage" id="positionSalesStage" required>
-</nav>
+        {{/each}}
+        {{#each customer}}
+        <input type="hidden" name="id_sales_stage" id="positionSalesStage" value="{{id_sales_stage}}" required>
+        {{/each}}
+    </nav>
+{{else}}
+    <nav class="crm-list-navbar">
+        {{#each salesStage}}
+            <div class="crm-list-navbar-item" onclick="change_sales_stage('{{id}}')">
+                <div class="box" id="box-{{id}}" idSalesStage="{{id}}">
+                    <span>{{name}}</span>
+                </div>
+            </div>
+        {{/each}}
+        <input type="hidden" name="id_sales_stage" id="positionSalesStage" required>
+    </nav>
+{{/if}}
 <script>
     /*--------
         this is for that the user can change and activate
@@ -44,10 +64,23 @@
 
     //if exist a divs, we will add the class box-activate
     if (firstBox) {
-        const idSalesStage = firstBox.getAttribute('idSalesStage');
-        change_sales_stage(idSalesStage)
-        firstBox.classList.add('box-activate');
+        /*
+        we will see if the user is edit a prospect. If the value of <saleStage> 
+        is greater than, we will know that the user is edit a prospect
+        */
+        const input = document.getElementById('positionSalesStage');
+        const value=input.value;
+        if(input.value>0){
+            change_sales_stage(input.value)
+        }else{
+            const idSalesStage = firstBox.getAttribute('idSalesStage');
+            change_sales_stage(idSalesStage)
+            firstBox.classList.add('box-activate');
+        }
     }
+
+
+
 </script>
 
 

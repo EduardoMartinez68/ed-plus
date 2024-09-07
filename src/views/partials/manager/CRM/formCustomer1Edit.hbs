@@ -1,0 +1,200 @@
+<style>
+    .form-group-search{
+        align-items: left;
+        text-align: left;
+    }
+
+    .search-container {
+        position: relative;
+        max-width: 25%;
+        right: 0%;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        color: #555;
+        box-sizing: border-box;
+    }
+
+    .search-input:focus {
+        border-color: var(--color-company);
+        outline: none;
+    }
+
+    .form-select-search{
+        position: absolute;
+        top: calc(100% + 5px);
+        left: 0;
+        width: 100%;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background-color: #fff;
+        z-index: 10;
+        max-height: 150px;
+        overflow-y: auto;
+        box-sizing: border-box;
+        display: block;
+    }
+
+    .form-select-search.display {
+        display: none;
+    }
+
+
+    .form-select-search option {
+        padding: 8px 12px;
+        font-size: 14px;
+        color: #555;
+        background-color: #fff;
+        border-bottom: 1px solid #eee;
+    }
+
+    .form-select-search option:hover {
+        background-color: #f0f0f0;
+    }
+</style>
+
+
+{{#each customer}}
+    <div class="form-group">
+        <label for="customerName">Nombre del Cliente *</label>
+        <input type="text" class="form-control" id="customerName" name="customerName" placeholder="Nombre del Cliente" required maxlength="255" value="{{name}}">
+    </div>
+    <div class="form-group">
+        <label for="email">Correo Electrónico *</label>
+        <input type="email" class="form-control" id="email" name="email" placeholder="Correo Electrónico" required value="{{email}}">
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div class="col">
+                <label for="estimatedRevenue">Ingresos Estimados $</label>
+                <input type="number" class="form-control" id="estimatedRevenue" name="estimatedRevenue" placeholder="Ingresos Estimados" value="0" value="{{estimated_income}}">
+            </div>
+            <div class="col">
+                <label for="probability">Probabilidad %</label>
+                <input type="number" class="form-control" id="probability" name="probability" placeholder="Probabilidad" value="0" value="{{probability}}">
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div class="col">
+                <label for="closurePercentage">Celular</label>
+                <input type="tel" class="form-control" id="phone" name="phone" placeholder="Celular del cliente" maxlength="20" value="{{phone}}">
+            </div>
+            <div class="col">
+                <label for="phone">Teléfono</label>
+                <input type="tel" class="form-control" id="cellPhone" name="cellPhone" placeholder="Teléfono del cliente" maxlength="20" value="{{cellphone}}">
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="notes">Notas</label>
+        <textarea class="form-control" id="notes" name="notes" rows="5" placeholder="Agregar notas...">{{notes}}</textarea>
+    </div>
+{{/each}}
+
+
+<script>
+        const searchInputSelect = document.getElementById('searchInputSelect');
+        const clientSelect = document.getElementById('clientSelect');
+
+        searchInputSelect.addEventListener('keyup', function() {
+            const filter = searchInputSelect.value.toLowerCase();
+            const options = clientSelect.options;
+
+            for (let i = 0; i < options.length; i++) {
+                const optionText = options[i].text.toLowerCase();
+                if (optionText.includes(filter)) {
+                    options[i].style.display = '';
+                } else {
+                    options[i].style.display = 'none';
+                }
+            }
+        });
+
+        // get the value of the option that the user selected
+        clientSelect.addEventListener('change', function() {
+            searchInput.textContent="";
+            clientSelect.classList.add('display');
+
+            //<option value="id"  >{{email}}</option>
+
+            const selectedOption = clientSelect.options[clientSelect.selectedIndex];
+            const idCustomer = selectedOption.value;
+            const emailCustomer = selectedOption.getAttribute('email');
+            const nameCustomer = selectedOption.getAttribute('nameCustomer');
+
+            //this is for update the inputs of the cellphone and phone of the customer and the company 
+            const phone = selectedOption.getAttribute('phone');
+            const cellphone = selectedOption.getAttribute('cellPhone');
+            const companyPhone = selectedOption.getAttribute('companyPhone');
+            const companyCellphone = selectedOption.getAttribute('companyCellphone');
+
+            document.getElementById('phone').value=phone;
+            document.getElementById('cellPhone').value=cellphone;
+
+            console.log(companyPhone)
+            console.log(document.getElementById('companyPhone'))
+            document.getElementById('companyPhone').value=companyPhone;
+            document.getElementById('companyCellphone').value=companyCellphone;
+
+            //this if for update the form of the company 
+            const website = selectedOption.getAttribute('website');
+            document.getElementById('website').value=website;
+
+            const companyName = selectedOption.getAttribute('companyName');
+            document.getElementById('companyName').value=companyName;
+
+            const companyAddress = selectedOption.getAttribute('companyAddress');
+            document.getElementById('companyAddress').value=companyAddress;
+
+            const contactName = selectedOption.getAttribute('contactName');
+            document.getElementById('contactName').value=contactName;
+
+            //this is for update the checkbox and know if the customer is a company or a man 
+            const typeCustomer=selectedOption.getAttribute('typeCustomer');
+            if(typeCustomer=='true'){
+                const ceckCompany=document.getElementById('company')
+                if(ceckCompany) { 
+                    ceckCompany.checked = true;
+                }
+            }else{
+                const checkIndividual=document.getElementById('individual')
+                if(checkIndividual) { 
+                    checkIndividual.checked = true;
+                }
+            }
+
+            //change the name of the input with the that the user search 
+            const inputName=document.getElementById('customerName')
+            inputName.value =nameCustomer;
+
+            const inputEmail=document.getElementById('email')
+            inputEmail.value =emailCustomer;
+
+
+            //show message of update 
+            regularMessage('Datos del formulario actualizado',`Se obtuvieron los datos del cliente '${emailCustomer}' correctamente 😊`)
+        })
+
+        //this is for know if the user is in the search
+        searchInputSelect.addEventListener('focus', function() {
+            clientSelect.classList.remove('display');
+        });
+
+        //this is for know if the user no is in the search 
+        searchInputSelect.addEventListener('blur', function() {
+            // Esperar 1 segundo antes de ejecutar otra función
+            setTimeout(function() {
+                //we will see if the user not would like search a customer
+                if (!clientSelect.classList.contains('display')){
+                    clientSelect.classList.add('display');
+                }
+            }, 250); // 1000 milisegundos = 1 segundo
+        });
+</script>
