@@ -163,6 +163,21 @@ async function get_data_of_a_prospect_with_his_id(id_prospect) {
     }
 }
 
+async function delete_prospect_with_id(id_prospect) {
+    const queryText = `
+        DELETE FROM "CRM".prospects WHERE id=$1
+    `;
+    const values = [id_prospect];
+
+    try {
+        const result = await database.query(queryText, values);
+        return result.rows; 
+    } catch (error) {
+        console.log('ERROR to delete the prospect in delete_prospect_with_id, File services/CRM.js '+error)
+        return null;
+    }
+}
+
 module.exports = {
     get_sales_stage_with_company_id,
     add_the_new_sales_stage_in_my_company,
@@ -170,5 +185,6 @@ module.exports = {
     get_all_sales_teams_with_company_id,
     add_new_sales_team_in_my_company,
     get_all_prospects_of_my_company,
-    get_data_of_a_prospect_with_his_id
+    get_data_of_a_prospect_with_his_id,
+    delete_prospect_with_id
 };

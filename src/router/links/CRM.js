@@ -11,7 +11,8 @@ const {
     get_all_sales_teams_with_company_id,
     add_new_sales_team_in_my_company,
     get_all_prospects_of_my_company,
-    get_data_of_a_prospect_with_his_id
+    get_data_of_a_prospect_with_his_id,
+    delete_prospect_with_id
 } = require('../../services/CRM');
 
 //functions branch
@@ -94,8 +95,6 @@ router.get('/:id_company/:id_branch/add-prospects', isLoggedIn, async (req, res)
     res.render('links/branch/CRM/addProspects', { branchFree, salesStage , customers, salesTeam, dataCompany, branches, employees});
 })
 
-
-
 router.get('/:id_company/:id_branch/:id_prospects/edit', isLoggedIn, async (req, res) => {
     const { id_company, id_branch , id_prospects} = req.params;
     const branchFree = await get_data_branch(id_branch);
@@ -126,6 +125,17 @@ router.get('/:id_company/:id_branch/:id_prospects/edit', isLoggedIn, async (req,
     const idEmployee=dataEmployees[0].id
     const employees=[{id:idEmployee,username: username}]
     res.render('links/branch/CRM/editProspects', { branchFree, salesStage , salesTeam, dataCompany, branches, employees, customer});
+})
+
+
+router.get('/:id_company/:id_branch/:id_prospects/delete-prospect', isLoggedIn, async (req, res) => {
+    const { id_company, id_branch , id_prospects} = req.params;
+    if(await delete_prospect_with_id(id_prospects)){
+        req.flash('success', 'La oportunidad fue eliminada con éxito 😉');
+    }else{
+        req.flash('message', 'La oportunidad no fue eliminada 🤔 ');
+    }
+    res.redirect(`/links/${id_company}/${id_branch}/CRM`);
 })
 
 

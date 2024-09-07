@@ -51,6 +51,7 @@
                             <li><a href="/links/{{id_companies}}/{{id_branches}}/{{id}}/edit" class="dropdown-item"><i class="fi-icon fi-rs-clock-three"></i> Agendar cita</a></li>
                             <li><a href="/links/{{id_companies}}/{{id_branches}}/{{id}}/send_email" class="dropdown-item"><i class="fi-icon fi-rr-envelope"></i> Enviar mensaje</a></li>
                             <li><a href="/links/{{id_companies}}/{{id_branches}}/{{id}}/send_whatsapp" class="dropdown-item"><i class="fi-icon fi-brands-whatsapp"></i> Enviar Whatsapp</a></li>
+                            <li><a onclick="delete_prospect('{{id_companies}}','{{id}}')" class="dropdown-item"><i class="fi-icon fi-sr-trash"></i> Eliminar</a></li>
                         </ul>
                     </div>
                 </div>
@@ -74,6 +75,19 @@
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
 <script>
+    async function delete_prospect(id_company,id_prospect){
+        if(await questionMessage('Eliminar oportunidad 😱',`¿Deseas eliminar esta oportunidad?`)){
+            const id_branch=document.getElementById('id_branch').value;
+
+            //we will see if the user would like delete the stage
+            if(id_branch){
+                window.location.href = `/links/${id_company}/${id_branch}/${id_prospect}/delete-prospect`;
+            }else{
+                window.location.href = `/links/${id_company}/${id}/delete-prospect`;
+            }
+        }
+    }
+    
     async function edit_name(id){
         const nameH=document.getElementById('h4-name-'+id); //get the h4 of the column
         const newName=await edit_name_table_crm(nameH.textContent); 
@@ -136,18 +150,17 @@
     }
 
     async function deleteStage(id,id_company,name){
-        if(await questionMessage('Eliminar etapa de venta',`¿Deseas eliminar la etapa de venta '${name}'?`)){
+        if(await questionMessage('Eliminar etapa de venta 😱',`¿Deseas eliminar la etapa de venta '${name}'?`)){
             const id_branch=document.getElementById('id_branch').value;
 
             //we will see if the user would like delete the stage
             if(id_branch){
-                window.location.href = `/fud/${id_company}/${id_branch}/${id}/delete-table-crm`;
+                window.location.href = `/links/${id_company}/${id_branch}/${id}/delete-table-crm`;
             }else{
-                window.location.href = `/fud/${id_company}/${id}/delete-table-crm`;
+                window.location.href = `/links/${id_company}/${id}/delete-table-crm`;
             }
         }
     }
-
 
     async function updateOrderInBackend() {
         //this is for get the new name of the columns
