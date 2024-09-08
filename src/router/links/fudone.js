@@ -378,8 +378,54 @@ const {
     get_the_data_of_the_table_of_my_app,
     get_data_of_my_app,
     get_character_of_my_app,
-    get_primary_keys_of_schema
+    get_primary_keys_of_schema,
+    get_code_table_of_my_app
 } = require('../../services/apps');
+const mainHandelbars=`
+<!--
+    ED CLOUD 
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/img/logo.png" type="image/png">
+    <title>ED PLUS</title>
+
+    <!--font-->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans">
+
+    <!-- BOX ICONS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'> 
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.4.2/uicons-solid-straight/css/uicons-solid-straight.css'>
+
+    <!-- my CSS -->
+    <link rel="stylesheet" href="/css/menu.css">
+    <link rel="stylesheet" href="/css/Styles.css">
+    <link rel="stylesheet" href="/css/load.css">
+    <style>
+        .alert-transparent {
+            background-color: var(--color-company);
+        }
+    </style> 
+
+    <!--select-->
+    <link href="https://cdn.jsdelivr.net/npm/chosen-js@1.8.7/dist/css/chosen.min.css" rel="stylesheet" />
+
+    <!--tutorial -->
+    <link src="https://unpkg.com/intro.js/introjs.css"></link>
+    <link rel="stylesheet" href="https://unpkg.com/intro.js/minified/introjs.min.css">
+    <link rel="stylesheet" href="/css/tutorial.css">
+</head>
+<body>
+
+</body>
+</html>
+`
+const hbs = require('handlebars'); // Para compilar dinámicamente
 
 router.get('/:id_company/:id_branch/ed-studios', isLoggedIn, async (req, res) => {
     const { id_company, id_branch } = req.params;
@@ -401,7 +447,6 @@ router.get('/:id_company/:id_branch/:id_app/add', isLoggedIn, async (req, res) =
     res.render("links/apps/editApp",{branchFree, apps, dataTable, characterApp});
 });
 
-
 router.get('/:id_company/:id_branch/:id_app/table', isLoggedIn, async (req, res) => {
     const { id_app, id_company, id_branch } = req.params;
     const branchFree = await get_data_branch(id_branch);
@@ -420,7 +465,134 @@ router.get('/:id_company/:id_branch/:id_app/edit-app', isLoggedIn, async (req, r
     const apps=await get_all_apps_of_this_company(id_company,id_branch)
 
     const dataTable=await get_the_data_of_the_table_of_my_app(id_company, id_branch, id_app)
-    res.render("links/apps/editApp",{branchFree,apps, dataTable});
+    const code=await get_code_table_of_my_app(id_company, id_branch, id_app)
+    const code1=mainHandelbars+`
+        <h5>{{user.user_name}}</h5>
+        {{#each branchFree}}
+            {{name_branch}}
+        {{/each}}
+    `
+    const template = hbs.compile(code1);
+    const data = {branchFree,apps, dataTable};
+    const html = template(data);
+
+    //res.send(html);
+    //-------------
+    // Renderiza la vista
+    const renderedView = res.render('links/apps/main', {branchFree,apps, dataTable}, (err, html) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send("Error rendering view");
+        }
+
+        // Aquí puedes combinar el HTML renderizado con tu código Handlebars dinámico
+        const code1 = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Ejemplo</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <style>
+        .form-container {
+            max-width: 800px;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container form-container">
+        <h1 class="text-center mb-4">Formulario de Ejemplo</h1>
+        <form>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="firstName" class="form-label">Nombre</label>
+                    <input type="text" class="form-control" id="firstName" placeholder="Nombre" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="lastName" class="form-label">Apellido</label>
+                    <input type="text" class="form-control" id="lastName" placeholder="Apellido" required>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="email" class="form-label">Correo Electrónico</label>
+                    <input type="email" class="form-control" id="email" placeholder="Correo Electrónico" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="phone" class="form-label">Teléfono</label>
+                    <input type="tel" class="form-control" id="phone" placeholder="Teléfono" required>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="dob" class="form-label">Fecha de Nacimiento</label>
+                    <input type="date" class="form-control" id="dob" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="gender" class="form-label">Género</label>
+                    <select id="gender" class="form-select" required>
+                        <option value="" disabled selected>Selecciona una opción</option>
+                        <option value="male">Masculino</option>
+                        <option value="female">Femenino</option>
+                        <option value="other">Otro</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="address" class="form-label">Dirección</label>
+                <textarea class="form-control" id="address" rows="3" placeholder="Dirección" required></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label for="comments" class="form-label">Comentarios</label>
+                <textarea class="form-control" id="comments" rows="4" placeholder="Comentarios"></textarea>
+            </div>
+
+            <div class="mb-3">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="terms" required>
+                    <label class="form-check-label" for="terms">
+                        Acepto los términos y condiciones
+                    </label>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">Enviar</button>
+                <button type="reset" class="btn btn-secondary">Restablecer</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous"></script>
+</body>
+</html>
+
+        `;
+
+        // Compila el código Handlebars dinámico
+        const template = hbs.compile(code1);
+        const data = {branchFree1:branchFree};
+
+        // Genera el HTML con el código Handlebars dinámico
+        const dynamicHtml = template(data);
+
+        // Combina el HTML renderizado con el HTML dinámico
+        const combinedHtml = html + dynamicHtml;
+
+        // Envía el HTML combinado al cliente
+        res.send(combinedHtml);
+    });
+
+
+    //res.render("links/apps/editApp",{branchFree,apps, dataTable});
 });
 
 router.get('/:id_company/:id_branch/ed-studios/create-database', isLoggedIn, async (req, res) => {

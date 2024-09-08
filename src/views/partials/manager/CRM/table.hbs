@@ -1,19 +1,24 @@
 <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.5.1/uicons-brands/css/uicons-brands.css'>
 <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.5.1/uicons-regular-rounded/css/uicons-regular-rounded.css'>
 <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.5.1/uicons-bold-rounded/css/uicons-bold-rounded.css'>
-
 <div class="add-column-form">
     {{#each branchFree}}
-    <button id="addColumnBtn" class="btn btn-confirm-message" onclick="add_table_crm('{{id_companies}}','{{id}}')">Añadir nueva columna <i
-            class="fi-icon fi-sr-square-plus"></i></button>
+    <button id="addColumnBtn" class="btn btn-confirm-message" onclick="add_table_crm('{{id_companies}}','{{id}}')">Añadir nueva columna ➕</button>
+    <button id="addColumnBtn" class="btn btn-edit" onclick="nextWeb('{{id_companies}}/{{id}}/add-prospects')">Nueva Oportunidad ⭐</button>
     {{/each}}
     {{#each company}}
-    <button id="addColumnBtn" class="btn btn-confirm-message" onclick="add_table_crm('{{id}}')">Añadir nueva columna <i
+    <button id="addColumnBtn" class="btn btn-confirm-message" onclick="add_table_crm('{{id}}')">Añadir nueva columna +<i
             class="fi-icon fi-sr-square-plus"></i></button>
     {{/each}}
-    <button id="addColumnBtn" class="btn btn-edit" onclick="updateOrderInBackend()">Guardar cambios <i class="fi-icon fi-sr-disk"></i></button>
+    <button id="addColumnBtn" class="btn btn-edit" onclick="updateOrderInBackend()">Guardar cambios 💾</button>
 </div>
-
+<style>
+    .board {
+        width: 100%;
+        height: 100%;
+        overflow-x: auto;
+    }
+</style>
 <!--this is for the form of edit-->
 {{#each branchFree}}
     <input type="hidden" value="{{id}}" id="id_branch">
@@ -157,7 +162,7 @@
         const hasTasks = Array.from(divTasks).some(task => task.getAttribute('stageId') === id.toString());
 
         if (hasTasks) {
-            errorMessage('MUCHO OJO 👁️',`No se puede eliminar la etapa de venta '${name}' porque tiene tareas asociadas.`);
+            errorMessage('MUCHO OJO 👁️',`No se puede eliminar la etapa de venta '${name}' porque tiene ventas asociadas.`);
             return; // Stop function if there are associated tasks
         }
 
@@ -166,9 +171,9 @@
 
             //we will see if the user would like delete the stage
             if(id_branch){
-                window.location.href = `/links/${id_company}/${id_branch}/${id}/delete-table-crm`;
+                window.location.href = `/fud/${id_company}/${id_branch}/${id}/delete-table-crm`;
             }else{
-                window.location.href = `/links/${id_company}/${id}/delete-table-crm`;
+                window.location.href = `/fud/${id_company}/${id}/delete-table-crm`;
             }
         }
     }

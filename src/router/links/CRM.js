@@ -64,7 +64,6 @@ router.get('/:id_company/:id_branch/CRM', isLoggedIn, async (req, res) => {
     res.render('links/branch/CRM/crm', { branchFree, apps, salesStage, prospects});
 })
 
-
 router.get('/:id_company/:id_branch/add-prospects', isLoggedIn, async (req, res) => {
     const { id_company, id_branch } = req.params;
     const branchFree = await get_data_branch(id_branch);

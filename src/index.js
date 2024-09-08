@@ -13,7 +13,7 @@ const path=require('path');
 //ReCAPTCHA of Google
 const { RecaptchaV2 } = require('express-recaptcha');
 
-//------------------initializations 
+//------------------initializations
 const app=express();
 require('./lib/passport');
 //require('./lib/addFrom');

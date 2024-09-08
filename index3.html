@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor de Formularios</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .form-builder {
+            margin-top: 20px;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-control {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container form-builder">
+        <h2>Editor de Formularios</h2>
+        <form id="form-builder">
+            <div class="row">
+                <div class="col-md-3">
+                    <h4>Agregar Elementos</h4>
+                    <button type="button" class="btn btn-primary" onclick="addInput()">Agregar Input</button>
+                    <button type="button" class="btn btn-secondary" onclick="addRow()">Agregar Row</button>
+                    <button type="button" class="btn btn-info" onclick="addCol()">Agregar Col</button>
+                </div>
+                <div class="col-md-9">
+                    <h4>Formulario</h4>
+                    <div id="form-container" class="form-container">
+                        <!-- Los campos del formulario se agregarán aquí -->
+                    </div>
+                </div>
+            </div>
+        </form>
+        <button class="btn btn-success mt-3" onclick="generateCode()">Generar Código HTML</button>
+        <textarea id="form-code" class="form-control mt-3" rows="10" readonly></textarea>
+    </div>
+
+    <script>
+        function addInput() {
+            const container = document.getElementById('form-container');
+            const inputGroup = document.createElement('div');
+            inputGroup.className = 'form-group';
+            inputGroup.innerHTML = `
+                <label for="input">Etiqueta del Campo</label>
+                <input type="text" class="form-control" placeholder="Ingrese el texto del input">
+                <button type="button" class="btn btn-danger mt-2" onclick="removeElement(this)">Eliminar</button>
+            `;
+            container.appendChild(inputGroup);
+        }
+
+        function addRow() {
+            const container = document.getElementById('form-container');
+            const row = document.createElement('div');
+            row.className = 'row mb-3';
+            row.innerHTML = `
+                <div class="col">
+                    <button type="button" class="btn btn-secondary" onclick="addCol(this)">Agregar Columna</button>
+                    <button type="button" class="btn btn-danger mt-2" onclick="removeElement(this)">Eliminar Fila</button>
+                </div>
+            `;
+            container.appendChild(row);
+        }
+
+        function addCol(button) {
+            const row = button.closest('.row');
+            const col = document.createElement('div');
+            col.className = 'col';
+            col.innerHTML = `
+                <div class="form-group">
+                    <label for="input">Etiqueta del Campo</label>
+                    <input type="text" class="form-control" placeholder="Ingrese el texto del input">
+                </div>
+            `;
+            row.appendChild(col);
+        }
+
+        function removeElement(button) {
+            const element = button.closest('.form-group') || button.closest('.row');
+            element.remove();
+        }
+
+        function generateCode() {
+            const formCode = document.getElementById('form-container').innerHTML;
+            document.getElementById('form-code').value = formCode;
+        }
+    </script>
+</body>
+</html>

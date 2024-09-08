@@ -132,9 +132,6 @@ async function get_the_data_of_the_table_of_my_app(id_company,id_branch,nameApp)
     }
 }
 
-
-
-
 async function get_primary_keys_of_schema(id_company, id_branch) {
     const schema = `_company_${id_company}_branch_${id_branch}`;
 
@@ -190,6 +187,25 @@ async function get_primary_keys_of_schema(id_company, id_branch) {
 }
 
 
+
+async function get_code_table_of_my_app(id_company, id_branch,app){
+    const schema = `_company_${id_company}_branch_${id_branch}`;
+
+    // Consulta para obtener las llaves primarias y sus tipos de datos
+    const queryText = `
+        SELECT * FROM ${schema}.apps
+        WHERE id=$1
+    `;
+
+    try {
+        const result = await database.query(queryText, [app]);
+        return result.rows;
+    } catch (error) {
+        return [];
+    }
+}
+
+
 module.exports = {
     get_all_apps_of_this_company,
     create_my_list_app,
@@ -197,5 +213,6 @@ module.exports = {
     get_the_data_of_the_table_of_my_app,
     get_data_of_my_app,
     get_character_of_my_app,
-    get_primary_keys_of_schema
+    get_primary_keys_of_schema,
+    get_code_table_of_my_app
 };
