@@ -4,13 +4,13 @@ module.exports={
         if(req.isAuthenticated()){
             return next();
         }
-        return res.redirect('/fud/login');
+        return res.redirect('/links/login');
     },
 
     isNotLoggedIn(req,res,next){
         if(!req.isAuthenticated()){
             return next();
         }
-        return res.redirect('/fud/home');
+        return res.redirect('/links/home');
     }
 };

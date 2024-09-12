@@ -147,7 +147,6 @@ async function get_all_prospects_of_my_company(id_company){
     }
 }
 
-
 async function get_data_of_a_prospect_with_his_id(id_prospect) {
     const queryText = `
         select * from "CRM".prospects WHERE id=$1

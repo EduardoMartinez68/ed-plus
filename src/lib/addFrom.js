@@ -2697,7 +2697,7 @@ async function update_prospect(prospects, id_prospect){
     const queryText = `
         UPDATE "CRM".prospects
         SET 
-            id_sales_stage = $1, name = $2, email = $3, estimated_income = $4, probability = $5, phone = $6, cellphone = $7, notes = $8,
+            id_sales_stage = $1, name = $2, email = $3, estimated_income = $4, probability = $5, cellphone = $6, phone = $7, notes = $8,
             color = $9, priority = $10, id_companies = $11, id_branches = $12, id_employees = $13, planned_closure = $14, id_sales_team = $15, 
             expected_closing_percentage = $16, id_product_to_sell = $17, category = $18, salesrep = $19, type_customer = $20, 
             company_name = $21, address = $22, website = $23, contact_name = $24, company_cellphone = $25, company_phone = $26

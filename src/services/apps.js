@@ -186,8 +186,6 @@ async function get_primary_keys_of_schema(id_company, id_branch) {
     }
 }
 
-
-
 async function get_code_table_of_my_app(id_company, id_branch,app){
     const schema = `_company_${id_company}_branch_${id_branch}`;
 

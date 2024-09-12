@@ -52,10 +52,20 @@
                     <button class="edit-btn"><i class="fi fi-br-menu-dots"></i></button>
                     <div class="dropdown-menu-2">
                         <ul>
-                            <li><a href="/links/{{id_companies}}/{{id_branches}}/{{id}}/edit" class="dropdown-item"><i class="fi-icon fi-ss-pencil"></i> Editar</a></li>
-                            <li><a href="/links/{{id_companies}}/{{id_branches}}/{{id}}/edit" class="dropdown-item"><i class="fi-icon fi-rs-clock-three"></i> Agendar cita</a></li>
-                            <li><a href="/links/{{id_companies}}/{{id_branches}}/{{id}}/send_email" class="dropdown-item"><i class="fi-icon fi-rr-envelope"></i> Enviar mensaje</a></li>
-                            <li><a href="/links/{{id_companies}}/{{id_branches}}/{{id}}/send_whatsapp" class="dropdown-item"><i class="fi-icon fi-brands-whatsapp"></i> Enviar Whatsapp</a></li>
+                            <li><a href="/links/{{id_companies}}/{{id_branches}}/{{id}}/see-oportunity"><i class="fi-icon fi-ss-eye"></i>Ver</a></li>
+                            <li><a href="/links/{{id_companies}}/{{id_branches}}/{{id}}/see-prospects" class="dropdown-item"><i class="fi-icon fi-ss-pencil"></i> Editar</a></li>
+                            <li><a href="/links/{{id_companies}}/{{id_branches}}/{{id}}/edit-prospects" class="dropdown-item"><i class="fi-icon fi-rs-clock-three"></i> Agendar cita</a></li>
+                            <!--we will see if this prospects have a email for send message-->
+                            {{#if email}}
+                                <li><a href="/links/{{id_companies}}/{{id_branches}}/{{id}}/{{cellphone}}" class="dropdown-item"><i class="fi-icon fi-rr-envelope"></i> Enviar mensaje</a></li>
+                            {{else}}
+                                <li><a href="/links/{{id_companies}}/{{id_branches}}/{{id}}/{{email}}" class="dropdown-item"><i class="fi-icon fi-rr-envelope"></i> Enviar mensaje</a></li>
+                            {{/if}}
+
+                            <!--we will see if this prospects have a cellphone for send message-->
+                            <li><a onclick="send_to_whatsApp('{{name}}','{{email}}','{{cellphone}}')" class="dropdown-item"><i class="fi-icon fi-brands-whatsapp"></i> Enviar Whatsapp</a></li>
+ 
+
                             <li><a onclick="delete_prospect('{{id_companies}}','{{id}}')" class="dropdown-item"><i class="fi-icon fi-sr-trash"></i> Eliminar</a></li>
                         </ul>
                     </div>

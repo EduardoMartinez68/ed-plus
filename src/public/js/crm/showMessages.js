@@ -38,7 +38,6 @@ async function add_table_crm(id_company, id_branch) {
     });
 }
 
-
 async function edit_name_table_crm(oldName) {
     // Contenido HTML de la ventana modal
     var containerHtml = `
@@ -88,3 +87,157 @@ async function edit_name_table_crm(oldName) {
         });
     });
 }
+
+async function show_send_message_for_whatsapp(nameCustomer, emailCustomer, cellphone) {
+    var containerHtml = `
+        <style>
+            .icon-container {
+                text-align: center;
+                margin-bottom: 15px;
+            }
+
+            .icon-container img {
+                width: 50px; /* Tamaño del icono */
+                height: 50px;
+            }
+
+            .send-button {
+                background-color: #128C7E; /* Verde WhatsApp */
+                color: white;
+                padding: 12px 24px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.3s, transform 0.2s;
+                font-size: 15px;
+                margin-top: 15px;
+                display: block;
+                width: 100%;
+            }
+
+            .send-button:hover {
+                background-color: #075E54;
+                transform: scale(1.02); /* Efecto suave al pasar el ratón */
+            }
+
+            .swal2-input, .swal2-textarea {
+                width: 100%;
+                margin: 5px 0;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                box-sizing: border-box;
+                font-size: 14px;
+                resize: vertical; /* Permite al usuario cambiar el tamaño verticalmente */
+            }
+
+            .swal2-label {
+                font-weight: bold;
+                display: block;
+                margin: 10px 0 5px;
+            }
+
+            .swal2-textarea {
+                min-height: 100px;
+                max-height: 300px;
+                background-color: #f9f9f9;
+                outline: none;
+                transition: border-color 0.3s ease-in-out;
+            }
+
+            .swal2-textarea:focus {
+                border-color: #128C7E; /* Verde WhatsApp para el borde enfocado */
+                box-shadow: 0 0 5px rgba(18, 140, 126, 0.5);
+            }
+
+        </style>     
+        <div class="icon-container">
+            <img src="https://cdn-icons-png.flaticon.com/256/3799/3799943.png" alt="WhatsApp Icon">
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <label class="swal2-label">Nombre del cliente:</label>
+                <span>${nameCustomer}</span>        
+            </div>
+            <div class="col">
+                <label class="swal2-label">Email del cliente:</label>
+                <span>${emailCustomer}</span>
+            </div>
+        </div>
+        <br>
+
+        <label for="message" class="swal2-label">Mensaje para WhatsApp</label>
+        <textarea id="message" class="swal2-textarea" placeholder="Escribe tu mensaje aquí..." rows="4" required></textarea>
+        
+        <button type="button" class="send-button" onclick="sendToWhatsApp('${cellphone}')">
+            Enviar a WhatsApp
+        </button>
+    `;
+
+    return Swal.fire({
+        title: 'Enviar WhatsApp a '+cellphone,
+        html: containerHtml,
+        focusConfirm: false,
+        showConfirmButton: false,
+        showCancelButton: false,
+        allowOutsideClick: () => !Swal.isLoading()
+    }).then((result) => {
+        // Espera que el usuario envíe el mensaje
+        return new Promise((resolve) => {
+            document.querySelector('.send-button').addEventListener('click', () => {
+                const message = document.getElementById('message').value;
+                resolve(message);
+            });
+        });
+    });
+}
+
+async function send_to_whatsApp(nameCustomer, emailCustomer, phoneNumber) {
+    // Verifica si el número de teléfono está vacío
+    if (phoneNumber.trim() === '') {
+        warningMessage('Error al enviar el mensaje 👁️', 'El contacto no tiene registrado ningún número de celular. Agrégale uno para proseguir.');
+        return;
+    }
+
+    // Elimina el símbolo "+" si existe en el número de teléfono
+    phoneNumber = phoneNumber.replace(/\+/g, '');
+
+    // Obtiene el mensaje del usuario
+    const message = await show_send_message_for_whatsapp(nameCustomer, emailCustomer, phoneNumber);
+
+    // Envía el mensaje si no está vacío
+    if (message.trim() !== '') {
+        const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+        window.open(whatsappUrl, '_blank');
+    } else {
+        Swal.fire('Por favor, escribe un mensaje antes de enviar.');
+    }
+}
+
+async function sendToWhatsApp(phoneNumber) {
+    // Verifica si el número de teléfono está vacío
+    if (phoneNumber.trim() === '') {
+        warningMessage('Error al enviar el mensaje 👁️', 'El contacto no tiene registrado ningún número de celular. Agrégale uno para proseguir.');
+        return;
+    }
+
+
+    // Elimina el símbolo "+" si existe en el número de teléfono
+    phoneNumber = phoneNumber.replace(/\+/g, '');
+
+    // Elimina los espacios en blanco del número de teléfono
+    phoneNumber = phoneNumber.replace(/\s+/g, '');
+
+    // Obtiene el mensaje del usuario
+    const message = document.getElementById('message').value;
+
+    // Envía el mensaje si no está vacío
+    if (message.trim() !== '') {
+        const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+        window.open(whatsappUrl, '_blank');
+    } else {
+        Swal.fire('Por favor, escribe un mensaje antes de enviar.');
+    }
+}
+
