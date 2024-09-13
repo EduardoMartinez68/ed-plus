@@ -52,9 +52,9 @@
                     <button class="edit-btn"><i class="fi fi-br-menu-dots"></i></button>
                     <div class="dropdown-menu-2">
                         <ul>
-                            <li><a href="/links/{{id_companies}}/{{id_branches}}/{{id}}/see-oportunity"><i class="fi-icon fi-ss-eye"></i>Ver</a></li>
                             <li><a href="/links/{{id_companies}}/{{id_branches}}/{{id}}/see-prospects" class="dropdown-item"><i class="fi-icon fi-ss-pencil"></i> Editar</a></li>
-                            <li><a href="/links/{{id_companies}}/{{id_branches}}/{{id}}/edit-prospects" class="dropdown-item"><i class="fi-icon fi-rs-clock-three"></i> Agendar cita</a></li>
+                            <li><a onclick="show_appointment('{{id_companies}}','{{id_branches}}','{{id}}')" class="dropdown-item"><i class="fi-icon fi-rs-clock-three"></i> Agendar cita</a></li>
+                            
                             <!--we will see if this prospects have a email for send message-->
                             {{#if email}}
                                 <li><a href="/links/{{id_companies}}/{{id_branches}}/{{id}}/{{cellphone}}" class="dropdown-item"><i class="fi-icon fi-rr-envelope"></i> Enviar mensaje</a></li>

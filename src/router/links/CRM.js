@@ -61,7 +61,6 @@ router.get('/:id_company/:id_branch/CRM', isLoggedIn, async (req, res) => {
     }
 
     const prospects=await get_all_prospects_of_my_company(id_company);
-    console.log(prospects)
     res.render('links/branch/CRM/crm', { branchFree, apps, salesStage, prospects});
 })
 

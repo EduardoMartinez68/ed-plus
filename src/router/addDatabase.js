@@ -632,7 +632,23 @@ async function add_new_prospects(prospects){
     }
 }
 
+async function add_appointment(appointment){
+    const queryText = `
+        INSERT INTO "CRM".appointment(
+            id_companies, id_branches, id_prospects, affair, meeting_date, duration_in_minutes, location, notes
+        )
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+    `;
+    const values = Object.values(appointment); //this is for create the format of save
 
+    try{
+        await database.query(queryText, values);
+        return true;
+    } catch (error) {
+        console.error('Error inserting into add_appointment database:', error);
+        return false;
+    }
+}
 
 
 
@@ -663,5 +679,6 @@ module.exports={
     add_order,
     add_new_sales_stage,
     add_new_sales_team_in_my_company,
-    add_new_prospects
+    add_new_prospects, 
+    add_appointment
 };

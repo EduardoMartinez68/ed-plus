@@ -2691,8 +2691,6 @@ router.post('/fud/:id_company/:id_branch/:id_prospect/update-prospect', isLogged
     res.redirect(`/links/${id_company}/${id_branch}/CRM`);
 })
 
-
-
 async function update_prospect(prospects, id_prospect){
     const queryText = `
         UPDATE "CRM".prospects
@@ -2742,7 +2740,37 @@ async function update_prospect(prospects, id_prospect){
 }
 
 
+//-----------------------------------------------appointment
+router.post('/fud/:id_company/:id_branch/:id_prospect/create-appointment', isLoggedIn, async (req, res) => {
+    const { id_company, id_branch, id_prospect} = req.params;
 
+    //we will create the appointment
+    const appointment=create_appointment(id_company, id_branch,id_prospect,req)
+
+    //we will see if we could add the appointment
+    if(await addDatabase.add_appointment(appointment)){
+        req.flash('success', 'La cita se reservó con éxito ❤️');
+    }else{
+        req.flash('message', 'La cita no se reservó 😳');
+    }
+
+    res.redirect(`/links/${id_company}/${id_branch}/CRM`);
+})
+
+function create_appointment(id_company, id_branch,id_prospect,req){
+    const appointment={
+        id_company, 
+        id_branch,
+        id_prospect,
+        affair: req.body.affair,
+        date: req.body.date,
+        duration: req.duration,
+        ubication: req.body.ubication,
+        notes: req.body.notes
+    }
+
+    return appointment;
+}
 
 //-----------------------------------------------apps
 const {

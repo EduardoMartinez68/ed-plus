@@ -241,3 +241,63 @@ async function sendToWhatsApp(phoneNumber) {
     }
 }
 
+async function show_appointment(idCompany,idBranch,idProspects){
+    var containerHtml = `
+    <style>
+        .swal2-textarea {
+            min-height: 100px;
+            max-height: 300px;
+            background-color: #f9f9f9;
+            outline: none;
+            transition: border-color 0.3s ease-in-out;
+        }
+    </style>
+
+    <form action="/fud/${idCompany}/${idBranch}/${idProspects}/create-appointment" method="post">
+        <div class="form-group">
+            <label for="affair">Asunto</label>
+            <input type="text" class="form-control" id="affair" placeholder="Introduce el asunto" required name="affair">
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label for="meeting_date">Fecha y Hora</label>
+                    <input type="datetime-local" class="form-control" id="meeting_date" name="date" placeholder="Selecciona la fecha y hora" required>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label for="duration">Duración (en minutos)</label>
+                    <input type="number" class="form-control" id="duration" name="duration" placeholder="Duración" step="0.01" min="0" value="0" required>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="location">Ubicación</label>
+            <input type="text" class="form-control" id="location" name="ubication" placeholder="Introduce la ubicación">
+        </div>
+        <div class="form-group">
+            <label for="grades">Notas</label>
+            <textarea class="form-control" id="grades" rows="3" name="notes" placeholder="Notas adicionales"></textarea>
+        </div>
+        <button type="submit" class="btn btn-success">Guardar Cita 💾</button>
+    </form>
+    `;
+
+    return Swal.fire({
+        title: 'Reservar una cita 📅',
+        html: containerHtml,
+        focusConfirm: false,
+        showConfirmButton: false,
+        showCancelButton: false,
+        allowOutsideClick: () => !Swal.isLoading()
+    }).then((result) => {
+        // Espera que el usuario envíe el mensaje
+        return new Promise((resolve) => {
+            document.querySelector('.send-button').addEventListener('click', () => {
+                const message = document.getElementById('message').value;
+                resolve(message);
+            });
+        });
+    });
+}
