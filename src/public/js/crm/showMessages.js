@@ -255,10 +255,6 @@ async function show_appointment(idCompany,idBranch,idProspects,idEmployee){
 
     <form action="/fud/${idCompany}/${idBranch}/${idProspects}/create-appointment" method="post">
         <input type="hidden" required readonly name="idEmployee" value="${idEmployee}">
-        <div class="form-group">
-            <label for="affair">Asunto</label>
-            <input type="text" class="form-control" id="affair" placeholder="Introduce el asunto" required name="affair">
-        </div>
         <div class="row">
             <div class="col-3">
                 <div class="form-group">
@@ -268,6 +264,10 @@ async function show_appointment(idCompany,idBranch,idProspects,idEmployee){
             </div>
             <div class="col">
             </div>
+        </div>
+        <div class="form-group">
+            <label for="affair">Asunto</label>
+            <input type="text" class="form-control" id="affair" placeholder="Introduce el asunto" required name="affair">
         </div>
         <div class="row">
             <div class="col">
@@ -297,6 +297,90 @@ async function show_appointment(idCompany,idBranch,idProspects,idEmployee){
 
     return Swal.fire({
         title: 'Reservar una cita 📅',
+        html: containerHtml,
+        focusConfirm: false,
+        showConfirmButton: false,
+        showCancelButton: false,
+        allowOutsideClick: () => !Swal.isLoading()
+    }).then((result) => {
+        // Espera que el usuario envíe el mensaje
+        return new Promise((resolve) => {
+            document.querySelector('.send-button').addEventListener('click', () => {
+                const message = document.getElementById('message').value;
+                resolve(message);
+            });
+        });
+    });
+}
+
+async function show_edit_appointment(idCompany,idBranch,idProspects,idAppointment,idEmployees,prospectName,prospectEmail,affair,color,dateStart,dateEnd,ubication,notes){
+    var containerHtml = `
+    <style>
+        .swal2-textarea {
+            min-height: 100px;
+            max-height: 300px;
+            background-color: #f9f9f9;
+            outline: none;
+            transition: border-color 0.3s ease-in-out;
+        }
+    </style>
+
+    <form action="/fud/${idCompany}/${idBranch}/${idProspects}/${idAppointment}/edit-appointment" method="post">
+        <input type="hidden" required readonly name="idEmployee" value="${idEmployees}">
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label for="meeting_date">Nombre:<br> ${prospectName}</label>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label for="meeting_date">Email:<br> ${prospectEmail}</label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-3">
+                <div class="form-group">
+                    <label for="meeting_date">Etiqueta</label>
+                    <input type="color" class="form-control" name="color" required value="${color}">
+                </div>
+            </div>
+            <div class="col">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="affair">Asunto</label>
+            <input type="text" class="form-control" id="affair" placeholder="Introduce el asunto" required name="affair" value="${affair}">
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label for="meeting_date">Fecha y Hora Inicial</label>
+                    <input type="datetime-local" class="form-control" id="meeting_date" name="date" placeholder="Selecciona la fecha y hora" required value="${dateStart}">
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label for="duration">Fecha y Hora Final</label>
+                    <input type="datetime-local" class="form-control" id="duration" name="duration" placeholder="Selecciona la fecha y hora" required value="${dateEnd}">
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="location">Ubicación</label>
+            <input type="text" class="form-control" id="location" name="ubication" placeholder="Introduce la ubicación" value="${ubication}">
+        </div>
+        <div class="form-group">
+            <label for="grades">Notas</label>
+            <textarea class="form-control" id="grades" rows="3" name="notes" placeholder="Notas adicionales">${notes}</textarea>
+        </div>
+        <button type="submit" class="btn btn-success">Actualizar Cita 💾</button>
+    </form>
+    `;
+
+    return Swal.fire({
+        title: 'Editar esta cita 📅',
         html: containerHtml,
         focusConfirm: false,
         showConfirmButton: false,

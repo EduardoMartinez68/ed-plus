@@ -15,8 +15,14 @@
         margin: 0 auto;
     }
 </style>
+
+<!--this is for when the user would like edit a appointment-->
+{{#each branchFree}}
+    <input type="hidden" idBranch="{{id}}" idCompany="{{id_companies}}" id="dataBranchCompany">
+{{/each}}
+
 {{#each appointment}}
-    <input type="hidden" affair="{{affair}}" notes="{{notes}}" meeting_date="{{meeting_date}}" end_date="{{end_date}}" color="{{color}}" class="dataCalendar">
+    <input type="hidden" idEmployees="{{id_employees}}" idProspects="{{id_prospects}}" idAppointment="{{id}}" affair="{{affair}}" notes="{{notes}}" meeting_date="{{meeting_date}}" end_date="{{end_date}}" color="{{color}}" location="{{location}}" prospectName="{{prospect_name}}" prospectEmail="{{prospect_email}}" class="dataCalendar">
 {{/each}}
 <br><br>
 <div class="container">
@@ -27,55 +33,104 @@
         </div>
     </center>
 </div>
+<script src="/js/crm/showMessages.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var calendarEl = document.getElementById('calendar');
+document.addEventListener('DOMContentLoaded', function () {
+    var calendarEl = document.getElementById('calendar');
 
-        // Selecciona todos los inputs con la clase "dataCalendar"
-        var dataCalendar = document.querySelectorAll('.dataCalendar');
+    // Selecciona todos los inputs con la clase "dataCalendar"
+    var dataCalendar = document.querySelectorAll('.dataCalendar');
 
-        // Función para convertir la fecha en formato ISO 8601 a formato local sin 'Z'
-        function convertToLocalDate(isoDate) {
-            const date = new Date(isoDate);
-            // Obtiene el año, mes, día, horas y minutos
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0'); // Meses de 0-11
-            const day = String(date.getDate()).padStart(2, '0');
-            const hours = String(date.getHours()).padStart(2, '0');
-            const minutes = String(date.getMinutes()).padStart(2, '0');
-            const seconds = String(date.getSeconds()).padStart(2, '0');
-            // Devuelve la fecha en formato YYYY-MM-DDTHH:MM:SS
-            return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
-        }
+    // Función para convertir la fecha en formato ISO 8601 a formato local sin 'Z'
+    function convertToLocalDate(isoDate) {
+        const date = new Date(isoDate);
+        // Obtiene el año, mes, día, horas y minutos
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Meses de 0-11
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const seconds = String(date.getSeconds()).padStart(2, '0');
+        // Devuelve la fecha en formato YYYY-MM-DDTHH:MM:SS
+        return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+    }
 
-        // Convierte los datos de los inputs en un formato adecuado para FullCalendar
-        var events = Array.from(dataCalendar).map(function(input) {
-            return {
-                title: input.getAttribute('affair') || 'Evento sin título',
-                start: convertToLocalDate(input.getAttribute('meeting_date')),
-                end: input.getAttribute('end_date') ? convertToLocalDate(input.getAttribute('end_date')) : null,
-                color: input.getAttribute('color') || '#007bff' // Puedes asignar un color por defecto si no está presente
-            };
-        });
-
-        // Inicializa el calendario
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
-            locale: 'es',
-            events: events,
-            headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay'
-            },
-            buttonText: {
-                today: 'Hoy',
-                month: 'Mes',
-                week: 'Semana',
-                day: 'Día'
+    // Convierte los datos de los inputs en un formato adecuado para FullCalendar
+    var events = Array.from(dataCalendar).map(function(input) {
+        return {
+            title: input.getAttribute('affair') || 'Evento sin título',
+            start: convertToLocalDate(input.getAttribute('meeting_date')),
+            end: input.getAttribute('end_date') ? convertToLocalDate(input.getAttribute('end_date')) : null,
+            color: input.getAttribute('color') || '#007bff', // Puedes asignar un color por defecto si no está presente
+            extendedProps: {
+                idAppointment: input.getAttribute('idAppointment'),
+                notes: input.getAttribute('notes'),
+                colorAppoint: input.getAttribute('color'),
+                location: input.getAttribute('location'),
+                endDate:input.getAttribute('end_date'),
+                prospectName:input.getAttribute('prospectName'),
+                prospectEmail:input.getAttribute('prospectEmail'),
+                idEmployees:input.getAttribute('idEmployees'),
+                idProspects:input.getAttribute('idProspects')
             }
-        });
-
-        calendar.render();
+        };
     });
+
+    // Inicializa el calendario
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        locale: 'es',
+        events: events,
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        },
+        buttonText: {
+            today: 'Hoy',
+            month: 'Mes',
+            week: 'Semana',
+            day: 'Día'
+        },
+        eventClick: function(info) {
+            // Llama a la función edit_event con la información del evento
+            edit_event(info.event);
+        }
+    });
+
+    calendar.render();
+});
+
+    function edit_event(event) {
+        //data form
+        const inputData=document.getElementById('dataBranchCompany');
+        const idBranch=inputData.getAttribute('idBranch')
+        const idCompany=inputData.getAttribute('idCompany')
+        const idAppointment=event.extendedProps.idAppointment;
+        const idEmployees=event.extendedProps.idEmployees;
+        const idProspects=event.extendedProps.idProspects;
+
+        //data of the appointment
+        const affair=event.title;
+        const color=event.extendedProps.colorAppoint || '#007bff';
+        const dateStart=formatDateToInput(event.startStr);
+        const dateEnd=formatDateToInput(event.extendedProps.endDate);
+        const ubication=event.extendedProps.location;
+        const notes=event.extendedProps.notes;
+
+        const prospectName=event.extendedProps.prospectName;
+        const prospectEmail=event.extendedProps.prospectEmail;
+        show_edit_appointment(idCompany,idBranch,idProspects,idAppointment,idEmployees,prospectName,prospectEmail,affair,color,dateStart,dateEnd,ubication,notes);
+    }
+
+    function formatDateToInput(datetime) {
+        const date = new Date(datetime);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        
+        return `${year}-${month}-${day}T${hours}:${minutes}`;
+    }
 </script>

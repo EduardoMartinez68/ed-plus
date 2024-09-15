@@ -179,7 +179,19 @@ async function delete_prospect_with_id(id_prospect) {
 
 async function get_appointment_withuser_id(id_employee){
     const queryText = `
-        select * from "CRM".appointment WHERE id_employees=$1
+        SELECT 
+            a.id as appointment_id,
+            a.*,
+            p.id as prospect_id,
+            p.name as prospect_name,
+            p.email as prospect_email,
+            p.cellphone as prospect_cellphone,
+            p.company_name as prospect_company_name,
+            p.address as prospect_address,
+            p.website as prospect_website
+        FROM "CRM".appointment a
+        LEFT JOIN "CRM".prospects p ON a.id_prospects = p.id
+        WHERE a.id_employees = $1
     `;
     const values = [id_employee];
 

@@ -2774,6 +2774,54 @@ function create_appointment(id_company, id_branch,id_prospect,req){
     return appointment;
 }
 
+router.post('/fud/:id_company/:id_branch/:id_prospect/:id_appointment/edit-appointment', isLoggedIn, async (req, res) => {
+    const { id_company, id_branch, id_prospect, id_appointment} = req.params;
+
+    //we will create the appointment
+    const appointment=create_appointment(id_company, id_branch,id_prospect,req)
+    console.log(appointment)
+    //we will see if we could add the appointment
+    if(await update_appointment(appointment,id_appointment)){
+        req.flash('success', 'La cita se actualizo con éxito ❤️');
+    }else{
+        req.flash('message', 'La cita no se actualizo 😳');
+    }
+
+    res.redirect(`/links/${id_company}/${id_branch}/appointment`);
+})
+
+async function update_appointment(appointment, id_appointment){
+    const queryText = `
+        UPDATE "CRM".appointment
+        SET 
+            id_companies=$1, id_branches=$2, id_prospects=$3, id_employees=$4 ,affair=$5, meeting_date=$6, end_date=$7, location=$8, notes=$9, color=$10
+        WHERE id = $11;
+    `;
+    const values = [
+        appointment.id_company,
+        appointment.id_branch,
+        appointment.id_prospect,
+        appointment.id_employee,
+        appointment.affair,
+        appointment.date,
+        appointment.duration,
+        appointment.ubication,
+        appointment.notes,
+        appointment.color,
+        id_appointment
+      ];
+
+    try{
+        await database.query(queryText, values);
+        return true;
+    } catch (error) {
+        console.error('Error update appointment in update_appointment in the file addFrom: ', error);
+        return false;
+    }
+}
+
+
+
 //-----------------------------------------------apps
 const {
     insert_app_in_my_list
