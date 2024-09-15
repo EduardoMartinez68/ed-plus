@@ -2762,11 +2762,13 @@ function create_appointment(id_company, id_branch,id_prospect,req){
         id_company, 
         id_branch,
         id_prospect,
+        id_employee: req.body.idEmployee,
         affair: req.body.affair,
         date: req.body.date,
-        duration: req.duration,
+        duration: req.body.duration,
         ubication: req.body.ubication,
-        notes: req.body.notes
+        notes: req.body.notes,
+        color:req.body.color
     }
 
     return appointment;

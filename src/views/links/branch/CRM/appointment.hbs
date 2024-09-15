@@ -1,0 +1,81 @@
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.7/main.min.css' rel='stylesheet' />
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+<style>
+    #calendar-container {
+        max-width: 900px;
+        width: 100%;
+        padding: 20px;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    #calendar {
+        max-width: 100%;
+        margin: 0 auto;
+    }
+</style>
+{{#each appointment}}
+    <input type="hidden" affair="{{affair}}" notes="{{notes}}" meeting_date="{{meeting_date}}" end_date="{{end_date}}" color="{{color}}" class="dataCalendar">
+{{/each}}
+<br><br>
+<div class="container">
+    <center>
+        <div id="calendar-container">
+            <h2>Mis Citas</h2>
+            <div id="calendar"></div>
+        </div>
+    </center>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var calendarEl = document.getElementById('calendar');
+
+        // Selecciona todos los inputs con la clase "dataCalendar"
+        var dataCalendar = document.querySelectorAll('.dataCalendar');
+
+        // Función para convertir la fecha en formato ISO 8601 a formato local sin 'Z'
+        function convertToLocalDate(isoDate) {
+            const date = new Date(isoDate);
+            // Obtiene el año, mes, día, horas y minutos
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // Meses de 0-11
+            const day = String(date.getDate()).padStart(2, '0');
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const seconds = String(date.getSeconds()).padStart(2, '0');
+            // Devuelve la fecha en formato YYYY-MM-DDTHH:MM:SS
+            return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+        }
+
+        // Convierte los datos de los inputs en un formato adecuado para FullCalendar
+        var events = Array.from(dataCalendar).map(function(input) {
+            return {
+                title: input.getAttribute('affair') || 'Evento sin título',
+                start: convertToLocalDate(input.getAttribute('meeting_date')),
+                end: input.getAttribute('end_date') ? convertToLocalDate(input.getAttribute('end_date')) : null,
+                color: input.getAttribute('color') || '#007bff' // Puedes asignar un color por defecto si no está presente
+            };
+        });
+
+        // Inicializa el calendario
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'es',
+            events: events,
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            buttonText: {
+                today: 'Hoy',
+                month: 'Mes',
+                week: 'Semana',
+                day: 'Día'
+            }
+        });
+
+        calendar.render();
+    });
+</script>

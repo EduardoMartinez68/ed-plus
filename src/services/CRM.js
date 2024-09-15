@@ -177,6 +177,21 @@ async function delete_prospect_with_id(id_prospect) {
     }
 }
 
+async function get_appointment_withuser_id(id_employee){
+    const queryText = `
+        select * from "CRM".appointment WHERE id_employees=$1
+    `;
+    const values = [id_employee];
+
+    try {
+        const result = await database.query(queryText, values);
+        return result.rows; 
+    } catch (error) {
+        console.log('ERROR to get the appointment in get_appointment_withuser_id, File services/CRM.js '+error)
+        return null;
+    }
+}
+
 module.exports = {
     get_sales_stage_with_company_id,
     add_the_new_sales_stage_in_my_company,
@@ -185,5 +200,6 @@ module.exports = {
     add_new_sales_team_in_my_company,
     get_all_prospects_of_my_company,
     get_data_of_a_prospect_with_his_id,
-    delete_prospect_with_id
+    delete_prospect_with_id,
+    get_appointment_withuser_id
 };

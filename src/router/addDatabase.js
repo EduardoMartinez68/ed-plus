@@ -635,9 +635,9 @@ async function add_new_prospects(prospects){
 async function add_appointment(appointment){
     const queryText = `
         INSERT INTO "CRM".appointment(
-            id_companies, id_branches, id_prospects, affair, meeting_date, duration_in_minutes, location, notes
+            id_companies, id_branches, id_prospects, id_employees ,affair, meeting_date, end_date, location, notes, color
         )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
     `;
     const values = Object.values(appointment); //this is for create the format of save
 

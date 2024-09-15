@@ -241,7 +241,7 @@ async function sendToWhatsApp(phoneNumber) {
     }
 }
 
-async function show_appointment(idCompany,idBranch,idProspects){
+async function show_appointment(idCompany,idBranch,idProspects,idEmployee){
     var containerHtml = `
     <style>
         .swal2-textarea {
@@ -254,21 +254,32 @@ async function show_appointment(idCompany,idBranch,idProspects){
     </style>
 
     <form action="/fud/${idCompany}/${idBranch}/${idProspects}/create-appointment" method="post">
+        <input type="hidden" required readonly name="idEmployee" value="${idEmployee}">
         <div class="form-group">
             <label for="affair">Asunto</label>
             <input type="text" class="form-control" id="affair" placeholder="Introduce el asunto" required name="affair">
         </div>
         <div class="row">
+            <div class="col-3">
+                <div class="form-group">
+                    <label for="meeting_date">Etiqueta</label>
+                    <input type="color" class="form-control" name="color" required value="#007bff">
+                </div>
+            </div>
+            <div class="col">
+            </div>
+        </div>
+        <div class="row">
             <div class="col">
                 <div class="form-group">
-                    <label for="meeting_date">Fecha y Hora</label>
+                    <label for="meeting_date">Fecha y Hora Inicial</label>
                     <input type="datetime-local" class="form-control" id="meeting_date" name="date" placeholder="Selecciona la fecha y hora" required>
                 </div>
             </div>
             <div class="col">
                 <div class="form-group">
-                    <label for="duration">Duración (en minutos)</label>
-                    <input type="number" class="form-control" id="duration" name="duration" placeholder="Duración" step="0.01" min="0" value="0" required>
+                    <label for="duration">Fecha y Hora Final</label>
+                    <input type="datetime-local" class="form-control" id="duration" name="duration" placeholder="Selecciona la fecha y hora" required>
                 </div>
             </div>
         </div>
