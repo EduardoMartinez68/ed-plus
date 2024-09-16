@@ -228,9 +228,9 @@ router.post('/fud/:id_company/edit-company', async (req, res) => {
 
     //we will see if the user have a subscription to ONE or is the CEO
     if(id_branch){
-        res.redirect(`/fud/${id_company}/${id_branch}/options`);
+        res.redirect(`/links/${id_company}/${id_branch}/options`);
     }else{
-        res.redirect(`/fud/${id_company}/options`);
+        res.redirect(`/links/${id_company}/options`);
     }
 });
 
@@ -255,9 +255,9 @@ router.post('/fud/:id/add-department', async (req, res) => {
     //we will see if the user is in a version of fud one 
     if(req.user.rol_user==rolFree){
         const {id_branch}=req.body;
-        res.redirect(`/fud/${id}/${id_branch}/food-department-free`);
+        res.redirect(`/links/${id}/${id_branch}/food-department-free`);
     }else{
-        res.redirect(`/fud/${id}/food-department`);
+        res.redirect(`/links/${id}/food-department`);
     }
 });
 
@@ -309,9 +309,9 @@ router.post('/fud/:id/add-category', async (req, res) => {
     //we will see if the user is in a version of fud one 
     if(req.user.rol_user==rolFree){
         const {id_branch}=req.body;
-        res.redirect(`/fud/${id}/${id_branch}/food-area-free`);
+        res.redirect(`/links/${id}/${id_branch}/food-area-free`);
     }else{
-        res.redirect(`/fud/${id}/food-department`);
+        res.redirect(`/links/${id}/food-department`);
     }
 });
 
@@ -364,7 +364,7 @@ router.post('/fud/:id/add-company-supplies', async (req, res) => {
         req.flash('message', 'El insumo no fue actualizado con éxito 👉👈')
     }
 
-    res.redirect('/fud/' + id + '/company-supplies');
+    res.redirect('/links/' + id + '/company-supplies');
 });
 
 router.post('/fud/:id/add-company-products', async (req, res) => {
@@ -377,7 +377,7 @@ router.post('/fud/:id/add-company-products', async (req, res) => {
         req.flash('message', 'El producto no fue actualizado 😅')
     }
 
-    res.redirect('/fud/' + id + '/company-products');
+    res.redirect('/links/' + id + '/company-products');
 });
 
 async function get_supplies_or_product_company(req, this_is_a_supplies) {
@@ -438,7 +438,7 @@ router.post('/fud/:id_company/add-company-combo', async (req, res) => {
 
             // save the combo in the branch
             const idComboFacture = await addDatabase.add_combo_branch(comboData);
-            res.redirect('/fud/' + id_company + '/' + idBranch + '/' + idComboFacture + '/edit-combo-free');
+            res.redirect('/links/' + id_company + '/' + idBranch + '/' + idComboFacture + '/edit-combo-free');
         }
     }
 });
@@ -520,7 +520,7 @@ router.post('/fud/:id_company/:id_combo/edit-combo-company', isLoggedIn, async (
     //we will see if the user add a product or supplies 
     if (barcodeProducts == '') {
         req.flash('message', 'El combo necesita tener un producto o algunos suministros 😅')
-        res.redirect('/fud/' + id_company + '/' + id_combo + '/edit-combo-company');
+        res.redirect('/links/' + id_company + '/' + id_combo + '/edit-combo-company');
     }
     else {
 
@@ -540,11 +540,11 @@ router.post('/fud/:id_company/:id_combo/edit-combo-company', isLoggedIn, async (
         //we will see if the user have the pack free 
         if(req.user.rol_user!=rolFree){
             //if the user have a rol of admin send to combo company
-            res.redirect('/fud/' + id_company + '/combos');
+            res.redirect('/links/' + id_company + '/combos');
         }else{
             //if the user have a count free, get the branch id for redirect to the user 
             const { id_branch} = req.body;
-            res.redirect('/fud/'+id_company+'/'+id_branch+'/combos-free');
+            res.redirect('/links/'+id_company+'/'+id_branch+'/combos-free');
         }
     }
 })
@@ -611,15 +611,15 @@ router.post('/fud/:id_company/:id/edit-supplies-form', isLoggedIn, async (req, r
     //we will see if the user have a suscription for fud one 
     if (req.user.rol_user==rolFree){
         const { id_branch} = req.body; //get the id branch
-        res.redirect(`/fud/${id_company}/${id_branch}/supplies-free`);
+        res.redirect(`/links/${id_company}/${id_branch}/supplies-free`);
     }    
     else{
         //rederict the object for the that be 
         if (thisIsASupplies) {
-            res.redirect('/fud/' + id_company + '/company-supplies');
+            res.redirect('/links/' + id_company + '/company-supplies');
         }
         else {
-            res.redirect('/fud/' + id_company + '/company-products');
+            res.redirect('/links/' + id_company + '/company-products');
         }        
     }  
 })
@@ -714,7 +714,7 @@ router.post('/fud/:id_company/add-providers', isLoggedIn, async (req, res) => {
     } else {
         await add_provider_to_database(provider, req);
     }
-    res.redirect('/fud/' + id_company + '/providers');
+    res.redirect('/links/' + id_company + '/providers');
 })
 
 function create_new_provider(req) {
@@ -783,7 +783,7 @@ router.post('/fud/:id_company/:id_branch/:id_provider/edit-providers', isLoggedI
         await update_provider_to_database(id_provider, provider, req);
     }
 
-    res.redirect('/fud/' + id_company + '/providers');
+    res.redirect('/links/' + id_company + '/providers');
 })
 
 async function update_provider_to_database(id_provider, provider, req) {
@@ -817,7 +817,7 @@ router.post('/fud/:id_company/add-new-branch', isLoggedIn, async (req, res) => {
         }
     }
 
-    res.redirect('/fud/' + id_company + '/branches');
+    res.redirect('/links/' + id_company + '/branches');
 })
 
 async function save_the_id_branch_with_the_id_subscription(idSubscription, idBranch) {
@@ -878,7 +878,7 @@ router.post('/fud/:id_branch/:id_company/edit-branch', isLoggedIn, async (req, r
                 req.flash('message', 'Ocurrio un error con el servidor, vuelve a intentarlo 👉👈')
             }
         }
-        res.redirect('/fud/' + id_company + '/branches');
+        res.redirect('/links/' + id_company + '/branches');
     }
 })
 
@@ -936,7 +936,7 @@ router.post('/fud/:id_company/addCustomer', isLoggedIn, async (req, res) => {
     else {
         req.flash('message', 'the customer not was add')
     }
-    res.redirect('/fud/' + id_company + '/customers-company');
+    res.redirect('/links/' + id_company + '/customers-company');
 })
 
 router.post('/fud/:id_company/:id_customer/editCustomer', isLoggedIn, async (req, res) => {
@@ -953,9 +953,9 @@ router.post('/fud/:id_company/:id_customer/editCustomer', isLoggedIn, async (req
 
     //we will see if the user have a UI CEO or Branch
     if(id_branch){
-        res.redirect(`/fud/${id_company}/${id_branch}/customers-company`);
+        res.redirect(`/links/${id_company}/${id_branch}/customers-company`);
     }else{
-        res.redirect(`/fud/${id_company}/customers-company`);
+        res.redirect(`/links/${id_company}/customers-company`);
     }
 })
 
@@ -1008,9 +1008,9 @@ router.post('/fud/:id_company/add-department-employees', isLoggedIn, async (req,
     //we will see if the user have the subscription to fud one 
     if(req.user.rol_user==rolFree){
         const { id_branch } = req.body;
-        res.redirect(`/fud/${id_company}/${id_branch}/employee-department`);
+        res.redirect(`/links/${id_company}/${id_branch}/employee-department`);
     }else{
-        res.redirect(`/fud/${id_company}/employee-department`);
+        res.redirect(`/links/${id_company}/employee-department`);
     }
 })
 
@@ -1045,9 +1045,9 @@ router.post('/fud/:id_company/add-type-employees', isLoggedIn, async (req, res) 
     //we will see if the user have a subscription to fud one 
     if(req.user.rol_user==rolFree){
         const { id_branch } = req.body;
-        res.redirect(`/fud/${id_company}/${id_branch}/type-employees-free`);
+        res.redirect(`/links/${id_company}/${id_branch}/type-employees-free`);
     }else{
-        res.redirect(`/fud/${id_company}/type-user`);
+        res.redirect(`/links/${id_company}/type-user`);
     }
 })
 
@@ -1166,9 +1166,9 @@ router.post('/fud/:id_company/:id_role/edit-role-employees', isLoggedIn, async (
     //we will see if the user have the subscription a fud one
     if(req.user.rol_user==rolFree){
         const { id_branch } = req.body;
-        res.redirect(`/fud/${id_company}/${id_branch}/type-employees-free`);
+        res.redirect(`/links/${id_company}/${id_branch}/type-employees-free`);
     }else{
-        res.redirect(`/fud/${id_company}/type-user`);
+        res.redirect(`/links/${id_company}/type-user`);
     }
 })
 
@@ -1216,7 +1216,7 @@ router.post('/fud/:id_company/add-employees', isLoggedIn, async (req, res) => {
             }
         }
     }
-    res.redirect('/fud/' + id_company + '/employees');
+    res.redirect('/links/' + id_company + '/employees');
 })
 
 async function delete_user(id) {
@@ -1300,7 +1300,7 @@ function create_new_employee(id_user, id_company, req) {
 router.post('/fud/:id_user/:id_company/:id_employee/edit-employees', isLoggedIn, async (req, res) => {
     const { id_company, id_employee, id_user } = req.params;
     await update_employee(req, res);
-    res.redirect('/fud/' + id_company + '/employees');
+    res.redirect('/links/' + id_company + '/employees');
 })
 
 async function update_employee(req, res) {
@@ -1386,15 +1386,29 @@ function new_data_employee(req) {
 router.post('/fud/:id_company/:id_branch/change-navbar', isLoggedIn, async (req, res) => {
     const { id_company, id_branch } = req.params;
     const {navbar}=req.body;
-    await update_navbar(id_company, navbar);
-    res.redirect(`/fud/${id_company}/${id_branch}/options`);
+
+    //we will see if can update the navbar
+    if(await update_navbar(id_company, navbar)){
+        req.flash('success', '¡La interfaz de usuario fue actualizada con éxito! 🤗')
+    }else{
+        req.flash('message', 'La interfaz de usuario no fue actualizada 👉👈');
+    }
+
+    res.redirect(`/links/${id_company}/${id_branch}/options`);
 })
 
 router.post('/fud/:id_company/change-navbar', isLoggedIn, async (req, res) => {
     const { id_company } = req.params;
     const {navbar}=req.body;
-    await update_navbar(id_company, navbar);
-    res.redirect(`/fud/${id_company}/options`);
+
+    //we will see if can update the navbar
+    if(await update_navbar(id_company, navbar)){
+        req.flash('success', 'La barra de tarreas fue actualizada con éxito! 🤗')
+    }else{
+        req.flash('message', 'La barra de tarreas no fue actualizada 👉👈');
+    }
+
+    res.redirect(`/links/${id_company}/options`);
 })
 
 
@@ -1433,9 +1447,9 @@ async function update_navbar(id_companies, navbar) {
         await database.query(updateQueryText, updateValues);
 
 
-        return `Updated navbar field for ${userIds.length} users.`;
+        return true;
     } else {
-        return 'No employees found for the given company.';
+        return false;
     }
 }
 
@@ -2527,7 +2541,7 @@ router.post('/fud/:id_company/:id_branch/addCustomer', isLoggedIn, async (req, r
     }
 
 
-    res.redirect(`/fud/${id_company}/${id_branch}/customers-company`);
+    res.redirect(`/links/${id_company}/${id_branch}/customers-company`);
 })
 
 router.post('/fud/:id_company/:id_customer/editCustomer', isLoggedIn, async (req, res) => {
@@ -2539,7 +2553,7 @@ router.post('/fud/:id_company/:id_customer/editCustomer', isLoggedIn, async (req
     else {
         req.flash('message', 'the customer not was upload 😰')
     }
-    res.redirect('/fud/' + id_company + '/customers-company');
+    res.redirect('/links/' + id_company + '/customers-company');
 })
 
 //-------------------------------------------------------CRM

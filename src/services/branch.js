@@ -1,6 +1,11 @@
 const database = require('../database');
 const addDatabase = require('../router/addDatabase');
 const rolFree=0
+//functions branch
+const {
+    get_all_apps_of_this_company
+} = require('./apps');
+
 async function delete_branch_company(idBranch) {
     try {
         var queryText = 'DELETE FROM "Company".branches WHERE id = $1';
@@ -44,10 +49,15 @@ async function get_data_branch_view_manager(id_branch) {
 }
 
 async function get_data_branch(id_branch) {
+    //get the data of the branch
     var queryText = 'SELECT * FROM "Company".branches WHERE id= $1';
     var values = [id_branch];
     const result = await database.query(queryText, values);
     const data = result.rows;
+
+    //we will get all the apps of this branch and we will add to the information of the branch
+    const apps=await get_all_apps_of_this_company(data[0].id_companies,data[0].id)
+    data[0].apps = apps;
     return data;
 }
 

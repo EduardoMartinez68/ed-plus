@@ -77,26 +77,50 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Inicializa el calendario
-    var calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
-        locale: 'es',
-        events: events,
-        headerToolbar: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay'
-        },
-        buttonText: {
-            today: 'Hoy',
-            month: 'Mes',
-            week: 'Semana',
-            day: 'Día'
-        },
-        eventClick: function(info) {
-            // Llama a la función edit_event con la información del evento
-            edit_event(info.event);
-        }
-    });
+    const thisIsCRM=document.getElementById('thisIsTheCrm')
+    var calendar=''
+    if(thisIsCRM){
+        calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'timeGridWeek', // Cambiado a vista semanal
+            locale: 'es',
+            events: events,
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            buttonText: {
+                today: 'Hoy',
+                month: 'Mes',
+                week: 'Semana',
+                day: 'Día'
+            },
+            eventClick: function(info) {
+                edit_event(info.event);
+            }
+        });
+    }else{
+        calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'es',
+            events: events,
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            buttonText: {
+                today: 'Hoy',
+                month: 'Mes',
+                week: 'Semana',
+                day: 'Día'
+            },
+            eventClick: function(info) {
+                // Llama a la función edit_event con la información del evento
+                edit_event(info.event);
+            }
+        });
+    }
 
     calendar.render();
 });

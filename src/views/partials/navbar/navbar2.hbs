@@ -414,15 +414,19 @@
                                 <span>ED Estudios</span>
                             </div>
                         {{/each}}
-                        {{#each apps}}
-                            <div class="app-icon" onclick="nextWeb('/{{id_companies}}/{{id_branch}}/app/{{name}}')">
-                                {{#if icon}}
-                                    <img src="{{icon}}" alt="Insumos">
-                                {{else}}
-                                    <img src="https://cdn-icons-png.flaticon.com/512/3902/3902021.png" alt="Insumos">
-                                {{/if}}
-                                <span>{{name}}</span>
-                            </div>
+
+                        <!--we will print all the apps of this branch--->
+                        {{#each branchFree}}
+                            {{#each apps}}
+                                <div class="app-icon" onclick="nextWeb('{{id_company}}/{{id_branch}}/app/{{name}}')">
+                                    {{#if icon}}
+                                        <img src="{{icon}}" alt="Insumos">
+                                    {{else}}
+                                        <img src="https://cdn-icons-png.flaticon.com/512/3902/3902021.png" alt="Insumos">
+                                    {{/if}}
+                                    <span>{{name}}</span>
+                                </div>
+                            {{/each}}
                         {{/each}}
 
                         {{#if user.edit_branch}}
