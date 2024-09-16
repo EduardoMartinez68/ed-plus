@@ -2790,6 +2790,22 @@ router.post('/fud/:id_company/:id_branch/:id_prospect/:id_appointment/edit-appoi
     res.redirect(`/links/${id_company}/${id_branch}/appointment`);
 })
 
+router.post('/fud/:id_company/:id_branch/:id_prospect/:id_appointment/edit-appointment-crm', isLoggedIn, async (req, res) => {
+    const { id_company, id_branch, id_prospect, id_appointment} = req.params;
+
+    //we will create the appointment
+    const appointment=create_appointment(id_company, id_branch,id_prospect,req)
+    console.log(appointment)
+    //we will see if we could add the appointment
+    if(await update_appointment(appointment,id_appointment)){
+        req.flash('success', 'La cita se actualizo con éxito ❤️');
+    }else{
+        req.flash('message', 'La cita no se actualizo 😳');
+    }
+
+    res.redirect(`/links/${id_company}/${id_branch}/CRM`);
+})
+
 async function update_appointment(appointment, id_appointment){
     const queryText = `
         UPDATE "CRM".appointment

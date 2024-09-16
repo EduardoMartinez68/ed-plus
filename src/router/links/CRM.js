@@ -13,7 +13,9 @@ const {
     get_all_prospects_of_my_company,
     get_data_of_a_prospect_with_his_id,
     delete_prospect_with_id,
-    get_appointment_withuser_id
+    get_appointment_with_user_id,
+    get_appointment_of_this_week_with_user_id,
+    delete_appointment_with_id
 } = require('../../services/CRM');
 
 //functions branch
@@ -61,8 +63,11 @@ router.get('/:id_company/:id_branch/CRM', isLoggedIn, async (req, res) => {
         salesStage=await get_sales_stage_with_company_id(id_company); //we get the new groups we added again
     }
 
+    const employees=await get_data_employee(req);
     const prospects=await get_all_prospects_of_my_company(id_company);
-    res.render('links/branch/CRM/crm', { branchFree, apps, salesStage, prospects});
+    const appointment=await get_appointment_of_this_week_with_user_id(employees[0].id)
+
+    res.render('links/branch/CRM/crm', { branchFree, apps, salesStage, prospects, appointment});
 })
 
 router.get('/:id_company/:id_branch/add-prospects', isLoggedIn, async (req, res) => {
@@ -148,9 +153,38 @@ router.get('/:id_company/:id_branch/appointment', isLoggedIn, async (req, res) =
     const branchFree = await get_data_branch(id_branch);
     const apps=await get_all_apps_of_this_company(id_company,id_branch)
     const employees=await get_data_employee(req)
-    const appointment=await get_appointment_withuser_id(employees[0].id)
+    const appointment=await get_appointment_with_user_id(employees[0].id)
     res.render('links/branch/CRM/appointment', { branchFree, apps, appointment});
 })
 
+router.get('/:id_company/:id_branch/:id_appointment/delete-appointment', isLoggedIn, async (req, res) => {
+    const { id_company, id_branch , id_appointment} = req.params;
+    const dataEmployees=await get_data_employee(req)
+    const idEmployee=dataEmployees[0].id;
+
+    //we will see if can delete the appointment, only the employee can delete his appointment
+    if(await delete_appointment_with_id(id_appointment,idEmployee)){
+        req.flash('success', 'La cita fue eliminada con éxito 😉');
+    }else{
+        req.flash('message', 'La cita no fue eliminada 👉👈');
+    }
+
+    res.redirect(`/links/${id_company}/${id_branch}/appointment`);
+})
+
+router.get('/:id_company/:id_branch/:id_appointment/delete-appointment-crm', isLoggedIn, async (req, res) => {
+    const { id_company, id_branch , id_appointment} = req.params;
+    const dataEmployees=await get_data_employee(req)
+    const idEmployee=dataEmployees[0].id;
+    
+    //we will see if can delete the appointment, only the employee can delete his appointment
+    if(await delete_appointment_with_id(id_appointment,idEmployee)){
+        req.flash('success', 'La cita fue eliminada con éxito 😉');
+    }else{
+        req.flash('message', 'La cita no fue eliminada 👉👈');
+    }
+
+    res.redirect(`/links/${id_company}/${id_branch}/CRM`);
+})
 
 module.exports = router;

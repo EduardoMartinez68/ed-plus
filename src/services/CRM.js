@@ -177,7 +177,7 @@ async function delete_prospect_with_id(id_prospect) {
     }
 }
 
-async function get_appointment_withuser_id(id_employee){
+async function get_appointment_with_user_id(id_employee){
     const queryText = `
         SELECT 
             a.id as appointment_id,
@@ -204,6 +204,51 @@ async function get_appointment_withuser_id(id_employee){
     }
 }
 
+
+async function get_appointment_of_this_week_with_user_id(id_employee){
+    const queryText = `
+        SELECT 
+            a.id as appointment_id,
+            a.*,
+            p.id as prospect_id,
+            p.name as prospect_name,
+            p.email as prospect_email,
+            p.cellphone as prospect_cellphone,
+            p.company_name as prospect_company_name,
+            p.address as prospect_address,
+            p.website as prospect_website
+        FROM "CRM".appointment a
+        LEFT JOIN "CRM".prospects p ON a.id_prospects = p.id
+        WHERE a.id_employees = $1
+        AND a.meeting_date >= DATE_TRUNC('week', CURRENT_DATE)
+        AND a.meeting_date < DATE_TRUNC('week', CURRENT_DATE) + INTERVAL '2 week'
+    `;
+    const values = [id_employee];
+
+    try {
+        const result = await database.query(queryText, values);
+        return result.rows; 
+    } catch (error) {
+        console.log('ERROR to get the appointment in get_appointment_withuser_id, File services/CRM.js '+error)
+        return null;
+    }
+}
+
+async function delete_appointment_with_id(id_appointment,id_employees){
+    const queryText = `
+        DELETE FROM "CRM".appointment WHERE id=$1 and id_employees=$2
+    `;
+    const values = [id_appointment, id_employees];
+
+    try {
+        const result = await database.query(queryText, values);
+        return result.rows; 
+    } catch (error) {
+        console.log('ERROR to delete the appointment in delete_appointment_with_id, File services/CRM.js '+error)
+        return null;
+    }
+}
+
 module.exports = {
     get_sales_stage_with_company_id,
     add_the_new_sales_stage_in_my_company,
@@ -213,5 +258,7 @@ module.exports = {
     get_all_prospects_of_my_company,
     get_data_of_a_prospect_with_his_id,
     delete_prospect_with_id,
-    get_appointment_withuser_id
+    get_appointment_with_user_id,
+    get_appointment_of_this_week_with_user_id,
+    delete_appointment_with_id
 };
