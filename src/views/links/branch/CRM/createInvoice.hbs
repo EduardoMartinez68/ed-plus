@@ -1,0 +1,289 @@
+<style>
+    h2 {
+        color: #075DA8;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+        background-color: white;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    th,
+    td {
+        border: 1px solid #ddd;
+        padding: 12px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #075DA8;
+        color: white;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    input[readonly],
+    input[type="checkbox"] {
+        background-color: #f1f1f1;
+    }
+
+    button {
+        background-color: #075DA8;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    button:hover {
+        background-color: #064b8b;
+    }
+
+    .controls {
+        text-align: left;
+        margin-top: 20px;
+    }
+
+    .delete-btn {
+        background-color: #f44336;
+    }
+
+    .delete-btn:hover {
+        background-color: #d8342b;
+    }
+
+    .checkbox-center {
+        text-align: center;
+    }
+
+    table input[type="checkbox"] {
+        margin: 0 auto;
+        display: block;
+        transform: scale(1.2);
+    }
+
+    .total-row {
+        font-weight: bold;
+        background-color: #e0e0e0;
+    }
+
+    .total-label {
+        text-align: right;
+    }
+</style>
+
+<br>
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-body">
+            <br>
+            <h2 class="text-center mb-4">Formulario de Cotización</h2>
+            <hr>
+            {{#each dataProspect}}
+                <label for="">{{email}}</label>
+                <form>
+                    <div class="row">
+                        <!-- Columna 1 -->
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="cliente" class="form-label">Cliente</label>
+                                <input type="text" class="form-control" id="cliente" placeholder="Nombre del cliente" value="{{name}}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="direccion" class="form-label">Dirección</label>
+                                <input type="text" class="form-control" id="direccion" placeholder="Dirección del cliente" value="{{address}}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="direccion-entrega" class="form-label">Dirección de Entrega</label>
+                                <input type="text" class="form-control" id="direccion-entrega"
+                                    placeholder="Dirección de entrega">
+                            </div>
+                        </div>
+
+                        <!-- Columna 2 -->
+                        <div class="col-md-6">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="mb-3">
+                                        <label for="expiracion" class="form-label">Expiración</label>
+                                        <input type="date" class="form-control" id="expiracion">
+                                    </div>                                
+                                </div>
+                                <div class="col">
+                                    <div class="mb-3">
+                                        <label for="fecha-cotizacion" class="form-label">Fecha de Cotización</label>
+                                        <input type="date" class="form-control" id="fecha-cotizacion">
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="row">
+                                <div class="col">
+                                    <div class="mb-3">
+                                        <label for="tarifa" class="form-label">Tarifa</label>
+                                        <select class="form-select" id="tarifa" required>
+                                            <option selected>Seleccione moneda</option>
+                                            <option value="mxn">Moneda Mexicana (MXN)</option>
+                                            <option value="usd">Dólar Estadounidense (USD)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="mb-3">
+                                        <label for="plazo-pago" class="form-label">Plazo de Pago</label>
+                                        <select class="form-select" id="plazo-pago" required>
+                                            <option selected>Seleccione plazo</option>
+                                            <option value="por-dia">Una vez</option>
+                                            <option value="por-dia">Por día</option>
+                                            <option value="semanal">Semanal</option>
+                                            <option value="quincenal">Quincenal</option>
+                                            <option value="por-mes">Por mes</option>
+                                            <option value="por-trimestre">Por trimestre</option>
+                                            <option value="por-semestre">Por semestre</option>
+                                            <option value="por-ano">Por año</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <table id="tabla-productos">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Descripción</th>
+                            <th>Cantidad</th>
+                            <th>UdM</th>
+                            <th>Paquete</th>
+                            <th>Precio Unitario</th>
+                            <th>Impuestos</th>
+                            <th>Descuento %</th>
+                            <th>Subtotal</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="text" name="producto" placeholder="Nombre del producto"></td>
+                            <td><input type="text" name="descripcion" placeholder="Descripción"></td>
+                            <td><input type="number" name="cantidad" oninput="calcularSubtotal(this)" placeholder="0"></td>
+                            <td>
+                                <select name="udm">
+                                    <option value="pieza">Pieza</option>
+                                    <option value="kilo">Kilo</option>
+                                    <option value="litro">Litro</option>
+                                </select>
+                            </td>
+                            <td class="checkbox-center"><input type="checkbox" name="paquete"></td>
+                            <td><input type="number" name="precio_unitario" step="0.01" oninput="calcularSubtotal(this)"
+                                    placeholder="0.00"></td>
+                            <td><input type="number" name="impuestos" step="0.01" oninput="calcularSubtotal(this)"
+                                    placeholder="0.00">
+                            </td>
+                            <td><input type="number" name="descuento" step="0.01" oninput="calcularSubtotal(this)"
+                                    placeholder="0.00">
+                            </td>
+                            <td><input type="text" name="subtotal" readonly></td>
+                            <td><button class="delete-btn" onclick="eliminarFila(this)">Eliminar</button></td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr class="total-row">
+                            <td colspan="8" class="total-label">Total General:</td>
+                            <td><input type="text" id="total-general" readonly value="0.00"></td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+                <div class="controls">
+                    <button onclick="agregarFila()">Agregar Producto</button>
+                </div>
+                <br>
+                <hr>
+                <div class="mb-3">
+                    <label for="cliente" class="form-label">Términos y condiciones</label>
+                    <textarea name="" id="" class="form-control">
+
+                    </textarea>
+                </div>
+                <button class="btn btn-success">Enviar cotización</button>
+            {{/each}}
+            <br><br>
+        </div>
+    </div>
+</div>
+<br><br>
+
+<script>
+    function agregarFila() {
+        const table = document.getElementById('tabla-productos').getElementsByTagName('tbody')[0];
+        const newRow = table.insertRow();
+        newRow.innerHTML = `
+                <td><input type="text" name="producto" placeholder="Nombre del producto"></td>
+                <td><input type="text" name="descripcion" placeholder="Descripción"></td>
+                <td><input type="number" name="cantidad" oninput="calcularSubtotal(this)" placeholder="0"></td>
+                <td>
+                    <select name="udm">
+                        <option value="pieza">Pieza</option>
+                        <option value="kilo">Kilo</option>
+                        <option value="litro">Litro</option>
+                    </select>
+                </td>
+                <td class="checkbox-center"><input type="checkbox" name="paquete"></td>
+                <td><input type="number" name="precio_unitario" step="0.01" oninput="calcularSubtotal(this)" placeholder="0.00"></td>
+                <td><input type="number" name="impuestos" step="0.01" oninput="calcularSubtotal(this)" placeholder="0.00"></td>
+                <td><input type="number" name="descuento" step="0.01" oninput="calcularSubtotal(this)" placeholder="0.00"></td>
+                <td><input type="text" name="subtotal" readonly></td>
+                <td><button class="delete-btn" onclick="eliminarFila(this)">Eliminar</button></td>
+            `;
+    }
+
+    async function eliminarFila(button) {
+        if(await questionMessage('⚠️ Eliminar producto ⚠️','¿Deseas eliminar este producto?')){
+            const row = button.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+            calcularTotalGeneral();
+        }
+    }
+
+    function calcularSubtotal(input) {
+        const row = input.parentNode.parentNode;
+        const cantidad = parseFloat(row.querySelector('input[name="cantidad"]').value) || 0;
+        const precio_unitario = parseFloat(row.querySelector('input[name="precio_unitario"]').value) || 0;
+        const impuestos = parseFloat(row.querySelector('input[name="impuestos"]').value) || 0;
+        const descuento = parseFloat(row.querySelector('input[name="descuento"]').value) || 0;
+
+        const subtotal = (cantidad * precio_unitario) + impuestos - (cantidad * precio_unitario * descuento / 100);
+        row.querySelector('input[name="subtotal"]').value = subtotal.toFixed(2);
+
+        calcularTotalGeneral();
+    }
+
+    function calcularTotalGeneral() {
+        const subtotales = document.querySelectorAll('input[name="subtotal"]');
+        let totalGeneral = 0;
+        subtotales.forEach(subtotal => {
+            totalGeneral += parseFloat(subtotal.value) || 0;
+        });
+        document.getElementById('total-general').value = totalGeneral.toFixed(2);
+    }
+</script>

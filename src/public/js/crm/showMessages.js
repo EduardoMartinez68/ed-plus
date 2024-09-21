@@ -503,8 +503,6 @@ async function show_edit_appointment_crm(idCompany,idBranch,idProspects,idAppoin
     });
 }
 
-
-
 async function delete_appointment(id_company,id_branch,id_appointment){
     if(await questionMessage('😰 Eliminar cita','¿Deseas eliminar esta reunión con este cliente?')){
         const thisIsCRM=document.getElementById('thisIsTheCrm')

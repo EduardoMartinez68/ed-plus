@@ -187,4 +187,14 @@ router.get('/:id_company/:id_branch/:id_appointment/delete-appointment-crm', isL
     res.redirect(`/links/${id_company}/${id_branch}/CRM`);
 })
 
+
+router.get('/:id_company/:id_branch/:id_prospect/create-invoice-crm', isLoggedIn, async (req, res) => {
+    const { id_company, id_branch , id_prospect} = req.params;
+    const branchFree = await get_data_branch(id_branch);
+    const dataProspect=await get_data_of_a_prospect_with_his_id(id_prospect)
+    res.render('links/branch/CRM/createInvoice',{branchFree, dataProspect});
+})
+
+
+
 module.exports = router;
