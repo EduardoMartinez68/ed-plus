@@ -1,0 +1,66 @@
+<div class="row">
+<!-- Columna 1 -->
+<div class="col-md-6">
+    <div class="mb-3">
+        <label for="cliente" class="form-label">Cliente</label>
+        <input type="text" class="form-control" id="cliente" placeholder="Nombre del cliente" value="{{name}}">
+    </div>
+    <div class="mb-3">
+        <label for="direccion" class="form-label">Dirección</label>
+        <input type="text" class="form-control" id="direccion" placeholder="Dirección del cliente" value="{{address}}">
+    </div>
+    <div class="mb-3">
+        <label for="direccion-entrega" class="form-label">Dirección de Entrega</label>
+        <input type="text" class="form-control" id="direccion-entrega" placeholder="Dirección de entrega">
+    </div>
+</div>
+
+<!-- Columna 2 -->
+<div class="col-md-6">
+    <div class="row">
+        <div class="col">
+            <div class="mb-3">
+                <label for="expiracion" class="form-label">Expiración</label>
+                <input type="date" class="form-control" id="expiracion">
+            </div>
+        </div>
+        <div class="col">
+            <div class="mb-3">
+                <label for="fecha-cotizacion" class="form-label">Fecha de Cotización</label>
+                <input type="date" class="form-control" id="fecha-cotizacion">
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col">
+            <div class="mb-3">
+                <label for="tarifa" class="form-label">Tarifa</label>
+                <select class="form-select" id="tarifa" required>
+                    <option selected>Seleccione moneda</option>
+                    <option value="mxn">Moneda Mexicana (MXN)</option>
+                    <option value="usd">Dólar Estadounidense (USD)</option>
+                </select>
+            </div>
+        </div>
+        <div class="col">
+            <div class="mb-3">
+                <label for="plazo-pago" class="form-label">Plazo de Pago</label>
+                <select class="form-select" id="plazo-pago" required>
+                    <option selected>Seleccione plazo</option>
+                    <option value="pago-de-inmediato">Pago inmediato</option>
+                    <option value="por-dia">7 Días</option>
+                    <option value="por-dia">15 Días</option>
+                    <option value="semanal">21 Días</option>
+                    <option value="quincenal">30 Días</option>
+                    <option value="por-mes">45 Días</option>
+                    <option value="por-trimestre">2 meses</option>
+                    <option value="por-trimestre">6 meses</option>
+                    <option value="por-trimestre">12 meses</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+</div>

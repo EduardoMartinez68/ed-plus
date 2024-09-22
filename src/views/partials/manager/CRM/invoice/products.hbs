@@ -1,0 +1,109 @@
+<table id="tabla-productos">
+<thead>
+    <tr>
+        <th>Producto</th>
+        <th>Descripción</th>
+        <th>Cantidad</th>
+        <th>UdM</th>
+        <th>Paquete</th>
+        <th>Precio Unitario</th>
+        <th>Impuestos</th>
+        <th>Descuento %</th>
+        <th>Subtotal</th>
+        <th>Acciones</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td><input type="text" name="producto" placeholder="Nombre del producto"></td>
+        <td><input type="text" name="descripcion" placeholder="Descripción"></td>
+        <td><input type="number" name="cantidad" oninput="calcularSubtotal(this)" placeholder="0"></td>
+        <td>
+            <select name="udm">
+                <option value="pieza">Pieza</option>
+                <option value="kilo">Kilo</option>
+                <option value="litro">Litro</option>
+            </select>
+        </td>
+        <td class="checkbox-center"><input type="checkbox" name="paquete"></td>
+        <td><input type="number" name="precio_unitario" step="0.01" oninput="calcularSubtotal(this)" placeholder="0.00">
+        </td>
+        <td><input type="number" name="impuestos" step="0.01" oninput="calcularSubtotal(this)" placeholder="0.00">
+        </td>
+        <td><input type="number" name="descuento" step="0.01" oninput="calcularSubtotal(this)" placeholder="0.00">
+        </td>
+        <td><input type="text" name="subtotal" readonly></td>
+        <td><button class="button-form delete-btn" onclick="eliminarFila(this)">🗑️</button></td>
+    </tr>
+</tbody>
+<tfoot>
+    <tr class="total-row">
+        <td colspan="8" class="total-label">Total General:</td>
+        <td><input type="text" id="total-general" readonly value="0.00"></td>
+        <td></td>
+    </tr>
+</tfoot>
+</table>
+<div class="controls">
+    <button onclick="agregarFila()" class="button-form">Agregar Producto</button>
+</div>
+
+
+
+<script>
+    function agregarFila() {
+        const table = document.getElementById('tabla-productos').getElementsByTagName('tbody')[0];
+        const newRow = table.insertRow();
+        newRow.innerHTML = `
+                <td><input type="text" name="producto" placeholder="Nombre del producto"></td>
+                <td><input type="text" name="descripcion" placeholder="Descripción"></td>
+                <td><input type="number" name="cantidad" oninput="calcularSubtotal(this)" placeholder="0"></td>
+                <td>
+                    <select name="udm">
+                        <option value="pieza">Pieza</option>
+                        <option value="kilo">Kilo</option>
+                        <option value="litro">Litro</option>
+                    </select>
+                </td>
+                <td class="checkbox-center"><input type="checkbox" name="paquete"></td>
+                <td><input type="number" name="precio_unitario" step="0.01" oninput="calcularSubtotal(this)" placeholder="0.00"></td>
+                <td><input type="number" name="impuestos" step="0.01" oninput="calcularSubtotal(this)" placeholder="0.00"></td>
+                <td><input type="number" name="descuento" step="0.01" oninput="calcularSubtotal(this)" placeholder="0.00"></td>
+                <td><input type="text" name="subtotal" readonly></td>
+                <td><button class="button-form delete-btn" onclick="eliminarFila(this)">🗑️</button></td>
+            `;
+    }
+
+    async function eliminarFila(button) {
+        if(await questionMessage('⚠️ Eliminar producto ⚠️','¿Deseas eliminar este producto?')){
+            const row = button.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+            calcularTotalGeneral();
+        }
+    }
+
+    function calcularSubtotal(input) {
+        const row = input.parentNode.parentNode;
+        const cantidad = parseFloat(row.querySelector('input[name="cantidad"]').value) || 0;
+        const precio_unitario = parseFloat(row.querySelector('input[name="precio_unitario"]').value) || 0;
+        const impuestos = parseFloat(row.querySelector('input[name="impuestos"]').value) || 0;
+        const descuento = parseFloat(row.querySelector('input[name="descuento"]').value) || 0;
+        const pricesTaxes=((impuestos*precio_unitario)/100)
+        const newPrices=precio_unitario+pricesTaxes;
+        const subtotal = (cantidad * newPrices) - (cantidad * newPrices * descuento / 100);
+        row.querySelector('input[name="subtotal"]').value = subtotal.toFixed(2);
+
+        calcularTotalGeneral();
+        600==100
+        x==15
+    }
+
+    function calcularTotalGeneral() {
+        const subtotales = document.querySelectorAll('input[name="subtotal"]');
+        let totalGeneral = 0;
+        subtotales.forEach(subtotal => {
+            totalGeneral += parseFloat(subtotal.value) || 0;
+        });
+        document.getElementById('total-general').value = totalGeneral.toFixed(2);
+    }
+</script>
