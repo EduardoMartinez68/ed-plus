@@ -462,14 +462,13 @@ router.get('/:id_company/:id_branch/:id_app/table', isLoggedIn, async (req, res)
 router.get('/:id_company/:id_branch/:id_app/edit-form-app', isLoggedIn, async (req, res) => {
     const { id_app, id_company, id_branch } = req.params;
     const branchFree = await get_data_branch(id_branch);
-    const apps=await get_all_apps_of_this_company(id_company,id_branch)
-    res.render("links/apps/editForm",{branchFree,apps});
+    const dataTable=await get_the_data_of_the_table_of_my_app(id_company, id_branch, id_app)
+    res.render("links/apps/editForm",{branchFree,dataTable});
 });
 
 router.get('/:id_company/:id_branch/:id_app/edit-app', isLoggedIn, async (req, res) => {
     const { id_app, id_company, id_branch } = req.params;
     const branchFree = await get_data_branch(id_branch);
-    const apps=await get_all_apps_of_this_company(id_company,id_branch)
 
     const dataTable=await get_the_data_of_the_table_of_my_app(id_company, id_branch, id_app)
     const code=await get_code_table_of_my_app(id_company, id_branch, id_app)
@@ -480,13 +479,13 @@ router.get('/:id_company/:id_branch/:id_app/edit-app', isLoggedIn, async (req, r
         {{/each}}
     `
     const template = hbs.compile(code1);
-    const data = {branchFree,apps, dataTable};
+    const data = {branchFree, dataTable};
     const html = template(data);
 
     //res.send(html);
     //-------------
     // Renderiza la vista
-    const renderedView = res.render('links/apps/main', {branchFree,apps, dataTable}, (err, html) => {
+    const renderedView = res.render('links/apps/main', {branchFree, dataTable}, (err, html) => {
         if (err) {
             console.error(err);
             return res.status(500).send("Error rendering view");

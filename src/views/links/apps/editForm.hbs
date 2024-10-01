@@ -27,7 +27,6 @@
 </style>
 <br>
 
-
 <!-- Contenedor Principal -->
 <div class="container my-4">
     <label for=""><i class="fi-icon fi-ss-paint"></i> Editor de formulario</label>
@@ -43,6 +42,9 @@
             <button class="btn btn-edit mt-3" data-bs-toggle="modal" data-bs-target="#addFieldModal">
                 Agregar Campo
             </button>
+            <button class="btn btn-secondary mt-3" data-bs-toggle="modal" data-bs-target="#configureSubmitModal">
+                <i class="fas fa-cog"></i> Configurar Botón de Enviar
+            </button>
         </div>
         <!-- Sección de Vista Previa -->
         <div class="col-md-6">
@@ -53,9 +55,7 @@
                     <p class="text-muted">Aún no has agregado campos al formulario.</p>
                 </form>
             </div>
-            <button class="btn btn-secondary mt-3" data-bs-toggle="modal" data-bs-target="#configureSubmitModal">
-                <i class="fas fa-cog"></i> Configurar Botón de Enviar
-            </button>
+            <button class="btn btn-success mt-3" type="submit">💾 Guardar formulario</button>
         </div>
     </div>
 </div>
@@ -78,6 +78,17 @@
                         <label for="fieldPlaceholder" class="form-label">Placeholder</label>
                         <input type="text" class="form-control" id="fieldPlaceholder" required>
                     </div>
+                    <!--with this we will get all the data of the form-->
+                    <div class="mb-3">
+                        <label for="fieldType" class="form-label">* Tipo de dato relacionado con la base de datos</label>
+                        <select name="" id="" required class="form-select">
+                            <option value="">Selecciona un valor de la base de datos</option>
+                            {{#each dataTable}}
+                                <option column_name="{{column_name}}" data_type="{{data_type}}" is_nullable="{{is_nullable}}" class="dataTable">{{column_name}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+
                     <div class="mb-3">
                         <label for="fieldType" class="form-label">Tipo de Input</label>
                         <select class="form-select" id="fieldType" required>
@@ -107,8 +118,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Agregar Campo</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-edit" data-bs-dismiss="modal">Agregar Campo</button>
                 </div>
             </form>
         </div>
@@ -153,10 +164,18 @@
                         <input type="number" class="form-control" id="editFieldMaxlength" min="1">
                         <small class="form-text text-muted">Deja en blanco para caracteres ilimitados.</small>
                     </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="editFieldRequired">
+                            <label class="form-check-label" for="editFieldRequired">
+                                Campo Obligatorio
+                            </label>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-edit">Guardar Cambios</button>
                 </div>
             </form>
         </div>
@@ -195,7 +214,7 @@
 
 <!-- Modal para Notificaciones -->
 <div id="notification" class="toast align-items-center text-bg-success border-0 position-fixed top-0 end-0 m-3"
-    role="alert" aria-live="assertive" aria-atomic="true">
+    role="alert" aria-live="assertive" aria-atomic="true" style="z-index: 1000;">
     <div class="d-flex">
         <div class="toast-body" id="notificationMessage">
             ¡Operación exitosa!
@@ -205,207 +224,8 @@
     </div>
 </div>
 
-<!-- Bootstrap JS y Dependencias -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<!-- JavaScript para Manejar el Editor de Formularios -->
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const addFieldForm = document.getElementById('addFieldForm');
-        const editFieldForm = document.getElementById('editFieldForm');
-        const configureSubmitForm = document.getElementById('configureSubmitForm');
-        const fieldsContainer = document.getElementById('fieldsContainer');
-        const formPreview = document.getElementById('formPreview').querySelector('form');
-        const notificationElement = document.getElementById('notification');
-        const notificationMessage = document.getElementById('notificationMessage');
-        let fields = [];
-        let editFieldIndex = null;
-
-        // Inicializar Bootstrap Toast para notificaciones
-        const toast = new bootstrap.Toast(notificationElement, { delay: 3000 });
-        
-        // Función para renderizar los campos en el editor y la vista previa
-        const renderFields = () => {
-            fieldsContainer.innerHTML = '';
-            formPreview.innerHTML = '';
-
-            if (fields.length === 0) {
-                fieldsContainer.innerHTML = '<p class="text-muted">No has agregado ningún campo.</p>';
-                formPreview.innerHTML = '<p class="text-muted">Aún no has agregado campos al formulario.</p>';
-                return;
-            }
-
-            fields.forEach((field, index) => {
-                // Render en el Editor
-                const fieldDiv = document.createElement('div');
-                fieldDiv.className = 'form-field';
-                fieldDiv.innerHTML = `
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <strong>${field.label}</strong> (${field.type})
-                                <p class="mb-0"><em>Placeholder:</em> "${field.placeholder}"${field.type === 'text' && field.maxlength ? `, <em>Máximo:</em> ${field.maxlength}` : ''}</p>
-                            </div>
-                            <div>
-                                <button class="btn btn-sm btn-primary me-2 edit-btn" data-index="${index}">✏️</button>
-                                <button class="btn btn-sm btn-danger delete-btn" data-index="${index}">🗑️</button>
-                            </div>
-                        </div>
-                    `;
-                fieldsContainer.appendChild(fieldDiv);
-
-                // Render en la Vista Previa
-                const previewField = document.createElement('div');
-                previewField.className = 'mb-3';
-                previewField.innerHTML = `
-                        <label class="form-label">${field.label}</label>
-                        <input type="${field.type}" class="form-control" placeholder="${field.placeholder}" ${field.type === 'text' && field.maxlength ? `maxlength="${field.maxlength}"` : ''} disabled>
-                    `;
-                formPreview.appendChild(previewField);
-            });
-
-            // Añadir el botón de enviar al final del formulario
-            if (submitButton) {
-                const submitButtonElement = document.createElement('button');
-                submitButtonElement.type = 'submit';
-                submitButtonElement.className = 'btn';
-                submitButtonElement.style.backgroundColor = submitButton.color;
-                submitButtonElement.style.color = '#fff';
-                submitButtonElement.innerHTML = submitButton.text;
-                formPreview.appendChild(submitButtonElement);
-            }
-        };
-
-        // Manejar la adición de un nuevo campo
-        addFieldForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const label = document.getElementById('fieldLabel').value.trim();
-            const placeholder = document.getElementById('fieldPlaceholder').value.trim();
-            const type = document.getElementById('fieldType').value;
-            const maxlengthInput = document.getElementById('fieldMaxlength').value.trim();
-            const maxlength = type === 'text' && maxlengthInput ? parseInt(maxlengthInput) : null;
-
-            if (label === '' || placeholder === '' || type === '') {
-                showNotification('Por favor, completa todos los campos obligatorios.', 'danger');
-                return;
-            }
-
-            fields.push({ label, placeholder, type, maxlength });
-            addFieldForm.reset();
-            document.getElementById('maxlengthContainer').classList.add('d-none');
-            renderFields();
-            const addFieldModal = bootstrap.Modal.getInstance(document.getElementById('addFieldModal'));
-            addFieldModal.hide();
-            notificationMessage('Campo agregado correctamente ❤️','El campo fue agregado correctamente. Sigue mejorando tu formulario');
-        });
-
-        // Mostrar u ocultar el campo de maxlength basado en el tipo seleccionado (Agregar)
-        document.getElementById('fieldType').addEventListener('change', (e) => {
-            const selectedType = e.target.value;
-            const maxlengthContainer = document.getElementById('maxlengthContainer');
-            if (selectedType === 'text') {
-                maxlengthContainer.classList.remove('d-none');
-                document.getElementById('fieldMaxlength').required = false;
-            } else {
-                maxlengthContainer.classList.add('d-none');
-                document.getElementById('fieldMaxlength').required = false;
-            }
-        });
-
-        // Manejar la edición de un campo
-        editFieldForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const label = document.getElementById('editFieldLabel').value.trim();
-            const placeholder = document.getElementById('editFieldPlaceholder').value.trim();
-            const type = document.getElementById('editFieldType').value;
-            const maxlengthInput = document.getElementById('editFieldMaxlength').value.trim();
-            const maxlength = type === 'text' && maxlengthInput ? parseInt(maxlengthInput) : null;
-
-            if (label === '' || placeholder === '' || type === '') {
-                infoMessage('Error 👁️','Por favor, completa todos los campos obligatorios.');
-                return;
-            }
-
-            fields[editFieldIndex] = { label, placeholder, type, maxlength };
-            editFieldForm.reset();
-            document.getElementById('editMaxlengthContainer').classList.add('d-none');
-            renderFields();
-            const editFieldModal = bootstrap.Modal.getInstance(document.getElementById('editFieldModal'));
-            editFieldModal.hide();
-            notificationMessage('Campo editado correctamente 😉','Tu formulario fue actualizado con exito');
-        });
-
-        // Mostrar u ocultar el campo de maxlength basado en el tipo seleccionado (Editar)
-        document.getElementById('editFieldType').addEventListener('change', (e) => {
-            const selectedType = e.target.value;
-            const maxlengthContainer = document.getElementById('editMaxlengthContainer');
-            if (selectedType === 'text') {
-                maxlengthContainer.classList.remove('d-none');
-                document.getElementById('editFieldMaxlength').required = false;
-            } else {
-                maxlengthContainer.classList.add('d-none');
-                document.getElementById('editFieldMaxlength').required = false;
-            }
-        });
-
-        // Delegar eventos para botones de editar y eliminar
-        fieldsContainer.addEventListener('click', async(e) => {
-            if (e.target.closest('.edit-btn')) {
-                const index = e.target.closest('.edit-btn').getAttribute('data-index');
-                editFieldIndex = index;
-                const field = fields[index];
-                document.getElementById('editFieldLabel').value = field.label;
-                document.getElementById('editFieldPlaceholder').value = field.placeholder;
-                document.getElementById('editFieldType').value = field.type;
-                if (field.type === 'text' && field.maxlength) {
-                    document.getElementById('editFieldMaxlength').value = field.maxlength;
-                    document.getElementById('editMaxlengthContainer').classList.remove('d-none');
-                } else {
-                    document.getElementById('editFieldMaxlength').value = '';
-                    document.getElementById('editMaxlengthContainer').classList.add('d-none');
-                }
-                const editFieldModal = new bootstrap.Modal(document.getElementById('editFieldModal'));
-                editFieldModal.show();
-            }
-
-            if (e.target.closest('.delete-btn')) {
-                const index = e.target.closest('.delete-btn').getAttribute('data-index');
-                if (await questionMessage('⚠️Eliminar campo⚠️','¿Estás seguro de que deseas eliminar este campo?')) {
-                    fields.splice(index, 1);
-                    renderFields();
-                    notificationMessage('Campo eliminado correctamente 😉','Tu formulario fue actualizado');
-                }
-            }
-        });
-
-        // Configuración del Botón de Enviar
-        let submitButton = {
-            text: 'Enviar',
-            color: '#0d6efd' // Color Bootstrap primary por defecto
-        };
-
-        // Manejar la configuración del botón de enviar
-        configureSubmitForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const text = document.getElementById('submitButtonText').value.trim();
-            const color = document.getElementById('submitButtonColor').value;
-
-            if (text === '') {
-                showNotification('Por favor, ingresa el texto del botón.', 'danger');
-                return;
-            }
-
-            submitButton = { text, color };
-            renderFields();
-            configureSubmitForm.reset();
-            const configureSubmitModal = bootstrap.Modal.getInstance(document.getElementById('configureSubmitModal'));
-            configureSubmitModal.hide();
-            notificationMessage('Boton editado correctamente 😉','Tu formulario fue actualizado');
-        });
-
-        // Inicializar Vista Previa con Botón de Enviar por Defecto
-        renderFields();
-
-    });
-</script>
+<!-- JavaScript para Manejar el Editor de Formularios-->
+<script src="/js/app/editForm.js"></script>
 
 
 
