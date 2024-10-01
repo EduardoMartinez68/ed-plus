@@ -47,6 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <strong>${field.label}</strong> (${field.type})${field.required ? '<span class="required-asterisk">*</span>' : ''}
                             <p class="mb-0"><em>Placeholder:</em> "${field.placeholder}"${field.type === 'text' && field.maxlength ? `, <em>Máximo:</em> ${field.maxlength}` : ''}</p>
                             <p class="mb-0"><em>Obligatorio:</em> ${field.required ? 'Sí' : 'No'}</p>
+                            <p class="mb-0"><em>Relacion con la base de datos: </em> ${field.relationToTheDatabase}</p>
                         </div>
                         <div>
                             <button class="btn btn-sm btn-edit me-2 edit-btn" data-index="${index}" title="Editar Campo">✏️</button>
@@ -88,13 +89,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const maxlengthInput = document.getElementById('fieldMaxlength').value.trim();
             const maxlength = type === 'text' && maxlengthInput ? parseInt(maxlengthInput) : null;
             const required = document.getElementById('fieldRequired').checked;
-
-            if (label === '' || placeholder === '' || type === '') {
+            const relationToTheDatabase=document.getElementById('typeDataOfDatabaseAdd').value;
+            if (label === '' || type === '') {
                 showNotification('Por favor, completa todos los campos obligatorios.', 'danger');
                 return;
             }
 
-            fields.push({ label, placeholder, type, maxlength, required });
+            fields.push({ label, placeholder, type, maxlength, required , relationToTheDatabase});
             addFieldForm.reset();
             document.getElementById('maxlengthContainer').classList.add('d-none');
             renderFields();
@@ -125,17 +126,19 @@ document.addEventListener('DOMContentLoaded', () => {
             const maxlengthInput = document.getElementById('editFieldMaxlength').value.trim();
             const maxlength = type === 'text' && maxlengthInput ? parseInt(maxlengthInput) : null;
             const required = document.getElementById('editFieldRequired').checked;
+            const relationToTheDatabase=document.getElementById('typeDataOfDatabaseEdit').value;
 
-            if (label === '' || placeholder === '' || type === '') {
+            if (label === '' || type === '') {
                 showNotification('Por favor, completa todos los campos obligatorios.', 'danger');
                 return;
             }
 
-            fields[editFieldIndex] = { label, placeholder, type, maxlength, required };
+            fields[editFieldIndex] = { label, placeholder, type, maxlength, required, relationToTheDatabase };
             editFieldForm.reset();
             document.getElementById('editMaxlengthContainer').classList.add('d-none');
             renderFields();
             const editFieldModal = bootstrap.Modal.getInstance(document.getElementById('editFieldModal'));
+            
             editFieldModal.hide();
             showNotification('Campo editado correctamente 😉', 'success');
         });
@@ -163,6 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('editFieldPlaceholder').value = field.placeholder;
                 document.getElementById('editFieldType').value = field.type;
                 document.getElementById('editFieldRequired').checked = field.required;
+
                 if (field.type === 'text' && field.maxlength) {
                     document.getElementById('editFieldMaxlength').value = field.maxlength;
                     document.getElementById('editMaxlengthContainer').classList.remove('d-none');
@@ -170,6 +174,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     document.getElementById('editFieldMaxlength').value = '';
                     document.getElementById('editMaxlengthContainer').classList.add('d-none');
                 }
+
+                document.getElementById('typeDataOfDatabaseEdit').value =field.relationToTheDatabase;
+
+
                 const editFieldModal = new bootstrap.Modal(document.getElementById('editFieldModal'));
                 editFieldModal.show();
             }

@@ -71,7 +71,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="fieldLabel" class="form-label">Etiqueta (Label)</label>
+                        <label for="fieldLabel" class="form-label">* Etiqueta (Label)</label>
                         <input type="text" class="form-control" id="fieldLabel" required>
                     </div>
                     <div class="mb-3">
@@ -81,16 +81,16 @@
                     <!--with this we will get all the data of the form-->
                     <div class="mb-3">
                         <label for="fieldType" class="form-label">* Tipo de dato relacionado con la base de datos</label>
-                        <select name="" id="" required class="form-select">
+                        <select name="" id="typeDataOfDatabaseAdd" required class="form-select">
                             <option value="">Selecciona un valor de la base de datos</option>
                             {{#each dataTable}}
-                                <option column_name="{{column_name}}" data_type="{{data_type}}" is_nullable="{{is_nullable}}" class="dataTable">{{column_name}}</option>
+                                <option column_name="{{column_name}}" data_type="{{data_type}}" is_nullable="{{is_nullable}}" class="dataTable" value="{{column_name}}">{{column_name}}</option>
                             {{/each}}
                         </select>
                     </div>
 
                     <div class="mb-3">
-                        <label for="fieldType" class="form-label">Tipo de Input</label>
+                        <label for="fieldType" class="form-label">* Tipo de Input</label>
                         <select class="form-select" id="fieldType" required>
                             <option value="">Selecciona un tipo</option>
                             <option value="text">Texto</option>
@@ -138,15 +138,25 @@
                 <div class="modal-body">
                     <input type="hidden" id="editFieldId">
                     <div class="mb-3">
-                        <label for="editFieldLabel" class="form-label">Etiqueta (Label)</label>
+                        <label for="editFieldLabel" class="form-label">* Etiqueta (Label)</label>
                         <input type="text" class="form-control" id="editFieldLabel" required>
                     </div>
                     <div class="mb-3">
                         <label for="editFieldPlaceholder" class="form-label">Placeholder</label>
                         <input type="text" class="form-control" id="editFieldPlaceholder" required>
                     </div>
+                    <!--with this we will get all the data of the form-->
                     <div class="mb-3">
-                        <label for="editFieldType" class="form-label">Tipo de Input</label>
+                        <label for="fieldType" class="form-label">* Tipo de dato relacionado con la base de datos</label>
+                        <select name="" id="typeDataOfDatabaseEdit" required class="form-select">
+                            <option value="">Selecciona un valor de la base de datos</option>
+                            {{#each dataTable}}
+                                <option column_name="{{column_name}}" data_type="{{data_type}}" is_nullable="{{is_nullable}}" class="dataTable" value="{{column_name}}">{{column_name}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editFieldType" class="form-label">* Tipo de Input</label>
                         <select class="form-select" id="editFieldType" required>
                             <option value="">Selecciona un tipo</option>
                             <option value="text">Texto</option>
