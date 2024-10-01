@@ -459,6 +459,13 @@ router.get('/:id_company/:id_branch/:id_app/table', isLoggedIn, async (req, res)
     res.render("links/apps/tableApp",{branchFree,apps, characterApp, items, dataTableMyApp});
 });
 
+router.get('/:id_company/:id_branch/:id_app/edit-form-app', isLoggedIn, async (req, res) => {
+    const { id_app, id_company, id_branch } = req.params;
+    const branchFree = await get_data_branch(id_branch);
+    const apps=await get_all_apps_of_this_company(id_company,id_branch)
+    res.render("links/apps/editForm",{branchFree,apps});
+});
+
 router.get('/:id_company/:id_branch/:id_app/edit-app', isLoggedIn, async (req, res) => {
     const { id_app, id_company, id_branch } = req.params;
     const branchFree = await get_data_branch(id_branch);

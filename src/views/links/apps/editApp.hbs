@@ -1,21 +1,23 @@
-<br><br><br>
 <div class="container">
     <div class="card">
         <div class="card-body">
             {{#each dataApp}}
             <form action="/{{id_company}}/{{id_branch}}/app/{{id}}/add" method="post">
-            <label for=""><i class="fi-icon fi-sr-square-code"></i> Agregar un nuevo dato a la tabla de {{name}}</label>
-            <hr>
-            {{/each}}
+                <label for=""><i class="fi-icon fi-sr-square-code"></i> Agregar un nuevo dato a la tabla de
+                    {{name}}</label>
+                <hr>
+                {{/each}}
                 {{#each dataTable}}
-                    <div class="form-group">
-                        <label for="">{{column_name}}</label>
-                        {{#if is_nullable}}
-                            <input type="{{data_type}}" name="{{column_name}}" class="form-control" placeholder="{{column_name}}" required>
-                        {{else}}
-                            <input type="{{data_type}}" name="{{column_name}}" class="form-control" placeholder="{{column_name}}">
-                        {{/if }}
-                    </div>
+                <div class="form-group">
+                    <label for="">{{column_name}}</label>
+                    {{#if is_nullable}}
+                    <input type="{{data_type}}" name="{{column_name}}" class="form-control"
+                        placeholder="{{column_name}}" required>
+                    {{else}}
+                    <input type="{{data_type}}" name="{{column_name}}" class="form-control"
+                        placeholder="{{column_name}}">
+                    {{/if }}
+                </div>
                 {{/each}}
                 <br><br>
                 <button class="btn btn-success">Guardar</button>

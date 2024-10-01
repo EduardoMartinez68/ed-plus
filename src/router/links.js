@@ -502,7 +502,7 @@ router.get('/point-sales', isLoggedIn, async (req, res) => {
     const id_branch = data.id_branches
     const id_employee = data.id
     const id_role = data.id_roles_employees
-    const link = `/fud/${id_user}/${id_company}/${id_branch}/${id_employee}/${id_role}/store-home`;
+    const link = `/links/${id_user}/${id_company}/${id_branch}/${id_employee}/${id_role}/store-home`;
     res.redirect(link);
 });
 
