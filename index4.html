@@ -5,11 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Planes de Membresía</title>
     <style>
+        /* Reset de Estilos */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
+            color: #333;
         }
 
         .container {
@@ -22,21 +28,24 @@
         h1 {
             color: #4356FE;
             margin-bottom: 20px;
+            font-size: 2.5em;
         }
 
-        /* Switch Button */
+        /* Switch Container */
         .switch-container {
             display: flex;
             align-items: center;
             justify-content: center;
             margin-bottom: 40px;
+            gap: 10px;
         }
 
         .switch-label {
-            margin-right: 10px;
             font-weight: bold;
+            color: #555;
         }
 
+        /* Switch Styling */
         .switch {
             position: relative;
             display: inline-block;
@@ -79,9 +88,9 @@
         }
 
         .discount-label {
-            margin-left: 15px;
             color: #4356FE;
             font-weight: bold;
+            font-size: 1em;
         }
 
         /* Pricing Cards */
@@ -98,12 +107,15 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             padding: 20px;
             width: 280px;
-            position: relative;
-            transition: transform 0.3s;
+            display: flex;
+            flex-direction: column;
+            position: relative; /* Añadido para posicionar el pseudo-elemento correctamente */
+            transition: transform 0.3s, box-shadow 0.3s;
         }
 
         .card:hover {
             transform: translateY(-10px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
         }
 
         .highlight {
@@ -121,6 +133,8 @@
             padding: 5px 10px;
             border-radius: 5px;
             font-size: 12px;
+            /* Aseguramos que el pseudo-elemento no interfiera con otros elementos */
+            white-space: nowrap;
         }
 
         .package-name {
@@ -135,15 +149,29 @@
             color: #333;
         }
 
+        .price-year {
+            font-size: 1em;
+            color: #555;
+            margin-bottom: 10px;
+        }
+
         .old-price {
             text-decoration: line-through;
             color: #888;
             font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        .users {
+            font-weight: bold;
+            color: #4356FE;
+            margin-bottom: 10px;
         }
 
         .description {
             margin: 15px 0;
             color: #555;
+            flex-grow: 1; /* Para que la descripción ocupe el espacio disponible */
         }
 
         .features {
@@ -156,7 +184,7 @@
         }
 
         .features.expanded {
-            max-height: 1000px; /* Arbitrary large value to accommodate all features */
+            max-height: 1000px; /* Valor arbitrario para acomodar todas las características */
         }
 
         .features li {
@@ -166,7 +194,7 @@
         }
 
         .features li::before {
-            content: "✔️";
+            content: "✓";
             position: absolute;
             left: 0;
             color: #4356FE;
@@ -179,6 +207,7 @@
             cursor: pointer;
             font-weight: bold;
             margin-top: 10px;
+            align-self: flex-start; /* Alinear a la izquierda */
         }
 
         .btn-select {
@@ -190,10 +219,21 @@
             cursor: pointer;
             margin-top: 20px;
             transition: background-color 0.3s;
+            width: 100%;
         }
 
         .btn-select:hover {
             background-color: #3048c9;
+        }
+
+        @media (max-width: 1200px) {
+            .pricing-cards {
+                gap: 15px;
+            }
+
+            .card {
+                width: 45%; /* Ajuste para dos tarjetas por fila */
+            }
         }
 
         @media (max-width: 768px) {
@@ -201,15 +241,19 @@
                 flex-direction: column;
                 align-items: center;
             }
+
+            .card {
+                width: 90%;
+            }
         }
     </style>
 </head>
 <body>
-
     <div class="container">
         <h1>Nuestras Membresías</h1>
         <span class="discount-label">30% de descuento</span>
         <span class="switch-label">+ 1 usuario gratis</span>
+        <br><br>
         <div class="switch-container">
             <label class="switch">
                 <input type="checkbox" id="priceToggle">
@@ -234,15 +278,15 @@
                     features: [
                         "1 Empresa",
                         "1 Sucursal",
-                        "Todas las app de ED",
+                        "Todas las apps de ED",
                         "1 usuario gratis"
                     ]
                 },
                 {
                     name: "Negocios",
                     price: "$600/mes",
-                    users: "4",
                     oldPrice: "$729/mes",
+                    users: "4",
                     description: "Ideal para pequeñas y medianas empresas.",
                     features: [
                         "1 Empresa",
@@ -250,13 +294,14 @@
                         "1 paquete de apps de ED software",
                         "Soporte técnico 24/7",
                         "Reportes personalizados",
+                        "La app de ED studio",
                     ]
                 },
                 {
                     name: "Empresas",
                     price: "$1,000/mes",
-                    users: "5",
                     oldPrice: "$1,275/mes",
+                    users: "5",
                     description: "Solución completa para grandes empresas.",
                     features: [
                         "1 Empresa",
@@ -265,6 +310,7 @@
                         "Todos tus negocios en un mismo lugar",
                         "Soporte técnico 24/7",
                         "Reportes personalizados",
+                        "La app de ED studio",
                         "Automatizaciones",
                         "Gestión de múltiples equipos",
                         "Tienda web gratis",
@@ -275,6 +321,7 @@
                     name: "Usuario Extra",
                     price: "$200/mes",
                     oldPrice: "$255/mes",
+                    users: "Extra",
                     description: "Añade usuarios adicionales a tu plan.",
                     features: [
                         "Añade un usuario extra a tu empresa",
@@ -294,7 +341,7 @@
                     features: [
                         "1 Empresa",
                         "1 Sucursal",
-                        "Todas las app de ED",
+                        "Todas las apps de ED",
                         "1 usuario gratis"
                     ]
                 },
@@ -312,6 +359,7 @@
                         "Todos tu negocio en un mismo lugar",
                         "Soporte técnico 24/7",
                         "Reportes personalizados",
+                        "La app de ED studio",
                     ]
                 },
                 {
@@ -328,6 +376,7 @@
                         "Todos tus negocios en un mismo lugar",
                         "Soporte técnico 24/7",
                         "Reportes personalizados",
+                        "La app de ED studio",
                         "Automatizaciones",
                         "Gestión de múltiples equipos",
                         "Tienda web gratis",
@@ -339,6 +388,7 @@
                     price: "$160/mes",
                     priceYear: "$1,920/año",
                     oldPrice: "$2,448/año",
+                    users: "Extra",
                     description: "Añade usuarios adicionales a tu plan.",
                     features: [
                         "Añade un usuario extra a tu empresa",
@@ -358,7 +408,7 @@
 
         function renderCards() {
             pricingCardsContainer.innerHTML = '';
-            pricingData[currentPricing].forEach((plan, index) => {
+            pricingData[currentPricing].forEach((plan) => {
                 // Crear tarjeta
                 const card = document.createElement('div');
                 card.classList.add('card');
@@ -377,13 +427,13 @@
                 price.classList.add('price');
                 price.textContent = plan.price;
                 card.appendChild(price);
-                
-                if(plan.priceYear){
+
+                // Precio anual si está disponible
+                if (currentPricing === 'anual' && plan.priceYear) {
                     const priceYear = document.createElement('div');
-                    priceYear.classList.add('description');
+                    priceYear.classList.add('price-year');
                     priceYear.textContent = plan.priceYear;
                     card.appendChild(priceYear);
-                    //card.appendChild(document.createElement('br'));
                 }
 
                 // Precio antiguo
@@ -394,11 +444,11 @@
                     card.appendChild(oldPrice);
                 }
 
-                // usuarios
+                // Usuarios
                 if (plan.users) {
                     const users = document.createElement('div');
-                    users.classList.add('toggle-btn');
-                    users.textContent = plan.users+' usuarios';
+                    users.classList.add('users');
+                    users.textContent = `${plan.users} usuario${plan.users !== "Extra" && plan.users !== "1" ? 's' : ''}`;
                     card.appendChild(users);
                 }
 
@@ -444,10 +494,10 @@
                 }
 
                 // Botón Seleccionar
-                card.appendChild(document.createElement('br'));
                 const selectBtn = document.createElement('button');
                 selectBtn.classList.add('btn-select');
                 selectBtn.textContent = 'Seleccionar';
+                // Aquí puedes agregar eventos al botón según tus necesidades
                 card.appendChild(selectBtn);
 
                 pricingCardsContainer.appendChild(card);
