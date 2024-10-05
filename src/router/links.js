@@ -47,6 +47,10 @@ async function get_country() {
 const companyName = 'links'
 
 //-------------------------------------------------------------------web-------------------------------------------
+router.get('/main', (req, res) => {
+    res.render(companyName + '/web/main'); //this web is for return your user
+})
+
 router.get('/identify', isNotLoggedIn, (req, res) => {
     res.render(companyName + '/web/identify'); //this web is for return your user
 })
