@@ -93,7 +93,7 @@
             <p>Calendario de contenido</p>
         </div>
         <div class="carousel-app-card">
-            <img src="https://cdn-icons-png.flaticon.com/512/2721/2721298.png" alt="App 3">
+            <img src="https://cdn-icons-png.flaticon.com/512/2721/2721298.png alt="App 3">
             <p>Objetivos</p>
         </div>
         <div class="carousel-app-card">
@@ -104,6 +104,7 @@
             <img src="https://cdn-icons-png.flaticon.com/512/7021/7021224.png" alt="App 5">
             <p>Inventario</p>
         </div>
+        <!-- Repetir los mismos ítems para efecto de bucle infinito -->
         <div class="carousel-app-card">
             <img src="https://cdn-icons-png.flaticon.com/256/13462/13462033.png" alt="App 1">
             <p>Producto</p>
@@ -197,10 +198,6 @@
             <p>Combos</p>
         </div>
         <div class="carousel-app-card">
-            <img src="https://cdn-icons-png.flaticon.com/512/7541/7541900.png" alt="App 5">
-            <p>Delivery</p>
-        </div>
-        <div class="carousel-app-card">
             <img src="https://cdn-icons-png.flaticon.com/512/1198/1198348.png" alt="App 5">
             <p>Franquicias</p>
         </div>
@@ -213,4 +210,3 @@
 
 <button class="carousel-button">Empezar ahora 💪</button>
 </center>
-<br><br>

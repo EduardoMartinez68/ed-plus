@@ -78,16 +78,16 @@
             <p>Ecommerce</p>
         </div>
         <div class="commercial-item">
-            <img src="https://cdn-icons-png.flaticon.com/512/9706/9706729.png" alt="Refaccionarias">
-            <p>Recursos Humanos</p>
+            <img src="https://cdn-icons-png.flaticon.com/512/7609/7609481.png" alt="Refaccionarias">
+            <p>Panaderia</p>
         </div>
         <div class="commercial-item">
             <img src="https://cdn-icons-png.flaticon.com/512/4472/4472550.png" alt="Boutique">
             <p>Escuelas</p>
         </div>
         <div class="commercial-item">
-            <img src="https://cdn-icons-png.flaticon.com/512/5706/5706401.png" alt="Mueblería">
-            <p>CRM</p>
+            <img src="https://cdn-icons-png.flaticon.com/512/403/403890.png" alt="Mueblería">
+            <p>Veterinarias</p>
         </div>
         <div class="commercial-item">
             <img src="https://cdn-icons-png.flaticon.com/512/5024/5024206.png" alt="Zapatería">
@@ -98,8 +98,8 @@
             <p>Inventarios</p>
         </div>
         <div class="commercial-item">
-            <img src="https://cdn-icons-png.flaticon.com/512/226/226974.png" alt="Más Giros">
-            <p>Más Negocios</p>
+            <img src="https://cdn-icons-png.flaticon.com/512/6879/6879686.png" alt="Más Giros">
+            <p>Supermercado</p>
         </div>
     </div>
 </div>
