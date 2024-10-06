@@ -437,6 +437,12 @@
                                 </div>
                             {{/each}}
                         {{/if}}
+                        {{#each branchFree}}
+                            <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/prices')">
+                                <img src="https://cdn-icons-png.flaticon.com/512/5560/5560586.png" alt="Editar Sucursal">
+                                <span>Membresias</span>
+                            </div>
+                        {{/each}}
                         {{#if user.settings}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/options')">

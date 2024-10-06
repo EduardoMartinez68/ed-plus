@@ -253,16 +253,18 @@
         const pricingData = {
             mensual: [
                 {
-                    name: "Gratis",
-                    price: "$0",
+                    name: "Personalizado",
+                    price: "💻😉🎨",
                     oldPrice: null,
-                    users: "1",
-                    description: "Acceso limitado a nuestras funciones básicas por TODO UN MES GRATIS.",
+                    users: "",
+                    description: "Obtén funciones exclusivas para tu organización",
                     features: [
-                        "1 Empresa",
-                        "1 Sucursal",
-                        "Todas las apps de ED",
-                        "1 usuario gratis"
+                        "Automatizaciones e integraciones de escala empresarial",
+                        "Distintos niveles de permisos",
+                        "Gobernanza y seguridad a nivel corporativo",
+                        "Análisis y generación de informes avanzados",
+                        "Soporte corporativo",
+                        "Crea un panel que combine 50 tableros"
                     ]
                 },
                 {
@@ -316,16 +318,18 @@
             ],
             anual: [
                 {
-                    name: "Gratis",
-                    price: "$0",
+                    name: "Personalizado",
+                    price: "💻😉🎨",
                     oldPrice: null,
-                    users: "1",
-                    description: "Acceso limitado a nuestras funciones básicas por TODO UN MES GRATIS.",
+                    users: "",
+                    description: "Obtén funciones exclusivas para tu organización",
                     features: [
-                        "1 Empresa",
-                        "1 Sucursal",
-                        "Todas las apps de ED",
-                        "1 usuario gratis"
+                        "Automatizaciones e integraciones de escala empresarial",
+                        "Distintos niveles de permisos",
+                        "Gobernanza y seguridad a nivel corporativo",
+                        "Análisis y generación de informes avanzados",
+                        "Soporte corporativo",
+                        "Crea un panel que combine 50 tableros"
                     ]
                 },
                 {
@@ -476,14 +480,25 @@
                     card.appendChild(toggleBtn);
                 }
 
-                // Botón Seleccionar
-                const selectBtn = document.createElement('button');
-                selectBtn.classList.add('web-price-btn-select');
-                selectBtn.textContent = 'Seleccionar';
-                // Aquí puedes agregar eventos al botón según tus necesidades
-                card.appendChild(selectBtn);
+                if (plan.name === "Personalizado") {
+                    // Botón Seleccionar
+                    const selectBtn = document.createElement('button');
+                    selectBtn.classList.add('web-price-btn-select');
+                    selectBtn.textContent = 'Comunicate con ventas';
+                    // Aquí puedes agregar eventos al botón según tus necesidades
+                    card.appendChild(selectBtn);
 
-                pricingCardsContainer.appendChild(card);
+                    pricingCardsContainer.appendChild(card);
+                }else{
+                    // Botón Seleccionar
+                    const selectBtn = document.createElement('button');
+                    selectBtn.classList.add('web-price-btn-select');
+                    selectBtn.textContent = 'Seleccionar';
+                    // Aquí puedes agregar eventos al botón según tus necesidades
+                    card.appendChild(selectBtn);
+
+                    pricingCardsContainer.appendChild(card);
+                }
             });
         }
 
