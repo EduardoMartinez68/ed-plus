@@ -132,7 +132,6 @@ router.get('/:id/:id_branch/products-free', isLoggedIn, async (req, res) => {
     }
 });
 
-
 //------------------------------------combo
 router.get('/:id/:id_branch/combos-free', isLoggedIn, async (req, res) => {
     const {id_branch } = req.params;
@@ -369,6 +368,17 @@ router.get('/:id_company/:id_branch/task-management', isLoggedIn, async (req, re
     const apps=await get_all_apps_of_this_company(id_company,id_branch)
     res.render("links/taskManagement/taskManagement",{branchFree, apps});
 });
+
+//------------------------------------projects
+router.get('/:id_company/:id_branch/projects', isLoggedIn, async (req, res) => {
+    const { id_company, id_branch } = req.params;
+    const branchFree = await get_data_branch(id_branch);
+    const apps=await get_all_apps_of_this_company(id_company,id_branch)
+    res.render("links/projects/projects",{branchFree, apps});
+});
+
+
+
 
 
 //------------------------------------ED STUDIOS 

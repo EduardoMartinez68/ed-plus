@@ -1,0 +1,187 @@
+<style>
+    .post {
+        background-color: #ffffff;
+        /* Color de fondo blanco para las publicaciones */
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+        /* Espacio entre publicaciones */
+        padding: 15px;
+        /* Espaciado interno */
+        position: relative;
+        /* Para posicionar el icono de actividad */
+    }
+
+    .post-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        /* Espacio debajo del encabezado */
+    }
+
+    .post-header img {
+        width: 40px;
+        /* Tamaño del avatar */
+        height: 40px;
+        border-radius: 50%;
+        /* Avatar circular */
+        margin-right: 10px;
+        /* Espacio entre avatar y texto */
+    }
+
+    .post-header h5 {
+        margin: 0;
+        /* Sin margen para el título */
+        font-size: 1.1rem;
+        /* Tamaño de fuente */
+    }
+
+    .post-content {
+        margin: 10px 0;
+        /* Espaciado alrededor del contenido */
+        font-size: 0.95rem;
+        /* Tamaño de fuente */
+    }
+
+    .post-image {
+        max-width: 100%;
+        /* Imagen responsive */
+        border-radius: 8px;
+        /* Bordes redondeados para la imagen */
+    }
+
+    .activity-icon {
+        position: absolute;
+        /* Icono de actividad en la esquina superior */
+        top: 10px;
+        right: 10px;
+        font-size: 24px;
+        /* Tamaño del icono */
+        color: #6c757d;
+        /* Color gris */
+    }
+        .form-container {
+            background-color: #ffffff; /* Color de fondo blanco para el formulario */
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px; /* Espaciado interno */
+            margin: 50px auto; /* Centrar el formulario en la página */
+        }
+
+        .form-control {
+            border-radius: 5px; /* Bordes redondeados para los campos */
+        }
+
+        .form-button {
+            background-color: var(--color-company); /* Color del botón */
+            color: white; /* Color del texto del botón */
+            border: none; /* Sin borde */
+            border-radius: 5px; /* Bordes redondeados */
+        }
+
+        .form-button:hover {
+            background-color: var(--color-hover); /* Color del botón al pasar el cursor */
+        }
+
+        .upload-btn-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            margin-top: 10px; /* Espacio arriba del botón de subir imagen */
+        }
+
+        .upload-btn-wrapper input[type="file"] {
+            font-size: 20px; /* Tamaño del input de archivo */
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0; /* Hacer invisible el input de archivo */
+            cursor: pointer; /* Cambiar el cursor al pasar sobre el botón */
+        }
+
+        .upload-btn {
+            background-color: #e2e8f0; /* Color de fondo para el botón de subir */
+            border: 1px solid #cbd5e0; /* Borde del botón de subir */
+            border-radius: 5px; /* Bordes redondeados */
+            padding: 10px 20px; /* Espaciado interno del botón */
+            cursor: pointer; /* Cambiar el cursor al pasar sobre el botón */
+            transition: background-color 0.2s; /* Transición suave */
+        }
+
+        .upload-btn:hover {
+            background-color: #cbd5e0; /* Color del botón de subir al pasar el cursor */
+        }
+</style>
+
+
+<div class="container my-5">
+    <label for="">Historial de Publicaciones</label>
+    <hr>
+    <!-- Publicación de Texto -->
+    <div class="post">
+        <div class="post-header">
+            <img src="https://via.placeholder.com/40" alt="Avatar">
+            <h5>Juan Pérez</h5>
+            <span class="activity-icon">📝</span> <!-- Icono de actividad -->
+        </div>
+        <div class="post-content">
+            Este es un texto de ejemplo para una publicación simple.
+        </div>
+    </div>
+
+    <!-- Publicación de Texto y Imagen -->
+    <div class="post">
+        <div class="post-header">
+            <img src="https://via.placeholder.com/40" alt="Avatar">
+            <h5>María López</h5>
+            <span class="activity-icon">🖼️</span> <!-- Icono de actividad -->
+        </div>
+        <div class="post-content">
+            Aquí hay un texto que acompaña a la imagen.
+        </div>
+        <img class="post-image" src="https://via.placeholder.com/400x200" alt="Imagen de la publicación">
+    </div>
+
+    <!-- Publicación de Actividad -->
+    <div class="post">
+        <div class="post-header">
+            <img src="https://via.placeholder.com/40" alt="Avatar">
+            <h5>Carlos Ruiz</h5>
+            <span class="activity-icon">✅</span> <!-- Icono de actividad -->
+        </div>
+        <div class="post-content">
+            Carlos completó la tarea de diseño.
+        </div>
+    </div>
+
+
+        <div class="form-container">
+            <form id="publicationForm">
+                <!-- Campo de texto para la publicación -->
+                <div class="mb-3">
+                    <label for="postText" class="form-label">Escribe tu publicación:</label>
+                    <textarea class="form-control" id="postText" rows="3" placeholder="Escribe algo..."></textarea>
+                </div>
+
+                <!-- Campo para subir imagen
+                <div class="mb-3">
+                    <label class="form-label">Sube una imagen:</label>
+                    <div class="upload-btn-wrapper">
+                        <button class="upload-btn">Seleccionar imagen</button>
+                        <input type="file" name="image" accept="image/*" />
+                    </div>
+                </div>
+                -->
+
+                <!-- Botón de publicar -->
+                <div class="text-right">
+                    <button type="submit" class="btn form-button">Publicar</button>
+                </div>
+            </form>
+        </div>
+        <br><br>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>

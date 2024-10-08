@@ -1,0 +1,19 @@
+<div class="container">
+<div class="btn-group">
+    <button class="btn-select btn-active" onclick="showSection('select-1', this)" type="button">Publicaciones</button>
+    <button class="btn-select" onclick="showSection('select-2', this)" type="button">Archivos</button>
+    <button class="btn-select" onclick="showSection('select-3', this)" type="button">Actividades</button>
+</div>
+
+
+<div id="select-1" class="content-section active">
+    {{>teams/Publications}}
+</div>
+<div id="select-2" class="content-section">
+    {{>manager/CRM/formCustomer3}}
+</div>
+<div id="select-3" class="content-section">
+    {{>manager/CRM/formCustomer2}}
+</div>
+    
+</div>
