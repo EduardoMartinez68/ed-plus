@@ -611,6 +611,14 @@ router.get('/:id_company/:id_branch/:id_app/edit-app', isLoggedIn, async (req, r
     //res.render("links/apps/editApp",{branchFree,apps, dataTable});
 });
 
+router.get('/:id_company/:id_branch/ed-studios/create-app', isLoggedIn, async (req, res) => {
+    const { id_company, id_branch } = req.params;
+    const branchFree = await get_data_branch(id_branch);
+    const apps=await get_all_apps_of_this_company(id_company,id_branch)
+    res.render('links/apps/createApp', { branchFree, apps});
+})
+
+
 router.get('/:id_company/:id_branch/ed-studios/create-database', isLoggedIn, async (req, res) => {
     const { id_company, id_branch } = req.params;
     const branchFree = await get_data_branch(id_branch);
