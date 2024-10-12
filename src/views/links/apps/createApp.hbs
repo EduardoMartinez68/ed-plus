@@ -307,8 +307,11 @@
             <div class="ed-studio-progress-step" aria-label="Paso 2">2</div>
             <div class="ed-studio-progress-step" aria-label="Paso 3">3</div>
         </div>
-        <form id="appForm">
-            <!-- Paso 1: Nombre de la App -->
+
+        {{#each branchFree}}
+        <form id="appForm" method="post" action="/fud/{{id_companies}}/{{id}}/create-app">
+        {{/each}}
+            <!-- Paso 1: app name-->
             <div class="ed-studio-form-step active" id="step-1">
                 <div class="ed-studio-form-group">
                     <label for="appName">Nombre de la App</label>
@@ -319,7 +322,7 @@
                 </div>
             </div>
 
-            <!-- Paso 2: Selección del Tipo de App -->
+            <!-- Paso 2: select type app -->
             <div class="ed-studio-form-step" id="step-2">
                 <div class="ed-studio-form-group">
                     <label>Selecciona el tipo de App</label>
@@ -347,7 +350,7 @@
                 </div>
             </div>
 
-            <!-- Paso 3: Selección del Logo -->
+            <!-- Paso 3: select icon -->
             <div class="ed-studio-form-step" id="step-3">
                 <div class="ed-studio-form-group">
                     <label for="appLogo">Elige el logo de tu App</label>
@@ -409,9 +412,10 @@
                                 class="ed-studio-logo-option">
                         </div>
                     </div>
-                    <!-- Input hidden para almacenar el logo seleccionado -->
+                    <!-- Input hidden to store the selected logo -->
                     <input type="hidden" id="selectedLogo" name="selectedLogo" value="">
-                    <!-- Vista previa del logo seleccionado -->
+
+                    <!-- Preview of the selected logo -->
                     <div class="ed-studio-logo-preview-container">
 
                     </div>
@@ -496,6 +500,7 @@
     });
 
     // Manejo de envío del formulario
+    /*
     form.addEventListener('submit', function (e) {
         e.preventDefault();
         // Mostrar spinner mientras se procesa el formulario
@@ -510,7 +515,7 @@
         setTimeout(() => {
             alert("¡App creada exitosamente!");
             form.reset();
-            /*logoPreview.style.display = 'none';*/
+            logoPreview.style.display = 'none';
             // Resetear la selección de tipo de app
             appTypes.forEach(t => t.classList.remove('selected'));
             // Resetear el indicador de progreso
@@ -518,7 +523,7 @@
             submitButton.removeChild(spinner);
             submitButton.disabled = false;
         }, 1500);
-    });
+    });*/
 
 
     /**/

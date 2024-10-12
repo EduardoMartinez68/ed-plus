@@ -2854,8 +2854,25 @@ async function update_appointment(appointment, id_appointment){
 
 //-----------------------------------------------apps
 const {
-    insert_app_in_my_list
+    insert_app_in_my_list,
+    create_constructor_app
 } = require('../services/apps');
+
+
+router.post('/fud/:id_company/:id_branch/create-app', isLoggedIn, async (req, res) => {
+    const { id_company, id_branch} = req.params;
+    const answer=req.body;
+    const app=create_constructor_app(id_company,id_branch,answer)
+
+    //we will see if can create the team
+    if(await create_team_of_my_app(app)){
+        req.flash('success', 'Tu aplicacion fue creada con éxito ❤️')
+    }else{
+        req.flash('message', 'Hubo un error al crear tu base de datos 👉👈')
+    }
+
+    res.redirect(`/links/${id_company}/${id_branch}/ed-studios`);
+})
 
 router.post('/fud/:id_company/:id_branch/app/create-database', isLoggedIn, async (req, res) => {
     const { id_company, id_branch} = req.params;
@@ -2869,6 +2886,23 @@ router.post('/fud/:id_company/:id_branch/app/create-database', isLoggedIn, async
 
     res.redirect(`/links/${id_company}/${id_branch}/ed-studios`);
 })
+
+
+async function create_team_of_my_app(app){
+    //get the schema of the user for create the database
+    const schema=`_company_${app.id_company}_branch_${app.id_branch}`;
+    const tableNameForm = app.name;
+    const tableName = tableNameForm.replace(/\s+/g, '_'); // Replace whitespace with underscores
+
+    try {
+        //this is for save the app of team in my list of apps of the company/branch
+        await insert_app_in_my_list(app.id_company, app.id_branch, tableName, app.icon, tableName, '', '', '') //if we can create the tabla, save the code in the list of my apps
+        return true;
+    } catch (error) {
+        console.error('Error to create the database apps in addfrom: ', error);
+        return false;
+    }
+}
 
 
 async function create_the_database_of_my_app(answer,id_company,id_branch){

@@ -1,102 +1,123 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Card Gallery</title>
-    <style>
-        /* Contenedor principal */
-        .container-my-apps {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            padding: 20px;
-            background-color: #f4f4f4;
-        }
+<style>
+    .app-grid-ed-studio{
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
 
-        /* Estilo de las tarjetas */
-        .card-my-apps {
-            background: #fff;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            overflow: hidden;
-            width: calc(16.666% - 40px); /* Tres tarjetas por fila, adaptado al margen */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s ease;
-        }
+    .app-item-ed-studio{
+        border-radius: 15px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2px 2px;
+    }
 
-        .card-my-apps:hover {
-            transform: scale(1.05);
-            cursor: pointer;
-        }
+    .app-icon-ed-studio{
+        width: 90px;
+        height: 90px;
+        background-color: #ffffff;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 10px;
+        transition: transform 0.3s, background-color 0.3s, box-shadow 0.3s;
+    }
 
-        .card-my-apps img {
-            width: 80%;
-            height: auto;
-            display: block;
-            padding-left: 25%;
-        }
+    .app-icon-ed-studio img {
+        max-width: 60%;
+        max-height: 60%;
+    }
 
-        .card-my-apps-content {
-            padding: 15px;
-        }
+    .app-name-ed-studio {
+        font-size: 14px;
+        color: #333333;
+        text-align: center;
+        word-wrap: break-word;
+    }
 
-        .card-my-apps-title {
-            font-size: 1.25rem;
-            margin-bottom: 10px;
-            color: #333;
-        }
+    /* Estilo para el icono de agregar más apps */
+    .add-app-ed-studio {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #ffffff;
+        border: 2px dashed #cccccc;
+        border-radius: 15px;
+        cursor: pointer;
+        transition: background-color 0.2s, border-color 0.2s;
+    }
 
-        .card-my-apps-description {
-            font-size: 1rem;
-            color: #666;
-        }
+    .add-app-ed-studio:hover {
+        background-color: #f0f0f0;
+        border-color: #999999;
+    }
 
-        /* Estilo para pantallas pequeñas */
-        @media (max-width: 768px) {
-            .card-my-apps {
-                width: calc(50% - 40px); /* Dos tarjetas por fila */
-            }
-        }
+    .add-app-ed-studio .plus-icon-ed-studio {
+        font-size: 36px;
+        color: #666666;
+    }
 
-        @media (max-width: 480px) {
-            .card-my-apps {
-                width: calc(100% - 40px); /* Una tarjeta por fila */
-            }
+    .app-icon-ed-studio:hover {
+        transform: translateY(-5px);
+        cursor: pointer;
+    }
+
+    /* Responsividad */
+    @media (min-width: 1200px) {
+        .app-grid-ed-studio {
+            grid-template-columns: repeat(6, 1fr);
         }
-    </style>
-</head>
-<body>
-    <br><br>
-    <div class="container">
-        <label for=""><i class="fi-icon fi-sr-apps"></i> Mis aplicaciones</label>
-        <hr>
-        
-        <div class="container-my-apps">
-            {{#each branchFree}}
-                <div class="card-my-apps" onclick="nextWeb('/{{id_companies}}/{{id}}/ed-studios/create-app')">
-                    <br>
-                    <img src="https://cdn-icons-png.flaticon.com/512/4713/4713424.png" alt="Sample Image">
-                    <div class="card-my-apps-content">
-                        <center><h2 class="card-my-apps-title">Agregar nueva APP</h2></center>
-                    </div>
-                </div>
-            {{/each}}
-            <!-- Tarjeta 1 -->
-            {{#each apps}}
-                <div class="card-my-apps" onclick="nextWeb('/{{id_company}}/{{id_branch}}/{{id}}/edit-app')">
-                    <br>
+    }
+
+    @media (max-width: 1199px) and (min-width: 768px) {
+        .app-grid-ed-studio {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+
+    @media (max-width: 767px) and (min-width: 480px) {
+        .app-grid-ed-studio {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    @media (max-width: 479px) {
+        .app-grid-ed-studio {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+</style>
+
+<br><br>
+<div class="container">
+    <label for=""><i class="fi-icon fi-sr-apps"></i> Mis aplicaciones</label>
+    <hr>
+    <div class="app-grid-ed-studio">
+        <!-- Icono para agregar más aplicaciones -->
+        {{#each branchFree}}
+            <div class="app-item add-app-ed-studio" onclick="nextWeb('/{{id_companies}}/{{id}}/ed-studios/create-app')">
+                <div class="plus-icon-ed-studio">+</div>
+                <div class="app-name-ed-studio">Agregar</div>
+            </div>
+        {{/each}}
+
+        <!-- Tarjeta 1 -->
+        {{#each apps}}
+            <div class="app-item-ed-studio" onclick="nextWeb('/{{id_company}}/{{id_branch}}/{{name}}/edit-form-app')">
+                <div class="app-icon-ed-studio">
                     {{#if icon}}
                         <img src="{{icon}}" alt="Sample Image">
                     {{else}}
                         <img src="https://cdn-icons-png.flaticon.com/512/3902/3902021.png" alt="Sample Image">
                     {{/if}}
-                    <div class="card-my-apps-content">
-                        <center><h2 class="card-my-apps-title">{{name}}</h2></center>
-                    </div>
                 </div>
-            {{/each}}
-        </div>
+                <div class="app-name-ed-studio">{{name}}</div>
+            </div>
+        {{/each}}
     </div>
-</body>
-</html>
+</div>

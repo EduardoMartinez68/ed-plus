@@ -650,7 +650,9 @@ async function add_appointment(appointment){
     }
 }
 
-
+async function add_app(app){
+    
+}
 
 module.exports={
     add_company,

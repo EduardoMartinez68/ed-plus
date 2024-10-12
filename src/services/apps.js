@@ -204,6 +204,22 @@ async function get_code_table_of_my_app(id_company, id_branch,app){
 }
 
 
+function create_constructor_app(id_company,id_branch,answer){
+    const icon=answer.selectedLogo
+    const name=answer.appName
+    const type=answer.appType
+    const app={
+        icon,
+        id_company,
+        id_branch,
+        name,
+        type
+    }
+
+    return app;
+}
+
+
 module.exports = {
     get_all_apps_of_this_company,
     create_my_list_app,
@@ -212,5 +228,6 @@ module.exports = {
     get_data_of_my_app,
     get_character_of_my_app,
     get_primary_keys_of_schema,
-    get_code_table_of_my_app
+    get_code_table_of_my_app,
+    create_constructor_app
 };
