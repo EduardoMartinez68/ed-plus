@@ -1,0 +1,96 @@
+<style>
+    .card-edit{
+        width: 50%;
+        height: auto;
+        background-color: white;
+        border-radius: 25px;
+        text-align: center;
+        align-items: center;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .card-edit img{
+        width: 50%;
+        height: auto;
+    }
+
+    .card-edit:hover{
+        transform: translateY(-10px);
+        transition: transform 0.3s ease;
+        cursor: pointer;
+    }
+
+    .icon-app{
+        width: 80%;
+        height: auto;
+    }
+
+        .playstore-btn {
+            display: flex;
+            align-items: center;
+            background-color: #26d179;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 16px;
+            text-decoration: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s, transform 0.2s;
+            cursor: pointer;
+            width: 18%;
+        }
+
+        .playstore-btn:hover {
+            background-color: #29b66d;
+            transform: translateY(-3px);
+        }
+
+        .playstore-btn img {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+        }
+
+        .playstore-btn span {
+            font-weight: bold;
+        }
+</style>
+<br><br><br>
+<div class="container">
+    <div class="">
+        <div class="">
+            <label for=""><i class="fi-icon fi-ss-cube"></i> Informacion de tu App</label>
+            <hr>
+            <div class="right">
+                <a href="#" class="playstore-btn">
+                    <img src="https://cdn-icons-png.flaticon.com/512/4372/4372862.png" alt="Google Play">
+                    <span>Subir a ED Store</span>
+                </a>
+            </div>
+            <br>
+
+            <div class="btn-group">
+                <button class="btn-select btn-active" onclick="showSection('select-1', this)" type="button">Caracteristicas</button>
+                <button class="btn-select" onclick="showSection('select-2', this)" type="button">Etiquetas</button>
+                <button class="btn-select" onclick="showSection('select-3', this)" type="button">Opciones</button>
+            </div>
+
+            <div id="select-1" class="content-section active">
+                {{>apps/editsApp/character}}
+            </div>
+            <div id="select-2" class="content-section">
+                {{>apps/editsApp/labels}}
+            </div>
+            <div id="select-3" class="content-section">
+                
+            </div>
+
+            <br><br>
+
+            {{>apps/editsApp/links}}
+
+        </div>
+    </div>
+</div>

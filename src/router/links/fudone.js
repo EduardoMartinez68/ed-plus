@@ -453,8 +453,8 @@ router.get('/:id_company/:id_branch/app/:id_app', isLoggedIn, async (req, res) =
     const dataTable=await get_the_data_of_the_table_of_my_app(id_company, id_branch, id_app)
     const characterApp=await get_character_of_my_app(id_company, id_branch, id_app)
 
-    
-    res.render("links/apps/editApp",{branchFree, apps, dataTable, characterApp});
+    console.log(characterApp)
+    res.render("links/apps/app",{branchFree, apps, dataTable, characterApp});
 });
 
 router.get('/:id_company/:id_branch/:id_app/add', isLoggedIn, async (req, res) => {
