@@ -3,19 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mis Aplicaciones</title>
+    <title>Gestor de Archivos</title>
+    <!-- Enlace a Font Awesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-pZI6U3Ov/RcFhR2m82Io3QoU2zLxaVgC2u5k1X3rzV4G7T6yXZdfhL+84cOgJT/q57VJJIBaX3qF5CvhFh1JRQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
-        /* Variables de CSS para facilitar la personalización */
+        /* Variables de CSS */
         :root {
-            --bg-color: #ffffff;
-            --icon-bg: #f0f0f0;
-            --primary-color: #4A90E2;
+            --color-company: #075DA8;
+            --bg-color: #f4f6f8;
+            --card-bg: #ffffff;
             --text-color: #333333;
-            --hover-bg: #e8f4fd;
-            --border-color: #dcdcdc;
-            --add-border: #cccccc;
-            --shadow-color: rgba(0, 0, 0, 0.05);
+            --secondary-text: #666666;
+            --border-color: #e0e0e0;
+            --shadow-color: rgba(0, 0, 0, 0.1);
             --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --transition-speed: 0.3s;
+            --sidebar-width: 250px;
         }
 
         /* Reset básico */
@@ -26,180 +29,586 @@
         }
 
         body {
-            background-color: #f9f9f9;
+            background-color: var(--bg-color);
             font-family: var(--font-family);
             color: var(--text-color);
-            padding: 30px 20px;
+            height: 100vh;
+            display: flex;
         }
 
-        h1 {
+        .container {
+            display: flex;
+            flex: 1;
+            height: 100%;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--card-bg);
+            border-right: 1px solid var(--border-color);
+            box-shadow: 2px 0 5px var(--shadow-color);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            overflow-y: auto;
+            transition: transform var(--transition-speed);
+        }
+
+        .sidebar h2 {
+            margin-bottom: 20px;
+            color: var(--color-company);
             text-align: center;
-            margin-bottom: 30px;
-            font-size: 2rem;
-            color: var(--primary-color);
         }
 
-        .app-grid {
+        .folders {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .folder {
+            background-color: var(--card-bg);
+            padding: 10px 15px;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px var(--shadow-color);
+            cursor: pointer;
+            transition: background-color var(--transition-speed), transform var(--transition-speed);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-align: left;
+        }
+
+        .folder:hover, .folder.active {
+            background-color: var(--color-company);
+            color: #ffffff;
+            transform: translateY(-2px);
+        }
+
+        .folder img.folder-icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        /* Botones */
+        .buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .buttons button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 6px;
+            background-color: var(--color-company);
+            color: #ffffff;
+            cursor: pointer;
+            transition: background-color var(--transition-speed), transform var(--transition-speed);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+        }
+
+        .buttons button:hover {
+            background-color: #054a8c;
+            transform: translateY(-2px);
+        }
+
+        .buttons button i {
+            font-size: 1rem;
+        }
+
+        /* Área de Archivos */
+        .file-area {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             gap: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
         }
 
-        .app-item {
-            background-color: var(--bg-color);
-            border-radius: 12px;
+        .file-item {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px 10px;
-            box-shadow: 0 4px 6px var(--shadow-color);
-            transition: transform 0.3s, background-color 0.3s, box-shadow 0.3s;
-            cursor: pointer;
+            gap: 10px;
         }
 
-        .app-item:hover {
+        .file-item:hover {
             transform: translateY(-5px);
-            background-color: var(--hover-bg);
-            box-shadow: 0 6px 10px var(--shadow-color);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
         }
 
-        .app-icon {
+        .file-item img, .file-item .file-icon {
             width: 60px;
             height: 60px;
-            background-color: var(--icon-bg);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 12px;
-            transition: background-color 0.3s;
-        }
-
-        .app-item:hover .app-icon {
-            background-color: var(--primary-color);
-        }
-
-        .app-icon img {
-            width: 100%;
-            height: 100%;
             object-fit: contain;
+            margin-bottom: 10px;
         }
 
-        .app-name {
-            font-size: 0.9rem;
-            color: var(--text-color);
-            text-align: center;
+        .file-item .file-icon {
+            font-size: 2rem;
+            color: var(--color-company);
+        }
+
+        .file-name {
+            font-size: 14px;
+            color: #333333;
             word-break: break-word;
         }
 
-        /* Estilo para el icono de agregar más apps */
-        .add-app {
-            border: 2px dashed var(--add-border);
-            color: var(--add-border);
-            transition: border-color 0.3s, color 0.3s;
+        /* Modal */
+        .modal {
+            display: none; /* Oculto por defecto */
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
         }
 
-        .add-app:hover {
-            border-color: var(--primary-color);
-            color: var(--primary-color);
+        .modal-content {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 8px;
+            width: 60%;
+            height: 90%;
+            position: relative;
+            box-shadow: 0 4px 15px var(--shadow-color);
+            animation: fadeIn 0.3s ease-out;
         }
 
-        .add-app .plus-icon {
-            font-size: 32px;
-            line-height: 1;
+        .close {
+            position: absolute;
+            right: 15px;
+            top: 10px;
+            font-size: 1.5rem;
+            color: var(--secondary-text);
+            cursor: pointer;
+            transition: color var(--transition-speed);
         }
 
-        .add-app .app-name {
+        .close:hover {
+            color: var(--color-company);
+        }
+
+        .modal-content h2 {
+            margin-bottom: 15px;
+            color: var(--color-company);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .modal-content input[type="text"], 
+        .modal-content select,
+        .modal-content input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
             font-size: 0.9rem;
         }
 
-        /* Responsividad mejorada */
-        @media (min-width: 1200px) {
-            .app-grid {
-                grid-template-columns: repeat(6, 1fr);
+        .modal-content button {
+            margin-top: 15px;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 6px;
+            background-color: var(--color-company);
+            color: #ffffff;
+            cursor: pointer;
+            transition: background-color var(--transition-speed), transform var(--transition-speed);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+        }
+
+        .modal-content button:hover {
+            background-color: #054a8c;
+            transform: translateY(-2px);
+        }
+
+        /* Previsualización */
+        .preview {
+            margin-top: 20px;
+        }
+
+        .preview img, 
+        .preview embed, 
+        .preview textarea {
+            width: 100%;
+            max-height: 600px;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .preview textarea {
+            resize: none;
+            padding: 10px;
+            background-color: #f9f9f9;
+            color: #333333;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+        }
+
+        /* Animaciones */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+            .file-area {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
             }
         }
 
-        @media (max-width: 1199px) and (min-width: 768px) {
-            .app-grid {
-                grid-template-columns: repeat(4, 1fr);
+        @media (max-width: 480px) {
+            body {
+                flex-direction: column;
             }
-        }
 
-        @media (max-width: 767px) and (min-width: 480px) {
-            .app-grid {
-                grid-template-columns: repeat(3, 1fr);
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                flex-direction: row;
+                overflow-x: auto;
             }
-        }
 
-        @media (max-width: 479px) {
-            .app-grid {
-                grid-template-columns: repeat(2, 1fr);
+            .folders {
+                flex-direction: row;
+                overflow-x: auto;
+            }
+
+            .folder {
+                min-width: unset;
+                justify-content: center;
+            }
+
+            .buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .buttons button {
+                width: 100%;
+                justify-content: center;
             }
         }
     </style>
 </head>
 <body>
-
-    <h1>Mis Aplicaciones</h1>
-    <div class="app-grid">
-        <!-- Icono para agregar más aplicaciones -->
-        <div class="app-item add-app" onclick="agregarApp()">
-            <div class="app-icon">
-                <span class="plus-icon">+</span>
+    <div class="container">
+        <!-- Sidebar de Carpetas -->
+        <div class="sidebar">
+            <h2>Carpetas</h2>
+            <div class="folders" id="folders">
+                <!-- Carpetas dinámicas -->
             </div>
-            <div class="app-name">Agregar</div>
         </div>
 
-        <!-- Aplicación 1 -->
-        <div class="app-item">
-            <div class="app-icon">
-                <img src="https://via.placeholder.com/60" alt="App 1">
+        <!-- Área Principal -->
+        <div class="main-content">
+            <div class="buttons">
+                <button onclick="openAddFolderModal()"><i class="fas fa-folder-plus"></i> Agregar Carpeta</button>
+                <button onclick="openAddFileModal()"><i class="fas fa-file-upload"></i> Agregar Archivo</button>
             </div>
-            <div class="app-name">Aplicación 1</div>
+
+            <div class="file-area" id="fileArea">
+                <!-- Archivos dinámicos -->
+            </div>
         </div>
 
-        <!-- Aplicación 2 -->
-        <div class="app-item">
-            <div class="app-icon">
-                <img src="https://via.placeholder.com/60" alt="App 2">
+        <!-- Modal para Agregar Carpeta -->
+        <div id="addFolderModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('addFolderModal')">&times;</span>
+                <h2><i class="fas fa-folder-plus"></i> Agregar Nueva Carpeta</h2>
+                <input type="text" id="newFolderName" placeholder="Nombre de la carpeta">
+                <button onclick="addFolder()"><i class="fas fa-check"></i> Agregar</button>
             </div>
-            <div class="app-name">Aplicación 2</div>
         </div>
 
-        <!-- Aplicación 3 -->
-        <div class="app-item">
-            <div class="app-icon">
-                <img src="https://via.placeholder.com/60" alt="App 3">
+        <!-- Modal para Agregar Archivo -->
+        <div id="addFileModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('addFileModal')">&times;</span>
+                <h2><i class="fas fa-file-upload"></i> Agregar Archivo</h2>
+                <input type="file" id="fileInput" accept=".png, .jpg, .jpeg, .pdf, .txt">
+                <select id="folderSelect">
+                    <!-- Opciones de carpetas dinámicas -->
+                </select>
+                <button onclick="addFile()"><i class="fas fa-upload"></i> Subir</button>
             </div>
-            <div class="app-name">Aplicación 3</div>
         </div>
 
-        <!-- Aplicación 4 -->
-        <div class="app-item">
-            <div class="app-icon">
-                <img src="https://via.placeholder.com/60" alt="App 4">
+        <!-- Modal para Previsualizar Archivo -->
+        <div id="previewModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('previewModal')">&times;</span>
+                <div class="preview" id="previewContent">
+                    <!-- Contenido dinámico -->
+                </div>
             </div>
-            <div class="app-name">Aplicación 4</div>
-        </div>
-
-        <!-- Aplicación 5 -->
-        <div class="app-item">
-            <div class="app-icon">
-                <img src="https://via.placeholder.com/60" alt="App 5">
-            </div>
-            <div class="app-name">Aplicación 5</div>
         </div>
     </div>
 
     <script>
-        // Función para manejar la acción de agregar una nueva aplicación
-        function agregarApp() {
-            alert('Funcionalidad para agregar una nueva aplicación.');
-            // Aquí puedes implementar la lógica para agregar más aplicaciones
+        // Estructura de Datos
+        let data = {
+            folders: [],
+            currentFolder: null
+        };
+
+        // Cargar Datos desde Local Storage
+        window.onload = function() {
+            if (localStorage.getItem('fileManagerData')) {
+                data = JSON.parse(localStorage.getItem('fileManagerData'));
+            } else {
+                // Carpeta por defecto
+                data.folders.push({
+                    id: generateId(),
+                    name: 'Carpeta Principal',
+                    files: []
+                });
+                data.currentFolder = data.folders[0].id;
+                saveData();
+            }
+            renderFolders();
+            renderFiles();
+        };
+
+        // Generar ID Único
+        function generateId() {
+            return '_' + Math.random().toString(36).substr(2, 9);
         }
+
+        // Guardar Datos en Local Storage
+        function saveData() {
+            localStorage.setItem('fileManagerData', JSON.stringify(data));
+        }
+
+        // Renderizar Carpetas
+        function renderFolders() {
+            const foldersDiv = document.getElementById('folders');
+            foldersDiv.innerHTML = '';
+            data.folders.forEach(folder => {
+                const folderDiv = document.createElement('div');
+                folderDiv.classList.add('folder');
+                if (folder.id === data.currentFolder) {
+                    folderDiv.classList.add('active');
+                }
+                folderDiv.innerHTML = `<img src="https://cdn-icons-png.flaticon.com/512/11471/11471391.png" alt="Folder Icon" class="folder-icon"> ${folder.name}`;
+                folderDiv.onclick = () => {
+                    data.currentFolder = folder.id;
+                    saveData();
+                    renderFolders();
+                    renderFiles();
+                };
+                foldersDiv.appendChild(folderDiv);
+            });
+
+            // Actualizar opciones en el select de carpetas
+            const folderSelect = document.getElementById('folderSelect');
+            folderSelect.innerHTML = '';
+            data.folders.forEach(folder => {
+                const option = document.createElement('option');
+                option.value = folder.id;
+                option.innerText = folder.name;
+                folderSelect.appendChild(option);
+            });
+        }
+
+        // Renderizar Archivos
+        function renderFiles() {
+            const fileArea = document.getElementById('fileArea');
+            fileArea.innerHTML = '';
+            const currentFolder = data.folders.find(folder => folder.id === data.currentFolder);
+            if (currentFolder) {
+                if (currentFolder.files.length === 0) {
+                    fileArea.innerHTML = '<p>No hay archivos en esta carpeta.</p>';
+                    return;
+                }
+                currentFolder.files.forEach(file => {
+                    const fileDiv = document.createElement('div');
+                    fileDiv.classList.add('file-item');
+                    fileDiv.onclick = () => {
+                        previewFile(file);
+                    };
+
+                    if (file.type.startsWith('image/')) {
+                        const img = document.createElement('img');
+                        img.src = file.data;
+                        img.alt = file.name;
+                        fileDiv.appendChild(img);
+                    } else if (file.type === 'application/pdf') {
+                        const pdfIcon = document.createElement('i');
+                        pdfIcon.classList.add('fas', 'fa-file-pdf');
+                        fileDiv.appendChild(pdfIcon);
+                    } else if (file.type === 'text/plain') {
+                        const txtIcon = document.createElement('i');
+                        txtIcon.classList.add('fas', 'fa-file-alt');
+                        fileDiv.appendChild(txtIcon);
+                    }
+
+                    const nameDiv = document.createElement('div');
+                    nameDiv.classList.add('file-name');
+                    nameDiv.innerText = file.name;
+                    fileDiv.appendChild(nameDiv);
+
+                    fileArea.appendChild(fileDiv);
+                });
+            }
+        }
+
+        // Abrir Modal
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        // Cerrar Modal
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Abrir Modales
+        function openAddFolderModal() {
+            openModal('addFolderModal');
+        }
+
+        function openAddFileModal() {
+            openModal('addFileModal');
+        }
+
+        // Agregar Carpeta
+        function addFolder() {
+            const folderName = document.getElementById('newFolderName').value.trim();
+            if (folderName === '') {
+                alert('El nombre de la carpeta no puede estar vacío.');
+                return;
+            }
+            data.folders.push({
+                id: generateId(),
+                name: folderName,
+                files: []
+            });
+            saveData();
+            renderFolders();
+            closeModal('addFolderModal');
+            document.getElementById('newFolderName').value = '';
+        }
+
+        // Agregar Archivo
+        function addFile() {
+            const fileInput = document.getElementById('fileInput');
+            const folderSelect = document.getElementById('folderSelect');
+            const files = fileInput.files;
+            const selectedFolderId = folderSelect.value;
+
+            if (files.length === 0) {
+                alert('Por favor, selecciona un archivo.');
+                return;
+            }
+
+            const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'application/pdf', 'text/plain'];
+            const file = files[0];
+
+            if (!allowedTypes.includes(file.type)) {
+                alert('Tipo de archivo no permitido.');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const fileData = e.target.result;
+                const currentFolder = data.folders.find(folder => folder.id === selectedFolderId);
+                if (currentFolder) {
+                    currentFolder.files.push({
+                        id: generateId(),
+                        name: file.name,
+                        type: file.type,
+                        data: fileData
+                    });
+                    saveData();
+                    if (selectedFolderId === data.currentFolder) {
+                        renderFiles();
+                    }
+                }
+            };
+
+            reader.readAsDataURL(file);
+            closeModal('addFileModal');
+            fileInput.value = ''; // Resetear input
+        }
+
+        // Previsualizar Archivo
+        function previewFile(file) {
+            const previewContent = document.getElementById('previewContent');
+            previewContent.innerHTML = ''; // Limpiar contenido previo
+
+            if (file.type.startsWith('image/')) {
+                const img = document.createElement('img');
+                img.src = file.data;
+                img.alt = file.name;
+                previewContent.appendChild(img);
+            } else if (file.type === 'application/pdf') {
+                const embed = document.createElement('embed');
+                embed.src = file.data;
+                embed.type = 'application/pdf';
+                embed.width = '100%';
+                embed.height = '600px';
+                previewContent.appendChild(embed);
+            } else if (file.type === 'text/plain') {
+                const textarea = document.createElement('textarea');
+                textarea.readOnly = true;
+                textarea.value = atob(file.data.split(',')[1]); // Decodificar Base64
+                previewContent.appendChild(textarea);
+            }
+
+            openModal('previewModal');
+        }
+
+        // Cerrar Modales al hacer clic fuera
+        window.onclick = function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        };
     </script>
 
 </body>
