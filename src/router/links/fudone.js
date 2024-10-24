@@ -631,7 +631,7 @@ router.get('/:id_company/:id_branch/ed-studios/create-app', isLoggedIn, async (r
 })
 
 
-router.get('/:id_company/:id_branch/ed-studios/create-database', isLoggedIn, async (req, res) => {
+router.get('/:id_company/:id_branch/:id_app/create-database', isLoggedIn, async (req, res) => {
     const { id_company, id_branch } = req.params;
     const branchFree = await get_data_branch(id_branch);
     const apps=await get_all_apps_of_this_company(id_company,id_branch)

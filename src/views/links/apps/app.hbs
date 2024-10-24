@@ -57,6 +57,7 @@
             font-weight: bold;
         }
 </style>
+<link rel="stylesheet" href="/css/manager/supplies_products.css">
 <br><br><br>
 <div class="container">
     <div class="">
@@ -73,23 +74,24 @@
 
             <div class="btn-group">
                 <button class="btn-select btn-active" onclick="showSection('select-1', this)" type="button">Caracteristicas</button>
-                <button class="btn-select" onclick="showSection('select-2', this)" type="button">Etiquetas</button>
-                <button class="btn-select" onclick="showSection('select-3', this)" type="button">Opciones</button>
+                <button class="btn-select" onclick="showSection('select-2', this)" type="button">Vistas</button>
+                <button class="btn-select" onclick="showSection('select-3', this)" type="button">Requerimientos</button>
+                <button class="btn-select" onclick="showSection('select-4', this)" type="button">Opciones de Tienda</button>
             </div>
 
             <div id="select-1" class="content-section active">
                 {{>apps/editsApp/character}}
             </div>
             <div id="select-2" class="content-section">
-                {{>apps/editsApp/labels}}
+                {{>apps/editsApp/links}}
             </div>
             <div id="select-3" class="content-section">
-                
+                {{>apps/editsApp/requirements}}
             </div>
-
+            <div id="select-4" class="content-section">
+                {{>apps/editsApp/options}}
+            </div>
             <br><br>
-
-            {{>apps/editsApp/links}}
 
         </div>
     </div>

@@ -1,29 +1,31 @@
-<div class="row">
-    <div class="col">
-        <div class="card-edit">
-            <br>
-            <img src="https://cdn-icons-png.flaticon.com/512/6238/6238911.png" alt="">
-            <br>
-            <label for="">Base de datos</label>
-            <br><br>
+{{#each characterApp}}
+    <div class="row">
+        <div class="col">
+            <div class="card-edit" onclick="nextWeb('{{id_company}}/{{id_branch}}/{{id}}/create-database')">
+                <br>
+                <img src="https://cdn-icons-png.flaticon.com/512/6238/6238911.png" alt="">
+                <br>
+                <label for="">Base de datos</label>
+                <br><br>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card-edit" onclick="nextWeb('{{id_company}}/{{id_branch}}/{{id}}/table')">
+                <br>
+                <img src="https://cdn-icons-png.flaticon.com/512/5342/5342693.png" alt="">
+                <br>
+                <label>Visualizacion de Datos</label>
+                <br><br>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card-edit" onclick="nextWeb('{{id_company}}/{{id_branch}}/{{id}}/edit-form-app')">
+                <br>
+                <img src="https://cdn-icons-png.flaticon.com/512/5369/5369863.png" alt="">
+                <br>
+                <label>Formulario</label>
+                <br><br>
+            </div>
         </div>
     </div>
-    <div class="col">
-        <div class="card-edit">
-            <br>
-            <img src="https://cdn-icons-png.flaticon.com/512/5342/5342693.png" alt="">
-            <br>
-            <label>Visualizacion de Datos</label>
-            <br><br>
-        </div>
-    </div>
-    <div class="col">
-        <div class="card-edit">
-            <br>
-            <img src="https://cdn-icons-png.flaticon.com/512/5369/5369863.png" alt="">
-            <br>
-            <label>Formulario</label>
-            <br><br>
-        </div>
-    </div>
-</div>
+{{/each}}

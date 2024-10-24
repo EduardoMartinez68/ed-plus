@@ -1,0 +1,25 @@
+<div class="card">
+    <div class="card-body">
+        <div class="container">
+            <div class="row">
+                <label for="">Caracteristicas</label>
+                <hr>
+                <div class="col-4">
+                    <div class="mb-3">
+                        <label for="productPrice" class="form-label">Precio ($ dolares)</label>
+                        <input type="number" class="form-control" id="productPrice" min="0" step="0.01" required placeholder="$0.00">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                {{>apps/editsApp/description}}
+            </div>
+            <br>
+            <div class="row">
+                <label for="">Etiquetas</label>
+                <hr>
+                {{>apps/editsApp/labels}}
+            </div>
+        </div>
+    </div>
+</div>
