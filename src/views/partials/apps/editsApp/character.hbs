@@ -1,43 +1,37 @@
 {{#each characterApp}}
-    <form action="/fud/{{id_company}}/{{id_branch}}/{{id}}/edit-character-app" method="post">
-        <div class="row">
-            <div class="card">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-2">
-                            <label for="">Icono de tu App</label>
-                            {{#if icon}}
-                                <img src="{{icon}}" alt="Sample Image" class="icon-app">
-                            {{else}}
-                                <img src="https://cdn-icons-png.flaticon.com/512/3902/3902021.png" alt="Sample Image" class="icon-app">
-                            {{/if}}
+<form action="/fud/{{id_company}}/{{id_branch}}/{{id}}/edit-character-app" method="post">
+    <div class="row">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-2">
+                        <label for="">Icono de tu App</label>
+                        {{#if icon}}
+                            <img src="{{icon}}" alt="Sample Image" class="icon-app">
+                            <input type="hidden" value="{{icon}}" name="icon">
+                        {{else}}
+                            <img src="https://cdn-icons-png.flaticon.com/512/3902/3902021.png" alt="Sample Image" class="icon-app">
+                            <input type="hidden" value="https://cdn-icons-png.flaticon.com/512/3902/3902021.png" name="icon">
+                        {{/if}}
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Nombre de tu App</label>
+                            <input type="text" value="{{name}}" class="form-control" name="name">
                         </div>
-                        <div class="col">
-                            <div class="form-group">
-                                <label for="exampleInputEmail1">Nombre de tu App</label>
-                                <input type="text" value="{{name}}" class="form-control">
-                            </div>
-                            <div class="form-group">
-                                <label for="exampleInputEmail1">Descripcion</label>
-                                <textarea name="" id="" class="form-control">{{description}}</textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="exampleInputEmail1">Categoria</label>
-                                <select class="form-select" aria-label="Default select example">
-                                    <option value="1">Informacion</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
-                                </select>
-                            </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Descripcion</label>
+                            <textarea name="" id="" class="form-control" name="description">{{description}}</textarea>
                         </div>
                     </div>
-                    <div class="row">
-                            <div class="d-flex justify-content-end">
-                                <button class="btn btn-edit mt-3">💾 Actualizar</button>
-                            </div>
+                </div>
+                <div class="row">
+                    <div class="d-flex justify-content-end">
+                        <button class="btn btn-edit mt-3">💾 Actualizar</button>
                     </div>
                 </div>
             </div>
         </div>
-    </form>
+    </div>
+</form>
 {{/each}}

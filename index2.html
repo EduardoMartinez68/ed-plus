@@ -1,156 +1,136 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestor de Tareas</title>
+    <title>Detalles de la Aplicación</title>
     <style>
-        /* Estilos CSS */
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            margin: 0;
-            padding: 20px;
         }
-
-        .task-manager {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .task-input {
-            margin-bottom: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .task-input input,
-        .task-input textarea {
-            margin: 5px 0;
-            padding: 10px;
-            width: 300px;
+        .app-container {
+            max-width: 600px;
+            margin: 20px auto;
             border: 1px solid #ddd;
-            border-radius: 5px;
+            padding: 20px;
+            border-radius: 8px;
         }
-
-        .task-input button {
-            padding: 10px 20px;
-            background-color: #5c67f2;
+        .app-header {
+            text-align: center;
+        }
+        .app-info {
+            margin-bottom: 20px;
+        }
+        .requirements {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .requirement-list {
+            list-style: none;
+            padding: 0;
+        }
+        .requirement-list li {
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            margin-bottom: 8px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .requirement-list li.installed {
+            border-color: #4CAF50;
+            background-color: #E8F5E9;
+        }
+        .requirement-list li .status {
+            font-weight: bold;
+            color: #FF5722;
+        }
+        .requirement-list li.installed .status {
+            color: #4CAF50;
+        }
+        .install-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #007BFF;
             color: white;
             border: none;
             border-radius: 5px;
+            font-size: 16px;
+            cursor: not-allowed;
+        }
+        .install-btn.enabled {
             cursor: pointer;
-            margin-top: 10px;
-        }
-
-        .task-columns {
-            display: flex;
-            justify-content: space-around;
-            width: 100%;
-        }
-
-        .task-column {
-            width: 30%;
-            padding: 10px;
-            border: 2px dashed #ddd;
-            border-radius: 5px;
-            min-height: 200px;
-            background-color: #fff;
-            transition: background-color 0.3s;
-        }
-
-        .task-column h3 {
-            text-align: center;
-            color: #444;
-        }
-
-        .task-column:hover {
-            background-color: #f1f1f1;
-        }
-
-        .task-item {
-            background-color: #eef;
-            border: 1px solid #bbb;
-            border-radius: 5px;
-            margin: 10px 0;
-            padding: 10px;
-            cursor: grab;
-        }
-
-        .task-item p {
-            margin: 0;
-            font-size: 14px;
-            color: #333;
+            background-color: #28a745;
         }
     </style>
 </head>
 <body>
-    <div class="task-manager">
-        <div class="task-input">
-            <input type="text" id="task-title" placeholder="Título de la tarea">
-            <textarea id="task-desc" placeholder="Descripción de la tarea"></textarea>
-            <button onclick="addTask()">Agregar Tarea</button>
-        </div>
-        <div class="task-columns">
-            <div class="task-column" id="planned" ondragover="allowDrop(event)" ondrop="drop(event)">
-                <h3>Planeada</h3>
-            </div>
-            <div class="task-column" id="in-progress" ondragover="allowDrop(event)" ondrop="drop(event)">
-                <h3>En Progreso</h3>
-            </div>
-            <div class="task-column" id="completed" ondragover="allowDrop(event)" ondrop="drop(event)">
-                <h3>Terminado</h3>
-            </div>
+
+<div class="app-container">
+    <div class="app-header">
+        <h1>Nombre de la Aplicación</h1>
+        <p>Descripción corta de la aplicación.</p>
+    </div>
+
+    <div class="app-info">
+        <h3>Requerimientos de Instalación</h3>
+        <div class="requirements">
+            <ul class="requirement-list" id="requirementList">
+                <!-- Requerimientos de ejemplo -->
+                <li data-app="App1" class="not-installed">
+                    <span>App1: Sistema de Gestión</span>
+                    <span class="status">No Instalado</span>
+                </li>
+                <li data-app="App2" class="installed">
+                    <span>App2: API de Conexión</span>
+                    <span class="status">Instalado</span>
+                </li>
+                <li data-app="App3" class="not-installed">
+                    <span>App3: Módulo de Seguridad</span>
+                    <span class="status">No Instalado</span>
+                </li>
+            </ul>
         </div>
     </div>
-    <script>
-        // Script JavaScript
-        function addTask() {
-            const title = document.getElementById('task-title').value;
-            const description = document.getElementById('task-desc').value;
-            
-            if (!title) return alert('Por favor, ingrese un título para la tarea.');
 
-            const taskItem = document.createElement('div');
-            taskItem.className = 'task-item';
-            taskItem.draggable = true;
-            taskItem.ondragstart = drag;
+    <button class="install-btn" id="installBtn" disabled>Instalar Aplicación</button>
+</div>
 
-            const taskTitle = document.createElement('h4');
-            taskTitle.textContent = title;
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const installBtn = document.getElementById('installBtn');
+        const requirementList = document.getElementById('requirementList');
+        const requirements = requirementList.querySelectorAll('li');
 
-            const taskDesc = document.createElement('p');
-            taskDesc.textContent = description;
-            taskDesc.style.display = 'none';
+        // Función para verificar los requerimientos
+        function checkRequirements() {
+            let allInstalled = true;
+            requirements.forEach(requirement => {
+                if (requirement.classList.contains('not-installed')) {
+                    allInstalled = false;
+                }
+            });
 
-            taskItem.appendChild(taskTitle);
-            taskItem.appendChild(taskDesc);
-            taskItem.onclick = () => taskDesc.style.display = taskDesc.style.display === 'none' ? 'block' : 'none';
-
-            document.getElementById('planned').appendChild(taskItem);
-
-            // Limpiar los campos de entrada
-            document.getElementById('task-title').value = '';
-            document.getElementById('task-desc').value = '';
+            // Si todas las apps requeridas están instaladas, activar el botón
+            if (allInstalled) {
+                installBtn.disabled = false;
+                installBtn.classList.add('enabled');
+                installBtn.textContent = 'Instalar Aplicación';
+            } else {
+                installBtn.disabled = true;
+                installBtn.classList.remove('enabled');
+                installBtn.textContent = 'Instalar Aplicación (Completa los requerimientos)';
+            }
         }
 
-        function allowDrop(event) {
-            event.preventDefault();
-        }
+        // Inicialmente comprobar el estado de los requerimientos
+        checkRequirements();
+    });
+</script>
 
-        function drag(event) {
-            event.dataTransfer.setData('text', event.target.id);
-        }
-
-        function drop(event) {
-            event.preventDefault();
-            const task = document.createElement('div');
-            task.className = 'task-item';
-            task.innerHTML = event.dataTransfer.getData('text');
-            event.target.appendChild(task);
-        }
-    </script>
 </body>
 </html>

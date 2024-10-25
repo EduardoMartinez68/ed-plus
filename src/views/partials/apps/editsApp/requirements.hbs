@@ -1,40 +1,136 @@
-<div style="height: 550px; overflow-y: scroll;">
-    <table class="table table-hover" id="table-container">
-        <colgroup>
-            <col style="width: 15%;"> <!--image-->
-            <col style="width: 85%;"> <!--barcode-->
-        </colgroup>
-        <thead>
-            <tr>
-                <th>Imagen de la App</th>
-                <th>Nombre de la App</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>
-                    <img src="https://cdn-icons-png.flaticon.com/512/1448/1448776.png" alt="App 1" style="width: 50px; height: 50px;">
-                </td>
-                <td>App 1</td>
-            </tr>
-            <tr>
-                <td>
-                    <img src="https://cdn-icons-png.flaticon.com/512/1448/1448776.png" alt="App 2" style="width: 50px; height: 50px;">
-                </td>
-                <td>App 2</td>
-            </tr>
-            <tr>
-                <td>
-                    <img src="https://cdn-icons-png.flaticon.com/512/1448/1448776.png" alt="App 3" style="width: 50px; height: 50px;">
-                </td>
-                <td>App 3</td>
-            </tr>
-            <tr>
-                <td>
-                    <img src="https://cdn-icons-png.flaticon.com/512/1448/1448776.png" alt="App 4" style="width: 50px; height: 50px;">
-                </td>
-                <td>App 4</td>
-            </tr>
-        </tbody>
-    </table>
+
+    <style>
+        .app-container {
+            max-width: 100%;
+            margin: 20px auto;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .app-header {
+            text-align: center;
+        }
+        .app-info {
+            margin-bottom: 20px;
+        }
+        .requirements {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .requirement-list {
+            list-style: none;
+            padding: 0;
+        }
+        .requirement-list li {
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            margin-bottom: 8px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .requirement-list li.installed {
+            border-color: #4CAF50;
+            background-color: #E8F5E9;
+        }
+        .requirement-list li .status {
+            font-weight: bold;
+            color: #FF5722;
+        }
+        .requirement-list li.installed .status {
+            color: #4CAF50;
+        }
+        .requirement-list li .app-icon {
+            margin-right: 10px;
+            width: 40px;
+            height: 40px;
+        }
+        .install-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: var(--color-company);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: not-allowed;
+        }
+        .install-btn.enabled {
+            cursor: pointer;
+            background-color: #28a745;
+        }
+
+        span:hover{
+            cursor: pointer;
+        }
+    </style>
+
+
+<div class="app-container">
+    <div class="app-info">
+        <div class="requirements">
+            <ul class="requirement-list" id="requirementList">
+                <!-- Requerimientos con imágenes como íconos -->
+                <li data-app="App1" class="not-installed">
+                    <span onclick="nextWeb()">
+                        <img src="https://cdn-icons-png.flaticon.com/512/3902/3902021.png" alt="Icono App1" class="app-icon"> 
+                        App1: Sistema de Gestión
+                    </span>
+                    <span class="status">No Instalado</span>
+                </li>
+                <li data-app="App2" class="installed">
+                    <span>
+                        <img src="https://cdn-icons-png.flaticon.com/512/3902/3902021.png" alt="Icono App2" class="app-icon"> 
+                        App2: API de Conexión
+                    </span>
+                    <span class="status">Instalado</span>
+                </li>
+                <li data-app="App3" class="not-installed">
+                    <span>
+                        <img src="https://cdn-icons-png.flaticon.com/512/3902/3902021.png" alt="Icono App3" class="app-icon"> 
+                        App3: Módulo de Seguridad
+                    </span>
+                    <span class="status"><a href="">No Instalado</a></span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <button class="install-btn" id="installBtn" disabled>Instalar Aplicación</button>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const installBtn = document.getElementById('installBtn');
+        const requirementList = document.getElementById('requirementList');
+        const requirements = requirementList.querySelectorAll('li');
+
+        // Función para verificar los requerimientos
+        function checkRequirements() {
+            let allInstalled = true;
+            requirements.forEach(requirement => {
+                if (requirement.classList.contains('not-installed')) {
+                    allInstalled = false;
+                }
+            });
+
+            // Si todas las apps requeridas están instaladas, activar el botón
+            if (allInstalled) {
+                installBtn.disabled = false;
+                installBtn.classList.add('enabled');
+                installBtn.textContent = 'Instalar Aplicación';
+            } else {
+                installBtn.disabled = true;
+                installBtn.classList.remove('enabled');
+                installBtn.textContent = 'Instalar Aplicación (Completa los requerimientos)';
+            }
+        }
+
+        // Inicialmente comprobar el estado de los requerimientos
+        checkRequirements();
+    });
+</script>
