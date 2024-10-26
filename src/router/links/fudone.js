@@ -184,7 +184,7 @@ router.get('/:id/:id_branch/add-combos-free', isLoggedIn, async (req, res) => {
         }
         else{
             req.flash('message','Ya alcanzaste el limite maximo para tu base de datos actual. Debes actualizar tu sucursal a la siguiente version 😅')
-            res.redirect('/fud/'+id+'/'+id_branch+'/combos-free');
+            res.redirect('/links/'+id+'/'+id_branch+'/combos-free');
         }
     } else {
         res.render('links/store/branchLost');
@@ -210,6 +210,14 @@ router.get('/:id_company/:id_branch/:id/delete-combo-free', isLoggedIn, async (r
     res.redirect(`/fud/${id_company}/${id_branch}/combos-free`);
 })
 
+//------------------------------------products 
+router.get('/:id_company/:id_branch/add-products-free', isLoggedIn, async (req, res) => {
+    const {id_company, id_branch } = req.params;
+    const departments = await get_department(id_company);
+    const category = await get_category(id_company);
+    const branchFree = await get_data_branch(id_branch);
+    res.render('links/free/products/addProducts',{branchFree,departments,category});
+});
 
 //------------------------------------branch
 router.get('/:idBranch/:idCompany/edit-branch-free', isLoggedIn, async (req, res) => {

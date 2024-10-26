@@ -9,17 +9,18 @@
     <div class="container p-4">
         <div class="row">
             <div class="col-md-8 mx-auto">
+                <label><i class="fi-icon fi-sr-calendar-clock"></i> Crear Nuevo Horario</label>
+                <hr>
                 <div class="card card-schedule">
                     <div class="card-body">
-                        <center><h2 class="title-schedules">SCHEDULES SETTING</h2></center>
                         <br>
                         <table class="table-data-schedules">
                             <tr>
-                                <th><lable>Name *</lable><br></th>
-                                <td><lable>Tolerance time (minutes)</lable></td>
+                                <th><lable>Nombre *</lable><br></th>
+                                <td><lable>Tiempo de tolerancia (minutos)</lable></td>
                             </tr>
                             <tr>
-                                <td><input type="text" class="form-control" placeholder="Schedule name" name="name_schedule" required></td>
+                                <td><input type="text" class="form-control" placeholder="Nombre del Horario" name="name_schedule" required></td>
                                 <td><input type="number" id="numero" class="form-control" min="0" step="any" value="0" name="tolerance"></td>
                             </tr>
                             <tr>
@@ -35,16 +36,16 @@
                             <table class="my-schedules">
                                 <tr>
                                     <th></th>
-                                    <th><center>Day</center></th>
-                                    <th><center>Entry time</center></th>
+                                    <th><center>Dia</center></th>
+                                    <th><center>Hora de entrada</center></th>
                                     <th></th>
-                                    <th><center>Departure</center></th>
+                                    <th><center>Hora de Salida</center></th>
                                     <th></th>
-                                    <th><center>Subtotal</center></th>
+                                    <th><center>Total de Horas</center></th>
                                 </tr>
                                     <tr class="Monday">
                                         <td class="td-add-schedules schedule-active"><button class="btn-add-schedules" id="btn-on-monday" type="button"><i class="fi-add-schedules fi-sr-clock-three" id="i-on-monday"></i></button></td>
-                                        <td>Monday</td>
+                                        <td>Lunes</td>
                                         <td>
                                             <input type="time" class="form-control" id="starMonday" disabled="false"  oninput="calculateHoursWorkedInADay('Monday')" name="ms">
                                         </td>
@@ -58,7 +59,7 @@
 
                                     <tr class="Tuesday">
                                         <td class="td-add-schedules schedule-active"><button class="btn-add-schedules" id="btn-on-thuesday" type="button"><i class="fi-add-schedules fi-sr-clock-three" id="i-on-thuesday"></i></button></td>
-                                        <td>Thuesday</td>
+                                        <td>Martes</td>
                                         <td>
                                             <input type="time" class="form-control" id="starThuesday" disabled="false" oninput="calculateHoursWorkedInADay('Tuesday')" name="ts">
                                         </td>
@@ -73,7 +74,7 @@
 
                                     <tr class="Wednesday">
                                         <td class="td-add-schedules schedule-active"><button class="btn-add-schedules" id="btn-on-wednesday" type="button"><i class="fi-add-schedules fi-sr-clock-three" id="i-on-wednesday"></i></button></td>
-                                        <td>Wednesday</td>
+                                        <td>Miercoles</td>
                                         <td>
                                             <input type="time" class="form-control" id="starWednesday" disabled="false" oninput="calculateHoursWorkedInADay('Wednesday')" name="ws">
                                         </td>
@@ -87,7 +88,7 @@
 
                                     <tr class="Thursday">
                                         <td class="td-add-schedules schedule-active"><button class="btn-add-schedules" id="btn-on-Thursday" type="button"><i class="fi-add-schedules fi-sr-clock-three" id="i-on-Thursday"></i></button></td>
-                                        <td>Thursday</td>
+                                        <td>Jueves</td>
                                         <td>
                                             <input type="time" class="form-control" id="star-Thursday" disabled="false" oninput="calculateHoursWorkedInADay('Thursday')" name="ths">
                                         </td>
@@ -101,7 +102,7 @@
 
                                     <tr class="Friday">
                                         <td class="td-add-schedules schedule-active"><button class="btn-add-schedules" id="btn-on-Friday" type="button"><i class="fi-add-schedules fi-sr-clock-three" id="i-on-Friday"></i></button></td>
-                                        <td>Friday</td>
+                                        <td>Viernes</td>
                                         <td>
                                             <input type="time" class="form-control" id="star-Friday" disabled="false" oninput="calculateHoursWorkedInADay('Friday')" name="fs">
                                         </td>
@@ -115,7 +116,7 @@
 
                                     <tr class="Saturday">
                                         <td class="td-add-schedules schedule-active"><button class="btn-add-schedules" id="btn-on-Saturday" type="button"><i class="fi-add-schedules fi-sr-clock-three" id="i-on-Saturday"></i></button></td>
-                                        <td>Saturday</td>
+                                        <td>Sabado</td>
                                         <td>
                                             <input type="time" class="form-control" id="star-Saturday" disabled="false" oninput="calculateHoursWorkedInADay('Saturday')" name="sas">
                                         </td>
@@ -129,7 +130,7 @@
 
                                     <tr class="Sunday">
                                         <td class="td-add-schedules schedule-active"><button class="btn-add-schedules" id="btn-on-Sunday" type="button"><i class="fi-add-schedules fi-sr-clock-three" id="i-on-Sunday"></i></button></td>
-                                        <td>Sunday</td>
+                                        <td>Domingo</td>
                                         <td>
                                             <input type="time" class="form-control" id="star-Sunday" disabled="false" oninput="calculateHoursWorkedInADay('Sunday')" name="sus">
                                         </td>
@@ -153,7 +154,7 @@
                             </table>
                         </center>
 
-                        <button class="btn btn-success btn-block">Save</button>
+                        <button class="btn btn-success btn-block">Guardar</button>
                     </div>
                 </div>
             </div>

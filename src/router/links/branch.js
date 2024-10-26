@@ -1051,8 +1051,9 @@ async function get_schedule_branch(idBranch) {
 
 router.get('/:id_company/:id_branch/add-schedule', isLoggedIn, async (req, res) => {
     if(await validate_subscription(req,res)){
-        const branch = await get_data_branch(req);
-        res.render(companyName + '/manager/employee/addSchedules', { branch });
+        const branchFree = await get_data_branch(req);
+        const branch=branchFree;
+        res.render(companyName + '/manager/employee/addSchedules', { branchFree , branch});
     }
 })
 
