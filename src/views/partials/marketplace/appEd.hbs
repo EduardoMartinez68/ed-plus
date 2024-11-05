@@ -1,0 +1,233 @@
+{{#each branchFree}}
+<div class="app-card">
+    <img src="https://cdn-icons-png.flaticon.com/512/3616/3616856.png" alt="App 1">
+    <div class="app-details">
+        <h3>Nueva Terminal</h3>
+        <p>MXN $59.00/mes</p>
+        <form action="/fud/add-app-fud" method="POST">
+            <!---
+                        <input type="hidden" name="price_id" value="price_1PX6PXRofynVwfKYFbVzc8G0" />
+                        <input type="hidden" name="price_id" value="price_1PYuUJRofynVwfKY9SaJLXxZ" typePrice="tester"/>
+                    -->
+            <input type="hidden" name="price_id" value="price_1PX6PXRofynVwfKYFbVzc8G0" />
+            <input type="hidden" name="app" value="new_terminal" />
+            <input type="hidden" name="id_company" value="{{id_companies}}" />
+            <input type="hidden" name="id_branch" value="{{id}}" />
+            <button id="checkout-and-portal-button" type="submit" class="download-button">Download</button>
+        </form>
+    </div>
+</div>
+<!-- App 2 -->
+<div class="app-card">
+    <img src="https://cdn-icons-png.flaticon.com/512/3190/3190497.png" alt="App 2">
+    <div class="app-details">
+        <h3>Creación de Página Web</h3>
+        <p>MXN $399.00/mes</p>
+        {{#if website_creation}}
+        <button class="download-button">Usar</button>
+        {{else}}
+        <form action="/fud/add-app-fud" method="POST">
+            <!---
+                        <input type="hidden" name="price_id" value="price_1PX6LRRofynVwfKY13PlCgiF" />
+                        <input type="hidden" name="price_id" value="price_1PYuUJRofynVwfKY9SaJLXxZ" typePrice="tester"/>
+                        --->
+            <input type="hidden" name="price_id" value="price_1PX6LRRofynVwfKY13PlCgiF" />
+            <input type="hidden" name="app" value="website_creation" />
+            <input type="hidden" name="id_company" value="{{id_companies}}" />
+            <input type="hidden" name="id_branch" value="{{id}}" />
+            <button id="checkout-and-portal-button" type="submit" class="download-button">Instalar</button>
+        </form>
+        {{/if}}
+    </div>
+</div>
+<!-- App 3 -->
+<div class="app-card">
+    <img src="https://cdn-icons-png.flaticon.com/256/2180/2180060.png" alt="App 3">
+    <div class="app-details">
+        <h3>Menu Digital</h3>
+        <p>MXN $200.00/mes</p>
+        <form action="/fud/add-app-fud" method="POST">
+            <!---
+                        <input type="hidden" name="price_id" value="price_1PX6PXRofynVwfKYFbVzc8G0" />
+                        <input type="hidden" name="price_id" value="price_1PYuUJRofynVwfKY9SaJLXxZ" typePrice="tester"/>
+                    -->
+            <input type="hidden" name="price_id" value="price_1PX6PXRofynVwfKYFbVzc8G0" />
+            <input type="hidden" name="app" value="new_terminal" />
+            <input type="hidden" name="id_company" value="{{id_companies}}" />
+            <input type="hidden" name="id_branch" value="{{id}}" />
+            <button id="checkout-and-portal-button" type="submit" class="download-button">Instalar</button>
+        </form>
+    </div>
+</div>
+<!-- App 4 -->
+<div class="app-card">
+    <img src="https://cdn-icons-png.flaticon.com/512/566/566632.png" alt="App 4">
+    <div class="app-details">
+        <h3>Horarios de Empleados</h3>
+        <p>MXN $220.00/mes</p>
+        {{#if employee_schedules}}
+            <button href="/fud/home" class="download-button">Usar</button>
+        {{else}}
+        <form action="/fud/add-app-fud" method="POST">
+            <!---
+                            <input type="hidden" name="price_id" value="price_1PX6OCRofynVwfKYcpxvrS86" typePrice="good"/>
+                            <input type="hidden" name="price_id" value="price_1PYuUJRofynVwfKY9SaJLXxZ" typePrice="tester"/>
+                        --->
+            <input type="hidden" name="price_id" value="price_1PX6OCRofynVwfKYcpxvrS86" typePrice="good" />
+            <input type="hidden" name="app" value="employee_schedules" />
+            <input type="hidden" name="id_company" value="{{id_companies}}" />
+            <input type="hidden" name="id_branch" value="{{id}}" />
+            <button id="checkout-and-portal-button" type="submit" class="download-button">Instalar</button>
+        </form>
+        {{/if}}
+    </div>
+</div>
+<!-- App 5 -->
+<div class="app-card">
+    <img src="https://cdn-icons-png.flaticon.com/512/5188/5188850.png" alt="App 5">
+    <div class="app-details">
+        <h3>Empleados</h3>
+        <p>GRATIS</p>
+        <button id="checkout-and-portal-button" type="submit"
+            onclick="nextWeb('{{id_companies}}/{{id}}/employees-branch')" class="download-button">Usar</button>
+    </div>
+</div>
+<!-- App 6 -->
+<div class="app-card">
+    <img src="https://cdn-icons-png.flaticon.com/512/6626/6626465.png" alt="App 6">
+    <div class="app-details">
+        <h3>Combos</h3>
+        <p>GRATIS</p>
+        <button id="checkout-and-portal-button" type="submit"
+            onclick="nextWeb('{{id_companies}}/{{id}}/combos-free')" class="download-button">Usar</button>
+    </div>
+</div>
+
+<!-- App 6 -->
+<div class="app-card">
+    <img src="https://cdn-icons-png.flaticon.com/512/2830/2830305.png" alt="App 6">
+    <div class="app-details">
+        <h3>ED Go!</h3>
+        <p>GRATIS</p>
+        <button id="checkout-and-portal-button" type="submit" class="download-button"
+            onclick="nextWeb('{{id_companies}}/{{id}}/order-free')">Usar</button>
+    </div>
+</div>
+
+<!-- App 6 -->
+<div class="app-card">
+    <img src="https://cdn-icons-png.flaticon.com/512/6165/6165633.png" alt="App 6">
+    <div class="app-details">
+        <h3>Gestior de Anuncios en mi Web</h3>
+        <p>GRATIS</p>
+        <button id="checkout-and-portal-button" type="submit" class="download-button"
+            onclick="nextWeb('{{id_companies}}/{{id}}/ad')">Usar</button>
+    </div>
+</div>
+
+<div class="app-card">
+    <img src="https://cdn-icons-png.flaticon.com/512/6712/6712868.png" alt="Punto de Venta">
+    <div class="app-details">
+        <h3>Punto de Venta</h3>
+        <p>GRATIS</p>
+        <button class="download-button" onclick="window.location.href='/point-sales'">Open</button>
+    </div>
+</div>
+
+<div class="app-card">
+    <img src="https://cdn-icons-png.flaticon.com/512/1147/1147832.png" alt="Productos">
+    <div class="app-details">
+        <h3>Insumos</h3>
+        <p>GRATIS</p>
+        <button class="download-button" onclick="nextWeb('{{id_companies}}/{{id}}/combos-free')">Open</button>
+    </div>
+</div>
+
+<!-- App: Productos -->
+<div class="app-card">
+    <img src="https://cdn-icons-png.flaticon.com/512/679/679922.png" alt="Productos">
+    <div class="app-details">
+        <h3>Productos</h3>
+        <p>GRATIS</p>
+        <button class="download-button" onclick="window.location.href='/products'">Open</button>
+    </div>
+</div>
+
+<!-- App: Proveedores -->
+<div class="app-card">
+    <img src="https://cdn-icons-png.flaticon.com/512/2554/2554978.png" alt="Proveedores">
+    <div class="app-details">
+        <h3>Proveedores</h3>
+        <p>GRATIS</p>
+        <button class="download-button" onclick="window.location.href='/providers'">Open</button>
+    </div>
+</div>
+
+<!-- App: Departamento de Productos -->
+<div class="app-card">
+    <img src="https://cdn-icons-png.flaticon.com/512/3974/3974868.png" alt="Departamento de Productos">
+    <div class="app-details">
+        <h3>Departamento de Productos</h3>
+        <p>GRATIS</p>
+        <button class="download-button" onclick="window.location.href='/product-department'">Open</button>
+    </div>
+</div>
+
+<div class="app-card">
+    <img src="https://cdn-icons-png.flaticon.com/512/3974/3974868.png" alt="Área de Productos" class="app-image">
+    <h3>Área de Productos</h3>
+    <p>GRATIS</p>
+    <button class="download-button">Descargar</button>
+</div>
+<div class="app-card">
+    <img src="https://cdn-icons-png.flaticon.com/512/3355/3355395.png" alt="Impresoras" class="app-image">
+    <h3>Impresoras</h3>
+    <p>GRATIS</p>
+    <button class="download-button" onclick="nextWeb('{{id_companies}}/{{id}}/box')">Usar</button>
+</div>
+<div class="app-card">
+    <img src="https://cdn-icons-png.flaticon.com/512/6176/6176257.png" alt="Gestión de Inventario" class="app-image">
+    <h3>Agenda</h3>
+    <p>GRATIS</p>
+    <button class="download-button" onclick="nextWeb('{{id_companies}}/{{id}}/0/sales')">Usar</button>
+</div>
+<div class="app-card">
+    <img src="https://cdn-icons-png.flaticon.com/512/5305/5305244.png" alt="Gestión de Inventario" class="app-image">
+    <h3>Ventas</h3>
+    <p>GRATIS</p>
+    <button class="download-button" onclick="nextWeb('{{id_companies}}/{{id}}/0/sales')">Usar</button>
+</div>
+<div class="app-card">
+    <img src="https://cdn-icons-png.flaticon.com/512/5163/5163814.png" alt="Gestión de Inventario" class="app-image">
+    <h3>Movimientos</h3>
+    <p>GRATIS</p>
+    <button class="download-button" onclick="nextWeb('{{id_companies}}/{{id}}/0/movements')">Usar</button>
+</div>
+
+<div class="app-card">
+    <img src="https://cdn-icons-png.flaticon.com/512/2257/2257295.png" alt="Reportes de Ventas" class="app-image">
+    <h3>Reportes</h3>
+    <p>GRATIS</p>
+    <button class="download-button" onclick="nextWeb('{{id_companies}}/{{id}}/reports')">Descargar</button>
+</div>
+<div class="app-card">
+    <img src="https://cdn-icons-png.flaticon.com/512/11815/11815356.png" alt="Gestión de Clientes" class="app-image">
+    <h3>Clientes</h3>
+    <p>GRATIS</p>
+    <button class="download-button" onclick="nextWeb('{{id_companies}}/{{id}}/customers-company')">Descargar</button>
+</div>
+<div class="app-card">
+    <img src="https://cdn-icons-png.flaticon.com/512/747/747563.png" alt="Programa de Lealtad" class="app-image">
+    <h3>CRM</h3>
+    <p>GRATIS</p>
+    <button class="download-button" onclick="nextWeb('{{id_companies}}/{{id}}/CRM')">Usar</button>
+</div>
+<div class="app-card">
+    <img src="https://cdn-icons-png.flaticon.com/512/8392/8392178.png" alt="Cupones" class="app-image">
+    <h3>Cotizaciones</h3>
+    <p>GRATIS</p>
+    <button class="download-button" onclick="nextWeb('{{id_companies}}/{{id}}/watch-invoice-crm')">Usar</button>
+</div>
+
+
+{{/each}}
