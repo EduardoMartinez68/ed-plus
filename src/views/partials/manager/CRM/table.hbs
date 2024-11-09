@@ -3,8 +3,8 @@
 <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.5.1/uicons-bold-rounded/css/uicons-bold-rounded.css'>
 <div class="add-column-form">
     {{#each branchFree}}
-    <button id="addColumnBtn" class="btn btn-confirm-message" onclick="add_table_crm('{{id_companies}}','{{id}}')">Añadir nueva columna ➕</button>
     <button id="addColumnBtn" class="btn btn-edit" onclick="nextWeb('{{id_companies}}/{{id}}/add-prospects')">Nueva Oportunidad ⭐</button>
+    <button id="addColumnBtn" class="btn btn-confirm-message" onclick="add_table_crm('{{id_companies}}','{{id}}')">Añadir nueva columna ➕</button>
     {{/each}}
     {{#each company}}
     <button id="addColumnBtn" class="btn btn-confirm-message" onclick="add_table_crm('{{id}}')">Añadir nueva columna +<i
