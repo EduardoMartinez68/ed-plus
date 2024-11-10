@@ -3,19 +3,46 @@
 <div class="container">
     <div class="card">
         <div class="card-body">
+            {{#each customer}}
+            <form action="/fud/{{id_companies}}/{{id_branches}}/{{id}}/update-prospect" method="post" id="myForm">
             <br>     
-            <label><i class="fi-icon fi-ss-trophy"></i> Editar oportunidad</label>
+            <div class="row">
+                <div class="col-9">
+                    <label><i class="fi-icon fi-ss-trophy"></i> Editar oportunidad</label>
+                    <h1>{{name}}</h1>
+                </div>
+                <div class="col">
+                    <div class="time-progress-container">
+                        <div class="time-progress-bar" id="progressBar">0%</div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col" style="text-align: right;">
+                                <label for="" class="form-label" style="text-align: right;" id="label-priority">Prioridad</label>
+                                <div class="rating-container">
+                                    <div class="priorities">
+                                        <span class="priority" data-value="3" data-message="Prioridad Alta">★</span>
+                                        <span class="priority" data-value="2" data-message="Prioridad Media">★</span>
+                                        <span class="priority" data-value="1" data-message="Prioridad Baja">★</span>
+                                    </div>
+                                    <div class="message-priority" id="ratingMessage">Seleccione una prioridad</div>
+                                    <input type="hidden" name="priority" id="priority" value="{{priority}}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {{/each}}           
+                </div>
+            </div>
             <hr>
             <br>
+
             <div class="btn-group">
                 <button class="btn-select btn-active" onclick="showSection('select-1', this)" type="button">Información Personal</button>
                 <button class="btn-select" onclick="showSection('select-2', this)" type="button">Seguimiento</button>
                 <button class="btn-select" onclick="showSection('select-3', this)" type="button">Información Adicional</button>
             </div>
 
-            {{#each customer}}
-            <form action="/fud/{{id_companies}}/{{id_branches}}/{{id}}/update-prospect" method="post">
-            {{/each}}
                 {{>manager/CRM/tabsSalesStage}}
 
                 <div id="select-1" class="content-section active">

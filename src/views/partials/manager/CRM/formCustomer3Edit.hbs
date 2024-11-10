@@ -1,23 +1,6 @@
 {{#each customer}}
     <div class="form-group">
-        <div class="row">
-            <div class="col-1">
-                <label for="exampleFormControlInput1" class="form-label">Etiqueta</label>
-                <input type="color" class="form-control" id="exampleFormControlInput1" placeholder="Etiqueta" name="label" value="{{color}}">
-            </div>
-            <div class="col" style="text-align: right;">
-                <label for="" class="form-label" style="text-align: right;" id="label-priority">Prioridad</label>
-                <div class="rating-container">
-                    <div class="priorities">
-                        <span class="priority" data-value="3" data-message="Prioridad Alta">★</span>
-                        <span class="priority" data-value="2" data-message="Prioridad Media">★</span>
-                        <span class="priority" data-value="1" data-message="Prioridad Baja">★</span>
-                    </div>
-                    <div class="message-priority" id="ratingMessage">Seleccione una prioridad</div>
-                    <input type="hidden" name="priority" id="priority" value="{{priority}}">
-                </div>
-            </div>
-        </div>
+        {{>manager/CRM/inputColor}}
     </div>
 {{/each}}
 <div class="form-group">
