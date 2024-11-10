@@ -3,6 +3,62 @@
 }
 
 
+/**--------------------------history sales--------------------------**/
+#history-of-sales {
+    /*display: none; /* Hide history on page load*/
+}
+
+.container-history {
+    margin: 0 auto; /* Centrar el contenedor */
+    padding: 10px; /* Espaciado interno del contenedor */
+    border-radius: 8px;
+}
+
+.img-history-sales{
+    width: 100%;
+    height: auto;
+    border-radius: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.title-history{
+    font-weight: bold;
+    color:black;
+    font-size: .9rem;
+    text-transform: uppercase;
+}
+
+.message-history{
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    margin-bottom: 16px;
+    border-radius: 5px;
+    font-size: 16px;
+    color: #333;
+}
+
+.container-message-history{
+
+}
+
+.title-with-lines {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 20px 0;
+    color: rgba(0, 0, 0, 0.5);
+    font-size: .8rem;
+  }
+
+  .title-with-lines::before,
+  .title-with-lines::after {
+    content: "";
+    flex: .5;
+    border-top: .5px solid rgba(0, 0, 0, 0.4);
+    margin: 0 10px;
+  }
+
 /**--------------------------starts--------------------------**/
 .rating-container {
     text-align: right;

@@ -29,6 +29,9 @@ function updateProgress() {
 
   progressBar.style.width = `${progressPercentage}%`;
   progressBar.textContent = `Faltan solo ${(totalDays+1)} días`;
+
+  //change the color of the label
+  //selectColor(progressBar.style.backgroundColor) 
 }
 
 updateProgress();

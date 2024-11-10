@@ -1,6 +1,16 @@
 <link rel="stylesheet" href="/css/task/tablet.css">
 <link rel="stylesheet" href="/css/CRM/crm.css">
-{{>manager/CRM/formCustomerEdit}}
+<div class="row">
+
+    <div class="col" id="information-sales">
+        {{>manager/CRM/formCustomerEdit}}
+    </div>
+    <div class="col-4" id="history-of-sales">
+        {{>manager/CRM/historySales}}
+    </div>
+</div>
 <script src="/js/crm/showMessages.js"></script>
 <script src="/js/crm/progress-bar.js"></script>
 <script src="/js/crm/select-color.js"></script>
+
+<script src="/js/crm/UI.js"></script>

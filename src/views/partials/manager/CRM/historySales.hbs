@@ -1,0 +1,28 @@
+<br><br>
+{{#each customer}}
+    <div class="form-buttons">
+        <button class="btn btn-edit">Enviar Mensaje</button>
+        <button class="btn btn-2" onclick="nextWeb('{{id_companies}}/{{id_branches}}/{{id}}/create-invoice-crm')">Crear Nota</button>
+        <button class="btn btn-2" onclick="send_to_whatsApp('{{name}}','{{email}}','{{cellphone}}')">Whatsapp</button>
+        <button class="btn btn-2" onclick="show_appointment('{{id_companies}}','{{id_branches}}','{{id}}','{{id_employees}}')">Actividades</button>
+    </div>
+{{/each}}
+<div class="title-with-lines"><i class="fi-icon fi-rr-clock-three"></i> Historial</div>
+<div class="container-history">
+    <div class="message-history">
+        <div class="row">
+            <div class="col-2">
+                <img src="https://img.freepik.com/psd-premium/personaje-avatar-3d_975163-690.jpg?w=360" alt=""
+                    class="img-history-sales">
+            </div>
+            <div class="col">
+                <label class="title-history">Nombre del usuario</label>
+                <label for="">-Ahora</label>
+                <div class="container-message-history">
+                    Texto del mensaje
+                </div>
+            </div>
+        </div>
+        <br>
+    </div>
+</div>

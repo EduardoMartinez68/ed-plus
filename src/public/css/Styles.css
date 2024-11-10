@@ -3,7 +3,8 @@
     --color-company: white;
     --color-footer:  #131313;
     /*rgb(57,78,194);*/
-    --color-hover: #2D3972;
+    --color-hover: #074a85;
+
     /*rgb(46, 62, 151);*/
     --color-body: #F5F6FA; /*rgb(246, 245, 248);*/
     
@@ -49,6 +50,11 @@ a:hover{
     color: white;
 }
 
+.btn-edit:hover{
+    background-color: var(--color-hover);
+    color: white;
+}
+
 .bar-link{
     font-size: 1rem;
     font-family: 'Open Sans', sans-serif;
@@ -67,6 +73,7 @@ a:hover{
     top: 10px;
     transform: translateX(+22.5%);
 }
+
 /*this is a style Boobstarp*/
 .form-check-input:checked{
     background-color: var(--color-company);
@@ -120,6 +127,16 @@ a:hover{
 .btn-cancel-message:hover {
     background: var(--color-cancel-hover);
     color: white;
+}
+
+.btn-2{
+    background: #dbdddf;
+    color: #3d4246;
+}
+
+.btn-2:hover{
+    background: #c2c3c5;
+    color: #2d3033;
 }
 
 .popup-message {
