@@ -28,6 +28,11 @@ a:hover{
     cursor: pointer;
 }
 
+table {
+    border-collapse: separate;
+    border-spacing: 0 10px;
+}
+
 .title-company{
     color: var(--color-company);
 }

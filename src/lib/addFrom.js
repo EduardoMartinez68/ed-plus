@@ -999,10 +999,10 @@ router.post('/fud/:id_company/add-department-employees', isLoggedIn, async (req,
     const { id_company } = req.params;
     const department = create_department_employee(req)
     if (await addDatabase.add_department_employees(department)) {
-        req.flash('success', 'the department was add with supplies 👍')
+        req.flash('success', 'El departamento se agregó con éxito. 👍')
     }
     else {
-        req.flash('message', 'the department not was add 😰')
+        req.flash('message', 'El departamento no se agregó. 😰')
     }
 
     //we will see if the user have the subscription to fud one 
@@ -1601,6 +1601,26 @@ router.post('/fud/:id_company/:id_branch/add-providers', isLoggedIn, async (req,
     }
 })
 
+
+router.post('/fud/:id_company/:id_branch/:id_provider/edit-providers-branch', isLoggedIn, async (req, res) => {
+    const { id_company, id_provider, id_branch } = req.params;
+    const provider = create_new_provider(req);
+    //we will changing the id branch for knkow
+    provider.branch = id_branch;
+    if (await this_provider_exists(provider)) {
+        req.flash('message', 'Este proveedor ya existe en esta sucursal 😅')
+    } else {
+        await update_provider_to_database(id_provider, provider, req);
+    }
+
+    //we will see if the user is use ed one 
+    if(req.user.rol_user==rolFree){
+        res.redirect(`/links/${id_company}/${id_branch}/providers-free`);
+    }else{
+        res.redirect(`/links/${id_company}/${id_branch}/providers`);
+    }
+})
+
 //edit products branch 
 router.post('/fud/:id_company/:id_branch/:id_supplies/update-products-branch', isLoggedIn, async (req, res) => {
     const { id_company, id_branch, id_supplies } = req.params;
@@ -1617,25 +1637,6 @@ router.post('/fud/:id_company/:id_branch/:id_supplies/update-products-branch', i
     }
 
     res.redirect(`/fud/${id_company}/${id_branch}/product`);
-})
-
-router.post('/fud/:id_company/:id_branch/:id_provider/edit-providers-branch', isLoggedIn, async (req, res) => {
-    const { id_company, id_provider, id_branch } = req.params;
-    const provider = create_new_provider(req);
-    //we will changing the id branch for knkow
-    provider.branch = id_branch;
-    if (await this_provider_exists(provider)) {
-        req.flash('message', 'Este proveedor ya existe en esta sucursal 😅')
-    } else {
-        await update_provider_to_database(id_provider, provider, req);
-    }
-
-    //we will see if the user is use ed one 
-    if(req.user.rol_user==rolFree){
-        res.redirect(`/fud/${id_company}/${id_branch}/providers-free`);
-    }else{
-        res.redirect(`/fud/${id_company}/${id_branch}/providers`);
-    }
 })
 
 router.post('/fud/:id_company/:id_branch/:id_combo/update-combo-branch', isLoggedIn, async (req, res) => {
@@ -1674,7 +1675,7 @@ function create_new_combo_branch(req, id_combo) {
 router.post('/fud/:id_user/:id_company/:id_branch/:id_employee/edit-employees', isLoggedIn, async (req, res) => {
     const { id_company, id_branch } = req.params;
     await update_employee(req, res);
-    res.redirect('/fud/' + id_company + '/' + id_branch + '/employees-branch');
+    res.redirect('/links/' + id_company + '/' + id_branch + '/employees-branch');
 })
 
 router.post('/fud/:id_company/:id_branch/add-employees', isLoggedIn, async (req, res) => {
@@ -1722,7 +1723,7 @@ router.post('/fud/:id_company/:id_branch/add-employees', isLoggedIn, async (req,
         }
     }
 
-    res.redirect('/fud/' + id_company + '/' + id_branch + '/employees-branch');
+    res.redirect('/links/' + id_company + '/' + id_branch + '/employees-branch');
 })
 
 
@@ -1742,7 +1743,7 @@ router.post('/fud/:id_company/:id_branch/add-box', isLoggedIn, async (req, res) 
         }
     }
 
-    res.redirect('/fud/' + id_company + '/' + id_branch + '/box');
+    res.redirect('/links/' + id_company + '/' + id_branch + '/box');
 })
 
 async function this_box_exist_in_this_branch(idBranch, numer) {
@@ -1765,7 +1766,7 @@ router.post('/fud/:id_company/:id_branch/ad-offer', isLoggedIn, async (req, res)
         req.flash('message', 'El anuncio no fue agregado 👉👈')
     }
 
-    res.redirect('/fud/' + id_company + '/' + id_branch + '/ad');
+    res.redirect('/links/' + id_company + '/' + id_branch + '/ad');
 })
 
 router.post('/fud/:id_company/:id_branch/ad-new', isLoggedIn, async (req, res) => {
@@ -1780,7 +1781,7 @@ router.post('/fud/:id_company/:id_branch/ad-new', isLoggedIn, async (req, res) =
         req.flash('message', 'El anuncio no fue agregado 👉👈')
     }
 
-    res.redirect('/fud/' + id_company + '/' + id_branch + '/ad');
+    res.redirect('/links/' + id_company + '/' + id_branch + '/ad');
 })
 
 router.post('/fud/:id_company/:id_branch/ad-comboAd', isLoggedIn, async (req, res) => {
@@ -1796,7 +1797,7 @@ router.post('/fud/:id_company/:id_branch/ad-comboAd', isLoggedIn, async (req, re
         req.flash('message', 'El anuncio no fue agregado 👉👈')
     }
 
-    res.redirect('/fud/' + id_company + '/' + id_branch + '/ad');
+    res.redirect('/links/' + id_company + '/' + id_branch + '/ad');
 })
 
 router.post('/fud/:id_company/:id_branch/ad-specialAd', isLoggedIn, async (req, res) => {
@@ -1812,7 +1813,7 @@ router.post('/fud/:id_company/:id_branch/ad-specialAd', isLoggedIn, async (req, 
         req.flash('message', 'El anuncio no fue agregado 👉👈')
     }
 
-    res.redirect('/fud/' + id_company + '/' + id_branch + '/ad');
+    res.redirect('/links/' + id_company + '/' + id_branch + '/ad');
 })
 
 async function create_ad(req, id_branch, type) {
@@ -1854,7 +1855,7 @@ router.post('/fud/:id_company/:id_branch/add-schedule', isLoggedIn, async (req, 
         req.flash('message', 'Ups! El horario no fue agregado 👉👈');
     }
 
-    res.redirect('/fud/' + id_company + '/' + id_branch + '/schedules');
+    res.redirect('/links/' + id_company + '/' + id_branch + '/schedules');
 })
 
 function create_schedule(req, id_branch) {
@@ -1913,7 +1914,7 @@ router.post('/fud/:id_company/:id_branch/:id_schedule/edit-schedule', isLoggedIn
         req.flash('message', 'Ups! El horario no fue actualizado 👉👈');
     }
 
-    res.redirect('/fud/' + id_company + '/' + id_branch + '/schedules');
+    res.redirect('/links/' + id_company + '/' + id_branch + '/schedules');
 })
 
 async function update_schedule_by_id(schedule, id) {

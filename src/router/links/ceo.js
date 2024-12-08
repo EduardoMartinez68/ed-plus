@@ -298,7 +298,7 @@ router.get('/:id/type-user', isLoggedIn, async (req, res) => {
         res.render('links/manager/role_type_employees/typeEmployees', { company, typeEmployees });
     }
     else {
-        res.redirect('/fud/home');
+        res.redirect('/links/home');
     }
 })
 
@@ -311,10 +311,10 @@ router.get('/:id/:idTypeEmployee/delete-role-user', isLoggedIn, async (req, res)
         } else {
             req.flash('message', 'El rol no fue eliminado con éxito 😮')
         }
-        res.redirect('/fud/' + id + '/type-user');
+        res.redirect('/links/' + id + '/type-user');
     }
     else {
-        res.redirect('/fud/home');
+        res.redirect('/links/home');
     }
 })
 
@@ -330,7 +330,7 @@ router.get('/:id/:id_branch/:idTypeEmployee/delete-role-user', isLoggedIn, async
         res.redirect(`/fud/${id}/${id_branch}/type-employees-free`);
     }
     else {
-        res.redirect('/fud/home');
+        res.redirect('/links/home');
     }
 })
 
@@ -342,7 +342,7 @@ router.get('/:id/:idRoleEmployee/edit-role-user', isLoggedIn, async (req, res) =
         res.render('links/manager/role_type_employees/editRoleEmployee', { roleEmployee });
     }
     else {
-        res.redirect('/fud/home');
+        res.redirect('/links/home');
     }
 })
 
@@ -355,7 +355,7 @@ router.get('/:id/:id_branch/:idRoleEmployee/edit-role-user', isLoggedIn, async (
         res.render('links/manager/role_type_employees/editRoleEmployee', { branchFree, roleEmployee });
     }
     else {
-        res.redirect('/fud/home');
+        res.redirect('/links/home');
     }
 })
 
@@ -392,10 +392,10 @@ router.get('/:id/:idDepartament/delete_departament', isLoggedIn, async (req, res
         }
     }
     else {
-        res.redirect('/fud/home');
+        res.redirect('/links/home');
     }
 
-    res.redirect('/fud/' + id + '/employee-department');
+    res.redirect('/links/' + id + '/employee-department');
 })
 
 router.get('/:id/:id_branch/:idDepartament/delete_departament', isLoggedIn, async (req, res) => {
@@ -411,7 +411,7 @@ router.get('/:id/:id_branch/:idDepartament/delete_departament', isLoggedIn, asyn
         }
     }
     else {
-        res.redirect('/fud/home');
+        res.redirect('/links/home');
     }
 
     res.redirect(`/fud/${id}/${id_branch}/employee-department`)
@@ -431,10 +431,10 @@ router.get('/:id/:idDepartament/:name/:description/edit-department-employee', is
         }
     }
     else {
-        res.redirect('/fud/home');
+        res.redirect('/links/home');
     }
 
-    res.redirect('/fud/' + id + '/employee-department');
+    res.redirect('/links/' + id + '/employee-department');
 })
 
 router.get('/:id/:id_branch/:idDepartament/:name/:description/edit-department-employee', isLoggedIn, async (req, res) => {
@@ -451,9 +451,9 @@ router.get('/:id/:id_branch/:idDepartament/:name/:description/edit-department-em
         }
     }
     else {
-        res.redirect('/fud/home');
+        res.redirect('/links/home');
     }
-    res.redirect(`/fud/${id}/${id_branch}/employee-department`)
+    res.redirect(`/links/${id}/${id_branch}/employee-department`)
 })
 
 //----------------------------------------------------------------supplies and products 
@@ -464,7 +464,7 @@ router.get('/:id/company-supplies', isLoggedIn, async (req, res) => {
         res.render('links/manager/supplies_and_products/supplies', { supplies_products, company });
     }
     else {
-        res.redirect('/fud/home');
+        res.redirect('/links/home');
     }
 });
 
@@ -475,7 +475,7 @@ router.get('/:id/company-products', isLoggedIn, async (req, res) => {
         res.render('links/manager/supplies_and_products/products', { supplies_products, company });
     }
     else {
-        res.redirect('/fud/home');
+        res.redirect('/links/home');
     }
 });
 
@@ -492,10 +492,10 @@ router.get('/:id_company/:id/delate-supplies-company', isLoggedIn, async (req, r
     }
 
     if (thisIsASupplies) {
-        res.redirect('/fud/' + id_company + '/company-supplies');
+        res.redirect('/links/' + id_company + '/company-supplies');
     }
     else {
-        res.redirect('/fud/' + id_company + '/company-products');
+        res.redirect('/links/' + id_company + '/company-products');
     }
 })
 
@@ -512,10 +512,10 @@ router.get('/:id_company/:id/:barcode/:name/:description/:useInventory/company-s
     }
 
     if (thisIsASupplies) {
-        res.redirect('/fud/' + id_company + '/company-supplies');
+        res.redirect('/links/' + id_company + '/company-supplies');
     }
     else {
-        res.redirect('/fud/' + id_company + '/company-products');
+        res.redirect('/links/' + id_company + '/company-products');
     }
 });
 
@@ -542,7 +542,7 @@ router.get('/:id/combos', isLoggedIn, async (req, res) => {
         res.render('links/manager/combo/combos', { company, combos });
     }
     else {
-        res.redirect('/fud/home');
+        res.redirect('/links/home');
     }
 })
 
@@ -558,7 +558,7 @@ router.get('/:id/add-combos', isLoggedIn, async (req, res) => {
         res.render('links/manager/combo/addCombo', { company, departments, category, supplies, products, suppliesCombo });
     }
     else {
-        res.redirect('/fud/home');
+        res.redirect('/links/home');
     }
 })
 
@@ -588,7 +588,7 @@ router.get('/:id_company/:id/delate-combo-company', isLoggedIn, async (req, res)
         req.flash('message', 'El combo NO fue eliminado con éxito 😳')
     }
 
-    res.redirect('/fud/' + id_company + '/combos');
+    res.redirect('/links/' + id_company + '/combos');
 })
 
 //----------------------------------------------------------------food department
@@ -615,17 +615,17 @@ router.get('/:id_company/:id/delate-food-department', isLoggedIn, async (req, re
         if (await delate_product_department(id)) {
             //we will see if the user have a suscription of fud one 
             if(req.user.rol_user==rolFree){
-                res.redirect('/fud/home');
+                res.redirect('/links/home');
             }else{
-                res.redirect('/fud/' + id_company + '/food-department');
+                res.redirect('/links/' + id_company + '/food-department');
             }
         }
         else {
-            res.redirect('/fud/home');
+            res.redirect('/links/home');
         }
     }
     else {
-        res.redirect('/fud/home');
+        res.redirect('/links/home');
     }
 
 });
@@ -640,17 +640,17 @@ router.get('/:id_company/:id/:name/:description/edit-food-department', isLoggedI
         if (await update_product_department(id, name, description)) {
             //we will see if the user have a suscription of fud one 
             if(req.user.rol_user==rolFree){
-                res.redirect('/fud/home');
+                res.redirect('/links/home');
             }else{
-                res.redirect('/fud/' + id_company + '/food-department');
+                res.redirect('/links/' + id_company + '/food-department');
             }
         }
         else {
-            res.redirect('/fud/home');
+            res.redirect('/links/home');
         }
     }
     else {
-        res.redirect('/fud/home');
+        res.redirect('/links/home');
     }
 });
 
@@ -676,14 +676,14 @@ router.get('/:id_company/:id/delete-food-category', isLoggedIn, async (req, res)
     if (company.length > 0) {
         //we going to see if we can delate the department 
         if (await delate_product_category(id)) {
-            res.redirect('/fud/' + id_company + '/food-category');
+            res.redirect('/links/' + id_company + '/food-category');
         }
         else {
-            res.redirect('/fud/home');
+            res.redirect('/links/home');
         }
     }
     else {
-        res.redirect('/fud/home');
+        res.redirect('/links/home');
     }
 });
 
@@ -695,14 +695,14 @@ router.get('/:id_company/:id/delete-food-category', isLoggedIn, async (req, res)
     if (company.length > 0) {
         //we going to see if we can delate the department 
         if (await delate_product_category(id)) {
-            res.redirect('/fud/' + id_company + '/food-category');
+            res.redirect('/links/' + id_company + '/food-category');
         }
         else {
-            res.redirect('/fud/home');
+            res.redirect('/links/home');
         }
     }
     else {
-        res.redirect('/fud/home');
+        res.redirect('/links/home');
     }
 
 });
@@ -716,14 +716,14 @@ router.get('/:id_company/:id/:name/:description/edit-food-category', isLoggedIn,
         //we going to see if we can delete the department 
         if (await update_product_category(id, name, description)) {
             //we will see if exist the user is use fud one 
-            res.redirect('/fud/' + id_company + '/food-category');
+            res.redirect('/links/' + id_company + '/food-category');
         }
         else {
-            res.redirect('/fud/home');
+            res.redirect('/links/home');
         }
     }
     else {
-        res.redirect('/fud/home');
+        res.redirect('/links/home');
     }
 });
 

@@ -329,7 +329,7 @@ function get_query_edit_user(dataUser){
 
 async function update_user(idUser,dataUser){
     var queryText = get_query_edit_user(dataUser)
-    console.log(queryText);
+
     //create the array
     var values = Object.values(dataUser);
     

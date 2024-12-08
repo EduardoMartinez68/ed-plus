@@ -70,7 +70,6 @@ const {
 
 
 //functions providers
-//functions providers
 const {
     search_providers,
     search_all_providers,
@@ -263,11 +262,11 @@ router.get('/:id_company/:id_branch/:id/delete-food-department', isLoggedIn, asy
             req.flash('message', 'El departamento NO fue eliminado con éxito 😳')
         }
 
-        res.redirect(`/fud/${id_company}/${id_branch}/food-department-free`);
+        res.redirect(`/links/${id_company}/${id_branch}/food-department-free`);
     }
     else {
         req.flash('message', 'No tienes los permisos para esto 😳')
-        res.redirect('/fud/home');
+        res.redirect('/links/home');
     }
 });
 
@@ -285,11 +284,11 @@ router.get('/:id_company/:id_branch/:id/:name/:description/edit-food-department'
             req.flash('message', 'El departamento NO fue actualizado con éxito 😳')
         }
 
-        res.redirect(`/fud/${id_company}/${id_branch}/food-department-free`);
+        res.redirect(`/links/${id_company}/${id_branch}/food-department-free`);
     }
     else {
         req.flash('message', 'No tienes los permisos para esto 😳')
-        res.redirect('/fud/home');
+        res.redirect('/links/home');
     }
 });
 
@@ -314,11 +313,11 @@ router.get('/:id_company/:id_branch/:id/:name/:description/edit-food-category-fr
             req.flash('message', 'La categoria NO fue actualizada con éxito 😳')
         }
 
-        res.redirect(`/fud/${id_company}/${id_branch}/food-area-free`);
+        res.redirect(`/links/${id_company}/${id_branch}/food-area-free`);
     }
     else {
         req.flash('message', 'No tienes los permisos para esto 😳')
-        res.redirect('/fud/home');
+        res.redirect('/links/home');
     }
 });
 
@@ -336,11 +335,11 @@ router.get('/:id_company/:id_branch/:id/delete-food-category', isLoggedIn, async
             req.flash('message', 'La categoria NO fue eliminada con éxito 😳')
         }
 
-        res.redirect(`/fud/${id_company}/${id_branch}/food-area-free`);
+        res.redirect(`/links/${id_company}/${id_branch}/food-area-free`);
     }
     else {
         req.flash('message', 'No tienes los permisos para esto 😳')
-        res.redirect('/fud/home');
+        res.redirect('/links/home');
     }
 
 });

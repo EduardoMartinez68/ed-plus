@@ -175,15 +175,15 @@ router.post('/restart-password', isNotLoggedIn, async (req, res) => {
             await sendEmail.email_to_recover_password(email,token)//await restart_password_send_token(email,token);
             //await sendEmail.email_to_recover_password('eduardoa4848@Outlook.es',token)//await restart_password_send_token(email,token);
             req.flash('success', 'Se envio un token a tu correo electronico usalo para restablecer tu password 👁️');
-            res.redirect('/fud/confirm-restart-password');
+            res.redirect('/links/confirm-restart-password');
         }else{
             //if we no can save the token in the database, show a message of error 
             req.flash('message', 'No pudimos enviar el token a tu cuenta, intente de nuevo 👉👈');
-            res.redirect('/fud/restart-password');
+            res.redirect('/links/restart-password');
         }
     }else{
         req.flash('message', 'No existe un usuario con este correo 🤨');
-        res.redirect('/fud/restart-password');
+        res.redirect('/links/restart-password');
     }
 
 });

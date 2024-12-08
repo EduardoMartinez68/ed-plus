@@ -1,10 +1,3 @@
-<head>
-<style>
-    table {
-        border-collapse: separate;
-        border-spacing: 0 10px;
-    }
-</style>
 <!---this code if for when the user have a subscription to ed one or is in a branch-->
 {{#each branch}}
 <input type="hidden" id="id_branch" value="{{id}}">
@@ -13,6 +6,7 @@
 <input type="hidden" id="id_branch" value="{{id}}">
 {{/each}}
 
+<!--this is the table of the data of the providers-->
 <div class="card">
     <div class="card-body">
         <table width="100%" border="1" class="table-information" id="table-container">
@@ -43,19 +37,4 @@
     </div>
 </div>
 
-<script>
-  async function delete_provider(idCompany,idProvider,name){
-    //if the user is in a branch or is with a subscription in ed one 
-    const idBranch=document.getElementById('id_branch').value;
-    if(idBranch){
-      if(await questionMessage(`Eliminar a '${name}' 😳`,'¿Quieres eliminar a este provedor?')){
-        window.location.href = `/fud/${idCompany}/${idBranch}/${idProvider}/delete-provider`;
-      }
-    }else{
-        //if not is in a branch or in ed one, the use is in the CEO UI
-      if(await questionMessage(`Eliminar a '${name}' 😳`,'¿Quieres eliminar a este provedor?')){
-        window.location.href = `/fud/${idCompany}/${idProvider}/delete-provider`;
-      }
-    }
-  }
-</script>
+<script src="/js/manager/providers/providers.js"></script>
