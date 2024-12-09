@@ -206,7 +206,7 @@ router.get('/:id_company/:id_branch/:id/delete-combo-free', isLoggedIn, async (r
         req.flash('message', 'El combo NO fue eliminado con éxito 😳')
     }
 
-    res.redirect(`/fud/${id_company}/${id_branch}/combos-free`);
+    res.redirect(`/links/${id_company}/${id_branch}/combos-free`);
 })
 
 //------------------------------------products 

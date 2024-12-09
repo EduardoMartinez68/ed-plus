@@ -1550,9 +1550,9 @@ router.post('/fud/:id_company/:id_branch/:id_supplies/update-supplies-branch', i
     }
 
     if (req.user.rol_user == rolFree) {
-        res.redirect(`/fud/${id_company}/${id_branch}/supplies-free`);
+        res.redirect(`/links/${id_company}/${id_branch}/supplies-free`);
     } else {
-        res.redirect(`/fud/${id_company}/${id_branch}/supplies`);
+        res.redirect(`/links/${id_company}/${id_branch}/supplies`);
     }
 })
 
@@ -1595,9 +1595,9 @@ router.post('/fud/:id_company/:id_branch/add-providers', isLoggedIn, async (req,
 
     //we will see if the user is use ed one 
     if(req.user.rol_user==rolFree){
-        res.redirect(`/fud/${id_company}/${id_branch}/providers-free`);
+        res.redirect(`/links/${id_company}/${id_branch}/providers-free`);
     }else{
-        res.redirect(`/fud/${id_company}/${id_branch}/providers`);
+        res.redirect(`/links/${id_company}/${id_branch}/providers`);
     }
 })
 
@@ -1636,7 +1636,7 @@ router.post('/fud/:id_company/:id_branch/:id_supplies/update-products-branch', i
         req.flash('message', 'El no producto se actualizó 👉👈');
     }
 
-    res.redirect(`/fud/${id_company}/${id_branch}/product`);
+    res.redirect(`/links/${id_company}/${id_branch}/product`);
 })
 
 router.post('/fud/:id_company/:id_branch/:id_combo/update-combo-branch', isLoggedIn, async (req, res) => {
@@ -1649,9 +1649,9 @@ router.post('/fud/:id_company/:id_branch/:id_combo/update-combo-branch', isLogge
     }
 
     if (req.user.rol_user == rolFree) {
-        res.redirect('/fud/' + id_company + '/' + id_branch + '/combos-free');
+        res.redirect('/links/' + id_company + '/' + id_branch + '/combos-free');
     } else {
-        res.redirect('/fud/' + id_company + '/' + id_branch + '/combos');
+        res.redirect('/links/' + id_company + '/' + id_branch + '/combos');
     }
 })
 
@@ -2528,21 +2528,27 @@ async function delete_order_by_id(id_order) {
 
 
 
-//-------------------------------------------------------customer
+//-------------------------------------------------------customer branch or One
 router.post('/fud/:id_company/:id_branch/addCustomer', isLoggedIn, async (req, res) => {
     const { id_company, id_branch} = req.params;
     const newCustomer = create_new_customer(req);
 
-    //we will see if can added the new customer to the database
-    if (await addDatabase.add_customer(newCustomer)) {
-        req.flash('success', 'El clienta fue agregada con exito ❤️')
+    //we will see if the customer exist in the database 
+    if(await addDatabase.this_customer_exists(newCustomer.id_company,newCustomer.email)){
+        req.flash('message', 'Este correo electrónico ya está registrado 😬')
+        res.redirect(`/links/${id_company}/${id_branch}/add-customer`);
     }
-    else {
-        req.flash('message', 'El cliente no fue agregado 👉👈')
+    else{
+        //we will see if can added the new customer to the database
+        if (await addDatabase.add_customer(newCustomer)) {
+            req.flash('success', 'El clienta fue agregada con exito ❤️')
+        }
+        else {
+            req.flash('message', 'El cliente no fue agregado 👉👈')
+        }
+
+        res.redirect(`/links/${id_company}/${id_branch}/customers-company`);
     }
-
-
-    res.redirect(`/links/${id_company}/${id_branch}/customers-company`);
 })
 
 router.post('/fud/:id_company/:id_customer/editCustomer', isLoggedIn, async (req, res) => {

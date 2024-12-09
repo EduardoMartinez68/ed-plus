@@ -1,5 +1,5 @@
 {{#each branch}}
-    <form action="/fud/{{id_companies}}/{{id}}/ad-offer" method="POST" enctype="multipart/form-data">
+    <form action="/links/{{id_companies}}/{{id}}/ad-offer" method="POST" enctype="multipart/form-data">
         <div class="col">
             <label>Image (2,000x400)</label><br>
             <img src="/img/ad.png" alt="" class="img-carousel" id="previewImage-1">
@@ -10,7 +10,7 @@
     </form>
 {{/each}}
 {{#each branchFree}}
-    <form action="/fud/{{id_companies}}/{{id}}/ad-offer" method="POST" enctype="multipart/form-data">
+    <form action="/links/{{id_companies}}/{{id}}/ad-offer" method="POST" enctype="multipart/form-data">
         <div class="col">
             <label>Image (2,000x400)</label><br>
             <img src="/img/ad.png" alt="" class="img-carousel" id="previewImage-1">
@@ -24,9 +24,9 @@
 
 <hr>
 <div class="row">
-    <label>All the image of the carousel</label><br>
+    <label>Toda la imagen del carrusel</label><br>
     {{#each offerAd}}
-        <form action="/fud/{{id_companies}}/{{id_branches}}/{{id}}/update-ad-offer" method="POST" enctype="multipart/form-data">
+        <form action="/links/{{id_companies}}/{{id_branches}}/{{id}}/update-ad-offer" method="POST" enctype="multipart/form-data">
             <div class="col">
                 {{#if img}}
                     <img src="{{img}}" alt="" class="img-carousel" id="previewImage{{id}}">

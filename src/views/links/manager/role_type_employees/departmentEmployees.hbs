@@ -14,27 +14,4 @@
         </div>
     </div>
 </div>
-
-
-
-
-
-
-
-<script>
-    async function delate_supplies(id,id_company){
-        if(await questionMessage('Eliminar departamento','¿Quieres eliminar estos suministros?')){
-            window.location.href = "/links/"+id_company+"/"+id+"/delate-company-supplies_product";
-        }
-    }
-
-    function edit_supplies(id,id_company,description){
-      await new_company_supplies('Add a new supplies')
-      //window.location.href = "/fud/"+id_company+"/"+id+"/edit-company-supplies_product";
-    }
-
-    function add_supplies(id_company){
-      console.log(id_company)
-      //await new_company_supplies('Add a new supplies')
-    }
-</script>
+<script src="/js/manager/roleEmployees/tableRoleEmployee.js"></script>

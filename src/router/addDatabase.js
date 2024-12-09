@@ -318,7 +318,7 @@ async function this_customer_exists(id_company,email){
     return result.rows.length>0;
 }
 
-async function save_customer(customer){
+async function add_customer(customer){
     const queryText = `
         INSERT INTO "Company".customers(
             id_companies, first_name, second_name, last_name, id_country, states, city, street, num_ext, num_int, postal_code, email, phone, cell_phone, points, birthday,
@@ -336,15 +336,6 @@ async function save_customer(customer){
     } catch (error) {
         console.error('Error inserting into customer database:', error);
         return false;
-    }
-}
-
-async function add_customer(customer){
-    if(await this_customer_exists(customer.id_company,customer.email)){
-        return false;
-    }
-    else{
-        return await save_customer(customer)
     }
 }
 
@@ -682,5 +673,6 @@ module.exports={
     add_new_sales_stage,
     add_new_sales_team_in_my_company,
     add_new_prospects, 
-    add_appointment
+    add_appointment,
+    this_customer_exists
 };

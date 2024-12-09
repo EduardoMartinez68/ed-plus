@@ -10,7 +10,7 @@ async function edit_box(idBox,idCompany,idBranch,number,ipPrinter){
             newIpPrinter=result[1];
         }
 
-        window.location.href = "/fud/"+idCompany+"/"+idBranch+"/"+idBox+"/"+newNumber+'/'+newIpPrinter+'/edit-box';
+        window.location.href = "/links/"+idCompany+"/"+idBranch+"/"+idBox+"/"+newNumber+'/'+newIpPrinter+'/edit-box';
     }else{
         errorMessage('😳 Error Box','Necesitas agregar un dato valido')
     }
@@ -19,6 +19,6 @@ async function edit_box(idBox,idCompany,idBranch,number,ipPrinter){
 async function delete_box(idBox,idCompany,idBranch){
     const answer=await questionMessage('Eliminar caja 😱');
     if(answer){
-        window.location.href = "/fud/"+idCompany+"/"+idBranch+"/"+idBox+'/delete-box';
+        window.location.href = "/links/"+idCompany+"/"+idBranch+"/"+idBox+'/delete-box';
     }
 }

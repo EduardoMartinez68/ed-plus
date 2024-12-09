@@ -1,14 +1,14 @@
-<head>
-    <link rel="stylesheet" href="/css/addUser/addUser.css">
-    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-bold-straight/css/uicons-bold-straight.css'>
 
-    <link rel="stylesheet" href="/css/addUser/addUser.css">
-    <link rel="stylesheet" href="/css/report/report.css">
-    </link>
-    <link rel="stylesheet" href="/css/report/sales.css">
-    </link>
-    <link rel="stylesheet" href="/css/manager/supplies_products.css">
-</head>
+<link rel="stylesheet" href="/css/addUser/addUser.css">
+<link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-bold-straight/css/uicons-bold-straight.css'>
+
+<link rel="stylesheet" href="/css/addUser/addUser.css">
+<link rel="stylesheet" href="/css/report/report.css">
+</link>
+<link rel="stylesheet" href="/css/report/sales.css">
+</link>
+<link rel="stylesheet" href="/css/manager/supplies_products.css">
+
 <div class="container p-4">
     <div class="row">
         <div class="col-md-8 mx-auto">
@@ -160,7 +160,7 @@
     <script>
         async function delete_supplies(id_company,id_branch,id_products_and_supplies){
             if(await questionMessage('Eliminar insumo 😳','¿Quieres eliminar estos suministros?')){
-                window.location.href = "/fud/"+id_company+"/"+id_branch+"/"+id_products_and_supplies+"/delete-supplies-free";
+                window.location.href = "/links/"+id_company+"/"+id_branch+"/"+id_products_and_supplies+"/delete-supplies-free";
             }
         }
 

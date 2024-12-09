@@ -145,7 +145,7 @@ router.get('/:id_company/:id_branch/:id/delete-supplies-free', isLoggedIn, async
         req.flash('message', 'Los suministros NO fueron eliminado 👉👈')
     }
 
-    res.redirect('/fud/' + id_company +'/'+ id_branch + '/supplies-free');
+    res.redirect('/links/' + id_company +'/'+ id_branch + '/supplies-free');
 })
 
 router.get('/:id_company/:id_branch/recharge-supplies', isLoggedIn, async (req, res) => {
@@ -214,7 +214,7 @@ router.get('/:id_company/:id_branch/recharge-products', isLoggedIn, async (req, 
         if (company.length > 0) {
             await update_supplies_branch(req, res, false)
         }
-        res.redirect('/fud/' + id_company + '/' + id_branch + '/products');
+        res.redirect('/links/' + id_company + '/' + id_branch + '/products');
     }
 })
 
@@ -235,7 +235,7 @@ router.get('/:id_company/:id_branch/:id_supplies/:existence/update-products-bran
         } else {
             req.flash('message', 'Este producto no fue actualizado 😅')
         }
-        res.redirect('/fud/' + id_company + '/' + id_branch + '/products');
+        res.redirect('/links/' + id_company + '/' + id_branch + '/products');
     }
 })
 
@@ -249,9 +249,9 @@ router.get('/:id_company/:id_branch/:id_supplies/:existence/update-supplies-bran
         }
 
         if(req.user.rol_user == rolFree){
-            res.redirect('/fud/' + id_company + '/' + id_branch + '/supplies-free');
+            res.redirect('/links/' + id_company + '/' + id_branch + '/supplies-free');
         }else{
-            res.redirect('/fud/' + id_company + '/' + id_branch + '/supplies');
+            res.redirect('/links/' + id_company + '/' + id_branch + '/supplies');
         }
     }
 })
@@ -708,7 +708,7 @@ router.get('/:id_company/:id_branch/:id_user/delete-employee', isLoggedIn, async
         req.flash('message', 'El empleado no fue eliminado 👉👈');
     }
 
-    res.redirect('/fud/' + id_company +'/'+id_branch+'/employees-branch');
+    res.redirect('/links/' + id_company +'/'+id_branch+'/employees-branch');
 })
 
 async function search_employee_branch(idBranch) {
@@ -890,7 +890,7 @@ router.get('/:id_company/:id_branch/:id_box/:new_number/:new_ipPrinter/edit-box'
             req.flash('messagge', 'La caja no fue actualizada 😰')
         }
 
-        res.redirect('/fud/' + id_company + '/' + id_branch + '/box');
+        res.redirect('/links/' + id_company + '/' + id_branch + '/box');
     }
 })
 
@@ -903,7 +903,7 @@ async function update_box_branch(id, num_box, ip_printer) {
         `;
         const values = [num_box, ip_printer, id];
         const result = await database.query(queryText, values);
-        console.log(result)
+
         return true;
     } catch (error) {
         console.error("Error to update the data of the box:", error);
@@ -921,7 +921,7 @@ router.get('/:id_company/:id_branch/:id_box/delete-box', isLoggedIn, async (req,
             req.flash('messagge', 'La caja no fue eliminada 👁️')
         }
 
-        res.redirect('/fud/' + id_company + '/' + id_branch + '/box');
+        res.redirect('/links/' + id_company + '/' + id_branch + '/box');
     }
 })
 
@@ -1001,7 +1001,7 @@ router.get('/:id_company/:id_branch/:id_ad/delete-ad', isLoggedIn, async (req, r
             req.flash('messagge', 'El anuncio no se pudo eliminar 🗑️')
         }
 
-        res.redirect('/fud/' + id_company + '/' + id_branch + '/ad');
+        res.redirect('/links/' + id_company + '/' + id_branch + '/ad');
     }
 })
 
@@ -1021,7 +1021,7 @@ router.post('/:id_company/:id_branch/:id_ad/update-ad-offer', isLoggedIn, async 
             }
         }
 
-        res.redirect('/fud/' + id_company + '/' + id_branch + '/ad');
+        res.redirect('/links/' + id_company + '/' + id_branch + '/ad');
     }
 })
 
@@ -1394,7 +1394,7 @@ router.get('/:id_company/:id_branch/:idCustomer/delete-customer', isLoggedIn, as
         req.flash('message', 'El cliente no fue eliminado 😰')
     }
 
-    res.redirect(`/fud/${id_company}/${id_branch}/customers-company`);
+    res.redirect(`/links/${id_company}/${id_branch}/customers-company`);
 })
 
 router.get('/:id_company/:id_branch/:idCustomer/edit-customer', isLoggedIn, async (req, res) => {

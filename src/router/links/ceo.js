@@ -404,7 +404,7 @@ router.get('/:id/:id_branch/:idDepartament/delete_departament', isLoggedIn, asyn
 
     if (company.length > 0) {
         if (await delete_departament_employee(idDepartament)) {
-            req.flash('success', '"El departamento fue eliminado con éxito 😊')
+            req.flash('success', 'El departamento fue eliminado con éxito 😊')
         }
         else {
             req.flash('message', 'El departamento no fue eliminado 😮')
@@ -414,7 +414,7 @@ router.get('/:id/:id_branch/:idDepartament/delete_departament', isLoggedIn, asyn
         res.redirect('/links/home');
     }
 
-    res.redirect(`/fud/${id}/${id_branch}/employee-department`)
+    res.redirect(`/links/${id}/${id_branch}/employee-department`)
 })
 
 router.get('/:id/:idDepartament/:name/:description/edit-department-employee', isLoggedIn, async (req, res) => {
