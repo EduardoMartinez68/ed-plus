@@ -1,7 +1,9 @@
 <link rel="stylesheet" href="/css/task/tablet.css">
 <link rel="stylesheet" href="/css/CRM/crm.css">
-<div class="row">
+<!--this code is for load screen-->
+{{>loading}}
 
+<div class="row">
     <div class="col" id="information-sales">
         {{>manager/CRM/formCustomerEdit}}
     </div>
@@ -9,8 +11,8 @@
         {{>manager/CRM/historySales}}
     </div>
 </div>
+<script src="/js/crm/loadMostHistory.js"></script>
 <script src="/js/crm/showMessages.js"></script>
 <script src="/js/crm/progress-bar.js"></script>
 <script src="/js/crm/select-color.js"></script>
-
 <script src="/js/crm/UI.js"></script>

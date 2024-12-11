@@ -204,7 +204,6 @@ async function get_appointment_with_user_id(id_employee){
     }
 }
 
-
 async function get_appointment_of_this_week_with_user_id(id_employee){
     const queryText = `
         SELECT 
@@ -249,6 +248,91 @@ async function delete_appointment_with_id(id_appointment,id_employees){
     }
 }
 
+
+async function get_the_first_ten_event_in_the_history_of_the_prospects(id_prospect){
+    const queryText = `
+        SELECT 
+            hp.id AS history_id,
+            hp.id_prospects,
+            hp.id_employees,
+            hp.creation_date AS history_creation_date,
+            hp.comment,
+            hp.link,
+            u.photo,
+            u.first_name,
+            u.second_name,
+            u.last_name
+        FROM 
+            "CRM".history_prospects hp
+        LEFT JOIN 
+            "Company".employees e ON hp.id_employees = e.id
+        LEFT JOIN 
+            "Fud".users u ON e.id_users = u.id
+        WHERE 
+            hp.id_prospects = $1
+        ORDER BY 
+            hp.creation_date DESC
+        LIMIT 10;
+    `;
+
+    const values = [id_prospect];
+
+    try {
+        const result = await database.query(queryText, values);
+        return result.rows; 
+    } catch (error) {
+        console.error(`ERROR in getLastTenEventsByProspect: ${error.message}`);
+        return null;
+    }
+}
+
+async function get_more_message_of_the_prospects(id_prospect,oldRange,newRange){
+    try {
+        // Calcula el límite y el offset
+        const limit = newRange - oldRange; // Cantidad de registros a obtener
+        const offset = oldRange;          // Punto de inicio en los resultados
+
+        // Consulta SQL con LIMIT y OFFSET
+        const queryText = `
+            SELECT 
+                hp.id AS history_id,
+                hp.id_prospects,
+                hp.id_employees,
+                hp.creation_date AS history_creation_date,
+                hp.comment,
+                hp.link,
+                u.photo,
+                u.first_name,
+                u.second_name,
+                u.last_name
+            FROM 
+                "CRM".history_prospects hp
+            LEFT JOIN 
+                "Company".employees e ON hp.id_employees = e.id
+            LEFT JOIN 
+                "Fud".users u ON e.id_users = u.id
+            WHERE 
+                hp.id_prospects = $1
+            ORDER BY 
+                hp.creation_date DESC
+            LIMIT $2 OFFSET $3;
+        `;
+
+        // Asigna los valores
+        const values = [id_prospect, limit, offset];
+
+        // Ejecuta la consulta
+        const result = await database.query(queryText, values);
+
+        // Retorna los datos obtenidos
+        return result.rows;
+    } catch (error) {
+        console.error(`ERROR in get_more_message_of_the_prospects: ${error.message}`);
+        return "Database query failed";
+    }
+}
+
+
 module.exports = {
     get_sales_stage_with_company_id,
     add_the_new_sales_stage_in_my_company,
@@ -260,5 +344,7 @@ module.exports = {
     delete_prospect_with_id,
     get_appointment_with_user_id,
     get_appointment_of_this_week_with_user_id,
-    delete_appointment_with_id
+    delete_appointment_with_id,
+    get_the_first_ten_event_in_the_history_of_the_prospects,
+    get_more_message_of_the_prospects
 };

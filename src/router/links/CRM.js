@@ -15,7 +15,9 @@ const {
     delete_prospect_with_id,
     get_appointment_with_user_id,
     get_appointment_of_this_week_with_user_id,
-    delete_appointment_with_id
+    delete_appointment_with_id,
+    get_the_first_ten_event_in_the_history_of_the_prospects,
+    get_more_message_of_the_prospects
 } = require('../../services/CRM');
 
 //functions branch
@@ -109,7 +111,9 @@ router.get('/:id_company/:id_branch/:id_prospects/edit-prospects', isLoggedIn, a
     const branchFree = await get_data_branch(id_branch);
     const apps=await get_all_apps_of_this_company(id_company,id_branch)
 
+    //this is for get the data of the prospect and his history 
     const customer=await get_data_of_a_prospect_with_his_id(id_prospects)
+    const historyProspect=await get_the_first_ten_event_in_the_history_of_the_prospects(id_prospects)
     
     // we will see if exist sales stage in the company
     //if not exist data in the database, we going to add (new, qualified, proposition, won)
@@ -135,8 +139,22 @@ router.get('/:id_company/:id_branch/:id_prospects/edit-prospects', isLoggedIn, a
     const dataEmployees=await get_data_employee(req)
     const idEmployee=dataEmployees[0].id
     const employees=[{id:idEmployee,username: username}]
-    res.render('links/branch/CRM/editProspects', { branchFree, apps, salesStage , salesTeam, dataCompany, branches, employees, customer});
+    res.render('links/branch/CRM/editProspects', { branchFree, apps, salesStage , salesTeam, dataCompany, branches, employees, customer, historyProspect});
 })
+
+router.post('/get-more-prospect', async (req, res) => {
+    const { oldRange, newRange, id_prospect} = req.body;
+
+    // Validate the data
+    if (!id_prospect || isNaN(oldRange) || isNaN(newRange)) {
+        return res.status(400).json({ error: 'Parámetros inválidos' });
+    }
+
+    const answer=await get_more_message_of_the_prospects(id_prospect,oldRange,newRange);
+    res.status(200).json({ message: answer }); // Return data to the client
+})
+
+
 
 router.get('/:id_company/:id_branch/:id_prospects/delete-prospect', isLoggedIn, async (req, res) => {
     const { id_company, id_branch , id_prospects} = req.params;

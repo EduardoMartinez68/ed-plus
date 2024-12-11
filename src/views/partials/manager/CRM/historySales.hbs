@@ -8,21 +8,31 @@
     </div>
 {{/each}}
 <div class="title-with-lines"><i class="fi-icon fi-rr-clock-three"></i> Historial</div>
-<div class="container-history">
-    <div class="message-history">
-        <div class="row">
-            <div class="col-2">
-                <img src="https://img.freepik.com/psd-premium/personaje-avatar-3d_975163-690.jpg?w=360" alt=""
-                    class="img-history-sales">
-            </div>
-            <div class="col">
-                <label class="title-history">Nombre del usuario</label>
-                <label for="">-Ahora</label>
-                <div class="container-message-history">
-                    Texto del mensaje
+<div class="container-history" id="container-history">
+    {{#each historyProspect}}
+        <div class="message-history">
+            <div class="row">
+                <div class="col-2">
+                    {{#if photo}}
+                        <img src="{{photo}}" alt=""
+                            class="img-history-sales">
+                    {{else}}
+                        <img src="https://cdn-icons-png.flaticon.com/512/3177/3177440.png" alt=""
+                            class="img-history-sales">
+                    {{/if}}
+                </div>
+                <div class="col">
+                    <label class="title-history">{{first_name}} {{second_name}} {{last_name}}</label>
+                    <label for="">-{{timeago history_creation_date}}</label>
+                    <a href="">{{link}}</a>
+                    <div class="container-message-history">
+                        {{comment}}
+                    </div>
                 </div>
             </div>
         </div>
-        <br>
-    </div>
+    {{/each}}
+    {{#each customer}}
+        <center><button class="btn btn-success" onclick="load_more_history('{{id}}')">Cargar</button></center>
+    {{/each}}
 </div>

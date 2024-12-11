@@ -1,54 +1,4 @@
-<style>
-    .star-checkbox {
-        position: relative;
-        display: inline-block;
-        width: 45px;
-        height: 45px;
-        cursor: pointer;
-    }
-
-    .star-checkbox:hover {
-        cursor: pointer;
-    }
-
-    .star-checkbox input[type="checkbox"] {
-        opacity: 0;
-        width: 0;
-        height: 0;
-    }
-
-    .star-checkbox label::before {
-        content: '\2605';
-        /* Código Unicode para una estrella rellena */
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        font-size: 45px;
-
-        /* Tamaño de la estrella */
-        color: transparent;
-        -webkit-text-stroke: 1px gold;
-        /* Contorno dorado */
-    }
-
-    .star-checkbox input[type="checkbox"]:checked+label::before {
-        color: gold;
-        -webkit-text-stroke: 1px gold;
-        
-    }
-
-    .container-start {
-        display: flex;
-        justify-content: flex-end;
-    }
-
-    .hidden {
-        display: none;
-    }
-</style>
-
+<link rel="stylesheet" href="/css/manager/combo/combo.css">
 <br>
 <div class="container">
     <div class="row">
@@ -150,10 +100,10 @@
         var otherDiv = document.getElementById('div' + (3 - divId)); // Obtiene el otro div (el que no se ha seleccionado)
 
         if (div.classList.contains('hidden')) {
-            div.classList.remove('hidden'); // Muestra el div seleccionado
-            otherDiv.classList.add('hidden'); // Oculta el otro div
+            div.classList.remove('hidden'); // Displays the selected div
+            otherDiv.classList.add('hidden'); // Hide the other div
         } else {
-            div.classList.add('hidden'); // Oculta el div seleccionado si ya está visible
+            div.classList.add('hidden'); //Hide the selected div if it is already visible
         }
     }
 

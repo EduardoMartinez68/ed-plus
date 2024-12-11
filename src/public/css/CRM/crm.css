@@ -9,9 +9,13 @@
 }
 
 .container-history {
-    margin: 0 auto; /* Centrar el contenedor */
-    padding: 10px; /* Espaciado interno del contenedor */
+    margin: 0 auto; /* Center the container */
+    padding: 10px; /* Internal container spacing*/
     border-radius: 8px;
+    max-height: 71%;
+    background-color: red;
+    overflow-y: scroll; /* Add vertical scrollbar */
+    max-width: 100%; /* Optional: Limit the width */
 }
 
 .img-history-sales{
