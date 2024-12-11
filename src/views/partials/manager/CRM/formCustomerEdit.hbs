@@ -1,10 +1,11 @@
-<br><br>
-
+{{#each customer}}
+<form action="/fud/{{id_companies}}/{{id_branches}}/{{id}}/update-prospect" method="post" id="myForm">
 <div class="container">
+    <br>
+        <button class="btn btn-edit" type="submit" style="margin-left: 10px; ">🡸</button>
+    <br><br>
     <div class="card">
         <div class="card-body">
-            {{#each customer}}
-            <form action="/fud/{{id_companies}}/{{id_branches}}/{{id}}/update-prospect" method="post" id="myForm">
             <br>     
             <div class="row">
                 <div class="col-9">
@@ -55,13 +56,16 @@
                     {{>manager/CRM/formCustomer2Edit}}
                 </div>
 
+                {{#each customer}}
                 <div class="div-container-right">
-                    <button type="submit" class="btn btn-confirm-message">Guardar</button>
+                    <button type="button" class="btn btn-confirm-message" onclick="send_form_data('{{id_companies}}','{{id_branches}}','{{id}}')">Guardar</button>
                 </div>
-            </form>
+                {{/each}}
+            
         </div>
     </div>
 </div>
+</form>
 {{>updateSelects}}
 
 
@@ -105,4 +109,50 @@ function update_date(){
     }
 }
 update_date()
+</script>
+<script>
+
+async function send_form_data(id_companies,id_branches,id_prospect) {
+    // Obtén todos los datos del formulario
+    const form = document.getElementById("myForm");
+
+    // Crear un objeto FormData con los datos del formulario
+    const formData = new FormData(form);
+
+    // Convertir FormData a un objeto simple de JavaScript
+    const formObject = {};
+    formData.forEach((value, key) => {
+        formObject[key] = value;
+    });
+
+    // Llamar a la función para manejar estos datos
+    await send_to_server(formObject,id_companies,id_branches,id_prospect);
+}
+
+async function send_to_server(formData,id_companies,id_branches,id_prospect) {
+    const loadingOverlay = document.getElementById("loadingOverlay");
+    loadingOverlay.style.display = "flex"; // Show loading overlay
+    try {
+        const response = await fetch('/fud/update-prospect', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({formData,id_companies,id_branches,id_prospect}), // Enviar los datos como JSON
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error en la solicitud: ${response.statusText}`);
+        }
+
+        //we will show the anser of the server
+        const data = await response.json();
+        notificationMessage('Notificación',data.message);
+    } catch (error) {
+        notificationMessageError('Error',error);
+        console.error('Error al enviar formulario:', error);
+    }finally{
+        loadingOverlay.style.display = "none"; // hidden loading overlay
+    }
+}
 </script>

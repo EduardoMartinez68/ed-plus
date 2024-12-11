@@ -13,7 +13,6 @@
     padding: 10px; /* Internal container spacing*/
     border-radius: 8px;
     max-height: 71%;
-    background-color: red;
     overflow-y: scroll; /* Add vertical scrollbar */
     max-width: 100%; /* Optional: Limit the width */
 }

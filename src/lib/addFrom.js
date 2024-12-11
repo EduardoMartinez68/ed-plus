@@ -2712,6 +2712,19 @@ router.post('/fud/:id_company/:id_branch/:id_prospect/update-prospect', isLogged
     res.redirect(`/links/${id_company}/${id_branch}/CRM`);
 })
 
+
+router.post('/fud/update-prospect', isLoggedIn, async (req, res) => {
+    const { formData, id_company, id_branch, id_prospect} = req.body;
+    const form=formData;
+
+    //we will see if fan update the prospect
+    if(await update_prospect(form,id_prospect)){
+        res.status(200).json({ message: 'La oportunidad de venta fue actualizada con éxito ❤️' }); // Return data to the client
+    }else{
+        res.status(200).json({ message: 'La oportunidad de venta no fue actualizada 😮' }); // Return data to the client
+    }
+})
+
 async function update_prospect(prospects, id_prospect){
     const queryText = `
         UPDATE "CRM".prospects
