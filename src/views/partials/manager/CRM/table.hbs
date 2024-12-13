@@ -91,6 +91,9 @@
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
 <script>
+    //const loadingScreen=document.getElementById('loading-screen');
+    const loadingScreen=document.getElementById('loadingOverlay');
+
     async function delete_prospect(id_company,id_prospect){
         if(await questionMessage('Eliminar oportunidad 😱',`¿Deseas eliminar esta oportunidad?`)){
             const id_branch=document.getElementById('id_branch').value;
@@ -216,8 +219,7 @@
         };
 
         //show the load window
-        document.getElementById('loading-screen').style.display = 'flex';
-
+        loadingScreen.style.display = 'flex';
         try {
             const response = await fetch('/fud/update-stage-columns', {
                 method: 'POST',
@@ -238,7 +240,7 @@
             errorMessage('Error al actualizar CRM', 'Hubo un error al intentar actualizar tus propuestas');
         } finally {
             // hidden the load window
-            document.getElementById('loading-screen').style.display = 'none';
+            loadingScreen.style.display = 'none';
         }
     }
 

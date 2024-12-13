@@ -72,6 +72,40 @@ table {
     box-shadow: none; 
 }
 
+/* styles of the button loading */
+.btn-loading-off:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Contenedor del ícono */
+.btn-loading-off .bnt-loading-icon{
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid white;
+    border-radius: 50%;
+    border-top-color: transparent;
+    margin-right: 10px;
+    animation: spin 1s linear infinite;
+}
+
+.btn-loading-off:disabled {
+    cursor: not-allowed;
+    opacity: 0.8;
+    background-color: #45a049;
+}
+
+/* Animación de rotación */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 .container-message {
     background: transparent;
     position: absolute;
