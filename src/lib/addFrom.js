@@ -2714,11 +2714,11 @@ router.post('/fud/:id_company/:id_branch/:id_prospect/update-prospect', isLogged
 
 
 router.post('/fud/update-prospect', isLoggedIn, async (req, res) => {
-    const { formData, id_company, id_branch, id_prospect} = req.body;
+    const { formData, linkData} = req.body;
     const form=formData;
 
     //we will see if fan update the prospect
-    if(await update_prospect(form,id_prospect)){
+    if(await update_prospect(form,linkData.id_form)){
         res.status(200).json({ message: 'La oportunidad de venta fue actualizada con éxito ❤️' }); // Return data to the client
     }else{
         res.status(200).json({ message: 'La oportunidad de venta no fue actualizada 😮' }); // Return data to the client

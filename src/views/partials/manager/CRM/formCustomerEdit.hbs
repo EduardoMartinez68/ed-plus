@@ -10,7 +10,7 @@
             <div class="row">
                 <div class="col-9">
                     <label><i class="fi-icon fi-ss-trophy"></i> Editar oportunidad</label>
-                    <h1>{{name}}</h1>
+                    <h1 id="title-name-edit">{{name}}</h1>
                 </div>
                 <div class="col">
                     <div class="time-progress-container">
@@ -61,7 +61,7 @@
                     <input type="hidden" value="{{id_companies}}" id="customer-id-company">
                     <input type="hidden" value="{{id_branches}}" id="customer-id-branch">
                     <input type="hidden" value="{{id}}" id="customer-id">
-                    <button type="button" class="btn btn-confirm-message" onclick="message_flask()" id="btn-form-loading">
+                    <button class="btn btn-confirm-message" id="btn-form-loading">
                         <span class="bnt-loading-icon"></span>
                         Guardar
                     </button>
@@ -108,133 +108,32 @@ function update_date(){
     }
 
     // Set the input value
-    console.log(inputDate)
     if (inputDate) {
-        console.log(formatISOToDateTimeLocal(plannedClosure))
         inputDate.value = formatISOToDateTimeLocal(plannedClosure);
     }
 }
 update_date()
 </script>
+
 <script>
 
-//get the form 
-const form = document.getElementById("myForm");
-const btnForm= document.getElementById('btn-form-loading');
+//get the data of the form 
 const idCompany=document.getElementById('customer-id-company').value;
 const idBranch=document.getElementById('customer-id-branch').value;
-const idCustomer=document.getElementById('customer-id').value;
+const idProspect=document.getElementById('customer-id').value;
 
-
-//Serializes form data to an object or string. This is for when we are going to compare if the user modified the form
-function serializeForm(form) {
-    const formData = new FormData(form);
-    const serialized = {};
-    formData.forEach((value, key) => {
-        serialized[key] = value;
-    });
-    return JSON.stringify(serialized);
-}
-
-// save the status first of the form
-let initialFormState = serializeForm(form);
-
-
-let timeout;
-
-//we will see if the user is edit the form
-form.addEventListener("input", () => {
-    if (the_form_was_edit()) {
-        //we will see if exist the class 
-        if(!btnForm.classList.contains('btn-loading-off')){
-            btnForm.classList.add('btn-loading-off');
-            btnForm.disabled = true;
-        }
-
-        // Cancels any previously scheduled saves
-        clearTimeout(timeout);
-
-        //Schedule a save after of X seconds of inactivity
-        const seconds=5;
-        timeout = setTimeout(() => {
-            send_the_form_automatically_to_the_server();
-        }, 1000*seconds);
-    }else{
-        off_button_loading();
+const h1Name=document.getElementById('title-name-edit');
+const customName=document.getElementById('customerName');
+//------------------------------this is for when the user would update the form-----------------------------------//
+async function update_the_form_in_the_server(){
+    const linkData={
+        id_company:idCompany,
+        id_branch:idBranch,
+        id_form:idProspect,
     }
-});
 
-async function send_the_form_automatically_to_the_server(){
-    //we will see if the user edit the form for send to the server
-    if (the_form_was_edit()) {
-        await send_form_data(idCompany, idBranch, idCustomer);
-    }else{
-        off_button_loading();
-    }
-}
-
-function the_form_was_edit(){
-    //Serializes the current state of the form
-    const currentFormState = serializeForm(form);
-    return currentFormState !== initialFormState;
-}
-
-function off_button_loading(){
-    //when the form is equal, we will cancel the animation button 
-    btnForm.classList.remove('btn-loading-off');
-    btnForm.disabled = false;
-}
-
-
-//------------------------------this is for when the user send the click-----------------------------------//
-async function send_form_data(id_companies,id_branches,id_prospect) {
-    // Create a FormData object with the form data
-    const formData = new FormData(form);
-
-    // Convert FormData to a simple JavaScript object
-    const formObject = {};
-    formData.forEach((value, key) => {
-        formObject[key] = value;
-    });
-
-    // Call the function to handle this data
-    await send_to_server(formObject,id_companies,id_branches,id_prospect);
-}
-
-async function send_to_server(formData,id_companies,id_branches,id_prospect) {
-    const loadingOverlay = document.getElementById("loadingOverlay");
-    //loadingOverlay.style.display = "flex"; // Show loading overlay
-
-    //we will see if can edit the form in the server or exist a error
-    try {
-        const response = await fetch('/fud/update-prospect', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({formData,id_companies,id_branches,id_prospect}), // Enviar los datos como JSON
-        });
-
-        if (!response.ok) {
-            throw new Error(`Error en la solicitud: ${response.statusText}`);
-        }
-
-        //we will show the anser of the server
-        const data = await response.json();
-        notificationMessage('Notificación',data.message);
-    } catch (error) {
-        notificationMessageError('Error',error);
-        console.error('Error al enviar formulario:', error);
-    }finally{
-        loadingOverlay.style.display = "none"; // hidden loading overlay
-        off_button_loading();
-
-        //we will save the new form edit for compare it later
-        initialFormState = serializeForm(form);
-    }
-}
-
-function message_flask(){
-    notificationMessage('Notificación','Base de datos actualizada');
+    await send_to_server('/fud/update-prospect',linkData);
+    updateProgress();
+    h1Name.textContent=customName.value;
 }
 </script>
