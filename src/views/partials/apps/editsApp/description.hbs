@@ -57,10 +57,15 @@
 
     //Before submitting the form, take the content from Quill and put it in the hidden field
     document.getElementById('myForm').onsubmit = function() {
+        update_container_text_description();
+    };
+
+
+    function update_container_text_description(){
         // Get HTML content from the editor
         var content = quill.root.innerHTML;
 
         //Place content in hidden field
         document.getElementById('notes').value = content;
-    };
+    }
 </script>

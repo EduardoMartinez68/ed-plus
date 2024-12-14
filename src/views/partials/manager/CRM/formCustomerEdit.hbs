@@ -61,7 +61,7 @@
                     <input type="hidden" value="{{id_companies}}" id="customer-id-company">
                     <input type="hidden" value="{{id_branches}}" id="customer-id-branch">
                     <input type="hidden" value="{{id}}" id="customer-id">
-                    <button type="button" class="btn btn-confirm-message" id="btn-form-loading" onclick="update_the_form_in_the_server()">
+                    <button type="button" class="btn btn-confirm-message" id="btn-form-loading" onclick="update_the_form_in_the_server_wallpaper()">
                         <span class="bnt-loading-icon"></span>
                         Guardar
                     </button>
@@ -126,6 +126,7 @@ const h1Name=document.getElementById('title-name-edit');
 const customName=document.getElementById('customerName');
 //------------------------------this is for when the user would update the form-----------------------------------//
 async function update_the_form_in_the_server(){
+
     const linkData={
         id_company:idCompany,
         id_branch:idBranch,
@@ -133,6 +134,20 @@ async function update_the_form_in_the_server(){
     }
 
     await send_to_server('/fud/update-prospect',linkData);
+    updateProgress();
+    h1Name.textContent=customName.value;
+}
+
+async function update_the_form_in_the_server_wallpaper(){
+    const form=document.getElementById('myForm');
+    const linkData={
+        id_company:idCompany,
+        id_branch:idBranch,
+        id_form:idProspect,
+    }
+
+    //await send_to_server('/fud/update-prospect',linkData);
+    await send_data_to_the_server_use_message_flask('/fud/update-prospect',form,linkData);
     updateProgress();
     h1Name.textContent=customName.value;
 }

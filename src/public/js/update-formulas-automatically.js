@@ -22,6 +22,8 @@ let timeout;
 
 //we will see if the user is edit the form
 form.addEventListener("input", () => {
+    update_container_text_description();
+    
     //we will to compare if the form was edit, for can send the update to the server
     if (the_form_was_edit()) {
         //we will see if in the form button exist the class 
