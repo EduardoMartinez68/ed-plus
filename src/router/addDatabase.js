@@ -641,6 +641,24 @@ async function add_appointment(appointment){
     }
 }
 
+async function add_message_to_the_customer_history(id_users,id_prospects,comment,link){
+    const queryText = `
+        INSERT INTO "CRM".history_prospects(
+        id_prospects, id_users, comment, link)
+        VALUES ($1, $2, $3, $4)
+    `;
+    const values = [id_prospects,id_users,comment,link] //this is for create the format of save
+    try{
+        await database.query(queryText, values);
+        return true;
+    } catch (error) {
+        console.error('Error inserting into add_new_sales_team_in_my_company database:', error);
+        return false;
+    }
+}
+
+
+
 async function add_app(app){
     
 }
@@ -674,5 +692,6 @@ module.exports={
     add_new_sales_team_in_my_company,
     add_new_prospects, 
     add_appointment,
-    this_customer_exists
+    this_customer_exists,
+    add_message_to_the_customer_history
 };

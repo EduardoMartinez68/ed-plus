@@ -15,6 +15,7 @@
     max-height: 71%;
     overflow-y: scroll; /* Add vertical scrollbar */
     max-width: 100%; /* Optional: Limit the width */
+    height: 100%;
 }
 
 .img-history-sales{

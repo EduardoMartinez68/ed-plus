@@ -2775,11 +2775,28 @@ async function update_prospect(prospects, id_prospect){
 
 
 //-----------------------------------------------appointment
+router.post('/fud/:id_company/:id_branch/:id_prospect/create-appointment-server', isLoggedIn, async (req, res) => {
+    const {id_company, id_branch, id_prospect} = req.params;
+    const {formData}=req.body;
+
+    //we will create the appointment
+    const appointment=create_appointment(id_company, id_branch,id_prospect,formData)
+
+    //we will see if we could add the appointment
+    if(await addDatabase.add_appointment(appointment)){
+        //this is for save the update of the customer
+        await addDatabase.add_message_to_the_customer_history(req.user.id,id_prospect,`Se creó una cita con el cliente para el día ${appointment.date}`,'');
+        res.status(200).json({ message: 'La cita se reservó con éxito ❤️' }); // Return data to the client
+    }else{
+        res.status(400).json({ message: 'La cita no se reservó 😳' }); // Return data to the client
+    }
+})
+
 router.post('/fud/:id_company/:id_branch/:id_prospect/create-appointment', isLoggedIn, async (req, res) => {
     const { id_company, id_branch, id_prospect} = req.params;
 
     //we will create the appointment
-    const appointment=create_appointment(id_company, id_branch,id_prospect,req)
+    const appointment=create_appointment(id_company, id_branch,id_prospect,req.body)
 
     //we will see if we could add the appointment
     if(await addDatabase.add_appointment(appointment)){
@@ -2791,18 +2808,18 @@ router.post('/fud/:id_company/:id_branch/:id_prospect/create-appointment', isLog
     res.redirect(`/links/${id_company}/${id_branch}/CRM`);
 })
 
-function create_appointment(id_company, id_branch,id_prospect,req){
+function create_appointment(id_company, id_branch,id_prospect,body){
     const appointment={
         id_company, 
         id_branch,
         id_prospect,
-        id_employee: req.body.idEmployee,
-        affair: req.body.affair,
-        date: req.body.date,
-        duration: req.body.duration,
-        ubication: req.body.ubication,
-        notes: req.body.notes,
-        color:req.body.color
+        id_employee: body.idEmployee,
+        affair: body.affair,
+        date: body.date,
+        duration: body.duration,
+        ubication: body.ubication,
+        notes: body.notes,
+        color:body.color
     }
 
     return appointment;

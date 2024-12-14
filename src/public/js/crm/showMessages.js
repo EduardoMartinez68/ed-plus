@@ -241,6 +241,9 @@ async function sendToWhatsApp(phoneNumber) {
     }
 }
 
+
+
+//this is for save appointment 
 async function show_appointment(idCompany,idBranch,idProspects,idEmployee){
     var containerHtml = `
     <style>
@@ -512,4 +515,171 @@ async function delete_appointment(id_company,id_branch,id_appointment){
             window.location.href = `/links/${id_company}/${id_branch}/${id_appointment}/delete-appointment`;
         }
     }
+}
+
+
+//this is for create a appoint when the user is edit a customer. 
+// This send the form data to the server for that the user not waste time updating the page
+async function create_an_appointment(idCompany,idBranch,idProspects,idEmployee){
+    var containerHtml = `
+    <style>
+        .swal2-textarea {
+            min-height: 100px;
+            max-height: 300px;
+            background-color: #f9f9f9;
+            outline: none;
+            transition: border-color 0.3s ease-in-out;
+        }
+    </style>
+
+    <form method="post" id="form-appoint">
+        <input type="hidden" required readonly name="idEmployee" value="${idEmployee}">
+        <div class="row">
+            <div class="col-3">
+                <div class="form-group">
+                    <label for="meeting_date">Etiqueta</label>
+                    <input type="color" class="form-control" name="color" required value="#007bff">
+                </div>
+            </div>
+            <div class="col">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="affair">Asunto</label>
+            <input type="text" class="form-control" id="affair" placeholder="Introduce el asunto" required name="affair">
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label for="meeting_date">Fecha y Hora Inicial</label>
+                    <input type="datetime-local" class="form-control" id="meeting_date" name="date" placeholder="Selecciona la fecha y hora" required>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label for="duration">Fecha y Hora Final</label>
+                    <input type="datetime-local" class="form-control" id="duration" name="duration" placeholder="Selecciona la fecha y hora" required>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="location">Ubicación</label>
+            <input type="text" class="form-control" id="location" name="ubication" placeholder="Introduce la ubicación">
+        </div>
+        <div class="form-group">
+            <label for="grades">Notas</label>
+            <textarea class="form-control" id="grades" rows="3" name="notes" placeholder="Notas adicionales"></textarea>
+        </div>
+        <button type="button" class="btn btn-success" onclick="send_data_to_the_server_for_create_an_appoint(${idCompany},${idBranch},${idProspects})">Guardar Cita 💾</button>
+    </form>
+    `;
+
+    return Swal.fire({
+        title: 'Reservar una cita 📅',
+        html: containerHtml,
+        focusConfirm: false,
+        showConfirmButton: false,
+        showCancelButton: false,
+        allowOutsideClick: () => !Swal.isLoading()
+    }).then(() => {
+        // Aquí puedes configurar un evento al mostrar el modal
+        document.getElementById('btn-save-appointment').addEventListener('click', () => {
+            send_data_to_the_server_for_create_an_appoint(idCompany, idBranch, idProspects);
+        });
+    });
+}
+
+
+async function send_data_to_the_server_for_create_an_appoint(id_company,id_branch,id_prospect){
+    //we will see if exist the form for send the data to the server
+    const form=document.getElementById('form-appoint');
+    if (!form) {
+        notificationMessageError('Error','Formulario no encontrado 😵');
+        return;
+    }
+
+
+    const link=`/fud/${id_company}/${id_branch}/${id_prospect}/create-appointment-server`;
+    const linkData={
+        id_company,
+        id_branch,
+        id_form: id_prospect
+    }
+
+    //we will see if can create the new appoint
+    if(await send_data_to_the_server_use_message_flask(link,form,linkData)){
+        //if we will can add the new appoint, show the new history message
+        add_new_message_history('Se creó una cita con el cliente','');
+    }
+}
+
+function add_new_message_history(message,link){
+    //get the data of add the information of the new message history
+    const container=document.getElementById('container-history');
+    const userName=document.getElementById('user-name-id').value;
+    const userPhoto=document.getElementById('user-photo-id').value;
+
+    // Create the new HTML element for the message
+    const messageHistory = document.createElement('div');
+    messageHistory.className = 'message-history';
+
+    //Generate content dynamically based on the `newMessage` object
+    messageHistory.innerHTML = `
+        <div class="row">
+            <div class="col-2">
+                <img src="${userPhoto || 'https://cdn-icons-png.flaticon.com/512/3177/3177440.png'}"
+                    class="img-history-sales">
+            </div>
+            <div class="col">
+                <label class="title-history">${userName}</label>
+                <label for="">-Ahora mismo</label>
+                <a href="${link || '#'}">${link || ''}</a>
+                <div class="container-message-history">
+                    ${message}
+                </div>
+            </div>
+        </div>
+    `;
+
+    // add the new message to the principle of the container
+    container.insertBefore(messageHistory, container.firstChild);
+}
+
+async function send_data_to_the_server_use_message_flask(link,form,linkData){
+    //on the loading tab for that the user not can edit the form
+    const loadingOverlay = document.getElementById("loadingOverlay");
+    loadingOverlay.style.display = "flex"; // Show loading overlay
+
+    const formData=serializeForm(form); //get the new form updated
+
+    //we will see if can edit the form in the server or exist a error
+    try {
+        //make the solicitude for send the data to the server
+        const response = await fetch(link, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({formData, linkData}), // send the data how JSON
+        });
+
+        //we will see if the answer of the server was success
+        if (!response.ok) {
+            throw new Error(`Error en la solicitud: ${response.statusText}`);
+        }
+
+        //we will show the anser of the server
+        const data = await response.json();
+        notificationMessage('Notificación',data.message);
+
+        return true;
+    } catch (error) {
+        //show the error that the server send
+        notificationMessageError('Error',error);
+        console.error('Error al enviar formulario:', error);
+    }finally{
+        loadingOverlay.style.display = "none"; // hidden loading overlay
+    }
+
+    return false;
 }

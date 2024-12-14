@@ -248,13 +248,12 @@ async function delete_appointment_with_id(id_appointment,id_employees){
     }
 }
 
-
 async function get_the_first_ten_event_in_the_history_of_the_prospects(id_prospect){
     const queryText = `
         SELECT 
             hp.id AS history_id,
             hp.id_prospects,
-            hp.id_employees,
+            hp.id_users,
             hp.creation_date AS history_creation_date,
             hp.comment,
             hp.link,
@@ -265,9 +264,7 @@ async function get_the_first_ten_event_in_the_history_of_the_prospects(id_prospe
         FROM 
             "CRM".history_prospects hp
         LEFT JOIN 
-            "Company".employees e ON hp.id_employees = e.id
-        LEFT JOIN 
-            "Fud".users u ON e.id_users = u.id
+            "Fud".users u ON hp.id_users = u.id
         WHERE 
             hp.id_prospects = $1
         ORDER BY 
@@ -297,7 +294,7 @@ async function get_more_message_of_the_prospects(id_prospect,oldRange,newRange){
             SELECT 
                 hp.id AS history_id,
                 hp.id_prospects,
-                hp.id_employees,
+                hp.id_users,
                 hp.creation_date AS history_creation_date,
                 hp.comment,
                 hp.link,
@@ -308,9 +305,7 @@ async function get_more_message_of_the_prospects(id_prospect,oldRange,newRange){
             FROM 
                 "CRM".history_prospects hp
             LEFT JOIN 
-                "Company".employees e ON hp.id_employees = e.id
-            LEFT JOIN 
-                "Fud".users u ON e.id_users = u.id
+                "Fud".users u ON hp.id_users = u.id
             WHERE 
                 hp.id_prospects = $1
             ORDER BY 

@@ -2,6 +2,12 @@
 <link rel="stylesheet" href="/css/CRM/crm.css">
 <!--this code is for load screen-->
 {{>loading}}
+
+<!--this is for add after the new message history-->
+<input type="hidden" value="{{user.first_name}} {{user.second_name}} {{user.last_name}}" id="user-name-id">
+<input type="hidden" value="{{photo}}" id="user-photo-id">
+
+
 <div class="row">
     <div class="col" id="information-sales">
         {{>manager/CRM/formCustomerEdit}}
