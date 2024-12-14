@@ -1,8 +1,9 @@
 const loadingOverlay = document.getElementById("loadingOverlay");
-const messageHistoryElements = document.querySelectorAll('.message-history');
 
 async function load_more_history(id_prospect){
+
     //this is for get how many history message exist in the container
+    const messageHistoryElements = document.querySelectorAll('.message-history');
     const messageHistoryCount = messageHistoryElements.length;
 
     //this number is the new range for get the new message
@@ -10,11 +11,10 @@ async function load_more_history(id_prospect){
     const newRange=oldRange+10;
 
     const answer = await get_answer_server(id_prospect, oldRange, newRange);
-    add_new_messages(answer);
-
+    add_more_new_messages(answer);
 }
 
-function add_new_messages(newMessages){
+function add_more_new_messages(newMessages){
     newMessages.message.forEach((message) => {
         const messageHtml = `
             <div class="message-history">
@@ -27,7 +27,7 @@ function add_new_messages(newMessages){
                     </div>
                     <div class="col">
                         <label class="title-history">${message.first_name || ''} ${message.second_name || ''} ${message.last_name || ''}</label>
-                        <label for="">-${timeago.format(new Date(message.history_creation_date))}</label>
+                        <label for="">-${message.history_creation_date}</label>
                         ${message.link ? `<a href="${message.link}">${message.link}</a>` : ''}
                         <div class="container-message-history">
                             ${message.comment || ''}
@@ -37,6 +37,7 @@ function add_new_messages(newMessages){
             </div>
         `;
         // add the new message to the container
+        const containerHistory=document.getElementById('container-history');
         containerHistory.insertAdjacentHTML('beforeend', messageHtml);
     });
 }

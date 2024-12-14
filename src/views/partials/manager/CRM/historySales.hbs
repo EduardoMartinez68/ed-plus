@@ -2,9 +2,10 @@
 {{#each customer}}
     <div class="form-buttons">
         <button class="btn btn-edit">Enviar Mensaje</button>
-        <button class="btn btn-2" onclick="nextWeb('{{id_companies}}/{{id_branches}}/{{id}}/create-invoice-crm')">Crear Nota</button>
+        <button class="btn btn-2" onclick="nextWeb('{{id_companies}}/{{id_branches}}/{{id}}/create-invoice-crm')">Cotización</button>
+        <button class="btn btn-2" onclick="create_new_note('{{id_companies}},{{id_branches}},{{id}}')">Crear Nota</button>
         <button class="btn btn-2" onclick="send_to_whatsApp('{{name}}','{{email}}','{{cellphone}}')">Whatsapp</button>
-        <button class="btn btn-2" onclick="create_an_appointment('{{id_companies}}','{{id_branches}}','{{id}}','{{id_employees}}')">Actividades</button>
+        <button class="btn btn-2" onclick="create_an_appointment('{{id_companies}}','{{id_branches}}','{{id}}','{{id_employees}}')">Crear Cita</button>
     </div>
 {{/each}}
 <div class="title-with-lines"><i class="fi-icon fi-rr-clock-three"></i> Historial</div>
@@ -32,7 +33,7 @@
             </div>
         </div>
     {{/each}}
-    {{#each customer}}
-        <center><button class="btn btn-success" onclick="load_more_history('{{id}}')">Cargar</button></center>
-    {{/each}}
 </div>
+{{#each customer}}
+    <center><button class="btn btn-success" onclick="load_more_history('{{id}}')">Cargar</button></center>
+{{/each}}

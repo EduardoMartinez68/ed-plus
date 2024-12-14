@@ -589,7 +589,6 @@ async function create_an_appointment(idCompany,idBranch,idProspects,idEmployee){
     });
 }
 
-
 async function send_data_to_the_server_for_create_an_appoint(id_company,id_branch,id_prospect){
     //we will see if exist the form for send the data to the server
     const form=document.getElementById('form-appoint');
@@ -682,4 +681,73 @@ async function send_data_to_the_server_use_message_flask(link,form,linkData){
     }
 
     return false;
+}
+
+
+//create note message
+async function create_new_note(idCompany,idBranch,idProspects,idEmployee){
+    var containerHtml = `
+    <style>
+        .swal2-textarea {
+            min-height: 100px;
+            max-height: 300px;
+            background-color: #f9f9f9;
+            outline: none;
+            transition: border-color 0.3s ease-in-out;
+        }
+    </style>
+
+    <form action="/fud/${idCompany}/${idBranch}/${idProspects}/create-message-history" method="post" id="form-message-history">
+        <input type="hidden" required readonly name="idEmployee" value="${idEmployee}">
+        <div class="form-group">
+            <label for="grades">Notas</label>
+            <textarea class="form-control" rows="3" name="comment" placeholder="Notas adicionales" id="notes-message-history"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="affair">Link</label>
+            <input type="text" class="form-control" id="link-message-history" placeholder="Introduce un enlace" name="link">
+        </div>
+        <br>
+        <button type="button" class="btn btn-success" onclick="send_data_to_the_server_for_create_an_note(${idCompany},${idBranch},${idProspects})">Guardar Nota 💾</button>
+    </form>
+    `;
+
+    return Swal.fire({
+        title: 'Crear un Nota 📝',
+        html: containerHtml,
+        focusConfirm: false,
+        showConfirmButton: false,
+        showCancelButton: false,
+        allowOutsideClick: () => !Swal.isLoading()
+    }).then((result) => {
+
+    });
+}
+
+
+async function send_data_to_the_server_for_create_an_note(id_company,id_branch,id_prospect){
+    //we will see if exist the form for send the data to the server
+    const form=document.getElementById('form-message-history');
+    if (!form) {
+        notificationMessageError('Error','Formulario no encontrado 😵');
+        return;
+    }
+
+
+    const link=`/fud/${id_company}/${id_branch}/${id_prospect}/create-message-history`;
+    const linkData={
+        id_company,
+        id_branch,
+        id_form: id_prospect
+    }
+
+    //get the information that the user would like add
+    const message=document.getElementById('notes-message-history').value;
+    const linkForm=document.getElementById('link-message-history').value;
+    
+    //we will see if can create the new appoint
+    if(await send_data_to_the_server_use_message_flask(link,form,linkData)){
+        //if we will can add the new appoint, show the new history message
+        add_new_message_history(message,linkForm);
+    }
 }

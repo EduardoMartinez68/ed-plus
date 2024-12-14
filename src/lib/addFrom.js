@@ -2702,7 +2702,6 @@ router.post('/fud/:id_company/:id_branch/:id_prospect/update-prospect', isLogged
     const { id_company, id_branch, id_prospect} = req.params;
 
     //we will see if fan update the prospect
-    console.log(req.body)
     if(await update_prospect(req.body,id_prospect)){
         req.flash('success', 'La oportunidad de venta fue actualizada con éxito ❤️');
     }else{
@@ -2773,7 +2772,18 @@ async function update_prospect(prospects, id_prospect){
     }
 }
 
+router.post('/fud/:id_company/:id_branch/:id_prospect/create-message-history', isLoggedIn, async (req, res) => {
+    const { id_company, id_branch, id_prospect} = req.params;
+    const { formData, linkData} = req.body;
+    const form=formData;
 
+    //we will see if fan update the prospect
+    if(await addDatabase.add_message_to_the_customer_history(req.user.id,id_prospect,form.comment,form.link)){
+        res.status(200).json({ message: 'La Nota de venta fue actualizada con éxito ❤️' }); // Return data to the client
+    }else{
+        res.status(200).json({ message: 'La Nota de venta no fue actualizada 😮' }); // Return data to the client
+    }
+})
 //-----------------------------------------------appointment
 router.post('/fud/:id_company/:id_branch/:id_prospect/create-appointment-server', isLoggedIn, async (req, res) => {
     const {id_company, id_branch, id_prospect} = req.params;
