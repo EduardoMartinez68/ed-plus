@@ -167,12 +167,14 @@ async function show_send_message_for_whatsapp(nameCustomer, emailCustomer, cellp
         </div>
         <br>
 
-        <label for="message" class="swal2-label">Mensaje para WhatsApp</label>
-        <textarea id="message" class="swal2-textarea" placeholder="Escribe tu mensaje aquí..." rows="4" required></textarea>
-        
-        <button type="button" class="send-button" onclick="sendToWhatsApp('${cellphone}')">
-            Enviar a WhatsApp
-        </button>
+        <form id='form-whatsapp'>
+            <label for="message" class="swal2-label">Mensaje para WhatsApp</label>
+            <textarea id="message" class="swal2-textarea" placeholder="Escribe tu mensaje aquí..." rows="4" required></textarea>
+            
+            <button type="button" class="send-button" onclick="sendToWhatsApp('${cellphone}')">
+                Enviar a WhatsApp
+            </button>
+        </form>
     `;
 
     return Swal.fire({
@@ -194,25 +196,17 @@ async function show_send_message_for_whatsapp(nameCustomer, emailCustomer, cellp
 }
 
 async function send_to_whatsApp(nameCustomer, emailCustomer, phoneNumber) {
-    // Verifica si el número de teléfono está vacío
+    // we will see if exist the phone is empty
     if (phoneNumber.trim() === '') {
         warningMessage('Error al enviar el mensaje 👁️', 'El contacto no tiene registrado ningún número de celular. Agrégale uno para proseguir.');
         return;
     }
 
-    // Elimina el símbolo "+" si existe en el número de teléfono
+    // Remove the "+" symbol if it exists in the phone number
     phoneNumber = phoneNumber.replace(/\+/g, '');
 
-    // Obtiene el mensaje del usuario
+    // get the message of the user
     const message = await show_send_message_for_whatsapp(nameCustomer, emailCustomer, phoneNumber);
-
-    // Envía el mensaje si no está vacío
-    if (message.trim() !== '') {
-        const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-        window.open(whatsappUrl, '_blank');
-    } else {
-        Swal.fire('Por favor, escribe un mensaje antes de enviar.');
-    }
 }
 
 async function sendToWhatsApp(phoneNumber) {
@@ -234,13 +228,42 @@ async function sendToWhatsApp(phoneNumber) {
 
     // Envía el mensaje si no está vacío
     if (message.trim() !== '') {
+        //this is for open other window in the search for send the message to whatsapp
         const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
         window.open(whatsappUrl, '_blank');
+
+        //her we save the information for create a history message
+        const messageHistory='Se envio un mensaje de whatsapp: \n'+message;
+        await send_data_to_the_server_for_create_an_note_of_whatsapp(id_company,id_branch,id_prospect,messageHistory,whatsappUrl);
+        add_new_message_history(messageHistory,'');
     } else {
         Swal.fire('Por favor, escribe un mensaje antes de enviar.');
     }
 }
 
+
+async function send_data_to_the_server_for_create_an_note_of_whatsapp(id_company,id_branch,id_prospect,message,linkForm){
+    //we will see if exist the form for send the data to the server
+    const form=document.getElementById('form-whatsapp');
+    if (!form) {
+        notificationMessageError('Error','Formulario no encontrado 😵');
+        return;
+    }
+
+
+    const link=`/fud/${id_company}/${id_branch}/${id_prospect}/create-message-history`;
+    const linkData={
+        id_company,
+        id_branch,
+        id_form: id_prospect
+    }
+    
+    //we will see if can create the new appoint
+    if(await send_data_to_the_server_use_message_flask(link,form,linkData)){
+        //if we will can add the new appoint, show the new history message
+        add_new_message_history(message,linkForm);
+    }
+}
 
 
 //this is for save appointment 
@@ -723,7 +746,6 @@ async function create_new_note(idCompany,idBranch,idProspects,idEmployee){
 
     });
 }
-
 
 async function send_data_to_the_server_for_create_an_note(id_company,id_branch,id_prospect){
     //we will see if exist the form for send the data to the server

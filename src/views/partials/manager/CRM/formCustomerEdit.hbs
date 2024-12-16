@@ -38,25 +38,27 @@
             <hr>
             <br>
 
+            <!--this is for change in the sections-->
             <div class="btn-group">
                 <button class="btn-select btn-active" onclick="showSection('select-1', this)" type="button">Información Personal</button>
                 <button class="btn-select" onclick="showSection('select-2', this)" type="button">Información de Venta</button>
                 <button class="btn-select" onclick="showSection('select-3', this)" type="button">Información Adicional</button>
             </div>
 
-                {{>manager/CRM/tabsSalesStage}}
+            <!--this is the container of the sections-->
+            {{>manager/CRM/tabsSalesStage}}
 
-                <div id="select-1" class="content-section active">
-                    {{>manager/CRM/formCustomer1Edit}}
-                </div>
-                <div id="select-2" class="content-section">
-                    {{>manager/CRM/formCustomer3Edit}}
-                </div>
-                <div id="select-3" class="content-section">
-                    {{>manager/CRM/formCustomer2Edit}}
-                </div>
+            <div id="select-1" class="content-section active">
+                {{>manager/CRM/formCustomer1Edit}}
+            </div>
+            <div id="select-2" class="content-section">
+                {{>manager/CRM/formCustomer3Edit}}
+            </div>
+            <div id="select-3" class="content-section">
+                {{>manager/CRM/formCustomer2Edit}}
+            </div>
 
-                {{#each customer}}
+            {{#each customer}}
                 <div class="div-container-right">
                     <input type="hidden" value="{{id_companies}}" id="customer-id-company">
                     <input type="hidden" value="{{id_branches}}" id="customer-id-branch">
@@ -66,7 +68,7 @@
                         Guardar
                     </button>
                 </div>
-                {{/each}}
+            {{/each}}
             
         </div>
     </div>
