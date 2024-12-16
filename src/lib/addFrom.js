@@ -2784,6 +2784,7 @@ router.post('/fud/:id_company/:id_branch/:id_prospect/create-message-history', i
         res.status(200).json({ message: 'La Nota de venta no fue actualizada 😮' }); // Return data to the client
     }
 })
+
 //-----------------------------------------------appointment
 router.post('/fud/:id_company/:id_branch/:id_prospect/create-appointment-server', isLoggedIn, async (req, res) => {
     const {id_company, id_branch, id_prospect} = req.params;

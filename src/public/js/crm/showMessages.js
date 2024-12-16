@@ -88,7 +88,21 @@ async function edit_name_table_crm(oldName) {
     });
 }
 
-async function show_send_message_for_whatsapp(nameCustomer, emailCustomer, cellphone) {
+async function send_to_whatsApp(idProspect,nameCustomer, emailCustomer, phoneNumber) {
+    // we will see if exist the phone is empty
+    if (phoneNumber.trim() === '') {
+        warningMessage('Error al enviar el mensaje 👁️', 'El contacto no tiene registrado ningún número de celular. Agrégale uno para proseguir.');
+        return;
+    }
+
+    // Remove the "+" symbol if it exists in the phone number
+    phoneNumber = phoneNumber.replace(/\+/g, '');
+    
+    // get the message of the user
+    const message = await show_send_message_for_whatsapp(idProspect,nameCustomer, emailCustomer, phoneNumber);
+}
+
+async function show_send_message_for_whatsapp(idProspect,nameCustomer, emailCustomer, cellphone) {
     var containerHtml = `
         <style>
             .icon-container {
@@ -167,11 +181,11 @@ async function show_send_message_for_whatsapp(nameCustomer, emailCustomer, cellp
         </div>
         <br>
 
-        <form id='form-whatsapp'>
+        <form id="form-whatsapp">
             <label for="message" class="swal2-label">Mensaje para WhatsApp</label>
-            <textarea id="message" class="swal2-textarea" placeholder="Escribe tu mensaje aquí..." rows="4" required></textarea>
+            <textarea id="message" class="swal2-textarea" placeholder="Escribe tu mensaje aquí..." rows="4" required name="comment"></textarea>
             
-            <button type="button" class="send-button" onclick="sendToWhatsApp('${cellphone}')">
+            <button type="button" class="send-button" onclick="sendToWhatsApp('${idProspect}','${cellphone}')">
                 Enviar a WhatsApp
             </button>
         </form>
@@ -195,7 +209,9 @@ async function show_send_message_for_whatsapp(nameCustomer, emailCustomer, cellp
     });
 }
 
-async function send_to_whatsApp(nameCustomer, emailCustomer, phoneNumber) {
+async function sendToWhatsApp(idProspect,phoneNumber) {
+    phoneNumber = phoneNumber.replace(/\D/g, ''); // Solo números
+
     // we will see if exist the phone is empty
     if (phoneNumber.trim() === '') {
         warningMessage('Error al enviar el mensaje 👁️', 'El contacto no tiene registrado ningún número de celular. Agrégale uno para proseguir.');
@@ -206,25 +222,9 @@ async function send_to_whatsApp(nameCustomer, emailCustomer, phoneNumber) {
     phoneNumber = phoneNumber.replace(/\+/g, '');
 
     // get the message of the user
-    const message = await show_send_message_for_whatsapp(nameCustomer, emailCustomer, phoneNumber);
-}
-
-async function sendToWhatsApp(phoneNumber) {
-    // Verifica si el número de teléfono está vacío
-    if (phoneNumber.trim() === '') {
-        warningMessage('Error al enviar el mensaje 👁️', 'El contacto no tiene registrado ningún número de celular. Agrégale uno para proseguir.');
-        return;
-    }
-
-
-    // Elimina el símbolo "+" si existe en el número de teléfono
-    phoneNumber = phoneNumber.replace(/\+/g, '');
-
-    // Elimina los espacios en blanco del número de teléfono
-    phoneNumber = phoneNumber.replace(/\s+/g, '');
-
-    // Obtiene el mensaje del usuario
-    const message = document.getElementById('message').value;
+    const message = document.getElementById('message').value; 
+    document.getElementById('message').value='Se envio un mensaje de whatsapp: \n'+message; //this is for update the input of the form of whatsapp
+    const mesageHistory=document.getElementById('message').value; //this is for save the new message update in the form
 
     // Envía el mensaje si no está vacío
     if (message.trim() !== '') {
@@ -234,8 +234,7 @@ async function sendToWhatsApp(phoneNumber) {
 
         //her we save the information for create a history message
         const messageHistory='Se envio un mensaje de whatsapp: \n'+message;
-        await send_data_to_the_server_for_create_an_note_of_whatsapp(id_company,id_branch,id_prospect,messageHistory,whatsappUrl);
-        add_new_message_history(messageHistory,'');
+        await send_data_to_the_server_for_create_an_note_of_whatsapp(0,0,idProspect,mesageHistory,'');
     } else {
         Swal.fire('Por favor, escribe un mensaje antes de enviar.');
     }

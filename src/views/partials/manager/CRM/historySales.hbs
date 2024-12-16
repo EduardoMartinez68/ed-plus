@@ -4,7 +4,7 @@
         <button class="btn btn-edit">Enviar Mensaje</button>
         <button class="btn btn-2" onclick="nextWeb('{{id_companies}}/{{id_branches}}/{{id}}/create-invoice-crm')">Cotización</button>
         <button class="btn btn-2" onclick="create_new_note('{{id_companies}},{{id_branches}},{{id}}')">Crear Nota</button>
-        <button class="btn btn-2" onclick="send_to_whatsApp('{{name}}','{{email}}','{{cellphone}}')">Whatsapp</button>
+        <button class="btn btn-2" onclick="send_to_whatsApp('{{id}}','{{name}}','{{email}}','{{cellphone}}')">Whatsapp</button>
         <button class="btn btn-2" onclick="create_an_appointment('{{id_companies}}','{{id_branches}}','{{id}}','{{id_employees}}')">Crear Cita</button>
     </div>
 {{/each}}
