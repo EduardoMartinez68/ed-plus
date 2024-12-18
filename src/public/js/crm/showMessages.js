@@ -240,7 +240,6 @@ async function sendToWhatsApp(idProspect,phoneNumber) {
     }
 }
 
-
 async function send_data_to_the_server_for_create_an_note_of_whatsapp(id_company,id_branch,id_prospect,message,linkForm){
     //we will see if exist the form for send the data to the server
     const form=document.getElementById('form-whatsapp');
@@ -265,7 +264,7 @@ async function send_data_to_the_server_for_create_an_note_of_whatsapp(id_company
 }
 
 
-//this is for save appointment 
+//this is for save appointment  create_an_appointment
 async function show_appointment(idCompany,idBranch,idProspects,idEmployee){
     var containerHtml = `
     <style>
@@ -605,8 +604,8 @@ async function create_an_appointment(idCompany,idBranch,idProspects,idEmployee){
         allowOutsideClick: () => !Swal.isLoading()
     }).then(() => {
         // Aquí puedes configurar un evento al mostrar el modal
-        document.getElementById('btn-save-appointment').addEventListener('click', () => {
-            send_data_to_the_server_for_create_an_appoint(idCompany, idBranch, idProspects);
+        document.getElementById('btn-save-appointment').addEventListener('click', async () => {
+            await send_data_to_the_server_for_create_an_appoint(idCompany, idBranch, idProspects);
         });
     });
 }
@@ -637,6 +636,13 @@ async function send_data_to_the_server_for_create_an_appoint(id_company,id_branc
 function add_new_message_history(message,link){
     //get the data of add the information of the new message history
     const container=document.getElementById('container-history');
+
+    //her we will see if exist the container-history. If not exist, we know that the user is in the dashboard CRM
+    if(!container){
+        return;
+    }
+
+    //if we are not in the dashboard CRM, It means we are in the editing interface and get the data of the form for add a message history
     const userName=document.getElementById('user-name-id').value;
     const userPhoto=document.getElementById('user-photo-id').value;
 
@@ -667,6 +673,7 @@ function add_new_message_history(message,link){
 }
 
 async function send_data_to_the_server_use_message_flask(link,form,linkData){
+    console.log(link)
     //on the loading tab for that the user not can edit the form
     const loadingOverlay = document.getElementById("loadingOverlay");
     loadingOverlay.style.display = "flex"; // Show loading overlay

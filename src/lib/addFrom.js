@@ -2776,12 +2776,12 @@ router.post('/fud/:id_company/:id_branch/:id_prospect/create-message-history', i
     const { id_company, id_branch, id_prospect} = req.params;
     const { formData, linkData} = req.body;
     const form=formData;
-
+    
     //we will see if fan update the prospect
     if(await addDatabase.add_message_to_the_customer_history(req.user.id,id_prospect,form.comment,form.link)){
-        res.status(200).json({ message: 'La Nota de venta fue actualizada con éxito ❤️' }); // Return data to the client
+        res.status(200).json({ message: 'La Nota de venta fue agregada con éxito ❤️' }); // Return data to the client
     }else{
-        res.status(200).json({ message: 'La Nota de venta no fue actualizada 😮' }); // Return data to the client
+        res.status(200).json({ message: 'La Nota de venta no fue agregada 😮' }); // Return data to the client
     }
 })
 

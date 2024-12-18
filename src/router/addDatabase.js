@@ -631,7 +631,7 @@ async function add_appointment(appointment){
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
     `;
     const values = Object.values(appointment); //this is for create the format of save
-
+    
     try{
         await database.query(queryText, values);
         return true;

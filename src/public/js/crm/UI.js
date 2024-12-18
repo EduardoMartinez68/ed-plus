@@ -1,39 +1,39 @@
 
-    const columns = document.querySelectorAll('.column');
+const columns = document.querySelectorAll('.column');
 
-    columns.forEach(column => {
-        new Sortable(column, {
+columns.forEach(column => {
+    new Sortable(column, {
+        group: 'shared',
+        animation: 150,
+        onEnd: function (evt) {
+            const destinationColumn = evt.to;
+            const idStage = destinationColumn.getAttribute('idStage');
+
+            const tanks = evt.item;
+            tanks.setAttribute('stageId', idStage)
+        }
+    });
+});
+
+document.getElementById('addColumnBtn').addEventListener('click', function () {
+    const columnName = document.getElementById('newColumnName').value.trim();
+    if (columnName) {
+        const newColumn = document.createElement('div');
+        newColumn.classList.add('column');
+        newColumn.innerHTML = `<h3>${columnName}</h3><hr>`;
+        document.querySelector('.board').appendChild(newColumn);
+
+        new Sortable(newColumn, {
             group: 'shared',
             animation: 150,
             onEnd: function (evt) {
-                const destinationColumn = evt.to;
-                const idStage=destinationColumn.getAttribute('idStage');
-
-                const tanks=evt.item;
-                tanks.setAttribute('stageId', idStage)
+                console.log('Elemento movido:', evt.item);
             }
         });
-    });
 
-    document.getElementById('addColumnBtn').addEventListener('click', function () {
-        const columnName = document.getElementById('newColumnName').value.trim();
-        if (columnName) {
-            const newColumn = document.createElement('div');
-            newColumn.classList.add('column');
-            newColumn.innerHTML = `<h3>${columnName}</h3><hr>`;
-            document.querySelector('.board').appendChild(newColumn);
-
-            new Sortable(newColumn, {
-                group: 'shared',
-                animation: 150,
-                onEnd: function (evt) {
-                    console.log('Elemento movido:', evt.item);
-                }
-            });
-
-            document.getElementById('newColumnName').value = '';
-        }
-    });
+        document.getElementById('newColumnName').value = '';
+    }
+});
 
 document.addEventListener('DOMContentLoaded', function () {
     // get all the class of .dropdown-btn en title-column

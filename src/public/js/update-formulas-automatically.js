@@ -80,7 +80,6 @@ function message_flask(){
     notificationMessage('Notificación','Base de datos actualizada');
 }
 
-
 async function send_to_server(link,linkData) {
     //const loadingOverlay = document.getElementById("loadingOverlay");
     //loadingOverlay.style.display = "flex"; // Show loading overlay
