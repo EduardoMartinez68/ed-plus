@@ -1,3 +1,4 @@
+//*-------------------------------DASHBOARD-------------------------------*//
 async function add_table_crm(id_company, id_branch) {
     var containerHtml = `
         <style>
@@ -88,6 +89,7 @@ async function edit_name_table_crm(oldName) {
     });
 }
 
+//*-------------------------------WHATSAPP-------------------------------*//
 async function send_to_whatsApp(idProspect,nameCustomer, emailCustomer, phoneNumber) {
     // we will see if exist the phone is empty
     if (phoneNumber.trim() === '') {
@@ -263,7 +265,7 @@ async function send_data_to_the_server_for_create_an_note_of_whatsapp(id_company
     }
 }
 
-
+//*-------------------------------APPOINTMENT FORM-------------------------------*//
 //this is for save appointment  create_an_appointment
 async function show_appointment(idCompany,idBranch,idProspects,idEmployee){
     var containerHtml = `
@@ -539,6 +541,7 @@ async function delete_appointment(id_company,id_branch,id_appointment){
 }
 
 
+//*-------------------------------APPOINTMENT FLASK-------------------------------*//
 //this is for create a appoint when the user is edit a customer. 
 // This send the form data to the server for that the user not waste time updating the page
 async function create_an_appointment(idCompany,idBranch,idProspects,idEmployee){
@@ -633,6 +636,9 @@ async function send_data_to_the_server_for_create_an_appoint(id_company,id_branc
     }
 }
 
+
+
+//*-------------------------------MESSAGE HISTORY-------------------------------*//
 function add_new_message_history(message,link){
     //get the data of add the information of the new message history
     const container=document.getElementById('container-history');
@@ -673,7 +679,6 @@ function add_new_message_history(message,link){
 }
 
 async function send_data_to_the_server_use_message_flask(link,form,linkData){
-    console.log(link)
     //on the loading tab for that the user not can edit the form
     const loadingOverlay = document.getElementById("loadingOverlay");
     loadingOverlay.style.display = "flex"; // Show loading overlay
@@ -778,4 +783,411 @@ async function send_data_to_the_server_for_create_an_note(id_company,id_branch,i
         //if we will can add the new appoint, show the new history message
         add_new_message_history(message,linkForm);
     }
+}
+
+
+//*-------------------------------EMAILS-------------------------------*//
+async function show_message_email(idProspect,email,customerName) {
+    const containerHtml = `
+        <style>
+            .swal2-popup {
+                width: 80% !important; /* Ajusta el ancho, puedes usar 90% o lo que prefieras */
+                max-width: none !important; /* Evita límites predeterminados */
+                height: auto !important; /* Permite que el contenido ajuste la altura */
+                max-height: 90vh; /* Asegura que no exceda el 90% del alto de la ventana */
+                padding: 20px !important; /* Agrega espacio interno adicional si es necesario */
+            }
+
+            .swal2-html-container {
+                max-height: 80vh; /* Ajusta el área de contenido interno */
+                overflow-y: auto; /* Habilita el scroll si el contenido excede el tamaño */
+            }
+                
+            .swal2-container {
+                font-family: Arial, sans-serif;
+            }
+            .email-container {
+                display: flex;
+                gap: 20px;
+            }
+            .preview {
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                background-color: #f9f9f9;
+                padding: 15px;
+                overflow-y: auto;
+                max-height: 400px;
+            }
+            .preview h4 {
+                font-size: 18px;
+                color: #333;
+                margin-bottom: 10px;
+            }
+            .form {
+                width:100%;
+            }
+
+            .form-group {
+                margin-bottom: 15px;
+            }
+            .email-flask-input, .email-flask-select {
+                border-radius: 5px;
+                border: 1px solid #ced4da;
+                padding: 8px;
+                width: 100%;
+                font-size: 14px;
+            }
+            .email-flask-input:focus, .email-flask-select:focus {
+                border-color: #80bdff;
+                outline: none;
+                box-shadow: 0 0 5px rgba(128, 189, 255, 0.5);
+            }
+            .email-flask-btn {
+                display: inline-block;
+                background-color: #007bff;
+                color: #fff;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 14px;
+            }
+            .email-flask-btn:hover {
+                background-color: #0056b3;
+            }
+            .template-preview {
+                background-color: #fff;
+                padding: 15px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+            }
+
+            #templatePreview {
+                max-height: 300px; /* Ajusta esta altura según tus necesidades */
+                overflow-y: auto; /* Habilita el scroll vertical si el contenido excede la altura */
+                padding: 10px; /* Opcional: agrega un poco de espacio interno */
+                border: 1px solid #ddd; /* Opcional: agrega un borde para delimitar la sección */
+                background-color: #f9f9f9; /* Opcional: color de fondo */
+                border-radius: 5px; /* Opcional: esquinas redondeadas */
+            }
+        </style>
+
+        <div class="email-container">
+
+
+            <!-- Formulario -->
+            <div class="form">
+                <form id="emailForm">
+
+                    <div class="row">
+                        <div class="col-1">
+                            <label for="email">Para: </label>
+                        </div>
+                        <div class="col">
+                            <input type="email" class="email-flask-input" id="email" name="email" placeholder="Introduce el email del cliente" required value="${email}">
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-1">
+                            <label for="email">Asunto: </label>
+                        </div>
+                        <div class="col">
+                            <input type="text" class="email-flask-input" id="subject" name="subject" placeholder="Introduce el asunto" required autofocus>
+                        </div>
+                    </div>
+                    <br>
+
+                    <div class="row">
+                        <div class="col-1">
+                            <label for="template">Selecciona una plantilla</label>
+                        </div>
+                        <div class="col-3">
+                            <select class="email-flask-select" id="template" name="template">
+                                <option value="" disabled selected>Elige una plantilla</option>
+                                <option value="template1">Plantilla 1: Bienvenida</option>
+                                <option value="template2">Plantilla 2: Promoción</option>
+                                <option value="template3">Plantilla 3: Seguimiento</option>
+                            </select>
+                        </div>
+
+                        <div class="col-1">
+                            <label for="">Subir plantilla personalizada: </label>
+                        </div>
+                        <div class="col-3">
+                            <input type="file" class="email-flask-input" id="customTemplate" name="customTemplate" accept=".html">
+                        </div>
+                    </div>
+                    <br>
+
+                    <!-- Previsualización -->
+                    <div class="preview" id="emailPreview">
+                        <h4>Previsualización del Email</h4>
+                        <div id="templatePreview" class="template-preview">
+                            Selecciona una plantilla para ver la previsualización aquí.
+                        </div>
+                    </div>
+                    <br>
+
+                    <button type="submit" class="email-flask-btn">Enviar</button>
+                </form>
+            </div>
+        </div>
+    `;
+
+    Swal.fire({
+        title: 'Enviar un email 📧',
+        html: containerHtml,
+        focusConfirm: false,
+        showConfirmButton: false,
+        showCancelButton: false,
+        allowOutsideClick: () => !Swal.isLoading(),
+        didRender: () => {
+            const templatePreview = document.getElementById('templatePreview');
+            const customTemplateInput = document.getElementById('customTemplate');
+
+            // Plantillas HTML prediseñadas
+            const templates = {
+                template1: `<h2 style="color: #007bff;">Bienvenido/a</h2><p>¡Gracias por unirte a nuestra comunidad! Estamos emocionados de tenerte aquí.</p>`,
+                template2: `<h2 style="color: #28a745;">Promoción Especial</h2><p>¡Aprovecha nuestra promoción especial del 20% de descuento por tiempo limitado!</p>`,
+                template3: `<h2 style="color: #ffc107;">Seguimiento</h2><p>Hola, solo queremos recordarte que estamos aquí para ayudarte en lo que necesites.</p>`,
+            };
+
+            // Actualizar previsualización al seleccionar plantilla
+            document.getElementById('template').addEventListener('change', (event) => {
+                const selectedTemplate = event.target.value;
+                templatePreview.innerHTML = templates[selectedTemplate] || 'Selecciona una plantilla para ver la previsualización aquí.';
+            });
+
+
+            // Manejar subida de plantilla personalizada
+            customTemplateInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const customTemplate = e.target.result;
+                        templatePreview.innerHTML = customTemplate;
+                    };
+                    reader.readAsText(file);
+                }
+            });
+
+            // Manejar el envío del formulario
+            document.getElementById('emailForm').addEventListener('submit', (event) => {
+                event.preventDefault();
+
+                const email = document.getElementById('email').value;
+                const subject = document.getElementById('subject').value;
+                const selectedTemplate = document.getElementById('template').value;
+                const message = document.getElementById('message').value;
+                const customTemplate = templatePreview.innerHTML;
+
+                const finalEmailContent = `
+                    <div>${customTemplate}</div>
+                    <div>${message}</div>
+                `;
+
+                // Simular envío del email
+                console.log('Para:', email);
+                console.log('Asunto:', subject);
+                console.log('Contenido del Email:', finalEmailContent);
+
+                Swal.fire('Éxito', 'El email ha sido enviado correctamente.', 'success');
+            });
+        }
+    });
+}
+
+
+async function show_message_email2() {
+    const containerHtml = `
+        <style>
+            .swal2-popup {
+                width: 80% !important; /* Ajusta el ancho, puedes usar 90% o lo que prefieras */
+                max-width: none !important; /* Evita límites predeterminados */
+                height: auto !important; /* Permite que el contenido ajuste la altura */
+                max-height: 90vh; /* Asegura que no exceda el 90% del alto de la ventana */
+                padding: 20px !important; /* Agrega espacio interno adicional si es necesario */
+            }
+
+            .swal2-html-container {
+                max-height: 80vh; /* Ajusta el área de contenido interno */
+                overflow-y: auto; /* Habilita el scroll si el contenido excede el tamaño */
+            }
+                
+            .swal2-container {
+                font-family: Arial, sans-serif;
+            }
+            .email-container {
+                display: flex;
+                gap: 20px;
+            }
+            .preview {
+                width: 50%;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                background-color: #f9f9f9;
+                padding: 15px;
+                overflow-y: auto;
+                max-height: 400px;
+            }
+            .preview h4 {
+                font-size: 18px;
+                color: #333;
+                margin-bottom: 10px;
+            }
+            .form {
+                width: 50%;
+            }
+            .form-group {
+                margin-bottom: 15px;
+            }
+            .email-flask-input, .email-flask-select {
+                border-radius: 5px;
+                border: 1px solid #ced4da;
+                padding: 8px;
+                width: 100%;
+                font-size: 14px;
+            }
+            .email-flask-input:focus, .email-flask-select:focus {
+                border-color: #80bdff;
+                outline: none;
+                box-shadow: 0 0 5px rgba(128, 189, 255, 0.5);
+            }
+            .email-flask-btn {
+                display: inline-block;
+                background-color: #007bff;
+                color: #fff;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 14px;
+            }
+            .email-flask-btn:hover {
+                background-color: #0056b3;
+            }
+            .template-preview {
+                background-color: #fff;
+                padding: 15px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+            }
+        </style>
+
+        <div class="email-container">
+            <!-- Previsualización -->
+            <div class="preview" id="emailPreview">
+                <h4>Previsualización del Email</h4>
+                <div id="templatePreview" class="template-preview">
+                    Selecciona una plantilla para ver la previsualización aquí.
+                </div>
+                <div id="additionalMessagePreview" style="margin-top: 15px; color: #666;">
+                    <!-- Mensaje adicional -->
+                </div>
+            </div>
+
+            <!-- Formulario -->
+            <div class="form">
+                <form id="emailForm">
+                    <div class="form-group">
+                        <label for="email">Para (Email del cliente)</label>
+                        <input type="email" class="email-flask-input" id="email" name="email" placeholder="Introduce el email del cliente" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="subject">Asunto</label>
+                        <input type="text" class="email-flask-input" id="subject" name="subject" placeholder="Introduce el asunto" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="template">Selecciona una plantilla</label>
+                        <select class="email-flask-select" id="template" name="template">
+                            <option value="" disabled selected>Elige una plantilla</option>
+                            <option value="template1">Plantilla 1: Bienvenida</option>
+                            <option value="template2">Plantilla 2: Promoción</option>
+                            <option value="template3">Plantilla 3: Seguimiento</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Mensaje adicional</label>
+                        <textarea class="email-flask-input" id="message" name="message" rows="3" placeholder="Escribe un mensaje adicional..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="customTemplate">Subir plantilla personalizada</label>
+                        <input type="file" class="email-flask-input" id="customTemplate" name="customTemplate" accept=".html">
+                    </div>
+                    <button type="submit" class="email-flask-btn">Enviar Email 📧</button>
+                </form>
+            </div>
+        </div>
+    `;
+
+    Swal.fire({
+        title: 'Enviar un email 📧',
+        html: containerHtml,
+        focusConfirm: false,
+        showConfirmButton: false,
+        showCancelButton: false,
+        allowOutsideClick: () => !Swal.isLoading(),
+        didRender: () => {
+            const templatePreview = document.getElementById('templatePreview');
+            const additionalMessagePreview = document.getElementById('additionalMessagePreview');
+            const messageInput = document.getElementById('message');
+            const customTemplateInput = document.getElementById('customTemplate');
+
+            // Plantillas HTML prediseñadas
+            const templates = {
+                template1: `<h2 style="color: #007bff;">Bienvenido/a</h2><p>¡Gracias por unirte a nuestra comunidad! Estamos emocionados de tenerte aquí.</p>`,
+                template2: `<h2 style="color: #28a745;">Promoción Especial</h2><p>¡Aprovecha nuestra promoción especial del 20% de descuento por tiempo limitado!</p>`,
+                template3: `<h2 style="color: #ffc107;">Seguimiento</h2><p>Hola, solo queremos recordarte que estamos aquí para ayudarte en lo que necesites.</p>`,
+            };
+
+            // Actualizar previsualización al seleccionar plantilla
+            document.getElementById('template').addEventListener('change', (event) => {
+                const selectedTemplate = event.target.value;
+                templatePreview.innerHTML = templates[selectedTemplate] || 'Selecciona una plantilla para ver la previsualización aquí.';
+            });
+
+            // Actualizar previsualización del mensaje adicional
+            messageInput.addEventListener('input', () => {
+                additionalMessagePreview.textContent = messageInput.value.trim();
+            });
+
+            // Manejar subida de plantilla personalizada
+            customTemplateInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const customTemplate = e.target.result;
+                        templatePreview.innerHTML = customTemplate;
+                    };
+                    reader.readAsText(file);
+                }
+            });
+
+            // Manejar el envío del formulario
+            document.getElementById('emailForm').addEventListener('submit', (event) => {
+                event.preventDefault();
+
+                const email = document.getElementById('email').value;
+                const subject = document.getElementById('subject').value;
+                const selectedTemplate = document.getElementById('template').value;
+                const message = document.getElementById('message').value;
+                const customTemplate = templatePreview.innerHTML;
+
+                const finalEmailContent = `
+                    <div>${customTemplate}</div>
+                    <div>${message}</div>
+                `;
+
+                // Simular envío del email
+                console.log('Para:', email);
+                console.log('Asunto:', subject);
+                console.log('Contenido del Email:', finalEmailContent);
+
+                Swal.fire('Éxito', 'El email ha sido enviado correctamente.', 'success');
+            });
+        }
+    });
 }
