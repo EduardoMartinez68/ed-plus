@@ -1,0 +1,52 @@
+<!-- Navbar -->
+<div class="navbar-message">
+  <div class="icons alert-message"> 
+    <i class="fi fi-ss-comments" id="chatIcon"></i>
+  </div>
+</div>
+
+<!-- Chat History -->
+<div class="chat-history" id="chatHistory">
+  <h3></h3>
+  <div class="container-button-chat">
+    <button class="btn"><i class="fi fi-rs-paper-plane"></i> Nuevo mensaje</button>
+  </div>
+  <div class="message">
+    <img src="https://cdn-icons-png.flaticon.com/512/3177/3177440.png" alt="" class="chat-history-image-profile">
+    <div class="message-content">
+        <label for="" class="chat-name">Usuario</label>
+        <p>Mensaje 1: Hola</p>
+    </div>
+  </div>
+  <div class="message">
+    <img src="https://cdn-icons-png.flaticon.com/512/3177/3177440.png" alt="" class="chat-history-image-profile">
+    <div class="message-content">
+        <label for="" class="chat-name">Usuario</label>
+        <p>Mensaje 1: Hola</p>
+    </div>
+  </div>
+  <div class="message">
+    <img src="https://cdn-icons-png.flaticon.com/512/3177/3177440.png" alt="" class="chat-history-image-profile">
+    <div class="message-content">
+        <label for="" class="chat-name">Usuario</label>
+        <p>Mensaje 1: Hola</p>
+    </div>
+  </div>
+  <label for=""></label>
+  <center><a href="#">Ver todo los mensajes</a></center>
+  <label for=""></label>
+</div>
+
+
+<script>
+  const chatIcon = document.getElementById('chatIcon');
+  const chatHistory = document.getElementById('chatHistory');
+
+  chatIcon.addEventListener('click', () => {
+    if (chatHistory.style.display === 'block') {
+      chatHistory.style.display = 'none';
+    } else {
+      chatHistory.style.display = 'block';
+    }
+  });
+</script>

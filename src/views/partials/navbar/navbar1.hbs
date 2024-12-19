@@ -76,13 +76,18 @@
 
                 <!--this is for add the name of the company or the branch-->
                 <ul class="titleDesciption">
+                    <!--
                     <span class="color-name-navbar">{{user.email}}</span>
                     {{#if user.photo}}
                         <img src="{{user.photo}}" class="img-profile-navbar">
                     {{else}}
                         <img src="https://cdn-icons-png.flaticon.com/512/3177/3177440.png" class="img-profile-navbar">
                     {{/if}}  
+                    -->
+
+                    {{>navbar/messageHistory}}
                 </ul>
+
             </div>
         </head>
     </section>

@@ -1,13 +1,14 @@
 /**/
 :root {
     --color-company: white;
-    --color-footer:  #131313;
+    --color-footer: #131313;
     /*rgb(57,78,194);*/
     --color-hover: #074a85;
 
     /*rgb(46, 62, 151);*/
-    --color-body: #F5F6FA; /*rgb(246, 245, 248);*/
-    
+    --color-body: #F5F6FA;
+    /*rgb(246, 245, 248);*/
+
     --color-session1: white;
     /* rgb(57,78,194);*/
     --color-session2: white;
@@ -24,7 +25,7 @@ a {
     color: rgba(0, 0, 0, .7);
 }
 
-a:hover{
+a:hover {
     cursor: pointer;
 }
 
@@ -33,7 +34,7 @@ table {
     border-spacing: 0 10px;
 }
 
-.title-company{
+.title-company {
     color: var(--color-company);
 }
 
@@ -42,34 +43,36 @@ table {
     height: 40px;
     object-fit: cover;
     border-radius: 50%;
-    margin-top: -4px; 
+    margin-top: -4px;
 }
 
-.color-name-navbar{
+.color-name-navbar {
     color: white;
 }
 
 
-.btn-edit{
+.btn-edit {
     background-color: var(--color-session1);
     color: white;
 }
 
-.btn-edit:hover{
+.btn-edit:hover {
     background-color: var(--color-hover);
     color: white;
 }
 
-.bar-link{
+.bar-link {
     font-size: 1rem;
     font-family: 'Open Sans', sans-serif;
     font-size: 1.2rem;
 }
 
-.btn-success:active, .btn-success:active:focus, .btn-success.active {
+.btn-success:active,
+.btn-success:active:focus,
+.btn-success.active {
     background-color: var(--color-hover);
-    border-color: white; 
-    box-shadow: none; 
+    border-color: white;
+    box-shadow: none;
 }
 
 /* styles of the button loading */
@@ -79,7 +82,7 @@ table {
 }
 
 /* Contenedor del ícono */
-.btn-loading-off .bnt-loading-icon{
+.btn-loading-off .bnt-loading-icon {
     display: inline-block;
     width: 16px;
     height: 16px;
@@ -101,6 +104,7 @@ table {
     from {
         transform: rotate(0deg);
     }
+
     to {
         transform: rotate(360deg);
     }
@@ -114,20 +118,20 @@ table {
 }
 
 /*this is a style Boobstarp*/
-.form-check-input:checked{
+.form-check-input:checked {
     background-color: var(--color-company);
     border-color: white;
 }
 
-.nav-link{
+.nav-link {
     color: var(--color-company);
 }
 
-.nav-link:hover{
+.nav-link:hover {
     color: var(--color-company);
 }
 
-.nav-link .active{
+.nav-link .active {
     background-color: var(--color-company);
     color: white;
 }
@@ -138,13 +142,14 @@ table {
     color: white;
     background-color: var(--color-company);
 }
+
 .nav-pills .nav-link {
-    color: rgba(0,0,0,.6);
+    color: rgba(0, 0, 0, .6);
     background-color: var(--color-body);
 }
 
 /*styles messages*/
-.container-message{
+.container-message {
     z-index: 100000000000000000;
 }
 
@@ -168,12 +173,12 @@ table {
     color: white;
 }
 
-.btn-2{
+.btn-2 {
     background: #dbdddf;
     color: #3d4246;
 }
 
-.btn-2:hover{
+.btn-2:hover {
     background: #c2c3c5;
     color: #2d3033;
 }
@@ -182,7 +187,7 @@ table {
     border-radius: 1rem;
 }
 
-.btn-button{
+.btn-button {
     border: none;
     font-size: 16px;
     color: white;
@@ -197,13 +202,13 @@ table {
     align-items: center;
 }
 
-.btn-button:hover{
+.btn-button:hover {
     background-color: var(--color-hover);
 }
 
 .scroll-navbar {
     max-height: 600px;
-    overflow-y: auto; 
+    overflow-y: auto;
     max-height: 84%;
 }
 
@@ -255,8 +260,8 @@ body {
     background-color: var(--color-body);
 }
 
-.btn-add{
-    background-color: rgb(55,167,84);
+.btn-add {
+    background-color: rgb(55, 167, 84);
     color: white;
     width: 100%;
     height: 100%;
@@ -265,13 +270,13 @@ body {
 }
 
 /*footer*/
-.logo-footer{
+.logo-footer {
     max-width: 6%;
     height: auto;
     margin-top: auto;
 }
 
-.container-footer{
+.container-footer {
     background-color: var(--color-footer);
     color: white;
 
@@ -281,7 +286,7 @@ body {
     padding-top: 20px;*/
 }
 
-.ul-footer{
+.ul-footer {
     list-style-type: none;
 }
 
@@ -289,30 +294,30 @@ body {
     content: "";
 }
 
-.link-footer{
+.link-footer {
     text-decoration: none;
-    color: rgba(255,255,255,0.5); 
+    color: rgba(255, 255, 255, 0.5);
     font-family: 'Open Sans', sans-serif;
     font-size: .825rem;
 }
 
-.title-footer{
+.title-footer {
     font-family: 'Open Sans', sans-serif;
     font-size: 1.2rem;
 }
 
-.title-footer-2{
+.title-footer-2 {
     font-family: 'Open Sans', sans-serif;
     font-size: 1rem;
 }
 
-.link-footer:hover{
-    color: rgba(255,255,255,1); 
+.link-footer:hover {
+    color: rgba(255, 255, 255, 1);
 }
 
-.container-copyright{
-    display: flex; 
-    justify-content: center; 
+.container-copyright {
+    display: flex;
+    justify-content: center;
     align-items: center;
     background-color: rgba(0, 0, 0, 0.3);
     height: 70px;
@@ -320,8 +325,8 @@ body {
     font-size: .8rem;
 }
 
-.text-footer{
-    color: rgba(255,255,255,0.5); 
+.text-footer {
+    color: rgba(255, 255, 255, 0.5);
     font-family: 'Open Sans', sans-serif;
     font-size: .825rem;
 }
@@ -460,7 +465,7 @@ body {
 }
 
 
-.fi-department{
+.fi-department {
     font-size: .8rem
 }
 
@@ -470,7 +475,7 @@ body {
     cursor: pointer;
 }
 
-.sidebar{
+.sidebar {
     position: fixed;
     left: -250px;
     width: 250px;
@@ -480,11 +485,11 @@ body {
     z-index: 100000;
 }
 
-.sidebar ul{
+.sidebar ul {
     list-style: none;
 }
 
-.sidebar header{
+.sidebar header {
     font-size: 22px;
     color: white;
     text-align: center;
@@ -493,7 +498,7 @@ body {
     user-select: none;
 }
 
-.sidebar ul a{
+.sidebar ul a {
     display: block;
     height: 100%;
     width: 100%;
@@ -502,72 +507,75 @@ body {
     color: white;
     padding-left: 40px;
     box-sizing: border-box;
-    border-top: 1px solid rgba(255,255,255,.1);
+    border-top: 1px solid rgba(255, 255, 255, .1);
     border-bottom: 1px solid black;
     transition: .4s;
     text-decoration: none;
 }
 
-.sidebar li:hover a{
+.sidebar li:hover a {
     padding-left: 50px;
     color: var(--color-company);
 }
 
-.sidebar  ul a i{
+.sidebar ul a i {
     margin-right: 16px;
     text-decoration: none;
 }
 
-#check{
+#check {
     display: none;
 }
-label #btn-navbar-open, label #btn-navbar-cancel{
+
+label #btn-navbar-open,
+label #btn-navbar-cancel {
     /*position: absolute;*/
     cursor: pointer;
     position: fixed;
 }
 
-label #btn-navbar-open{
+label #btn-navbar-open {
     left: 10px;
-    top:8px;
+    top: 8px;
     font-size: 22px;
     color: white;
     padding: 6px 12px;
     transition: all .5s;
 }
 
-label #btn-navbar-cancel{
+label #btn-navbar-cancel {
     z-index: 100001;
     left: -195px;
-    top:61px;
+    top: 61px;
     font-size: 18px;
     color: white;
     padding-inline-start: 4px 9px;
     transition: all .5s ease;
 }
 
-#check:checked ~ .sidebar{
+#check:checked~.sidebar {
     left: 0;
 }
 
-#check:checked ~ label #btn-navbar-open{
+#check:checked~label #btn-navbar-open {
     left: 250px;
     opacity: 0;
     pointer-events: none;
 }
 
-#check:checked ~ label #btn-navbar-cancel{
+#check:checked~label #btn-navbar-cancel {
     left: 195px;
 }
 
-.background-navbar{
-    background-color: rgba(0,0,0,.5);
+.background-navbar {
+    background-color: rgba(0, 0, 0, .5);
     width: 100%;
     height: 100%;
     position: absolute;
 }
 
 @import url("//harvesthq.github.io/chosen/chosen.css");
+
 .chosen-container {
     width: 250px;
 }
@@ -577,7 +585,7 @@ label #btn-navbar-cancel{
 }
 
 
-.img-message{
+.img-message {
     max-width: 250px;
     max-height: 250px;
     border-radius: 2rem;
@@ -614,12 +622,13 @@ label #btn-navbar-cancel{
 .search-input {
     width: 100%;
     padding: 10px 20px;
-    padding-left: 60px; /* Espacio para el ícono */
+    padding-left: 60px;
+    /* Espacio para el ícono */
     border: 2px solid #ddd;
     border-radius: 25px;
     font-size: 1rem;
     transition: border-color 0.3s;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3); 
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .search-input:focus {
@@ -641,7 +650,7 @@ label #btn-navbar-cancel{
 }
 
 /*--------------------------select div-------------------*/
-.btn-group{
+.btn-group {
     padding-top: 1rem;
 }
 
@@ -705,4 +714,130 @@ label #btn-navbar-cancel{
     .content-section {
         margin-top: 10px;
     }
+}
+
+
+/**--------------------------navbar chat-------------------*/
+.navbar-message{
+    position: relative;
+}
+
+.navbar-message .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.navbar-message .icons {
+    display: flex;
+    align-items: center;
+    top: -30px;
+    left: 10px;
+}
+
+.navbar-message .icons i {
+    font-size: 1.5rem;
+    margin-left: 20px;
+    cursor: pointer;
+    color: white;
+}
+
+/* Chat History */
+.chat-history {
+    position: absolute;
+    top: 60px;
+    right: 20px;
+    width: 300px;
+    max-height: 400px;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    overflow-y: auto;
+    display: none;
+}
+
+.chat-history h3 {
+    margin: 0;
+    padding: 10px;
+    background-color: var(--color-company);
+    color: white;
+    border-radius: 8px 8px 0 0;
+    text-align: center;
+}
+
+.chat-history .message {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.chat-history .message:last-child {
+    border-bottom: none;
+}
+
+.message {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.message:last-child {
+    border-bottom: none;
+}
+
+.chat-history-image-profile {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.message-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-name {
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+.message p {
+    margin: 0;
+    font-size: 14px;
+    color: #333;
+}
+
+.alert-message {
+    position: relative;
+}
+
+.alert-message::after {
+    content: '';
+    position: absolute;
+    top: 5px;
+    right: 20px;
+
+    width: 13px;
+    height: 13px;
+    background-color: red;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+}
+
+.container-button-chat{
+    display: flex;
+    justify-content: flex-end;
+    padding: 5px;
+}
+
+.container-button-chat .btn{
+    color: var(--color-company);
+}
+
+.container-button-chat .btn:hover{
+    color: var(--color-company);
+    border-color: var(--color-company);
 }

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Navbar con Chat</title>
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-rounded/css/uicons-solid-rounded.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Navbar */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background-color: #333;
+      color: white;
+    }
+
+    .navbar .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    .navbar .icons {
+      display: flex;
+      align-items: center;
+    }
+
+    .navbar .icons i {
+      font-size: 1.5rem;
+      margin-left: 20px;
+      cursor: pointer;
+    }
+
+    /* Chat History */
+    .chat-history {
+      position: absolute;
+      top: 60px;
+      right: 20px;
+      width: 300px;
+      max-height: 400px;
+      background-color: white;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      overflow-y: auto;
+      display: none;
+    }
+
+    .chat-history h3 {
+      margin: 0;
+      padding: 10px;
+      background-color: #444;
+      color: white;
+      border-radius: 8px 8px 0 0;
+      text-align: center;
+    }
+
+    .chat-history .message {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .chat-history .message:last-child {
+      border-bottom: none;
+    }
+
+    .message {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    }
+
+    .message:last-child {
+    border-bottom: none;
+    }
+
+    .chat-history-image-profile {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+    }
+
+    .message p {
+    margin: 0;
+    font-size: 14px;
+    color: #333;
+    }
+
+    .alert-message {
+    position: relative;
+    }
+
+    .alert-message::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 10px;
+    height: 10px;
+    background-color: red;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+    }
+
+  </style>
+  <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
+  <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
+  <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-straight/css/uicons-solid-straight.css'>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+  <div class="logo">Mi Sitio</div>
+  <div class="icons alert-message">
+    <i class="fi fi-ss-comments" id="chatIcon"></i>
+  </div>
+</div>
+
+<!-- Chat History -->
+<div class="chat-history" id="chatHistory">
+  <h3>Historial de Chat</h3>
+  <div class="message">
+    <img src="https://cdn-icons-png.flaticon.com/512/3177/3177440.png" alt="" class="chat-history-image-profile">
+    <p>Mensaje 1: Hola</p>
+  </div>
+  <div class="message">Mensaje 2: ¿Cómo estás?</div>
+  <div class="message">Mensaje 3: ¿Qué tal tu día?</div>
+</div>
+
+<script>
+  const chatIcon = document.getElementById('chatIcon');
+  const chatHistory = document.getElementById('chatHistory');
+
+  chatIcon.addEventListener('click', () => {
+    if (chatHistory.style.display === 'block') {
+      chatHistory.style.display = 'none';
+    } else {
+      chatHistory.style.display = 'block';
+    }
+  });
+</script>
+
+</body>
+</html>
