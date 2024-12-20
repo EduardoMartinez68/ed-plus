@@ -110,12 +110,14 @@ io.on('connection', (socket) => {
     //send the message to a user in specific
     socket.on('sendMessageToUser', ({ toUserId, message }) => {
         const recipientSocketId = users[toUserId];
-
+        
         //we will see if exist the user in the socket for send a message or save in the database
         if (recipientSocketId) {
             io.to(recipientSocketId).emit('privateMessage', message);
+            socket.emit('messageStatus', { success: true, message: 'Mensaje enviado con éxito' });
         } else {
-            console.log(`Usuario ${toUserId} no está conectado.`);
+            //if no is connection save the message in the database
+            socket.emit('messageStatus', { success: false, message: `Este email '${toUserId}' no existe 🤔` });
         }
     });
 
