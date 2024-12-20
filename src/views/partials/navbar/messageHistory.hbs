@@ -1,6 +1,7 @@
 <!-- Navbar -->
+<input type="hidden" value="{{user.id}}" id="userIdChat">
 <div class="navbar-message">
-  <div class="icons alert-message"> 
+  <div class="icons" id="icons-message-history">
     <i class="fi fi-ss-comments" id="chatIcon"></i>
   </div>
 </div>
@@ -9,27 +10,27 @@
 <div class="chat-history" id="chatHistory">
   <h3></h3>
   <div class="container-button-chat">
-    <button class="btn"><i class="fi fi-rs-paper-plane"></i> Nuevo mensaje</button>
+    <button class="btn" onclick="show_send_message_to_user()"><i class="fi fi-rs-paper-plane"></i> Nuevo mensaje</button>
   </div>
   <div class="message">
     <img src="https://cdn-icons-png.flaticon.com/512/3177/3177440.png" alt="" class="chat-history-image-profile">
     <div class="message-content">
-        <label for="" class="chat-name">Usuario</label>
-        <p>Mensaje 1: Hola</p>
+      <label for="" class="chat-name">Usuario</label>
+      <p>Mensaje 1: Hola</p>
     </div>
   </div>
   <div class="message">
     <img src="https://cdn-icons-png.flaticon.com/512/3177/3177440.png" alt="" class="chat-history-image-profile">
     <div class="message-content">
-        <label for="" class="chat-name">Usuario</label>
-        <p>Mensaje 1: Hola</p>
+      <label for="" class="chat-name">Usuario</label>
+      <p>Mensaje 1: Hola</p>
     </div>
   </div>
   <div class="message">
     <img src="https://cdn-icons-png.flaticon.com/512/3177/3177440.png" alt="" class="chat-history-image-profile">
     <div class="message-content">
-        <label for="" class="chat-name">Usuario</label>
-        <p>Mensaje 1: Hola</p>
+      <label for="" class="chat-name">Usuario</label>
+      <p>Mensaje 1: Hola</p>
     </div>
   </div>
   <label for=""></label>
@@ -38,15 +39,6 @@
 </div>
 
 
-<script>
-  const chatIcon = document.getElementById('chatIcon');
-  const chatHistory = document.getElementById('chatHistory');
 
-  chatIcon.addEventListener('click', () => {
-    if (chatHistory.style.display === 'block') {
-      chatHistory.style.display = 'none';
-    } else {
-      chatHistory.style.display = 'block';
-    }
-  });
-</script>
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<script src="/js/navbarMessageHistory.js"></script>

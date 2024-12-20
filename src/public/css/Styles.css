@@ -718,9 +718,10 @@ label #btn-navbar-cancel {
 
 
 /**--------------------------navbar chat-------------------*/
+/*
 .navbar-message{
     position: relative;
-}
+}*/
 
 .navbar-message .logo {
     font-size: 1.5rem;
@@ -730,8 +731,10 @@ label #btn-navbar-cancel {
 .navbar-message .icons {
     display: flex;
     align-items: center;
+    /*
     top: -30px;
     left: 10px;
+    */
 }
 
 .navbar-message .icons i {
