@@ -16,6 +16,11 @@ chatIcon.addEventListener('click', () => {
 });
 
 
+function is_valid_email(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
 //---------------------------------------------------------BACKEND--------------------------------------------------------//
 /*
     in this code, We manage the inputs and outputs of the message and notification for the user. We will socket for read the
@@ -41,9 +46,88 @@ socket.on('privateMessage', (message) => {
         iconsMessages.classList.add('alert-message');
     }
 
+    create_new_message(message);
+
     // show notification in the screen
     play_sound_notification();
 });
+
+function create_new_message(message){
+    // Obtener el contenedor donde se mostrarán los mensajes
+    const chatHistory = document.getElementById('chatHistory');
+
+    // Crear un nuevo div para el mensaje
+    const newMessageDiv = document.createElement('div');
+    newMessageDiv.classList.add('message');
+
+    // Crear la imagen de perfil del usuario (puedes cambiar la URL a la imagen que desees)
+    const profileImage = document.createElement('img');
+    profileImage.src = 'https://cdn-icons-png.flaticon.com/512/3177/3177440.png';  // Aquí puedes poner la URL de la imagen de perfil del usuario
+    profileImage.alt = '';
+    profileImage.classList.add('chat-history-image-profile');
+
+    // Crear el contenedor del contenido del mensaje
+    const messageContentDiv = document.createElement('div');
+    messageContentDiv.classList.add('message-content');
+
+    // Crear el nombre del usuario (puedes obtenerlo dinámicamente si lo tienes)
+    const userNameLabel = document.createElement('label');
+    userNameLabel.classList.add('chat-name');
+    userNameLabel.textContent = message.sender || 'Usuario'; // Suponiendo que 'message.sender' contiene el nombre del remitente
+
+    // Crear el párrafo para mostrar el mensaje
+    const messageParagraph = document.createElement('p');
+    messageParagraph.textContent = message || 'Mensaje no disponible';  // Asumiendo que 'message.text' contiene el mensaje
+
+    // Agregar todo al DOM
+    messageContentDiv.appendChild(userNameLabel);
+    messageContentDiv.appendChild(messageParagraph);
+    newMessageDiv.appendChild(profileImage);
+    newMessageDiv.appendChild(messageContentDiv);
+
+    // Agregar el nuevo mensaje al chat
+    chatHistory.appendChild(newMessageDiv);
+
+    // Hacer scroll hacia el final para mostrar el mensaje más reciente
+    chatHistory.scrollTop = chatHistory.scrollHeight;
+
+    update_view_all_messages();
+}
+
+function update_view_all_messages() {
+    // Eliminar el antiguo bloque de "Ver todos los mensajes"
+    const oldViewAllMessages = document.querySelector('.view-all-messages');
+    if (oldViewAllMessages) {
+      oldViewAllMessages.remove();
+    }
+  
+    // Crear un nuevo bloque de "Ver todos los mensajes"
+    const newViewAllMessages = document.createElement('div');
+    newViewAllMessages.classList.add('view-all-messages');
+    
+    // Crear los labels
+    const topLabel = document.createElement('label');
+    topLabel.textContent = "";
+  
+    const bottomLabel = document.createElement('label');
+    bottomLabel.textContent = "";
+  
+    // Crear el centro con el enlace
+    const center = document.createElement('center');
+    const link = document.createElement('a');
+    link.href = "#";
+    link.textContent = "Ver todos los mensajes";
+    center.appendChild(link);
+  
+    // Agregar los labels y el enlace al nuevo bloque
+    newViewAllMessages.appendChild(topLabel);
+    newViewAllMessages.appendChild(center);
+    newViewAllMessages.appendChild(bottomLabel);
+    
+    // Agregar el nuevo bloque al final del contenedor chatHistory
+    const chatHistory = document.getElementById('chatHistory');
+    chatHistory.appendChild(newViewAllMessages);
+}
 
 //we will see if the message can be send. Get the answer of the server
 socket.on('messageStatus', (status) => {
@@ -143,9 +227,11 @@ function send_message_to_user(){
     //we will see if exist the email and the message
     const toUserId = document.getElementById('email-to-message').value;
     const message=document.getElementById('text-to-message').value;
-    if(toUserId){
+
+    //we will see if the email is success
+    if(toUserId && is_valid_email(toUserId)){
         if(message){
-            socket.emit('sendMessageToUser', { toUserId , message });
+            socket.emit('sendMessageToUser', { userId, toUserId , message });
         }else{
             warningMessage('ERROR','Necesitamos que ingreses un mensaje valido 👁️')
         }
@@ -156,3 +242,4 @@ function send_message_to_user(){
 }
 }
 
+update_view_all_messages();

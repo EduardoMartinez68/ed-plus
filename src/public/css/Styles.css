@@ -736,7 +736,6 @@ label #btn-navbar-cancel {
     left: 10px;
     */
 }
-
 .navbar-message .icons i {
     font-size: 1.5rem;
     margin-left: 20px;
@@ -811,6 +810,11 @@ label #btn-navbar-cancel {
     font-size: 14px;
     color: #333;
 }
+
+.view-all-messages {
+    margin-top: auto; /* Esto empuja el enlace al final */
+    text-align: center;
+  }
 
 .alert-message {
     position: relative;

@@ -101,22 +101,43 @@ const { Server } = require("socket.io");
 const io = new Server(server);
 const users = {}; // object for  mapear users IDs with Socket IDs
 
-io.on('connection', (socket) => {
+const chat = require('./services/chat.js');
+
+io.on('connection', async(socket) =>{
     // save the relation with the user and his socket ID
     socket.on('registerUser', (userId) => {
         users[userId] = socket.id;
     });
 
     //send the message to a user in specific
-    socket.on('sendMessageToUser', ({ toUserId, message }) => {
+    socket.on('sendMessageToUser', async({ userId, toUserId, message }) => {
+        //we will see if exist the email in the database of socket
         const recipientSocketId = users[toUserId];
-        
+        let canSend=recipientSocketId; //this is for know if can be send
+
         //we will see if exist the user in the socket for send a message or save in the database
-        if (recipientSocketId) {
-            io.to(recipientSocketId).emit('privateMessage', message);
+        if (!recipientSocketId) {
+            //if the user not is connection we will see if exist this email in the database 
+            canSend=await chat.this_email_exist(toUserId);
+        }
+
+        //if the email exist we will to save the message in the database
+        if(canSend){
+            // get the data of the  sender (user that send the message)
+            const chatId = await chat.create_new_chat(userId, toUserId); //Method to obtain or create a chat between both users
+
+            //we will see if can save the new message in the database
+            if(await chat.send_new_message(chatId, userId, message)){
+                //if the user is connection send the notification 
+                if(recipientSocketId){
+                    io.to(recipientSocketId).emit('privateMessage', message);
+                }
+            }
+            
+            //return a answer success for the frontend
             socket.emit('messageStatus', { success: true, message: 'Mensaje enviado con éxito' });
-        } else {
-            //if no is connection save the message in the database
+        }else{
+            //if the user not exist send a answer of error
             socket.emit('messageStatus', { success: false, message: `Este email '${toUserId}' no existe 🤔` });
         }
     });
