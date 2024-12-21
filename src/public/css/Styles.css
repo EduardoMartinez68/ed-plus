@@ -798,6 +798,11 @@ label #btn-navbar-cancel {
     flex-direction: column;
 }
 
+.message-content-unread {
+    background-color: #074a85;
+    opacity: 0.8;
+}
+
 .chat-name {
     font-weight: bold;
     font-size: 14px;

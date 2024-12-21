@@ -1,0 +1,71 @@
+<!-- Quill CSS this is the css for the TEXT EDITOR-->
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<style>
+    #editor-container {
+        height: 300px;
+    }
+</style>
+
+
+<div class="container mt-4">
+    <label for="cliente" class="form-label">Términos y condiciones</label>
+
+    <!-- Editor -->
+    <div id="editor-container">
+        
+    </div>
+
+    <!-- Hidden field to store Quill content -->
+    <input type="hidden" name="notes" id="notes" value="">
+</div>
+
+
+
+<!-- Quill JS. This library is for use the TEXT EDITOR-->
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // initializes Quill
+    var quill = new Quill('#editor-container', {
+        theme: 'snow',
+        modules: {
+            toolbar: [
+                [{ 'header': [1, 2, 3, false] }],
+                ['bold', 'italic', 'underline', 'strike'],
+                [{ 'color': [] }, { 'background': [] }],
+                [{ 'align': [] }],
+                ['link'],
+                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                ['clean']
+            ]
+        }
+    });
+
+    //Function to get the content of the editor
+    function getQuillContent() {
+        var content = quill.root.innerHTML;
+        document.getElementById('output').innerHTML = content;
+    }
+
+    /*--THIS IS ONLY IF THE USER IS EDIT THE CONTENT OF THE TEXT EDITOR--*/
+    var storedHtmlContent = document.getElementById('notes').value; //get the value of the edit if the user is edit a text
+    quill.clipboard.dangerouslyPasteHTML(storedHtmlContent); // Insert the HTML content into the container
+    /*-------------*/
+
+    //Before submitting the form, take the content from Quill and put it in the hidden field
+    document.getElementById('myForm').onsubmit = function() {
+        update_container_text_description();
+    };
+
+
+    function update_container_text_description(){
+        // Get HTML content from the editor
+        var content = quill.root.innerHTML;
+
+        //Place content in hidden field
+        document.getElementById('notes').value = content;
+    }
+</script>

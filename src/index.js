@@ -13,13 +13,13 @@ const path=require('path');
 //ReCAPTCHA of Google
 const { RecaptchaV2 } = require('express-recaptcha');
 
-//------------------initializations-----------------------------------------//
+//*------------------initializations-----------------------------------------//
 const app=express();
 require('./lib/passport');
 //require('./lib/addFrom');
 require('./lib/editFrom');
 
-//-----------------------------------------------------------settings-----------------------------------------//
+//*-----------------------------------------------------------settings-----------------------------------------//
 app.set('port',process.env.PORT || 4000);
 app.set('views',path.join(__dirname,'views'))
 app.engine('.hbs',engine({ //we will create the engine for the web
@@ -32,7 +32,7 @@ app.engine('.hbs',engine({ //we will create the engine for the web
 app.set('view engine','.hbs');
 
 
-//-----------------------------------------------------------middlewares-----------------------------------------//
+//*-----------------------------------------------------------middlewares-----------------------------------------//
 require('dotenv').config();
 const {APP_PG_USER,APP_PG_HOST,APP_PG_DATABASE,APP_PG_PASSWORD,APP_PG_PORT}=process.env; //this code is for get the data of the database
 
@@ -64,7 +64,7 @@ const {MY_SITE_KEYS,MY_SECRET_KEY}=process.env; //this code is for get the data 
 const recaptcha = new RecaptchaV2(MY_SITE_KEYS, MY_SECRET_KEY); //this is for load the Recaptcha in the web for delete to the bots
 app.use(recaptcha.middleware.verify);
 
-//-----------------------------------------------------------activate the our library-----------------------------------------// 
+//*-----------------------------------------------------------activate the our library-----------------------------------------// 
 app.use(flash());
 app.use(morgan('dev'));
 app.use(express.urlencoded({extended:false}));
@@ -82,7 +82,7 @@ const storage=multer.diskStorage({ //this function is for load a image in the fo
 app.use(multer({storage: storage}).single('image'));
 
 
-//-----------------------------------------------------------global variables-----------------------------------------//
+//*-----------------------------------------------------------global variables-----------------------------------------//
 app.use((req,res,next)=>{
     app.locals.success=req.flash('success');
     app.locals.message=req.flash('message');
@@ -94,7 +94,7 @@ app.use((req,res,next)=>{
 });
 
 
-//-----------------------------------------chat online-----------------------------------------//
+//*-----------------------------------------chat online-----------------------------------------//
 const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
@@ -105,10 +105,69 @@ const chat = require('./services/chat.js');
 
 io.on('connection', async(socket) =>{
     // save the relation with the user and his socket ID
-    socket.on('registerUser', (userId) => {
+    socket.on('registerUser', async(userId) => {
         users[userId] = socket.id;
+        const notifications=await chat.get_the_first_notification(userId,10);
+        io.to(userId).emit('privateNotifications', {notifications});
     });
 
+    async function create_to_user(toUserEmail){
+        //we will see if exist the email in the database of socket for know if is connection
+        const theUserIsConnect = users[toUserEmail];
+
+        let canSend=theUserIsConnect; //this is for know if can send the notification
+
+        //we will see if exist the user in the socket for send a message or save in the database
+        if (!theUserIsConnect) {
+            //if the user not is connection we will see if exist this email in the database 
+            canSend=await chat.this_email_exist(toUserId);
+        }
+        
+        //we going to make the to User for know the answer of search. 
+        //We will see if can send a message to user because exist in the database or is connection now
+        const toUser={
+            canSend,
+            theUserIsConnect
+        }
+        return toUser;
+    }
+
+
+    //*-----------------------------------NOTIFICATIONS-----------------------------------
+    //send the new notification to a user in specific
+    socket.on('sendNotificationToUser', async({ userEmail, toUserEmail, message }) => {
+        const toUser=await create_to_user(toUserEmail);
+
+        //we will see if we can send the notification when see if the email exist in the web or in the database
+        if(toUser.canSend){
+            //we will see if can save the new notification in the database redis 
+            if(await chat.create_notification(userEmail, toUserEmail, message)){
+                //if the user is connection send the notification to his frontend
+                if(toUser.theUserIsConnect){
+                    io.to(recipientSocketId).emit('privateMessage', {userId,message});
+                }
+
+                //return a answer success for the frontend of the user that send the message
+                socket.emit('messageStatus', { success: true, message: 'Mensaje enviado con éxito. 👌' });
+            }
+            else{
+                //if we not can save the notification we will send a message of error
+                socket.emit('messageStatus', { success: false, message: `No pudimos enviar el mensaje al usuario '${toUserEmail}'. Inténtalo de nuevo. 😳` });
+            }
+        }else{
+            //if the user not exist send a answer of error
+            socket.emit('messageStatus', { success: false, message: `El usuario '${toUserEmail}' no existe. 🤔` });
+        }
+    });
+
+    //send the new notification to a user in specific
+    socket.on('getTheFirstTenNotifications', async({ userEmail}) => {
+        const notifications=await chat.get_the_first_notification(userEmail,10);
+        io.to(recipientSocketId).emit('privateNotifications', {notifications});
+    });
+
+
+    //*-----------------------------------MESSAGES-----------------------------------
     //send the message to a user in specific
     socket.on('sendMessageToUser', async({ userId, toUserId, message }) => {
         //we will see if exist the email in the database of socket
@@ -130,7 +189,7 @@ io.on('connection', async(socket) =>{
             if(await chat.send_new_message(chatId, userId, message)){
                 //if the user is connection send the notification 
                 if(recipientSocketId){
-                    io.to(recipientSocketId).emit('privateMessage', message);
+                    io.to(recipientSocketId).emit('privateMessage', {userId,message});
                 }
             }
             
@@ -165,7 +224,8 @@ io.on('connection', async(socket) =>{
         console.log('Un usuario se ha desconectado');
     });
 });
-//-----------------------------------------------------------routes-----------------------------------------//
+
+//*-----------------------------------------------------------routes-----------------------------------------//
 const companyName='/links' //links
 app.use(require('./router'))
 app.use(require('./router/authentication'))
