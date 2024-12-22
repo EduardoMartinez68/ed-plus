@@ -106,12 +106,12 @@ const chat = require('./services/chat.js');
 
 io.on('connection', async(socket) =>{
 
+    //*-----------------------------------LOGIN-----------------------------------
     // save the relation with the user and his socket ID
     socket.on('registerUser', async(userId,companyId) => {
         //her we will get the max employees from the database
         const MaxEmployees=await chat.get_max_employee_of_this_company(companyId);
 
-        
         
         //we will see if the user can loading or if the company is to limit
         if (connectedEmployees[companyId] && connectedEmployees[companyId].length >= MaxEmployees) {
