@@ -234,8 +234,8 @@
 
     <div class="web-price-container">
         <h1 class="web-price-h1">Nuestras Membresías</h1>
-        <span class="web-price-discount-label">30% de descuento</span>
-        <span class="web-price-switch-label">+ 1 usuario gratis</span>
+        <span class="web-price-discount-label">20% de descuento</span>
+        <span class="web-price-switch-label">+ 1 dispositivos gratis</span>
         <br><br>
         <div class="web-price-switch-container">
             <label class="web-price-switch">
@@ -271,11 +271,12 @@
                     name: "Negocios",
                     price: "$600/mes",
                     oldPrice: "$729/mes",
-                    users: "4",
+                    users: "3",
                     description: "Ideal para pequeñas y medianas empresas.",
                     features: [
                         "1 Empresa",
                         "1 Sucursal",
+                        "Usuarios ilimitados",
                         "1 paquete de apps de ED software",
                         "Soporte técnico 24/7",
                         "Reportes personalizados",
@@ -290,7 +291,8 @@
                     description: "Solución completa para grandes empresas.",
                     features: [
                         "1 Empresa",
-                        "Sucursales ilimitadas",
+                        "1 Sucursal",
+                        "Usuarios ilimitados",
                         "Todas las apps de ED software",
                         "Todos tus negocios en un mismo lugar",
                         "Soporte técnico 24/7",
@@ -303,13 +305,13 @@
                     ]
                 },
                 {
-                    name: "Usuario Extra",
+                    name: "Dispositivos Extra",
                     price: "$200/mes",
                     oldPrice: "$255/mes",
                     users: "Extra",
-                    description: "Añade usuarios adicionales a tu plan.",
+                    description: "Añade un dispositivo adicionales a tu plan.",
                     features: [
-                        "Añade un usuario extra a tu empresa",
+                        "Añade un dispositivo extra a tu empresa",
                         "Acceso a todas las funciones de tu empresa",
                         "Soporte estándar",
                         "Reportes básicos"
@@ -337,11 +339,12 @@
                     price: "$480/mes",
                     oldPrice: "$7,680/año",
                     priceYear: "$5,760/año",
-                    users: "5",
+                    users: "4",
                     description: "Ideal para pequeñas y medianas empresas.",
                     features: [
                         "1 Empresa",
                         "1 Sucursal",
+                        "Usuarios ilimitados",
                         "1 paquete de apps de ED software",
                         "Todos tu negocio en un mismo lugar",
                         "Soporte técnico 24/7",
@@ -351,14 +354,15 @@
                 },
                 {
                     name: "Empresas",
-                    price: "$720/mes",
+                    price: "$800/mes",
                     oldPrice: "$11,520/año",
-                    priceYear: "$8,640/año",
+                    priceYear: "$9,600/año",
                     users: "6",
                     description: "Solución completa para grandes empresas.",
                     features: [
                         "1 Empresa",
-                        "Sucursales ilimitadas",
+                        "1 Sucursal",
+                        "Usuarios ilimitados",
                         "Todas las apps de ED software",
                         "Todos tus negocios en un mismo lugar",
                         "Soporte técnico 24/7",
@@ -371,14 +375,14 @@
                     ]
                 },
                 {
-                    name: "Usuario Extra",
+                    name: "Dispositivos Extra",
                     price: "$160/mes",
                     priceYear: "$1,920/año",
                     oldPrice: "$2,448/año",
                     users: "Extra",
-                    description: "Añade usuarios adicionales a tu plan.",
+                    description: "Añade un dispositivo adicionales a tu plan.",
                     features: [
-                        "Añade un usuario extra a tu empresa",
+                        "Añade un dispositivo extra a tu empresa",
                         "Acceso a todas las funciones de tu empresa",
                         "Soporte estándar",
                         "Reportes básicos"
@@ -435,7 +439,7 @@
                 if (plan.users) {
                     const users = document.createElement('div');
                     users.classList.add('web-price-users');
-                    users.textContent = `${plan.users} usuario${plan.users !== "Extra" && plan.users !== "1" ? 's' : ''}`;
+                    users.textContent = `${plan.users} dispositivo${plan.users !== "Extra" && plan.users !== "1" ? 's' : ''}`;
                     card.appendChild(users);
                 }
 

@@ -6,6 +6,18 @@
   </div>
 </div>
 
+<!-- this is for get the data of the company-->
+{{#each branchFree}}
+  <input type="hidden" value="{{id_companies}}" id="id-company-ed-clouded">
+{{/each}}
+{{#each branch}}
+  <input type="hidden" value="{{id_companies}}" id="id-company-ed-clouded">
+{{/each}}
+{{#each company}}
+  <input type="hidden" value="{{id}}" id="id-company-ed-clouded">
+{{/each}}
+
+
 <!-- Chat History -->
 <div class="chat-history" id="chatHistory">
   <h3></h3>

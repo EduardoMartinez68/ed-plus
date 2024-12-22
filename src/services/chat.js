@@ -1,7 +1,7 @@
 const rolFree=0
 const database = require('../database');
 
-
+//*---------------------------------------login----------------------------------------------------
 async function this_email_exist(email){
     //we will search the company of the user 
     const queryText = `
@@ -12,6 +12,18 @@ async function this_email_exist(email){
 
     //return if exist or not exist
     return result.rows.length > 0;
+}
+
+async function get_max_employee_of_this_company(id_company){
+    //we will search the company of the user and get the max of devices
+    const queryText = `
+        SELECT * FROM "User".companies WHERE id = $1
+    `;
+    var values = [id_company];
+    const result = await database.query(queryText, values);
+
+    //return if exist or not exist
+    return result.rows[0].number_of_devices;
 }
 
 //*---------------------------------------notifications----------------------------------------------------
@@ -206,4 +218,5 @@ module.exports = {
     create_new_chat,
     create_notification,
     get_the_first_notification,
+    get_max_employee_of_this_company
 };

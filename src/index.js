@@ -100,13 +100,48 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
 const users = {}; // object for  mapear users IDs with Socket IDs
+const connectedEmployees = {}; //this is for that we know how many employees is connection
 
 const chat = require('./services/chat.js');
 
 io.on('connection', async(socket) =>{
+
     // save the relation with the user and his socket ID
-    socket.on('registerUser', async(userId) => {
-        users[userId] = socket.id;
+    socket.on('registerUser', async(userId,companyId) => {
+        //her we will get the max employees from the database
+        const MaxEmployees=await chat.get_max_employee_of_this_company(companyId);
+
+        
+        
+        //we will see if the user can loading or if the company is to limit
+        if (connectedEmployees[companyId] && connectedEmployees[companyId].length >= MaxEmployees) {
+            // send a message of rejection to the client
+            socket.emit("connectionRejected", "Ups, parece que alcanzaste tu límite de dispositivos conectados. Por favor, actualiza tu membresía.");
+            return;
+        }
+
+        // add the employee to the map
+        socket.companyId = companyId;
+
+        //if the company not exist, we will start the counter from 0
+        if (!connectedEmployees[companyId]) {
+            connectedEmployees[companyId] = []; //create the list of the employees
+        }
+
+        connectedEmployees[companyId].push(socket.id);//if the company exist we will add one more employee
+
+        //we will see if the user exist connect
+        if(!users[userId]){
+            users[userId] = socket.id; //save the user in the socket
+            console.log('usuario agregado');
+        }
+        else{
+            // send a message of rejection to the client
+            socket.emit("connectionRejected", "Ups, parece que alcanzaste tu límite de dispositivos conectados. Por favor, actualiza tu membresía.");
+            return;
+        }
+
+
         const notifications=await chat.get_the_first_notification(userId,10);
         io.to(userId).emit('privateNotifications', {notifications});
     });
@@ -203,12 +238,29 @@ io.on('connection', async(socket) =>{
 
     // delete to the user of the registry when disconnecting
     socket.on('disconnect', () => {
+        console.log(`Socket desconectado: ${socket.id}`);
+      
+        // Eliminar al usuario de todas las empresas donde esté conectado
+        for (const idEmpresa in connectedEmployees) {
+          // Filtrar para eliminar el socket.id desconectado
+          connectedEmployees[idEmpresa] = connectedEmployees[idEmpresa].filter(
+            (id) => id !== socket.id
+          );
+      
+          // Si no quedan usuarios conectados a esta empresa, eliminarla del objeto
+          if (connectedEmployees[idEmpresa].length === 0) {
+            delete connectedEmployees[idEmpresa];
+            console.log(`Empresa ${idEmpresa} sin usuarios conectados.`);
+          }
+        }
+      
+        // Eliminar al usuario del registro 'users'
         for (const userId in users) {
-            if (users[userId] === socket.id) {
-                delete users[userId];
-                console.log(`Usuario ${userId} desconectado y eliminado de la lista.`);
-                break;
-            }
+          if (users[userId] === socket.id) {
+            delete users[userId];
+            console.log(`Usuario ${userId} desconectado y eliminado de la lista.`);
+            break; // Salimos del bucle porque ya encontramos al usuario
+          }
         }
     });
 
@@ -220,9 +272,6 @@ io.on('connection', async(socket) =>{
         socket.broadcast.emit('newNotification', notification); 
     });
 
-    socket.on('disconnect', () => {
-        console.log('Un usuario se ha desconectado');
-    });
 });
 
 //*-----------------------------------------------------------routes-----------------------------------------//
