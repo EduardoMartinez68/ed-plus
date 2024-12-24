@@ -3,11 +3,14 @@ document.getElementById('create-pdf').addEventListener('click', () => {
     const { jsPDF } = window.jspdf;
 
     // create a instance of jsPDF
-    const doc = new jsPDF();
+    //const doc = new jsPDF();
+    const doc = new jsPDF('p','mm','letter');
     let currentY = 10; //this is for save the current position of the cursor of the PDF
-    add_image(doc,'http://localhost:4000/img/logo.png',10,currentY,100,100);
 
-    currentY=80;
+    //add the icon company
+    currentY=add_image(doc,'http://localhost:4000/img/logo.png',10,currentY,50,50);
+
+    //create the table of the container
     currentY=create_table_products(doc,currentY);
     currentY=create_table_products(doc,currentY);
 
@@ -155,9 +158,9 @@ function urlToBase64(url) {
 
         xhr.onload = function () {
             const uInt8Array = new Uint8Array(xhr.response);
-            const i = uInt8Array.length;
             const binaryString = String.fromCharCode.apply(null, uInt8Array);
             const base64String = window.btoa(binaryString);
+            console.log("Base64 de la imagen:", base64String);  // Verifica la conversión
             resolve(base64String);
         };
 
@@ -170,15 +173,9 @@ function urlToBase64(url) {
 }
 
 function add_image(doc, imageUrl, xPosition, yPosition, width, height) {
-    urlToBase64(imageUrl).then(base64Image => {
-        // Usamos 'PNG' si la imagen es PNG. Si es JPEG, usa 'JPEG'.
-        doc.addImage(base64Image, 'PNG', xPosition, yPosition, width, height);
-        console.log('IMAGEN CARGADA Y AGREGADA AL PDF');
-    }).catch(error => {
-        console.error("Error al convertir la imagen:", error);
-    });
+    doc.addImage(imageUrl, 'PNG', xPosition, yPosition, width, height);
+    return yPosition+height+10;
 }
-
 
 
 function fileToBase64(file, callback) {
