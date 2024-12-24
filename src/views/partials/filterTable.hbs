@@ -1,0 +1,147 @@
+  <style>
+    .modal .modal-header {
+        background-color: var(--color-company);
+        color: #fff;
+    }
+
+    .modal .btn-primary {
+        background-color: #343a40;
+        border: none;
+    }
+</style>
+
+<!-- Modal -->
+<div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="filterModalLabel"><i class="fi-icon fi-sr-filter"></i> Filtros</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="filterForm">
+                    <!--her we will to create the selects that the user can user for filter the table-->
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-edit" id="applyFilters">Aplicar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+// function for get the value unique of a column
+function getUniqueValues(tableId, columnIndex) {
+    const rows = document.querySelectorAll(`#${tableId} tbody tr`);
+    const values = new Set();
+    rows.forEach(row => {
+        const cell = row.children[columnIndex];
+        if (cell && cell.textContent.trim()) {
+            values.add(cell.textContent.trim());
+        }
+    });
+    return Array.from(values);
+}
+
+
+// function for  dynamically populate filters
+function populateFilters(tableId, filtersConfig) {
+    const filterForm = document.getElementById('filterForm');
+    filterForm.innerHTML = ''; // clean the filter that exist
+
+    //Iterate over filter settings and add them to the form
+    filtersConfig.forEach((filter) => {
+        const { columnIndex, label } = filter;
+        
+        // close the container for the filter
+        const filterDiv = document.createElement('div');
+        filterDiv.classList.add('mb-3');
+
+        // close the label
+        const labelElement = document.createElement('label');
+        labelElement.setAttribute('for', `filter${label}`);
+        labelElement.classList.add('form-label');
+        labelElement.textContent = label;
+        filterDiv.appendChild(labelElement);
+
+        // create the select for the filters
+        const selectElement = document.createElement('select');
+        selectElement.classList.add('form-select');
+        selectElement.id = `filter${label}`;
+        filterDiv.appendChild(selectElement);
+
+        //Populate filter options
+        const options = getUniqueValues(tableId, columnIndex);
+        selectElement.innerHTML = '<option value="">Todos</option>';
+        options.forEach(option => {
+            const opt = document.createElement("option");
+            opt.value = option;
+            opt.textContent = option;
+            selectElement.appendChild(opt);
+        });
+
+        filterForm.appendChild(filterDiv);
+    });
+}
+
+// function for add the filters to the table
+function applyFilters(tableId, filtersConfig) {
+    const rows = document.querySelectorAll(`#${tableId} tbody tr`);
+    
+    const filters = {};
+    filtersConfig.forEach(filter => {
+        const selectElement = document.getElementById(`filter${filter.label}`);
+        filters[filter.columnIndex] = selectElement.value;
+    });
+
+    rows.forEach(row => {
+        let visible = true;
+        filtersConfig.forEach(filter => {
+            const columnValue = row.children[filter.columnIndex].textContent.trim();
+            const filterValue = filters[filter.columnIndex];
+            if (filterValue && columnValue !== filterValue) {
+                visible = false;
+            }
+        });
+        row.style.display = visible ? "" : "none";
+    });
+}
+
+//Function to display the modal and populate filters
+function showFilterModal(tableId, filtersConfig) {
+    populateFilters(tableId, filtersConfig);
+    const modal = new bootstrap.Modal(document.getElementById("filterModal"));
+    modal.show();
+}
+
+//Show modal with filters
+document.getElementById("btnShowFilters").addEventListener("click", () => {
+    showFilterModal('table-container', filtersConfig);
+});
+
+//Apply filters and close the modal
+document.getElementById("applyFilters").addEventListener("click", () => {
+    applyFilters('table-container', filtersConfig);
+    const modal = bootstrap.Modal.getInstance(document.getElementById("filterModal"));
+    modal.hide();
+});
+
+
+/*
+example for filter the container of the column(this change depending of the table)
+this is add in the hbs file that have the table that we would like filter
+
+
+const filtersConfig = [
+    { columnIndex: 2, label: 'Cliente' },
+    { columnIndex: 3, label: 'Comercial' },
+    { columnIndex: 7, label: 'Estado' },
+];
+*/
+
+
+</script>

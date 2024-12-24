@@ -1,0 +1,79 @@
+<table class="table table-hover" id="table-container">
+    <colgroup>
+        <col style="width: 10%;">
+        <col style="width: 20%;">
+        <col style="width: 20%;">
+        <col style="width: 10%;">
+        <col style="width: 10%;">
+        <col style="width: 10%;">
+        <col style="width: 10%;">
+        <col style="width: 10%;">
+    </colgroup>
+    <thead>
+      <tr>
+        <th>Clave</th>
+        <th>Fecha de Creación</th>
+        <th>Cliente</th>
+        <th>Comercial</th>
+        <th>Siguiente Actividad</th>
+        <th>Compañía</th>
+        <th>Total</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+
+    <tbody>
+    {{#each customers}}
+      <tr id="{{email}}">
+        <td>{{first_name}} {{second_name}} {{last_name}}</td>
+        <td>{{email}}</td>
+        <td>{{cell_phone}}/{{phone}}</td>
+        <td>{{points}}</td>
+        <td>
+            <button class="btn btn-edit" onclick="edit_customer('{{id}}','{{id_companies}}')"><i class="fi-department fi-sr-pencil"></i></button>
+            <button class="btn btn-danger" onclick="delete_customer('{{id}}','{{id_companies}}','{{first_name}}')"><i class="fi-department fi-sr-trash"></i></button>
+        </td>     
+      </tr>
+    {{/each}}
+
+    <tr>
+        <td>001</td>
+        <td>2024-12-23</td>
+        <td>Juan Pérez</td>
+        <td>Pedro López</td>
+        <td>Enviar cotización</td>
+        <td>ABC Corp</td>
+        <td>$1,000.00</td>
+        <td>Pendiente</td>
+    </tr>
+    <tr>
+        <td>002</td>
+        <td>2024-12-22</td>
+        <td>María Gómez</td>
+        <td>Laura Sánchez</td>
+        <td>Reunión</td>
+        <td>XYZ Ltd</td>
+        <td>$2,500.00</td>
+        <td>Completado</td>
+    </tr>
+
+
+    </tbody>
+</table>
+
+
+
+
+
+<!---we will make the filter of the table-->
+<script>
+    const filtersConfig = [
+        { columnIndex: 2, label: 'Cliente' },
+        { columnIndex: 3, label: 'Comercial' },
+        { columnIndex: 7, label: 'Estado' },
+    ];
+</script>
+
+{{>filterTable}}
+
+

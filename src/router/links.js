@@ -453,7 +453,7 @@ async function home_employees(req, res) {
     const id_employee = data.id
     const id_role = data.id_roles_employees
 
-    const url = `/fud/${id_user}/${id_company}/${id_branch}/${id_employee}/${id_role}/store-home`;
+    const url = `/links/${id_user}/${id_company}/${id_branch}/${id_employee}/${id_role}/store-home`;
     res.redirect(url)
 }
 
