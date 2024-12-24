@@ -8,7 +8,7 @@ document.getElementById('create-pdf').addEventListener('click', () => {
     let currentY = 10; //this is for save the current position of the cursor of the PDF
 
     //add the icon company
-    currentY=add_image(doc,'http://localhost:4000/img/logo.png',10,currentY,50,50);
+    currentY=add_image(doc,'http://localhost:4000/img/your_logo.png',10,currentY,50,25);
 
     //create the table of the container
     currentY=create_table_products(doc,currentY);
