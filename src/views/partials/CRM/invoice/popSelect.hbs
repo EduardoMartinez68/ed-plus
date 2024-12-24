@@ -1,0 +1,23 @@
+<link rel="stylesheet" href="/css/popSelect.css">
+
+
+<div id="modal-pop-select-menu-container">
+    <input type="text" id="modal-pop-select-pop-select-search" placeholder="Buscar producto por nombre o código...">
+    <div id="modal-pop-select-pop-select-container">
+        {{#each products}}
+            <div class="modal-pop-select-pop-select" id-item="{{id}}" description="{{description}}" price="{{price_1}}">
+                {{#if img}}
+                    <img src="https://cdn-icons-png.flaticon.com/512/756/756940.png" alt="Producto 1">
+                {{else}}
+                    <img src="{{img}}" alt="Producto 1">
+                {{/if}}
+                <p>{{name}}</p>
+                <p>{{barcode}}</p>
+            </div>
+        {{/each}}
+    </div>
+    <button id="modal-pop-select-add-button" onclick="hidenMenu()">Agregar</button>
+</div>
+
+<!--this is for select a product-->
+<script src="/js/popSelect.js"></script>
