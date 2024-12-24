@@ -213,12 +213,18 @@ router.get('/:id_company/:id_branch/watch-invoice-crm', isLoggedIn, async (req, 
     res.render('links/branch/CRM/tableInvoice',{branchFree, dataProspect});
 })
 
+
+//functions customers
+const combos = require('../../services/combos');
+
 router.get('/:id_company/:id_branch/:id_prospect/create-invoice-crm', isLoggedIn, async (req, res) => {
     const { id_company, id_branch , id_prospect} = req.params;
     const branchFree = await get_data_branch(id_branch);
     const dataProspect=await get_data_of_a_prospect_with_his_id(id_prospect)
     const salesStage=await get_sales_stage_with_company_id(id_company)
-    res.render('links/branch/CRM/createInvoice',{branchFree, dataProspect,salesStage});
+    const products=await combos.get_all_dish_and_combo(id_company,id_branch);
+    console.log(products)
+    res.render('links/branch/CRM/createInvoice',{branchFree, dataProspect,salesStage, products});
 })
 
 

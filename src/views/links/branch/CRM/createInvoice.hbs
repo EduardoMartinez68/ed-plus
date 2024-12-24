@@ -107,6 +107,9 @@
             <h2 class="text-center mb-4">Formulario de Cotización</h2>
             <hr>
             {{>manager/CRM/tabsSalesStage}}
+
+
+            
             {{#each dataProspect}}
                 <a href="/links/{{id_companies}}/{{id_branches}}/{{id}}/edit-prospects" target="_blank">{{email}} <i class="fi-icon fi-bs-arrow-up-right-from-square"></i></a>
                 {{>manager/CRM/invoice/form}}
@@ -116,9 +119,13 @@
                     <button class="btn-select" onclick="showSection('select-2', this)" type="button">Productos opcionales</button>
                     <button class="btn-select" onclick="showSection('select-3', this)" type="button">Otra información</button>
                 </div>
+            {{/each}}
+            
                 <div id="select-1" class="content-section active">
                     {{>manager/CRM/invoice/products}}
                 </div>
+
+            {{#each dataProspect}}
                 <div id="select-2" class="content-section">
                     
                     <br>

@@ -22,6 +22,17 @@ async function get_all_combos(req) {
     return result.rows;
 }
 
+async function get_all_combos_and_products(id_company) {
+    //we will search the company of the user 
+    const queryText = `
+    SELECT * from "Kitchen".dishes_and_combos id_companies = $1
+    `;
+    var values = [id_company];
+    const result = await database.query(queryText, values);
+
+    return result.rows;
+}
+
 async function search_combo(id_company, id_dishes_and_combos) {
     //we will search the company of the user 
     var queryText = 'SELECT * FROM "Kitchen".dishes_and_combos WHERE id_companies= $1 and id=$2';
@@ -122,5 +133,6 @@ module.exports = {
     delate_combo_company,
     delete_all_supplies_combo,
     get_combo_features,
-    get_all_dish_and_combo
+    get_all_dish_and_combo,
+    get_all_combos_and_products
 };

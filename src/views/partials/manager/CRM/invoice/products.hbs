@@ -1,9 +1,21 @@
 <table id="tabla-productos">
+<colgroup>
+    <col style="width: 15%;">
+    <col style="width: 15%;">
+    <col style="width: 10%;">
+    <col style="width: 10%;">
+    <col style="width: 5%;">
+    <col style="width: 10%;">
+    <col style="width: 10%;">
+    <col style="width: 10%;">
+    <col style="width: 10%;">
+    <col style="width: 5%;">
+</colgroup>
 <thead>
     <tr>
         <th>Producto</th>
         <th>Descripción</th>
-        <th>Cantidad</th>
+        <th>Cant.</th>
         <th>UdM</th>
         <th>Paquete</th>
         <th>Precio Unitario</th>
@@ -45,7 +57,7 @@
 </tfoot>
 </table>
 <div class="controls">
-    <button onclick="agregarFila()" class="button-form">Agregar Producto</button>
+    <button onclick="" class="button-form" id="modal-products-view-menu-button">Agregar Producto</button>
 </div>
 
 
@@ -106,4 +118,198 @@
         });
         document.getElementById('total-general').value = totalGeneral.toFixed(2);
     }
+</script>
+
+
+
+
+
+<!--this is for select a product-->
+<style>
+    .modal-products-modal-header {
+        background-color: var(--color-company);
+        color: #fff;
+    }
+
+    #modal-products-menu-container {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: white;
+    }
+
+    #modal-products-product-container {
+        width: 90%;
+        max-width: 800px;
+        height: 400px;
+        overflow-y: auto;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        background-color: #fff;
+        border-radius: 8px;
+        padding: 15px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-products-product {
+        flex: 0 0 calc(25% - 10px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 10px;
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: transform 0.2s, background-color 0.2s;
+    }
+
+    .modal-products-product:hover {
+        transform: scale(1.05);
+        background-color: #f0f0f0;
+    }
+
+    .modal-products-product img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 5px;
+    }
+
+    .modal-products-product p {
+        margin: 5px 0;
+        text-align: center;
+        font-size: 14px;
+        color: black;
+    }
+
+    #modal-products-add-button {
+        margin-top: 20px;
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    #modal-products-add-button:hover {
+        background-color: #45a049;
+    }
+
+    #modal-products-product-search {
+        margin-bottom: 15px;
+        width: 100%;
+        max-width: 600px;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        outline: none;
+        transition: transform 0.2s ease-in-out;
+    }
+
+    #modal-products-product-search:focus {
+        border-color: #007BFF;
+        transform: scale(1.02);
+    }
+</style>
+
+
+
+<div id="modal-products-menu-container">
+    <input type="text" id="modal-products-product-search" placeholder="Buscar producto por nombre o código...">
+    <div id="modal-products-product-container">
+        {{#each products}}
+            <div class="modal-products-product">
+                {{#if img}}
+                    <img src="https://cdn-icons-png.flaticon.com/512/756/756940.png" alt="Producto 1">
+                {{else}}
+                    <img src="{{img}}" alt="Producto 1">
+                {{/if}}
+                <p>{{name}}</p>
+                <p>{{barcode}}</p>
+            </div>
+        {{/each}}
+    </div>
+    <button id="modal-products-add-button" onclick="hidenMenu()">Agregar</button>
+</div>
+
+
+<script>
+    const viewMenuButton = document.getElementById("modal-products-view-menu-button");
+    const menuContainer = document.getElementById("modal-products-menu-container");
+    const productSearch = document.getElementById("modal-products-product-search");
+    const addButton = document.getElementById("modal-products-add-button");
+    menuContainer.style.display = "none";
+
+    let selectedProduct = null;
+
+    // Mostrar el menú
+    viewMenuButton.addEventListener("click", () => {
+        menuContainer.style.display = "flex";
+    });
+
+    // Ocultar el menú cuando se hace clic fuera
+    menuContainer.addEventListener("click", (event) => {
+        if (event.target === menuContainer) {
+            menuContainer.style.display = "none";
+        }
+    });
+
+    function hidenMenu(){
+        if (selectedProduct) {
+            console.log("Producto seleccionado:", selectedProduct);
+            menuContainer.style.display = "none";
+            productSearch.value='';
+            selectedProduct=null;
+
+            document.querySelectorAll(".modal-products-product").forEach(product => {
+                product.style.display =  "flex" ;
+            });
+
+            // Restablecer los bordes de todos los productos
+            document.querySelectorAll(".modal-products-product").forEach(product => {
+                product.style.border = "1px solid #ddd";
+            });
+
+            agregarFila();
+        } else {
+            alert("Por favor, selecciona un producto primero.");
+        }
+    }
+
+    // Filtrar productos
+    productSearch.addEventListener("input", (e) => {
+        const filter = e.target.value.toLowerCase();
+        document.querySelectorAll(".modal-products-product").forEach(product => {
+            const name = product.querySelector("p:nth-child(2)").textContent.toLowerCase();
+            const barcode = product.querySelector("p:nth-child(3)").textContent;
+            product.style.display = name.includes(filter) || barcode.includes(filter) ? "flex" : "none";
+        });
+    });
+
+    // Seleccionar producto
+    document.querySelectorAll(".modal-products-product").forEach(product => {
+        product.addEventListener("click", () => {
+            selectedProduct = {
+                name: product.querySelector("p:nth-child(2)").textContent,
+                barcode: product.querySelector("p:nth-child(3)").textContent
+            };
+            document.querySelectorAll(".modal-products-product").forEach(p => p.style.border = "1px solid #ddd");
+            product.style.border = "2px solid #4CAF50";
+        });
+    });
+
 </script>

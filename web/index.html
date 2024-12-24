@@ -1,240 +1,206 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Filtrar Tabla</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Productos</title>
     <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: Arial, sans-serif;
+        .modal-products-modal-header {
+            background-color: var(--color-company);
+            color: #fff;
         }
 
-        .btn-filter {
+        #modal-products-menu-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
             display: flex;
-            align-items: center;
+            flex-direction: column;
             justify-content: center;
-            margin-bottom: 1rem;
+            align-items: center;
+            color: white;
         }
 
-        .btn-filter i {
-            margin-right: 0.5rem;
-        }
-
-        table {
+        #modal-products-product-container {
+            width: 90%;
+            max-width: 800px;
+            height: 400px;
+            overflow-y: auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
             background-color: #fff;
             border-radius: 8px;
-            overflow: hidden;
+            padding: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
 
-        thead {
-            background-color: #343a40;
-            color: #fff;
+        .modal-products-product {
+            flex: 0 0 calc(25% - 10px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
         }
 
-        .modal .modal-header {
-            background-color: #343a40;
-            color: #fff;
+        .modal-products-product:hover {
+            transform: scale(1.05);
+            background-color: #f0f0f0;
         }
 
-        .modal .btn-primary {
-            background-color: #343a40;
+        .modal-products-product img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .modal-products-product p {
+            margin: 5px 0;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        #modal-products-add-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
             border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        #modal-products-add-button:hover {
+            background-color: #45a049;
+        }
+
+        #modal-products-view-menu-button {
+            padding: 15px 30px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        #modal-products-view-menu-button:hover {
+            background-color: #0056b3;
+        }
+
+        #modal-products-product-search {
+            margin-bottom: 15px;
+            width: 100%;
+            max-width: 600px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            outline: none;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        #modal-products-product-search:focus {
+            border-color: #007BFF;
+            transform: scale(1.02);
         }
     </style>
 </head>
 <body>
-<div class="container mt-5">
-    <h2 class="text-center mb-4">Filtrar Tabla</h2>
+    <button id="modal-products-view-menu-button">Ver Menú</button>
 
-    <!-- Botón para abrir el modal -->
-    <button class="btn btn-dark btn-filter" id="btnShowFilters">
-        <i class="fas fa-filter"></i> Mostrar Filtros
-    </button>
-
-    <!-- Tabla -->
-    <table class="table table-hover text-center mt-3" id="table-container">
-        <thead>
-        <tr>
-            <th>Clave</th>
-            <th>Fecha</th>
-            <th>Cliente</th>
-            <th>Comercial</th>
-            <th>Actividad</th>
-            <th>Compañía</th>
-            <th>Total</th>
-            <th>Estado</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td>001</td>
-            <td>2024-12-23</td>
-            <td>Juan Pérez</td>
-            <td>Pedro López</td>
-            <td>Enviar cotización</td>
-            <td>ABC Corp</td>
-            <td>$1,000.00</td>
-            <td>Pendiente</td>
-        </tr>
-        <tr>
-            <td>002</td>
-            <td>2024-12-22</td>
-            <td>María Gómez</td>
-            <td>Laura Sánchez</td>
-            <td>Reunión</td>
-            <td>XYZ Ltd</td>
-            <td>$2,500.00</td>
-            <td>Completado</td>
-        </tr>
-        </tbody>
-    </table>
-
-    <!-- Modal -->
-    <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="filterModalLabel">Filtros</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="filterForm">
-                        <!-- Campos de filtro -->
-                        <div class="mb-3">
-                            <label for="filterCliente" class="form-label">Cliente</label>
-                            <select class="form-select" id="filterCliente"></select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="filterComercial" class="form-label">Comercial</label>
-                            <select class="form-select" id="filterComercial"></select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="filterEstado" class="form-label">Estado</label>
-                            <select class="form-select" id="filterEstado"></select>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-primary" id="applyFilters">Aplicar</button>
-                </div>
+    <div id="modal-products-menu-container">
+        <input type="text" id="modal-products-product-search" placeholder="Buscar producto por nombre o código...">
+        <div id="modal-products-product-container">
+            <div class="modal-products-product">
+                <img src="https://chedrauimx.vtexassets.com/arquivos/ids/37121753-800-auto?v=638640415812070000&width=800&height=auto&aspect=true" alt="Producto 1">
+                <p>Producto 1</p>
+                <p>1234567890</p>
+            </div>
+            <div class="modal-products-product">
+                <img src="https://chedrauimx.vtexassets.com/arquivos/ids/37121753-800-auto?v=638640415812070000&width=800&height=auto&aspect=true" alt="Producto 2">
+                <p>Producto 2</p>
+                <p>0987654321</p>
+            </div>
+            <div class="modal-products-product">
+                <img src="https://chedrauimx.vtexassets.com/arquivos/ids/37121753-800-auto?v=638640415812070000&width=800&height=auto&aspect=true" alt="Producto 3">
+                <p>Producto 3</p>
+                <p>1122334455</p>
             </div>
         </div>
+        <button id="modal-products-add-button" onclick="hidenMenu()">Agregar</button>
     </div>
-</div>
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/js/all.min.js"></script>
-<script>
-// Función para obtener los valores únicos de una columna
-function getUniqueValues(tableId, columnIndex) {
-    const rows = document.querySelectorAll(`#${tableId} tbody tr`);
-    const values = new Set();
-    rows.forEach(row => {
-        const cell = row.children[columnIndex];
-        if (cell && cell.textContent.trim()) {
-            values.add(cell.textContent.trim());
-        }
-    });
-    return Array.from(values);
-}
+    <script>
+        const viewMenuButton = document.getElementById("modal-products-view-menu-button");
+        const menuContainer = document.getElementById("modal-products-menu-container");
+        const productSearch = document.getElementById("modal-products-product-search");
+        const addButton = document.getElementById("modal-products-add-button");
+        menuContainer.style.display = "none";
 
-// Función para poblar los filtros dinámicamente (permitir selección múltiple)
-function populateFilters(tableId, filtersConfig) {
-    const filterForm = document.getElementById('filterForm');
-    filterForm.innerHTML = ''; // Limpiar los filtros existentes
+        let selectedProduct = null;
 
-    // Iterar sobre la configuración de filtros y agregarlos al formulario
-    filtersConfig.forEach((filter) => {
-        const { columnIndex, label } = filter;
-
-        // Crear el contenedor para el filtro
-        const filterDiv = document.createElement('div');
-        filterDiv.classList.add('mb-3');
-
-        // Crear la etiqueta
-        const labelElement = document.createElement('label');
-        labelElement.setAttribute('for', `filter${label}`);
-        labelElement.classList.add('form-label');
-        labelElement.textContent = label;
-        filterDiv.appendChild(labelElement);
-
-        // Crear el select para los filtros (permitir múltiples selecciones)
-        const selectElement = document.createElement('select');
-        selectElement.classList.add('form-select');
-        selectElement.id = `filter${label}`;
-        selectElement.setAttribute('multiple', 'multiple');  // Permitir selección múltiple
-        filterDiv.appendChild(selectElement);
-
-        // Poblar las opciones del filtro
-        const options = getUniqueValues(tableId, columnIndex);
-        selectElement.innerHTML = ''; // Limpiar opciones
-        options.forEach(option => {
-            const opt = document.createElement("option");
-            opt.value = option;
-            opt.textContent = option;
-            selectElement.appendChild(opt);
+        // Mostrar el menú
+        viewMenuButton.addEventListener("click", () => {
+            menuContainer.style.display = "flex";
         });
 
-        filterForm.appendChild(filterDiv);
-    });
-}
-
-// Función para aplicar los filtros a la tabla (permitir múltiples valores)
-function applyFilters(tableId, filtersConfig) {
-    const rows = document.querySelectorAll(`#${tableId} tbody tr`);
-
-    const filters = {};
-    filtersConfig.forEach(filter => {
-        const selectElement = document.getElementById(`filter${filter.label}`);
-        const selectedValues = Array.from(selectElement.selectedOptions).map(option => option.value);
-        filters[filter.columnIndex] = selectedValues;
-    });
-
-    rows.forEach(row => {
-        let visible = true;
-        filtersConfig.forEach(filter => {
-            const columnValue = row.children[filter.columnIndex].textContent.trim();
-            const filterValues = filters[filter.columnIndex];
-
-            // Mostrar solo si el valor de la celda está en los valores seleccionados
-            if (filterValues.length > 0 && !filterValues.includes(columnValue)) {
-                visible = false;
+        // Ocultar el menú cuando se hace clic fuera
+        menuContainer.addEventListener("click", (event) => {
+            if (event.target === menuContainer) {
+                menuContainer.style.display = "none";
             }
         });
-        row.style.display = visible ? "" : "none";
-    });
-}
 
-// Función para mostrar el modal y poblar filtros
-function showFilterModal(tableId, filtersConfig) {
-    populateFilters(tableId, filtersConfig);
-    const modal = new bootstrap.Modal(document.getElementById("filterModal"));
-    modal.show();
-}
+        function hidenMenu(){
+            if (selectedProduct) {
+                console.log("Producto seleccionado:", selectedProduct);
+                menuContainer.style.display = "none";
 
-// Configuración de columnas a filtrar (puedes cambiar esta configuración según tus necesidades)
-const filtersConfig = [
-    { columnIndex: 2, label: 'Cliente' },
-    { columnIndex: 3, label: 'Comercial' },
-    { columnIndex: 7, label: 'Estado' },
-];
+                selectedProduct=null;
+                // Restablecer los bordes de todos los productos
+                document.querySelectorAll(".modal-products-product").forEach(product => {
+                    product.style.border = "1px solid #ddd";
+                });
+            } else {
+                alert("Por favor, selecciona un producto primero.");
+            }
+        }
 
-// Mostrar modal con filtros
-document.getElementById("btnShowFilters").addEventListener("click", () => {
-    showFilterModal('table-container', filtersConfig);
-});
+        // Filtrar productos
+        productSearch.addEventListener("input", (e) => {
+            const filter = e.target.value.toLowerCase();
+            document.querySelectorAll(".modal-products-product").forEach(product => {
+                const name = product.querySelector("p:nth-child(2)").textContent.toLowerCase();
+                const barcode = product.querySelector("p:nth-child(3)").textContent;
+                product.style.display = name.includes(filter) || barcode.includes(filter) ? "flex" : "none";
+            });
+        });
 
-// Aplicar filtros y cerrar el modal
-document.getElementById("applyFilters").addEventListener("click", () => {
-    applyFilters('table-container', filtersConfig);
-    const modal = bootstrap.Modal.getInstance(document.getElementById("filterModal"));
-    modal.hide();
-});
-</script>
+        // Seleccionar producto
+        document.querySelectorAll(".modal-products-product").forEach(product => {
+            product.addEventListener("click", () => {
+                selectedProduct = {
+                    name: product.querySelector("p:nth-child(2)").textContent,
+                    barcode: product.querySelector("p:nth-child(3)").textContent
+                };
+                document.querySelectorAll(".modal-products-product").forEach(p => p.style.border = "1px solid #ddd");
+                product.style.border = "2px solid #4CAF50";
+            });
+        });
+
+    </script>
 </body>
 </html>
