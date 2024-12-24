@@ -49,8 +49,8 @@
         const table = document.getElementById('tabla-productos').getElementsByTagName('tbody')[0];
         const newRow = table.insertRow();
         newRow.innerHTML = `
-                <td><input type="text" name="producto" placeholder="Nombre del producto" value=${selectedItem.name} readonly></td>
-                <td><input type="text" name="descripcion" placeholder="Descripción" value=${selectedItem.description} readonly></td>
+                <td><input type="text" name="producto" placeholder="Nombre del producto" value="${selectedItem.name}" readonly></td>
+                <td><input type="text" name="descripcion" placeholder="Descripción" value="${selectedItem.description}" readonly></td>
                 <td><input type="number" name="cantidad" oninput="calcularSubtotal(this)" placeholder="0" value=1></td>
                 <td>
                     <select name="udm">
@@ -60,10 +60,10 @@
                     </select>
                 </td>
                 <td class="checkbox-center"><input type="checkbox" name="paquete"></td>
-                <td><input type="number" name="precio_unitario" step="0.01" oninput="calcularSubtotal(this)" placeholder="0.00" value=${selectedItem.price}></td>
+                <td><input type="number" name="precio_unitario" step="0.01" oninput="calcularSubtotal(this)" placeholder="0.00" value="${selectedItem.price}"></td>
                 <td><input type="number" name="impuestos" step="0.01" oninput="calcularSubtotal(this)" placeholder="0.00"></td>
                 <td><input type="number" name="descuento" step="0.01" oninput="calcularSubtotal(this)" placeholder="0.00"></td>
-                <td><input type="text" name="subtotal" value=${selectedItem.price} readonly></td>
+                <td><input type="text" name="subtotal" value="${selectedItem.price}" readonly></td>
                 <td><button class="button-form delete-btn" onclick="eliminarFila(this)">🗑️</button></td>
             `;
 
@@ -111,7 +111,7 @@
         selectedItem = {
             id:  item.getAttribute('id-item'),
             name: item.querySelector("p:nth-child(2)").textContent,
-            description:  item.getAttribute('description'),
+            description: item.getAttribute('description') === '' ? '.' : item.getAttribute('description'),
             price:  item.getAttribute('price'),
             barcode: item.querySelector("p:nth-child(3)").textContent
         };
