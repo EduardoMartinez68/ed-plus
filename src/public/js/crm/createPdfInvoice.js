@@ -1,4 +1,4 @@
-document.getElementById('create-pdf').addEventListener('click', () => {
+document.getElementById('create-pdf').addEventListener('click', async () => {
     // import jsPDF
     const { jsPDF } = window.jspdf;
 
@@ -6,18 +6,121 @@ document.getElementById('create-pdf').addEventListener('click', () => {
     //const doc = new jsPDF();
     const doc = new jsPDF('p','mm','letter');
     let currentY = 10; //this is for save the current position of the cursor of the PDF
+    save_the_information_of_the_invoice(doc,currentY);
 
     //add the icon company
     currentY=add_image(doc,'http://localhost:4000/img/your_logo.png',10,currentY,50,25);
+    currentY=save_data_of_export(doc,currentY);
+
+
+    //create the title of the tables 
+    doc.setFontSize(20);
+    doc.setTextColor(7, 93, 168);
+    doc.text('Formulario de Cotización', 14, currentY);
+    doc.setTextColor(0, 0, 0);
+    currentY+=10;
 
     //create the table of the container
+    doc.setFontSize(12);
     currentY=create_table_products(doc,currentY);
+
+    const total=document.getElementById('total-general').value;
+    currentY=draw_the_total(doc,total,14,currentY);
+    
     currentY=create_table_products(doc,currentY);
+    currentY=draw_the_total(doc,total,14,currentY);
+
+    const paymentTerm=document.getElementById('payment-term').value;
+    doc.setFontSize(10);
+    doc.text("Plazo de pago: "+paymentTerm, 14, currentY);
+    currentY+=20;
+
+    doc.setDrawColor(7, 93, 168); // Color azul (#075DA8)
+    doc.setLineWidth(1); // Grosor de la línea
+    doc.line(10, currentY, 200, currentY);
+    currentY+=10;
+
+    
+    doc.setFontSize(15);
+    doc.text("Terminos y condiciones", 14, currentY);
+    currentY+=10;
+
+    //Save the termitions and conditions 
+    currentY=await save_termitions_and_conditions(doc, 14, currentY, 500);
+
 
     // download the file
     doc.save("ventas.pdf");
 });
 
+
+function save_data_of_export(doc,currentY){
+    //add the information of the company 
+    const expiration=document.getElementById('expiration').value;
+    const quoteDate=document.getElementById('quote-date').value;
+
+    currentY+=10;
+    doc.text("Expiración: "+expiration, 100, currentY);
+    doc.text("Fecha de Cotización"+quoteDate, 150, currentY);
+
+    return currentY+20;
+}
+
+function save_the_information_of_the_invoice(doc,currentY){
+    //add the information of the company 
+    const nameCompany=document.getElementById('name-branch-pdf').value;
+    const emailCompany=document.getElementById('email-branch-pdf').value;
+
+    doc.text(nameCompany, 100, currentY);
+    doc.setFontSize(10);
+    doc.text(emailCompany, 100, currentY+5);
+
+    currentY += 15;
+    const customer=document.getElementById('customer').value;
+    doc.text(customer, 100, currentY);
+
+
+    currentY += 10;
+    const address=document.getElementById('address').value;
+    doc.text('Dirección: '+address, 100, currentY);
+
+    currentY += 8;
+    const deliveryAddress=document.getElementById('delivery-address').value;
+    doc.text('Dirección de Entrega: '+deliveryAddress, 100, currentY);
+
+    return currentY;
+}
+
+
+async function save_termitions_and_conditions(doc, x, y, width) {
+    doc.setFontSize(5);
+
+    // get the container in HTML
+    const content = quill.root.innerHTML;
+
+    // create a container for show the HTML
+    const canvasContainer = document.createElement('div');
+    canvasContainer.style.width = `${width}px`; // get the width of the container
+    canvasContainer.innerHTML = content;
+
+    document.body.appendChild(canvasContainer); // add to DOM for measure and render
+
+    //Using jsPDF to render HTML content
+    await doc.html(canvasContainer, {
+        x: x,
+        y: y,
+        html2canvas: {
+            scale: 0.25 //Adjust the scale if the content is too large
+        },
+        callback: function () {
+            document.body.removeChild(canvasContainer); // delete the container temporary
+        }
+    });
+
+    // return the new position in Y
+    const textHeight = canvasContainer.offsetHeight;
+    return y + textHeight+25;
+}
 
 function create_table_products(doc,currentY){
     // add a title
@@ -83,7 +186,20 @@ function create_table_products(doc,currentY){
         }
     });
 
+
+
+    const total=document.getElementById('total-general').value;
+    const width=14;
     return tablePDF.lastAutoTable.finalY + 10;
+}
+
+function draw_the_total(doc,total,x,y){
+    doc.setTextColor(7, 93, 168);
+    doc.text('TOTAL GENERAL:', x, y);
+    doc.setTextColor(0, 0, 0);
+    doc.text('$'+total, x+38, y);
+
+    return y+20;
 }
 
 function create_optional_products_table(doc,currentY){

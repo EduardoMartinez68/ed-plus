@@ -89,6 +89,19 @@
 </style>
 <link rel="stylesheet" href="/css/CRM/crm.css">
 <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-bold-straight/css/uicons-bold-straight.css'>
+
+
+<!---this data is for save the information that after add to the PDF-->
+{{#each branchFree}}
+    <input type="hidden" value="{{name_branch}}" id="name-branch-pdf">
+    <input type="hidden" value="{{email_branch}}" id="email-branch-pdf">
+{{/each}}
+
+
+<!----->
+
+
+
 <br>
 <div class="container mt-5">
     <div class="row">
