@@ -9,7 +9,14 @@ document.getElementById('create-pdf').addEventListener('click', async () => {
     save_the_information_of_the_invoice(doc,currentY);
 
     //add the icon company
-    currentY=add_image(doc,'http://localhost:4000/img/your_logo.png',10,currentY,50,25);
+    const hiddenImage = document.getElementById('icon-pdf');
+    let imageUrl = hiddenImage ? hiddenImage.src : ''; //get the path of the image. Check if element exists before accessing src
+
+    //if the image is not found, we will use a default image
+    if (!imageUrl || imageUrl === 'undefined' || imageUrl === '') {
+        imageUrl = '/img/your_logo.png';
+    }
+    currentY=add_image(doc,imageUrl,10,currentY,50,25);
     currentY=save_data_of_export(doc,currentY);
 
 
@@ -194,10 +201,11 @@ function create_table_products(doc,currentY){
 }
 
 function draw_the_total(doc,total,x,y){
+    const fee=document.getElementById('fee').value;
     doc.setTextColor(7, 93, 168);
     doc.text('TOTAL GENERAL:', x, y);
     doc.setTextColor(0, 0, 0);
-    doc.text('$'+total, x+38, y);
+    doc.text('$'+total+' '+fee, x+38, y);
 
     return y+20;
 }

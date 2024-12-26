@@ -223,7 +223,8 @@ router.get('/:id_company/:id_branch/:id_prospect/create-invoice-crm', isLoggedIn
     const dataProspect=await get_data_of_a_prospect_with_his_id(id_prospect)
     const salesStage=await get_sales_stage_with_company_id(id_company)
     const products=await combos.get_all_dish_and_combo(id_company,id_branch);
-    console.log(branchFree)
+    const dataCompany=await get_data_company_with_id(id_company)
+    console.log(dataCompany)
     res.render('links/branch/CRM/createInvoice',{branchFree, dataProspect,salesStage, products});
 })
 

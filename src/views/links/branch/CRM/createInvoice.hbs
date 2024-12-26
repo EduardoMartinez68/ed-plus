@@ -97,7 +97,13 @@
     <input type="hidden" value="{{email_branch}}" id="email-branch-pdf">
 {{/each}}
 
-
+{{#each dataCompany}}
+    {{#if path_logo}}
+        <img src="{{path_logo}}" alt="" id="icon-pdf" style="display: none;">
+    {{else}}
+        <img src="http://localhost:4000/img/your_logo.png" alt="" id="icon-pdf" style="display: none;">
+    {{/if}}
+{{/each}}
 <!----->
 
 
