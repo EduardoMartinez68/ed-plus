@@ -68,7 +68,7 @@ function save_data_of_export(doc,currentY){
 
     currentY+=10;
     doc.text("Expiración: "+expiration, 100, currentY);
-    doc.text("Fecha de Cotización"+quoteDate, 150, currentY);
+    doc.text("Fecha de Cotización: "+quoteDate, 150, currentY);
 
     return currentY+20;
 }

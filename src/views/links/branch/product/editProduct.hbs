@@ -6,7 +6,7 @@
             <div class="card-body">
                 {{#each comboFeactures}}
                 <form action="/fud/{{id_companies}}/{{id_branches}}/{{id}}/update-combo-branch" method="POST" id="myForm">
-                    <label for=""><i class="fi-icon fi-ss-hamburger-soda"></i>Informacion del Combo</label>
+                    <label for=""><i class="fi-icon fi-ss-box"></i> Información adicional del producto</label>
                     <hr>
                     
                     <div class="row">
@@ -14,7 +14,7 @@
                             {{#if dish_img}}
                                 <img src="{{dish_img}}" alt="" class="icon-combo">
                             {{else}}
-                                <img src="https://cdn-icons-png.flaticon.com/512/6626/6626465.png" alt="" class="icon-combo">
+                                <img src="/img/icons_first/product.webp" alt="" class="icon-combo">
                             {{/if}}
                         </div>
                         <div class="col">
@@ -23,8 +23,7 @@
                             <label for="">Description:</label>
                             <label for="">{{dish_description}}</label>
                             <br><br>
-                            <a class="btn btn-edit" href="/links/{{id_companies}}/{{id_branches}}/{{id_dishes_and_combos}}/edit-data-combo-free">✏️ Editar informacion del combo</a>
-                            <button class="btn btn-danger" id="{{id}}" onclick="delete_combo('{{id_dishes_and_combos}}','{{id_companies}}','{{id_branches}}')" type="button">🗑️ Eliminar combo</button>
+                            <button class="btn btn-danger" id="{{id}}" onclick="delete_product('{{id_dishes_and_combos}}','{{id_companies}}','{{id_branches}}')" type="button">🗑️ Eliminar Producto</button>
                         </div>
                     </div>
 
@@ -89,7 +88,7 @@
     function read_check_box() {
         const title = 'Favoritos'
         var checkBox = document.getElementById("invalidCheck");
-        var text = checkBox.checked ? 'Este Combo fue agregado a favoritos ⭐' : 'Este Combo fue removido de favoritos 👍';
+        var text = checkBox.checked ? 'Este Producto fue agregado a favoritos ⭐' : 'Este Producto fue removido de favoritos 👍';
         notificationMessage(title, text)
     }
 </script>
@@ -108,9 +107,9 @@
     }
 
 
-    async function delete_combo(id_combo,id_company,id_branch){
-        if(await questionMessage('Eliminar combo  😳','¿Quieres eliminar este combo?')){
-            window.location.href = `/links/${id_company}/${id_branch}/${id_combo}/delete-combo-free`
+    async function delete_product(id_combo,id_company,id_branch){
+        if(await questionMessage('Eliminar Producto  😳','¿Quieres eliminar este Producto?')){
+            window.location.href = `/links/${id_company}/${id_branch}/${id_combo}/delete-product-free`
         }
     }
 </script>

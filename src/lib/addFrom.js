@@ -418,7 +418,7 @@ router.post('/fud/:id_company/add-company-combo', async (req, res) => {
 
         //get the new combo
         const combo = await create_a_new_combo(req)
-
+        
         //we will see if can add the combo to the database
         const idCombos = await addDatabase.add_combo_company(combo)
 
@@ -464,6 +464,11 @@ async function create_a_new_combo(req) {
 }
 
 function parse_barcode_products(barcodeProducts) {
+    //her is for know if exist barcodeProducts in the form 
+    if(!barcodeProducts){
+        return [];
+    }
+
     // Remove leading and trailing brackets if present
     barcodeProducts = barcodeProducts.trim().replace(/^\[|\]$/g, '');
 
@@ -494,7 +499,7 @@ function parse_barcode_products(barcodeProducts) {
             result.push({ idProduct: idProduct, amount: amount, foodWaste: foodWaste, unity: unity, additional: additional });
         }
     }
-    console.log(result)
+    
     return result;
 }
 
@@ -1455,6 +1460,70 @@ async function update_navbar(id_companies, navbar) {
 
 
 //---------------------------------------------------------------------------------------------------------BRANCHES---------------------------------------------------------------
+router.post('/fud/:id_company/:id_branch/add-product-free', isLoggedIn, async (req, res) => {
+    const { id_company, id_branch } = req.params;
+    let canAdd=false;
+
+    //this is for create the new supplies and save the id of the supplies
+    const newSupplies = await get_supplies_or_product_company(req, false);
+    newSupplies.id_company=id_company; //update the data of id_company because the function "get_supplies_or_product_company" not have this data,
+
+    const idSupplies = await addDatabase.add_supplies_company(newSupplies); //get the id of the supplies that added
+
+    //we will see if the product can be save in the database
+    if (idSupplies) {
+        //we will create the supplies in the branch
+        const idSuppliesFactures = await addDatabase.add_product_and_suppiles_features(id_branch, idSupplies) //add the supplies in the branch 
+
+        //we will creating the data of the supplies and we will saving with the id of the supplies that create
+        const supplies = create_supplies_branch(req, idSuppliesFactures);
+        
+        //update the data in the branch for save the new product in his branch
+        if (await update.update_supplies_branch(supplies)){
+
+            //get the new combo
+            const combo = await create_a_new_combo(req);
+            const dataProduct={idProduct:idSupplies,amount: 1,foodWaste: supplies.sale_amount,unity: supplies.sale_unity,additional: 0}
+            combo.supplies.push(dataProduct); //update the data of supplies use only the barcode of the product
+            //console.log(combo);
+
+            //we will see if can add the combo to the database
+            const idCombos = await addDatabase.add_combo_company(combo)
+
+            //we will wach if the user have a branch free or a franquicia
+            if (req.user.rol_user != rolFree) {
+                if (idCombos) {
+                    req.flash('success', 'El combo fue agregado con éxito ❤️')
+                }
+                else {
+                    req.flash('message', 'El combo no fue agregado con éxito 😳')
+                }
+                
+                //if the user have a franquicia we will save the combo in the company
+                res.redirect('/fud/' + id_company + '/combos');
+            } else {
+                //get the data combo in the branch
+                const comboData = create_combo_data_branch(idCombos, id_company, id_branch);
+
+                // save the combo in the branch
+                const idComboFacture = await addDatabase.add_combo_branch(comboData);
+                if(idComboFacture){
+                    canAdd=true;
+                    res.redirect(`/links/${id_company}/${id_branch}/${idComboFacture}/edit-products-free`);
+                }
+            }
+        }
+    }
+
+
+    //we will see if exit a error in the process
+    if(!canAdd){
+        req.flash('message', 'El producto no fue agregado con éxito 👉👈')
+        res.redirect(`/links/${id_company}/${id_branch}/products-free`);
+    }
+})
+
+
 router.post('/fud/:id/:id_branch/add-supplies-free', isLoggedIn, async (req, res) => {
     const { id, id_branch } = req.params;
 
@@ -1463,7 +1532,7 @@ router.post('/fud/:id/:id_branch/add-supplies-free', isLoggedIn, async (req, res
     const packDatabase = await get_pack_database(id);
 
     //we will see if the user can add most supplies 
-    const allSupplies = await get_all_the_supplies_of_this_company(id, true);
+    //const allSupplies = await get_all_the_supplies_of_this_company(id, true);
     //if (allSupplies < get_supplies_max(packDatabase)) {
         //we will waching if the supplies can save the image 
         if (packDatabase == 0) {
@@ -1496,7 +1565,7 @@ router.post('/fud/:id/:id_branch/add-supplies-free', isLoggedIn, async (req, res
     //}
 
 
-    res.redirect(`/fud/${id}/${id_branch}/supplies-free`);
+    res.redirect(`/links/${id}/${id_branch}/supplies-free`);
 })
 
 function get_supplies_max(packBranch) {

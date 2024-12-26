@@ -120,16 +120,20 @@ router.get('/:id/:id_branch/supplies-free', isLoggedIn, async (req, res) => {
 });
 
 router.get('/:id/:id_branch/products-free', isLoggedIn, async (req, res) => {
-    const {id_branch } = req.params;
+    const {id,id_branch } = req.params;
     const branchFree = await get_data_branch(id_branch);
     if (branchFree != null) {
         //const supplies_products = await search_company_supplies_or_products(req, true);
-        const supplies = await get_supplies_or_features(id_branch, false)
-        res.render('links/free/supplies/supplies', { branchFree, supplies});
+        const supplies = await get_supplies_or_features(id_branch, false);
+        const departments = await get_department(id);
+        const category = await get_category(id);
+        res.render('links/free/products/products', { branchFree, supplies,departments,category});
     } else {
         res.render('links/store/branchLost');
     }
 });
+
+///fud/{{id_companies}}/add-company-combo para agregar combo
 
 //------------------------------------combo
 router.get('/:id/:id_branch/combos-free', isLoggedIn, async (req, res) => {
@@ -153,7 +157,7 @@ router.get('/:id_company/:id_branch/:id_dishes_and_combos/edit-data-combo-free',
         id_branch: branchFree[0].id,
         id_combo: id_dishes_and_combos
     }]
-    console.log(dataForm)
+    
     const departments = await get_data_tabla_with_id_company(id_company, "Kitchen", "product_department");
     const category = await get_data_tabla_with_id_company(id_company, "Kitchen", "product_category");
 
@@ -171,7 +175,7 @@ router.get('/:id/:id_branch/add-combos-free', isLoggedIn, async (req, res) => {
     const branchFree = await get_data_branch(id_branch);
     if (branchFree != null) {
         const { id } = req.params;
-        const packCombo=await get_pack_database(id);
+        const packCombo=100//await get_pack_database(id);
         const combos = await get_combo_features(id_branch);
         if(the_user_can_add_most_combo(combos.length,packCombo)){
             const departments = await get_department(id);
@@ -197,17 +201,19 @@ function the_user_can_add_most_combo(combos,packCombo){
 router.get('/:id_company/:id_branch/:id/delete-combo-free', isLoggedIn, async (req, res) => {
     const { id, id_company, id_branch} = req.params;
     const pathImg = await get_path_img('Kitchen', 'dishes_and_combos', id) //get the image in our database 
-
     //we will see if can delete the combo of the database 
     if (await delate_combo_company(id, pathImg)) {
-        req.flash('success', 'El combo fue eliminado con éxito 😄')
+        canDelete=true;
     }
-    else {
+    
+    if(canDelete){
+        req.flash('success', 'El combo fue eliminado con éxito 😄')
+    }else{
         req.flash('message', 'El combo NO fue eliminado con éxito 😳')
     }
-
     res.redirect(`/links/${id_company}/${id_branch}/combos-free`);
 })
+
 
 //------------------------------------products 
 router.get('/:id_company/:id_branch/add-products-free', isLoggedIn, async (req, res) => {
@@ -217,6 +223,29 @@ router.get('/:id_company/:id_branch/add-products-free', isLoggedIn, async (req, 
     const branchFree = await get_data_branch(id_branch);
     res.render('links/free/products/addProducts',{branchFree,departments,category});
 });
+
+router.get('/:id_company/:id_branch/:id/delete-product-free', isLoggedIn, async (req, res) => {
+    const { id, id_company, id_branch} = req.params;
+    const pathImg = await get_path_img('Kitchen', 'dishes_and_combos', id) //get the image in our database 
+    const idProduct=await search_supplies_combo(id);
+    let canDelete=false;
+
+    //firts we will see if can delete the product of the database
+    if(await await delate_supplies_company(idProduct[0], pathImg)){
+        //we will see if can delete the combo of the database 
+        if (await delate_combo_company(id, pathImg)) {
+            canDelete=true;
+        }
+    }
+
+    if(canDelete){
+        req.flash('success', 'El producto fue eliminado con éxito 😄')
+    }else{
+        req.flash('message', 'El producto NO fue eliminado con éxito 😳')
+    }
+
+    res.redirect(`/links/${id_company}/${id_branch}/products-free`);
+})
 
 //------------------------------------branch
 router.get('/:idBranch/:idCompany/edit-branch-free', isLoggedIn, async (req, res) => {

@@ -166,7 +166,7 @@ async function update_token_uber_eat_branch(id_branch, token_uber) {
 }
 
 async function update_customer(customerId, newCustomer) {
-    console.log(newCustomer)
+    
     var queryText = `
         UPDATE "Company".customers
         SET 
@@ -427,7 +427,7 @@ async function update_supplies_branch(supplies){
         id=$13
     `;
     
-    console.log(supplies)
+    
     //create the array of the new data supplies
     var values = Object.values(supplies);
 

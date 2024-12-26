@@ -1,0 +1,52 @@
+<div style="height: 750px; overflow-y: scroll;">
+    <table class="table table-hover" id="table-container"> <!--table-bordered-->
+        <colgroup>
+            <col style="width: 5%;"> <!--image-->
+            <col style="width: 25%;"> <!--barcode-->
+            <col style="width: 25%;"> <!--name-->
+            <col style="width: 20%;"> <!--description-->
+            <col style="width: 4%;"> <!--existence-->
+            <col style="width: 6%;"> <!--price-->
+            <col style="width: 7%;"> <!--button-->
+            <col style="width: 7%;"> <!--button-->
+        </colgroup>
+        <thead>
+        <tr>
+            <th></th>
+            <th>Barcode</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Existence</th>
+            <th>Price</th>
+            <th></th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+            {{#each supplies}}
+                <tr id="{{barcode}}">
+                    {{#if img}}
+                        <td><img src="{{img}}" class="img-s-p"></td>
+                    {{else}}
+                        <td><img src="/img/icons_first/product.webp" class="img-s-p"></td>
+                    {{/if}}
+                    <td>{{barcode}}</td>
+                    <td>{{name}}</td>
+                    <td>{{description}}</td>
+                    <td>{{existence}}/{{sale_unity}}</td>
+                    <td>{{sale_price}}/{{currency_sale}}</td>
+                    <td>
+                        <button class="btn btn-edit" onclick="edit_inventory('{{id_companies}}','{{id_branches}}','{{id}}','{{img}}','{{barcode}}','{{name}}','{{existence}}','{{sale_unity}}')"><i class="fi-department fi-ss-truck-loading"></i></button>
+                    </td>
+                    <td>
+                        <button class="btn btn-edit" onclick="edit_supplies('{{id_companies}}','{{id_branches}}','{{id}}')"><i class="fi-department fi-sr-pencil"></i></button>
+                    </td>
+                </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>
+<br><br>
+
+
+<script src="/js/manager/supplies/supplies.js"></script>
