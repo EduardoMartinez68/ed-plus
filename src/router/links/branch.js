@@ -413,16 +413,12 @@ router.get('/:id_company/:id_branch/:id_combo_features/edit-combo-free', isLogge
     //}
 })
 
-router.get('/:id_company/:id_branch/:id_combo_features/edit-products-free', isLoggedIn, async (req, res) => {
-    //if(await validate_subscription(req,res)){
-        const { id_combo_features, id_branch } = req.params;
-        const comboFeactures = await get_data_combo_factures(id_combo_features);
-        const suppliesCombo = await get_all_price_supplies_branch(comboFeactures[0].id_dishes_and_combos, id_branch)
-        const branch = await get_data_branch(req);
-        const branchFree=branch;
-        res.render('links/branch/product/editProduct', { comboFeactures, suppliesCombo, branch , branchFree});
-    //}
-})
+/*
+DELETE FROM "Inventory".dish_and_combo_features;
+DELETE FROM "Kitchen".dishes_and_combos;
+DELETE FROM "Kitchen".table_supplies_combo;
+DELETE FROM "Kitchen".products_and_supplies;
+*/
 
 async function get_all_price_supplies_branch(idCombo, idBranch) {
     try {

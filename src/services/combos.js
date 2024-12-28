@@ -80,7 +80,7 @@ async function delete_all_supplies_combo(id) {
     }
 }
 
-async function get_combo_features(idBranche) {
+async function get_combo_features(idBranche,is_a_product) {
     var queryText = `
     SELECT 
         f.*,
@@ -99,9 +99,9 @@ async function get_combo_features(idBranche) {
     LEFT JOIN
         "Kitchen".product_department pd_dept ON d.id_product_department = pd_dept.id
     WHERE 
-        f.id_branches = $1
+        f.id_branches = $1 and d.is_a_product =$2
     `;
-    var values = [idBranche];
+    var values = [idBranche,is_a_product];
     const result = await database.query(queryText, values);
     const data = result.rows;
     return data;
@@ -126,6 +126,130 @@ async function get_all_dish_and_combo(idCompany, idBranch) {
     return result.rows;
 }
 
+async function get_data_combo_factures(idComboFacture) {
+    const queryText = `
+        SELECT 
+            f.id,
+            f.id_companies,
+            f.id_branches,
+            f.id_dishes_and_combos,
+            f.price_1,
+            f.revenue_1,
+            f.price_2,
+            f.revenue_2,
+            f.price_3,
+            f.revenue_3,
+            f.favorites,
+            f.sat_key,
+            f.purchase_unit,
+            f.existence,
+            f.amount,
+            f.product_cost,
+            f.id_providers,
+            d.name AS dish_name,
+            d.description AS dish_description,
+            d.img AS dish_img,
+            d.barcode AS dish_barcode,
+            d.id_product_department AS dish_product_department,
+            d.id_product_category AS dish_product_category
+        FROM 
+            "Inventory".dish_and_combo_features f
+        INNER JOIN 
+            "Kitchen".dishes_and_combos d ON f.id_dishes_and_combos = d.id
+        WHERE 
+            f.id = $1
+    `;
+
+    const result = await database.query(queryText, [idComboFacture]);
+    return result.rows;
+}
+
+async function get_all_price_supplies_branch(idCombo, idBranch) {
+    try {
+        // Consulta para obtener los suministros de un combo específico
+        const comboQuery1 = `
+            SELECT tsc.id_products_and_supplies, tsc.amount, tsc.unity, psf.currency_sale
+            FROM "Kitchen".table_supplies_combo tsc
+            INNER JOIN "Inventory".product_and_suppiles_features psf
+            ON tsc.id_products_and_supplies = psf.id_products_and_supplies
+            WHERE tsc.id_dishes_and_combos = $1 ORDER BY id_products_and_supplies DESC
+        `;
+
+        const comboQuery2 = `SELECT tsc.id_products_and_supplies, tsc.amount, tsc.unity, psf.currency_sale, psf.additional
+        FROM "Kitchen".table_supplies_combo tsc
+        INNER JOIN (
+            SELECT DISTINCT ON (id_products_and_supplies) id_products_and_supplies, currency_sale
+            FROM "Inventory".product_and_suppiles_features
+            ORDER BY id_products_and_supplies
+        ) psf
+        ON tsc.id_products_and_supplies = psf.id_products_and_supplies
+        WHERE tsc.id_dishes_and_combos = $1
+        ORDER BY tsc.id_products_and_supplies DESC
+        `;
+        const comboQuery=`SELECT tsc.id_products_and_supplies, tsc.amount, tsc.unity, tsc.additional, psf.currency_sale
+        FROM "Kitchen".table_supplies_combo tsc
+        INNER JOIN (
+            SELECT DISTINCT ON (id_products_and_supplies) id_products_and_supplies, currency_sale
+            FROM "Inventory".product_and_suppiles_features
+            ORDER BY id_products_and_supplies
+        ) psf
+        ON tsc.id_products_and_supplies = psf.id_products_and_supplies
+        WHERE tsc.id_dishes_and_combos = $1
+        ORDER BY tsc.id_products_and_supplies DESC
+        `;
+        const comboValues = [idCombo];
+        const comboResult = await database.query(comboQuery, comboValues)
+
+        // Consulta para obtener el precio de los suministros en la sucursal específica
+        const priceQuery = `
+            SELECT psf.id_products_and_supplies, psf.sale_price, psf.sale_unity
+            FROM "Inventory".product_and_suppiles_features psf
+            WHERE psf.id_branches = $1 ORDER BY id_products_and_supplies DESC
+        `;
+        const priceValues = [idBranch];
+        const priceResult = await database.query(priceQuery, priceValues);
+
+        // Construir un objeto que contenga los suministros y sus precios en la sucursal específica
+        const suppliesWithPrice = {};
+        priceResult.rows.forEach(row => {
+            suppliesWithPrice[row.id_products_and_supplies] = row.sale_price;
+        });
+
+        // Agregar los suministros y sus cantidades del combo junto con sus precios
+        const suppliesInfo = [];
+        comboResult.rows.forEach(row => {
+            const supplyId = row.id_products_and_supplies;
+            const supplyPrice = suppliesWithPrice[supplyId] || 0; // Precio predeterminado si no se encuentra
+            suppliesInfo.push({
+                img: '',
+                product_name: '',
+                product_barcode: '',
+                description: '',
+                id_products_and_supplies: supplyId,
+                amount: row.amount,
+                unity: row.unity,
+                sale_price: supplyPrice,
+                currency: row.currency_sale,
+                additional: row.additional
+            });
+        });
+
+        //agregamos los datos del combo 
+        const suppliesCombo = await search_supplies_combo(idCombo);
+        for (var i = 0; i < suppliesCombo.length; i++) {
+            suppliesInfo[i].img = suppliesCombo[i].img;
+            suppliesInfo[i].product_name = suppliesCombo[i].product_name;
+            suppliesInfo[i].product_barcode = suppliesCombo[i].product_barcode;
+            suppliesInfo[i].description = suppliesCombo[i].description;
+        }
+
+        return suppliesInfo;
+    } catch (error) {
+        console.error("Error en la consulta:", error);
+        throw error;
+    }
+}
+
 module.exports = {
     get_all_combos,
     search_combo,
@@ -134,5 +258,7 @@ module.exports = {
     delete_all_supplies_combo,
     get_combo_features,
     get_all_dish_and_combo,
-    get_all_combos_and_products
+    get_all_combos_and_products,
+    get_data_combo_factures,
+    get_all_price_supplies_branch
 };

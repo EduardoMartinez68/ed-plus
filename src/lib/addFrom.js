@@ -1485,8 +1485,7 @@ router.post('/fud/:id_company/:id_branch/add-product-free', isLoggedIn, async (r
             const combo = await create_a_new_combo(req);
             const dataProduct={idProduct:idSupplies,amount: 1,foodWaste: supplies.sale_amount,unity: supplies.sale_unity,additional: 0}
             combo.supplies.push(dataProduct); //update the data of supplies use only the barcode of the product
-            //console.log(combo);
-
+            
             //we will see if can add the combo to the database
             const idCombos = await addDatabase.add_combo_company(combo)
 
@@ -1711,6 +1710,8 @@ router.post('/fud/:id_company/:id_branch/:id_supplies/update-products-branch', i
 router.post('/fud/:id_company/:id_branch/:id_combo/update-combo-branch', isLoggedIn, async (req, res) => {
     const { id_company, id_combo, id_branch } = req.params;
     const combo = create_new_combo_branch(req, id_combo);
+
+    
     if (await update.update_combo_branch(combo)) {
         req.flash('success', 'El combo se actualizó con éxito 😄');
     } else {

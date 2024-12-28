@@ -6,6 +6,11 @@
         <div class="col-8">
             <input type="text" class="form-control" placeholder="Buscar código de barras..." id="search">
         </div>
+        <div class="col">
+            <div class="col">
+                <button class="btn btn-confirm-message" onclick="nextWeb('{{id_companies}}/{{id}}/add-products-free')">Agregar producto +</button>
+            </div>
+        </div>
     </div>
     {{/each}}
 </div>
@@ -15,9 +20,6 @@
       <li class="nav-item">
         <a class="nav-link active" id="lista-insumos-tab" data-toggle="tab" href="#lista-insumos" role="tab" aria-controls="lista-insumos" aria-selected="true">Lista de productos</a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" id="agregar-insumo-tab" data-toggle="tab" href="#agregar-insumo" role="tab" aria-controls="agregar-insumo" aria-selected="false">Agregar nuevo productos</a>
-      </li>
     </ul>
     <!-- Contenido de las pestañas -->
     <div class="tab-content" id="myTabContent">
@@ -26,11 +28,7 @@
       </div>
 
 
-      <div class="tab-pane fade" id="agregar-insumo" role="tabpanel" aria-labelledby="agregar-insumo-tab">
-        <div class="container">
-            {{>products/form}}
-        </div>
-      </div>
+
       
     </div>
   </div>

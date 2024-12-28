@@ -107,6 +107,26 @@ async function get_supplies_or_features(id_branch, type) {
     return data;
 }
 
+async function get_supplies_or_features_with_id_products_and_supplies(id_products_and_supplies) {
+    var queryText = `
+        SELECT 
+            f.*,
+            p.id_companies,
+            p.img,
+            p.barcode,
+            p.name,
+            p.description,
+            p.use_inventory
+        FROM "Inventory".product_and_suppiles_features f
+        INNER JOIN "Kitchen".products_and_supplies p ON f.id_products_and_supplies = p.id
+        WHERE f.id_products_and_supplies = $1
+    `;
+    var values = [id_products_and_supplies];
+    const result = await database.query(queryText, values);
+    const data = result.rows;
+    return data;
+}
+
 async function get_supplies_with_id(id_supplies) {
     var queryText = `
         SELECT 
@@ -150,5 +170,6 @@ module.exports = {
     search_company_supplies_or_products_with_company,
     search_company_supplies_or_products_with_id_company,
     search_company_supplies_or_products,
-    update_product_category
+    update_product_category,
+    get_supplies_or_features_with_id_products_and_supplies
 };

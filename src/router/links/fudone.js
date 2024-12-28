@@ -25,7 +25,8 @@ const {
     search_company_supplies_or_products_with_company,
     search_company_supplies_or_products_with_id_company,
     search_company_supplies_or_products,
-    update_product_category
+    update_product_category,
+    get_supplies_or_features_with_id_products_and_supplies
 } = require('../../services/supplies');
 
 //functions branch
@@ -39,7 +40,9 @@ const {
     get_combo_features,
     search_supplies_combo,
     search_combo,
-    delate_combo_company
+    delate_combo_company,
+    get_data_combo_factures,
+    get_all_price_supplies_branch
 } = require('../../services/combos');
 
 //functions branch
@@ -79,6 +82,7 @@ const {
     delete_provider
 } = require('../../services/providers');
 
+const rolFree=0;
 
 /*
 *----------------------router-----------------*/
@@ -119,21 +123,81 @@ router.get('/:id/:id_branch/supplies-free', isLoggedIn, async (req, res) => {
     }
 });
 
-router.get('/:id/:id_branch/products-free', isLoggedIn, async (req, res) => {
-    const {id,id_branch } = req.params;
+
+//------------------------------------products
+router.get('/:id_company/:id_branch/products-free', isLoggedIn, async (req, res) => {
+    const {id_company,id_branch } = req.params;
     const branchFree = await get_data_branch(id_branch);
     if (branchFree != null) {
         //const supplies_products = await search_company_supplies_or_products(req, true);
         const supplies = await get_supplies_or_features(id_branch, false);
-        const departments = await get_department(id);
-        const category = await get_category(id);
-        res.render('links/free/products/products', { branchFree, supplies,departments,category});
+        res.render('links/free/products/products', { branchFree, supplies});
     } else {
         res.render('links/store/branchLost');
     }
 });
 
-///fud/{{id_companies}}/add-company-combo para agregar combo
+router.get('/:id_company/:id_branch/add-products-free', isLoggedIn, async (req, res) => {
+    const {id_company,id_branch } = req.params;
+    const branchFree = await get_data_branch(id_branch);
+    if (branchFree != null) {
+        //const supplies_products = await search_company_supplies_or_products(req, true);
+        const supplies = await get_supplies_or_features(id_branch, false);
+        const departments = await get_department(id_company);
+        const category = await get_category(id_company);
+        res.render('links/free/products/addFormProducts', { branchFree, supplies,departments,category});
+    } else {
+        res.render('links/store/branchLost');
+    }
+});
+
+
+//--this is for edit the data of the combo
+router.get('/:id_company/:id_branch/:id_combo_features/edit-products-free', isLoggedIn, async (req, res) => {
+    
+        const { id_combo_features, id_branch } = req.params;
+        const comboFeactures = await get_data_combo_factures(id_combo_features); //this is the data of the combo
+
+        //this is for get the supplies of the combo
+        const suppliesCombo = await get_all_price_supplies_branch(comboFeactures[0].id_dishes_and_combos, id_branch)
+
+        //we will see if the user have a suscription free
+        if(req.user.rol_user==rolFree){
+            const branchFree = await get_data_branch(id_branch); //get data of rol free
+
+            //get the data of the product that is in the combo. This is the information of the product 
+            const supplies=await get_supplies_or_features_with_id_products_and_supplies(suppliesCombo[0].id_products_and_supplies);
+            res.render('links/branch/products/editProduct', { comboFeactures, suppliesCombo , branchFree, supplies});      
+        }else{
+            const branch = await get_data_branch(id_branch);
+            res.render('links/branch/products/editProduct', { comboFeactures, suppliesCombo, branch});
+        }
+    
+})
+
+//--this is for when the user would like delete the product (supplies)
+router.get('/:id_company/:id_branch/:id/delete-product-free', isLoggedIn, async (req, res) => {
+    const { id, id_company, id_branch} = req.params;
+    const pathImg = await get_path_img('Kitchen', 'dishes_and_combos', id) //get the image in our database 
+    const idProduct=await search_supplies_combo(id);
+    let canDelete=false;
+
+    //firts we will see if can delete the product of the database
+    if(await await delate_supplies_company(idProduct[0], pathImg)){
+        //we will see if can delete the combo of the database 
+        if (await delate_combo_company(id, pathImg)) {
+            canDelete=true;
+        }
+    }
+
+    if(canDelete){
+        req.flash('success', 'El producto fue eliminado con éxito 😄')
+    }else{
+        req.flash('message', 'El producto NO fue eliminado con éxito 😳')
+    }
+
+    res.redirect(`/links/${id_company}/${id_branch}/products-free`);
+})
 
 //------------------------------------combo
 router.get('/:id/:id_branch/combos-free', isLoggedIn, async (req, res) => {
@@ -141,7 +205,7 @@ router.get('/:id/:id_branch/combos-free', isLoggedIn, async (req, res) => {
     const branchFree = await get_data_branch(id_branch);
     if (branchFree != null) {
         //const supplies_products = await search_company_supplies_or_products(req, true);
-        const combos = await get_combo_features(id_branch);
+        const combos = await get_combo_features(id_branch,false);
         res.render('links/free/combo/combo', { branchFree, combos});
     } else {
         res.render('links/store/branchLost');
@@ -212,39 +276,6 @@ router.get('/:id_company/:id_branch/:id/delete-combo-free', isLoggedIn, async (r
         req.flash('message', 'El combo NO fue eliminado con éxito 😳')
     }
     res.redirect(`/links/${id_company}/${id_branch}/combos-free`);
-})
-
-
-//------------------------------------products 
-router.get('/:id_company/:id_branch/add-products-free', isLoggedIn, async (req, res) => {
-    const {id_company, id_branch } = req.params;
-    const departments = await get_department(id_company);
-    const category = await get_category(id_company);
-    const branchFree = await get_data_branch(id_branch);
-    res.render('links/free/products/addProducts',{branchFree,departments,category});
-});
-
-router.get('/:id_company/:id_branch/:id/delete-product-free', isLoggedIn, async (req, res) => {
-    const { id, id_company, id_branch} = req.params;
-    const pathImg = await get_path_img('Kitchen', 'dishes_and_combos', id) //get the image in our database 
-    const idProduct=await search_supplies_combo(id);
-    let canDelete=false;
-
-    //firts we will see if can delete the product of the database
-    if(await await delate_supplies_company(idProduct[0], pathImg)){
-        //we will see if can delete the combo of the database 
-        if (await delate_combo_company(id, pathImg)) {
-            canDelete=true;
-        }
-    }
-
-    if(canDelete){
-        req.flash('success', 'El producto fue eliminado con éxito 😄')
-    }else{
-        req.flash('message', 'El producto NO fue eliminado con éxito 😳')
-    }
-
-    res.redirect(`/links/${id_company}/${id_branch}/products-free`);
 })
 
 //------------------------------------branch
