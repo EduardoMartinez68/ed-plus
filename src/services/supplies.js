@@ -56,7 +56,7 @@ async function delate_supplies_company(id, pathOmg) {
         await delate_image_upload(pathOmg); //delate img
         return true;
     } catch (error) {
-        console.log('error to delete the supplies in the company: '+error)
+        console.log('error to delete the supplies in the company in the function delate_supplies_company: '+error)
         return false;
     }
 }
@@ -106,7 +106,7 @@ async function get_supplies_or_features(id_branch, type) {
     const data = result.rows;
     return data;
 }
-
+//--------------------------------------------------------------products
 async function get_supplies_or_features_with_id_products_and_supplies(id_products_and_supplies) {
     var queryText = `
         SELECT 
@@ -160,6 +160,37 @@ async function update_product_category(id, name, description) {
     }
 }
 
+async function delete_supplies_or_product_of_the_branch(id_products_and_supplies){
+    try {
+        var queryText = `
+            DELETE FROM "Inventory".product_and_suppiles_features
+            WHERE id = $1
+        `;
+        var values = [id_products_and_supplies];
+        await database.query(queryText, values);
+        return true;
+    } catch (error) {
+        console.log('error to delete the supplies in the branch in the function delete_supplies_or_product_of_the_branch: '+error)
+        return false;
+    }
+}
+
+async function delete_dishes_or_combo_of_the_branch(id_dishes_and_combos){
+    try {
+        var queryText = `
+            DELETE FROM "Inventory".dish_and_combo_features
+            WHERE id = $1 
+        `;
+        var values = [id_dishes_and_combos];
+        await database.query(queryText, values);
+        return true;
+    } catch (error) {
+        console.log('error to delete the dishes or combo in the branch in the function delete_dishes_or_combo_of_the_branch: '+error)
+        return false;
+    }
+}
+
+
 module.exports = {
     get_supplies_or_features,
     get_supplies_with_id,
@@ -171,5 +202,7 @@ module.exports = {
     search_company_supplies_or_products_with_id_company,
     search_company_supplies_or_products,
     update_product_category,
-    get_supplies_or_features_with_id_products_and_supplies
+    get_supplies_or_features_with_id_products_and_supplies,
+    delete_supplies_or_product_of_the_branch,
+    delete_dishes_or_combo_of_the_branch
 };

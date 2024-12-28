@@ -10,10 +10,10 @@
 
                 <!---this is for get tha data of the combo and supplies--->
                 {{#each comboFeactures}}
-                    <input type="hidden" value="{{id}}" name="id_comboFeactures">
+                    <input type="hidden" value="{{id}}" name="id_comboFeactures" id="id_comboFeactures">
                 {{/each}}
                 {{#each productFacture}}
-                    <input type="hidden" value="{{id}}" name="id_productFacture">
+                    <input type="hidden" value="{{id}}" name="id_productFacture" id="id_productFacture">
                 {{/each}}
 
                 {{#each comboFeactures}}
@@ -131,8 +131,14 @@
 
 
     async function delete_product(id_combo,id_company,id_branch){
+        //id_combo delete the combo
+        //id_comboFeactures delete combo in the facture
+        //id_productFacture delete supplies
+        
         if(await questionMessage('Eliminar Producto  😳','¿Quieres eliminar este Producto?')){
-            window.location.href = `/links/${id_company}/${id_branch}/${id_combo}/delete-product-free`
+            const id_comboFeactures=document.getElementById('id_comboFeactures').value;
+            const id_productFacture=document.getElementById('id_productFacture').value;
+            window.location.href = `/links/${id_company}/${id_branch}/${id_combo}/${id_comboFeactures}/${id_productFacture}/delete-product-free`
         }
     }
 </script>

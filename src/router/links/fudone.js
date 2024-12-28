@@ -26,7 +26,9 @@ const {
     search_company_supplies_or_products_with_id_company,
     search_company_supplies_or_products,
     update_product_category,
-    get_supplies_or_features_with_id_products_and_supplies
+    get_supplies_or_features_with_id_products_and_supplies,
+    delete_supplies_or_product_of_the_branch,
+    delete_dishes_or_combo_of_the_branch
 } = require('../../services/supplies');
 
 //functions branch
@@ -42,7 +44,8 @@ const {
     search_combo,
     delate_combo_company,
     get_data_combo_factures,
-    get_all_price_supplies_branch
+    get_all_price_supplies_branch,
+    delete_all_supplies_combo
 } = require('../../services/combos');
 
 //functions branch
@@ -186,26 +189,40 @@ router.get('/:id_company/:id_branch/:id_combo_features/edit-products-free', isLo
 })
 
 //--this is for when the user would like delete the product (supplies)
-router.get('/:id_company/:id_branch/:id/delete-product-free', isLoggedIn, async (req, res) => {
-    const { id, id_company, id_branch} = req.params;
-    const pathImg = await get_path_img('Kitchen', 'dishes_and_combos', id) //get the image in our database 
-    const idProduct=await search_supplies_combo(id);
+router.get('/:id_company/:id_branch/:id_combo/:id_comboFeactures/:id_productFacture/delete-product-free', isLoggedIn, async (req, res) => {
+    const { id_combo, id_comboFeactures, id_productFacture, id_company, id_branch} = req.params;
+    const pathImg = await get_path_img('Kitchen', 'dishes_and_combos', id_combo) //get the image in our database 
+    const idProduct=await search_supplies_combo(id_combo);
     let canDelete=false;
 
-    //firts we will see if can delete the product of the database
-    if(await await delate_supplies_company(idProduct[0], pathImg)){
-        //we will see if can delete the combo of the database 
-        if (await delate_combo_company(id, pathImg)) {
-            canDelete=true;
+    //get the data of the supplies and the combo of the branch
+    const idSuppliesCompany=idProduct[0].id_products_and_supplies;
+    const idComboCompany=idProduct[0].id_dishes_and_combos;
+
+    //delete all the container of the combo
+    await delete_all_supplies_combo(id_combo);
+
+    //delete the supplies of the branch
+    if(await delete_supplies_or_product_of_the_branch(id_productFacture)){
+        //delete the combo of the branch
+        if(await delete_dishes_or_combo_of_the_branch(id_comboFeactures)){
+            //delete the combo of the company
+            if(await delate_combo_company(id_combo, pathImg)){
+                //delete the supplies of the company
+                if(await delate_supplies_company(idSuppliesCompany, pathImg)){
+                    canDelete=true;
+                }
+            }
         }
     }
 
+    //we will see if exist a error when delete the product and show a message to the user
     if(canDelete){
         req.flash('success', 'El producto fue eliminado con éxito 😄')
     }else{
         req.flash('message', 'El producto NO fue eliminado con éxito 😳')
     }
-
+    
     res.redirect(`/links/${id_company}/${id_branch}/products-free`);
 })
 
