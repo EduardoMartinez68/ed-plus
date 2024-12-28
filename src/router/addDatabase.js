@@ -188,6 +188,44 @@ async function save_combo_company(combo) {
     }
 }
 
+async function add_product_combo_company(combo){
+    if(await this_combo_exists(combo.id_company,combo.barcode)){
+        return false;
+    }
+    else{
+        //we save the new combo
+        const idCombo=await save_product_combo_company(combo)
+        if(idCombo!=null){
+            //we going to save all the supplies and products of the combo
+            await save_all_supplies_combo_company(idCombo,combo.supplies)
+            return idCombo;
+        }
+
+        return false;
+    }
+}
+
+async function save_product_combo_company(combo) {
+    var queryText = 'INSERT INTO "Kitchen".dishes_and_combos (id_companies, img, barcode, name, description,is_a_product) VALUES ($1, $2, $3, $4, $5,$6) RETURNING id';
+
+    var values = [combo.id_company, combo.path_image, combo.barcode, combo.name, combo.description,true];
+
+    try {
+        const result = await database.query(queryText, values);
+
+        if (result.rowCount > 0) {
+            const insertedId = result.rows[0].id;
+            return insertedId;
+        } else {
+            console.error('No se insertaron filas en la base de datos.');
+            return null;
+        }
+    } catch (error) {
+        console.error('Error al insertar en la base de datos:', error);
+        return null;
+    }
+}
+
 async function save_all_supplies_combo_company(id_combo,supplies){
     try{
         //create a loop for get all the supplies and products of the combo
@@ -693,5 +731,6 @@ module.exports={
     add_new_prospects, 
     add_appointment,
     this_customer_exists,
-    add_message_to_the_customer_history
+    add_message_to_the_customer_history,
+    add_product_combo_company
 };

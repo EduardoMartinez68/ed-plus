@@ -407,13 +407,13 @@ router.post('/fud/:id_company/add-company-combo', async (req, res) => {
     //we will see if the user add a product or supplies 
     if (barcodeProducts == '') {
         req.flash('message', 'the combo need have a product or some supplies 😅')
-        res.redirect('/fud/' + id + '/add-combos');
+        res.redirect('/fud/' + id_company + '/add-combos');
     }
     else {
         const packCompany = await get_pack_database(id_company)
         //we will see if the user can save image in the database 
         if (packCompany == 0) {
-            //req.file = null;
+            req.file = null;
         }
 
         //get the new combo
@@ -438,7 +438,15 @@ router.post('/fud/:id_company/add-company-combo', async (req, res) => {
 
             // save the combo in the branch
             const idComboFacture = await addDatabase.add_combo_branch(comboData);
-            res.redirect('/links/' + id_company + '/' + idBranch + '/' + idComboFacture + '/edit-combo-free');
+
+            //we will see if can save the combo in the branch
+            if(idComboFacture){
+                req.flash('success', 'El combo fue creado con exito ❤️')
+                res.redirect('/links/' + id_company + '/' + idBranch + '/' + idComboFacture + '/edit-combo-free');
+            }else{
+                req.flash('message', 'El combo no fue agregado intentalo de nuevo 😅')
+                res.redirect('/links/' + id_company + '/' + idBranch  + '/add-combos-free');
+            }
         }
     }
 });
@@ -1460,6 +1468,13 @@ async function update_navbar(id_companies, navbar) {
 
 
 //---------------------------------------------------------------------------------------------------------BRANCHES---------------------------------------------------------------
+/*
+SELECT * FROM "Inventory".dish_and_combo_features;
+SELECT * FROM "Inventory".product_and_suppiles_features;
+SELECT * FROM "Kitchen".dishes_and_combos;
+SELECT * FROM "Kitchen".table_supplies_combo;
+SELECT * FROM "Kitchen".products_and_supplies;
+*/
 router.post('/fud/:id_company/:id_branch/add-product-free', isLoggedIn, async (req, res) => {
     const { id_company, id_branch } = req.params;
     let canAdd=false;
@@ -1487,7 +1502,7 @@ router.post('/fud/:id_company/:id_branch/add-product-free', isLoggedIn, async (r
             combo.supplies.push(dataProduct); //update the data of supplies use only the barcode of the product
             
             //we will see if can add the combo to the database
-            const idCombos = await addDatabase.add_combo_company(combo)
+            const idCombos = await addDatabase.add_product_combo_company(combo)
 
             //we will wach if the user have a branch free or a franquicia
             if (req.user.rol_user != rolFree) {

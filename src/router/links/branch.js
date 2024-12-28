@@ -414,12 +414,6 @@ router.get('/:id_company/:id_branch/:id_combo_features/edit-combo-free', isLogge
     //}
 })
 
-/*
-DELETE FROM "Inventory".dish_and_combo_features;
-DELETE FROM "Kitchen".dishes_and_combos;
-DELETE FROM "Kitchen".table_supplies_combo;
-DELETE FROM "Kitchen".products_and_supplies;
-*/
 
 async function get_all_price_supplies_branch(idCombo, idBranch) {
     try {

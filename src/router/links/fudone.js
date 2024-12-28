@@ -143,7 +143,7 @@ router.get('/:id_company/:id_branch/products-free', isLoggedIn, async (req, res)
     const {id_branch } = req.params;
     const branchFree = await get_data_branch(id_branch);
     if (branchFree != null) {
-        const combos = await get_combo_features(id_branch,false);
+        const combos = await get_combo_features(id_branch,true);
         res.render('links/free/products/products', { branchFree, combos});
     } else {
         res.render('links/store/branchLost');
@@ -222,7 +222,7 @@ router.get('/:id_company/:id_branch/:id_combo/:id_comboFeactures/:id_productFact
     }else{
         req.flash('message', 'El producto NO fue eliminado con éxito 😳')
     }
-    
+
     res.redirect(`/links/${id_company}/${id_branch}/products-free`);
 })
 
@@ -231,8 +231,7 @@ router.get('/:id/:id_branch/combos-free', isLoggedIn, async (req, res) => {
     const {id_branch } = req.params;
     const branchFree = await get_data_branch(id_branch);
     if (branchFree != null) {
-        //const supplies_products = await search_company_supplies_or_products(req, true);
-        const combos = await get_combo_features(id_branch,true);
+        const combos = await get_combo_features(id_branch,false);
         res.render('links/free/combo/combo', { branchFree, combos});
     } else {
         res.render('links/store/branchLost');
