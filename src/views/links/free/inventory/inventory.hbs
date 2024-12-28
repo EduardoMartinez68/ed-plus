@@ -1,6 +1,9 @@
 <link rel="stylesheet" href="/css/manager/supplies_products.css">
+<link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
 <br><br>
 <div class="container">
+    <label for=""><i class="fi-icon fi-ss-box-alt"></i>Inventario</label>
+    <hr>
     {{#each branchFree}}
     <div class="row">
         <div class="col-8">
@@ -42,7 +45,7 @@
           //get the data of the from 
           var newExistence = parseFloat(data[0]);
           if(newExistence>0){
-              window.location.href = `/links/${id_company}/${id_branch}/${id_supplies}/${newExistence}/update-supplies-branch`;
+              window.location.href = `/links/${id_company}/${id_branch}/${id_supplies}/${newExistence}/update-products-branch`;
           }
       }
   }

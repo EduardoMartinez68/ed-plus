@@ -231,11 +231,12 @@ router.get('/:id_company/:id_branch/:id_supplies/:existence/update-products-bran
     if(await validate_subscription(req,res)){
         const { id_company, id_branch, id_supplies, existence } = req.params;
         if (await update_inventory_supplies_branch(id_supplies, existence)) {
-            req.flash('success', 'El producto fue actualizado con éxito ⭐')
+            req.flash('success', 'El Inventario fue actualizado con éxito ⭐')
         } else {
-            req.flash('message', 'Este producto no fue actualizado 😅')
+            req.flash('message', 'Este Inventario no fue actualizado 😅')
         }
-        res.redirect('/links/' + id_company + '/' + id_branch + '/products');
+        
+        res.redirect(`/links/${id_company}/${id_branch}/inventory`);
     }
 })
 
