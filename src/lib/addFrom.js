@@ -1522,6 +1522,32 @@ router.post('/fud/:id_company/:id_branch/add-product-free', isLoggedIn, async (r
     }
 })
 
+router.post('/fud/:id_company/:id_branch/:id_combo/update-product-branch', isLoggedIn, async (req, res) => {
+    const {id_company,id_branch,id_combo}=req.params;
+    let canUpdateAllTheProduct=false; //this is for know if we can update all the container
+
+    //we will creating the new supplies and we will saving the id of the supplies
+    const supplies = create_supplies_branch(req, req.body.id_productFacture);
+
+    //we will watching if the supplies can update 
+    if (await update.update_supplies_branch(supplies)) {
+        //when the supplies is updating, we will create the new combo for update 
+        const combo = create_new_combo_branch(req, id_combo);
+
+        if (await update.update_combo_branch(combo)) {
+            canUpdateAllTheProduct=true;
+        } 
+    }
+
+    //we will see if can update all the product or exist a error for try again
+    if(canUpdateAllTheProduct){
+        req.flash('success', 'El Producto se actualizó con éxito 😄');
+        res.redirect(`/links/${id_company}/${id_branch}/products-free`);
+    }else{
+        req.flash('message', 'El Producto no se actualizo 😳');
+        res.redirect(`/links/${id_company}/${id_branch}/${id_combo}/edit-products-free`);
+    }
+})
 
 router.post('/fud/:id/:id_branch/add-supplies-free', isLoggedIn, async (req, res) => {
     const { id, id_branch } = req.params;
@@ -1718,10 +1744,10 @@ router.post('/fud/:id_company/:id_branch/:id_combo/update-combo-branch', isLogge
         req.flash('message', 'El combo no actualizó 😳');
     }
 
-    if (req.user.rol_user == rolFree) {
-        res.redirect('/links/' + id_company + '/' + id_branch + '/combos-free');
+    if (req.user.rol_user === rolFree) {
+        res.redirect(`/links/${id_company}/${id_branch}/combos-free`);
     } else {
-        res.redirect('/links/' + id_company + '/' + id_branch + '/combos');
+        res.redirect(`/links/${id_company}/${id_branch}/combos`);
     }
 })
 

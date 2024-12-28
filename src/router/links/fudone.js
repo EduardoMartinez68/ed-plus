@@ -125,13 +125,23 @@ router.get('/:id/:id_branch/supplies-free', isLoggedIn, async (req, res) => {
 
 
 //------------------------------------products
-router.get('/:id_company/:id_branch/products-free', isLoggedIn, async (req, res) => {
+router.get('/:id_company/:id_branch/inventory', isLoggedIn, async (req, res) => {
     const {id_company,id_branch } = req.params;
     const branchFree = await get_data_branch(id_branch);
     if (branchFree != null) {
-        //const supplies_products = await search_company_supplies_or_products(req, true);
         const supplies = await get_supplies_or_features(id_branch, false);
-        res.render('links/free/products/products', { branchFree, supplies});
+        res.render('links/free/inventory/inventory', { branchFree, supplies});
+    } else {
+        res.render('links/store/branchLost');
+    }
+});
+
+router.get('/:id_company/:id_branch/products-free', isLoggedIn, async (req, res) => {
+    const {id_branch } = req.params;
+    const branchFree = await get_data_branch(id_branch);
+    if (branchFree != null) {
+        const combos = await get_combo_features(id_branch,false);
+        res.render('links/free/products/products', { branchFree, combos});
     } else {
         res.render('links/store/branchLost');
     }
@@ -166,8 +176,8 @@ router.get('/:id_company/:id_branch/:id_combo_features/edit-products-free', isLo
             const branchFree = await get_data_branch(id_branch); //get data of rol free
 
             //get the data of the product that is in the combo. This is the information of the product 
-            const supplies=await get_supplies_or_features_with_id_products_and_supplies(suppliesCombo[0].id_products_and_supplies);
-            res.render('links/branch/products/editProduct', { comboFeactures, suppliesCombo , branchFree, supplies});      
+            const productFacture=await get_supplies_or_features_with_id_products_and_supplies(suppliesCombo[0].id_products_and_supplies);
+            res.render('links/branch/products/editProduct', { comboFeactures, suppliesCombo , branchFree, productFacture});      
         }else{
             const branch = await get_data_branch(id_branch);
             res.render('links/branch/products/editProduct', { comboFeactures, suppliesCombo, branch});
@@ -205,7 +215,7 @@ router.get('/:id/:id_branch/combos-free', isLoggedIn, async (req, res) => {
     const branchFree = await get_data_branch(id_branch);
     if (branchFree != null) {
         //const supplies_products = await search_company_supplies_or_products(req, true);
-        const combos = await get_combo_features(id_branch,false);
+        const combos = await get_combo_features(id_branch,true);
         res.render('links/free/combo/combo', { branchFree, combos});
     } else {
         res.render('links/store/branchLost');

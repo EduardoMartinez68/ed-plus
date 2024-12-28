@@ -5,7 +5,18 @@
         <div class="card">
             <div class="card-body">
                 {{#each comboFeactures}}
-                <form action="/fud/{{id_companies}}/{{id_branches}}/{{id}}/update-combo-branch" method="POST" id="myForm">
+                <form action="/fud/{{id_companies}}/{{id_branches}}/{{id}}/update-product-branch" method="POST" id="myForm">
+                {{/each}}
+
+                <!---this is for get tha data of the combo and supplies--->
+                {{#each comboFeactures}}
+                    <input type="hidden" value="{{id}}" name="id_comboFeactures">
+                {{/each}}
+                {{#each productFacture}}
+                    <input type="hidden" value="{{id}}" name="id_productFacture">
+                {{/each}}
+
+                {{#each comboFeactures}}
                     <label for=""><i class="fi-icon fi-ss-box"></i> Información adicional del producto</label>
                     <hr>
                     
@@ -41,30 +52,41 @@
                     <!---navbar--->
                     <ul class="nav nav-tabs" id="myTab" role="tablist">
                         <li class="nav-item">
-                            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home"
+                            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home-t" role="tab" aria-controls="home"
                                 aria-selected="true"><i class="fi-icon fi-sr-usd-circle"></i> Precios de venta</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile"
-                                aria-selected="false"><i class="fi-icon fi-ss-apple-whole"></i> Suministros</a>
+                            <a class="nav-link" id="character-tab" data-toggle="tab" href="#character-t" role="tab" aria-controls="character"
+                                aria-selected="false"><i class="fi-icon fi-sr-file-invoice-dollar"></i> Caracteristicas</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#other" role="tab" aria-controls="profile"
+                            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile-t" role="tab" aria-controls="profile"
+                                aria-selected="false"><i class="fi-icon fi-sr-box-alt"></i> Lista de Producto</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="other-tab" data-toggle="tab" href="#other-t" role="tab" aria-controls="other"
                                 aria-selected="false"><i class="fi-icon fi-ss-settings"></i> Otro</a>
                         </li>
                     </ul>
 
                     <!---container navbar--->
                     <div class="tab-content" id="myTabContent">
-                        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                        <div class="tab-pane fade show active" id="home-t" role="tabpanel" aria-labelledby="home-tab">
                             {{>manager/combo/prices}}
                         </div>
                     {{/each}}
-                        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                            {{>manager/combo/supplies}}
-                        </div>
+
+
+                    <div class="tab-pane fade" id="character-t" role="tabpanel" aria-labelledby="character-tab">
+                        {{>products/informationSuppliesForm}}
+                    </div>
+
+                    <div class="tab-pane fade" id="profile-t" role="tabpanel" aria-labelledby="profile-tab">
+                        {{>manager/combo/supplies}}
+                    </div>
+
                     {{#each comboFeactures}}
-                        <div class="tab-pane fade" id="other" role="tabpanel" aria-labelledby="profile-tab">
+                        <div class="tab-pane fade" id="other-t" role="tabpanel" aria-labelledby="other-tab">
                             {{>manager/combo/other}}
                         </div>
                     </div>
@@ -78,6 +100,7 @@
     </div>
 </div>
 <br><br><br>
+{{>updateSelects}}
 
 <script src="https://kit.fontawesome.com/a076d05399.js"></script>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>

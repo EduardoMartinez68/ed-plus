@@ -4,10 +4,9 @@
             <col style="width: 5%;"> <!--image-->
             <col style="width: 25%;"> <!--barcode-->
             <col style="width: 25%;"> <!--name-->
-            <col style="width: 20%;"> <!--description-->
-            <col style="width: 4%;"> <!--existence-->
+            <col style="width: 25%;"> <!--description-->
+            <col style="width: 5%;"> <!--existence-->
             <col style="width: 6%;"> <!--price-->
-            <col style="width: 7%;"> <!--button-->
             <col style="width: 7%;"> <!--button-->
         </colgroup>
         <thead>
@@ -18,7 +17,6 @@
             <th>Description</th>
             <th>Existence</th>
             <th>Price</th>
-            <th></th>
             <th></th>
         </tr>
         </thead>
@@ -37,10 +35,6 @@
                     <td>{{sale_price}}/{{currency_sale}}</td>
                     <td>
                         <button class="btn btn-edit" onclick="edit_inventory('{{id_companies}}','{{id_branches}}','{{id}}','{{img}}','{{barcode}}','{{name}}','{{existence}}','{{sale_unity}}')"><i class="fi-department fi-ss-truck-loading"></i></button>
-                    </td>
-                    <td>
-                        <button class="btn btn-edit" onclick="edit_supplies('{{id_companies}}','{{id_branches}}','{{id}}')"><i class="fi-department fi-sr-pencil"></i></button>
-                        <button class="btn btn-edit" onclick="nextWeb('{{id_companies}}/{{id_branches}}/{{id}}/edit-products-free')"><i class="fi-department fi-sr-pencil"></i></button>
                     </td>
                 </tr>
             {{/each}}

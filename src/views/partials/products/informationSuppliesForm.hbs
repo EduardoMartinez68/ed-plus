@@ -1,0 +1,86 @@
+{{#each productFacture}}
+<!--
+<form action="/fud/{{id_companies}}/{{id_branches}}/{{id}}/update-supplies-branch" method="POST" id="myForm">
+</form>
+--->
+<br>
+<div class="content_box">
+    <div class="content-sales active">
+        <div class="row">
+            <div class="col">
+                <label>Monto de Compra *</label><br>
+                <input type="tex" class="form-control" name="purchase_amount" placeholder="Monto de Compra"
+                    autofocus required value="{{purchase_amount}}">
+            </div>
+            <div class="col">
+                <label>Unidad de Compra</label>
+                <select value="{{purchase_unity}}" name="purchase_unity" class="form-select">
+                    {{>unity/unitOfMeasure}}
+                </select>
+            </div>
+            <div class="col">
+                <label>Precio de Compra *</label><br>
+                <input type="tex" class="form-control" name="purchase_price" placeholder="Precio de Compra" required
+                    value="{{purchase_price}}">
+            </div>
+            <div class="col">
+                <label>Moneda</label>
+                <select value="{{currency_purchase}}" name="currency_purchase" class="form-select">
+                    {{>unity/unitOfMoney}}
+                </select>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col">
+                <label>Monto de Venta *</label><br>
+                <input type="tex" class="form-control" name="sale_amount" placeholder="Monto de Venta" required
+                    value="{{purchase_price}}">
+            </div>
+            <div class="col">
+                <label>Unidad de Venta</label>
+                <select value="{{sale_unity}}" name="sale_unity" class="form-select">
+                    {{>unity/unitOfMeasure}}
+                </select>
+            </div>
+            <div class="col">
+                <label>Precio de Venta *</label><br>
+                <input type="tex" class="form-control" name="sale_price" placeholder="Precio de Venta" required
+                    value="{{sale_price}}">
+            </div>
+            <div class="col">
+                <label>Moneda</label>
+                <select value="{{currency_sale}}" name="currency_sale" class="form-select">
+                    {{>unity/unitOfMoney}}
+                </select>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col">
+                <label>Inventario Máximo</label><br>
+                <input type="tex" class="form-control" name="max_inventory" placeholder="Inventario Máximo"
+                    value="{{max_inventary}}">
+            </div>
+            <div class="col">
+                <label>Inventario Mínimo</label><br>
+                <input type="tex" class="form-control" name="minimum_inventory" placeholder="Inventario Mínimo"
+                    value="{{minimum_inventory}}">
+            </div>
+            <div class="col">
+                <label>Unidad de Medida *</label><br>
+                <select value="{{unit_inventory}}" name="unit_inventory" class="form-select">
+                    {{>unity/unitOfMeasure}}
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <label>Existencia</label><br>
+                <input type="tex" class="form-control" name="existence" placeholder="Existencia" required
+                    value="{{existence}}">
+            </div>
+        </div>
+    </div>
+</div>
+{{/each}}

@@ -163,9 +163,9 @@
                         {{/if}}
                         {{#if user.computer_equipment}}
                             {{#each branchFree}}
-                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/box')">
-                                    <img src="https://cdn-icons-png.flaticon.com/512/3355/3355395.png" alt="Impresoras">
-                                    <span>Impresoras</span>
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/inventory')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/2897/2897763.png" alt="Impresoras">
+                                    <span>Inventario</span>
                                 </div>
                             {{/each}}
                         {{/if}}
@@ -428,7 +428,14 @@
                                 </div>
                             {{/each}}
                         {{/each}}
-
+                        {{#if user.computer_equipment}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/box')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/3355/3355395.png" alt="Impresoras">
+                                    <span>Impresoras</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
                         {{#if user.edit_branch}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('{{id}}/{{id_companies}}/edit-branch-free')">
@@ -437,12 +444,14 @@
                                 </div>
                             {{/each}}
                         {{/if}}
+
                         {{#each branchFree}}
                             <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/prices')">
                                 <img src="https://cdn-icons-png.flaticon.com/512/5560/5560586.png" alt="Editar Sucursal">
                                 <span>Membresias</span>
                             </div>
                         {{/each}}
+
                         {{#if user.settings}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/options')">

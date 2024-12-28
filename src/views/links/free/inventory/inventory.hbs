@@ -1,0 +1,78 @@
+<link rel="stylesheet" href="/css/manager/supplies_products.css">
+<br><br>
+<div class="container">
+    {{#each branchFree}}
+    <div class="row">
+        <div class="col-8">
+            <input type="text" class="form-control" placeholder="Buscar código de barras..." id="search">
+        </div>
+        <div class="col">
+            <div class="col">
+                <button class="btn btn-confirm-message" onclick="nextWeb('{{id_companies}}/{{id}}/add-products-free')">Agregar producto +</button>
+            </div>
+        </div>
+    </div>
+    {{/each}}
+</div>
+<div class="container mt-4">
+  <div class="row">
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+      <li class="nav-item">
+        <a class="nav-link active" id="lista-insumos-tab" data-toggle="tab" href="#lista-insumos" role="tab" aria-controls="lista-insumos" aria-selected="true">Lista de productos</a>
+      </li>
+    </ul>
+    <!-- Contenido de las pestañas -->
+    <div class="tab-content" id="myTabContent">
+      <div class="tab-pane fade show active" id="lista-insumos" role="tabpanel" aria-labelledby="lista-insumos-tab">
+        {{>manager/products/table}}
+      </div>
+
+
+
+      
+    </div>
+  </div>
+</div>
+<br><br><br>
+<script>
+  async function show_message_edit(id_supplies,id_company,id_branch,img,barcode,nameDepartment,existence,purchaseAmount){
+      //we will to get the data of the new department
+      const data=await edit_supplies_branch('Edita '+nameDepartment,img,barcode,nameDepartment,existence,purchaseAmount);
+      if(data){
+          //get the data of the from 
+          var newExistence = parseFloat(data[0]);
+          if(newExistence>0){
+              window.location.href = `/links/${id_company}/${id_branch}/${id_supplies}/${newExistence}/update-supplies-branch`;
+          }
+      }
+  }
+</script>
+<script src="/js/manager/addEmployee.js"></script>
+<script src="/js/store/other.js"></script>
+<script>
+    const tabs = document.querySelectorAll('.tab_btn');
+    const all_content = document.querySelectorAll('.content-sales');
+
+    tabs.forEach((tab, index) => {
+        tab.addEventListener('click', (e) => {
+            tabs.forEach(tab => { tab.classList.remove('active') });
+            tab.classList.add('active');
+
+            var line = document.querySelector('.line');
+            line.style.width = e.target.offsetWidth + "px";
+            line.style.left = e.target.offsetLeft + "px";
+
+            all_content.forEach(content => {
+                content.classList.remove('active');
+            })
+            all_content[index].classList.add('active');
+        })
+    })
+</script>
+<script src="/js/search.js"></script>
+
+
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
