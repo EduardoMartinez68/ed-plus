@@ -240,7 +240,7 @@
         /**/
 
         /* Contenedor principal de las apps */
-        .app-container {
+        .app-container-pricing {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 40px;
@@ -249,7 +249,7 @@
         }
 
         /* Cada ítem de la app */
-        .app-item {
+        .app-item-pricing {
             display: flex;
             flex-direction: column; /* Apilar los elementos de arriba hacia abajo */
             justify-content: center; /* Centrar el contenido verticalmente */
@@ -263,17 +263,21 @@
             height: 25px; /* Ajusta el tamaño del contenedor según lo necesario */
         }
 
-        .app-item img {
+        .app-item-pricing img {
             width: 150%;
             height: 150%;
+
+            width: 25px;
+            height: 25px;
+
             margin-bottom: 10px; /* Espacio entre la imagen y el texto */
             transform: translateY(20px)
         }
 
-        .app-item p {
+        .app-item-pricing p {
             font-size: 70%;
             font-weight: bold;
-            transform: translateY(22px)
+            transform: translateY(15px)
         }
 
         .app-title-business{
@@ -289,10 +293,10 @@
 
         /* En dispositivos muy pequeños, 1 columna */
         @media (max-width: 480px) {
-            .app-container {
+            .app-container-pricing {
                 grid-template-columns: 1fr;
             }
-            .app-container {
+            .app-container-pricing {
                 grid-template-columns: repeat(2, 1fr);
             }
         }
@@ -338,6 +342,36 @@
             background-color: #0C87F4; /* Color más oscuro en hover */
             color: white; /* Texto blanco en hover */
         }
+        /* Estilos para pantallas pequeñas */
+        @media (max-width: 768px) {
+            .message-box {
+                flex-direction: column; /* Pone los elementos en columna */
+                height: auto; /* Ajusta la altura automáticamente */
+                text-align: center; /* Centra el texto */
+            }
+
+            .message-text {
+                font-size: 18px; /* Reduce el tamaño del texto */
+                max-width: 100%; /* Asegura que el texto no se desborde */
+                margin-bottom: 10px; /* Espacio debajo del texto */
+            }
+
+            .message-button {
+                width: 80%; /* Hace el botón más grande en dispositivos pequeños */
+                margin-top: 10px; /* Da espacio entre el texto y el botón */
+            }
+        }
+
+        /* Estilos para dispositivos más pequeños como celulares */
+        @media (max-width: 480px) {
+            .message-text {
+                font-size: 16px; /* Ajuste adicional para pantallas más pequeñas */
+            }
+
+            .message-button {
+                font-size: 14px; /* Reduce el tamaño del texto del botón */
+            }
+        }
     </style>
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-brands/css/uicons-brands.css'>
 </head>
@@ -372,34 +406,34 @@
                     <br>
                     <center><label for="" class="label-app">Apps del servicio</label></center>
                     <hr>
-                    <div class="app-container">
-                        <div class="app-item">
+                    <div class="app-container-pricing">
+                        <div class="app-item-pricing">
                             <img src="https://cdn-icons-png.flaticon.com/512/6712/6712868.png" alt="Pedidos">
                             <p>POS</p>
                         </div>
-                        <div class="app-item">
+                        <div class="app-item-pricing">
                             <img src="https://cdn-icons-png.flaticon.com/512/679/679922.png" alt="Empleados">
                             <p>Productos</p>
                         </div>
-                        <div class="app-item">
+                        <div class="app-item-pricing">
                             <img src="https://cdn-icons-png.flaticon.com/512/2897/2897763.png" alt="Inventario">
                             <p>Inventario</p>
                         </div>
                         
-                        <div class="app-item">
+                        <div class="app-item-pricing">
                             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYHZFEDUUqcCN7usAKazDn5Wm0lOdux06U3g&s" alt="Reportes">
                             <p>Provedores</p>
                         </div>
 
-                        <div class="app-item">
+                        <div class="app-item-pricing">
                             <img src="https://cdn-icons-png.flaticon.com/512/6073/6073874.png" alt="Empleados">
                             <p>Empleados</p>
                         </div>
-                        <div class="app-item">
+                        <div class="app-item-pricing">
                             <img src="https://cdn-icons-png.flaticon.com/512/11815/11815356.png" alt="Empleados">
                             <p>Clientes</p>
                         </div>
-                        <div class="app-item">
+                        <div class="app-item-pricing">
                             <img src="https://cdn-icons-png.flaticon.com/512/6784/6784466.png" alt="Empleados">
                             <p>Reportes</p>
                         </div>
@@ -432,54 +466,54 @@
                     <br>
                     <center><label for="" class="label-app app-title-business">Apps del servicio</label></center>
                     <hr>
-                    <div class="app-container">
-                        <div class="app-item">
+                    <div class="app-container-pricing">
+                        <div class="app-item-pricing">
                             <img src="https://cdn-icons-png.flaticon.com/512/6712/6712868.png" alt="Pedidos">
                             <p>POS</p>
                         </div>
-                        <div class="app-item">
+                        <div class="app-item-pricing">
                             <img src="https://cdn-icons-png.flaticon.com/512/679/679922.png" alt="Empleados">
                             <p>Productos</p>
                         </div>
-                        <div class="app-item">
+                        <div class="app-item-pricing">
                             <img src="https://cdn-icons-png.flaticon.com/512/2897/2897763.png" alt="Inventario">
                             <p>Inventario</p>
                         </div>
 
-                        <div class="app-item">
+                        <div class="app-item-pricing">
                             <img src="https://cdn-icons-png.flaticon.com/512/1147/1147832.png" alt="Empleados">
                             <p>Insumos</p>
                         </div>
-                        <div class="app-item">
+                        <div class="app-item-pricing">
                             <img src="https://cdn-icons-png.flaticon.com/128/6626/6626465.png" alt="Empleados">
                             <p>Combos</p>
                         </div>
-                        <div class="app-item">
+                        <div class="app-item-pricing">
                             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYHZFEDUUqcCN7usAKazDn5Wm0lOdux06U3g&s" alt="Reportes">
                             <p>Provedores</p>
                         </div>
 
-                        <div class="app-item">
+                        <div class="app-item-pricing">
                             <img src="https://cdn-icons-png.flaticon.com/512/6073/6073874.png" alt="Empleados">
                             <p>Empleados</p>
                         </div>
-                        <div class="app-item">
+                        <div class="app-item-pricing">
                             <img src="https://cdn-icons-png.flaticon.com/512/11815/11815356.png" alt="Empleados">
                             <p>Clientes</p>
                         </div>
-                        <div class="app-item">
+                        <div class="app-item-pricing">
                             <img src="https://cdn-icons-png.flaticon.com/512/6784/6784466.png" alt="Empleados">
                             <p>Reportes</p>
                         </div>
-                        <div class="app-item">
+                        <div class="app-item-pricing">
                             <img src="https://cdn-icons-png.flaticon.com/512/3176/3176363.png" alt="Empleados">
                             <p>Ecommerce</p>
                         </div>
-                        <div class="app-item">
+                        <div class="app-item-pricing">
                             <img src="https://cdn-icons-png.flaticon.com/512/6165/6165633.png" alt="Empleados">
                             <p>Anuncios</p>
                         </div>
-                        <div class="app-item">
+                        <div class="app-item-pricing">
                             <img src="https://cdn-icons-png.flaticon.com/512/1198/1198348.png" alt="Empleados">
                             <p>Franquicias</p>
                         </div>
@@ -506,33 +540,33 @@
                     <br>
                     <center><label for="" class="label-app">Apps del servicio</label></center>
                     <hr>
-                    <div class="app-container">
-                        <div class="app-item">
+                    <div class="app-container-pricing">
+                        <div class="app-item-pricing">
                             <img src="https://cdn-icons-png.flaticon.com/512/6712/6712868.png" alt="Pedidos">
                             <p>POS</p>
                         </div>
-                        <div class="app-item">
+                        <div class="app-item-pricing">
                             <img src="https://cdn-icons-png.flaticon.com/512/1147/1147832.png" alt="Empleados">
                             <p>Insumos</p>
                         </div>
-                        <div class="app-item">
+                        <div class="app-item-pricing">
                             <img src="https://cdn-icons-png.flaticon.com/128/6626/6626465.png" alt="Empleados">
                             <p>Combos</p>
                         </div>
-                        <div class="app-item">
+                        <div class="app-item-pricing">
                             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYHZFEDUUqcCN7usAKazDn5Wm0lOdux06U3g&s" alt="Reportes">
                             <p>Provedores</p>
                         </div>
 
-                        <div class="app-item">
+                        <div class="app-item-pricing">
                             <img src="https://cdn-icons-png.flaticon.com/512/6073/6073874.png" alt="Empleados">
                             <p>Empleados</p>
                         </div>
-                        <div class="app-item">
+                        <div class="app-item-pricing">
                             <img src="https://cdn-icons-png.flaticon.com/512/11815/11815356.png" alt="Empleados">
                             <p>Clientes</p>
                         </div>
-                        <div class="app-item">
+                        <div class="app-item-pricing">
                             <img src="https://cdn-icons-png.flaticon.com/512/6784/6784466.png" alt="Empleados">
                             <p>Reportes</p>
                         </div>

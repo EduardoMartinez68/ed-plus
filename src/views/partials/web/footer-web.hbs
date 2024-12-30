@@ -1,0 +1,116 @@
+<style>
+.footer-web {
+    background-color: #252733; /* Azul de la empresa */
+    color: white;
+    padding: 40px 20px;
+    font-family: Arial, sans-serif;
+    text-align: left;
+}
+
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footer-logo {
+    flex: 1;
+}
+
+.footer-logo img {
+    max-width: 150px;
+    margin-bottom: 15px;
+}
+
+.footer-logo p {
+    font-size: 16px;
+    line-height: 1.6;
+    max-width: 90%;
+}
+
+.footer-links {
+    flex: 2;
+    display: flex;
+    justify-content: space-between;
+}
+
+.footer-column {
+    width: 45%;
+}
+
+.footer-column h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.footer-column ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-column ul li {
+    margin-bottom: 8px;
+}
+
+.footer-column ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.footer-column ul li a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .footer-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .footer-logo,
+    .footer-links {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .footer-column {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+}
+
+</style>
+<footer class="footer-web">
+    <div class="footer-container">
+        <div class="footer-logo">
+            <img src="/img/icon-home.webp">
+            <p>Llevamos el desarrollo del software a un nuevo nivel. Tecnología con un toque de magia ❤️</p>
+        </div>
+
+        <div class="footer-links">
+            <div class="footer-column">
+                <h3>Sobre nosotros</h3>
+                <ul>
+                    <li><a href="#">Nuestra empresa</a></li>
+                    <li><a href="#">Contáctanos</a></li>
+                    <li><a href="/links/privacy" target="_blank">Legal • Privacidad</a></li>
+                    <li><a href="/links/terms_conditions" target="_blank">Seguridad</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3>Contacto</h3>
+                <ul>
+                    <li><strong>Teléfono:</strong>{{>web/phone}}</li>
+                    <li><strong>Horario:</strong> Lunes a sábados de 07:00 a. m. a 05:00 p. m.</li>
+                    <li><strong>Email:</strong> <a href="mailto:hola@fu.do">{{>web/email}}</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <br><br>
+    <center><label for="" style="color: white;">{ED} Software Technology</label></center>
+</footer>
