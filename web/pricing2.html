@@ -90,7 +90,7 @@
         }
 
         .pricing-plan h2 {
-            color: #4356FE;
+            color: #0066CC;
             font-size: 28px;
             margin-bottom: 10px;
         }
@@ -107,7 +107,7 @@
             display: inline-block;
             padding: 10px 20px;
             border-radius: 30px;
-            background: linear-gradient(90deg, #4356FE, #6C85FF);
+            background: linear-gradient(90deg, #3A88D8, #0066CC);
             color: white;
         }
 
@@ -152,7 +152,7 @@
             font-size: 14px;
         }
 
-        .promotion {
+        .promotion, .promotion-month{
             font-size: 14px;
             color: #555;
             margin-top: 10px;
@@ -182,13 +182,15 @@
             color: #fff;
         }
 
-        .pricing-plan.popular .promotion {
+        .pricing-plan.popular .promotion{
             color: #FFDD00;
         }
-
+        .pricing-plan.popular .promotion-month{
+            color: white;
+        }
         /* Mejora de los botones "Comprar" */
         .pricing-plan .buy-btn {
-            background-color: #4356FE;
+            background: linear-gradient(90deg, #3A88D8, #0066CC);
             color: white;
             font-size: 18px;
             padding: 15px 30px;
@@ -204,17 +206,17 @@
         }
 
         .pricing-plan .buy-btn:hover {
-            background-color: #1F44A8;
+            background: linear-gradient(90deg, #3A88D8, #0066CC);
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
         }
 
         .pricing-plan .buy-btn:active {
-            background-color: #1A3E99;
+            background: linear-gradient(90deg, #3A88D8, #0066CC);
         }
 
         .pricing-plan .buy-btn:focus {
             outline: none;
-            box-shadow: 0 0 8px rgba(67, 86, 254, 0.8);
+            background: linear-gradient(90deg, #3A88D8, #0066CC);
         }
 
         .label-app{
@@ -279,7 +281,50 @@
                 grid-template-columns: repeat(2, 1fr);
             }
         }
+
+
+
+        /**/
+        .message-box {
+            background-color: #0066CC; /* Color azul de la empresa */
+            color: white; /* Texto blanco */
+            border-radius: 32px;
+            padding: 20px;
+            max-width: 100%;
+            height: 120px;
+            margin: 20px auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .message-text {
+            font-size: 32px;
+            margin: 0;
+            text-align: left;
+            max-width: 80%; /* Limitar ancho del texto */
+            font-weight: bold;
+        }
+
+        .message-button {
+            background-color: #0C87F4;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            font-size: 16px;
+            text-decoration: none;
+            border-radius: 15px;
+            width: 20%;
+            transition: background-color 0.3s ease;
+        }
+
+        .message-button:hover {
+            background-color: #0C87F4; /* Color más oscuro en hover */
+            color: white; /* Texto blanco en hover */
+        }
     </style>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-brands/css/uicons-brands.css'>
 </head>
 <body>
     <div class="container">
@@ -292,11 +337,13 @@
         <div class="pricing-table">
             <div class="pricing-plan">
                 <br>
-                <h2>Mini</h2>
+                <h2>Tiendas</h2>
                 <p class="price">$299 MXN/mes</p>
-                <p class="promotion" style="display: none;">$3,000 MXN/Anual</p>
+                <p class="promotion" style="display: none;">$3,000 MXN/Anual + IVA</p>
+                <p class="promotion-month">$299 MXN/mes + IVA</p>
                 <ul class="features">
                     <li><span>1 empresa</span></li>
+                    <li><span>1 Sucursal</span></li>
                     <li><span>1,000 productos</span></li>
                     <li class="danger"><span>insumos</span></li>
                     <li class="danger"><span>combos/Platillos</span></li>
@@ -353,77 +400,19 @@
                 <div class="highlight">Más popular</div>
                 <h2>Business</h2>
                 <p class="price">$399 MXN/mes</p>
-                <p class="promotion" style="display: none;">$4,020 MXN/Anual</p>
+                <p class="promotion" style="display: none;">$4,020 MXN/Anual + IVA</p>
+                <p class="promotion-month">$399 MXN/mes + IVA</p>
                 <ul class="features">
                     <li><span>1 empresa</span></li>
+                    <li><span>Sucursales ilimitadas</span></li>
                     <li><span>3,000 productos</span></li>
-                    <li><span>1,000 insumos</span></li>
-                    <li><span>100 combos/Platillos</span></li>
-                    <li><span id="pack-2">6 dispositivos</span></li>
-                    <li><span>Usuarios ilimitados</span></li>
-                    <li><span>Soporte técnico</span></li>
-                    <br>
-                    <center><label for="" class="label-app app-title-business">Apps del servicio</label></center>
-                    <hr>
-                    <div class="app-container">
-                        <div class="app-item">
-                            <img src="https://cdn-icons-png.flaticon.com/512/6712/6712868.png" alt="Pedidos">
-                            <p class="app-title-business">POS</p>
-                        </div>
-                        <div class="app-item">
-                            <img src="https://cdn-icons-png.flaticon.com/512/679/679922.png" alt="Empleados">
-                            <p class="app-title-business">Productos</p>
-                        </div>
-                        <div class="app-item">
-                            <img src="https://cdn-icons-png.flaticon.com/512/2897/2897763.png" alt="Inventario">
-                            <p class="app-title-business">Inventario</p>
-                        </div>
-
-                        <div class="app-item">
-                            <img src="https://cdn-icons-png.flaticon.com/512/1147/1147832.png" alt="Empleados">
-                            <p class="app-title-business">Insumos</p>
-                        </div>
-                        <div class="app-item">
-                            <img src="https://cdn-icons-png.flaticon.com/128/6626/6626465.png" alt="Empleados">
-                            <p class="app-title-business">Combos</p>
-                        </div>
-                        <div class="app-item">
-                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYHZFEDUUqcCN7usAKazDn5Wm0lOdux06U3g&s" alt="Reportes">
-                            <p class="app-title-business">Provedores</p>
-                        </div>
-
-                        <div class="app-item">
-                            <img src="https://cdn-icons-png.flaticon.com/512/6073/6073874.png" alt="Empleados">
-                            <p class="app-title-business">Empleados</p>
-                        </div>
-                        <div class="app-item">
-                            <img src="https://cdn-icons-png.flaticon.com/512/11815/11815356.png" alt="Empleados">
-                            <p class="app-title-business">Clientes</p>
-                        </div>
-                        <div class="app-item">
-                            <img src="https://cdn-icons-png.flaticon.com/512/6784/6784466.png" alt="Empleados">
-                            <p class="app-title-business">Reportes</p>
-                        </div>
-                    </div>
-                </ul>
-                <button class="buy-btn">Comprar</button>
-            </div>
-
-            <div class="pricing-plan">
-                <br>
-                <h2>Pro</h2>
-                <p class="price">$699/mes</p>
-                <p class="promotion" style="display: none;">$7,044 MXN/Anual</p>
-                <ul class="features">
-                    <li><span>1 empresa</span></li>
-                    <li><span>15,000 productos</span></li>
                     <li><span>3,000 insumos</span></li>
                     <li><span>300 combos/Platillos</span></li>
                     <li><span id="pack-3">8 dispositivos</span></li>
                     <li><span>Usuarios ilimitados</span></li>
                     <li><span>Soporte técnico</span></li>
                     <br>
-                    <center><label for="" class="label-app">Apps del servicio</label></center>
+                    <center><label for="" class="label-app app-title-business">Apps del servicio</label></center>
                     <hr>
                     <div class="app-container">
                         <div class="app-item">
@@ -472,6 +461,63 @@
                             <img src="https://cdn-icons-png.flaticon.com/512/6165/6165633.png" alt="Empleados">
                             <p>Anuncios</p>
                         </div>
+                        <div class="app-item">
+                            <img src="https://cdn-icons-png.flaticon.com/512/1198/1198348.png" alt="Empleados">
+                            <p>Franquicias</p>
+                        </div>
+                    </div>
+                </ul>
+                <button class="buy-btn">Comprar</button>
+            </div>
+
+            <div class="pricing-plan">
+                <br>
+                <h2>Restaurantes</h2>
+                <p class="price">$360/mes</p>
+                <p class="promotion" style="display: none;">$3,528 MXN/Anual + IVA</p>
+                <p class="promotion-month">$369 MXN/mes + IVA</p>
+                <ul class="features">
+                    <li><span>1 empresa</span></li>
+                    <li><span>1 Sucursal</span></li>
+                    <li class="danger"><span>productos</span></li>
+                    <li><span>1,000 insumos</span></li>
+                    <li><span>100 combos/Platillos</span></li>
+                    <li><span id="pack-2">4 dispositivos</span></li>
+                    <li><span>Usuarios ilimitados</span></li>
+                    <li><span>Soporte técnico</span></li>
+                    <br>
+                    <center><label for="" class="label-app">Apps del servicio</label></center>
+                    <hr>
+                    <div class="app-container">
+                        <div class="app-item">
+                            <img src="https://cdn-icons-png.flaticon.com/512/6712/6712868.png" alt="Pedidos">
+                            <p>POS</p>
+                        </div>
+                        <div class="app-item">
+                            <img src="https://cdn-icons-png.flaticon.com/512/1147/1147832.png" alt="Empleados">
+                            <p>Insumos</p>
+                        </div>
+                        <div class="app-item">
+                            <img src="https://cdn-icons-png.flaticon.com/128/6626/6626465.png" alt="Empleados">
+                            <p>Combos</p>
+                        </div>
+                        <div class="app-item">
+                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYHZFEDUUqcCN7usAKazDn5Wm0lOdux06U3g&s" alt="Reportes">
+                            <p>Provedores</p>
+                        </div>
+
+                        <div class="app-item">
+                            <img src="https://cdn-icons-png.flaticon.com/512/6073/6073874.png" alt="Empleados">
+                            <p>Empleados</p>
+                        </div>
+                        <div class="app-item">
+                            <img src="https://cdn-icons-png.flaticon.com/512/11815/11815356.png" alt="Empleados">
+                            <p>Clientes</p>
+                        </div>
+                        <div class="app-item">
+                            <img src="https://cdn-icons-png.flaticon.com/512/6784/6784466.png" alt="Empleados">
+                            <p>Reportes</p>
+                        </div>
                     </div>
                 </ul>
                 <button class="buy-btn">Comprar</button>
@@ -479,12 +525,20 @@
         </div>
         <br><br>
         <center><label for="">* Los precios no incluyen impuestos. Los impuestos se calculan en el siguiente paso.</label></center>
+
+
+
+        <br><br><br>
+        <div class="message-box">
+            <p class="message-text">¿Necesitas un paquete personalizado?, contáctanos</p>
+            <a href="mailto:contacto@tuempresa.com" class="message-button"><i class="fi fi-brands-whatsapp"></i> +52 444 304 2129</a>
+        </div>
     </div>
 
     <script>
         function togglePricing() {
-            const monthlyPrices = ["$299 MXN", "$399 MXN", "$699 MXN"];
-            const yearlyPrices = ["$250 MXN", "$335 MXN", "$587 MXN"];
+            const monthlyPrices = ["$299 MXN", "$399 MXN", "$350 MXN"];
+            const yearlyPrices = ["$250 MXN", "$335 MXN", "$294 MXN"];
 
             const prices = document.getElementById('pricingToggle').checked ? yearlyPrices : monthlyPrices;
 
@@ -497,13 +551,18 @@
                 promo.style.display = document.getElementById('pricingToggle').checked ? 'block' : 'none';
             });
 
+            const promotionsMonth = document.querySelectorAll('.promotion-month');
+            promotionsMonth.forEach(promo => {
+                promo.style.display = document.getElementById('pricingToggle').checked ? 'none' : 'block';
+            });
+
             const discountText = document.querySelector('.discount-text');
             discountText.style.opacity = document.getElementById('pricingToggle').checked ? '1' : '0.5';
 
 
             ///change the user
             document.getElementById('pack-1').textContent = document.getElementById('pack-1').textContent === "3 dispositivos" ? "4 dispositivos" : "3 dispositivos";
-            document.getElementById('pack-2').textContent = document.getElementById('pack-2').textContent === "5 dispositivos" ? "6 dispositivos" : "5 dispositivos";
+            document.getElementById('pack-2').textContent = document.getElementById('pack-2').textContent === "3 dispositivos" ? "4 dispositivos" : "3 dispositivos";
             document.getElementById('pack-3').textContent = document.getElementById('pack-3').textContent === "8 dispositivos" ? "7 dispositivos" : "8 dispositivos";
         }
 
