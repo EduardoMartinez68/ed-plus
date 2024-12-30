@@ -1,0 +1,85 @@
+<style>
+    .img-login-ad{
+        width: 100%;
+        height: auto;
+    }
+    .login-button {
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .login-button:hover {
+        background-color: #45a049;
+    }
+
+
+    .form-group2 {
+        display: flex;
+        flex-direction: column; /* Alinea el contenido de arriba a abajo */
+        align-items: flex-start; /* Alinea los elementos al inicio (izquierda) */
+        margin-bottom: 20px;
+    }
+    .form-group2 label {
+        display: block;
+        margin-bottom: 5px;
+        color: #555;
+    }
+    .form-group2 input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 16px;
+        transition: border-color 0.3s ease;
+    }
+    .form-group2 input:focus {
+        border-color: #007bff;
+        outline: none;
+    }
+</style>
+
+<div class="card p-3" style="box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5)">
+    <br>
+    <label for="">🚀 Ingresa tus datos para empezar 🚀</label>
+    <hr>
+    <form action="/fud/signup" method="POST">
+        <br>
+        <div class="form-group2">
+            <label for="email"><i class="fi-session fi-rr-envelope"></i> Email *</label>
+            <input type="email" id="email" name="email" placeholder="Ingresa tu email" required maxlength="100">
+        </div>
+        <div class="form-group2">
+            <label for="business-name"><i class="fi-session fi-rr-store-alt"></i> Nombre del Negocio *</label>
+            <input type="text" id="business-name" name="businessName" placeholder="Ingresa el nombre del negocio"
+                required maxlength="100">
+        </div>
+        <div class="form-group2">
+            <label for="phone"><i class="fi-session fi-rr-smartphone"></i> Teléfono *</label>
+            <input type="tel" id="phone" name="phone" placeholder="Ingresa tu teléfono" required maxlength="20">
+        </div>
+        <hr>
+
+        <div class="form-group">
+            <div class="button-container">
+                <button class="btn" id="create-account-btn">Prueba 15 días gratis</button>
+            </div>
+            <br>
+            <center>
+                <label class="link-session" for="acceptTerms">Read our</label><a class="link-singUp"
+                    href="terms_conditions" target="_blank">terminition and
+                    conditions</a>
+                <br>
+                <input type="checkbox" id="acceptTerms" name="acceptTerms"><label class="link-session">Acepto las
+                    condiciones del Servicio y las Politicas de privacidad de Füd</label>
+                <p style="color: red;">* Debes aceptar las Condiciones y Políticas.</p>
+                <br><br>
+            </center>
+        </div>
+    </form>
+</div>

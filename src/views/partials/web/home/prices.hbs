@@ -1,0 +1,72 @@
+<style>
+/* Estilos para el contenedor de las pestañas */
+.tabs-container {
+    display: flex;
+    margin-bottom: 20px;
+    width: 25%;
+}
+
+/* Botones de las pestañas */
+.tab-button {
+    flex: 1;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    background-color: gray; /* Color para pestañas no activas */
+    transition: background-color 0.3s ease;
+}
+
+.tab-button.active {
+    background-color: #0066CC; /* Color para la pestaña activa */
+}
+
+/* Contenido de las pestañas */
+.tab-content {
+    display: none; /* Ocultar por defecto */
+}
+
+.tab-content.active {
+    display: block; /* Mostrar solo el contenido activo */
+}
+
+</style>
+<div class="container">
+    <center>
+        <div class="tabs-container">
+            <button class="tab-button active" onclick="showTab('plans')">Planes</button>
+            <button class="tab-button" onclick="showTab('modules')">Módulos</button>
+        </div>
+    </center>
+</div>
+
+<div id="plans" class="tab-content active">
+    {{>web/home/pricing}}
+</div>
+
+<div id="modules" class="tab-content">
+    {{>web/home/module}}
+</div>
+
+<br><br><br>
+
+
+<script>
+    function showTab(tabId) {
+        // Ocultar todos los contenidos de las pestañas
+        const tabContents = document.querySelectorAll('.tab-content');
+        tabContents.forEach(content => content.classList.remove('active'));
+
+        // Quitar la clase "active" de todos los botones
+        const tabButtons = document.querySelectorAll('.tab-button');
+        tabButtons.forEach(button => button.classList.remove('active'));
+
+        // Mostrar el contenido correspondiente y activar el botón
+        document.getElementById(tabId).classList.add('active');
+        document.querySelector(`.tab-button[onclick="showTab('${tabId}')"]`).classList.add('active');
+    }
+</script>
+
+

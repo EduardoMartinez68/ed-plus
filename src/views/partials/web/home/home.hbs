@@ -1,0 +1,52 @@
+    <style>
+        .hero-section {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(90deg, #3b81c7, #0066CC);
+            color: white; /* Texto blanco */
+            padding: 50px 20px;
+            height: 100vh; /* Ocupa toda la pantalla */
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-title {
+            font-size: 46px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            max-width: 800px; /* Limitar el ancho del texto */
+            z-index: 10;
+        }
+
+        .hero-image {
+            height: 80%;
+            width: auto; /* Imagen principal */
+            border-radius: 15px;
+            z-index: 10;
+        }
+
+        .floating-image {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            animation: float-random 6s infinite ease-in-out;
+        }
+
+        /* Estilo para imágenes interiores */
+        .inner-image {
+            width: 60px;
+            height: 60px;
+        }
+    </style>
+
+
+
+
+
+<div class="hero-section">
+    <h1 class="hero-title">La solución más práctica para cualquier tipo de negocio! 🚀</h1>
+    <img src="/img/web/home.webp" alt="La solución para negocios" class="hero-image">
+</div>
