@@ -1,0 +1,169 @@
+<style>
+.module-card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    text-align: center;
+    transition: transform 0.3s ease;
+    margin: 20px;
+}
+
+.module-card:hover {
+    transform: translateY(-10px);
+}
+
+.module-title {
+    font-size: 22px;
+    font-weight: bold;
+    color: black; /* Color azul de la empresa */
+    margin-bottom: 10px;
+}
+
+.module-title,
+.module-description {
+    text-align: left; /* Alinea ambos elementos a la izquierda */
+}
+
+.module-description {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.module-features {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 20px;
+}
+
+.module-features li {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 8px;
+    text-align: left;
+}
+
+.module-price {
+    text-align: right; /* Esto moverá el contenido dentro del .module-price al lado derecho */
+}
+
+.module-price span {
+    font-size: 20px;
+    font-weight: bold;
+    color: #0066CC;
+    display: block;
+    transform: translateY(-60px);
+}
+
+.module-button {
+    background-color: #0066CC;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-left: 0;
+}
+
+.module-button:hover {
+    background-color: #004a99;
+}
+.container-modules{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 10px;
+    width: 80%;
+}
+
+/* Hacer el diseño responsive: en pantallas más pequeñas, 2 columnas */
+@media (max-width: 768px) {
+    .container-modules {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* En dispositivos muy pequeños, 1 columna */
+@media (max-width: 480px) {
+    .container-modules {
+        grid-template-columns: 1fr;
+    }
+    .container-modules {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+</style>
+
+<div class="container-modules">
+    <div class="module-card">
+        <h3 class="module-title">Dispositivos Extra</h3>
+        <p class="module-description">Centraliza tus envíos a domicilio.</p>
+        <hr>
+        <div class="module-price">
+            <span>$ 200 /mes</span>
+        </div>
+        
+        <ul class="module-features">
+            <li>✔️ Dispositivos Extra para tu empresa.</li>
+            <li>✔️ Acceso a todas las Apps de tu sucursal.</li>
+            <li>✔️ Acceso para cualquier usuario.</li>
+        </ul>
+    </div>
+
+
+    <div class="module-card">
+        <h3 class="module-title">Monitor de Cocina (KDS)</h3>
+        <p class="module-description">Gestiona comandas digitales en tu cocina.</p>
+        <hr>
+        <div class="module-price">
+            <span>$ 200 /mes</span>
+        </div>
+        
+        <ul class="module-features">
+            <li>✔️ Comandas 100% digitales.</li>
+            <li>✔️ Configuración de tiempos de preparación.</li>
+            <li>✔️ Alertas sonoras en tiempo real.</li>
+            <li>✔️ Disponible para múltiples dispositivos.</li>
+            <li>✔️ Aviso al camarero de orden lista para entregar.</li>
+        </ul>
+    </div>
+
+    <div class="module-card">
+        <h3 class="module-title">Monitor de Cocina (KDS)</h3>
+        <p class="module-description">Gestiona comandas digitales en tu cocina.</p>
+        <hr>
+        <div class="module-price">
+            <span>$ 100 /mes</span>
+        </div>
+        
+        <ul class="module-features">
+            <li>✔️ Ventas en mesas.</li>
+            <li>✔️ Mapa de salas y mesas en la web y en la App Móvil.</li>
+            <li>✔️ Asignación de ventas a meseros.</li>
+            <li>✔️ Traslado de consumos de una mesa a otra.</li>
+            <li>✔️ Estadísticas de mesas con más ventas.</li>
+        </ul>
+    </div>
+
+    <div class="module-card">
+        <h3 class="module-title">Facturación Electrónica</h3>
+        <p class="module-description">Emite documentos fiscales y simplifica tu facturación.</p>
+        <hr>
+        <div class="module-price">
+            <span>$ 100 /mes</span>
+        </div>
+        
+        <ul class="module-features">
+            <li>✔️ Emisión de facturas electrónicas CFDI 4.0.</li>
+            <li>✔️ Portal de Autofacturación para tus clientes.</li>
+            <li>✔️ Acceso rápido a la documentación.</li>
+            <li>✔️ Identificación de ventas timbradas.</li>
+            <li>✔️ Cumplimiento de las normas del SAT.</li>
+        </ul>
+    </div>
+</div>
