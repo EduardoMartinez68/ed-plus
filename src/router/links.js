@@ -60,7 +60,7 @@ router.get('/terms-and-conditions', (req, res) => {
 })
 
 router.get('/prices', isNotLoggedIn, (req, res) => {
-    res.render(companyName + '/web/prices');
+    res.render('links/web/prices');
 })
 
 router.get('/prices2', (req, res) => {
@@ -120,7 +120,8 @@ router.get('/other', isLoggedIn, (req, res) => {
 })
 
 router.get('/login-web', (req, res) => {
-    res.render(companyName + '/web/loginAd');
+    //res.render(companyName + '/web/loginAd');
+    res.render('links/web/prices');
 })
 
 router.get('/recipes', isLoggedIn, (req, res) => {

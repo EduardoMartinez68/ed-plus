@@ -1,0 +1,116 @@
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+
+    
+  <div class="container">
+    <a class="navbar-brand" href="#">Mi Empresa</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link text-white" href="#my-pricing">Precios</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link btn btn-info text-white" href="/links/login">Iniciar sesión</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link btn btn-bright" href="#create-my-user">Crear cuenta gratis</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+</nav>
+<style>
+/* Navbar fijo al hacer scroll */
+.navbar {
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  transition: all 0.3s ease;
+  padding: 38px 20px;
+  background-color: #06294A;
+}
+
+.navbar-nav .nav-item {
+  margin-right: 20px;
+}
+
+.navbar-nav .nav-link {
+  font-size: 1rem;
+  padding: 12px 25px;
+  border-radius: 25px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  width: 200px;
+}
+
+/* Botón "Crear cuenta gratis" */
+.navbar-nav .btn-bright {
+  background: linear-gradient(45deg, #0066CC, #0055A5);
+  box-shadow: 0 0 20px rgba(0, 102, 204, 0.6);
+  color: white;
+  border: none;
+  font-weight: bold;
+  border-radius: 25px;
+  padding: 12px 25px;
+  transition: all 0.3s ease;
+}
+
+.navbar-nav .btn-bright:hover {
+  box-shadow: 0 0 40px rgba(0, 102, 204, 0.8);
+  transform: scale(1.1);
+  background: linear-gradient(45deg, #0055A5, #0066CC);
+}
+
+/* Botón de Precios */
+.navbar-nav .nav-link.text-white {
+  color: white;
+  font-weight: bold;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.navbar-nav .nav-link.text-white:hover {
+  color: #0066CC;
+  text-decoration: underline;
+}
+
+/* Botón "Iniciar sesión" */
+.navbar-nav .btn-info {
+  background-color: transparent;
+
+  border-width: 2px;
+  border-color: white;
+  border: 2px solid white; 
+
+  color: white;
+  font-weight: bold;
+  padding: 12px 25px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.navbar-nav .btn-info:hover {
+    text-decoration: underline;
+    background-color: transparent;
+}
+
+/* Efecto de sombra suave al hacer scroll */
+.navbar.scrolled {
+  background-color: #003366 !important;
+  box-shadow: 0 5px 15px rgba(0, 51, 102, 0.5);
+}
+
+.navbar-toggler {
+  background-color: #0066CC;
+}
+
+@media (max-width: 767px) {
+  .navbar-nav .nav-item {
+    margin-right: 0;
+  }
+}
+
+</style>
