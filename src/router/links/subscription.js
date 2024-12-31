@@ -30,6 +30,9 @@ const {
     check_company_other,
 } = require('../../services/company');
 
+
+const {APP_PASSWORD_STRIPE}=process.env;
+const stripe = require('stripe')(APP_PASSWORD_STRIPE);
 /*
 *----------------------links-----------------*/
 const companyName='links'

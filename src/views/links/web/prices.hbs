@@ -1,14 +1,16 @@
+{{#if user}}
+    {{>web/home/prices}}
+{{else}}
+    {{>web/home/navbar}}
+    {{>web/home/solution}}
+    {{>web/home/sect2}}
+    {{>web/home/mostSolution}}
+    {{>web/home/sect1}}
+    {{>web/home/sect3}}
+    {{>web/home/marketplace}}
+    {{>web/home/bussines}}
 
 
-{{>web/home/navbar}}
-{{>web/home/solution}}
-{{>web/home/sect2}}
-{{>web/home/mostSolution}}
-{{>web/home/sect1}}
-{{>web/home/sect3}}
-{{>web/home/marketplace}}
-{{>web/home/bussines}}
-
-
-{{>web/home/prices}}
-{{>web/home/footer-web}}
+    {{>web/home/pricing}}
+    {{>web/home/footer-web}}
+{{/if}}

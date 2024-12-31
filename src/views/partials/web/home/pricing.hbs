@@ -449,7 +449,19 @@
 
 
                 </ul>
-                <button class="buy-btn">Comprar</button>
+
+
+                <!---we will see if the exist a user for sale a suscription-->
+                {{#if user}}
+                    <form action="/links/create-suscription-fud-pack" method="POST">
+                        <input type="hidden" name="price_id" value="price_1Qc9kvRofynVwfKYtxEv36vF" />
+                        <input type="hidden" name="pack_database" value="1" />
+                        <input type="hidden" name="pack_branch" value="1" />
+                        <button class="buy-btn" id="checkout-and-portal-button" type="submit">Comprar</button>
+                    </form>
+                {{else}}
+                    <a class="buy-btn" href="#create-my-user">Prueba 15 días gratis.</a>
+                {{/if}}
             </div>
 
             <div class="pricing-plan popular">
@@ -523,7 +535,17 @@
                         </div>
                     </div>
                 </ul>
-                <button class="buy-btn">Comprar</button>
+                {{#if user}}
+                    <form action="/links/create-suscription-fud-pack" method="POST">
+                        <input type="hidden" name="price_id" value="price_1Qc9kvRofynVwfKYtxEv36vF" />
+                        <input type="hidden" name="pack_database" value="2" />
+                        <input type="hidden" name="pack_branch" value="2" />
+                        <button class="buy-btn" id="checkout-and-portal-button" type="submit">Comprar</button>
+                    </form>
+                {{else}}
+                    <a class="buy-btn" href="#create-my-user">Prueba 15 días gratis.</a>
+                    <br><br>
+                {{/if}}
             </div>
 
             <div class="pricing-plan">
@@ -576,7 +598,16 @@
                         </div>
                     </div>
                 </ul>
-                <button class="buy-btn">Comprar</button>
+                {{#if user}}
+                    <form action="/links/create-suscription-fud-pack" method="POST">
+                        <input type="hidden" name="price_id" value="price_1Qc9kvRofynVwfKYtxEv36vF" />
+                        <input type="hidden" name="pack_database" value="3" />
+                        <input type="hidden" name="pack_branch" value="3" />
+                        <button class="buy-btn" id="checkout-and-portal-button" type="submit">Comprar</button>
+                    </form>
+                {{else}}
+                    <a class="buy-btn" href="#create-my-user">Prueba 15 días gratis.</a>
+                {{/if}}
             </div>
         </div>
         <br><br>
@@ -588,7 +619,7 @@
         <br><br><br>
         <div class="message-box">
             <p class="message-text">¿Necesitas un paquete personalizado?, contáctanos</p>
-            <a href="mailto:contacto@tuempresa.com" class="message-button"><i class="fi fi-brands-whatsapp"></i> +52 444 304 2129</a>
+            <a href="https://wa.me/524443042129?text=Busco%20informacion%20sobre%20ED%20Plus" target="_blank" class="message-button"><i class="fi fi-brands-whatsapp"></i> +52 444 304 2129</a>
         </div>
     </div>
 
