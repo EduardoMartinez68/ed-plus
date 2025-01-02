@@ -4,19 +4,23 @@
   <div class="row">
     <div class="nav flex-column col nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
 <a class="nav-link active" id="navbar-character-tab" data-toggle="pill" href="#navbar-character" role="tab"
-    aria-controls="navbar-character" aria-selected="true"><i class="fi-icon fi-ss-package"></i> Personaje</a>
+    aria-controls="navbar-character" aria-selected="true"><i class="fi-icon fi-ss-package"></i> Caracteristicas</a>
 
 <a class="nav-link" id="navbar-branch-tab" data-toggle="pill" href="#navbar-branch" role="tab"
     aria-controls="navbar-branch" aria-selected="true"><i class="fi-icon fi-sr-store-alt"></i> Sucursal</a>
 
-<a class="nav-link" id="navbar-customer-tab" data-toggle="pill" href="#navbar-customer" role="tab"
-    aria-controls="navbar-customer" aria-selected="false"><i class="fi-icon fi-sr-user"></i> Cliente</a>
-
 <a class="nav-link" id="navbar-employee-tab" data-toggle="pill" href="#navbar-employee" role="tab"
-    aria-controls="navbar-employee" aria-selected="false"><i class="fi-icon fi-sr-hat-chef"></i> Empleado</a>
+    aria-controls="navbar-employee" aria-selected="false"><i class="fi-icon fi-sr-user"></i>  Empleado</a>
+
+<a class="nav-link" id="navbar-store-tab" data-toggle="pill" href="#navbar-store" role="tab"
+    aria-controls="navbar-products" aria-selected="false"><i class="fi-icon fi-sr-shopping-cart"></i> Tienda</a>
 
 <a class="nav-link" id="navbar-products-tab" data-toggle="pill" href="#navbar-products" role="tab"
-    aria-controls="navbar-products" aria-selected="false"><i class="fi-icon fi-sr-restaurant"></i> Cocina</a>
+    aria-controls="navbar-products" aria-selected="false"><i class="fi-icon fi-sr-hat-chef"></i> Cocina</a>
+
+
+<a class="nav-link" id="navbar-customer-tab" data-toggle="pill" href="#navbar-customer" role="tab"
+    aria-controls="navbar-customer" aria-selected="false"><i class="fi fi-sr-users-alt"></i> Cliente</a>
 
 <a class="nav-link" id="navbar-sales-tab" data-toggle="pill" href="#navbar-sales" role="tab"
     aria-controls="navbar-sales" aria-selected="false"><i class="fi-icon fi-ss-label"></i> Ventas</a>
@@ -41,6 +45,7 @@
       {{>CEO/type_employee/sales}}
       {{>CEO/type_employee/providers}}
       {{>CEO/type_employee/Kitchen}}
+      {{>CEO/type_employee/store}}
       {{>CEO/type_employee/setting}}
       <hr>
       <button type="submit" class="btn btn-success btn-block" id="">Save</button>

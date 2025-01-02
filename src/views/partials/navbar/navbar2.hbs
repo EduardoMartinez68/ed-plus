@@ -120,6 +120,10 @@
                         </div>
                         --->
 
+                        <div class="app-icon" onclick="nextWeb('/home')">
+                            <img src="https://cdn-icons-png.flaticon.com/512/3388/3388847.png" alt="Insumos">
+                            <span>Home</span>
+                        </div>
 
                         {{#if user.point_sales}}
                             {{#each branchFree}}
@@ -161,7 +165,7 @@
                                 </div>
                             {{/each}}
                         {{/if}}
-                        {{#if user.computer_equipment}}
+                        {{#if user.Inventory}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/inventory')">
                                     <img src="https://cdn-icons-png.flaticon.com/512/2897/2897763.png" alt="Impresoras">
@@ -173,7 +177,7 @@
                         {{#if user.employees}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/employees-branch')">
-                                    <img src="https://cdn-icons-png.flaticon.com/512/9187/9187532.png" alt="Empleados">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/6073/6073874.png" alt="Empleados">
                                     <span>Empleados</span>
                                 </div>
                             {{/each}}
@@ -212,6 +216,8 @@
                                 </div>
                             {{/each}}
                         {{/if}}
+
+                        <!--
                         {{#if user.accounting}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/reports')">
@@ -220,6 +226,7 @@
                                 </div>
                             {{/each}}
                         {{/if}}
+                        -->
 
                         {{#if user.customers}}
                             {{#each branchFree}}
@@ -261,6 +268,8 @@
                                 </div>
                             {{/each}}
                         {{/if}}
+
+                        <!---
                         {{#if user.customers}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/appointment')">
@@ -269,6 +278,8 @@
                                 </div>
                             {{/each}}
                         {{/if}}
+                        -->
+
                         {{#if user.sales}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/0/sales')">
@@ -285,6 +296,8 @@
                                 </div>
                             {{/each}}
                         {{/if}}
+
+                        <!--
                         {{#if user.movements}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/0/movements')">
@@ -293,6 +306,7 @@
                                 </div>
                             {{/each}}
                         {{/if}}
+
                         {{#if user.accounting}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/reports')">
@@ -301,6 +315,7 @@
                                 </div>
                             {{/each}}
                         {{/if}}
+                        -->
                         {{#if user.accounting}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/reports')">
@@ -309,6 +324,7 @@
                                 </div>
                             {{/each}}
                         {{/if}}
+                        <!--
                         {{#if user.accounting}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/reports')">
@@ -317,6 +333,7 @@
                                 </div>
                             {{/each}}
                         {{/if}}
+                        --->
                         {{#if user.supplies}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/supplies-free')">
@@ -333,6 +350,8 @@
                                 </div>
                             {{/each}}
                         {{/if}}
+
+                        <!---
                         {{#if user.ecommerce}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('myrestaurant/{{id_companies}}/{{id}}')">
@@ -341,6 +360,8 @@
                                 </div>
                             {{/each}}
                         {{/if}}
+                        
+
                         {{#if user.ecommerce}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('myrestaurant/{{id_companies}}/{{id}}')">
@@ -349,6 +370,7 @@
                                 </div>
                             {{/each}}
                         {{/if}}
+                        
 
                         {{#if user.edit_branch}}
                             {{#each branchFree}}
@@ -358,6 +380,8 @@
                                 </div>
                             {{/each}}
                         {{/if}}
+                        
+
                         {{#if user.dealer}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/order-free')">
@@ -366,6 +390,7 @@
                                 </div>
                             {{/each}}
                         {{/if}}
+                        
 
                         {{#if user.accounting}}
                             {{#each branchFree}}
@@ -414,8 +439,9 @@
                                 <span>ED Estudios</span>
                             </div>
                         {{/each}}
+                        -->
 
-                        <!--we will print all the apps of this branch--->
+                        <!--we will print all the apps of this branch
                         {{#each branchFree}}
                             {{#each apps}}
                                 <div class="app-icon" onclick="nextWeb('{{id_company}}/{{id_branch}}/app/{{name}}')">
@@ -428,6 +454,8 @@
                                 </div>
                             {{/each}}
                         {{/each}}
+                        --->
+                        
                         {{#if user.computer_equipment}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/box')">
@@ -460,12 +488,15 @@
                                 </div>
                             {{/each}}
                         {{/if}}
+
+                        <!---
                         {{#each branchFree}}
                             <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/marketplace')">
                                 <img src="https://cdn-icons-png.flaticon.com/512/4372/4372862.png" alt="Áreas">
                                 <span>Marketplace</span>
                             </div>
                         {{/each}}
+                        --->
                         <div class="app-icon" onclick="nextWeb('logout')">
                             <img src="https://cdn-icons-png.flaticon.com/512/3596/3596136.png" alt="Áreas">
                             <span>Cerrar Sesion</span>

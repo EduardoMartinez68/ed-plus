@@ -1,7 +1,21 @@
+<!--
+BUSSINES
+UPDATE "Fud".users
+	SET  point_sales='true', supplies='true', products='true', combos='true', product_department='true', product_area='true', providers='true', employees='true', schedules='false', employees_schedules='false', employee_department='true', employee_roles='true', customers='true', crm='false', ecommerce='true', ads='true', dealer='true', computer_equipment='true', sales='true', movements='true', accounting='true', edit_branch='true', settings='true', Inventory='true';
+
+
+RESTAURANT
+UPDATE "Fud".users
+	SET  point_sales='true', supplies='true', products='false', combos='true', product_department='true', product_area='true', providers='true', employees='true', schedules='false', employees_schedules='false', employee_department='true', employee_roles='true', customers='true', crm='false', ecommerce='false', ads='false', dealer='true', computer_equipment='true', sales='true', movements='true', accounting='true', edit_branch='true', settings='true', "Inventory"='false';
+
+CUSTOMER
+UPDATE "Fud".users
+	SET  point_sales='true', supplies='false', products='true', combos='false', product_department='true', product_area='true', providers='true', employees='true', schedules='false', employees_schedules='false', employee_department='true', employee_roles='true', customers='true', crm='false', ecommerce='false', ads='false', dealer='true', computer_equipment='true', sales='true', movements='true', accounting='true', edit_branch='true', settings='true', "Inventory"='true';
+-->
 <div class="tab-pane fade" id="navbar-employee" role="tabpanel" aria-labelledby="navbar-employee-tab">
     <div class="card">
         <div class="card-body">
-            <label for=""><i class="fi-icon fi-sr-hat-chef"></i> Empleado</label>
+            <label for=""><i class="fi-icon fi-sr-user"></i> Empleado</label>
             <hr>
             <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchAddEmployee" name="addEmployee" valueCheck="{{add_employee}}">
