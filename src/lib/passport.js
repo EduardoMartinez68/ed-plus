@@ -34,7 +34,7 @@ passport.use('local.login', new LocalStrategy({
 }));
 
 async function search_user(email){
-    var queryText = 'SELECT * FROM "Fud".users WHERE email = $1';
+    const queryText = 'SELECT * FROM "Fud".users WHERE email = $1';
     var values = [email] 
     return await database.query(queryText, values);
 }
@@ -435,9 +435,98 @@ passport.serializeUser((user,done)=>{
 });
 
 passport.deserializeUser(async (id,done)=>{
-    var queryText = 'SELECT * FROM "Fud".users Where id = $1';
-    var values = [id];
-    const obj = await database.query(queryText, values);
+    //var queryText = 'SELECT * FROM "Fud".users Where id = $1';
+    const queryText = `
+        SELECT 
+            u.id AS id,          -- ID del usuario
+            e.id AS id_employee,      -- ID del empleado
+            r.id AS id_role,          -- ID del rol
+            u.*,
+            r.name_role,              -- Campos de la tabla "roles_employees"
+            r.commissions,
+            r.salary,
+            r.discount_for_product,
+            r.add_box,
+            r.edit_box,
+            r.delete_box,
+            r.create_reservation,
+            r.view_reservation,
+            r.view_reports,
+            r.add_customer,
+            r.edit_customer,
+            r.delete_customer,
+            r.cancel_debt,
+            r.offer_loan,
+            r.get_fertilizer,
+            r.view_customer_credits,
+            r.send_email,
+            r.add_employee,
+            r.edit_employee,
+            r.delete_employee,
+            r.create_schedule,
+            r.assign_schedule,
+            r.view_schedule,
+            r.create_type_user,
+            r.create_employee_department,
+            r.view_sale_history,
+            r.delete_sale_history,
+            r.view_movement_history,
+            r.delete_movement_history,
+            r.view_supplies,
+            r.add_supplies,
+            r.edit_supplies,
+            r.delete_supplies,
+            r.view_products,
+            r.edit_products,
+            r.delete_products,
+            r.view_combo,
+            r.add_combo,
+            r.edit_combo,
+            r.delete_combo,
+            r.view_food_departament,
+            r.add_food_departament,
+            r.edit_food_departament,
+            r.delete_food_departament,
+            r.view_food_category,
+            r.add_food_category,
+            r.edit_food_category,
+            r.delete_food_category,
+            r.waste_report,
+            r.add_provider,
+            r.edit_provider,
+            r.delete_provider,
+            r.view_provider,
+            r.sell,
+            r.apply_discount,
+            r.apply_returns,
+            r.add_offers,
+            r.edit_offers,
+            r.delete_offers,
+            r.change_coins,
+            r.modify_hardware,
+            r.modify_hardware_kitchen,
+            r.give_permissions,
+            r.currency,
+            r.type_of_salary
+        FROM 
+            "Fud".users AS u
+        JOIN 
+            "Company".employees AS e
+        ON 
+            u.id = e.id_users
+        JOIN 
+            "Employee".roles_employees AS r
+        ON 
+            e.id_roles_employees = r.id
+        WHERE 
+            u.id = $1;  -- Filtrar por el ID del usuario
+    `;
 
+
+    var queryText2 = 'SELECT * FROM "Fud".users Where id = $1';
+    var values = [id];
+
+    const obj = await database.query(queryText, values);
+    console.log(obj.rows[0])
     done(null,obj.rows[0]);
 });

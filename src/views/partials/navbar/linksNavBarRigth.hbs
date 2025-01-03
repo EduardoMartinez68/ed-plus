@@ -8,7 +8,7 @@
         <li><a href="company-home"><i class="fi-icon fi-sr-apps"> Inicio</i></a></li>
     {{/each}}
     {{#each branchFree}}
-        <li><a href="/links/{{id_companies}}/{{id}}/visit-branch"><i class="fi-icon fi-sr-apps"> Inicio</i></a></li>
+        <li><a href="/links/home"><i class="fi-icon fi-sr-apps"> Inicio</i></a></li>
     {{/each}}
 
 
@@ -16,7 +16,7 @@
     {{#if user.point_sales}}
         {{#each branchFree}}
             <li>
-                <a href="/links/{{id_companies}}/{{id}}/point-sales"><i class="fi-icon fi-sr-shop"> POS</i></a>
+                <a href="/links/point-sales"><i class="fi-icon fi-sr-shop"> POS</i></a>
             </li>
         {{/each}}
         {{#each branch}}
@@ -167,6 +167,7 @@
         {{/each}}
     {{/if}}
 
+    <!--
     {{#if user.dealer}}
         {{#each branchFree}}
             <li>
@@ -174,6 +175,7 @@
             </li>
         {{/each}}
     {{/if}}
+    -->
 
     {{#if user.computer_equipment}}
         {{#each branchFree}}
@@ -207,7 +209,7 @@
         {{/each}}
     {{/if}}
 
-    <!--we will print all the apps of this branch--->
+    <!--we will print all the apps of this branch
     {{#each branchFree}}
         {{#each apps}}
             <li>
@@ -215,6 +217,7 @@
             </li>
         {{/each}}
     {{/each}}
+    --->
 
     {{#if user.edit_branch}}
         {{#each branchFree}}
@@ -233,11 +236,12 @@
     {{/if}}
 
 
-    <!--Employees--->
+    <!--Employees
     {{#if branch}}
         <li><a href="/links/my-order"><i class="fi-icon fi-sr-ballot">
                     Mis Pedidos</i></a></li>
     {{/if}}
+    --->
 
     <!--subscriptions--->
     {{#each branchFree}}
