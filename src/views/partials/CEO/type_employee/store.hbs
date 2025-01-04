@@ -4,16 +4,20 @@
             <label for=""><i class="fi-icon fi-sr-shopping-cart"></i> Tienda</label>
             <hr>
             <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchPointSales" name="viewProducts" valueCheck="{{point_sales}}">
+                <label class="form-check-label" for="flexSwitchViewProducts">Vender</label>
+            </div>
+            <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchViewProducts" name="viewProducts" valueCheck="{{view_products}}">
-                <label class="form-check-label" for="flexSwitchViewProducts">Ver Productos</label>
+                <label class="form-check-label" for="flexSwitchViewProducts">Ver Productos e Inventario</label>
             </div>
             <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchEditProducts" name="editProducts" valueCheck="{{edit_products}}">
-                <label class="form-check-label" for="flexSwitchEditProducts">Editar Productos</label>
+                <label class="form-check-label" for="flexSwitchEditProducts">Editar Productos e inventario</label>
             </div>
             <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchDeleteProducts" name="deleteProducts" valueCheck="{{delete_products}}">
-                <label class="form-check-label" for="flexSwitchDeleteProducts">Eliminar Productos</label>
+                <label class="form-check-label" for="flexSwitchDeleteProducts">Eliminar Productos e inventario</label>
             </div>
         </div>
     </div>

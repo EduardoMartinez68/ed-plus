@@ -434,12 +434,15 @@ passport.serializeUser((user,done)=>{
     done(null,user.id);
 });
 
+let num=0;
 passport.deserializeUser(async (id,done)=>{
     //var queryText = 'SELECT * FROM "Fud".users Where id = $1';
     const queryText = `
         SELECT 
             u.id AS id,          -- ID del usuario
             e.id AS id_employee,      -- ID del empleado
+            e.id_companies AS id_company,      -- ID del empleado
+            e.id_branches AS id_branch,      -- ID del empleado
             r.id AS id_role,          -- ID del rol
             u.*,
             r.name_role,              -- Campos de la tabla "roles_employees"
@@ -527,6 +530,9 @@ passport.deserializeUser(async (id,done)=>{
     var values = [id];
 
     const obj = await database.query(queryText, values);
-    console.log(obj.rows[0])
+    //console.log('--------------------------------------------')
+    //console.log(num)
+    //num++;
+    //console.log(obj.rows[0])
     done(null,obj.rows[0]);
 });
