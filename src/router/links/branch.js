@@ -74,7 +74,7 @@ const {
 } = require('../../services/foodDepartment');
 const { get_data_company, get_data_company_with_id } = require('../../services/company');
 
-//functions providers
+//functions providers edit-role-user
 const {
     search_providers,
     search_all_providers,
@@ -626,6 +626,8 @@ router.get('/:id_company/:id_branch/:id_role_employee/edit-role-user', isLoggedI
     if(await validate_subscription(req,res)){
         const { id_role_employee } = req.params;
         const roleEmployee = await get_data_tole_employees(id_role_employee);
+        console.log('roleEmployee')
+        console.log(roleEmployee)
         const branch = await get_data_branch(req);
         res.render('links/branch/role_type_employees/editRoleEmployee', { roleEmployee, branch });
     }

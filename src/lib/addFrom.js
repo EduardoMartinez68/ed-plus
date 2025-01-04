@@ -1118,9 +1118,11 @@ function create_type_employee(id_company, req) {
         watch_permission(req.body.addSupplies),
         watch_permission(req.body.editSupplies),
         watch_permission(req.body.deleteSupplies),
+
         watch_permission(req.body.viewProducts),
         watch_permission(req.body.editProducts),
         watch_permission(req.body.deleteProducts),
+
         watch_permission(req.body.viewCombo),
         watch_permission(req.body.addCombo),
         watch_permission(req.body.editCombo),
@@ -1149,7 +1151,9 @@ function create_type_employee(id_company, req) {
 
         watch_permission(req.body.modifyHardware),
         watch_permission(req.body.modifyHardwareKitchen),
-        watch_permission(req.body.givePermissions)
+        watch_permission(req.body.givePermissions),
+
+        watch_permission(req.body.pointSales)
     ]
     return newTypeEmployee
 }

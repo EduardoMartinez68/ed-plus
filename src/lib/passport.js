@@ -448,6 +448,7 @@ passport.deserializeUser(async (id,done)=>{
             r.name_role,              -- Campos de la tabla "roles_employees"
             r.commissions,
             r.salary,
+            r.app_point_sales,
             r.discount_for_product,
             r.add_box,
             r.edit_box,
