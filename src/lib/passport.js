@@ -530,7 +530,8 @@ passport.deserializeUser(async (id,done)=>{
             r.edit_rol_employee,
             r.delete_rol_employee,
             r.add_employee_department,
-            r.add_employee_roles
+            r.add_employee_roles,
+            r.view_employee
         FROM 
             "Fud".users AS u
         JOIN 

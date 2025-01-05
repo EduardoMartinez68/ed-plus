@@ -288,9 +288,10 @@ async function update_role_employee(idRoleEmployee, newRole){
         edit_rol_employee=$73,
         delete_rol_employee=$74,
         employee_roles=$75,
-        employee_department=$76
+        employee_department=$76,
+        view_employee=$77
         WHERE 
-            id=$77
+            id=$78
     `;
 
     var values = Object.values(newRole);

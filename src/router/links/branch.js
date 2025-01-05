@@ -587,55 +587,6 @@ async function get_data_combo_factures(idComboFacture) {
     return result.rows;
 }
 
-router.get('/:id_company/:id_branch/providers', isLoggedIn, async (req, res) => {
-    if(await validate_subscription(req,res)){
-        const { id_company, id_branch } = req.params;
-        const providers = await search_providers(id_branch);
-        const branch = await get_data_branch(req);
-        res.render('links/branch/providers/providers', { providers, branch });
-    }
-})
-
-router.get('/:id_company/:id_branch/add-providers', isLoggedIn, async (req, res) => {
-    if(await validate_subscription(req,res)){
-        const { id_company } = req.params;
-
-        //we will see if the user is use ed one
-        if(req.user.rol_user==rolFree){
-            const branchFree = await get_data_branch(req);
-            res.render('links/branch/providers/addProviders', { branchFree });
-        }else{
-            const branch = await get_data_branch(req);
-            res.render('links/branch/providers/addProviders', { branch });
-        }
-    }
-})
-
-router.get('/:id_company/:id_branch/:id_provider/edit-provider', isLoggedIn, async (req, res) => {
-    if(await validate_subscription(req,res)){
-        const { id_provider } = req.params;
-        const provider = await search_provider(id_provider);
-
-        //we will see if the user is use ed one
-        if(req.user.rol_user==rolFree){
-            const branchFree = await get_data_branch(req);
-            res.render('links/manager/providers/editProviders', { provider, branchFree });
-        }else{
-            const branch = await get_data_branch(req);
-            res.render('links/manager/providers/editProviders', { provider, branch });
-        }
-    }
-})
-
-router.get('/:id_company/:id_branch/food-department', isLoggedIn, async (req, res) => {
-    if(await validate_subscription(req,res)){
-        const { id_company } = req.params;
-        const departments = await get_department(id_company);
-        const branch = await get_data_branch(req);
-        res.render('links/branch/areas/department', { departments, branch });
-    }
-})
-
 router.get('/:id_company/:id_branch/food-category', isLoggedIn, async (req, res) => {
     if(await validate_subscription(req,res)){
         const { id_company } = req.params;
@@ -699,19 +650,26 @@ router.get('/:id_company/:id_branch/customer', isLoggedIn, async (req, res) => {
 
 //----------------------------------------------------------------employees
 router.get('/:id_company/:id_branch/employees-branch', isLoggedIn, async (req, res) => {
-    if(await validate_subscription(req,res)){
-        const { id_branch, id_company } = req.params;
-        const employees = await search_employees_branch(id_branch);
 
-        //we will see if the suscription is for a branch free
-        if(req.user.rol_user==rolFree){
-            const branchFree = await get_data_branch(req);
-            res.render('links/branch/employees/employee', { employees, branchFree });           
-        }else{
-            const branch = await get_data_branch(req);
-            res.render('links/branch/employees/employee', { employees, branch });
-        }
+    const { id_branch, id_company } = req.params;
+
+    //we will see if the user have the permission for this App.
+    if(!this_user_have_this_permission(req.user,id_company, id_branch,'view_employee')){
+        req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
+        return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
     }
+
+    const employees = await search_employees_branch(id_branch);
+
+    //we will see if the suscription is for a branch free
+    if(req.user.rol_user==rolFree){
+        const branchFree = await get_data_branch(req);
+        res.render('links/branch/employees/employee', { employees, branchFree });           
+    }else{
+        const branch = await get_data_branch(req);
+        res.render('links/branch/employees/employee', { employees, branch });
+    }
+    
 })
 
 router.get('/:id_company/:id_branch/:id_user/employees', isLoggedIn, async (req, res) => {
@@ -726,28 +684,48 @@ router.get('/:id_company/:id_branch/:id_user/employees', isLoggedIn, async (req,
 })
 
 router.get('/:id_company/:id_branch/:id_employee/edit-employees', isLoggedIn, async (req, res) => {
-    if(await validate_subscription(req,res)){
-        const { id_company, id_branch, id_employee } = req.params;
-        const employee = await search_employee(id_employee);
-        const departments = await search_employee_departments(id_company);
-        const country = await get_country();
-        const roles = await get_type_employees(id_company);
-        
-        //we will see if the suscription is fud one 
-        if(req.user.rol_user == rolFree){
-            const branchFree = await get_data_branch(req);
-            const branches = branchFree;
-            res.render('links/branch/employees/editEmployee', { employee, branchFree, departments, country, roles, branches });      
-        }else{
-            const branch = await get_data_branch(req);
-            const branches = branch;
-            res.render('links/branch/employees/editEmployee', { employee, branch, departments, country, roles, branches });
-        }
+    
+    const { id_company, id_branch, id_employee } = req.params;
+
+    //we will see if the user have the permission for this App.
+    if(!this_user_have_this_permission(req.user,id_company, id_branch,'edit_employee')){
+        req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
+        return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
     }
+
+    const employee = await search_employee(id_employee);
+    const departments = await search_employee_departments(id_company);
+    const country = await get_country();
+    const roles = await get_type_employees(id_company);
+    
+    //we will see if the suscription is fud one 
+    if(req.user.rol_user == rolFree){
+        const branchFree = await get_data_branch(req);
+        const branches = branchFree;
+        res.render('links/branch/employees/editEmployee', { employee, branchFree, departments, country, roles, branches });      
+    }else{
+        const branch = await get_data_branch(req);
+        const branches = branch;
+        res.render('links/branch/employees/editEmployee', { employee, branch, departments, country, roles, branches });
+    }
+    
 })
 
 router.get('/:id_company/:id_branch/:id_user/delete-employee', isLoggedIn, async (req, res) => {
     const { id_company,id_branch,id_user } = req.params;
+
+    //first we will see if the user if the employee
+    if(req.user.id==id_user){
+        req.flash('message', 'No te puedes eliminar a ti mismo de la base de datos 👁️');
+        return res.redirect(`/links/${id_company}/${id_branch}/employees-branch`);
+    }
+
+    //we will see if the user have the permission for this App.
+    if(!this_user_have_this_permission(req.user,id_company, id_branch,'delete_employee')){
+        req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
+        return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
+    }
+
     //first delete the image for not save trash in the our server
     await delete_profile_picture(id_user);
 
@@ -761,7 +739,7 @@ router.get('/:id_company/:id_branch/:id_user/delete-employee', isLoggedIn, async
         req.flash('message', 'El empleado no fue eliminado 👉👈');
     }
 
-    res.redirect('/links/' + id_company +'/'+id_branch+'/employees-branch');
+    res.redirect(`/links/${id_company}/${id_branch}/employees-branch`);
 })
 
 async function search_employee_branch(idBranch) {
@@ -772,52 +750,65 @@ async function search_employee_branch(idBranch) {
 }
 
 router.get('/:id_company/:id_branch/add-employee', isLoggedIn, async (req, res) => {
-    if(await validate_subscription(req,res)){
-        const { id_company } = req.params;
-        const departments = await search_employee_departments(id_company);
-        const country = await get_country()
-        const roles = await get_type_employees(id_company)
+    
+    const { id_company, id_branch} = req.params;
 
-        //we will see if the suscription is for fud one
-        if(req.user.rol_user==rolFree){
-            const branchFree = await get_data_branch(req);
-            const branches = branchFree;
-            res.render(companyName + '/branch/employees/addEmployee', { departments, country, roles, branches, branchFree });          
-        }else{
-            const branch = await get_data_branch(req);
-            const branches = branch;
-            res.render(companyName + '/branch/employees/addEmployee', { departments, country, roles, branches, branch });
-        }
+    //we will see if the user have the permission for this App.
+    if(!this_user_have_this_permission(req.user,id_company, id_branch,'add_employee')){
+        req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
+        return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
     }
+
+    const departments = await search_employee_departments(id_company);
+    const country = await get_country()
+    const roles = await get_type_employees(id_company)
+
+    //we will see if the suscription is for fud one
+    if(req.user.rol_user==rolFree){
+        const branchFree = await get_data_branch(req);
+        const branches = branchFree;
+        res.render(companyName + '/branch/employees/addEmployee', { departments, country, roles, branches, branchFree });          
+    }else{
+        const branch = await get_data_branch(req);
+        const branches = branch;
+        res.render(companyName + '/branch/employees/addEmployee', { departments, country, roles, branches, branch });
+    }
+    
 })
 
 router.get('/:id_company/:id_branch/:number_page/sales', isLoggedIn, async (req, res) => {
-    if(await validate_subscription(req,res)){
-        const { id_company,id_branch,number_page } = req.params;
+    
+    const { id_company,id_branch,number_page } = req.params;
 
-        //we will convert the page number for that tha database can get all the data 
-        let  pageNumber =parseInt(number_page)
-        pageNumber = pageNumber <= 0 ? 1 : pageNumber; //this is for limite the search of the sale 
-
-        //calculate the new data of the sale
-        const salesStart=(pageNumber -1)*100;
-        const salesEnd=pageNumber *100;
-
-        //create the data sale for create the button in the web 
-        const newNumberPage=pageNumber +1;
-        const oldNumberPage=pageNumber -1;
-
-        const dataSales=[{id_company,id_branch,oldNumberPage,newNumberPage,pageNumber}]
-
-        const sales = await get_sales_branch(id_branch,salesStart,salesEnd);
-        if(req.user.rol_user==rolFree){
-            const branchFree = await get_data_branch(req);
-            res.render('links/manager/sales/sales', { branchFree, sales ,dataSales});
-        }else{
-            const branch = await get_data_branch(req);
-            res.render('links/manager/sales/sales', { branch, sales ,dataSales});
-        }
+    //we will see if the user have the permission for this App.
+    if(!this_user_have_this_permission(req.user,id_company, id_branch,'view_sale_history')){
+        req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
+        return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
     }
+
+    //we will convert the page number for that tha database can get all the data 
+    let  pageNumber =parseInt(number_page)
+    pageNumber = pageNumber <= 0 ? 1 : pageNumber; //this is for limite the search of the sale 
+
+    //calculate the new data of the sale
+    const salesStart=(pageNumber -1)*100;
+    const salesEnd=pageNumber *100;
+
+    //create the data sale for create the button in the web 
+    const newNumberPage=pageNumber +1;
+    const oldNumberPage=pageNumber -1;
+
+    const dataSales=[{id_company,id_branch,oldNumberPage,newNumberPage,pageNumber}]
+
+    const sales = await get_sales_branch(id_branch,salesStart,salesEnd);
+    if(req.user.rol_user==rolFree){
+        const branchFree = await get_data_branch(req);
+        res.render('links/manager/sales/sales', { branchFree, sales ,dataSales});
+    }else{
+        const branch = await get_data_branch(req);
+        res.render('links/manager/sales/sales', { branch, sales ,dataSales});
+    }
+    
 })
 
 async function get_sales_branch(idBranch, start, end) {
@@ -845,29 +836,36 @@ async function get_sales_branch(idBranch, start, end) {
 }
 
 router.get('/:id_company/:id_branch/:number_page/movements', isLoggedIn, async (req, res) => {
-    if(await validate_subscription(req,res)){
-        const { id_company, id_branch, number_page } = req.params;
-        //we will convert the page number for that tha database can get all the data 
-        let  pageNumber =parseInt(number_page)// convert the number_page to integer
-        pageNumber = pageNumber <= 0 ? 1 : pageNumber; //this is for limite the search of the sale 
+    
+    const { id_company, id_branch, number_page } = req.params;
 
-        const movementsStart = (pageNumber - 1) * 100;
-        const movementsEnd = pageNumber * 100;
-
-        //create the data sale for create the button in the web 
-        const newNumberPage=pageNumber +1;
-        const oldNumberPage=pageNumber -1;
-
-        const dataMovent=[{id_company,id_branch,oldNumberPage,newNumberPage,pageNumber}]
-        const movements = await get_movement_history_with_id_branch(id_branch,movementsStart,movementsEnd);
-        if(req.user.rol_user==rolFree){
-            const branchFree = await get_data_branch(req);
-            res.render('links/manager/movements/movements', { branchFree, movements , dataMovent});
-        }else{
-            const branch = await get_data_branch(req);
-            res.render('links/manager/movements/movements', { branch, movements , dataMovent});
-        }
+    //we will see if the user have the permission for this App.
+    if(!this_user_have_this_permission(req.user,id_company, id_branch,'view_movement_history')){
+        req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
+        return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
     }
+
+    //we will convert the page number for that tha database can get all the data 
+    let  pageNumber =parseInt(number_page)// convert the number_page to integer
+    pageNumber = pageNumber <= 0 ? 1 : pageNumber; //this is for limite the search of the sale 
+
+    const movementsStart = (pageNumber - 1) * 100;
+    const movementsEnd = pageNumber * 100;
+
+    //create the data sale for create the button in the web 
+    const newNumberPage=pageNumber +1;
+    const oldNumberPage=pageNumber -1;
+
+    const dataMovent=[{id_company,id_branch,oldNumberPage,newNumberPage,pageNumber}]
+    const movements = await get_movement_history_with_id_branch(id_branch,movementsStart,movementsEnd);
+    if(req.user.rol_user==rolFree){
+        const branchFree = await get_data_branch(req);
+        res.render('links/manager/movements/movements', { branchFree, movements , dataMovent});
+    }else{
+        const branch = await get_data_branch(req);
+        res.render('links/manager/movements/movements', { branch, movements , dataMovent});
+    }
+    
 })
 
 async function get_movement_history_with_id_branch(idBranch, start, end) {
@@ -902,18 +900,24 @@ async function get_movement_history_with_id_branch(idBranch, start, end) {
 }
 
 router.get('/:id_company/:id_branch/box', isLoggedIn, async (req, res) => {
-    if(await validate_subscription(req,res)){
-        const { id_branch, id_company } = req.params;
-        const boxes = await get_box_branch(id_branch);
-        //we will see if the user use fud one 
-        const branch = await get_data_branch(req);
-        const branchFree=branch
-        if (req.user.rol_user==rolFree){
-            res.render('links/branch/box/box', { branchFree, boxes });
-        }else{
-            res.render('links/branch/box/box', { branch, boxes });
-        }
+    
+    const { id_branch, id_company } = req.params;
+
+    //we will see if the user have the permission for this App.
+    if(!this_user_have_this_permission(req.user,id_company, id_branch,'add_box')){
+        req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
+        return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
     }
+
+    const boxes = await get_box_branch(id_branch);
+    //we will see if the user use fud one 
+    const branch = await get_data_branch(req);
+    const branchFree=branch
+    if (req.user.rol_user==rolFree){
+        res.render('links/branch/box/box', { branchFree, boxes });
+    }else{
+        res.render('links/branch/box/box', { branch, boxes });
+    }  
 })
 
 async function get_box_branch(idBranch) {
@@ -933,18 +937,24 @@ async function get_box_branch(idBranch) {
 }
 
 router.get('/:id_company/:id_branch/:id_box/:new_number/:new_ipPrinter/edit-box', isLoggedIn, async (req, res) => {
-    if(await validate_subscription(req,res)){
-        const { id_branch, id_company, id_box, new_number, new_ipPrinter } = req.params;
+    
+    const { id_branch, id_company, id_box, new_number, new_ipPrinter } = req.params;
 
-        //we will watching if caned update the box
-        if (await update_box_branch(id_box, new_number, new_ipPrinter)) {
-            req.flash('success', 'La caja fue actualizada con suministros 🤩')
-        } else {
-            req.flash('messagge', 'La caja no fue actualizada 😰')
-        }
-
-        res.redirect('/links/' + id_company + '/' + id_branch + '/box');
+    //we will see if the user have the permission for this App.
+    if(!this_user_have_this_permission(req.user,id_company, id_branch,'edit_box')){
+        req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
+        return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
     }
+
+    //we will watching if caned update the box
+    if (await update_box_branch(id_box, new_number, new_ipPrinter)) {
+        req.flash('success', 'La caja fue actualizada con suministros 🤩')
+    } else {
+        req.flash('messagge', 'La caja no fue actualizada 😰')
+    }
+
+    res.redirect(`/links/${id_company}/${id_branch}/box`);
+    
 })
 
 async function update_box_branch(id, num_box, ip_printer) {
@@ -965,17 +975,23 @@ async function update_box_branch(id, num_box, ip_printer) {
 }
 
 router.get('/:id_company/:id_branch/:id_box/delete-box', isLoggedIn, async (req, res) => {
-    if(await validate_subscription(req,res)){
-        const { id_branch, id_company, id_box } = req.params;
-        //we will watching if caned delete the box
-        if (await delete_box_branch(parseInt(id_box))) {
-            req.flash('success', 'La caja fue eliminada con exito 👍')
-        } else {
-            req.flash('messagge', 'La caja no fue eliminada 👁️')
-        }
+    
+    const { id_branch, id_company, id_box } = req.params;
 
-        res.redirect('/links/' + id_company + '/' + id_branch + '/box');
+    //we will see if the user have the permission for this App.
+    if(!this_user_have_this_permission(req.user,id_company, id_branch,'delete_box')){
+        req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
+        return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
     }
+
+    //we will watching if caned delete the box
+    if (await delete_box_branch(parseInt(id_box))) {
+        req.flash('success', 'La caja fue eliminada con exito 👍')
+    } else {
+        req.flash('messagge', 'La caja no fue eliminada 👁️')
+    }
+
+    res.redirect(`/links/${id_company}/${id_branch}/box`);
 })
 
 async function delete_box_branch(id) {
@@ -1307,6 +1323,15 @@ async function update_history_schedule(id, id_schedules) {
 
 //----------------------------------------------------------------food department
 router.get('/:id_company/:id_branch/add-department-free', isLoggedIn, async (req, res) => {
+
+    const {id_company, id_branch}=req.params;
+
+    //we will see if the user have the permission for this App.
+    if(!this_user_have_this_permission(req.user,id_company, id_branch,'add_food_department')){
+        req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
+        return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
+    }
+
     const company = await check_company(req);
     const saucers = await get_data(req);
     res.render('links/store/dish', { company, saucers });
@@ -1323,6 +1348,13 @@ router.get('/:id_company/:id_branch/marketplace', isLoggedIn,async (req, res) =>
 router.get('/:id_company/:id_branch/providers', isLoggedIn, async (req, res) => {
     //if this company is of the user, we will to search all the providers of tha company
     const { id_company , id_branch} = req.params;
+
+    //we will see if the user have the permission for this App.
+    if(!this_user_have_this_permission(req.user,id_company, id_branch,'view_provider')){
+        req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
+        return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
+    }
+
     const providers = await search_all_providers(id_company);
 
     //if the company not have providers render other view
@@ -1341,6 +1373,14 @@ router.get('/:id_company/:id_branch/providers', isLoggedIn, async (req, res) => 
 })
 
 router.get('/:id_company/:name_provider/search-provider', isLoggedIn, async (req, res) => {
+    const{id_company,id_branch}=req.body;
+
+    //we will see if the user have the permission for this App.
+    if(!this_user_have_this_permission(req.user,id_company, id_branch,'view_provider')){
+        req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
+        return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
+    }
+
     //we will see if the company is of the user 
     const company = await this_company_is_of_this_user(req, res)
     if (company != null) {
@@ -1378,7 +1418,14 @@ router.get('/:id_provider/edit-providers', isLoggedIn, async (req, res) => {
 
 router.get('/:id_company/:id_branch/:id_provider/edit-prover', isLoggedIn, async (req, res) => {
     //if this company is of the user, we will to search the provider of tha company
-    const { id_provider } = req.params;
+    const { id_company, id_branch, id_provider } = req.params;
+
+    //we will see if the user have the permission for this App.
+    if(!this_user_have_this_permission(req.user,id_company, id_branch,'edit_provider')){
+        req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
+        return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
+    }
+
     const provider = await search_provider(id_provider);
     if(req.user.rol_user==rolFree){
         const branchFree=await get_data_branch(id_branch);
@@ -1392,6 +1439,13 @@ router.get('/:id_company/:id_branch/:id_provider/edit-prover', isLoggedIn, async
 router.get('/:id_company/:id_branch/:id_provider/delete-provider', isLoggedIn, async (req, res) => {
     //we will see if the company is of the user 
     const { id_provider, id_company, id_branch} = req.params;
+
+    //we will see if the user have the permission for this App.
+    if(!this_user_have_this_permission(req.user,id_company, id_branch,'delete_provider')){
+        req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
+        return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
+    }
+
     if (await delete_provider(id_provider)) {
         req.flash('success', 'El proveedor fue eliminado con éxito 😉')
     }
@@ -1407,9 +1461,87 @@ router.get('/:id_company/:id_branch/:id_provider/delete-provider', isLoggedIn, a
     }
 })
 
+
+//-----banch Free
+router.get('/:id_company/:id_branch/providers', isLoggedIn, async (req, res) => {
+    
+    const { id_company, id_branch } = req.params;
+
+    //we will see if the user have the permission for this App.
+    if(!this_user_have_this_permission(req.user,id_company, id_branch,'view_provider')){
+        req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
+        return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
+    }
+
+    const providers = await search_providers(id_branch);
+    const branch = await get_data_branch(req);
+    res.render('links/branch/providers/providers', { providers, branch });
+    
+})
+
+router.get('/:id_company/:id_branch/add-providers', isLoggedIn, async (req, res) => {
+    
+    const { id_company, id_branch} = req.params;
+
+    //we will see if the user have the permission for this App.
+    if(!this_user_have_this_permission(req.user,id_company, id_branch,'add_provider')){
+        req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
+        return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
+    }
+
+    //we will see if the user is use ed one
+    if(req.user.rol_user==rolFree){
+        const branchFree = await get_data_branch(req);
+        res.render('links/branch/providers/addProviders', { branchFree });
+    }else{
+        const branch = await get_data_branch(req);
+        res.render('links/branch/providers/addProviders', { branch });
+    }
+    
+})
+
+router.get('/:id_company/:id_branch/:id_provider/edit-provider', isLoggedIn, async (req, res) => {
+    
+    const {id_company,id_branch, id_provider } = req.params;
+
+    //we will see if the user have the permission for this App.
+    if(!this_user_have_this_permission(req.user,id_company, id_branch,'edit_provider')){
+        req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
+        return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
+    }
+
+    const provider = await search_provider(id_provider);
+
+    //we will see if the user is use ed one
+    if(req.user.rol_user==rolFree){
+        const branchFree = await get_data_branch(req);
+        res.render('links/manager/providers/editProviders', { provider, branchFree });
+    }else{
+        const branch = await get_data_branch(req);
+        res.render('links/manager/providers/editProviders', { provider, branch });
+    }
+    
+})
+
+router.get('/:id_company/:id_branch/food-department', isLoggedIn, async (req, res) => {
+    if(await validate_subscription(req,res)){
+        const { id_company } = req.params;
+        const departments = await get_department(id_company);
+        const branch = await get_data_branch(req);
+        res.render('links/branch/areas/department', { departments, branch });
+    }
+})
+
 //----------------------------------------------------------------customers
 router.get('/:id_company/:id_branch/customers-company', isLoggedIn, async (req, res) => {
     const { id_company , id_branch} = req.params;
+
+    //we will see if the user have the permission for this App.
+    if(!this_user_have_this_permission(req.user,id_company, id_branch,'view_customer_credits')){
+        req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
+        return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
+    }
+
     const customers = await search_all_customers(id_company)
     const country = await get_country()
     
@@ -1425,6 +1557,13 @@ router.get('/:id_company/:id_branch/customers-company', isLoggedIn, async (req, 
 
 router.get('/:id_company/:id_branch/add-customer', isLoggedIn, async (req, res) => {
     const { id_company, id_branch} = req.params;
+
+    //we will see if the user have the permission for this App.
+    if(!this_user_have_this_permission(req.user,id_company, id_branch,'add_customer')){
+        req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
+        return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
+    }
+
     const country = await get_country();
 
     //we will see if the user have a branch or more branch
@@ -1440,6 +1579,12 @@ router.get('/:id_company/:id_branch/add-customer', isLoggedIn, async (req, res) 
 router.get('/:id_company/:id_branch/:idCustomer/delete-customer', isLoggedIn, async (req, res) => {
     const { idCustomer, id_company, id_branch} = req.params;
 
+    //we will see if the user have the permission for this App.
+    if(!this_user_have_this_permission(req.user,id_company, id_branch,'delete_customer')){
+        req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
+        return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
+    }
+
     //we will see if can delete to the customer
     if (await delete_customer(idCustomer)) {
         req.flash('success', 'El cliente fue eliminado con éxito 😉')
@@ -1451,8 +1596,14 @@ router.get('/:id_company/:id_branch/:idCustomer/delete-customer', isLoggedIn, as
 })
 
 router.get('/:id_company/:id_branch/:idCustomer/edit-customer', isLoggedIn, async (req, res) => {
-    const { idCustomer } = req.params;
+    const { id_company,id_branch,idCustomer } = req.params;
     
+    //we will see if the user have the permission for this App.
+    if(!this_user_have_this_permission(req.user,id_company, id_branch,'edit_customer')){
+        req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
+        return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
+    }
+
     const country = await get_country()
     const customer = await search_customers(idCustomer)
 

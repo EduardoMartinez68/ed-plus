@@ -18,6 +18,10 @@ UPDATE "Fud".users
             <label for=""><i class="fi-icon fi-sr-user"></i> Empleado</label>
             <hr>
             <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="view_employee" name="view_employee" valueCheck="{{view_employee}}">
+                <label class="form-check-label" for="view_employee">App de empleados</label>
+            </div>
+            <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchAddEmployee" name="addEmployee" valueCheck="{{add_employee}}">
                 <label class="form-check-label" for="flexSwitchAddEmployee">Agregar un nuevo empleado</label>
             </div>
@@ -34,32 +38,32 @@ UPDATE "Fud".users
                 <label class="form-check-label" for="flexSwitchCreateSchedule">Crear un horario</label>
             </div>
             <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchViewSchedule" name="viewSchedule" valueCheck="{{view_schedule}}">
+                <label class="form-check-label" for="flexSwitchViewSchedule">App horario</label>
+            </div>
+            <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchAssignSchedule" name="assignSchedule" valueCheck="{{assign_schedule}}">
                 <label class="form-check-label" for="flexSwitchAssignSchedule">Asignar horario</label>
             </div>
             <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchViewSchedule" name="viewSchedule" valueCheck="{{view_schedule}}">
-                <label class="form-check-label" for="flexSwitchViewSchedule">Ver horario</label>
-            </div>
-            <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCreateTypeUser" name="employee_roles" valueCheck="{{employee_roles}}">
-                <label class="form-check-label" for="flexSwitchCreateTypeUser">Ver tipo de usuario</label>
+                <label class="form-check-label" for="flexSwitchCreateTypeUser">App rol usuario</label>
             </div>
             <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCreateTypeUser" name="createTypeUser" valueCheck="{{create_type_user}}">
-                <label class="form-check-label" for="flexSwitchCreateTypeUser">Crear tipo de usuario</label>
+                <label class="form-check-label" for="flexSwitchCreateTypeUser">Crear rol de usuario</label>
             </div>
             <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCreateTypeUser" name="edit_rol_employee" valueCheck="{{edit_rol_employee}}">
-                <label class="form-check-label" for="flexSwitchCreateTypeUser">Editar tipo de usuario</label>
+                <label class="form-check-label" for="flexSwitchCreateTypeUser">Editar rol de usuario</label>
             </div>
             <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCreateTypeUser" name="delete_rol_employee" valueCheck="{{delete_rol_employee}}">
-                <label class="form-check-label" for="flexSwitchCreateTypeUser">Eliminar tipo de usuario</label>
+                <label class="form-check-label" for="flexSwitchCreateTypeUser">Eliminar rol de usuario</label>
             </div>
             <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCreateTypeUser" name="employee_department" valueCheck="{{employee_department}}">
-                <label class="form-check-label" for="flexSwitchCreateTypeUser">Ver departamento de empleado</label>
+                <label class="form-check-label" for="flexSwitchCreateTypeUser">App departamento de empleado</label>
             </div>
             <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCreateEmployeeDepartment" name="createEmployeeDepartment" valueCheck="{{create_employee_department}}">

@@ -176,7 +176,7 @@
                             {{/each}}
                         {{/if}}
 
-                        {{#if user.employees}}
+                        {{#if user.view_employee}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/employees-branch')">
                                     <img src="https://cdn-icons-png.flaticon.com/512/6073/6073874.png" alt="Empleados">
@@ -234,7 +234,7 @@
                         {{/if}}
                         -->
 
-                        {{#if user.customers}}
+                        {{#if user.view_customer_credits}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/customers-company')">
                                     <img src="https://cdn-icons-png.flaticon.com/512/11815/11815356.png" alt="Clientes">
@@ -258,7 +258,9 @@
                                 </div>
                             {{/each}}
                         {{/if}}
-                        {{#if user.ecommerce}}
+
+
+                        {{#if user.sell}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('myrestaurant/{{id_companies}}/{{id}}')">
                                     <img src="https://cdn-icons-png.flaticon.com/512/3176/3176363.png" alt="Ecommerce">
@@ -266,7 +268,8 @@
                                 </div>
                             {{/each}}
                         {{/if}}
-                        {{#if user.ads}}
+
+                        {{#if user.sell}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/ad')">
                                     <img src="https://cdn-icons-png.flaticon.com/512/6165/6165633.png" alt="Anuncios">
@@ -324,16 +327,15 @@
                             {{/each}}
                         {{/if}}
                         -->
-                        {{#if user.accounting}}
-                            {{#if user.view_reports}}
-                                {{#each branchFree}}
-                                    <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/reports')">
-                                        <img src="https://cdn-icons-png.flaticon.com/512/2257/2257295.png" alt="Contabilidad">
-                                        <span>Reportes</span>
-                                    </div>
-                                {{/each}}
-                            {{/if}}
+                        {{#if user.view_reports}} 
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/reports')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/2257/2257295.png" alt="Contabilidad">
+                                    <span>Reportes</span>
+                                </div>
+                            {{/each}}
                         {{/if}}
+
                         <!--
                         {{#if user.accounting}}
                             {{#each branchFree}}
@@ -467,7 +469,7 @@
                         {{/each}}
                         --->
                         
-                        {{#if user.computer_equipment}}
+                        {{#if user.add_box}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/box')">
                                     <img src="https://cdn-icons-png.flaticon.com/512/3355/3355395.png" alt="Impresoras">
@@ -475,7 +477,9 @@
                                 </div>
                             {{/each}}
                         {{/if}}
-                        {{#if user.edit_branch}}
+
+
+                        {{#if user.modify_hardware}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('{{id}}/{{id_companies}}/edit-branch-free')">
                                     <img src="https://cdn-icons-png.flaticon.com/512/3733/3733132.png" alt="Editar Sucursal">
@@ -484,14 +488,16 @@
                             {{/each}}
                         {{/if}}
 
-                        {{#each branchFree}}
-                            <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/prices')">
-                                <img src="https://cdn-icons-png.flaticon.com/512/5560/5560586.png" alt="Editar Sucursal">
-                                <span>Membresias</span>
-                            </div>
-                        {{/each}}
+                        {{#if user.modify_hardware_kitchen}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/prices')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/5560/5560586.png" alt="Editar Sucursal">
+                                    <span>Membresias</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
 
-                        {{#if user.settings}}
+                        {{#if user.give_permissions}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/options')">
                                     <img src="https://cdn-icons-png.flaticon.com/512/2052/2052698.png" alt="Departamentos">
