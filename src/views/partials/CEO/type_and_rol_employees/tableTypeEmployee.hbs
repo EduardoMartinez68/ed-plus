@@ -24,8 +24,12 @@
             <td>{{commissions}}%</td>
             <td>{{discount_for_product}}%</td>
             <td>
-                <button class="btn btn-danger" id="{{id}}" onclick="delete_role_employee(this.id,{{id_companies}})"><i class="fi-department fi-sr-trash"></i></button>
-                <button class="btn btn-edit" id="{{id}}" onclick="edit_role_employee(this.id,'{{id_companies}}','{{name}}','{{description}}')"><i class="fi-department fi-sr-pencil"></i></button>            
+                {{#if user.edit_rol_employee}}
+                    <button class="btn btn-danger" id="{{id}}" onclick="delete_role_employee(this.id,'{{id_companies}}')"><i class="fi-department fi-sr-trash"></i></button>
+                {{/if}}
+                {{#if user.delete_rol_employee}}
+                    <button class="btn btn-edit" id="{{id}}" onclick="edit_role_employee(this.id,'{{id_companies}}','{{name}}','{{description}}')"><i class="fi-department fi-sr-pencil"></i></button>            
+                {{/if}}
             </td>
         </tr>
     {{/each}}

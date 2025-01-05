@@ -1155,7 +1155,15 @@ function create_type_employee(id_company, req) {
 
         watch_permission(req.body.pointSales),
         watch_permission(req.body.viewInventory),
-        watch_permission(req.body.editInventory)
+        watch_permission(req.body.editInventory),
+
+        
+        watch_permission(req.body.edit_employee_department),
+        watch_permission(req.body.delete_employee_department),
+        watch_permission(req.body.edit_rol_employee),
+        watch_permission(req.body.delete_rol_employee),
+        watch_permission(req.body.employee_roles),
+        watch_permission(req.body.employee_department)
     ]
     return newTypeEmployee
 }

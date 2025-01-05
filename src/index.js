@@ -138,7 +138,7 @@ io.on('connection', async(socket) =>{
         const maxEmployees= companyLimitsCache[companyId];
 
         //we will see if the company is to limit of connected devices
-        if (companyConnections.length >= maxEmployees) {
+        if (companyConnections.length >= maxEmployees+1) {
             socket.emit(
               "connectionRejected",
               "Ups, parece que alcanzaste tu límite de dispositivos conectados. Por favor, actualiza tu membresía."
@@ -259,15 +259,9 @@ io.on('connection', async(socket) =>{
             (connection) => connection.socketId !== socket.id
             );
 
-            console.log(
-            `Socket ${socket.id} desconectado de la empresa ${companyId}. Conexiones restantes:`,
-            connectedEmployees[companyId]
-            );
-
             // Si no quedan conexiones en esta empresa, eliminar la entrada del objeto
             if (connectedEmployees[companyId].length === 0) {
                 delete connectedEmployees[companyId];
-                console.log(`Empresa ${companyId} eliminada del registro de conexiones.`);
             }
         } else {
             console.log(

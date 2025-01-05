@@ -280,9 +280,17 @@ async function update_role_employee(idRoleEmployee, newRole){
         give_permissions=$67,
         app_point_sales=$68,
         view_inventory=$69,
-        edit_inventory=$70
+        edit_inventory=$70,
+
+
+        edit_employee_department=$71,
+        delete_employee_department=$72,
+        edit_rol_employee=$73,
+        delete_rol_employee=$74,
+        employee_roles=$75,
+        employee_department=$76
         WHERE 
-            id=$71
+            id=$77
     `;
 
     var values = Object.values(newRole);

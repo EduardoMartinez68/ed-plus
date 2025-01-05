@@ -84,6 +84,9 @@ const {
     delete_provider
 } = require('../../services/providers');
 
+const {
+    this_user_have_this_permission
+} = require('../../services/permission');
 
 const rolFree=0
 const companyName='links'
@@ -118,24 +121,38 @@ router.get('/:id_company/:id_branch/supplies', isLoggedIn, async (req, res) => {
 })
 
 router.get('/:id_company/:id_branch/:id_supplies/edit-supplies-branch', isLoggedIn, async (req, res) => {
-    if(await validate_subscription(req,res)){
-        const { id_company, id_branch, id_supplies } = req.params;
-        const supplies = await get_supplies_with_id(id_supplies, true);
 
-        //we will see if the user have a suscription for fud one 
-        if (req.user.rol_user==rolFree){
-            const branch = await get_data_branch(req);
-            res.render('links/branch/supplies/editSupplies', { supplies, branch });    
-        }    
-        else{
-            const branchFree = await get_data_branch(req);
-            res.render('links/branch/supplies/editSupplies', { supplies, branchFree });            
-        }  
+    const { id_company, id_branch, id_supplies } = req.params;
+
+    //we will see if the user have the permission for this App.
+    if(!this_user_have_this_permission(req.user,id_company, id_branch,'edit_supplies')){
+        req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
+        return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
     }
+
+    const supplies = await get_supplies_with_id(id_supplies, true);
+
+    //we will see if the user have a suscription for fud one 
+    if (req.user.rol_user==rolFree){
+        const branch = await get_data_branch(req);
+        res.render('links/branch/supplies/editSupplies', { supplies, branch });    
+    }    
+    else{
+        const branchFree = await get_data_branch(req);
+        res.render('links/branch/supplies/editSupplies', { supplies, branchFree });            
+    }  
+    
 })
 
 router.get('/:id_company/:id_branch/:id/delete-supplies-free', isLoggedIn, async (req, res) => {
     const { id, id_company,id_branch } = req.params;
+
+    //we will see if the user have the permission for this App.
+    if(!this_user_have_this_permission(req.user,id_company, id_branch,'delete_supplies')){
+        req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
+        return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
+    }
+
     const pathOmg = await get_path_img('Kitchen', 'products_and_supplies', id)
 
     if (await delate_supplies_company(id, pathOmg)) {
@@ -219,41 +236,59 @@ router.get('/:id_company/:id_branch/recharge-products', isLoggedIn, async (req, 
 })
 
 router.get('/:id_company/:id_branch/:id_supplies/edit-products-branch', isLoggedIn, async (req, res) => {
-    if(await validate_subscription(req,res)){
-        const { id_company, id_branch, id_supplies } = req.params;
-        const supplies = await get_supplies_with_id(id_supplies, false);
-        const branch = await get_data_branch(req);
-        res.render('links/branch/supplies/editSupplies', { supplies, branch });
+    const { id_company, id_branch, id_supplies } = req.params;
+
+    //we will see if the user have the permission for this App.
+    if(!this_user_have_this_permission(req.user,id_company, id_branch,'edit_product')){
+        req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
+        return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
     }
+
+    const supplies = await get_supplies_with_id(id_supplies, false);
+    const branch = await get_data_branch(req);
+    res.render('links/branch/supplies/editSupplies', { supplies, branch });
+    
 })
 
 router.get('/:id_company/:id_branch/:id_supplies/:existence/update-products-branch', isLoggedIn, async (req, res) => {
-    if(await validate_subscription(req,res)){
-        const { id_company, id_branch, id_supplies, existence } = req.params;
-        if (await update_inventory_supplies_branch(id_supplies, existence)) {
-            req.flash('success', 'El Inventario fue actualizado con éxito ⭐')
-        } else {
-            req.flash('message', 'Este Inventario no fue actualizado 😅')
-        }
-        
-        res.redirect(`/links/${id_company}/${id_branch}/inventory`);
+    const { id_company, id_branch, id_supplies, existence } = req.params;
+
+    //we will see if the user have the permission for this App.
+    if(!this_user_have_this_permission(req.user,id_company, id_branch,'edit_product')){
+        req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
+        return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
     }
+
+    if (await update_inventory_supplies_branch(id_supplies, existence)) {
+        req.flash('success', 'El Inventario fue actualizado con éxito ⭐')
+    } else {
+        req.flash('message', 'Este Inventario no fue actualizado 😅')
+    }
+    
+    res.redirect(`/links/${id_company}/${id_branch}/inventory`);
+    
 })
 
 router.get('/:id_company/:id_branch/:id_supplies/:existence/update-supplies-branch', isLoggedIn, async (req, res) => {
-    if(await validate_subscription(req,res)){
-        const { id_company, id_branch, id_supplies, existence } = req.params;
-        if (await update_inventory_supplies_branch(id_supplies, existence)) {
-            req.flash('success', 'Los suministros fueron actualizados con éxito ⭐')
-        } else {
-            req.flash('message', 'Los suministros no fueron actualizados 😅')
-        }
+    
+    const { id_company, id_branch, id_supplies, existence } = req.params;
 
-        if(req.user.rol_user == rolFree){
-            res.redirect('/links/' + id_company + '/' + id_branch + '/supplies-free');
-        }else{
-            res.redirect('/links/' + id_company + '/' + id_branch + '/supplies');
-        }
+    //we will see if the user have the permission for this App.
+    if(!this_user_have_this_permission(req.user,id_company, id_branch,'edit_supplies')){
+        req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
+        return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
+    }
+
+    if (await update_inventory_supplies_branch(id_supplies, existence)) {
+        req.flash('success', 'Los suministros fueron actualizados con éxito ⭐')
+    } else {
+        req.flash('message', 'Los suministros no fueron actualizados 😅')
+    }
+
+    if(req.user.rol_user == rolFree){
+        res.redirect('/links/' + id_company + '/' + id_branch + '/supplies-free');
+    }else{
+        res.redirect('/links/' + id_company + '/' + id_branch + '/supplies');
     }
 })
 
@@ -387,25 +422,38 @@ async function this_combo_exist_branch(idBranch,idCombo) {
 }
 
 router.get('/:id_company/:id_branch/:id_combo_features/edit-combo-branch', isLoggedIn, async (req, res) => {
-    if(await validate_subscription(req,res)){
-        const { id_combo_features, id_branch } = req.params;
-        const comboFeactures = await get_data_combo_factures(id_combo_features);
-        const suppliesCombo = await get_all_price_supplies_branch(comboFeactures[0].id_dishes_and_combos, id_branch)
 
-        //we will see if the user have a suscription free
-        if(req.user.rol_user==rolFree){
-            const branchFree = await get_data_branch(req);
-            res.render('links/branch/combo/editCombo', { comboFeactures, suppliesCombo, branchFree });           
-        }else{
-            const branch = await get_data_branch(req);
-            res.render('links/branch/combo/editCombo', { comboFeactures, suppliesCombo, branch });
-        }
+    const { id_combo_features, id_company, id_branch } = req.params;
+
+    //we will see if the user have the permission for this App.
+    if(!this_user_have_this_permission(req.user,id_company, id_branch,'edit_combo')){
+        req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
+        return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
     }
+    const comboFeactures = await get_data_combo_factures(id_combo_features);
+    const suppliesCombo = await get_all_price_supplies_branch(comboFeactures[0].id_dishes_and_combos, id_branch)
+
+    //we will see if the user have a suscription free
+    if(req.user.rol_user==rolFree){
+        const branchFree = await get_data_branch(req);
+        res.render('links/branch/combo/editCombo', { comboFeactures, suppliesCombo, branchFree });           
+    }else{
+        const branch = await get_data_branch(req);
+        res.render('links/branch/combo/editCombo', { comboFeactures, suppliesCombo, branch });
+    }
+    
 })
 
 router.get('/:id_company/:id_branch/:id_combo_features/edit-combo-free', isLoggedIn, async (req, res) => {
     //if(await validate_subscription(req,res)){
         const { id_combo_features, id_branch } = req.params;
+        
+        //we will see if the user have the permission for this App.
+        if(!this_user_have_this_permission(req.user,id_company, id_branch,'edit_combo')){
+            req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
+            return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
+        }
+
         const comboFeactures = await get_data_combo_factures(id_combo_features);
         const suppliesCombo = await get_all_price_supplies_branch(comboFeactures[0].id_dishes_and_combos, id_branch)
         const branch = await get_data_branch(req);

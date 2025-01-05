@@ -441,6 +441,7 @@ passport.deserializeUser(async (id,done)=>{
 
     //if the user exist in the cache, we return the id of the user
     if (userCache.has(id)) {
+        console.log(userCache.get(id))
         return done(null, userCache.get(id));
     }
 
@@ -453,7 +454,7 @@ passport.deserializeUser(async (id,done)=>{
             e.id_branches AS id_branch,      -- ID del empleado
             r.id AS id_role,          -- ID del rol
             u.*,
-            r.name_role,              -- Campos de la tabla "roles_employees"
+            r.name_role,              -- Campos de la tabla "roles_employees" view_products
             r.commissions,
             r.salary,
             r.app_point_sales,
@@ -521,7 +522,15 @@ passport.deserializeUser(async (id,done)=>{
             r.currency,
             r.type_of_salary,
             r.view_inventory,
-            r.edit_inventory
+            r.edit_inventory,
+            r.employee_department,
+            r.edit_employee_department,
+            r.delete_employee_department,
+            r.employee_roles,
+            r.edit_rol_employee,
+            r.delete_rol_employee,
+            r.add_employee_department,
+            r.add_employee_roles
         FROM 
             "Fud".users AS u
         JOIN 
@@ -546,7 +555,6 @@ passport.deserializeUser(async (id,done)=>{
         userCache.set(id, user);
     }
 
-    console.log(user)
     done(null,user);
 });
 
