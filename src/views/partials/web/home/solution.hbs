@@ -1,6 +1,6 @@
 
 
-<div class="section" id="create-my-user">
+<div class="section not-cellphone" id="create-my-user">
     <br><br>
     <div class="row">
         <div class="col-8 div-ad">
@@ -12,6 +12,8 @@
 
             <label class="section-title">La plataforma que necesitas. </label> <label class="section-title-3">Empieza gratis.</label>
             <br>
+
+            <!--AD--->
             <div class="div-dialog">
                 <label class="section-title">ED Plus resuelve </label> <label id="solution-text" class="solution-text">Las comandas</label>
             </div>
@@ -19,6 +21,19 @@
             <img src="/img/web/img-2.webp" alt="Ventas eficientes" class="img-ad">
         </div>
         <div class="col">
+            {{>web/home/formSingUp}}
+        </div>
+    </div>
+</div>
+
+<div class="section cellphone">
+    <br><br>
+    <div class="row">
+        <div class="col">
+            <label>Software para tiendas, super mercados, restaurantes, bares y cafés</label>
+            <br>
+            <h1 class="section-title-2">El mejor Punto de Venta en la Nube de México</h1>
+            <br>
             {{>web/home/formSingUp}}
         </div>
     </div>
@@ -141,23 +156,76 @@
         z-index: 1;
     }
 
+    .div-dialog{
+        background-color: white;
+        border-radius: 20px;
+        position: absolute; /* O si prefieres, relative o fixed según lo que necesites */
+        transform: translate(400px, 80px);
+        z-index: 2;
+        padding: 20px;
+    }
+
+
+    .cellphone{
+        display: none;
+    }
+
+
+    /* IPAD H*/
+    @media (max-width: 1300px) {
+        .img-ad{
+            width: 80%;
+            transform: translate(-500px,0px);
+        }
+
         .div-dialog{
             background-color: white;
             border-radius: 20px;
             position: absolute; /* O si prefieres, relative o fixed según lo que necesites */
-            transform: translate(400px, 80px);
+            transform: translate(100px, 80px);
+            z-index: 2;
+            padding: 20px;
+        }
+    }
+
+    /* IPAD v*/
+    @media (max-width: 1000px) {
+        .img-ad{
+            width: 80%;
+            transform: translate(-380px,50px);
+        }
+
+        .div-dialog{
+            background-color: white;
+            border-radius: 20px;
+            position: absolute; /* O si prefieres, relative o fixed según lo que necesites */
+            transform: translate(30px, 80px);
             z-index: 2;
             padding: 20px;
         }
 
-        /* Ajuste para dispositivos móviles */
-        @media (max-width: 768px) {
-            .img-ad{
-                display: none;
-            }
-
-            .div-dialog{
-                display: none;
-            }
+        .solution-text {
+            font-size: 1.5rem;
         }
+    }
+
+    /* Estilos para dispositivos más pequeños como celulares */
+    @media (max-width: 480px) {
+        .not-cellphone{
+            display: none;
+        }
+
+        .cellphone{
+            display: block;
+        }
+
+        .img-ad{
+            width: 100%;
+            transform: translate(-0px,0px);
+        }
+
+        .div-dialog{
+            display: block;
+        }
+    }
 </style>

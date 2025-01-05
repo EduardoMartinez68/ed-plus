@@ -129,7 +129,15 @@ const {
 const {
     search_customers,
 } = require('../../services/customers');
+
+//functions permission
+const {
+    this_user_have_this_permission
+} = require('../../services/permission');
+
 /* 
+
+
 *----------------------links-----------------*/
 const rolFree=0
 //-------------------------------------------------------------------company
@@ -347,16 +355,18 @@ router.get('/:id/:idRoleEmployee/edit-role-user', isLoggedIn, async (req, res) =
 })
 
 router.get('/:id/:id_branch/:idRoleEmployee/edit-role-user', isLoggedIn, async (req, res) => {
-    const company = await check_company(req);
-    if (company.length > 0) {
-        const { idRoleEmployee, id_branch} = req.params;
-        const roleEmployee = await get_data_tole_employees(idRoleEmployee)
-        const branchFree=await get_data_branch(id_branch)
-        res.render('links/manager/role_type_employees/editRoleEmployee', { branchFree, roleEmployee });
+
+    const { idRoleEmployee, id,id_branch} = req.params;
+
+    //we will see if the user have the permission for this App.
+    if(!this_user_have_this_permission(req.user,id, id_branch,'edit_rol_employee')){
+        req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
+        return res.redirect(`/links/${id}/${id_branch}/permission_denied`);
     }
-    else {
-        res.redirect('/links/home');
-    }
+
+    const roleEmployee = await get_data_tole_employees(idRoleEmployee)
+    const branchFree=await get_data_branch(id_branch)
+    res.render('links/manager/role_type_employees/editRoleEmployee', { branchFree, roleEmployee });
 })
 
 //-------------------------------------------------------------department user get_country

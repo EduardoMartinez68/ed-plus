@@ -5,14 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Precios</title>
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #E7EAF1;
-            color: #333;
-        }
-
         .container {
             max-width: 1200px;
             margin: 40px auto;
@@ -342,6 +334,8 @@
             background-color: #0C87F4; /* Color más oscuro en hover */
             color: white; /* Texto blanco en hover */
         }
+
+
         /* Estilos para pantallas pequeñas */
         @media (max-width: 768px) {
             .message-box {
@@ -360,6 +354,22 @@
                 width: 80%; /* Hace el botón más grande en dispositivos pequeños */
                 margin-top: 10px; /* Da espacio entre el texto y el botón */
             }
+
+            .pricing-plan .buy-btn {
+                background: linear-gradient(90deg, #3A88D8, #0066CC);
+                color: white;
+                font-size: 18px;
+                padding: 15px 30px;
+                border: none;
+                border-radius: 50px;
+                cursor: pointer;
+                width: 100%;
+                text-transform: uppercase;
+                font-weight: bold;
+                transition: background-color 0.3s ease, box-shadow 0.3s ease;
+                margin-top: 20px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            }
         }
 
         /* Estilos para dispositivos más pequeños como celulares */
@@ -370,6 +380,10 @@
 
             .message-button {
                 font-size: 14px; /* Reduce el tamaño del texto del botón */
+            }
+
+            .pricing-plan .buy-btn {
+                font-size: .75rem;
             }
         }
     </style>

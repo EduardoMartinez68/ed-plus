@@ -441,7 +441,6 @@ passport.deserializeUser(async (id,done)=>{
 
     //if the user exist in the cache, we return the id of the user
     if (userCache.has(id)) {
-        console.log(userCache.get(id))
         return done(null, userCache.get(id));
     }
 

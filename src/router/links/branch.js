@@ -622,14 +622,21 @@ router.get('/:id_company/:id_branch/type-employees-free', isLoggedIn, async (req
 })
 
 router.get('/:id_company/:id_branch/:id_role_employee/edit-role-user', isLoggedIn, async (req, res) => {
-    if(await validate_subscription(req,res)){
-        const { id_role_employee } = req.params;
-        const roleEmployee = await get_data_tole_employees(id_role_employee);
-        console.log('roleEmployee')
-        console.log(roleEmployee)
-        const branch = await get_data_branch(req);
-        res.render('links/branch/role_type_employees/editRoleEmployee', { roleEmployee, branch });
+    
+    const { id_company,id_branch,id_role_employee } = req.params;
+
+    //we will see if the user have the permission for this App.
+    if(!this_user_have_this_permission(req.user,id_company, id_branch,'edit_rol_employee')){
+        req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
+        return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
     }
+
+    const roleEmployee = await get_data_tole_employees(id_role_employee);
+    console.log('----------------------------roleEmployee--------------------')
+    console.log(roleEmployee)
+    const branch = await get_data_branch(req);
+    res.render('links/branch/role_type_employees/editRoleEmployee', { roleEmployee, branch });
+    
 })
 
 router.get('/:id_company/:id_branch/customer', isLoggedIn, async (req, res) => {

@@ -549,7 +549,14 @@ router.get('/:id_company/:id_branch/:id/delete-food-category', isLoggedIn, async
 
 //------------------------------------type user
 router.get('/:id_company/:id_branch/type-user', isLoggedIn, async (req, res) => {
-    const { id_company } = req.params;
+    const { id_company, id_branch} = req.params;
+
+    //we will see if the user have the permission for this App.
+    if(!this_user_have_this_permission(req.user,id_company, id_branch,'employee_department')){
+        req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
+        return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
+    }
+
     const branchFree = await check_company_other(req);
     const typeEmployees = await get_type_employees(id_company);
     res.render('links/manager/role_type_employees/typeEmployees', { branchFree, typeEmployees });
