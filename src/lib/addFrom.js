@@ -1153,7 +1153,9 @@ function create_type_employee(id_company, req) {
         watch_permission(req.body.modifyHardwareKitchen),
         watch_permission(req.body.givePermissions),
 
-        watch_permission(req.body.pointSales)
+        watch_permission(req.body.pointSales),
+        watch_permission(req.body.viewInventory),
+        watch_permission(req.body.editInventory)
     ]
     return newTypeEmployee
 }

@@ -434,9 +434,17 @@ passport.serializeUser((user,done)=>{
     done(null,user.id);
 });
 
-let num=0;
+
+const userCache=require('../lib/databaseCache.js');
+
 passport.deserializeUser(async (id,done)=>{
-    //var queryText = 'SELECT * FROM "Fud".users Where id = $1';
+
+    //if the user exist in the cache, we return the id of the user
+    if (userCache.has(id)) {
+        return done(null, userCache.get(id));
+    }
+
+    //if the user no is save in the cahcer we search his data in the database
     const queryText = `
         SELECT 
             u.id AS id,          -- ID del usuario
@@ -511,7 +519,9 @@ passport.deserializeUser(async (id,done)=>{
             r.modify_hardware_kitchen,
             r.give_permissions,
             r.currency,
-            r.type_of_salary
+            r.type_of_salary,
+            r.view_inventory,
+            r.edit_inventory
         FROM 
             "Fud".users AS u
         JOIN 
@@ -525,15 +535,19 @@ passport.deserializeUser(async (id,done)=>{
         WHERE 
             u.id = $1;  -- Filtrar por el ID del usuario
     `;
-
-
-    var queryText2 = 'SELECT * FROM "Fud".users Where id = $1';
     var values = [id];
 
+    //get the anser of the database
     const obj = await database.query(queryText, values);
-    //console.log('--------------------------------------------')
-    //console.log(num)
-    //num++;
-    //console.log(obj.rows[0])
-    done(null,obj.rows[0]);
+    const user=obj.rows[0];
+
+    //if get the user of the database, we will save the data of the user in cache
+    if (user) {
+        userCache.set(id, user);
+    }
+
+    console.log(user)
+    done(null,user);
 });
+
+

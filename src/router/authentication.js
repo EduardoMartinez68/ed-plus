@@ -12,12 +12,22 @@ router.get('/links/login',isNotLoggedIn,(req,res)=>{
     res.render('links/web/login');
 });
 
+
+const userCache=require('../lib/databaseCache.js');
 router.get('/links/logout',(req,res)=>{
+    const userId = req.user.id; //get the user id
+
     req.logout(function(err) {
         if (err) {
           console.error('Error al desautenticar:', err);
           return res.status(500).json({ message: 'Error al desautenticar' });
         }
+
+        //when the user outside of the web, delete his data of the cache
+        if (userId) {
+            userCache.delete(userId); // delete to user of the cache
+        }
+
         res.redirect('/links/login');
     })
 });

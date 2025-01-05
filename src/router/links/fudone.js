@@ -170,7 +170,7 @@ router.get('/:id_company/:id_branch/inventory', isLoggedIn, async (req, res) => 
     const {id_company,id_branch } = req.params;
 
     //we will see if the user have the permission for this App.
-    if(!this_user_have_this_permission(req.user,id_company, id_branch,'view_products')){
+    if(!this_user_have_this_permission(req.user,id_company, id_branch,'view_inventory')){
         req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
         return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
     }
