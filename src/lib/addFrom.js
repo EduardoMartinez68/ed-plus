@@ -19,6 +19,7 @@ const path = require('path');
 const printer = require('../lib/printer');
 
 //config the connection with digitalocean
+/*
 const AWS = require('aws-sdk');
 const { APP_NYCE, APP_ACCESS_KEY_ID, SECRET_ACCESS_KEY } = process.env; //Get our nyce3 for connection with digitalocean
 const spacesEndpoint = new AWS.Endpoint(APP_NYCE)
@@ -30,8 +31,14 @@ const s3 = new AWS.S3({
 });
 
 const bucketName = APP_NYCE;
-
+*/
 async function upload_image_to_space(filePath, objectName) {
+    //THIS IS FOR WHEN THE APPLICATION IS FOR DESKTOP
+   console.log('------upload--------')
+   const currentPath = path.basename(filePath);
+   return path.join('/img/uploads', currentPath);
+
+    /*
     const fileContent = fs.readFileSync(filePath);
 
     const params = {
@@ -50,9 +57,12 @@ async function upload_image_to_space(filePath, objectName) {
         console.error('Error to upload the image to digitalocean:', err);
         return '';
     }
+    */
 };
 
 async function delete_image_upload(pathImg) {
+    //THIS IS FOR WHEN THE APPLICATION IS FOR DESKTOP
+    /*
     const params = {
         Bucket: bucketName,
         Key: pathImg
@@ -66,15 +76,20 @@ async function delete_image_upload(pathImg) {
         console.error('Error to delete the image:', err);
         return false;
     }
-    /*
-    var pathImage = path.join(__dirname, '../public/img/uploads', pathImg);
+    */
+
+    //THIS IS FOR WHEN THE WEB IS IN A SERVER
+    console.log('----------------delete-------------')
+    var pathImage = path.join(__dirname, '../public',pathImg); //path.join(__dirname, '../public/img/uploads', pathImg);
     fs.unlink(pathImage, (error) => {
         if (error) {
             console.error('Error to delate image:', error);
         } else {
             console.log('Image delate success');
         }
-    });*/
+    });
+
+    return true;
 }
 
 //packs 
@@ -196,7 +211,8 @@ async function create_a_new_image(req) {
 
         return imageUrl;
     }
-
+    console.log('------------------------')
+    console.log(req.file)
     return '';
 }
 

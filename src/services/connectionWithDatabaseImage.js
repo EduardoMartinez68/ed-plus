@@ -1,14 +1,10 @@
 const database = require('../database');
 
 //config the connection with digitalocean
+/*
 const AWS= require('aws-sdk'); 
 const {APP_NYCE,APP_ACCESS_KEY_ID,SECRET_ACCESS_KEY}=process.env; //Get our nyce3 for connection with digitalocean
 const spacesEndpoint=new AWS.Endpoint(APP_NYCE)
-
-//delate image
-const fs = require('fs');
-const path = require('path');
-
 
 const s3=new AWS.S3({
     endpoint:spacesEndpoint,
@@ -17,6 +13,12 @@ const s3=new AWS.S3({
 });
 
 const bucketName = APP_NYCE;
+
+*/
+//delate image
+const fs = require('fs');
+const path = require('path');
+
 
 //this is a function for get the path of the image of a table
 async function get_path_img(schema, table, id) {
@@ -34,6 +36,9 @@ async function get_path_img(schema, table, id) {
 
 //this function is for delate the image of the tabla of the file img/uploads
 async function delate_image_upload(pathImg) {
+  console.log('------------delete image---------')
+    //THIS IS FOR WHEN THE WEB IS IN A SERVER
+    /*
     const params = {
         Bucket: bucketName,
         Key: pathImg
@@ -47,7 +52,9 @@ async function delate_image_upload(pathImg) {
         console.error('Error to delete the image:', err);
         return false;
     }
-    /*
+    */
+
+    //THIS IS FOR WHEN THE APPLICATION IS FOR DESKTOP
     var pathImage = path.join(__dirname, '../public/img/uploads', pathImg);
     fs.unlink(pathImage, (error) => {
         if (error) {
@@ -55,7 +62,7 @@ async function delate_image_upload(pathImg) {
         } else {
             console.log('Image delate success');
         }
-    });*/
+    });
 }
 
 async function get_image(id) {
@@ -66,27 +73,53 @@ async function get_image(id) {
 }
 
 async function upload_image_to_space(filePath, objectName){
-    const fileContent = fs.readFileSync(filePath);
-  
-    const params = {
-      Bucket: bucketName,
-      Key: objectName,
-      Body: fileContent,
-      ACL: 'public-read' // O 'private' si deseas que no sea público
-    };
-  
-    try {
-      const data = await s3.upload(params).promise();
-      console.log('Image upload with success digitalocean:', data.Location);
-      fs.unlinkSync(filePath); // delete file temporary
-      return data.Location;
-    } catch (err) {
-      console.error('Error to upload the image to digitalocean:', err);
-      return '';
-    }
+  console.log('------------update image---------')
+   // Ruta actual de la imagen
+   const currentPath = path.join(__dirname, '../public/img/uploads', filePath);
+    
+   // Nueva ruta de destino para la imagen
+   const destinationPath = path.join(currentPath, filePath);
+
+   // Verifica si la carpeta de destino existe, si no, créala
+   if (!fs.existsSync(destinationPath)) {
+       fs.mkdirSync(destinationPath, { recursive: true });
+   }
+
+   // Mueve el archivo
+   fs.rename(currentPath, destinationPath, (error) => {
+       if (error) {
+           console.error('Error al mover la imagen:', error);
+       } else {
+           console.log(`Imagen movida con éxito a: ${destinationPath}`);
+       }
+   });
+
+   return destinationPath;
+
+  /*
+  const fileContent = fs.readFileSync(filePath);
+
+  const params = {
+    Bucket: bucketName,
+    Key: objectName,
+    Body: fileContent,
+    ACL: 'public-read' // O 'private' if you would like that be public
+  };
+
+  try {
+    const data = await s3.upload(params).promise();
+    console.log('Image upload with success digitalocean:', data.Location);
+    fs.unlinkSync(filePath); // delete file temporary
+    return data.Location;
+  } catch (err) {
+    console.error('Error to upload the image to digitalocean:', err);
+    return '';
+  }*/
 };
 
 async function delete_image_from_space(objectName){
+  console.log('------------delete image 2---------')
+    //THIS IS FOR WHEN THE WEB IS IN A SERVER
     const params = {
       Bucket: bucketName,
       Key: objectName
@@ -103,11 +136,11 @@ async function delete_image_from_space(objectName){
 };
 
 async function create_a_new_image(req){
+  console.log('------------create_a_new_image---------')
     if(req.file){
         const filePath = req.file.path;
         const objectName = req.file.filename;
         const imageUrl = await upload_image_to_space(filePath, objectName);
-
         return imageUrl;
     }
 
@@ -115,6 +148,7 @@ async function create_a_new_image(req){
 }
 
 async function delate_image(id) {
+  console.log('------------delete image 3---------')
     var pathImg = await get_image(id);
     const params = {
         Bucket: bucketName,

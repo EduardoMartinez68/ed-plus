@@ -1,3 +1,7 @@
+//----------------------desktop application
+const { app, BrowserWindow } = require('electron');
+
+//----------------------server application
 const express=require('express');
 const morgan=require('morgan');
 const {engine}=require('express-handlebars');
@@ -13,23 +17,26 @@ const path=require('path');
 //ReCAPTCHA of Google
 const { RecaptchaV2 } = require('express-recaptcha');
 
+
+
 //*------------------initializations-----------------------------------------//
-const app=express();
+const serverExpress =express();
+
 require('./lib/passport');
 //require('./lib/addFrom');
 require('./lib/editFrom');
 
 //*-----------------------------------------------------------settings-----------------------------------------//
-app.set('port',process.env.PORT || 4000);
-app.set('views',path.join(__dirname,'views'))
-app.engine('.hbs',engine({ //we will create the engine for the web
+serverExpress.set('port',process.env.PORT || 4000);
+serverExpress.set('views',path.join(__dirname,'views'))
+serverExpress.engine('.hbs',engine({ //we will create the engine for the web
     defaultLayout:'main',
-    layoutsDir: path.join(app.get('views'),'layouts'),
-    partialsDir: path.join(app.get('views'),'partials'),
+    layoutsDir: path.join(serverExpress.get('views'),'layouts'),
+    partialsDir: path.join(serverExpress.get('views'),'partials'),
     extname: '.hbs',
     helpers:require('./lib/handlebars')
 }))
-app.set('view engine','.hbs');
+serverExpress.set('view engine','.hbs');
 
 
 //*-----------------------------------------------------------middlewares-----------------------------------------//
@@ -49,7 +56,7 @@ const pgPool = new pg.Pool({
     }*/
     
 });
-app.use(session({
+serverExpress.use(session({
     secret: 'FudSession',
     resave: false ,
     saveUninitialized:false,
@@ -62,15 +69,15 @@ app.use(session({
 
 const {MY_SITE_KEYS,MY_SECRET_KEY}=process.env; //this code is for get the data of the database
 const recaptcha = new RecaptchaV2(MY_SITE_KEYS, MY_SECRET_KEY); //this is for load the Recaptcha in the web for delete to the bots
-app.use(recaptcha.middleware.verify);
+serverExpress.use(recaptcha.middleware.verify);
 
 //*-----------------------------------------------------------activate the our library-----------------------------------------// 
-app.use(flash());
-app.use(morgan('dev'));
-app.use(express.urlencoded({extended:false}));
-app.use(express.json());
-app.use(passport.initialize());
-app.use(passport.session());
+serverExpress.use(flash());
+serverExpress.use(morgan('dev'));
+serverExpress.use(express.urlencoded({extended:false}));
+serverExpress.use(express.json());
+serverExpress.use(passport.initialize());
+serverExpress.use(passport.session());
 
 const storage=multer.diskStorage({ //this function is for load a image in the forms
     destination: path.join(__dirname,'public/img/uploads'),
@@ -79,24 +86,24 @@ const storage=multer.diskStorage({ //this function is for load a image in the fo
     }
 });
 
-app.use(multer({storage: storage}).single('image'));
+serverExpress.use(multer({storage: storage}).single('image'));
 
 
 //*-----------------------------------------------------------global variables-----------------------------------------//
-app.use((req,res,next)=>{
-    app.locals.success=req.flash('success');
-    app.locals.message=req.flash('message');
-    app.locals.user=req.user;
-    app.locals.company=req.company;
-    app.locals.pack_company = 0;
-    app.locals.pack_branch = 0;
+serverExpress.use((req,res,next)=>{
+    serverExpress.locals.success=req.flash('success');
+    serverExpress.locals.message=req.flash('message');
+    serverExpress.locals.user=req.user;
+    serverExpress.locals.company=req.company;
+    serverExpress.locals.pack_company = 0;
+    serverExpress.locals.pack_branch = 0;
     next();
 });
 
 
 //*-----------------------------------------chat online-----------------------------------------//
 const http = require('http');
-const server = http.createServer(app);
+const server = http.createServer(serverExpress);
 const { Server } = require("socket.io");
 const io = new Server(server);
 const users = {}; // object for  mapear users IDs with Socket IDs
@@ -282,35 +289,98 @@ io.on('connection', async(socket) =>{
 
 //*-----------------------------------------------------------routes-----------------------------------------//
 const companyName='/links' //links
-app.use(require('./router'))
-app.use(require('./router/authentication'))
-app.use(companyName,require('./router/links'))
-app.use(companyName,require('./router/links/fudone'))
-app.use(companyName,require('./router/links/ceo'))
-app.use(companyName,require('./router/links/branch'))
-app.use(companyName,require('./router/links/subscription'))
-app.use(companyName,require('./router/links/store'))
-app.use(companyName,require('./router/links/delivery'))
-app.use(companyName,require('./router/links/app'))
-app.use(companyName,require('./router/links/CRM'))
+serverExpress.use(require('./router'))
+serverExpress.use(require('./router/authentication'))
+serverExpress.use(companyName,require('./router/links'))
+serverExpress.use(companyName,require('./router/links/fudone'))
+serverExpress.use(companyName,require('./router/links/ceo'))
+serverExpress.use(companyName,require('./router/links/branch'))
+serverExpress.use(companyName,require('./router/links/subscription'))
+serverExpress.use(companyName,require('./router/links/store'))
+serverExpress.use(companyName,require('./router/links/delivery'))
+serverExpress.use(companyName,require('./router/links/app'))
+serverExpress.use(companyName,require('./router/links/CRM'))
 
-app.use(require('./lib/addFrom'));
+serverExpress.use(require('./lib/addFrom'));
 
 //add database
 //app.use(companyName,require('./router/addDatabase'))
 
 //public
-app.use(express.static(path.join(__dirname,'public')));
+serverExpress.use(express.static(path.join(__dirname,'public')));
 
-//---------------------------------------------------------------------------------------------------------------------------
-
-//starting the server
+//*-----------------------------------------------------------Server application-----------------------------------------//
 /*
-app.listen(app.get('port'),()=>{
-    console.log('server on port:',app.get('port'));
-});
+    SETTING IN PACKAGE.JSON
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/"
+  },
 */
 
+//this is for get the IP of the computer that is the server
+const os = require('os');
+
+function getLocalIP() {
+    const interfaces = os.networkInterfaces();
+    for (let iface in interfaces) {
+        for (let i = 0; i < interfaces[iface].length; i++) {
+            const address = interfaces[iface][i];
+            if (address.family === 'IPv4' && !address.internal) {
+                return address.address;
+            }
+        }
+    }
+    return '127.0.0.1';
+}
+
+//starting the server in the computer
+serverExpress.listen(serverExpress.get('port'), '0.0.0.0', () => {
+    console.log(`Server running on http://${getLocalIP()}:${serverExpress.get('port')}`);
+});
+
+
+//*-----------------------------------------------------------Desktop application-----------------------------------------//
+/*
+    SETTING IN PACKAGE.JSON
+  "main": "src/index.js",
+  "scripts": {
+    "start": "npx electron .",
+    "dev": "nodemon src/",
+    "electron": "electron ."
+  },
+*/
+//this is for create the UI in the windows
+let mainWindow;
+const createMainWindow = () => {
+    mainWindow = new BrowserWindow({
+        width: 800,
+        height: 600,
+        webPreferences: {
+            nodeIntegration: true,
+        },
+    });
+
+    //This is to make the screen grow to full screen
+    mainWindow.maximize();
+
+    // load the URL of the server Express
+    mainWindow.loadURL(`http://localhost:${serverExpress.get('port')}`);
+};
+
+// whne Electron is ready, load the web in the screen
+app.on('ready', createMainWindow);
+
+// clouse the screen
+app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') {
+        app.quit();
+    }
+});
+
+/*
 server.listen(app.get('port'), () => {
     console.log('Servidor corriendo en http://localhost:' + app.get('port'));
 });
+*/

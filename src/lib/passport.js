@@ -209,7 +209,7 @@ passport.use('local.signup', new LocalStrategy({
             phone: ${phone} <br>
             email: ${correctedEmail}
         `
-        await sendEmail.send_email('technologyfud@gmail.com','eduardoa4848@Outlook.es',message)
+        //await sendEmail.send_email('technologyfud@gmail.com','eduardoa4848@Outlook.es',message)
         
         //create a company for the user 
         const newCompany=await get_new_company(newUser.id,correctedEmail,businessName,phone);

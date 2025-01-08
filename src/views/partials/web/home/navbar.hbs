@@ -112,10 +112,82 @@
   background-color: #0066CC;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 1000px) {
+  .navbar {
+    padding: 20px 15px;
+    background-color: #06294A; /* Color de fondo más compacto */
+  }
+
+  .navbar-brand {
+    height: 40px; /* Logo más pequeño */
+    width: auto;
+    transform: translateY(-75px);
+  }
+
+  .navbar-toggler {
+      padding: 6px 10px;
+      border-radius: 5px;
+      background-color: #0055A5; /* Mejor contraste */
+      border: none;
+      transform: translateY(-75px);
+  }
+
+  .navbar-nav {
+    margin-top: 10px;
+  }
+
   .navbar-nav .nav-item {
     margin-right: 0;
+    margin-bottom: 10px; /* Espaciado vertical entre enlaces */
+    text-align: center;
+  }
+
+  .navbar-nav .nav-link {
+    font-size: 0.9rem; /* Texto ligeramente más pequeño */
+    padding: 10px 15px; /* Menos padding */
+    width: auto; /* Botones adaptables al contenido */
+  }
+
+  /* Botón "Crear cuenta gratis" */
+  .navbar-nav .btn-bright {
+    font-size: 0.9rem;
+    padding: 10px 15px;
+    border-radius: 20px;
+    width: 100%; /* Botón ancho completo */
+  }
+
+  /* Botón "Iniciar sesión" */
+  .navbar-nav .btn-info {
+    font-size: 0.9rem;
+    padding: 10px 15px;
+    width: 100%; /* Botón ancho completo */
+    text-align: center;
+    border-radius: 20px;
+  }
+
+  /* Botón "Precios" */
+  .navbar-nav .nav-link.text-white {
+    font-size: 0.9rem;
+    width: 100%; /* Botón ancho completo */
+    text-align: center;
+  }
+
+  /* Ajustes para el menú colapsable */
+  .collapse {
+    background-color: #06294A; /* Fondo coherente con la navbar */
+    padding: 15px;
+    border-radius: 5px;
   }
 }
-
 </style>
+<script>
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const navbarCollapse = document.querySelector('.navbar-collapse');
+      const bsCollapse = new bootstrap.Collapse(navbarCollapse, {
+        toggle: false
+      });
+      bsCollapse.hide();
+    });
+  });
+</script>
