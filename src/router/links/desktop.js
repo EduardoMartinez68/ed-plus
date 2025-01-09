@@ -5,7 +5,6 @@ const database = require('../../database');
 //const sql = fs.readFileSync('database/archivo.sql').toString();
 
 router.get('/install-desktop', isNotLoggedIn, async (req, res) => {
-    
     //her we will see if can connect to the database, and if can connect with the database get the number of user
     const user=await connect_with_the_database();
 
