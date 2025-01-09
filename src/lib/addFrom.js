@@ -168,7 +168,7 @@ async function compare_company_with_name(req, name) {
     var queryText = 'SELECT * FROM "User".companies Where name = $1 and id_users= $2';
     var values = [name, parseInt(req.user.id)];
     var user = await database.query(queryText, values);
-    return user.rows.length > 0
+    return user.rows.length > 0;
 }
 
 

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Error</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    .container {
+      text-align: center;
+      padding: 20px 30px;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      max-width: 400px;
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+      color: #e74c3c;
+    }
+    p {
+      font-size: 16px;
+      margin-bottom: 20px;
+      color: #555;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: var(--color-company);
+      border: none;
+      border-radius: 5px;
+      color: #fff;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Error 🤕</h1>
+    <p>Hubo un problema al crear la base de datos. Por favor, intenta nuevamente.</p>
+    <button onclick="location.reload()">Crear la base de datos</button>
+    <br><br>
+    <center>
+        <label for="">Power by {ED} Software Developer</label>
+    </center>
+  </div>
+</body>
+</html>
