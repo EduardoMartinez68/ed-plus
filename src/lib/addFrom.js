@@ -34,7 +34,6 @@ const bucketName = APP_NYCE;
 */
 async function upload_image_to_space(filePath, objectName) {
     //THIS IS FOR WHEN THE APPLICATION IS FOR DESKTOP
-   console.log('------upload--------')
    const currentPath = path.basename(filePath);
    return path.join('/img/uploads', currentPath);
 
@@ -79,7 +78,6 @@ async function delete_image_upload(pathImg) {
     */
 
     //THIS IS FOR WHEN THE WEB IS IN A SERVER
-    console.log('----------------delete-------------')
     var pathImage = path.join(__dirname, '../public',pathImg); //path.join(__dirname, '../public/img/uploads', pathImg);
     fs.unlink(pathImage, (error) => {
         if (error) {

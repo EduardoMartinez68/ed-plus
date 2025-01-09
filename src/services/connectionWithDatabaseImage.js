@@ -54,8 +54,8 @@ async function delate_image_upload(pathImg) {
     }
     */
 
-    //THIS IS FOR WHEN THE APPLICATION IS FOR DESKTOP
-    var pathImage = path.join(__dirname, '../public/img/uploads', pathImg);
+    //THIS IS FOR WHEN THE WEB IS IN A SERVER
+    var pathImage = path.join(__dirname, '../public',pathImg); //path.join(__dirname, '../public/img/uploads', pathImg);
     fs.unlink(pathImage, (error) => {
         if (error) {
             console.error('Error to delate image:', error);
@@ -63,6 +63,8 @@ async function delate_image_upload(pathImg) {
             console.log('Image delate success');
         }
     });
+
+    return true;
 }
 
 async function get_image(id) {
@@ -73,28 +75,8 @@ async function get_image(id) {
 }
 
 async function upload_image_to_space(filePath, objectName){
-  console.log('------------update image---------')
-   // Ruta actual de la imagen
-   const currentPath = path.join(__dirname, '../public/img/uploads', filePath);
-    
-   // Nueva ruta de destino para la imagen
-   const destinationPath = path.join(currentPath, filePath);
-
-   // Verifica si la carpeta de destino existe, si no, créala
-   if (!fs.existsSync(destinationPath)) {
-       fs.mkdirSync(destinationPath, { recursive: true });
-   }
-
-   // Mueve el archivo
-   fs.rename(currentPath, destinationPath, (error) => {
-       if (error) {
-           console.error('Error al mover la imagen:', error);
-       } else {
-           console.log(`Imagen movida con éxito a: ${destinationPath}`);
-       }
-   });
-
-   return destinationPath;
+   const currentPath = path.basename(filePath);
+   return path.join('/img/uploads', currentPath);
 
   /*
   const fileContent = fs.readFileSync(filePath);
@@ -118,7 +100,18 @@ async function upload_image_to_space(filePath, objectName){
 };
 
 async function delete_image_from_space(objectName){
-  console.log('------------delete image 2---------')
+    //THIS IS FOR WHEN THE WEB IS IN A SERVER
+    var pathImage = path.join(__dirname, '../public',pathImg); //path.join(__dirname, '../public/img/uploads', pathImg);
+    fs.unlink(pathImage, (error) => {
+        if (error) {
+            console.error('Error to delate image:', error);
+        } else {
+            console.log('Image delate success');
+        }
+    });
+
+    return true;
+    
     //THIS IS FOR WHEN THE WEB IS IN A SERVER
     const params = {
       Bucket: bucketName,
@@ -136,7 +129,6 @@ async function delete_image_from_space(objectName){
 };
 
 async function create_a_new_image(req){
-  console.log('------------create_a_new_image---------')
     if(req.file){
         const filePath = req.file.path;
         const objectName = req.file.filename;

@@ -300,6 +300,7 @@ serverExpress.use(companyName,require('./router/links/store'))
 serverExpress.use(companyName,require('./router/links/delivery'))
 serverExpress.use(companyName,require('./router/links/app'))
 serverExpress.use(companyName,require('./router/links/CRM'))
+serverExpress.use(companyName,require('./router/links/desktop'))
 
 serverExpress.use(require('./lib/addFrom'));
 
