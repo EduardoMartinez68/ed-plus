@@ -7,6 +7,7 @@ const helpers=require('../lib/helpers.js');
 const sendEmail = require('../lib/sendEmail.js'); //this is for send emails 
 const addDatabase=require('../router/addDatabase');
 
+const system=require('../lib/system'); //get the variable system for we know where is running the app
 //-----------------------------login
 passport.use('local.login', new LocalStrategy({
     usernameField: 'userName',
@@ -18,7 +19,15 @@ passport.use('local.login', new LocalStrategy({
     password = password.trim();
 
     //search the user in the database 
-    const user=await search_user(userName);
+    let user;
+    if(system=='desktop'){
+        //if the user is in the desktop, we will see to user for his name
+        user=await search_user_for_user_name(userName);
+    }else{
+        //if the user is in the desktop, we will see to user for his email
+        user=await search_user_for_email(userName);
+    }
+
     if(user.rows.length>0){ //if exist a user with the username of the form
         //we will watch if the password is correct
         if (await helpers.matchPassword(password,user.rows[0].password)){
@@ -33,9 +42,15 @@ passport.use('local.login', new LocalStrategy({
     }
 }));
 
-async function search_user(email){
+async function search_user_for_email(email){
     const queryText = 'SELECT * FROM "Fud".users WHERE email = $1';
     var values = [email] 
+    return await database.query(queryText, values);
+}
+
+async function search_user_for_user_name(username){
+    const queryText = 'SELECT * FROM "Fud".users WHERE user_name = $1';
+    var values = [username] 
     return await database.query(queryText, values);
 }
 
@@ -194,7 +209,8 @@ passport.use('local.signup', new LocalStrategy({
         }
     
         //create the username 
-        const userName='admin_'+businessName
+        let formattedName = businessName.replace(/ /g, "_"); //this is for delete all the space in white
+        const userName='admin_'+formattedName;
     
         //create the password 
         const password=create_password();

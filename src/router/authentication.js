@@ -2,6 +2,9 @@ const express=require('express');
 const router=express.Router();
 const passport=require('passport');
 const {isLoggedIn,isNotLoggedIn}=require('../lib/auth');
+
+const system=require('../lib/system'); //get the variable system for we know where is running the app
+
 //---------------------------------------------------------------------web
 router.get('/links/signup',isNotLoggedIn,(req,res)=>{
     //res.render('links/web/singup');
@@ -9,9 +12,13 @@ router.get('/links/signup',isNotLoggedIn,(req,res)=>{
 });
 
 router.get('/links/login',isNotLoggedIn,(req,res)=>{
-    res.render('links/web/login');
+    //we will see if the app is in the website or in the desktop 
+    if(system=='desktop'){
+        res.redirect('/links/login-desktop');
+    }else{
+        res.redirect('/links/login');
+    }
 });
-
 
 const userCache=require('../lib/databaseCache.js');
 router.get('/links/logout',(req,res)=>{
@@ -28,7 +35,12 @@ router.get('/links/logout',(req,res)=>{
             userCache.delete(userId); // delete to user of the cache
         }
 
-        res.redirect('/links/login');
+        //we will see if the app is in the website or in the desktop 
+        if(system=='desktop'){
+            res.redirect('/links/install-desktop');
+        }else{
+            res.redirect('/links/login');
+        }
     })
 });
 
