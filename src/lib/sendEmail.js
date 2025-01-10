@@ -78,7 +78,7 @@ async function email_to_recover_password(email,token) {
 
 async function welcome_email(email,name) {
     const toEmail = email;//'fud-technology@hotmail.com' //email
-    const subjectEmail = '🚀 ¡Bienvenido a Füd Technology! 🚀';
+    const subjectEmail = '🚀 ¡Bienvenido a {ED} PLUS! 🚀';
     const message = `
         <html>
         <head>
@@ -146,7 +146,7 @@ async function welcome_email(email,name) {
                     <p>Para comenzar, te invitamos a explorar nuestra plataforma y descubrir todo lo que tenemos para ofrecerte.</p>
 
                     <p>Si tienes alguna pregunta o necesitas ayuda, no dudes en contactarnos. 🤗</p>
-                    <p>¡Gracias por unirte a Füd y esperamos que tengas una experiencia increíble con nosotros! ❤️</p>
+                    <p>¡Gracias por unirte a {ED PLUS} y esperamos que tengas una experiencia increíble con nosotros! ❤️</p>
                     <br><br>
                     <a class="button" href="https://fud-tech.cloud">Explora Ahora 🚀</a>
                 </div>

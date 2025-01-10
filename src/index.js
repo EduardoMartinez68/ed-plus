@@ -1,5 +1,8 @@
+const system=require('./lib/system');
+
 //----------------------desktop application
 const { app, BrowserWindow } = require('electron');
+
 
 //----------------------server application
 const express=require('express');
@@ -137,22 +140,25 @@ io.on('connection', async(socket) =>{
             return;
         }
 
-        // we will see if exist the limit of employees in caché
-        if (!companyLimitsCache[companyId]) {
-            // if not exist in the caché, we will get from the database
-            companyLimitsCache[companyId] = await chat.get_max_employee_of_this_company(companyId); // save in the caché
-        }
+        //we will see if the user is in DESKTOP 
+        if(system!='desktop'){ //if the user not is in the desktop, we is in the server
+            // we will see if exist the limit of employees in caché
+            if (!companyLimitsCache[companyId]) {
+                // if not exist in the caché, we will get from the database
+                companyLimitsCache[companyId] = await chat.get_max_employee_of_this_company(companyId); // save in the caché
+            }
 
-        //her we will get the max employees from the database
-        const maxEmployees= companyLimitsCache[companyId];
+            //her we will get the max employees from the database
+            const maxEmployees= companyLimitsCache[companyId];
 
-        //we will see if the company is to limit of connected devices
-        if (companyConnections.length >= maxEmployees+1) {
-            socket.emit(
-              "connectionRejected",
-              "Ups, parece que alcanzaste tu límite de dispositivos conectados. Por favor, actualiza tu membresía."
-            );
-            return;
+            //we will see if the company is to limit of connected devices
+            if (companyConnections.length >= maxEmployees) {
+                socket.emit(
+                "connectionRejected",
+                "Ups, parece que alcanzaste tu límite de dispositivos conectados. Por favor, actualiza tu membresía."
+                );
+                return;
+            }
         }
 
         // Relate the socket to the company
@@ -345,6 +351,7 @@ serverExpress.listen(serverExpress.get('port'), '0.0.0.0', () => {
 
 
 //*-----------------------------------------------------------Desktop application-----------------------------------------//
+//we will see if the APP is for desktop
 /*
     SETTING IN PACKAGE.JSON
   "main": "src/index.js",

@@ -885,7 +885,9 @@ router.post('/fud/:id_branch/:id_company/edit-branch', isLoggedIn, async (req, r
         else {
             req.flash('message', 'La sucursal no fue actualizada 😰')
         }
-        res.redirect('/fud/home');
+
+        res.redirect('/links/home')
+        //res.redirect(`/links/${id_company}/${id_branch}/edit-branch-free`);
     }else{
         if (!await this_subscription_exist_with_my_branch(idSubscription, id_branch)) {
             //if this subscription was used, show a message of error 
@@ -905,7 +907,8 @@ router.post('/fud/:id_branch/:id_company/edit-branch', isLoggedIn, async (req, r
                 req.flash('message', 'Ocurrio un error con el servidor, vuelve a intentarlo 👉👈')
             }
         }
-        res.redirect('/links/' + id_company + '/branches');
+        
+        res.redirect(`/links/${id_company}/branches`);
     }
 })
 
