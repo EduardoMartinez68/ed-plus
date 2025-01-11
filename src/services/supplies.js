@@ -191,6 +191,46 @@ async function delete_dishes_or_combo_of_the_branch(id_dishes_and_combos){
 }
 
 
+async function get_inventory_products_branch(id_branch){
+    var queryText = `
+        SELECT 
+            f.*,
+            p.id_companies,
+            p.img,
+            p.barcode,
+            p.name,
+            p.description,
+            p.use_inventory
+        FROM "Inventory".product_and_suppiles_features f
+        INNER JOIN "Kitchen".products_and_supplies p ON f.id_products_and_supplies = p.id
+        WHERE f.id_branches = $1 and p.supplies =$2 and use_inventory=true
+    `;
+    var values = [id_branch, false];
+    const result = await database.query(queryText, values);
+    const data = result.rows;
+    return data;
+}
+
+async function get_inventory_supplies_branch(id_branch){
+    var queryText = `
+        SELECT 
+            f.*,
+            p.id_companies,
+            p.img,
+            p.barcode,
+            p.name,
+            p.description,
+            p.use_inventory
+        FROM "Inventory".product_and_suppiles_features f
+        INNER JOIN "Kitchen".products_and_supplies p ON f.id_products_and_supplies = p.id
+        WHERE f.id_branches = $1 and p.supplies =$2 and use_inventory=true
+    `;
+    var values = [id_branch, true];
+    const result = await database.query(queryText, values);
+    const data = result.rows;
+    return data;
+}
+
 module.exports = {
     get_supplies_or_features,
     get_supplies_with_id,
@@ -204,5 +244,7 @@ module.exports = {
     update_product_category,
     get_supplies_or_features_with_id_products_and_supplies,
     delete_supplies_or_product_of_the_branch,
-    delete_dishes_or_combo_of_the_branch
+    delete_dishes_or_combo_of_the_branch,
+    get_inventory_products_branch,
+    get_inventory_supplies_branch
 };

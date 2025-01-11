@@ -164,40 +164,40 @@
             }
         }
 
-    async function edit_supplies(id,id_company,img,barcode,nameDepartment,descriptionDepartment,use_inventory,id_branch){
-        //we will to delate the space in 
-        if(descriptionDepartment=="-"){
-            descriptionDepartment=""
-        }
+        async function edit_supplies(id,id_company,img,barcode,nameDepartment,descriptionDepartment,use_inventory,id_branch){
+            //we will to delate the space in 
+            if(descriptionDepartment=="-"){
+                descriptionDepartment=""
+            }
 
-        //we will to get the data of the new department
-        const data=await edit_supplies_company('✏️ Editar insumo',id,id_company,img,barcode,nameDepartment,descriptionDepartment,use_inventory,id_branch);
-        if(data){
-            //get the data of the from 
-            var newImg = data[0];
-            var newBarcode = data[1];
-            var name = data[2];
-            var description = data[3];
-            var useInventory = data[4];
-            console.log(newImg)
+            //we will to get the data of the new department
+            const data=await edit_supplies_company('✏️ Editar insumo',id,id_company,img,barcode,nameDepartment,descriptionDepartment,use_inventory,id_branch);
+            if(data){
+                //get the data of the from 
+                var newImg = data[0];
+                var newBarcode = data[1];
+                var name = data[2];
+                var description = data[3];
+                var useInventory = data[4];
+                console.log(newImg)
 
-            //we will to see if be a name
-            if(newBarcode!=""){
-                if(name!=""){
-                    if(description==""){
-                        description="-";
-                    }            
-                    //window.location.href = `/fud/${id_company}/${id}/${newBarcode}/${name}/${description}/${useInventory}/company-supplies`;
+                //we will to see if be a name
+                if(newBarcode!=""){
+                    if(name!=""){
+                        if(description==""){
+                            description="-";
+                        }            
+                        //window.location.href = `/fud/${id_company}/${id}/${newBarcode}/${name}/${description}/${useInventory}/company-supplies`;
+                    }
+                    else{
+                        warningMessage('Error','👁️ Necesitas agregar un nombre a tus suministros');
+                    }
                 }
                 else{
-                    warningMessage('Error','👁️ Necesitas agregar un nombre a tus suministros');
+                    warningMessage('Error','👁️ Necesitas agregar un código de barras a tus suministros');
                 }
             }
-            else{
-                warningMessage('Error','👁️ Necesitas agregar un código de barras a tus suministros');
-            }
         }
-    }
 
       //await new_company_supplies('Add a new supplies')
       //window.location.href = "/fud/"+id_company+"/"+id+"/edit-company-supplies_product";

@@ -21,6 +21,23 @@
         </tr>
         </thead>
         <tbody>
+            {{#each products}}
+                <tr id="{{barcode}}">
+                    {{#if img}}
+                        <td><img src="{{img}}" class="img-s-p"></td>
+                    {{else}}
+                        <td><img src="/img/icons_first/product.webp" class="img-s-p"></td>
+                    {{/if}}
+                    <td>{{barcode}}</td>
+                    <td>{{name}}</td>
+                    <td>{{description}}</td>
+                    <td>{{existence}}/{{sale_unity}}</td>
+                    <td>{{sale_price}}/{{currency_sale}}</td>
+                    <td>
+                        <button class="btn btn-edit" onclick="edit_inventory('{{id_companies}}','{{id_branches}}','{{id}}','','{{barcode}}','{{name}}','{{existence}}','{{sale_unity}}')"><i class="fi-department fi-ss-truck-loading"></i></button>
+                    </td>
+                </tr>
+            {{/each}}
             {{#each supplies}}
                 <tr id="{{barcode}}">
                     {{#if img}}
@@ -34,7 +51,7 @@
                     <td>{{existence}}/{{sale_unity}}</td>
                     <td>{{sale_price}}/{{currency_sale}}</td>
                     <td>
-                        <button class="btn btn-edit" onclick="edit_inventory('{{id_companies}}','{{id_branches}}','{{id}}','{{img}}','{{barcode}}','{{name}}','{{existence}}','{{sale_unity}}')"><i class="fi-department fi-ss-truck-loading"></i></button>
+                        <button class="btn btn-edit" onclick="edit_inventory('{{id_companies}}','{{id_branches}}','{{id}}','','{{barcode}}','{{name}}','{{existence}}','{{sale_unity}}')"><i class="fi-department fi-ss-truck-loading"></i></button>
                     </td>
                 </tr>
             {{/each}}

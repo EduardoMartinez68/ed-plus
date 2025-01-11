@@ -7,6 +7,19 @@
 <div class="content_box">
     <div class="content-sales active">
         <div class="row">
+            <div class="form-group">
+                <div class="form-check" name="">
+                    <input type="hidden" value="{{id_products_and_supplies}}" name="id_products_and_supplies">
+                    {{#if use_inventory}}
+                        <input class="form-check-input" type="checkbox" id="invalidCheck2" name="inventory" checked>
+                    {{else}}
+                        <input class="form-check-input" type="checkbox" id="invalidCheck2" name="inventory">
+                    {{/if}}
+                    <label class="form-check-label" for="invalidCheck2">
+                        Usar inventario
+                    </label>
+                </div>
+            </div>
             <div class="col">
                 <label>Monto de Compra *</label><br>
                 <input type="tex" class="form-control" name="purchase_amount" placeholder="Monto de Compra"

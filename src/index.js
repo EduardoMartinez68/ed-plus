@@ -72,9 +72,12 @@ serverExpress.use(session({
     //store: new MySQLStore(pool)
 }));
 
+/*
+--------------CAPTCHA--------------
 const {MY_SITE_KEYS,MY_SECRET_KEY}=process.env; //this code is for get the data of the database
 const recaptcha = new RecaptchaV2(MY_SITE_KEYS, MY_SECRET_KEY); //this is for load the Recaptcha in the web for delete to the bots
 serverExpress.use(recaptcha.middleware.verify);
+*/
 
 //*-----------------------------------------------------------activate the our library-----------------------------------------// 
 serverExpress.use(flash());

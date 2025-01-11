@@ -39,6 +39,8 @@ async function connect_with_the_database(){
 async function create_database_in_desktop(){
     //we will see if can create the database
     try{
+        const fs = require('fs');
+        const sql = fs.readFileSync('../../database/database.sql').toString();
         await database.query(sql);
         return true;
     }catch(err){

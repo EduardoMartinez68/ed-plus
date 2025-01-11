@@ -7,8 +7,8 @@
             <col style="width: 20%;"> <!--description-->
             <col style="width: 4%;"> <!--existence-->
             <col style="width: 6%;"> <!--price-->
-            <col style="width: 7%;"> <!--button-->
-            <col style="width: 7%;"> <!--button-->
+            <col style="width: 14%;"> <!--button-->
+            <!--<col style="width: 7%;"> button-->
         </colgroup>
         <thead>
         <tr>
@@ -18,7 +18,6 @@
             <th>Description</th>
             <th>Existence</th>
             <th>Price</th>
-            <th></th>
             <th></th>
         </tr>
         </thead>
@@ -35,9 +34,12 @@
                     <td>{{description}}</td>
                     <td>{{existence}}/{{sale_unity}}</td>
                     <td>{{sale_price}}/{{currency_sale}}</td>
+                    <!--
                     <td>
+                        
                         <button class="btn btn-edit" onclick="edit_inventory('{{id_companies}}','{{id_branches}}','{{id}}','','{{barcode}}','{{name}}','{{existence}}','{{sale_unity}}')"><i class="fi-department fi-ss-truck-loading"></i></button>
                     </td>
+                    -->
                     <td>
                         <button class="btn btn-edit" onclick="edit_supplies('{{id_companies}}','{{id_branches}}','{{id}}')"><i class="fi-department fi-sr-pencil"></i></button>
                     </td>

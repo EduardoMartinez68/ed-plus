@@ -17,6 +17,7 @@ const {
 //functions supplies
 const {
     get_supplies_or_features,
+    get_inventory_branch,
     get_supplies_with_id,
     update_supplies_company,
     get_new_data_supplies_company,
@@ -28,7 +29,9 @@ const {
     update_product_category,
     get_supplies_or_features_with_id_products_and_supplies,
     delete_supplies_or_product_of_the_branch,
-    delete_dishes_or_combo_of_the_branch
+    delete_dishes_or_combo_of_the_branch,
+    get_inventory_products_branch,
+    get_inventory_supplies_branch
 } = require('../../services/supplies');
 
 //functions branch
@@ -176,8 +179,9 @@ router.get('/:id_company/:id_branch/inventory', isLoggedIn, async (req, res) => 
     }
 
     const branchFree = await get_data_branch(id_branch);
-    const supplies = await get_supplies_or_features(id_branch, false);
-    res.render('links/free/inventory/inventory', { branchFree, supplies});
+    const products = await get_inventory_products_branch(id_branch);
+    const supplies = await get_inventory_supplies_branch(id_branch);
+    res.render('links/free/inventory/inventory', { branchFree, products, supplies});
 });
 
 router.get('/:id_company/:id_branch/products-free', isLoggedIn, async (req, res) => {
@@ -202,7 +206,7 @@ router.get('/:id_company/:id_branch/add-products-free', isLoggedIn, async (req, 
     const {id_company, id_branch } = req.params;
 
     //we will see if the user have the permission for this App.
-    if(!this_user_have_this_permission(req.user,id_company, id_branch,'add_products')){
+    if(!this_user_have_this_permission(req.user,id_company, id_branch,'view_products')){
         req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
         return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
     }
@@ -365,7 +369,7 @@ router.get('/:id/:id_branch/add-combos-free', isLoggedIn, async (req, res) => {
 });
 
 function the_user_can_add_most_combo(combos,packCombo){
-    return combos<=packCombo
+    return true;//combos<=packCombo
 }
 
 router.get('/:id_company/:id_branch/:id/delete-combo-free', isLoggedIn, async (req, res) => {

@@ -1586,6 +1586,9 @@ router.post('/fud/:id_company/:id_branch/:id_combo/update-product-branch', isLog
         } 
     }
 
+    //this is for update if the product is in inventory or not is in inventory
+    await update_product_in_inventory(req.body.id_products_and_supplies,req.body.inventory);
+
     //we will see if can update all the product or exist a error for try again
     if(canUpdateAllTheProduct){
         req.flash('success', 'El Producto se actualizó con éxito 😄');
@@ -1595,6 +1598,22 @@ router.post('/fud/:id_company/:id_branch/:id_combo/update-product-branch', isLog
         res.redirect(`/links/${id_company}/${id_branch}/${id_combo}/edit-products-free`);
     }
 })
+
+async function update_product_in_inventory(id_product, inventory) {
+    var queryText = `
+    UPDATE "Kitchen".products_and_supplies
+    SET 
+        use_inventory=$1
+    WHERE 
+        id=$2
+    `;
+    var answer=(inventory === 'on');
+    var values = [answer,id_product];
+    const result = await database.query(queryText, values);
+    const data = result.rows;
+    return data;
+}
+
 
 router.post('/fud/:id/:id_branch/add-supplies-free', isLoggedIn, async (req, res) => {
     const { id, id_branch } = req.params;
@@ -1868,7 +1887,6 @@ router.post('/fud/:id_company/:id_branch/add-employees', isLoggedIn, async (req,
 
     res.redirect('/links/' + id_company + '/' + id_branch + '/employees-branch');
 })
-
 
 router.post('/fud/:id_company/:id_branch/add-box', isLoggedIn, async (req, res) => {
     const { id_company, id_branch } = req.params;
