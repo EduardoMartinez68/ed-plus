@@ -1391,7 +1391,7 @@ async function get_profile_picture(idUser) {
 
 async function new_data_user(req) {
     const { user_name, email, first_name, second_name, last_name, rol_user } = req.body;
-    const image = await create_a_new_image(req)
+    const image = await create_a_new_image(req);
     const new_user = {
         image,
         user_name,
@@ -1572,6 +1572,9 @@ router.post('/fud/:id_company/:id_branch/add-product-free', isLoggedIn, async (r
 router.post('/fud/:id_company/:id_branch/:id_combo/update-product-branch', isLoggedIn, async (req, res) => {
     const {id_company,id_branch,id_combo}=req.params;
     let canUpdateAllTheProduct=false; //this is for know if we can update all the container
+    let idComboCompany=0;
+    //we will see if exist a new image 
+    const image = await create_a_new_image(req);
 
     //we will creating the new supplies and we will saving the id of the supplies
     const supplies = create_supplies_branch(req, req.body.id_productFacture);
@@ -1580,7 +1583,6 @@ router.post('/fud/:id_company/:id_branch/:id_combo/update-product-branch', isLog
     if (await update.update_supplies_branch(supplies)) {
         //when the supplies is updating, we will create the new combo for update 
         const combo = create_new_combo_branch(req, id_combo);
-
         if (await update.update_combo_branch(combo)) {
             canUpdateAllTheProduct=true;
         } 
@@ -1588,6 +1590,20 @@ router.post('/fud/:id_company/:id_branch/:id_combo/update-product-branch', isLog
 
     //this is for update if the product is in inventory or not is in inventory
     await update_product_in_inventory(req.body.id_products_and_supplies,req.body.inventory);
+
+    //if exist a new image, we will update the imagen of the combo and of the supplies 
+    if(image!= null){
+        //get the path image of the combo and of the image, if not exist, we not do nathing 
+        var path_photo=await get_data_photo(req.body.id_dishes_and_combos);
+        if (path_photo!=null){
+            //if exist a imagen, we will delete 
+            await delete_image_upload(path_photo);
+        }
+
+        await update_combo_image(req.body.id_dishes_and_combos,image);
+        await update_supplies_image(req.body.id_products_and_supplies,image);
+    }
+
 
     //we will see if can update all the product or exist a error for try again
     if(canUpdateAllTheProduct){
@@ -1614,6 +1630,54 @@ async function update_product_in_inventory(id_product, inventory) {
     return data;
 }
 
+async function get_data_photo(id_combo) {
+    const queryText = `
+    SELECT img 
+    FROM "Kitchen".dishes_and_combos 
+    WHERE id = $1
+    `;
+
+    const values = [id_combo];
+
+    try {
+        const result = await database.query(queryText, values);
+        // if exist a image, return the image else return a null
+        return result.rows.length > 0 ? result.rows[0].img : null;
+    } catch (error) {
+        console.error("Error to get the image:", error);
+        return null;
+    }
+}
+
+async function update_combo_image(id_combo,image){
+    var queryText = `
+    UPDATE "Kitchen".dishes_and_combos
+    SET 
+        img=$1
+    WHERE 
+        id=$2
+    `;
+
+    var values = [image,id_combo];
+    const result = await database.query(queryText, values);
+    const data = result.rows;
+    return data;
+}
+
+async function update_supplies_image(id_supplies,image){
+    var queryText = `
+    UPDATE "Kitchen".products_and_supplies
+    SET 
+        img=$1
+    WHERE 
+        id=$2
+    `;
+
+    var values = [image,id_supplies];
+    const result = await database.query(queryText, values);
+    const data = result.rows;
+    return data;
+}
 
 router.post('/fud/:id/:id_branch/add-supplies-free', isLoggedIn, async (req, res) => {
     const { id, id_branch } = req.params;

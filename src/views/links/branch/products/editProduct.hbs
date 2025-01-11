@@ -5,12 +5,13 @@
         <div class="card">
             <div class="card-body">
                 {{#each comboFeactures}}
-                <form action="/fud/{{id_companies}}/{{id_branches}}/{{id}}/update-product-branch" method="POST" id="myForm">
+                <form action="/fud/{{id_companies}}/{{id_branches}}/{{id}}/update-product-branch" method="POST" id="myForm" enctype="multipart/form-data">
                 {{/each}}
 
                 <!---this is for get tha data of the combo and supplies--->
                 {{#each comboFeactures}}
                     <input type="hidden" value="{{id}}" name="id_comboFeactures" id="id_comboFeactures">
+                    <input type="hidden" value="{{id_dishes_and_combos}}" name="id_dishes_and_combos">
                 {{/each}}
                 {{#each productFacture}}
                     <input type="hidden" value="{{id}}" name="id_productFacture" id="id_productFacture">
@@ -23,10 +24,18 @@
                     <div class="row">
                         <div class="col-4">
                             {{#if dish_img}}
-                                <img src="{{dish_img}}" alt="" class="icon-combo">
+                                <img src="{{dish_img}}" alt="" class="icon-combo" id="imgEmployee">
                             {{else}}
-                                <img src="/img/icons_first/product.webp" alt="" class="icon-combo">
+                                <img src="/img/icons_first/product.webp" alt="" class="icon-combo" id="imgEmployee">
                             {{/if}}
+                            <div class="form-group">
+                                <center>
+                                    <label for="inputImg" class="custom-file-upload">
+                                        <input type="file" name="image" accept="image/*" id="inputImg" style="display: none;">
+                                        <i class="fas fa-upload"></i> Subir imagen
+                                    </label>
+                                </center>
+                            </div>
                         </div>
                         <div class="col">
                             <h4>Nombre: {{dish_name}}</h4>
@@ -37,7 +46,7 @@
                             <button class="btn btn-danger" id="{{id}}" onclick="delete_product('{{id_dishes_and_combos}}','{{id_companies}}','{{id_branches}}')" type="button">🗑️ Eliminar Producto</button>
                         </div>
                     </div>
-
+                    <br><br>
                     <!---this is the start favorites--->
                     <div class="container-start">
                         <div class="star-checkbox">
@@ -103,9 +112,10 @@
 {{>updateSelects}}
 
 <script src="https://kit.fontawesome.com/a076d05399.js"></script>
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="/js/desktop/jquery-3.3.1.slim.min.js"></script>
+<script src="/js/desktop/popper.min.js"></script>
+<script src="/js/desktop/bootstrap.min.js"></script>
+<script src="/js/manager/addEmployee.js"></script>
 
 <script>
     function read_check_box() {

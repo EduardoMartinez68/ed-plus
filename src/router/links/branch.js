@@ -253,7 +253,7 @@ router.get('/:id_company/:id_branch/:id_supplies/edit-products-branch', isLogged
 router.get('/:id_company/:id_branch/:id_supplies/:existence/update-products-branch', isLoggedIn, async (req, res) => {
     const { id_company, id_branch, id_supplies, existence } = req.params;
 
-    //we will see if the user have the permission for this App.
+    //we will see if the user have the permission for this App. edit_products
     if(!this_user_have_this_permission(req.user,id_company, id_branch,'edit_inventory')){
         req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
         return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
