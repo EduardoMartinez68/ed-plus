@@ -26,6 +26,8 @@ async function get_sales_company(idCompany, start, end) {
     }
 }
 
+
+
 async function get_movements_company(idCompany, start, end) {
     try {
         const query = `
@@ -510,7 +512,9 @@ async function get_data_report_distribute_day(id_company) {
         WHERE sh.id_companies = $1
         AND DATE(sh.sale_day) = $2
         `;
-        const res = await database.query(query, [id_company]);
+
+        const sale_day = new Date().toISOString().split('T')[0];
+        const res = await database.query(query, [id_company,sale_day]);
         const rows = res.rows;
 
         let names = [];

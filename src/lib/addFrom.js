@@ -2209,7 +2209,7 @@ router.post('/fud/:id_customer/car-post', isLoggedIn, async (req, res) => {
                 commanderDish.push(dataComandera);
 
                 //save the buy in the database 
-                //await addDatabase.add_buy_history(dataComboFeatures.id_companies, dataComboFeatures.id_branches, id_employee, id_customer, dataComboFeatures.id_dishes_and_combos,combo.price,combo.amount,combo.total,day);
+                await addDatabase.add_buy_history(dataComboFeatures.id_companies, dataComboFeatures.id_branches, id_employee, id_customer, dataComboFeatures.id_dishes_and_combos,combo.price,combo.amount,combo.total,day);
             }
 
             //save the comander

@@ -1,4 +1,4 @@
-<link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
+<link rel='stylesheet' href='/css/desktop/uicons-solid-rounded.css'>
 <style>
     .offert-price {
         text-decoration: line-through;
@@ -325,9 +325,9 @@
                             <!--container-combo-->
                             <div class="col-4">
                                 {{#if img}}
-                                <img src="{{img}}" alt="" class="card-img-cellphone">
+                                    <img src="{{img}}" alt="" class="card-img-cellphone">
                                 {{else}}
-                                <img src="https://cdn-icons-png.flaticon.com/512/1695/1695572.png" alt=""
+                                <img src="/img/icons_first/combo.webp" alt=""
                                     class="card-img-cellphone">
                                 {{/if}}
                             </div>
@@ -497,7 +497,7 @@
 <!---this is for load the image if not exist a image in the card of the menu--->
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    const defaultImage = 'https://cdn-icons-png.flaticon.com/512/1695/1695572.png';
+    const defaultImage = '/img/icons_first/combo.webp';
     
     // Get all card images
     const cardImages = document.querySelectorAll('.card-img-top');
