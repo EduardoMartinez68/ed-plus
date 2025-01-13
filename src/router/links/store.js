@@ -31,29 +31,31 @@ const {
     get_all_dish_and_combo,
     get_all_data_combo_most_sold,
     get_data_recent_combos,
+    get_all_products_in_sales
 } = require('../../services/store');
 
 const {
     get_all_invoice_with_the_id_of_the_branch
 } = require('../../services/invoice');
 
-
+//functions permission
+const {
+    this_user_have_this_permission
+} = require('../../services/permission');
 
 router.get('/:id_user/:id_company/:id_branch/:id_employee/:id_role/store-home', isLoggedIn, async (req, res) => {
     try {
-        if (!(await this_employee_works_here(req, res))) {
-            res.render('links/store/branchLost');
-            return;
-        }
 
         const { id_company, id_branch } = req.params;
+
+        //we will see if the user not have the permission for this App.
+        if(!this_user_have_this_permission(req.user,id_company, id_branch,'app_point_sales')){
+            req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
+            return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
+        }
+
         const branchFree = await get_data_branch(id_branch);
         const dataEmployee = await get_data_employee(req);
-
-        if (!id_branch || !branchFree) {
-            res.render('links/store/branchLost');
-            return;
-        }
 
         const dishAndCombo = await get_all_dish_and_combo(id_company, id_branch);
         const newCombos = await get_data_recent_combos(id_company);
@@ -63,7 +65,11 @@ router.get('/:id_user/:id_company/:id_branch/:id_employee/:id_role/store-home', 
         const combosAd = await get_all_ad(id_branch, 'combo');
         const specialsAd = await get_all_ad(id_branch, 'special');
         const addition = '{"nombre": "Juan", "edad": 30, "ciudad": "Madrid"}'; // Ejemplo de datos adicionales
-        const boxes=await get_all_box_of_the_branch_with_his_id(id_branch)
+        const boxes=await get_all_box_of_the_branch_with_his_id(id_branch);
+
+        //const productsSales=await get_all_products_in_sales(id_branch);
+        console.log(dishAndCombo)
+
         const templateData = {
             branchFree,
             dishAndCombo,
@@ -77,6 +83,7 @@ router.get('/:id_user/:id_company/:id_branch/:id_employee/:id_role/store-home', 
             boxes,
             addition: JSON.stringify(addition)
         };
+
         res.render('links/store/home/home', templateData);
     } catch (error) {
         console.error('Error en la ruta store-home:', error);

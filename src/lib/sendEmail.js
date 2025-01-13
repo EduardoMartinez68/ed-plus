@@ -22,7 +22,7 @@ async function email_to_recover_password(email,token) {
                     background-color: #f9f9f9;
                 }
                 .header {
-                    background-color: #FF002A;
+                    background-color: #1648FF;
                     color: #fff;
                     text-align: center;
                     padding: 10px;
@@ -37,7 +37,7 @@ async function email_to_recover_password(email,token) {
                     font-size: 14px;
                 }
                 .token-box {
-                    border: 2px solid #FF002A;
+                    border: 2px solid #1648FF;
                     border-radius: 5px;
                     padding: 10px;
                     text-align: center;
@@ -56,7 +56,7 @@ async function email_to_recover_password(email,token) {
                     <h1>Restablecimiento de contraseña</h1>
                 </div>
                 <div class="content">
-                    <p>Hola!! 👋, Somos el equipo de <i class="fi fi-sr-hat-chef"></i> Füd</p>
+                    <p>Hola!! 👋, Somos el equipo de {ED} Plus 🚀</p>
                     <p>¿Has solicitado restablecer tu contraseña? Utiliza el siguiente token para completar el proceso:</p>
                     <div class="token-box">
                         <strong class="token">${token}</strong>

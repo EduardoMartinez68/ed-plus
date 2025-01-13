@@ -148,7 +148,7 @@ router.post('/send_email_contact', isNotLoggedIn, (req, res) => {
     const {name,email,phone,msg_subject,message} = req.body;
     const emailMessage='Name: '+name+'<br>'+'email: '+email+'<br>'+'phone: '+phone+'<br>'+'message: '+message;
     sendEmail.send_email('eduardoa4848@Outlook.es',msg_subject,emailMessage);
-    res.redirect('/fud/send-email');
+    res.redirect('/links/send-email');
 })
 
 router.get('/send-email', isNotLoggedIn, (req, res) => {
@@ -217,20 +217,20 @@ router.post('/confirm-restart-password', isNotLoggedIn, async (req, res) => {
                 await delete_token(token); //delete the token used for the user 
                 //if the password was update with success, redirect to user to the web of login
                 req.flash('success', 'Tu contraseña fue actualizada con exito ❤️');
-                res.redirect('/fud/login');
+                res.redirect('/links/login');
             }else{
                 //if not can update the password show a message of error
                 req.flash('message', 'La contraseñas no pudo actualizarse intentelo de nuevo 😰');
-                res.redirect('/fud/confirm-restart-password');
+                res.redirect('/links/confirm-restart-password');
             }
         }else{
             req.flash('message', 'La contraseñas no coinsiden 🤨');
-            res.redirect('/fud/confirm-restart-password');
+            res.redirect('/links/confirm-restart-password');
         }
     }else{
         //if the token not have a user assigned show a message of error
         req.flash('message', 'Este Token no se encuentra en la base de datos o ya caduco 👁️');
-        res.redirect('/fud/confirm-restart-password');
+        res.redirect('/links/confirm-restart-password');
     }
 });
 

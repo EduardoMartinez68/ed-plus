@@ -295,7 +295,7 @@ function add_new_product_to_the_car(bodyTable, idProduct, product, price, price2
     cell4.innerHTML = `<td class="total">${price}</td>`;
     cell4.className = 'total';
 
-    cell5.innerHTML = `<button class="btn-car" onclick="delate_fish_car(this)"><i class="fi-icon-delate fi-sr-trash"></i></button>`;
+    cell5.innerHTML = `<button class="btn-car" onclick="delate_fish_car(this)">🗑️</button>`;
 }
 
 function this_product_exists_in_the_cart(bodyTable, newProduct) {

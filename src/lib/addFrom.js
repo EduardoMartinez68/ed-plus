@@ -2394,7 +2394,7 @@ async function watch_if_can_create_all_the_combo(combos) {
             await update_inventory(supplies.idBranch, supplies.idSupplies, newAmount);
         }
     } else {
-        return 'not can create the combo becaus not exist enough ' + answer;
+        return 'No se puede crear el combo porque no existe suficiente ' + answer;
     }
 
     // If cannot create the combo, send a message of warning
@@ -2419,7 +2419,7 @@ async function exist_supplies_for_create_this_combo(idBranch, idSupplies, amount
         const dataSuppliesFeactures = await get_data_supplies_features(idBranch, idSupplies)
         const existence = dataSuppliesFeactures.existence;
         const minimumInventory = dataSuppliesFeactures.minimum_inventory;
-
+        
         //we will calculate if can create the combo
         return (existence - amount >= 0);
     } catch (error) {
@@ -2447,7 +2447,7 @@ async function get_data_supplies_features(idBranch, idSupplies) {
 
 function calculate_the_supplies_that_need(arrayCombo) {
     var listSupplies = [] //this list is for save all the supplies for that do not repeat
-
+    console.log(arrayCombo)
     //we will to read all the combos of the array 
     for (const combo of arrayCombo) {
         //this for read all the supplies of the combo current
@@ -2522,7 +2522,7 @@ async function get_all_price_supplies_branch(idCombo, idBranch) {
         `;
         const comboValues = [idCombo];
         const comboResult = await database.query(comboQuery, comboValues);
-
+        
         // Consulta para obtener el precio de los suministros en la sucursal específica
         const priceQuery = `
             SELECT psf.id_products_and_supplies, psf.sale_price, psf.sale_unity
@@ -2661,8 +2661,6 @@ function create_move(req) {
 }
 
 router.post('/fud/add-order-post', async (req, res) => {
-    console.log('bodyyy')
-    console.log(req.body)
     try {
         //we will to add the information to the database 
         const answer = await addDatabase.add_order(req.body);
@@ -2679,7 +2677,6 @@ router.post('/fud/:id_company/:id_branch/edit-order', async (req, res) => {
     const { customer_name, address, cellphone, phone, comment, id_order} = req.body;
     const { delivery_driver } = req.body;
     const {statusOrder} =req.body;
-    console.log(delivery_driver)
     if (await update_rder(id_order, customer_name, address, cellphone, phone, delivery_driver, comment, statusOrder)) {
         req.flash('success', 'El pedido fue actualizado con exito 🥳');
     } else {

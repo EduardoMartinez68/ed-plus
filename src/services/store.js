@@ -161,6 +161,24 @@ async function get_dish_and_combo_with_id(idCombo) {
     return result.rows[0];
 }
 
+async function get_all_products_in_sales(idBranch) {
+    var queryText = `
+        SELECT 
+            i.*,
+            d.barcode,
+            d.name,
+            d.description,
+            d.img,
+            d.id_product_department,
+            d.id_product_category
+        FROM "Inventory".dish_and_combo_features i
+        INNER JOIN "Kitchen".dishes_and_combos d ON i.id_dishes_and_combos = d.id
+        WHERE i.id_branches = $1 AND d.is_a_product = true
+    `;
+    var values = [idBranch];
+    const result = await database.query(queryText, values);
+    return result.rows;
+}
 
 module.exports = {
     this_employee_works_here,
@@ -171,5 +189,6 @@ module.exports = {
     get_data_recent_combos,
     get_recent_combos,
     get_all_combo_most_sold,
-    get_dish_and_combo_with_id
+    get_dish_and_combo_with_id,
+    get_all_products_in_sales
 };
