@@ -2381,17 +2381,23 @@ async function watch_if_can_create_all_the_combo(combos) {
     // Iterate through all the combos
     var arrayCombo = await get_all_supplies_of_the_combos(combos)
     var listSupplies = calculate_the_supplies_that_need(arrayCombo);
-
+    
     //we will to calculate if have the supplies need for create all the combos that the customer would like eat
     const answer = await exist_the_supplies_need_for_creat_all_the_combos(listSupplies);
     if (answer == true) {
         //if exist all the supplies, we update the inventory 
         for (const supplies of listSupplies) {
-            //get the data feature of the supplies and his existence 
-            const dataSuppliesFeactures = await get_data_supplies_features(supplies.idBranch, supplies.idSupplies)
-            const existence = dataSuppliesFeactures.existence;
-            const newAmount = existence - supplies.amount; //calculate the new amount for update in the inventory
-            await update_inventory(supplies.idBranch, supplies.idSupplies, newAmount);
+            /*
+            if the supplies is equal to a empty space, this means that the products not use inventrory, else if exist a name
+            the producuts if use inventory
+            */
+            if(supplies.name!=''){
+                //get the data feature of the supplies and his existence 
+                const dataSuppliesFeactures = await get_data_supplies_features(supplies.idBranch, supplies.idSupplies)
+                const existence = dataSuppliesFeactures.existence;
+                const newAmount = existence - supplies.amount; //calculate the new amount for update in the inventory
+                await update_inventory(supplies.idBranch, supplies.idSupplies, newAmount);
+            }
         }
     } else {
         return 'No se puede crear el combo porque no existe suficiente ' + answer;
@@ -2404,9 +2410,15 @@ async function watch_if_can_create_all_the_combo(combos) {
 async function exist_the_supplies_need_for_creat_all_the_combos(listSupplies) {
     //we will to calculate if have the supplies need for create all the combos that the customer would like eat
     for (const supplies of listSupplies) {
-        if (!await exist_supplies_for_create_this_combo(supplies.idBranch, supplies.idSupplies, supplies.amount)) {
-            //if there are not enough supplies, we will send the supplies that need buy the restaurant 
-            return supplies.name;
+        /*
+        if the supplies is equal to a empty space, this means that the products not use inventrory, else if exist a name
+        the producuts if use inventory
+        */
+        if(supplies.name!=''){
+            if (!await exist_supplies_for_create_this_combo(supplies.idBranch, supplies.idSupplies, supplies.amount)) {
+                //if there are not enough supplies, we will send the supplies that need buy the restaurant 
+                return supplies.name;
+            }
         }
     }
 
@@ -2447,7 +2459,7 @@ async function get_data_supplies_features(idBranch, idSupplies) {
 
 function calculate_the_supplies_that_need(arrayCombo) {
     var listSupplies = [] //this list is for save all the supplies for that do not repeat
-    console.log(arrayCombo)
+    
     //we will to read all the combos of the array 
     for (const combo of arrayCombo) {
         //this for read all the supplies of the combo current
@@ -2497,7 +2509,7 @@ async function get_all_supplies_this_combo(dataComboFeatures, amountCombo) {
     const idCombo = dataComboFeatures.id_dishes_and_combos;
     const idBranch = dataComboFeatures.id_branches;
     const dataSupplies = await get_all_price_supplies_branch(idCombo, idBranch);
-
+    
     // first Iterate through all the supplies needed for this combo
     var arraySupplies = []
     for (const supplies of dataSupplies) {
@@ -2618,7 +2630,8 @@ async function search_supplies_combo(id_dishes_and_combos) {
         SELECT tsc.*, pas.img AS img, pas.name AS product_name, pas.barcode AS product_barcode
         FROM "Kitchen".table_supplies_combo tsc
         JOIN "Kitchen".products_and_supplies pas ON tsc.id_products_and_supplies = pas.id
-        WHERE tsc.id_dishes_and_combos = $1 ORDER BY id_products_and_supplies DESC
+        WHERE tsc.id_dishes_and_combos = $1 AND pas.use_inventory = True
+        ORDER BY id_products_and_supplies DESC
     `;
     var values = [id_dishes_and_combos];
     const result = await database.query(queryText, values);
