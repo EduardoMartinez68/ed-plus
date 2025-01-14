@@ -1575,7 +1575,7 @@ router.post('/fud/:id_company/:id_branch/:id_combo/update-product-branch', isLog
     let idComboCompany=0;
     //we will see if exist a new image 
     const image = await create_a_new_image(req);
-
+ 
     //we will creating the new supplies and we will saving the id of the supplies
     const supplies = create_supplies_branch(req, req.body.id_productFacture);
 
@@ -1592,7 +1592,7 @@ router.post('/fud/:id_company/:id_branch/:id_combo/update-product-branch', isLog
     await update_product_in_inventory(req.body.id_products_and_supplies,req.body.inventory);
 
     //if exist a new image, we will update the imagen of the combo and of the supplies 
-    if(image!= null){
+    if(image.trim() != ""){
         //get the path image of the combo and of the image, if not exist, we not do nathing 
         var path_photo=await get_data_photo(req.body.id_dishes_and_combos);
         if (path_photo!=null){
@@ -2509,7 +2509,7 @@ async function get_all_supplies_this_combo(dataComboFeatures, amountCombo) {
     const idCombo = dataComboFeatures.id_dishes_and_combos;
     const idBranch = dataComboFeatures.id_branches;
     const dataSupplies = await get_all_price_supplies_branch(idCombo, idBranch);
-    
+
     // first Iterate through all the supplies needed for this combo
     var arraySupplies = []
     for (const supplies of dataSupplies) {
