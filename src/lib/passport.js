@@ -216,7 +216,15 @@ passport.use('local.signup', new LocalStrategy({
         const password=create_password();
     
         // Create a new user
-        const newUser = await create_a_new_user_ad(req, userName, password,correctedEmail,businessName);
+        let newUser;
+        if(system=='desktop'){
+            //if the user is in the desktop, we will save the admin
+            newUser = await create_a_new_user_ad(req, 'admin', 'admin',correctedEmail,businessName);
+        }else{
+            //if the user is in the desktop, we will save the user in the server
+            newUser = await create_a_new_user_ad(req, userName, password,correctedEmail,businessName);
+        }
+
 
         //we send the information of the new user 
         const message=`
