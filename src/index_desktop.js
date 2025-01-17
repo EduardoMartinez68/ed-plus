@@ -1,5 +1,9 @@
 const system=require('./lib/system');
 
+//----------------------desktop application
+const { app, BrowserWindow } = require('electron');
+
+
 //----------------------server application
 const express=require('express');
 const morgan=require('morgan');
@@ -22,6 +26,7 @@ const { RecaptchaV2 } = require('express-recaptcha');
 const serverExpress =express();
 
 require('./lib/passport');
+//require('./lib/addFrom');
 require('./lib/editFrom');
 
 //*-----------------------------------------------------------settings-----------------------------------------//
@@ -359,7 +364,33 @@ serverExpress.listen(serverExpress.get('port'), '0.0.0.0', () => {
     "electron": "electron ."
   },
 */
+//this is for create the UI in the windows
+let mainWindow;
+const createMainWindow = () => {
+    mainWindow = new BrowserWindow({
+        width: 800,
+        height: 600,
+        webPreferences: {
+            nodeIntegration: true,
+        },
+    });
 
+    //This is to make the screen grow to full screen
+    mainWindow.maximize();
+
+    // load the URL of the server Express
+    mainWindow.loadURL(`http://localhost:${serverExpress.get('port')}`);
+};
+
+// whne Electron is ready, load the web in the screen
+app.on('ready', createMainWindow);
+
+// clouse the screen
+app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') {
+        app.quit();
+    }
+});
 
 /*
 server.listen(app.get('port'), () => {

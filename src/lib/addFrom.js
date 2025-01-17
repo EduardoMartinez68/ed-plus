@@ -651,6 +651,8 @@ router.post('/fud/:id_company/:id/edit-supplies-form', isLoggedIn, async (req, r
     }  
 })
 
+
+
 async function get_data_supplies_product(id) {
     //we will search the company of the user 
     var queryText = 'SELECT * FROM "Kitchen".products_and_supplies WHERE id= $1';
@@ -1571,13 +1573,47 @@ router.post('/fud/:id_company/:id_branch/add-product-free', isLoggedIn, async (r
 
 router.post('/fud/:id_company/:id_branch/:id_combo/update-product-branch', isLoggedIn, async (req, res) => {
     const {id_company,id_branch,id_combo}=req.params;
+    const {name,barcode,description}=req.body;
+
+    //get the id of the supplies and of the combo for edit his data in the company
+    const idSuppliesCompany=req.body.id_products_and_supplies;
+    const idComboCompany=req.body.id_dishes_and_combos;
+    
+    //we will to see if the user add a name and a barcode to the product
+    if (barcode == "") {
+        req.flash('message', '👁️ Necesitas agregar un código de barras a tus suministros');
+    }
+    if (name == "") {
+        req.flash('message', '👁️ Necesitas agregar un nombre a tus suministros');
+    }
+
+    //we will see if can edit the supplies
+    let newSupplies;
+    if (barcode != "" && name != "") {
+        //this is when the user would like edit the supplies in the company. Not all the user can do this only the user Plus One
+        newSupplies = await get_new_data_supplies_img_company(req);
+    }else{
+        //if the user not add a barcode and no name, we will send to the page of edit
+        return res.redirect(`/links/${id_company}/${id_branch}/${id_combo}/edit-products-free`);
+    }
+
     let canUpdateAllTheProduct=false; //this is for know if we can update all the container
-    let idComboCompany=0;
-    //we will see if exist a new image 
-    const image = await create_a_new_image(req);
+
+    //we will see if the after create also the imagen when update the supplies 
+    let image;
+    if(newSupplies.path_image!=''){
+        image=newSupplies.path_image;
+    }else{
+        //we will see if exist a new image 
+        image = await create_a_new_image(req);
+    }
  
     //we will creating the new supplies and we will saving the id of the supplies
     const supplies = create_supplies_branch(req, req.body.id_productFacture);
+
+    //when the user update the supplies of the branch, also update the supplies of the company 
+    newSupplies.id=idSuppliesCompany; //complete the information of the supplies company
+    await update_supplies_company(newSupplies);
 
     //we will watching if the supplies can update 
     if (await update.update_supplies_branch(supplies)) {
@@ -1589,22 +1625,24 @@ router.post('/fud/:id_company/:id_branch/:id_combo/update-product-branch', isLog
     }
 
     //this is for update if the product is in inventory or not is in inventory
-    await update_product_in_inventory(req.body.id_products_and_supplies,req.body.inventory);
+    await update_product_in_inventory(idSuppliesCompany,req.body.inventory);
 
     //if exist a new image, we will update the imagen of the combo and of the supplies 
     if(image.trim() != ""){
         //get the path image of the combo and of the image, if not exist, we not do nathing 
-        var path_photo=await get_data_photo(req.body.id_dishes_and_combos);
+        var path_photo=await get_data_photo(idComboCompany);
         if (path_photo!=null){
             //if exist a imagen, we will delete 
             await delete_image_upload(path_photo);
         }
 
-        await update_combo_image(req.body.id_dishes_and_combos,image);
-        await update_supplies_image(req.body.id_products_and_supplies,image);
+        await update_combo_image(idComboCompany,image);
+        await update_supplies_image(idSuppliesCompany,image);
     }
 
-
+    //update the combo of the company
+    await update_information_combo_product(name,barcode,description,idComboCompany);
+    
     //we will see if can update all the product or exist a error for try again
     if(canUpdateAllTheProduct){
         req.flash('success', 'El Producto se actualizó con éxito 😄');
@@ -1614,6 +1652,25 @@ router.post('/fud/:id_company/:id_branch/:id_combo/update-product-branch', isLog
         res.redirect(`/links/${id_company}/${id_branch}/${id_combo}/edit-products-free`);
     }
 })
+
+async function create_a_new_products(req,path_image) {
+    const { barcode, name, description, barcodeProducts } = req.body;
+    const { id_company } = req.params;
+
+    const supplies = parse_barcode_products(barcodeProducts)
+    const combo = {
+        id_company: id_company,
+        path_image: path_image,
+        barcode,
+        name,
+        description,
+        id_product_department: req.body.department,
+        id_product_category: req.body.category,
+        supplies
+    }
+
+    return combo;
+}
 
 async function update_product_in_inventory(id_product, inventory) {
     var queryText = `
@@ -1663,6 +1720,24 @@ async function update_combo_image(id_combo,image){
     const data = result.rows;
     return data;
 }
+
+async function update_information_combo_product(name,barcode,description,id_combo){
+    var queryText = `
+    UPDATE "Kitchen".dishes_and_combos
+    SET 
+        name=$1,
+        barcode=$2,
+        description=$3
+    WHERE 
+        id=$4
+    `;
+
+    var values = [name,barcode,description,id_combo];
+    const result = await database.query(queryText, values);
+    const data = result.rows;
+    return data;
+}
+
 
 async function update_supplies_image(id_supplies,image){
     var queryText = `

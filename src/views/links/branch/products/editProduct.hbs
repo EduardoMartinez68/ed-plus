@@ -38,10 +38,12 @@
                             </div>
                         </div>
                         <div class="col">
-                            <h4>Nombre: {{dish_name}}</h4>
-                            <h5>Codigo de Barras: {{dish_barcode}}</h5>
+                            <h4>Nombre: </h4>
+                            <input type="text" value="{{dish_name}}" name="name" class="form-control">
+                            <h5>Codigo de Barras:</h5>
+                            <input type="text" value="{{dish_barcode}}" name="barcode" class="form-control">
                             <label for="">Description:</label>
-                            <label for="">{{dish_description}}</label>
+                            <textarea for="" name="description" class="form-control">{{dish_description}}</textarea>
                             <br><br>
                             <button class="btn btn-danger" id="{{id}}" onclick="delete_product('{{id_dishes_and_combos}}','{{id_companies}}','{{id_branches}}')" type="button">🗑️ Eliminar Producto</button>
                         </div>

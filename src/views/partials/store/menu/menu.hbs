@@ -333,9 +333,9 @@
                                 {{/if}}
                             </div>
                             <div class="col-8 character-cellphone">
-                                <h2 class="name">{{name}}</h2>
-                                <h1 class="name">${{price_1}}</h1>
-                                <p class="description">{{barcode}}</p>
+                                <h2 class="card-title" >{{name}}</h2>
+                                <h1 class="card-text" >${{price_1}}</h1>
+                                <p class="description" >{{barcode}}</p>
                             </div>
                         </div>
                         {{/each}}
@@ -412,6 +412,62 @@
                 }
             });
 
+        });
+
+        //we will see if the user did enter and the input
+        searchInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                //we will see the barcode that the user would like search
+                const valueInputBarcode=searchInput.value.toLowerCase();
+                let barcodeInput=valueInputBarcode; //save the barcode that the user would like search
+
+                /*
+                ----now this is for know if the user write a barcode and a number----
+                        example: milk*10
+                */
+                // Expression regular for know the format "text*number"
+                const match = valueInputBarcode.match(/(.+)\*(\d+)$/);
+                let repeatCount = 1; // value predetermined
+
+                //we will see if exist a cant that the user would add to the card
+                if (match) {
+                    barcodeInput = match[1]; // Extract the text before that the asterisk 
+                    repeatCount = parseInt(match[2], 10); //Extract and convert the number after the asterisk
+                }
+
+                //now we will to search the product that the user need add to the card
+                let cardProduct=null;
+
+                //we will to read all the card of the menu
+                cards.forEach(card => {
+                    const barcode = card.id.toLowerCase();
+                    card.style.display = ''; //show all the card
+
+                    //if we found the product, save his exist 
+                    if (barcode==barcodeInput) {
+                        cardProduct=card;
+                    }
+                });
+
+                //we will see if we found the products for add to the card
+                if(cardProduct){
+                    // get all the data that need for add the product to the card
+                    console.log(cardProduct)
+                    const productId = cardProduct.getAttribute('id-product');
+                    const productName = cardProduct.querySelector('.card-title').textContent.trim();
+                    const productPrice1 = cardProduct.querySelector('.card-text').textContent.trim().replace('$', '');
+                    const productPrice2 = cardProduct.getAttribute('data-price-2') || '0'; 
+                    const productPrice3 = cardProduct.getAttribute('data-price-3') || '0';
+
+                    //if exist a cant that the user would add of the product, we use a loop "for" for add the product to the card
+                    for (let i = 0; i < repeatCount; i++) {
+                        // call to the function addFish with the product data
+                        addFish(productId, productName, productPrice1, productPrice2, productPrice3);
+                    }
+                }else{
+                    notificationMessageError('😬 Ups!','Este articulo no se encuentra en el menu.');
+                }
+            }
         });
     });
 </script>
