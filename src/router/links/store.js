@@ -68,7 +68,7 @@ router.get('/:id_user/:id_company/:id_branch/:id_employee/:id_role/store-home', 
         const boxes=await get_all_box_of_the_branch_with_his_id(id_branch);
 
         //const productsSales=await get_all_products_in_sales(id_branch);
-        console.log(dishAndCombo)
+        
 
         const templateData = {
             branchFree,

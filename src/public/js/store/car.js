@@ -297,17 +297,22 @@ function borrarNumero() {
 ///-------------------------------------------------------------this script is for add a combo to the car
 
 //get the table for his id
-
-function addFish(idProduct, product, price, price2, price3) {
-    // get the body of the table
-    var bodyTable = tabla.getElementsByTagName("tbody")[0];
-    if (!this_product_exists_in_the_cart(bodyTable, product)) {
-        add_new_product_to_the_car(bodyTable, idProduct, product, price, price, price2, price3);
+function addFish(idProduct, product, price, price2, price3,thisProductIsSoldInBulk) {
+    //we will see if this product or combo can sale for supplies
+    if(thisProductIsSoldInBulk=='true'){
+        open_ui_weight_scale(idProduct, product, price, price2, price3,1);
     }
-    
-    //show a message of that we add the product to the car
-    notificationMessage('❤️ '+product+' ❤️', 'El producto fue agregado con éxito 😁');
-    update_total();
+    else{//if the product not is sale for supplies, we will add the product/combo to the car
+        // get the body of the table
+        var bodyTable = tabla.getElementsByTagName("tbody")[0];
+        if (!this_product_exists_in_the_cart(bodyTable, product)) {
+            add_new_product_to_the_car(bodyTable, idProduct, product, price, price2, price3);
+        }
+        
+        //show a message of that we add the product to the car
+        notificationMessage('❤️ '+product+' ❤️', 'El producto fue agregado con éxito 😁');
+        update_total();
+    }
 }
 
 function add_new_product_to_the_car(bodyTable, idProduct, product, price, price2, price3) {
@@ -335,6 +340,49 @@ function add_new_product_to_the_car(bodyTable, idProduct, product, price, price2
     cell3.className = 'amount';
 
     cell4.innerHTML = `<td class="total">${price}</td>`;
+    cell4.className = 'total';
+
+    cell5.innerHTML = `<button class="btn-car" onclick="delate_fish_car(this)">🗑️</button>`;
+}
+
+function addFishWithSupplies(idProduct, product, price, price2, price3, total, cant){
+    // get the body of the table
+    var bodyTable = tabla.getElementsByTagName("tbody")[0];
+    //if (!this_product_exists_in_the_cart(bodyTable, product)) {
+        add_new_product_to_the_car_with_supplies(bodyTable, idProduct, product, price, price2, price3,total,cant);
+    //}
+    
+    //show a message of that we add the product to the car
+    notificationMessage('❤️ '+product+' ❤️', 'El producto fue agregado con éxito 😁');
+    update_total();
+    
+}
+
+function add_new_product_to_the_car_with_supplies(bodyTable, idProduct, product, price, price2, price3,total,cant) {
+    // create the new row
+    var newRow = bodyTable.insertRow();
+
+    // create the new data of the row
+    var cell1 = newRow.insertCell(0);
+    var cell2 = newRow.insertCell(1);
+    var cell3 = newRow.insertCell(2);
+    var cell4 = newRow.insertCell(3);
+    var cell5 = newRow.insertCell(4);
+
+    // add data to the new row
+    cell1.innerHTML = `<td class="dish">${product}</td>`;
+    cell1.id = idProduct;
+    cell1.className = 'dish'
+
+    //add the three price different
+    cell2.innerHTML = `<button class="btn-car" price1=${price}  price2=${price2}  price3=${price3} onclick="edit_price(this)">${price}</button>`;
+    cell2.className = 'price';
+
+    //this is the amount 
+    cell3.innerHTML = `<button class="btn-car" onclick="edit_car(this)">${cant}</button>`;
+    cell3.className = 'amount';
+
+    cell4.innerHTML = `<td class="total">${total}</td>`;
     cell4.className = 'total';
 
     cell5.innerHTML = `<button class="btn-car" onclick="delate_fish_car(this)">🗑️</button>`;

@@ -1,0 +1,255 @@
+<style>
+    #scales-store-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        display: none;
+        z-index: 999;
+    }
+
+    .scales-store-balance-container {
+        background-color: #fff;
+        max-width: 500px;
+        margin: 100px auto;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        text-align: center;
+        border: 3px solid #075DA8;
+        position: relative;
+        z-index: 1000;
+    }
+
+    .scale-h2 {
+        color: #075DA8;
+    }
+
+    .scales-store-inputs-container {
+        display: flex;
+        justify-content: space-between;
+        margin: 20px 0;
+    }
+
+    .scales-store-input-group {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 45%;
+    }
+
+    .scales-store-input-group label {
+        font-size: 16px;
+        margin-bottom: 10px;
+    }
+
+    .scales-store-input-group input {
+        padding: 10px;
+        width: 100%;
+        border: 2px solid #ccc;
+        border-radius: 5px;
+        text-align: center;
+        font-size: 16px;
+        transition: border 0.3s;
+    }
+
+    .scales-store-input-group input:focus {
+        border-color: #075DA8;
+        outline: none;
+    }
+
+    .scales-store-buttons-container {
+        margin-top: 20px;
+    }
+
+    .scales-button {
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin: 0 10px;
+        transition: all 0.3s ease;
+    }
+
+    #scales-store-accept-btn {
+        background-color: #075DA8;
+        color: #fff;
+    }
+
+    #scales-store-accept-btn:hover {
+        background-color: #06447a;
+    }
+
+    #scales-store-cancel-btn {
+        background-color: #e63946;
+        color: #fff;
+    }
+
+    #scales-store-cancel-btn:hover {
+        background-color: #b02a36;
+    }
+
+    #scales-store-show-balance-btn {
+        margin: 50px auto;
+        display: block;
+        background-color: #075DA8;
+        padding: 15px 25px;
+        font-size: 18px;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+
+    #scales-store-show-balance-btn:hover {
+        background-color: #06447a;
+        transform: scale(1.05);
+    }
+
+
+
+
+
+
+
+
+
+
+#scales-store-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: none; /* Inicialmente oculto */
+    z-index: 999; /* Asegúrate de que esté sobre todo lo demás */
+}
+
+.scales-store-balance-container {
+    background-color: #fff;
+    max-width: 500px;
+    margin: auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    border: 3px solid #075DA8;
+    position: fixed; /* Fijo sobre la interfaz */
+    top: 50%; /* Centrado verticalmente */
+    left: 50%; /* Centrado horizontalmente */
+    transform: translate(-50%, -50%); /* Ajuste para centrar */
+    z-index: 1000; /* Encima del overlay */
+}
+
+#scales-store-accept-btn:hover {
+    background-color: #06447a;
+}
+
+#scales-store-cancel-btn:hover {
+    background-color: #b02a36;
+}
+</style>
+
+<!--this is the background black-->
+<div id="scales-store-overlay">
+
+    <!--this is the UI for calculate the price of the product-->
+    <div class="scales-store-balance-container" id="scales-store-balance-container">
+        <h2 id="scales-store-price-per-kg" class="scale-h2">1 kg de limón = $10</h2>
+
+        <div class="scales-store-inputs-container">
+            <div class="scales-store-input-group">
+                <label for="scales-store-weight-input">Peso (kg)</label>
+                <input type="number" id="scales-store-weight-input" placeholder="Ingresa peso" min="0" step="0.01">
+            </div>
+            <div class="scales-store-input-group">
+                <label for="scales-store-price-input">Precio ($)</label>
+                <input type="number" id="scales-store-price-input" placeholder="Ingresa precio" min="0" step="0.01">
+            </div>
+        </div>
+
+        <div class="scales-store-buttons-container">
+            <button id="scales-store-accept-btn" class="scales-button">Aceptar</button>
+            <button id="scales-store-cancel-btn" class="scales-button">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let pricePerKg = 10; // 1 kg = $10
+    let infoProductIdProduct=null
+    let infoProductProduct=null
+    let infoProductPrice2=null
+    let infoProductPrice3=null
+
+    //get the data of the UI for use after
+    const overlay = document.getElementById('scales-store-overlay');
+    const balanceContainer = document.getElementById('scales-store-balance-container');
+    const pricePerKgText = document.getElementById('scales-store-price-per-kg');
+    const weightInput = document.getElementById('scales-store-weight-input');
+    const priceInput = document.getElementById('scales-store-price-input');
+    const acceptBtn = document.getElementById('scales-store-accept-btn');
+    const cancelBtn = document.getElementById('scales-store-cancel-btn');
+
+    balanceContainer.style.display = 'none'; //hidden the UI 
+
+    // update the price of change of the weight
+    weightInput.addEventListener('input', () => {
+        const weight = parseFloat(weightInput.value) || 0;
+        priceInput.value = (weight * pricePerKg).toFixed(2);
+    });
+
+    // update the weight to the change of the price
+    priceInput.addEventListener('input', () => {
+        const price = parseFloat(priceInput.value) || 0;
+        weightInput.value = (price / pricePerKg).toFixed(2);
+    });
+
+    // button for success
+    acceptBtn.addEventListener('click', () => {
+        //get the value of the UI
+        const weight = parseFloat(weightInput.value) || 0;
+        const price = parseFloat(priceInput.value) || 0;
+        closeBalance(); //hidden the UI
+
+        //we will see if have a product save in the cash 
+        if(infoProductProduct){
+            //add the product to the car
+            addFishWithSupplies(infoProductIdProduct,infoProductProduct, infoProductPrice1, infoProductPrice2, infoProductPrice3, price, weight);
+        }
+    });
+
+    function open_ui_weight_scale(idProduct, product, price, price2, price3,weight){
+        //update the information of the weight scale
+        pricePerKgText.textContent=`${weight} kg de ${product} = ${price}`;
+        pricePerKg=(price/weight); //3kg==30
+
+        //show the UI of the weight scale
+        overlay.style.display = 'block';
+        balanceContainer.style.display = 'block';
+
+        //update the value of the product 
+        infoProductIdProduct=idProduct
+        infoProductProduct=product
+        infoProductPrice1=price
+        infoProductPrice2=price2
+        infoProductPrice3=price3
+    }
+
+    // button for cancel
+    cancelBtn.addEventListener('click', closeBalance);
+
+    // close the UI and hidden the overlay
+    function closeBalance() {
+        weightInput.value = '';
+        priceInput.value = '';
+        overlay.style.display = 'none';
+        balanceContainer.style.display = 'none';
+    }
+</script>

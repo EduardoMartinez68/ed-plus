@@ -1641,7 +1641,8 @@ router.post('/fud/:id_company/:id_branch/:id_combo/update-product-branch', isLog
     }
 
     //update the combo of the company
-    await update_information_combo_product(name,barcode,description,idComboCompany);
+    const thisProductIsSoldInBulk=req.body.thisProductIsSoldInBulk; //get is the product is sold in bulk
+    await update_information_combo_product(name,barcode,description,thisProductIsSoldInBulk,idComboCompany);
     
     //we will see if can update all the product or exist a error for try again
     if(canUpdateAllTheProduct){
@@ -1721,18 +1722,19 @@ async function update_combo_image(id_combo,image){
     return data;
 }
 
-async function update_information_combo_product(name,barcode,description,id_combo){
+async function update_information_combo_product(name,barcode,description,thisProductIsSoldInBulk,id_combo){
     var queryText = `
     UPDATE "Kitchen".dishes_and_combos
     SET 
         name=$1,
         barcode=$2,
-        description=$3
+        description=$3,
+        this_product_is_sold_in_bulk=$4
     WHERE 
-        id=$4
+        id=$5
     `;
 
-    var values = [name,barcode,description,id_combo];
+    var values = [name,barcode,description,thisProductIsSoldInBulk,id_combo];
     const result = await database.query(queryText, values);
     const data = result.rows;
     return data;

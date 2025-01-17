@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interfaz de Balanza</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        #scales-store-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: none;
+            z-index: 999;
+        }
+
+        .scales-store-balance-container {
+            background-color: #fff;
+            max-width: 500px;
+            margin: 100px auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            border: 3px solid #075DA8;
+            position: relative;
+            z-index: 1000;
+        }
+
+        h2 {
+            color: #075DA8;
+        }
+
+        .scales-store-inputs-container {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+
+        .scales-store-input-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 45%;
+        }
+
+        .scales-store-input-group label {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .scales-store-input-group input {
+            padding: 10px;
+            width: 100%;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+
+        .scales-store-input-group input:focus {
+            border-color: #075DA8;
+            outline: none;
+        }
+
+        .scales-store-buttons-container {
+            margin-top: 20px;
+        }
+
+        button {
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+        }
+
+        #scales-store-accept-btn {
+            background-color: #075DA8;
+            color: #fff;
+        }
+
+        #scales-store-accept-btn:hover {
+            background-color: #06447a;
+        }
+
+        #scales-store-cancel-btn {
+            background-color: #e63946;
+            color: #fff;
+        }
+
+        #scales-store-cancel-btn:hover {
+            background-color: #b02a36;
+        }
+
+        #scales-store-show-balance-btn {
+            margin: 50px auto;
+            display: block;
+            background-color: #075DA8;
+            padding: 15px 25px;
+            font-size: 18px;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+
+        #scales-store-show-balance-btn:hover {
+            background-color: #06447a;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <button id="scales-store-show-balance-btn">Abrir Balanza</button>
+
+    <div id="scales-store-overlay"></div>
+
+    <div class="scales-store-balance-container" id="scales-store-balance-container">
+        <h2 id="scales-store-price-per-kg">1 kg de limón = $10</h2>
+
+        <div class="scales-store-inputs-container">
+            <div class="scales-store-input-group">
+                <label for="scales-store-weight-input">Peso (kg)</label>
+                <input type="number" id="scales-store-weight-input" placeholder="Ingresa peso" min="0" step="0.01">
+            </div>
+            <div class="scales-store-input-group">
+                <label for="scales-store-price-input">Precio ($)</label>
+                <input type="number" id="scales-store-price-input" placeholder="Ingresa precio" min="0" step="0.01">
+            </div>
+        </div>
+
+        <div class="scales-store-buttons-container">
+            <button id="scales-store-accept-btn">Aceptar</button>
+            <button id="scales-store-cancel-btn">Cancelar</button>
+        </div>
+    </div>
+
+    <script>
+        const pricePerKg = 10; // 1 kg = $10
+        const overlay = document.getElementById('scales-store-overlay');
+        const balanceContainer = document.getElementById('scales-store-balance-container');
+        const pricePerKgText = document.getElementById('scales-store-price-per-kg');
+        const weightInput = document.getElementById('scales-store-weight-input');
+        const priceInput = document.getElementById('scales-store-price-input');
+        const showBalanceBtn = document.getElementById('scales-store-show-balance-btn');
+        const acceptBtn = document.getElementById('scales-store-accept-btn');
+        const cancelBtn = document.getElementById('scales-store-cancel-btn');
+
+        balanceContainer.style.display = 'none';
+        
+        // Mostrar la balanza y el overlay
+        showBalanceBtn.addEventListener('click', () => {
+            overlay.style.display = 'block';
+            balanceContainer.style.display = 'block';
+        });
+
+        // Actualizar el precio al cambiar el peso
+        weightInput.addEventListener('input', () => {
+            const weight = parseFloat(weightInput.value) || 0;
+            priceInput.value = (weight * pricePerKg).toFixed(2);
+        });
+
+        // Actualizar el peso al cambiar el precio
+        priceInput.addEventListener('input', () => {
+            const price = parseFloat(priceInput.value) || 0;
+            weightInput.value = (price / pricePerKg).toFixed(2);
+        });
+
+        // Botón de aceptar
+        acceptBtn.addEventListener('click', () => {
+            const weight = parseFloat(weightInput.value) || 0;
+            const price = parseFloat(priceInput.value) || 0;
+            alert(`Has aceptado: ${weight.toFixed(2)} kg por $${price.toFixed(2)}`);
+            closeBalance();
+        });
+
+        // Botón de cancelar
+        cancelBtn.addEventListener('click', closeBalance);
+
+        // Cerrar la balanza y el overlay
+        function closeBalance() {
+            weightInput.value = '';
+            priceInput.value = '';
+            overlay.style.display = 'none';
+            balanceContainer.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
