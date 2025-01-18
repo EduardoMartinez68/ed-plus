@@ -17,7 +17,7 @@
             {{#if img}}
               <td><img src="{{img}}" alt="" class="img-s-p"></td>
             {{else}}
-              <td><img src="https://cdn-icons-png.flaticon.com/512/2909/2909753.png" alt="" class="img-s-p"></td>
+              <td><img src="img/icons_first/product.webp" alt="" class="img-s-p"></td>
             {{/if}}
             <td>{{product_barcode}}</td>
             <td>{{product_name}}</td>
@@ -39,7 +39,7 @@
         <td></td>
         <td></td>
         <td></td>
-        <td><label>Precio recomendado</label></td>
+        <td><label id="p-message">Precio recomendado</label></td>
         <td id="total">0$</td>
     </tr>
   </tbody>
@@ -84,7 +84,8 @@
     totalCell.textContent = total;
 
     var labelAveragePrice = document.getElementById("averagePrice");
-    labelAveragePrice.value = total;
+    labelAveragePrice.value = 'Precio recomendado';
+    document.getElementById('p-message').textContent='Precio recomendado';
   }
 
 
@@ -100,6 +101,7 @@
         var cells = row.getElementsByTagName("td");
         var total=0;
         var currency="MXN"
+
         //we will reading all the cells of the row
         for (var j = 0; j < cells.length; j++) {
             //get the cell and his values 
@@ -127,7 +129,10 @@
           
 
             if(j==cells.length-2){
-              cell.textContent = total +" "+currency+"$";
+              //we will see if this is the last one row
+              if(i!=rows.length-1){
+                cell.textContent = total +" "+currency+"$";
+              }
             }
         }
     }

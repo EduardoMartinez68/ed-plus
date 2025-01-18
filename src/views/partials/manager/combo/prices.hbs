@@ -5,7 +5,7 @@
         <input type="text" id="averagePrice" class="form-control" name="averagePrice" min="0" step="1" placeholder="Price" required readonly>
     </div>
 </div>
-<div class="row">
+<div class="row mt-2">
     <div class="col-2">
         <label for="validationCustom01">Divisa *</label>
         <select name="selectCurrency" class="form-select" aria-label="Default select example">
@@ -14,14 +14,13 @@
     </div>
 </div>
 
-
-    <div class="row">
+    <div class="row mt-2">
         <div class="col">
-            <label for="validationCustom01">Precio de venta*</label>
+            <label for="validationCustom01">Precio de venta por (unidad/kg)*</label>
             <input type="text" id="price1" class="form-control"  name="price1" min="0" step="1" placeholder="Sale price" required oninput="calculate_input_price(1)" value="{{price_1}}">
         </div>
         <div class="col">
-            <label for="validationCustom01">% Ganancia *</label>
+            <label for="validationCustom01">% Ganancia por (unidad/kg)*</label>
             <input type="text" id="revenue1" class="form-control"  name="revenue1" min="0" step="1" placeholder="Revenue" required oninput="calculate_input_revenue(1)" value="{{revenue_1}}">
         </div>
     </div>
