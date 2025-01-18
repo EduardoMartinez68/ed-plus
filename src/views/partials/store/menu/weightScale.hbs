@@ -201,15 +201,23 @@
 
     // update the price of change of the weight
     weightInput.addEventListener('input', () => {
-        const weight = parseFloat(weightInput.value) || 0;
-        priceInput.value = (weight * pricePerKg).toFixed(2);
+        update_weight_of_the_scale();
     });
 
     // update the weight to the change of the price
     priceInput.addEventListener('input', () => {
-        const price = parseFloat(priceInput.value) || 0;
-        weightInput.value = (price / pricePerKg).toFixed(2);
+        update_price_of_the_scale();
     });
+
+    function update_price_of_the_scale(){
+        const price = parseFloat(priceInput.value) || 0;
+        weightInput.value = (price / pricePerKg).toFixed(2);    
+    }
+
+    function update_weight_of_the_scale(){
+        const weight = parseFloat(weightInput.value) || 0;
+        priceInput.value = (weight * pricePerKg).toFixed(2);
+    }
 
     // button for success
     acceptBtn.addEventListener('click', () => {
@@ -227,7 +235,7 @@
 
     function open_ui_weight_scale(idProduct, product, price, price2, price3,weight){
         //update the information of the weight scale
-        pricePerKgText.textContent=`${weight} kg de ${product} = ${price}`;
+        pricePerKgText.textContent=`${weight} kg de ${product} = ${price} $`;
         pricePerKg=(price/weight); //3kg==30
 
         //show the UI of the weight scale

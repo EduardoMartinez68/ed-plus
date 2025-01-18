@@ -251,6 +251,7 @@
                                             <h5 class="card-title">{{name}}</h5>
                                             <p class="card-text">${{price_1}}</p>
                                             <p class="card-text">{{barcode}}</p>
+                                            <input type="hidden" class="this_product_is_sold_in_bulk" value="{{this_product_is_sold_in_bulk}}">
                                             <button class="button-card" onclick="addFish('{{id}}','{{name}}','{{price_1}}','{{price_2}}','{{price_3}}','{{this_product_is_sold_in_bulk}}')">Comprar</button>
                                         </center>
                                     </div>
@@ -336,6 +337,7 @@
                                 <h2 class="card-title" >{{name}}</h2>
                                 <h1 class="card-text" >${{price_1}}</h1>
                                 <p class="description" >{{barcode}}</p>
+                                <input type="hidden" class="this_product_is_sold_in_bulk" value="{{this_product_is_sold_in_bulk}}">
                             </div>
                         </div>
                         {{/each}}
@@ -426,13 +428,13 @@
                         example: milk*10
                 */
                 // Expression regular for know the format "text*number"
-                const match = valueInputBarcode.match(/(.+)\*(\d+)$/);
+                const match = valueInputBarcode.split('*') //valueInputBarcode.match(/(.+)\*(\d+)$/);
                 let repeatCount = 1; // value predetermined
-
+                
                 //we will see if exist a cant that the user would add to the card
                 if (match) {
-                    barcodeInput = match[1]; // Extract the text before that the asterisk 
-                    repeatCount = parseInt(match[2], 10); //Extract and convert the number after the asterisk
+                    barcodeInput = match[0]; // Extract the text before that the asterisk 
+                    repeatCount = parseInt(match[1], 10); //Extract and convert the number after the asterisk
                 }
 
                 //now we will to search the product that the user need add to the card
@@ -452,17 +454,28 @@
                 //we will see if we found the products for add to the card
                 if(cardProduct){
                     // get all the data that need for add the product to the card
-                    console.log(cardProduct)
                     const productId = cardProduct.getAttribute('id-product');
                     const productName = cardProduct.querySelector('.card-title').textContent.trim();
                     const productPrice1 = cardProduct.querySelector('.card-text').textContent.trim().replace('$', '');
                     const productPrice2 = cardProduct.getAttribute('data-price-2') || '0'; 
                     const productPrice3 = cardProduct.getAttribute('data-price-3') || '0';
+                    const typeProduct = cardProduct.querySelector('.this_product_is_sold_in_bulk').value || 'false';
 
-                    //if exist a cant that the user would add of the product, we use a loop "for" for add the product to the card
-                    for (let i = 0; i < repeatCount; i++) {
+                    //we will see if the product that the user would like add to the card is a product is sold in bulk
+                    if(typeProduct=='true'){
                         // call to the function addFish with the product data
-                        addFish(productId, productName, productPrice1, productPrice2, productPrice3);
+                        addFish(productId, productName, productPrice1, productPrice2, productPrice3,typeProduct);
+                        
+                        //update the cant in the scale
+                        repeatCount = parseFloat(match[1], 10); //this is for get decimals
+                        document.getElementById('scales-store-weight-input').value=repeatCount;
+                        update_weight_of_the_scale();
+                    }else{
+                        //if exist a cant that the user would add of the product, we use a loop "for" for add the product to the card
+                        for (let i = 0; i < repeatCount; i++) {
+                            // call to the function addFish with the product data
+                            addFish(productId, productName, productPrice1, productPrice2, productPrice3,typeProduct);
+                        }
                     }
                 }else{
                     notificationMessageError('😬 Ups!','Este articulo no se encuentra en el menu.');

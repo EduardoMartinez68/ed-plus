@@ -324,9 +324,9 @@ serverExpress.use(express.static(path.join(__dirname,'public')));
 //*-----------------------------------------------------------Server application-----------------------------------------//
 /*
     SETTING IN PACKAGE.JSON
-  "main": "index.js",
+  "main": "index_desktop.js",
   "scripts": {
-    "start": "node src/index.js",
+    "start": "node src/index_desktop.js",
     "dev": "nodemon src/"
   },
 */
@@ -357,7 +357,7 @@ serverExpress.listen(serverExpress.get('port'), '0.0.0.0', () => {
 //we will see if the APP is for desktop
 /*
     SETTING IN PACKAGE.JSON
-  "main": "src/index.js",
+  "main": "src/index_desktop.js",
   "scripts": {
     "start": "npx electron .",
     "dev": "nodemon src/",
