@@ -66,6 +66,9 @@ async function delete_all_car(total,moneyReceived,exchange,comment) {
                 const idCommander=answerServer.message;
                 const answerServerOrder=await get_answer_server_for_add_order(idCommander);
             }
+            
+            //we will print ticket
+            printTicket(total,moneyReceived,exchange,comment);
 
             //if the server can do the pay we will to delete all the cart and send a message of success
             delete_all_fish();
@@ -605,7 +608,7 @@ function delete_all_fish() {
 
     //update the total
     var total = 0;
-    btn.textContent = "Buy $" + total;
+    btn.textContent = "Comprar $" + total;
 }
 
 //const myCountry=getLocation()

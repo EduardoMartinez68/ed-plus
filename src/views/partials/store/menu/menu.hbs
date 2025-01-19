@@ -123,6 +123,14 @@
         }
     }
 </style>
+
+
+{{#each dataCompany}}
+    <input type="hidden" value="{{path_logo}}" id="path-icon-company">
+    <input type="hidden" value="{{name}}" id="name-company">
+{{/each}}
+
+
 <div class="title-home-store">
     <br>
     <label for=""><button class="btn" onclick="showTutorial()">💡 <label for="">Repetir Tutorial</label></button></label>
@@ -626,3 +634,10 @@ document.addEventListener("DOMContentLoaded", function() {
     integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
     crossorigin="anonymous"></script>
 <script src="/js/desktop/bootstrap-nav.bundle.min.js"></script>
+
+
+
+<!---js for print tickets--->
+<script src="/js/store/JQuery.js"></script>
+<script src="/js/store/escops.js"></script>
+<script src="/js/store/tickets.js"></script>
