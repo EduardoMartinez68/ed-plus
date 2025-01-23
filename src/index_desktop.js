@@ -1,7 +1,8 @@
 const system=require('./lib/system');
+const thiIsADemo=true;
 
 //----------------------desktop application
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, dialog, ipcMain  } = require('electron');
 
 
 //----------------------server application
@@ -20,7 +21,46 @@ const path=require('path');
 //ReCAPTCHA of Google
 const { RecaptchaV2 } = require('express-recaptcha');
 
+//this is for create a demo of PLUS
+const nodePersist = require('node-persist');
+nodePersist.init({
+  dir: path.join(__dirname, 'data')
+});
 
+
+async function initialize_demo() {
+    const installDate = await nodePersist.get('installDate');
+
+    if (!installDate) {
+      // Si no existe la fecha de instalación, la guarda
+      const currentDate = new Date().toISOString();
+      await nodePersist.set('installDate', currentDate);
+      console.log("Fecha de instalación guardada:", currentDate);
+    } else {
+      console.log("Fecha de instalación existente:", installDate);
+    }
+}
+
+async function is_demo_expired() {
+    const installDate = await nodePersist.get('installDate');
+    if (!installDate) {
+      console.log("No se encontró la fecha de instalación");
+      return false;
+    }
+  
+    const installDateObj = new Date(installDate);
+    const currentDate = new Date();
+    const diffTime = currentDate - installDateObj;
+    const diffDays = diffTime / (1000 * 60 * 60 * 24); // Convertir la diferencia a días
+  
+    if (diffDays > 15) {
+      console.log("La demo ha expirado.");
+      return true;
+    } else {
+      console.log("La demo aún está activa.");
+      return false;
+    }
+}
 
 //*------------------initializations-----------------------------------------//
 const serverExpress =express();
@@ -383,7 +423,29 @@ const createMainWindow = () => {
 };
 
 // whne Electron is ready, load the web in the screen
-app.on('ready', createMainWindow);
+app.on('ready', async () => {
+
+    //we will see if the software is a demo
+    if(thiIsADemo){
+        //start the demo when the exe open for first time
+        await initialize_demo();
+
+
+        //we will see if the demo expired
+        if (await is_demo_expired()) {
+            dialog.showMessageBoxSync({
+                type: 'warning',
+                title: 'Demo Expirada',
+                message: 'Tu demo de 15 días ha expirado. Por favor, compra la versión completa y sigue creciendo con ED PLUS 🚀.',
+            });
+            app.quit(); // close the application
+            return;
+        }
+    }
+
+    // load the windows if the demo no was expired
+    createMainWindow();
+});
 
 // clouse the screen
 app.on('window-all-closed', () => {

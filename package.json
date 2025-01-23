@@ -5,7 +5,7 @@
   "main": "src/index_desktop.js",
   "scripts": {
     "start": "npx electron .",
-    "dev": "nodemon src/",
+    "dev": "nodemon src/index_desktop.js",
     "electron": "electron ."
   },
   "keywords": [],
@@ -36,6 +36,7 @@
     "mongodb": "^6.0.0",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
+    "node-persist": "^4.0.3",
     "node-thermal-printer": "^4.4.2",
     "nodemailer": "^6.9.13",
     "passport": "^0.6.0",
@@ -56,6 +57,8 @@
   },
   "devDependencies": {
     "electron": "^25.9.8",
+    "electron-builder": "^25.1.8",
+    "electron-packager": "^17.1.2",
     "nodemon": "^2.0.22"
   }
 }
