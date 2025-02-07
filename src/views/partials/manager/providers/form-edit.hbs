@@ -1,5 +1,6 @@
 {{#each provider}}
     <form action="/fud/{{id_companies}}/{{id_branches}}/{{id}}/edit-providers-branch" method="POST">
+    <div id="select-1" class="content-section active">
         <table width="100%">
             <tr>
                 <td>
@@ -97,10 +98,12 @@
         <div class="form-group">
             <button class="btn btn-success btn-block">Save</button>
         </div>
+    </div>
 </div>
-<div class="content-sales">
+<div id="select-2" class="content-section">
         <div class="form-group">
             <label>Type provider</label>
+            <input type="hidden" value="{{type}}" id="select-type-provider">
             <div class="form-check form-check-inline">
                 <input class="form-check-input" type="radio" name="type" id="inlineRadio1" value="individual">
                 <label class="form-check-label" for="inlineRadio1">Individual</label>
@@ -177,3 +180,18 @@
         <button class="btn btn-success btn-block">Save</button>
     </div>
 </form>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const hiddenInput = document.getElementById('select-type-provider');
+    const radioIndividual = document.getElementById('inlineRadio1');
+    const radioCompany = document.getElementById('inlineRadio2');
+
+    if (hiddenInput.value.trim().toLowerCase() === 'company') {
+        radioCompany.checked = true;
+    } else {
+        radioIndividual.checked = true;
+    }
+});
+
+</script>

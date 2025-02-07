@@ -1,0 +1,57 @@
+<div class="cart-point-of-sales">
+
+    <!--this is for create the select of the printer and for create the select of the options--->
+    <div class="row">
+        <div class="col-6">
+            <label for="">Impresora</label>
+            <select name="" id="dataPrinter" class="form-select">
+                <option value="">No imprimir Ticket</option>
+                {{#each boxes}}
+                <option value="{{ip_printer}}">{{num_box}}</option>
+                {{/each}}
+            </select>
+        </div>
+        <div class="col-6">
+            <label for=""></label>
+            <div class="dropdown">
+                <button class="btn btn-primary button-spacing dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                    Funciones
+                </button>
+                <ul class="dropdown-menu">
+                    {{#each dataEmployee}}
+                    <input type="text" value="{{id_branches}}" style="display: none;" id="id_branch">
+                    <!--
+                    <li class="li-link"><a class="dropdown-item" id="emailClient" email="" idClient="null"
+                            onclick="select_customer('{{id_companies}}')"><i class="fi-icon fi-sr-following"></i>
+                            Buscar Cliente</a></li>
+                    --->
+                    <li class="li-link"><a class="dropdown-item" onclick="cash_movement('{{id}}','{{id_branches}}')"><i
+                                class="fi-icon fi-sr-hand-holding-usd"></i> Movimiento de caja</a></li>
+                    {{/each}}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <br>
+
+    <!--this is the search of the menu--->
+    <div class="search-container">
+        <input type="text" class="search-input" placeholder="Escribe un código de barras..." id="search" autofocus
+            name="usernameSearch">
+        <i class="fi fi-br-search search-icon"></i>
+    </div>
+    <br>
+
+    <!-- shopping cart -->
+    <div class="cart-items-point-of-sales" id="cart-items">
+
+    </div>
+
+
+    <div class="cart-total-point-of-sales">
+        <h6>Total de productos: <span id="products-total">0</span></h6>
+        <p>Total del Carrito: <span id="cart-total">0.00</span></p>
+        <button class="btn-buy-point-of-sales" onclick="openPopSales()">Comprar</button>
+    </div>
+</div>

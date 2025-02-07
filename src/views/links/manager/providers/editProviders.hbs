@@ -20,13 +20,13 @@
                 <div class="card">
                     <div class="card-body">
                         <!---dashboard--->
-                        <div class="tab_box">
-                            <button class="tab_btn active"><i class="fi-container fi-sr-truck-loading"></i>Basic
-                                Data</button>
-                            <button class="tab_btn"><i class="fi-container fi-ss-truck-moving"></i>Billing
-                                Information</button>
-                            <div class="line"></div>
+                    <!---dashboard--->
+                        <div class="btn-group">
+                            <button class="btn-select btn-active" onclick="showSection('select-1', this)" type="button">Datos Básicos</button>
+                            <button class="btn-select" onclick="showSection('select-2', this)" type="button">Información de Facturación</button>
                         </div>
+
+                        
                         <div class="content_box">
                             <div class="content-sales active">
                                 {{#if branch}}

@@ -221,6 +221,57 @@ router.get('/:id_company/:id_branch/add-products-free', isLoggedIn, async (req, 
 });
 
 
+
+router.get('/:id_company/:id_branch/upload-products', isLoggedIn, async (req, res) => {
+    const {id_company, id_branch } = req.params;
+
+    //we will see if the user have the permission for this App.
+    if(!this_user_have_this_permission(req.user,id_company, id_branch,'view_products')){
+        req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
+        return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
+    }
+
+    const branchFree = await get_data_branch(id_branch);
+
+    res.render('links/free/products/uploadProducts', { branchFree});
+});
+
+const XLSX = require('xlsx');
+const path = require('path');
+const fs = require('fs');
+
+router.get('/download-excel-product', (req, res) => {
+    // Datos de ejemplo, que pueden venir de tu base de datos
+    const data = [
+        { Barcode:'Producto 1e', Producto: 'Producto 1', Description: '', Precio: 10, Cantidad: 5, UsaInventario: 0, EsUnInsumo: 0,MontoDeCompra:0,UnidadDeCompra:'Pza',
+            PrecioDeCompra:0,MontoDeVenta:0,UnidadDeVenta:'Pza',InventarioMáximo:0,InventarioMínimo:0,UnidadDeMedida: 'Pza'},
+        {Barcode:'Producto 2e', Producto: 'Producto 2', Description: '', Precio: 10, Cantidad: 5, UsaInventario: 0, EsUnInsumo: 0,MontoDeCompra:0,UnidadDeCompra:'kg',
+            PrecioDeCompra:0,MontoDeVenta:0,UnidadDeVenta:'kg',InventarioMáximo:0,InventarioMínimo:0,UnidadDeMedida: 'kg'
+        },
+        { Barcode:'Producto 3e', Producto: 'Producto 3', Description: '', Precio: 10, Cantidad: 5, UsaInventario: 0, EsUnInsumo: 0,MontoDeCompra:0,UnidadDeCompra:'L',
+            PrecioDeCompra:0,MontoDeVenta:0,UnidadDeVenta:'L',InventarioMáximo:0,InventarioMínimo:0,UnidadDeMedida: 'L'
+        }
+    ];
+
+    // Convertir los datos a una hoja de trabajo (workbook)
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Products');
+
+    // Generar un archivo Excel en memoria
+    const filePath = path.join(__dirname, 'products.xlsx');
+    XLSX.writeFile(wb, filePath);
+
+    // Enviar el archivo Excel al cliente
+    res.download(filePath, 'productos.xlsx', (err) => {
+        if (err) {
+            console.error('Error al enviar el archivo:', err);
+        }
+        // Eliminar el archivo después de la descarga
+        fs.unlinkSync(filePath);
+    });
+});
+
 //--this is for edit the data of the combo
 router.get('/:id_company/:id_branch/:id_combo_features/edit-products-free', isLoggedIn, async (req, res) => {
     

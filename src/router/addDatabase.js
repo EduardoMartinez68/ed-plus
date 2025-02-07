@@ -347,7 +347,7 @@ async function this_branch_exists(id_company,name){
     return result.rows.length>0;
 }
 
-//////////////////////customer
+//////////////////////customer commanders
 async function this_customer_exists(id_company,email){
     //we will search the company of the user 
     var queryText = `SELECT * FROM "Company".customers WHERE id_companies = $1 AND email = $2`;

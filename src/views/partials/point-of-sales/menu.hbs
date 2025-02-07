@@ -1,0 +1,28 @@
+<!-- menu (left) -->
+<div class="menu-point-of-sales">
+    <div class="product-cards-point-of-sales">
+        <!-- we will see if exist a product in the menu-->
+        {{#if dishAndCombo}}
+            <!-- her we will read all the information of the products and we will print the information in the screen-->
+            {{#each dishAndCombo}}
+                <div class="product-card-point-of-sales"
+                    onclick="addToCart('product-{{id}}','{{name}}', '{{barcode}}', {{price_1}},'{{purchase_unit}}','{{this_product_is_sold_in_bulk}}','{{id_dishes_and_combos}}')"
+                    id="{{barcode}}" id-product="{{id}}" data-price-1='{{price_1}}' data-price-2="{{price_2}}"
+                    data-price-3="{{price_3}}" purchase_unit="{{purchase_unit}}" this_product_is_sold_in_bulk="{{this_product_is_sold_in_bulk}}" id_dishes_and_combos="{{id_dishes_and_combos}}">
+                    <img src="{{img}}" alt="Producto 1" id="product-{{id}}">
+                    <br>
+                    <label for="" class="card-text">${{price_1}}</label>
+                    <div class="product-name-point-of-sales">{{name}}</div>
+                    <div class="product-barcode-point-of-sales">{{barcode}}</div>
+                    <input type="hidden" class="this_product_is_sold_in_bulk" value="{{this_product_is_sold_in_bulk}}">
+                </div>
+            {{/each}}
+        {{else}}
+            <center>
+                <label for="">Parece que aún no existe nada en el menú.</label>
+                <img src="/img/icons_first/notfile.webp" alt="Producto 1" id="product-{{id}}">
+                <button class="btn btn-edit">Agregar un Producto</button>
+            </center>
+        {{/if}}
+    </div>
+</div>

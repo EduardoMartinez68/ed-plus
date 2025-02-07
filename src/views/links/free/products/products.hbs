@@ -16,13 +16,16 @@
 <div class="container">
     {{#each branchFree}}
     <div class="row">
-        <div class="col-8">
+        <div class="col-6">
             <input type="text" class="form-control" placeholder="Buscar código de barras..." id="search">
         </div>
         <div class="col">
             <div class="col">
                 <button class="btn btn-confirm-message" onclick="nextWeb('{{id_companies}}/{{id}}/add-products-free')">Agregar producto +</button>
             </div>
+        </div>
+        <div class="col">
+            <button class="btn btn-edit" onclick="nextWeb('{{id_companies}}/{{id}}/upload-products')"><i class="fi-icon fi-br-upload"></i> Subir productos</button>
         </div>
     </div>
     {{/each}}

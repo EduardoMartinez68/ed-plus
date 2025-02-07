@@ -1,0 +1,419 @@
+<style>
+    /*
+    body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f4f4f4;
+    }
+    */
+
+    .popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5); /* Fondo negro con opacidad */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 999; /* Asegura que esté sobre otros elementos */
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+    }
+
+    .popup-overlay.active {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    .popup {
+        width: 80%;
+        height: auto;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        display: flex;
+        justify-content: space-between;
+
+        /* Centrando en la pantalla */
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 100;
+    }
+
+    .left-panel,
+    .right-panel {
+        width: 48%;
+    }
+
+    .buttons-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+
+    .button-pop-sales {
+        padding: 15px;
+        font-size: 18px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .num-btn,
+    .quick-amount-btn {
+        background: #ddd;
+    }
+
+    .num-btn:hover,
+    .quick-amount-btn:hover {
+        background: #bbb;
+    }
+
+    .delete-btn {
+        background: #ff4d4d;
+        color: white;
+    }
+
+    .delete-btn:hover {
+        background: #cc0000;
+    }
+
+    .pay-btn {
+        width: 100%;
+        background: #00A245;
+        color: white;
+        padding: 15px;
+        font-size: 20px;
+    }
+
+    .pay-btn:hover {
+        background: #018339;
+    }
+
+    .input-container {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .input-pop-sales {
+        padding: 10px;
+        font-size: 18px;
+        text-align: right;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .selected {
+        border: 2px solid #007bff;
+    }
+
+    .total-text {
+        font-size: 14px;
+        color: #666;
+        margin-top: 5px;
+    }
+
+    .change {
+        font-size: 20px;
+        font-weight: bold;
+        margin-top: 10px;
+    }
+
+    .positive {
+        color: green;
+    }
+
+    .negative {
+        color: red;
+    }
+
+    @media (max-width: 768px) {
+        .popup {
+            width: 95%;
+            padding: 15px;
+        }
+
+        .buttons-container {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .pay-btn {
+            font-size: 18px;
+            padding: 12px;
+        }
+
+        .input-pop-sales {
+            font-size: 16px;
+        }
+
+        .change {
+            font-size: 18px;
+        }
+
+        .total-text {
+            font-size: 12px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .popup {
+            width: 100%;
+            padding: 10px;
+        }
+
+        .right-panel {
+            width: 100%;
+        }
+
+        .left-panel {
+            width: 0%;
+        }
+
+        .buttons-container {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+        }
+
+        .button-pop-sales {
+            font-size: 16px;
+            padding: 12px;
+        }
+
+        .pay-btn {
+            font-size: 16px;
+            padding: 10px;
+        }
+
+        .input-container {
+            flex-direction: column;
+        }
+
+        .input-pop-sales {
+            font-size: 14px;
+        }
+
+        .total-text {
+            font-size: 12px;
+        }
+
+        /* Ocultar botones numéricos (0-9) en pantallas pequeñas */
+        .num-btn,
+        .delete-btn,
+        .quick-amount-btn {
+            display: none;
+        }
+    }
+</style>
+<div class="popup-overlay" id="popupOverlay">
+    <div class="popup" id="popup">
+        <button class="button-pop-sales close-btn" onclick="closePopSales()">&times;</button>
+        <div class="left-panel">
+            <div class="buttons-container">
+                <button class="button-pop-sales quick-amount-btn" onclick="setAmount(20)">$20</button>
+                <button class="button-pop-sales quick-amount-btn" onclick="setAmount(100)">$100</button>
+                <button class="button-pop-sales quick-amount-btn" onclick="setAmount(200)">$200</button>
+            </div>
+            <br>
+            <div class="buttons-container">
+                <button class="button-pop-sales  num-btn" onclick="addNumber(1)">1</button>
+                <button class="button-pop-sales  num-btn" onclick="addNumber(2)">2</button>
+                <button class="button-pop-sales num-btn" onclick="addNumber(3)">3</button>
+                <button class="button-pop-sales num-btn" onclick="addNumber(4)">4</button>
+                <button class="button-pop-sales num-btn" onclick="addNumber(5)">5</button>
+                <button class="button-pop-sales num-btn" onclick="addNumber(6)">6</button>
+                <button class="button-pop-sales num-btn" onclick="addNumber(7)">7</button>
+                <button class="button-pop-sales num-btn" onclick="addNumber(8)">8</button>
+                <button class="button-pop-sales num-btn" onclick="addNumber(9)">9</button>
+                <button class="button-pop-sales delete-btn" onclick="deleteNumber()">⌫</button>
+                <button class="button-pop-sales num-btn" onclick="addNumber(0)">0</button>
+                <button class="button-pop-sales num-btn" onclick="addNumber('.')">.</button>
+            </div>
+        </div>
+        <div class="right-panel">
+            <h2>Total: $<span id="total">35000</span></h2>
+            <p class="total-text" id="total-text">number</p>
+            <div class="input-container">
+                <label for="">Efectivo</label>
+                <input type="text" id="cash" placeholder="Efectivo" onfocus="setSelected(this)" oninput="calculateChange()"
+                    class="input-pop-sales">
+                <label for="">Tarjeta de Crédito</label>
+                <input type="text" id="credit" placeholder="Tarjeta de Crédito" onfocus="setSelected(this)"
+                    oninput="calculateChange()" class="input-pop-sales">
+                <label for="">Tarjeta de Débito</label>
+                <input type="text" id="debit" placeholder="Tarjeta de Débito" onfocus="setSelected(this)"
+                    oninput="calculateChange()" class="input-pop-sales">
+            </div>
+            <p class="change" id="change">Cambio: $0.00</p>
+            <button class="button-pop-sales pay-btn" onclick="buy_my_car()">Cobrar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let selectedInput = null;
+    let finalTotal=0;
+
+    function openPopSales() {
+        //forever that the user open the UI, the default input is the cash
+        setSelected(document.getElementById('cash'));
+
+        //get the total of the shopping cart
+        const totalText = document.getElementById('cart-total').textContent.trim(); // Elimina espacios extra
+        const total = parseFloat(totalText.replace(/[^0-9.]/g, '')); // Elimina caracteres no numéricos
+        const formattedTotal = total.toFixed(2); // String con 2 decimales
+        finalTotal = parseFloat(formattedTotal); // Número final
+
+        //update the data of the shopping cart
+        document.getElementById('total').textContent=finalTotal;
+        calculateChange();
+        updateTotalText();
+
+        //when the data was updated, we will show the pop
+        document.getElementById('popupOverlay').classList.add('active');
+    }
+
+    function closePopSales() {
+        //restart the inputs
+        if (selectedInput) {
+            selectedInput.classList.remove('selected');
+        }
+        document.getElementById('cash').value='';
+        document.getElementById('debit').value='';
+        document.getElementById('credit').value='';
+        selectedInput=null;
+
+        //close the pop
+        finalTotal=0;
+        document.getElementById('popupOverlay').classList.remove('active');
+    }
+
+    function setSelected(input) {
+        if (selectedInput) {
+            selectedInput.classList.remove('selected');
+        }
+        selectedInput = input;
+        selectedInput.classList.add('selected');
+    }
+
+    function addNumber(num) {
+        if (selectedInput) {
+            selectedInput.value += num;
+            calculateChange();
+        }
+    }
+
+    function deleteNumber() {
+        if (selectedInput) {
+            selectedInput.value = selectedInput.value.slice(0, -1);
+            calculateChange();
+        }
+    }
+
+    function setAmount(amount) {
+        if (selectedInput) {
+            selectedInput.value = amount;
+            calculateChange();
+        }
+    }
+
+    function calculateChange(){
+        const total=finalTotal;
+        let cash = parseFloat(document.getElementById('cash').value) || 0;
+        let credit = parseFloat(document.getElementById('credit').value) || 0;
+        let debit = parseFloat(document.getElementById('debit').value) || 0;
+        let paid = cash + credit + debit;
+        let change = paid - total;
+        let changeText = document.getElementById('change');
+        changeText.textContent = `Cambio: $${change.toFixed(2)}`;
+        changeText.className = 'change ' + (change >= 0 ? 'positive' : 'negative');
+    }
+
+    function numberToWords(number) {
+        const ones = [
+            '', 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve',
+            'diez', 'once', 'doce', 'trece', 'catorce', 'quince', 'dieciséis', 'diecisiete',
+            'dieciocho', 'diecinueve'
+        ];
+
+        const tens = [
+            '', '', 'veinte', 'treinta', 'cuarenta', 'cincuenta', 'sesenta', 'setenta',
+            'ochenta', 'noventa'
+        ];
+        const hundreds = [
+            '', 'cien', 'doscientos', 'trescientos', 'cuatrocientos', 'quinientos', 'seiscientos',
+            'setecientos', 'ochocientos', 'novecientos'
+        ];
+        const thousands = [
+            '', 'mil', 'dos mil', 'tres mil', 'cuatro mil', 'cinco mil', 'seis mil', 'siete mil',
+            'ocho mil', 'nueve mil'
+        ];
+        const millions = [
+            '', 'un millón', 'dos millones', 'tres millones', 'cuatro millones', 'cinco millones',
+            'seis millones', 'siete millones', 'ocho millones', 'nueve millones'
+        ];
+
+        let numberU = parseInt(number);
+
+        if (numberU === 0) return 'cero';
+
+        let result = '';
+
+        // Convertir el número en millones
+        if (numberU >= 1000000) {
+            let millionPart = Math.floor(numberU / 1000000);
+            result += millions[millionPart] + ' ';
+            numberU %= 1000000;
+        }
+
+        // Convertir el número en miles
+        if (numberU >= 1000) {
+            let thousandPart = Math.floor(numberU / 1000);
+            result += thousands[thousandPart] + ' ';
+            numberU %= 1000;
+        }
+
+        // Convertir centenas
+        if (numberU >= 100) {
+            result += hundreds[Math.floor(numberU / 100)] + ' ';
+            numberU %= 100;
+        }
+
+        // Convertir decenas y unidades
+        if (numberU >= 20) {
+            result += tens[Math.floor(numberU / 10)] + ' ';
+            numberU %= 10;
+            if (numberU > 0) result += 'y ' + ones[numberU];
+        } else if (numberU > 0) {
+            result += ones[numberU];
+        }
+
+        // Leer los decimales (puntos)
+        if (number % 1 !== 0) {
+            result += ' punto';
+            let decimalPart = (number % 1).toFixed(2).split('.')[1]; // Obtener la parte decimal como cadena
+            for (let i = 0; i < decimalPart.length; i++) {
+                result += ' ' + ones[parseInt(decimalPart.charAt(i))];
+            }
+        }
+
+        return result.charAt(0).toUpperCase() + result.slice(1).trim(); // Capitaliza la primera letra y elimina espacios innecesarios
+    }
+
+    function updateTotalText() {
+        const total=finalTotal;
+        const totalText = numberToWords(total);
+        document.getElementById('total-text').innerText = totalText;
+    }
+</script>

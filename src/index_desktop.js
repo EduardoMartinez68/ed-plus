@@ -137,6 +137,7 @@ const storage=multer.diskStorage({ //this function is for load a image in the fo
 serverExpress.use(multer({storage: storage}).single('image'));
 
 
+
 //*-----------------------------------------------------------global variables-----------------------------------------//
 serverExpress.use((req,res,next)=>{
     serverExpress.locals.success=req.flash('success');
@@ -432,6 +433,7 @@ app.on('ready', async () => {
 
 
         //we will see if the demo expired
+        /*
         if (await is_demo_expired()) {
             dialog.showMessageBoxSync({
                 type: 'warning',
@@ -441,6 +443,7 @@ app.on('ready', async () => {
             app.quit(); // close the application
             return;
         }
+        */
     }
 
     // load the windows if the demo no was expired

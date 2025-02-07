@@ -1,0 +1,13 @@
+<!--this is for show a message pop for edit the price, cant. or discount--->
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <button class="close-btn" onclick="closeModal()">✕</button>
+        <h2>Editar Cantidad</h2>
+        <div class="quantity-container">
+            <button class="quantity-btn" onclick="changeQuantity(-1)">-</button>
+            <input type="text" id="quantity" value="1" readonly>
+            <button class="quantity-btn" onclick="changeQuantity(1)">+</button>
+        </div>
+        <button class="update-btn" onclick="updateQuantity()">Actualizar</button>
+    </div>
+</div>

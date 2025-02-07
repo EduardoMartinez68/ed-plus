@@ -1,263 +1,171 @@
-<head>
-    <link rel="stylesheet" href="/css/cssOther/swiper-bundle.min.css">
-    </link><!--Card Slider-->
-    <link rel="stylesheet" href="/css/store/homeStore.css">
-    </link>
-    <link rel="stylesheet" href="/css/store/navigationHome.css">
-    </link>
-    <link rel="stylesheet" href="/css/cart/cart.css">
-    </link>
-</head>
-<!--this code is for load screen-->
+<link rel='stylesheet' href='/css/desktop/uicons-solid-rounded.css'>
+<link rel="stylesheet" href="/css/point of sales/cart.css">
+<link rel="stylesheet" href="/css/point of sales/messagePop.css">
+
 {{>loading}}
 
-<!--home-->
-<section class="navbar-menu" id="navbar-1">
-    {{>store/home/carouselAd}}
-    {{>store/home/carouselMostSale}}
-    {{>store/home/exploreOurCombos}}
-</section>
-<!--the new-->
-<section class="navbar-menu" id="navbar-2">
-    {{>store/new/carouselNew}}
-    {{>store/new/fishNew}}
-    {{>store/new/carouselNewFish}}
-</section>
-<section class="navbar-menu active" id="navbar-3">
-    {{>store/menu/weightScale}}
-    {{>store/menu/menu}}
-</section>
-<section class="navbar-menu" id="navbar-4">
-    {{>store/profile/profile}}
-</section>
-<!--restaurant-->
-{{>store/carHouse}}
-{{>store/navigationStore}}
+<!--this is for get all the data of the company when the user printer the ticket-->
+{{#each dataCompany}}
+    <input type="hidden" value="{{path_logo}}" id="path-icon-company">
+    <input type="hidden" value="{{name}}" id="name-company">
+{{/each}}
+<h6 id="employee-name" style="display: none;">{{user.first_name}} {{user.second_name}} {{user.last_name}}</h6>
 
-<!--tutorial-->
-<script src="/js/desktop/intro.min.js"></script>
+<!--this is the container of the point of sale-->
+<div class="container-point-of-sales">
+    <!-- menu (left) -->
+    {{>point-of-sales/menu}}
+
+    <!-- shopping cart (right) -->
+    {{>point-of-sales/shoppingCart}}
+</div>
+
+{{>point-of-sales/messagePop}}
+{{>point-of-sales/messagePopSales}}
+{{>point-of-sales/weightScale}}
+
+<!--SHOOPING CART--->
+<script src="/js/point of sale/shoppingCart.js"></script>
+<script src="/js/point of sale/editCantOfProductShoppingCart.js"></script>
+<script src="/js/point of sale/searchMenu.js"></script>
+
+
+<!---js for print tickets--->
+<script src="/js/point of sale/JQuery.js"></script>
+<script src="/js/point of sale/escops.js"></script>
+<script src="/js/point of sale/tickets.js"></script>
+
+
+<!------------------------->
+
+
+<!---this is the information for orden of send--->
 <script>
-    // we will see if the user see the tutorial
-    if (!localStorage.getItem('tutorialHome')) {
-        showTutorial();
-        localStorage.setItem('tutorialHome', 'true');
+    function get_data_order() {
+        const idBranch = parseInt(document.getElementById('id_branch').value);
+        const customerName = document.getElementById('customer-name').value || "";
+        const customerCellphone = document.getElementById('customer-cellphone').value || "";
+        const customerPhone = document.getElementById('customer-phone').value || "";
+        const customerAddress = document.getElementById('customer-address').value || "";
+        const customerComment = document.getElementById('customer-comment').value || "";
+
+        return {
+            idBranch: idBranch,
+            name: customerName,
+            cellphone: customerCellphone,
+            phone: customerPhone,
+            address: customerAddress,
+            comment: customerComment
+        };
     }
 
-    function showTutorial() {
-        // Inicializar el tutorial
-        const intro = introJs();
+    function update_input_order(dataOrder) {
+        document.getElementById('customer-name').value = dataOrder[0];
+        document.getElementById('customer-cellphone').value = dataOrder[1];
+        document.getElementById('customer-phone').value = dataOrder[2];
+        document.getElementById('customer-address').value = dataOrder[3];
+        document.getElementById('customer-comment').value = dataOrder[4];
 
-        
-        if(window.matchMedia("(max-width: 767px)").matches){
-            // Configurar los pasos del tutorial
-            intro.setOptions({
-                steps: [
-                    {
-                        intro: "Bienvenido al tutorial de ED Plus 🚀"
-                    },
-                    {
-                        element: document.querySelector('[step="menuStore-cellphone"]'),
-                        intro: "Este es el menú de tu restaurante. Muy pronto lo llenarás completamente.",
-                        position: 'right'
-                    },
-                    {
-                        element: document.querySelector('[step="step1"]'),
-                        intro: "Este es el sistema de navegación para el punto de venta. Tienes la interfaz de inicio, lo nuevo de tu restaurante, tu menú y la información de tu perfil.",
-                        position: 'bottom'
-                    },
-                    {
-                        element: document.querySelector('[step="step-ad"]'),
-                        intro: "Los anuncios de Füd te permiten tener actualizados a tus empleados de cualquier oferta",
-                        position: 'bottom'
-                    },
-                    {
-                        element: document.querySelector('[step="btnNavBar"]'),
-                        intro: "Puedes usar este botón para abrir el inventario y navegar por las diferentes herramientas de Füd."
-                    },
-                    {
-                        element: document.querySelector('[step="btnNavBar"]'),
-                        intro: "Podrás volver a cerrar el menú usando el mismo botón de cierre.",
-                        position: 'bottom'
-                    },
-                    {
-                        element: document.querySelector('[step="btn-navbar-supplies"]'),
-                        intro: "Navega al menú de insumos para empezar a crear tu cocina.",
-                        position: 'right'
-                    }
-                ],
-                showProgress: true, // Mostrar el progreso del tutorial
-                showBullets: false, // Ocultar los puntos de navegación
-                disableInteraction: true, // Desactivar la interacción mientras se muestra el tooltip
-                exitOnEsc: false,
-                exitOnOverlayClick: false
-            });
+        //show the information of send
+        var table = document.getElementById('table-order');
+        table.style.display = 'block';
+    }
 
-        }
-        else{
-            // Configurar los pasos del tutorial
-            intro.setOptions({
-                steps: [
-                    {
-                        intro: "Bienvenido al tutorial de Füd ❤️"
-                    },
-                    { //1
-                        element: document.querySelector('[step="menuStore"]'),
-                        intro: "Este es el menú de tu restaurante. Muy pronto lo llenarás completamente.",
-                        position: 'right'
-                    },
-                    { //2
-                        element: document.querySelector('[step="step1"]'),
-                        intro: "Este es el sistema de navegación para el punto de venta. Tienes la interfaz de inicio, lo nuevo de tu restaurante, tu menú y la información de tu perfil.",
-                        position: 'bottom'
-                    },
-                    { //3
-                        element: document.querySelector('[step="step-ad"]'),
-                        intro: "Los anuncios de Füd te permiten tener actualizados a tus empleados de cualquier oferta",
-                        position: 'bottom'
-                    },
-                    { //4
-                        element: document.querySelector('[step="btnNavBar"]'),
-                        intro: "Puedes usar este botón para abrir el inventario y navegar por las diferentes herramientas de Füd.",
-                        position: 'right'
-                    },
-                    { //5
-                        element: document.querySelector('[step="btnNavBar"]'),
-                        intro: "Podrás volver a cerrar el menú usando el mismo botón de cierre.",
-                        position: 'bottom'
-                    },
-                    { //6
-                        element: document.querySelector('[step="btn-navbar-supplies"]'),
-                        intro: "Navega al menú de insumos para empezar a crear tu cocina.",
-                        position: 'right'
-                    }
-                ],
-                showProgress: true, // Mostrar el progreso del tutorial
-                showBullets: false, // Ocultar los puntos de navegación
-                disableInteraction: true, // Desactivar la interacción mientras se muestra el tooltip
-                exitOnEsc: false,
-                exitOnOverlayClick: false
-            });
+    function reset_input_order() {
+        document.getElementById('customer-name').value = "";
+        document.getElementById('customer-cellphone').value = "";
+        document.getElementById('customer-phone').value = "";
+        document.getElementById('customer-address').value = "";
+        document.getElementById('customer-comment').value = "";
 
-        }
-        // Agregar un evento para cuando se cambia de paso
-        intro.onbeforechange(function(targetElement) {
-            // Detectar si el paso actual es el del botón de navegación
-            if (this._currentStep === 3) {
-                // Simular un clic en el botón de navegación
-                document.querySelector('[step="btn-new"]').click();
+        //delete the information of send
+        var table = document.getElementById('table-order');
+        table.style.display = 'none';
+    }
+
+    async function create_new_order() {
+        //we will get the data of the order
+        const oldDataOrder = get_data_order()
+        const dataOrder = await show_create_new_order(oldDataOrder);
+        //we will if the user not delete the data 
+        if (dataOrder != null) {
+            //we will see if the data is complete 
+            if (dataOrder[0] != '' && dataOrder[3] != '') {
+                update_input_order(dataOrder); //update the value of the inpus of the send 
+            } else {
+                reset_input_order();
+                warningMessage('Error al guardar los datos', 'Asegúrate de que el envío tenga nombre del cliente y su dirección 👀');
             }
-            else if (this._currentStep === 4) {
-                // Simular un clic en el botón de navegación
-                document.querySelector('[step="btnNavBar"]').click();
-            } else if (this._currentStep === 5) {
-                    // Esperar a que el usuario cierre el menú
-                    intro.pause();
-                    const btnNavBar = document.querySelector('[step="btnNavBar"]');
-                    btnNavBar.addEventListener('click', function handleClick() {
-                    btnNavBar.removeEventListener('click', handleClick);
-                    intro.nextStep(); // Continuar con el siguiente paso
-                    intro.resume(); // Reanudar el tutorial
-                });
-            }
-        });
-
-        // Iniciar el tutorial
-        intro.start();
-    }
-</script>
-
-<script type="text/javascript">
-    // La variable addition está disponible aquí como una cadena JSON
-    const addition = [{{ addition }}]
-</script>
-<script>
-    function setCookie(name, value, days) {
-        let expires = "";
-        if (days) {
-            const date = new Date();
-            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-            expires = "; expires=" + date.toUTCString();
-        }
-        document.cookie = name + "=" + (value || "") + expires + "; path=/";
-        console.log(`Cookie set: ${name}=${value}; Expires in ${days} days`);
-    }
-
-    function getCookie(name) {
-        const nameEQ = name + "=";
-        const ca = document.cookie.split(';');
-        for (let i = 0; i < ca.length; i++) {
-            let c = ca[i];
-            while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-            if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
-        }
-        return null;
-    }
-
-    function off_all_the_menu() {
-        // get all the item with the class 'navbar-menu'
-        const navbars = document.querySelectorAll('.navbar-menu');
-
-        // read all the item and delete the class 'active'
-        navbars.forEach(navbar => {
-            navbar.classList.remove('active');
-        });
-
-        // get all the item with the class 'navbar-menu'
-        const icon = document.querySelectorAll('.list');
-
-        // read all the item and delete the class 'active'
-        icon.forEach(navbar => {
-            navbar.classList.remove('active');
-        });
-    }
-
-    function on_navbar_with_the_cookie(number) {
-        var id = "navbar-" + number; // create the id of the navbar
-        const navbar = document.getElementById(id); // get the navbar of the menu that will be activated
-        if (navbar) {
-            navbar.classList.add('active'); // add the class
         } else {
-            console.log(`Navbar with id ${id} not found`);
-        }
-
-        // get all the item with the class 'navbar-menu'
-        const icon = document.querySelectorAll('.list');
-        icon[number - 1].classList.add('active');
-    }
-
-    function update_menu_with_the_cookie() {
-        console.log('Getting positionMenu cookie...');
-        // get the cookie of the menu
-        const positionMenu = getCookie('positionMenu');
-        console.log('positionMenu:', positionMenu);
-        // check if the cookie exists and if it does, update the menu
-        if (positionMenu) {
-            off_all_the_menu();
-            on_navbar_with_the_cookie(positionMenu);
+            if (await questionMessage('Borrar datos del envío', '¿Estás seguro de borrar los datos del envío? 🤔')) {
+                reset_input_order();
+                confirmationMessage('Datos del envío Borrados', 'Los datos del pedido para el repartidor han sido borrados exitosamente 👍');
+            }
         }
     }
+</script>
+<script>
 
-    document.addEventListener('DOMContentLoaded', () => {
-        update_menu_with_the_cookie();
+    //this is for update the input that is selected in the sweet alert of teh car
+    function selectInput(input) {
+        var inputs = document.querySelectorAll('.input-buy'); //get all the input of the sweet
+        inputs.forEach(function (el) {
+            el.classList.remove('selected'); //delete the classe <selected>
+        });
+        input.classList.add('selected'); //add the classe <selected> in the input that the user did click
+    }
+</script>
 
-        const list = document.querySelectorAll('.list');
-        const menuNavBar = document.querySelectorAll('.navbar-menu');
 
-        function activeLink() {
-            list.forEach((item, index) => {
-                item.classList.remove('active');
-                menuNavBar[index].classList.remove('active'); // Remove 'active' from menuNavBar as well
-                if (item === this) {
-                    item.classList.add('active');
-                    menuNavBar[index].classList.add('active'); // Add 'active' to menuNavBar as well
-                    setCookie('positionMenu', index + 1, 1); // create a cookie with the value of the new position of the user that expires in one day
-                    console.log(`Activated item number ${index + 1}`);
-                }
-            });
-        }
+<!---this is for load the image if not exist a image in the card of the menu--->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const defaultImage = '/img/icons_first/combo.webp';
 
-        list.forEach((item) => {
-            item.addEventListener('click', activeLink);
+        // Get all card images
+        const cardImages = document.querySelectorAll('.card-img-top');
+
+        cardImages.forEach(img => {
+            if (!img.src || img.src === '') {
+                img.src = defaultImage;
+            }
         });
     });
 </script>
+
+<!---this is the information for orden of send--->
+<script src="/js/menu.js"></script>
+<script src="/js/store/search.js"></script>
+<script src="/js/search.js"></script>
+<script src="/js/store/cashMovement.js"></script>
+<script src="/js/store/return.js"></script>
+
+
+
+<script src="/js/desktop/jquery-3.5.1.slim.min.js"></script>
+<script src="/js/desktop/popper.min.js"></script>
+<script src="/js/desktop/bootstrap.min.js"></script>
+<script src="/js/desktop/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
+<script src="/js/desktop/bootstrap-nav.bundle.min.js"></script>
+
+
+<!---this is for load the image if not exist a image in the card of the menu--->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const defaultImage = '/img/icons_first/combo.webp';
+
+        // Get all card images
+        const cardImages = document.querySelectorAll('.card-img-top');
+
+        cardImages.forEach(img => {
+            if (!img.src || img.src === '') {
+                img.src = defaultImage;
+            }
+        });
+    });
+</script>
+
+<script src="/js/point of sale/cashMovement.js"></script>
+<script src="/js/point of sale/return.js"></script>
