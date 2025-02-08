@@ -23,11 +23,13 @@
                 </div>
             {{/each}}
         {{else}}
-            <center>
-                <label for="">Parece que aún no existe nada en el menú.</label>
-                <img src="/img/icons_first/notfile.webp" alt="Producto 1" id="product-{{id}}">
-                <button class="btn btn-edit">Agregar un Producto</button>
-            </center>
+            {{#each branchFree}}
+                <center>
+                    <label for="">Parece que aún no existe nada en el menú.</label>
+                    <img src="/img/icons_first/notfile.webp" alt="Producto 1" id="product-{{id}}">
+                    <button class="btn btn-edit" onclick="nextWeb('/{{id_companies}}/{{id}}/add-products-free')">Agregar un Producto</button>
+                </center>
+            {{/each}}
         {{/if}}
     </div>
 </div>

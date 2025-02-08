@@ -15,17 +15,23 @@ async function buy_my_car() {
     //we will see if the user can buy all the shooping cart
     if (change>=0) {
         //we will to get the email of the client 
-        //const emailClient = document.getElementById('emailClient').textContent;
-        const comment='';
+        const comment=document.getElementById('comment-sales').value;
+        const emailClient=document.getElementById('emailClient');
+        const id_customer=emailClient.getAttribute('idClient');
         
         //we will see if the user can buy all the shooping cart
-        if(await send_buy_to_the_server(total,moneyReceived,change,comment)){
+        if(await send_buy_to_the_server(total,moneyReceived,change,comment,id_customer)){
             //we will print ticket
             printTicket(total,moneyReceived,change,comment);
             
             //this is for delete all the shooping cart
             cartItems.splice(0, cartItems.length); 
             updateCart(); //update the UI of the shooping cart for delete all the products
+            
+            //delete the customer
+            emailClient.setAttribute('idClient', null);
+            emailClient.textContent='';
+            document.getElementById('comment-sales').value=''; //delete the comment
 
             closePopSales(); //close the UI of the shooping cart for that the user get the Purchase money
 
@@ -42,13 +48,13 @@ async function buy_my_car() {
     }
 }
 
-async function send_buy_to_the_server(total,moneyReceived,exchange,comment){
+async function send_buy_to_the_server(total,moneyReceived,exchange,comment,id_customer){
     // Show loading overlay
     loadingOverlay.style.display = "flex";
 
     try {
         //we will watching if the server can complete the pay and setting the inventory
-        const answerServer = await get_answer_server({products:cartItems,total:total,moneyReceived:moneyReceived,change:exchange,comment:comment},`/fud/car-post`);
+        const answerServer = await get_answer_server({products:cartItems,total:total,moneyReceived:moneyReceived,change:exchange,comment:comment,id_customer:id_customer},`/fud/car-post`);
 
         //we will see if save the commander 
         if (!isNaN(answerServer.message)) {

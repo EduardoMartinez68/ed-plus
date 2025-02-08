@@ -1,5 +1,15 @@
+<style>
+    .li-link:hover{
+        background-color: var(--color-company);
+    }
+</style>
 <div class="cart-point-of-sales">
-
+    <div class="row">
+        <div class="col">
+            <label for="">Cliente: </label>
+            <label id="emailClient" email="" idClient="null"></label>
+        </div>
+    </div>
     <!--this is for create the select of the printer and for create the select of the options--->
     <div class="row">
         <div class="col-6">
@@ -7,14 +17,14 @@
             <select name="" id="dataPrinter" class="form-select">
                 <option value="">No imprimir Ticket</option>
                 {{#each boxes}}
-                <option value="{{ip_printer}}">{{num_box}}</option>
+                    <option value="{{ip_printer}}">{{num_box}}</option>
                 {{/each}}
             </select>
         </div>
         <div class="col-6">
             <label for=""></label>
             <div class="dropdown">
-                <button class="btn btn-primary button-spacing dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                <button class="btn btn-edit button-spacing dropdown-toggle" type="button" data-bs-toggle="dropdown"
                     aria-expanded="false">
                     Funciones
                 </button>
@@ -26,6 +36,7 @@
                             onclick="select_customer('{{id_companies}}')"><i class="fi-icon fi-sr-following"></i>
                             Buscar Cliente</a></li>
                     --->
+                    <li class="li-link"><a class="dropdown-item" onclick="select_customer('{{id_companies}}')"><i class="fi-icon fi-sr-following"></i> Buscar Cliente</a></li>
                     <li class="li-link"><a class="dropdown-item" onclick="cash_movement('{{id}}','{{id_branches}}')"><i
                                 class="fi-icon fi-sr-hand-holding-usd"></i> Movimiento de caja</a></li>
                     {{/each}}
@@ -55,3 +66,42 @@
         <button class="btn-buy-point-of-sales" onclick="openPopSales()">Comprar</button>
     </div>
 </div>
+
+
+<script>
+async function select_customer(idCompany) {
+    const button = document.getElementById('emailClient');
+    const emailClient = button.textContent;
+    const client = await edit_client_car(emailClient); //we going to get the email of the customer 
+    client.push(idCompany)
+
+    var customerFound = false
+    if (client != '') {
+        loadingOverlay.style.display = "flex";
+        const answer = await get_answer_server(client, '/fud/client');
+
+        if (answer.idCustomer != null) {
+            const idCustomer = answer.idCustomer
+            const firstName = answer.firstName
+            const lastName = answer.lastName
+            const email = answer.email
+            //update the name of the customer
+            button.textContent = email;
+            button.setAttribute('idClient', idCustomer);
+            customerFound = true;
+        } else {
+            button.textContent = '';
+            button.setAttribute('idClient', null);
+        }
+    } else {
+        button.textContent = '';
+        button.setAttribute('idClient', null);
+    }
+    loadingOverlay.style.display = "none";
+
+    //show a message of that we not found to the customer
+    if (!customerFound) {
+        errorMessage('UPS 😅', 'El cliente no fue encontrado. Por favor busque de nuevo');
+    }
+}
+</script>

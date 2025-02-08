@@ -254,6 +254,11 @@
                 <label for="">Tarjeta de Débito</label>
                 <input type="text" id="debit" placeholder="Tarjeta de Débito" onfocus="setSelected(this)"
                     oninput="calculateChange()" class="input-pop-sales">
+
+                <div class="form-group">
+                    <label for="exampleFormControlTextarea1">Comentario</label>
+                    <textarea class="form-control" id="comment-sales" rows="3"></textarea>
+                </div>
             </div>
             <p class="change" id="change">Cambio: $0.00</p>
             <button class="button-pop-sales pay-btn" onclick="buy_my_car()">Cobrar</button>
@@ -266,22 +271,28 @@
     let finalTotal=0;
 
     function openPopSales() {
-        //forever that the user open the UI, the default input is the cash
-        setSelected(document.getElementById('cash'));
+        //we will see if exist a product in the shopping cart
+        if(cartItems.length > 0){
+            //forever that the user open the UI, the default input is the cash
+            setSelected(document.getElementById('cash'));
 
-        //get the total of the shopping cart
-        const totalText = document.getElementById('cart-total').textContent.trim(); // Elimina espacios extra
-        const total = parseFloat(totalText.replace(/[^0-9.]/g, '')); // Elimina caracteres no numéricos
-        const formattedTotal = total.toFixed(2); // String con 2 decimales
-        finalTotal = parseFloat(formattedTotal); // Número final
+            //get the total of the shopping cart
+            const totalText = document.getElementById('cart-total').textContent.trim(); // Elimina espacios extra
+            const total = parseFloat(totalText.replace(/[^0-9.]/g, '')); // Elimina caracteres no numéricos
+            const formattedTotal = total.toFixed(2); // String con 2 decimales
+            finalTotal = parseFloat(formattedTotal); // Número final
 
-        //update the data of the shopping cart
-        document.getElementById('total').textContent=finalTotal;
-        calculateChange();
-        updateTotalText();
+            //update the data of the shopping cart
+            document.getElementById('total').textContent=finalTotal;
+            calculateChange();
+            updateTotalText();
 
-        //when the data was updated, we will show the pop
-        document.getElementById('popupOverlay').classList.add('active');
+            //when the data was updated, we will show the pop
+            document.getElementById('popupOverlay').classList.add('active');
+        }else{
+            //if not exist a product in the shopping car, we will show a message of error
+            errorMessage('Ups 👉👈', 'No existe ningun producto en el carrito');
+        }
     }
 
     function closePopSales() {

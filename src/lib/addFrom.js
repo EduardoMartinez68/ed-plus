@@ -2515,7 +2515,7 @@ router.post('/fud/car-post', isLoggedIn, async (req, res) => {
 
         //if can buy this combos, we going to add this buy to the database 
         if (text == 'success') {
-            const { id_customer } = req.params;
+            const id_customer = req.body.id_customer;
 
             //get the day of sale
             const day = new Date();
