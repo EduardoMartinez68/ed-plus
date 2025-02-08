@@ -209,8 +209,6 @@ async function create_a_new_image(req) {
 
         return imageUrl;
     }
-    console.log('------------------------')
-    console.log(req.file)
     return '';
 }
 
@@ -1529,8 +1527,6 @@ router.post('/links/:id_company/:id_branch/upload-products', async (req, res) =>
     });
 
 
-
-
     //we will see if exist all the column need for create the new product
     const requiredColumns = [
         "Barcode", "Producto", "Description",'Precio','Cantidad','UsaInventario','EsUnInsumo',
@@ -1583,32 +1579,51 @@ router.post('/links/:id_company/:id_branch/upload-products', async (req, res) =>
             //we will create the supplies in the branch
             const idSuppliesFactures = await addDatabase.add_product_and_suppiles_features(id_branch, idSupplies) //add the supplies in the branch 
 
-            //we will creating the data of the supplies and we will saving with the id of the supplies that create
-            const supplies = create_supplies_branch_with_excel(purchase_amount,purchase_unity,purchase_price,sale_amount,sale_unity,sale_price,max_inventory,minimum_inventory,unit_inventory,existence,idSuppliesFactures);
-            
-            //update the data in the branch for save the new product in his branch
-            if (await update.update_supplies_branch(supplies)){
-
-                //get the new combo
-                const combo = await create_a_new_combo_with_excel(id_company,barcode,name,description);
-                const dataProduct={idProduct:idSupplies,amount: 1,foodWaste: supplies.sale_amount,unity: supplies.sale_unity,additional: 0}
-                combo.supplies.push(dataProduct); //update the data of supplies use only the barcode of the product
+            //we will watch if not can added the supplies in the branch 
+            if(idSuppliesFactures==null){
+                //if we not can added the supplies in the branch, we will to delete the supplies of the company for avoid mistakes
+                await delete_supplies_company(idSupplies);
+            }else{
+                //we will creating the data of the supplies and we will saving with the id of the supplies that create
+                const supplies = create_supplies_branch_with_excel(purchase_amount,purchase_unity,purchase_price,sale_amount,sale_unity,sale_price,max_inventory,minimum_inventory,unit_inventory,existence,idSuppliesFactures);
                 
-                //we will see if can add the combo to the database
-                const idCombos = await addDatabase.add_product_combo_company(combo);
+                //update the data in the branch for save the new product in his branch
+                if (await update.update_supplies_branch(supplies)){
 
-                //get the data combo in the branch
-                const comboData = create_combo_data_branch(idCombos, id_company, id_branch);
+                    //get the new combo
+                    const combo = create_a_new_combo_with_excel(id_company,barcode,name,description);
+                    const dataProduct={idProduct:idSupplies,amount: 1,foodWaste: supplies.sale_amount,unity: supplies.sale_unity,additional: 0}
+                    combo.supplies.push(dataProduct); //update the data of supplies use only the barcode of the product
+                    
+                    //we will see if can add the combo to the database
+                    const idCombos = await addDatabase.add_product_combo_company(combo);
 
-                // save the combo in the branch
-                const idComboFacture = await addDatabase.add_combo_branch(comboData);
-                if(!idComboFacture){
-                    canAdd=false;
-                    productsThatNoWasAdd+=name+',';
+                    //get the data combo in the branch
+                    const comboData = create_combo_data_branch(idCombos, id_company, id_branch);
+
+                    // save the combo in the branch
+                    const idComboFacture = await addDatabase.add_combo_branch(comboData);
+                    if(!idComboFacture){
+                        await delete_all_supplies_combo(idCombos);
+                        await delete_product_combo_company(idCombos);
+                        await delete_product_and_suppiles_features(idSuppliesFactures);
+                        await delete_supplies_company(idSupplies);
+
+                        canAdd=false;
+                        productsThatNoWasAdd+=name+',';
+                    }else{
+                        //if we can added the combo to the branch, update the price of the combo
+                        await update_price_combo_for_excel(sale_price,idComboFacture)
+                    }
+                }else{
+                    //if we not can update the supplies in the branch, we will delete the supplis in the branch and in the company
+                    await delete_product_and_suppiles_features(idSuppliesFactures);
+                    await delete_supplies_company(idSupplies);
                 }
             }
         }else{
             productsThatNoWasAdd+=name+',';
+            canAdd=false;
         }
 
     };
@@ -1617,7 +1632,7 @@ router.post('/links/:id_company/:id_branch/upload-products', async (req, res) =>
     if(canAdd){
         req.flash('success', 'Productos subidos con éxito 😉');
     }else{
-        req.flash('message', `Ocurrio un error al momento de cargar los siguientes productos:  ${productsThatNoWasAdd}. Tal vez su barcode y nombres ya existen en la base de datos.`);
+        req.flash('message', `Ocurrio un error al momento de cargar los siguientes productos:  ${productsThatNoWasAdd}. Tal vez su barcode y nombres ya existen en la base de datos 😬.`);
     }
 
     res.redirect(`/links/${id_company}/${id_branch}/upload-products`);
@@ -1663,7 +1678,7 @@ function create_supplies_branch_with_excel(purchase_amount,purchase_unity,purcha
     return supplies;
 }
 
-async function create_a_new_combo_with_excel(id_company,barcode,name,description) {
+function create_a_new_combo_with_excel(id_company,barcode,name,description) {
     const combo = {
         id_company: id_company,
         path_image:'',
@@ -1678,6 +1693,61 @@ async function create_a_new_combo_with_excel(id_company,barcode,name,description
     return combo;
 }
 
+async function update_price_combo_for_excel(newPrice, id){
+    const queryText = `
+        UPDATE "Inventory".dish_and_combo_features 
+        SET price_1 = $1 
+        WHERE id = $2 
+    `;
+    const values = [newPrice, id];
+
+    try {
+        await database.query(queryText, values);
+        return true;
+    } catch (error) {
+        console.error('Error to update the price of the combo in update_price_combo_for_excel:', error);
+        return false;
+    }
+}
+
+async function delete_product_and_suppiles_features(id) {
+    const queryText = 'DELETE FROM "Inventory".product_and_suppiles_features WHERE id = $1';
+    const values = [id];
+
+    try {
+        await database.query(queryText, values);
+        return true;
+    } catch (error) {
+        console.error('Error al eliminar en la base de datos product_and_suppiles_features:', error);
+        return null;
+    }
+}
+
+async function delete_supplies_company(id) {
+    const queryText = 'DELETE FROM "Kitchen".products_and_supplies WHERE id = $1';
+    const values = [id];
+
+    try {
+        await database.query(queryText, values);
+        return true;
+    } catch (error) {
+        console.error('Error al eliminar el supply:', error);
+        return null;
+    }
+}
+
+async function delete_product_combo_company(id) {
+    const queryText = 'DELETE FROM "Kitchen".dishes_and_combos WHERE id = $1';
+    const values = [id];
+
+    try {
+        await database.query(queryText, values);
+        return true;
+    } catch (error) {
+        console.error('Error al eliminar en la base de datos:', error);
+        return false;
+    }
+}
 //----
 router.post('/fud/:id_company/:id_branch/add-product-free', isLoggedIn, async (req, res) => {
     const { id_company, id_branch } = req.params;
@@ -1688,7 +1758,7 @@ router.post('/fud/:id_company/:id_branch/add-product-free', isLoggedIn, async (r
     newSupplies.id_company=id_company; //update the data of id_company because the function "get_supplies_or_product_company" not have this data,
 
     const idSupplies = await addDatabase.add_supplies_company(newSupplies); //get the id of the supplies that added
-
+    
     //we will see if the product can be save in the database
     if (idSupplies) {
         //we will create the supplies in the branch
@@ -1718,7 +1788,7 @@ router.post('/fud/:id_company/:id_branch/add-product-free', isLoggedIn, async (r
                 }
                 
                 //if the user have a franquicia we will save the combo in the company
-                res.redirect('/fud/' + id_company + '/combos');
+                res.redirect('/links/' + id_company + '/combos');
             } else {
                 //get the data combo in the branch
                 const comboData = create_combo_data_branch(idCombos, id_company, id_branch);
@@ -1727,6 +1797,7 @@ router.post('/fud/:id_company/:id_branch/add-product-free', isLoggedIn, async (r
                 const idComboFacture = await addDatabase.add_combo_branch(comboData);
                 if(idComboFacture){
                     canAdd=true;
+                    await update_price_combo_for_excel(supplies.sale_price,idComboFacture);
                     res.redirect(`/links/${id_company}/${id_branch}/${idComboFacture}/edit-products-free`);
                 }
             }
@@ -2451,7 +2522,7 @@ router.post('/fud/car-post', isLoggedIn, async (req, res) => {
 
             const commanderDish=[]
             for (const product of products) {
-                console.log(product)
+                
                 const nameProduct=product.name;
                 const priceProduct=product.name;
                 const amount=product.quantity;

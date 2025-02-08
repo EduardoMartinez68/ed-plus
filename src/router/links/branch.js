@@ -445,7 +445,7 @@ router.get('/:id_company/:id_branch/:id_combo_features/edit-combo-branch', isLog
 
 router.get('/:id_company/:id_branch/:id_combo_features/edit-combo-free', isLoggedIn, async (req, res) => {
     //if(await validate_subscription(req,res)){
-        const { id_combo_features, id_branch } = req.params;
+        const { id_company, id_combo_features, id_branch } = req.params;
         
         //we will see if the user have the permission for this App.
         if(!this_user_have_this_permission(req.user,id_company, id_branch,'edit_combo')){

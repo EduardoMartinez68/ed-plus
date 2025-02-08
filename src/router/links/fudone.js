@@ -426,7 +426,7 @@ router.get('/:id_company/:id_branch/:id/delete-combo-free', isLoggedIn, async (r
     const { id, id_company, id_branch} = req.params;
 
     //we will see if the user have the permission for this App.
-    if(!this_user_have_this_permission(req.user,id, id_branch,'delete_combo')){
+    if(!this_user_have_this_permission(req.user,id_company, id_branch,'delete_combo')){
         req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
         return res.redirect(`/links/${id}/${id_branch}/permission_denied`);
     }

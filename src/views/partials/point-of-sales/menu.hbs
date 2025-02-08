@@ -9,7 +9,12 @@
                     onclick="addToCart('product-{{id}}','{{name}}', '{{barcode}}', {{price_1}},'{{purchase_unit}}','{{this_product_is_sold_in_bulk}}','{{id_dishes_and_combos}}')"
                     id="{{barcode}}" id-product="{{id}}" data-price-1='{{price_1}}' data-price-2="{{price_2}}"
                     data-price-3="{{price_3}}" purchase_unit="{{purchase_unit}}" this_product_is_sold_in_bulk="{{this_product_is_sold_in_bulk}}" id_dishes_and_combos="{{id_dishes_and_combos}}">
-                    <img src="{{img}}" alt="Producto 1" id="product-{{id}}">
+                    <!--we will see if the product have a image-->
+                    {{#if img}}
+                        <img src="{{img}}" alt="Producto 1" id="product-{{id}}">
+                    {{else}}
+                        <img src="/img/icons_first/product.webp" alt="Producto 1" id="product-{{id}}">
+                    {{/if}}
                     <br>
                     <label for="" class="card-text">${{price_1}}</label>
                     <div class="product-name-point-of-sales">{{name}}</div>
