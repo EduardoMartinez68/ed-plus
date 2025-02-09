@@ -1,0 +1,161 @@
+
+  <style>
+    .card {
+      border: none;
+      border-radius: 10px;
+    }
+    .variant-card {
+      transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+    }
+    .variant-card.fade-out {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+  </style>
+
+  <div class="container py-5">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        {{#each branchFree}}
+        <form action="/links/{{id_companies}}/{{id}}/add-boutique" method="POST" id="productoForm">
+        {{/each}}
+          <!-- Datos generales del producto -->
+          <h6>Agregar Producto Boutique 👗</h6>
+          <hr class="my-4">
+          <label>Caracteristicas del Producto</label>
+          <br><br>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="form-floating">
+                <input type="text" class="form-control" id="barcode" name="barcode" placeholder="Código de Barras" required>
+                <label for="barcode">Código de Barras *</label>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-floating">
+                <input type="text" class="form-control" id="nombre" name="name" placeholder="Nombre del producto" required>
+                <label for="nombre">Nombre del Producto *</label>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-floating">
+                <input type="number" step="0.01" class="form-control" id="precio" name="price" placeholder="Precio" required>
+                <label for="precio">Precio (MXN) *</label>
+              </div>
+            </div>
+          </div>
+          <div class="form-floating my-3">
+            <textarea class="form-control" id="descripcion" name="description" placeholder="Descripción" style="height: 100px;"></textarea>
+            <label for="descripcion">Descripción</label>
+          </div>
+          
+          <hr class="my-4">
+          <label>Variantes (Talla y Color)</label>
+          <div id="variantes">
+            <!-- Aquí se agregarán las variantes dinámicamente -->
+          </div>
+          
+          <!-- Botón para agregar variantes -->
+          <div class="col-6 my-2">
+            <button type="button" class="btn btn-edit" onclick="agregarVariante()">Agregar Variante</button>
+          </div>
+
+          <!-- Hidden inputs para enviar información extra de las variantes -->
+          <input type="hidden" name="variant_count" id="variant_count" value="0">
+          <input type="hidden" name="variant_json" id="variant_json" value="">
+          
+          <br>
+          <!-- Botón para enviar el formulario -->
+          <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-confirm-message">Guardar Boutique</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+ 
+  <!-- JavaScript para agregar y eliminar variantes, y validar el formulario -->
+  <script>
+    // Función para agregar una variante (tarjeta con campos Talla y Color)
+    function agregarVariante() {
+      const container = document.getElementById("variantes");
+      const variantCard = document.createElement("div");
+      variantCard.className = "card variant-card mb-3";
+      variantCard.innerHTML = `
+        <div class="card-body position-relative">
+          <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-0 remove-variant" onclick="eliminarVariante(this)">
+            x
+          </button>
+          <div class="row g-3">
+            <div class="col-md-3">
+              <div class="form-floating">
+                <input type="text" class="form-control" name="talla[]" placeholder="Talla" required>
+                <label>Talla *</label>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-floating">
+                <input type="text" class="form-control" name="color[]" placeholder="Color" required>
+                <label>Color *</label>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-floating">
+                <input type="number" class="form-control" name="existence[]" placeholder="Existencia" required min="0" value="0">
+                <label>Existencia *</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      container.appendChild(variantCard);
+    }
+    
+    // Función para eliminar una variante con animación
+    function eliminarVariante(btn) {
+      const variantCard = btn.closest('.variant-card');
+      if (variantCard) {
+        variantCard.classList.add('fade-out');
+        setTimeout(() => {
+          variantCard.remove();
+        }, 300); // 300ms es la duración de la animación
+      }
+    }
+    
+    // Validación del formulario para asegurarse que existe al menos 1 variante y generar el JSON
+    document.getElementById("productoForm").addEventListener("submit", function(event) {
+      const variantContainer = document.getElementById("variantes");
+      const variantCards = variantContainer.querySelectorAll('.variant-card');
+      
+      // Si no hay variantes, cancelar el envío y alertar al usuario.
+      if (variantCards.length < 2) {
+        event.preventDefault();
+        errorMessage('Ups! 😅',"Por favor, agrega al menos dos variante de talla y color.");
+        return false;
+      }
+      
+        // Verificar que no existan variantes duplicadas (misma talla y color)
+        const variantSet = new Set();
+        for (const card of variantCards) {
+            const tallaInput = card.querySelector('input[name="talla[]"]');
+            const colorInput = card.querySelector('input[name="color[]"]');
+            const talla = tallaInput ? tallaInput.value.trim().toLowerCase() : "";
+            const color = colorInput ? colorInput.value.trim().toLowerCase() : "";
+            const key = `${talla}|${color}`;
+            
+            if (variantSet.has(key)) {
+            event.preventDefault();
+            errorMessage('Ups! 😅', "No pueden existir variantes duplicadas con la misma talla y color.");
+            return false;
+            }
+            variantSet.add(key);
+        }
+
+      // Actualizar el campo oculto con el número de variantes
+      document.getElementById("variant_count").value = variantCards.length;
+    });
+    
+    // Agregar automáticamente la primera variante al cargar la página.
+    agregarVariante();
+  </script>

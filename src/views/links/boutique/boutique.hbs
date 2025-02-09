@@ -1,0 +1,48 @@
+<br>
+<link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-straight/css/uicons-solid-straight.css'>
+<div class="container">
+    <label for="">👗 Boutique</label>
+    <hr>
+    <label>Buscar un Producto en tu Boutique</label>
+    <div class="row">
+        <div class="col-5">
+            <input type="text" class="form-control" placeholder="Buscar por código de barras..." id="search">
+        </div>
+        {{#each branchFree}}
+            <div class="col">
+                <button class="btn btn-confirm-message" onclick="nextWeb('{{id_companies}}/{{id}}/add-boutique')">Agregar Boutique +</button>
+            </div>
+        {{/each}}
+    </div>
+    <br>
+
+    <div class="table-responsive" style="height: 700px; overflow-y: scroll;">
+        <table class="table table-hover" id="table-container">
+            <thead>
+                <tr>
+                    <th>Codigo de Barras</th>
+                    <th>Nombre</th>
+                    <th>Descripcion</th>
+                    <th>Vareaciones</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>0101010101</td>
+                    <td>Camisa</td>
+                    <td>Es una camisa de mujer</td>
+                    <td></td>
+                    <td>
+                        <button class="btn btn-edit" id="{{id}}" onclick="edit_supplies(this.id,{{id_companies}},'{{img}}','{{barcode}}','{{name}}','{{description}}','{{use_inventory}}')"><i class="fi-department fi-sr-pencil"></i></button>
+                        <button class="btn btn-danger" id="{{id}}" onclick="edit_supplies(this.id,{{id_companies}},'{{img}}','{{barcode}}','{{name}}','{{description}}','{{use_inventory}}')"><i class="fi-department fi-sr-trash"></i></button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+<script src="/js/search.js"></script>
