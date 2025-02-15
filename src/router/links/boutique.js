@@ -1,6 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const { isLoggedIn, isNotLoggedIn } = require('../../lib/auth');
+
+const database = require('../../database');
+const addDatabase = require('../addDatabase');
+const update = require('../updateDatabase');
+
 //functions branch
 const {
     get_data_branch,
@@ -8,10 +13,45 @@ const {
 } = require('../../services/branch');
 
 router.get('/:id_company/:id_branch/boutique', isLoggedIn, async (req, res) => {
-    const {id_branch}=req.params;
+    const {id_company,id_branch}=req.params;
     const branchFree = await get_data_branch(id_branch);
-    res.render('links/boutique/boutique.hbs',{branchFree});
+    const boutique=await get_all_the_product_of_the_boutique(id_company,id_branch);
+    res.render('links/boutique/boutique.hbs',{branchFree,boutique});
 })
+
+async function get_all_the_product_of_the_boutique(id_company,id_branch){
+    const queryText = `
+        SELECT 
+            b.*, 
+            COUNT(tb.id) AS total_products
+            FROM "Inventory".boutique b
+            LEFT JOIN "Inventory".table_boutique tb ON tb.id_boutique = b.id
+            WHERE b.id_companies = $1 AND b.id_branches = $2
+        GROUP BY b.id;
+    `;
+    const values = [id_company, id_branch];
+
+    try {
+        const answer=await database.query(queryText, values);
+        return answer.rows;
+    } catch (error) {
+        console.error('Error to get_all_the_product_of_the_boutique:', error);
+        return [];
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 router.get('/:id_company/:id_branch/add-boutique', isLoggedIn, async (req, res) => {
     const {id_branch}=req.params;
@@ -24,9 +64,19 @@ router.post('/:id_company/:id_branch/add-boutique', isLoggedIn, async (req, res)
 
     //get the data of the product
     const {barcode,name,price,description,variant_count,max_inventary}=req.body;
-    //we will see if can save the boutique in the database
-    
 
+    //we will see if can save the boutique in the database
+    const newBoutique=create_boutique(barcode,name,price,description,max_inventary,id_company,id_branch);
+    const idBoutique=await add_the_boutique(newBoutique);
+    
+    //we will see if can added the boutique to the database
+    if(!idBoutique){
+        //if no save the boutique in the database, we will show a error to the user
+        req.flash('message', `No se pudo agregar el producto ${name}. Tal vez el codigo de barras o el nombre ya existen 😬`);
+        return res.redirect(`/links/${id_company}/${id_branch}/add-boutique`);
+    }
+    
+    //if can added the boutique to the database, so we will save all the variants in the database
     //get the variants of the clothes
     const tallas = req.body['talla[]'];    
     const colores = req.body['color[]'];
@@ -50,31 +100,118 @@ router.post('/:id_company/:id_branch/add-boutique', isLoggedIn, async (req, res)
         const newName=`${name}-color ${color} talla ${size}`;
 
         //her we will save all the new product and the new combo in the company and in the branch
-        if(await add_product_to_boutique(id_company, id_branch, newBarcode,newName,description,priceProduct,1,priceProduct,existence,max_inventary)==false){
+        const idProductFacture=await add_product_to_boutique(id_company, id_branch, newBarcode,newName,description,priceProduct,1,priceProduct,existence,max_inventary);
+
+        //if the product can save in the database, we will save in the table of the boutique
+        if(idProductFacture!=null){
+            await add_product_to_the_table_of_boutique(idBoutique.id,idProductFacture);
+        }else{
+            //if the product no can save in the database, we will save the name of the product for show to the user after
             canAdd=false;
             productsThatNoWasAdd+=newName+',';
         }
+        
     }
 
     //we will see if can save all the products 
     if(canAdd){
-        req.flash('success', 'Productos subidos con éxito 😉');
+        req.flash('success', 'Todas las variantes fueron subidos con éxito 😉');
     }else{
-        req.flash('message', `Ocurrio un error al momento de cargar los siguientes productos:  ${productsThatNoWasAdd}. Tal vez su barcode y nombres ya existen en la base de datos 😬.`);
+        req.flash('message', `Ocurrio un error al momento de cargar las siguientes variantes:  ${productsThatNoWasAdd}. Tal vez su barcode y nombres ya existen en la base de datos 😬.`);
     }
 
-    res.redirect(`/links/${id_company}/${id_branch}/add-boutique`);
+    res.redirect(`/links/${id_company}/${id_branch}/boutique`);
 })
 
+function create_boutique(barcode,name,purchase_sale,description,max_inventary,id_companies,id_branches){
+    const boutique={
+        name,
+        barcode,
+        description,
+        use_inventory: true,
+        max_inventary,
+        min_inventory: 0,
+        purchase_price:0,
+        purchase_sale,
+        id_companies,
+        id_branches
+    }
+
+    return boutique;
+}
+
+async function add_the_boutique(boutiqueData){
+  // Definir la consulta SQL para insertar en boutique
+  const queryText = `
+    INSERT INTO "Inventory".boutique (
+      name, 
+      barcode, 
+      description, 
+      use_inventory, 
+      max_inventary, 
+      min_inventory, 
+      purchase_price, 
+      purchase_sale, 
+      id_companies, 
+      id_branches
+    )
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+    RETURNING id;
+  `;
+  
+  // Preparar los valores a insertar
+  const values = [
+    boutiqueData.name,
+    boutiqueData.barcode,
+    boutiqueData.description,
+    boutiqueData.use_inventory,
+    boutiqueData.max_inventary,
+    boutiqueData.min_inventory,
+    boutiqueData.purchase_price,
+    boutiqueData.purchase_sale,
+    boutiqueData.id_companies,
+    boutiqueData.id_branches
+  ];
+  
+  try {
+    const result = await database.query(queryText, values);
+    return result.rows[0];
+  } catch (error) {
+    console.error('Error al insertar en boutique:', error);
+    return false;
+  }
+}
+
+async function add_product_to_the_table_of_boutique(id_boutique,id_dish_and_combo_features){
+  // Definir la consulta SQL para insertar en boutique
+  const queryText = `
+    INSERT INTO "Inventory".table_boutique(
+      id_boutique, 
+      id_dish_and_combo_features
+    )
+    VALUES ($1, $2)
+  `;
+  
+  // Preparar los valores a insertar
+  const values = [
+    id_boutique,
+    id_dish_and_combo_features
+  ];
+  console.log(values)
+  try {
+    await database.query(queryText, values);
+    return true;
+  } catch (error) {
+    console.error('Error al insertar en boutique:', error);
+    return false;
+  }
+}
 
 async function add_product_to_boutique( id_company, id_branch, barcode,name,description,sale_price,purchase_amount,purchase_price,existence,max_inventory){
-    let canAdd=true;
-    let productsThatNoWasAdd='';
-
     //get all the data of the product
     const use_inventory=1;
     const this_is_a_supplies=0;
-    const newProducts=create_new_product_with_excel(id_company, barcode, name, description, use_inventory, this_is_a_supplies);
+    const newProducts=create_new_product_with_boutique(id_company, barcode, name, description, use_inventory, this_is_a_supplies);
     const idSupplies = await addDatabase.add_supplies_company(newProducts);
 
     //we will see if the product can be save in the database
@@ -120,12 +257,10 @@ async function add_product_to_boutique( id_company, id_branch, barcode,name,desc
                     await delete_product_combo_company(idCombos);
                     await delete_product_and_suppiles_features(idSuppliesFactures);
                     await delete_supplies_company(idSupplies);
-
-                    canAdd=false;
-                    productsThatNoWasAdd+=name+',';
                 }else{
                     //if we can added the combo to the branch, update the price of the combo
-                    await update_price_combo_for_excel(sale_price,idComboFacture)
+                    await update_price_combo_for_excel(sale_price,idComboFacture);
+                    return idComboFacture; //this is when the product was added with success
                 }
             }else{
                 //if we not can update the supplies in the branch, we will delete the supplis in the branch and in the company
@@ -133,12 +268,151 @@ async function add_product_to_boutique( id_company, id_branch, barcode,name,desc
                 await delete_supplies_company(idSupplies);
             }
         }
-    }else{
-        productsThatNoWasAdd+=name+',';
-        canAdd=false;
     }
 
 
-    res.redirect(`/links/${id_company}/${id_branch}/upload-products`);
+    return null; //if exist a error when the user added the 
 }
+
+
+function create_new_product_with_boutique(id_company, barcode, name, description, use_inventory, this_is_a_supplies) {
+    const supplies = {
+        id_company,
+        img: '',
+        barcode,
+        name,
+        description,
+        use_inventory,
+        this_is_a_supplies
+    }
+
+    return supplies;
+}
+
+function create_supplies_branch_with_excel(purchase_amount,purchase_unity,purchase_price,sale_amount,sale_unity,sale_price,max_inventory,minimum_inventory,unit_inventory,existence,id_supplies) {
+    const supplies = {
+        purchase_amount: string_to_float(purchase_amount),
+        purchase_unity,
+        purchase_price: string_to_float(purchase_price),
+        currency_purchase: 'MXN',
+        sale_amount: string_to_float(sale_amount),
+        sale_unity,
+        sale_price: string_to_float(sale_price),
+        currency_sale:'MXN',
+        max_inventory: string_to_float(max_inventory),
+        minimum_inventory: string_to_float(minimum_inventory),
+        unit_inventory,
+        existence: string_to_float(existence),
+        id_supplies: id_supplies,
+    };
+
+    return supplies;
+}
+
+function create_a_new_combo_with_excel(id_company,barcode,name,description) {
+    const combo = {
+        id_company: id_company,
+        path_image:'',
+        barcode,
+        name,
+        description,
+        id_product_department: '',
+        id_product_category: '',
+        supplies:[]
+    }
+
+    return combo;
+}
+
+async function update_price_combo_for_excel(newPrice, id){
+    const queryText = `
+        UPDATE "Inventory".dish_and_combo_features 
+        SET price_1 = $1 
+        WHERE id = $2 
+    `;
+    const values = [newPrice, id];
+
+    try {
+        await database.query(queryText, values);
+        return true;
+    } catch (error) {
+        console.error('Error to update the price of the combo in update_price_combo_for_excel:', error);
+        return false;
+    }
+}
+
+async function delete_product_and_suppiles_features(id) {
+    const queryText = 'DELETE FROM "Inventory".product_and_suppiles_features WHERE id = $1';
+    const values = [id];
+
+    try {
+        await database.query(queryText, values);
+        return true;
+    } catch (error) {
+        console.error('Error al eliminar en la base de datos product_and_suppiles_features:', error);
+        return null;
+    }
+}
+
+async function delete_supplies_company(id) {
+    const queryText = 'DELETE FROM "Kitchen".products_and_supplies WHERE id = $1';
+    const values = [id];
+
+    try {
+        await database.query(queryText, values);
+        return true;
+    } catch (error) {
+        console.error('Error al eliminar el supply:', error);
+        return null;
+    }
+}
+
+async function delete_product_combo_company(id) {
+    const queryText = 'DELETE FROM "Kitchen".dishes_and_combos WHERE id = $1';
+    const values = [id];
+
+    try {
+        await database.query(queryText, values);
+        return true;
+    } catch (error) {
+        console.error('Error al eliminar en la base de datos:', error);
+        return false;
+    }
+}
+
+async function delete_all_supplies_combo(id) {
+    try {
+        var queryText = 'DELETE FROM "Kitchen".table_supplies_combo WHERE id_dishes_and_combos = $1';
+        var values = [id];
+        await database.query(queryText, values); // Delete combo
+        return true;
+    } catch (error) {
+        console.error('Error al eliminar en la base de datos:', error);
+        return false;
+    }
+}
+
+function create_combo_data_branch(idCombo, idCompany, id_branch) {
+    const comboData = {
+        idCompany: idCompany,
+        idBranch: id_branch,
+        idDishesAndCombos: idCombo,
+        price_1: 0,
+        amount: 0,
+        product_cost: 0,
+        revenue_1: 0,
+        purchase_unit: 'Pza'
+    };
+    return comboData;
+}
+
+
+
+function string_to_float(str) {
+    let floatValue = parseFloat(str);
+    return isNaN(floatValue) ? 0 : floatValue;
+}
+
+
+
 module.exports = router;
