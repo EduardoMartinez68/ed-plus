@@ -406,13 +406,66 @@ function create_combo_data_branch(idCombo, idCompany, id_branch) {
     return comboData;
 }
 
-
-
 function string_to_float(str) {
     let floatValue = parseFloat(str);
     return isNaN(floatValue) ? 0 : floatValue;
 }
 
+
+
+router.get('/:id_company/:id_branch/:id_boutique/edit-boutique', isLoggedIn, async (req, res) => {
+    const {id_company,id_branch,id_boutique}=req.params;
+    const branchFree = await get_data_branch(id_branch);
+    const boutique=await get_data_boutique_with_id(id_boutique);
+    const tableBoutique=await get_data_table_boutique_with_id(id_boutique);
+    console.log(boutique)
+    console.log(tableBoutique)
+    res.render('links/boutique/editBoutique.hbs',{branchFree,boutique,tableBoutique});
+})
+
+
+async function get_data_boutique_with_id(id) {
+    const queryText = `
+    SELECT *
+    FROM "Inventory".boutique
+    WHERE id = $1
+  `;
+  
+  try {
+    const result = await database.query(queryText, [id]);
+    // Si se encuentra la boutique, se retorna el primer registro (único resultado esperado)
+    return result.rows;
+  } catch (error) {
+    console.error('Error al obtener datos de la boutique con id:', error);
+    throw error;
+  }
+}
+
+async function get_data_table_boutique_with_id(id_boutique) {
+    const queryText = `
+        SELECT 
+            dnc.id, 
+            dnc.img, 
+            dnc.barcode, 
+            dnc.name, 
+            dacf.price_1
+        FROM "Inventory".table_boutique tb
+        JOIN "Inventory".dish_and_combo_features dacf 
+            ON tb.id_dish_and_combo_features = dacf.id
+        JOIN "Kitchen".dishes_and_combos dnc 
+            ON dacf.id_dishes_and_combos = dnc.id
+        WHERE tb.id_boutique = $1;
+  `;
+  
+  try {
+    const result = await database.query(queryText, [id_boutique]);
+    // Si se encuentra la boutique, se retorna el primer registro (único resultado esperado)
+    return result.rows;
+  } catch (error) {
+    console.error('Error al obtener datos de la boutique con id:', error);
+    return []
+  }
+}
 
 
 module.exports = router;
