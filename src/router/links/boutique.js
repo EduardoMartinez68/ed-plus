@@ -81,7 +81,7 @@ router.post('/:id_company/:id_branch/add-boutique', isLoggedIn, async (req, res)
     const tallas = req.body['talla[]'];    
     const colores = req.body['color[]'];
     const prices = req.body['prices[]'];
-    const existences = req.body['prices[]'];
+    const existences = req.body['existence[]'];
 
     //use this variable for know if we could add all the variants of the product 
     let canAdd=true;
@@ -100,11 +100,11 @@ router.post('/:id_company/:id_branch/add-boutique', isLoggedIn, async (req, res)
         const newName=`${name}-color ${color} talla ${size}`;
 
         //her we will save all the new product and the new combo in the company and in the branch
-        const idProductFacture=await add_product_to_boutique(id_company, id_branch, newBarcode,newName,description,priceProduct,1,priceProduct,existence,max_inventary);
+        const result=await add_product_to_boutique(id_company, id_branch, newBarcode,newName,description,priceProduct,1,priceProduct,existence,max_inventary);
 
         //if the product can save in the database, we will save in the table of the boutique
-        if(idProductFacture!=null){
-            await add_product_to_the_table_of_boutique(idBoutique.id,idProductFacture);
+        if(result !=null){
+            await add_product_to_the_table_of_boutique(idBoutique.id,result.idComboFacture,result.idSuppliesFactures);
         }else{
             //if the product no can save in the database, we will save the name of the product for show to the user after
             canAdd=false;
@@ -182,22 +182,24 @@ async function add_the_boutique(boutiqueData){
   }
 }
 
-async function add_product_to_the_table_of_boutique(id_boutique,id_dish_and_combo_features){
+async function add_product_to_the_table_of_boutique(id_boutique,id_dish_and_combo_features,id_product_and_suppiles_features){
   // Definir la consulta SQL para insertar en boutique
   const queryText = `
     INSERT INTO "Inventory".table_boutique(
       id_boutique, 
-      id_dish_and_combo_features
+      id_dish_and_combo_features,
+      id_product_and_suppiles_features
     )
-    VALUES ($1, $2)
+    VALUES ($1, $2, $3)
   `;
   
   // Preparar los valores a insertar
   const values = [
     id_boutique,
-    id_dish_and_combo_features
+    id_dish_and_combo_features,
+    id_product_and_suppiles_features
   ];
-  console.log(values)
+
   try {
     await database.query(queryText, values);
     return true;
@@ -260,7 +262,7 @@ async function add_product_to_boutique( id_company, id_branch, barcode,name,desc
                 }else{
                     //if we can added the combo to the branch, update the price of the combo
                     await update_price_combo_for_excel(sale_price,idComboFacture);
-                    return idComboFacture; //this is when the product was added with success
+                    return { idComboFacture,idSuppliesFactures }; //this is when the product was added with success
                 }
             }else{
                 //if we not can update the supplies in the branch, we will delete the supplis in the branch and in the company
@@ -448,15 +450,24 @@ async function get_data_table_boutique_with_id(id_boutique) {
             dnc.img, 
             dnc.barcode, 
             dnc.name, 
-            dacf.price_1
+            dacf.price_1,
+            psf.existence,
+            tb.id_dish_and_combo_features,
+            tb.id_product_and_suppiles_features 
+
         FROM "Inventory".table_boutique tb
         JOIN "Inventory".dish_and_combo_features dacf 
             ON tb.id_dish_and_combo_features = dacf.id
         JOIN "Kitchen".dishes_and_combos dnc 
             ON dacf.id_dishes_and_combos = dnc.id
+
+        JOIN "Inventory".product_and_suppiles_features psf 
+            ON tb.id_product_and_suppiles_features = psf.id
+
+            
         WHERE tb.id_boutique = $1;
   `;
-  
+  //"Inventory".product_and_suppiles_features --existence
   try {
     const result = await database.query(queryText, [id_boutique]);
     // Si se encuentra la boutique, se retorna el primer registro (único resultado esperado)
@@ -465,6 +476,88 @@ async function get_data_table_boutique_with_id(id_boutique) {
     console.error('Error al obtener datos de la boutique con id:', error);
     return []
   }
+}
+
+/*---------------------------form edit boutique--------------------------*/
+router.post('/:id_company/:id_branch/:id_boutique/edit-boutique', isLoggedIn, async (req, res) => {
+    const {id_company,id_branch,id_boutique}=req.params;
+    console.log(req.body)
+    await update_old_product_to_boutique(req);
+
+    //we will see if can save all the products 
+    let canAdd=true;
+    if(canAdd){
+        req.flash('success', 'Tu Boutique fue actualizada con éxito 😉');
+    }else{
+        req.flash('message', `Ocurrio un error al momento de cargar las siguientes variantes:  ${productsThatNoWasAdd} 😬.`);
+    }
+
+    res.redirect(`/links/${id_company}/${id_branch}/boutique`);
+})
+
+async function update_old_product_to_boutique(req){
+    //if can added the boutique to the database, so we will save all the variants in the database
+    //get the variants of the clothes
+    const id_dish_and_combo_features_form = req.body['id_dish_and_combo_features[]'];    
+    const id_product_and_suppiles_features_form = req.body['id_product_and_suppiles_features[]'];
+    const names = req.body['name-old[]'];
+    const barcodes = req.body['barcode-old[]'];
+    const prices = req.body['prieces-old[]'];
+    const existences = req.body['existence-old[]'];
+
+    //use this variable for know if we could add all the variants of the product 
+    let canAdd=true;
+    let productsThatNoWasAdd='';
+
+    //her we will read all the variants of the clothes
+    for (let i = 0; i < id_dish_and_combo_features_form.length; i++) {
+        //get the data of the variants
+        const id_dish_and_combo_features=id_dish_and_combo_features_form[i];
+        const id_product_and_suppiles_features=id_product_and_suppiles_features_form[i];
+        const name = names[i];
+        const barcode = barcodes[i];
+        const price = prices[i];
+        const existence = existences[i];
+
+        //we will see if can update the information of the product
+        await update_the_inventory_of_the_product(existence, id_product_and_suppiles_features);
+        await update_the_price_of_the_product(price, id_dish_and_combo_features);
+    }
+}
+
+
+async function update_the_inventory_of_the_product(existence, id_product_and_suppiles_features){
+    const queryText = `
+        UPDATE "Inventory".product_and_suppiles_features 
+        SET existence = $1 
+        WHERE id = $2 
+    `;
+    const values = [existence, id_product_and_suppiles_features];
+
+    try {
+        await database.query(queryText, values);
+        return true;
+    } catch (error) {
+        console.error('Error to update the price of the combo in update_price_combo_for_excel:', error);
+        return false;
+    }
+}
+
+async function update_the_price_of_the_product(price_1, id_dish_and_combo_features){
+    const queryText = `
+        UPDATE "Inventory".dish_and_combo_features 
+        SET price_1 = $1 
+        WHERE id = $2 
+    `;
+    const values = [price_1, id_dish_and_combo_features];
+
+    try {
+        await database.query(queryText, values);
+        return true;
+    } catch (error) {
+        console.error('Error to update the price of the combo in update_price_combo_for_excel:', error);
+        return false;
+    }
 }
 
 

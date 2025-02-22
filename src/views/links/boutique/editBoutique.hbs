@@ -50,13 +50,6 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input type="number" step="0.01" class="form-control" id="price" name="price-sales"
-                                placeholder="Precio" required>
-                            <label for="price">Precio de venta (MXN) *</label>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-floating">
                             <input type="number" step="0.01" class="form-control" id="max_inventary"
                                 name="max_inventary" placeholder="Maximo inventario" value="{{max_inventary}}">
                             <label for="max_inventary">Inventario Maximo</label>
@@ -68,66 +61,88 @@
                         style="height: 100px;">{{description}}</textarea>
                     <label for="descripcion">Descripción</label>
                 </div>
+
+                <!--information of the branch-->
+                <input type="text" id="id-branch" value="{{id_branches}}" hidden>
+                <input type="text" id="id-company" value="{{id_companies}}" hidden>
             {{/each}}
 
-                <hr class="my-4">
-                <label>Variantes (Talla y Color)</label>
 
-                {{#each tableBoutique}}
-                    <div class="card-body position-relative">
-                        <button type="button"
-                            class="btn btn-sm btn-danger position-absolute top-0 end-0 m-0 remove-variant"
-                            onclick="eliminarVariante(this)">
-                            x
-                        </button>
-                        <div class="row g-1">
-                            <div class="col-md-1">
-                                <div class="form-floating">
-                                    {{#if img}}
-                                        <img src="/img/upload/{{img}}" alt="" class="icon-boutique">
-                                    {{else}}
-                                        <img src="/img/icons_first/product.webp" alt="" class="icon-boutique">
-                                    {{/if}}
+                <div class="btn-group">
+                    <button class="btn-select btn-active" onclick="showSection('select-1', this)" type="button">Variantes (Talla y Color)</button>
+                    <button class="btn-select" onclick="showSection('select-2', this)" type="button">Nueva lista de Variantes</button>
+                </div>
+
+                <hr class="my-4">
+                <div id="select-1" class="content-section active">
+                    <label>Variantes (Talla y Color)</label>
+                    {{#each tableBoutique}}
+                        <div class="card-body position-relative variant-old">
+                            <button type="button"
+                                class="btn btn-sm btn-danger position-absolute top-0 end-0 m-0 remove-variant"
+                                onclick="delete_icon(this)">
+                                x
+                            </button>
+                            <!--this information is for get the id of the products-->
+                            <input type="text" name="id_dish_and_combo_features[]" value="{{id_dish_and_combo_features}}" hidden>
+                            <input type="text" name="id_product_and_suppiles_features[]" value="{{id_product_and_suppiles_features}}" hidden>
+
+                            <!--this is for show the information of the products-->
+                            <div class="row g-1">
+                                <div class="col-md-1">
+                                    <div class="form-floating">
+                                        {{#if img}}
+                                            <img src="/img/upload/{{img}}" alt="" class="icon-boutique">
+                                        {{else}}
+                                            <img src="/img/icons_first/product.webp" alt="" class="icon-boutique">
+                                        {{/if}}
+                                    </div>
+                                </div>                                    
+                                <div class="col-md-3">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" name="barcode-old[]" placeholder="Talla" required value="{{barcode}}" readonly>
+                                        <label>Codigo de Barras</label>
+                                    </div>
                                 </div>
-                            </div>                                    
-                            <div class="col-md-3">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" name="talla[]" placeholder="Talla" required value="{{barcode}}" readonly>
-                                    <label>Codigo de Barras</label>
+                                <div class="col-md-3">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" name="name-old[]" placeholder="Talla" required value="{{name}}" readonly>
+                                        <label>Nombre</label>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" name="talla[]" placeholder="Talla" required value="{{name}}" readonly>
-                                    <label>Nombre</label>
+                                <div class="col-md-2">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" name="prieces-old[]" placeholder="Color" required
+                                            value="{{price_1}}">
+                                        <label>Precio *</label>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" name="prices[]" placeholder="Color" required
-                                        value="{{price}}">
-                                    <label>Precio *</label>
+                                <div class="col-md-2">
+                                    <div class="form-floating">
+                                        <input type="number" class="form-control" name="existence-old[]"
+                                            placeholder="Existencia" required min="0" value="{{existence}}">
+                                        <label>Existencia *</label>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-floating">
-                                    <input type="number" class="form-control" name="existence[]"
-                                        placeholder="Existencia" required min="0" value="0">
-                                    <label>Existencia *</label>
+                                <div class="col-md-1">
+                                    <div class="form-floating">
+                                        <button class="btn btn-edit" onclick="edit_product_boutique('{{id_dish_and_combo_features}}')" type="button">✏️</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                {{/each}}
-                
-                <div id="variantes">
-                    <!-- Aquí se agregarán las variantes dinámicamente -->
+                    {{/each}}
                 </div>
+                <hr>
+                <div id="select-2" class="content-section">
+                    <div id="variantes">
+                        <!-- Aquí se agregarán las variantes dinámicamente -->
+                    </div>
 
-
-                <!-- Botón para agregar variantes -->
-                <div class="col-6 my-2">
-                    <button type="button" class="btn btn-edit" onclick="agregarVariante()">Agregar Variante</button>
+                    <!-- Botón para agregar variantes -->
+                    <div class="col-6 my-2">
+                        <button type="button" class="btn btn-edit" onclick="agregarVariante()">Agregar Variante</button>
+                    </div>
                 </div>
 
                 <!-- Hidden inputs para enviar información extra de las variantes -->
@@ -137,7 +152,7 @@
                 <br>
                 <!-- Botón para enviar el formulario -->
                 <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-confirm-message">Guardar Boutique</button>
+                    <button type="submit" class="btn btn-confirm-message">Actualizar Boutique</button>
                 </div>
             </form>
         </div>
@@ -204,9 +219,10 @@
     document.getElementById("productoForm").addEventListener("submit", function (event) {
         const variantContainer = document.getElementById("variantes");
         const variantCards = variantContainer.querySelectorAll('.variant-card');
+        const variantCardsOld=document.querySelectorAll('.variant-old');
 
         // Si no hay variantes, cancelar el envío y alertar al usuario.
-        if (variantCards.length < 2) {
+        if ((variantCards.length + variantCardsOld.length)< 2) {
             event.preventDefault();
             errorMessage('Ups! 😅', "Por favor, agrega al menos dos variante de talla y color.");
             return false;
@@ -234,4 +250,11 @@
     });
 
 
+
+    function edit_product_boutique(id_dish_and_combo_features){
+        const id_company = document.getElementById('id-company').value;
+        const id_branch = document.getElementById('id-branch').value;
+
+        window.location.href = `/links/${id_company}/${id_branch}/${id_dish_and_combo_features}/edit-products-free`;
+    }
 </script>
