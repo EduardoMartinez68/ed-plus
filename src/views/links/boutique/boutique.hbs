@@ -35,8 +35,8 @@
                             <td>{{description}}</td>
                             <td>{{total_products}}</td>
                             <td>
-                                <button class="btn btn-edit" id="{{id}}" onclick="nextWeb('{{id_companies}}/{{id_branches}}/{{id}}/edit-boutique')"><i class="fi-department fi-sr-pencil"></i></button>
-                                <button class="btn btn-danger" id="{{id}}" onclick="edit_supplies(this.id,{{id_companies}},'{{img}}','{{barcode}}','{{name}}','{{description}}','{{use_inventory}}')"><i class="fi-department fi-sr-trash"></i></button>
+                                <button class="btn btn-edit" onclick="nextWeb('{{id_companies}}/{{id_branches}}/{{id}}/edit-boutique')"><i class="fi-department fi-sr-pencil"></i></button>
+                                <button class="btn btn-danger" onclick="delete_boutique('{{id_companies}}','{{id_branches}}','{{id}}','{{name}}')"><i class="fi-department fi-sr-trash"></i></button>
                             </td>
                         </tr>
                     {{/each}}
@@ -60,3 +60,10 @@
 
 
 <script src="/js/search.js"></script>
+<script>
+    async function delete_boutique(id_company,id_branch,id_boutique,name){
+        if(await questionMessage('👁️ Eliminar Boutique', `¿Deseas eliminar el Boutique de '${name}'?`)){
+            window.location.href = `/links/${id_company}/${id_branch}/${id_boutique}/delete-all-the-boutique`;
+        }
+    }
+</script>

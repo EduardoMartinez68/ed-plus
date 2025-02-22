@@ -779,11 +779,75 @@ async function get_path_image_combo(idCombos){
         if (result.rows.length > 0) {
             return result.rows[0].img; // Devuelve el ID correcto
         } else {
-            return null; // No se encontró el registro
+            return ''; // No se encontró el registro
         }
     } catch (error) {
         console.error('Error al obtener id_dishes_and_combos:', error);
-        return null;
+        return '';
+    }
+}
+
+
+
+router.get('/:id_company/:id_branch/:id_boutique/delete-all-the-boutique', isLoggedIn, async (req, res) => {
+    
+    const {id_company,id_branch,id_boutique}=req.params;
+    //get all the products of the boutique
+    const boutique=await get_all_the_table_boutique(id_boutique);
+
+    //her is for delete all the items that exist in the tabla of boutique
+    for (const item of boutique) {
+        const idSupplies=await get_id_supplies(item.id_product_and_suppiles_features);
+        const idCombos=await get_id_combo(item.id_dish_and_combo_features);
+    
+        //this is for delete tha image of the product
+        const pathImage=await get_path_image_combo(idCombos);
+        await delate_image_upload(pathImage);
+    
+        //her we will delete all the data of the product
+        await delete_table_boutique(item.id);
+        await delete_all_supplies_combo(idCombos);
+        await delete_product_combo_company(idCombos);
+        await delete_product_and_suppiles_features(item.id_product_and_suppiles_features);
+        await delete_supplies_company(idSupplies);
+    }
+
+    //now we will delete the boutique 
+    if(await delete_the_boutique(id_boutique)){
+        req.flash('success', 'El boutique fue eliminado con éxito 😉');
+    }else{
+        req.flash('message', `Ocurrió un error al momento de eliminar el boutique 🤕`);
+    }
+    
+    res.redirect(`/links/${id_company}/${id_branch}/boutique`);
+})
+
+async function get_all_the_table_boutique(id_boutique){
+    const queryText = `
+        SELECT * FROM "Inventory".table_boutique
+        WHERE id_boutique = $1;
+    `;
+
+    try {
+        const result = await database.query(queryText, [id_boutique]);
+        return result.rows;
+    } catch (error) {
+        console.error('Error to get_all_the_table_boutique:', error);
+        return [];
+    }
+}
+
+async function delete_the_boutique(id){
+    const queryText = 'DELETE FROM "Inventory".boutique WHERE id = $1';
+    const values = [id];
+
+    try {
+        await database.query(queryText, values);
+        return true;
+    }
+    catch (error) {
+        console.error('Error al eliminar en la base de datos:', error);
+        return false;
     }
 }
 module.exports = router;
