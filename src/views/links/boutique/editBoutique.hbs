@@ -33,6 +33,13 @@
                 <hr class="my-4">
                 <label>Caracteristicas del Producto</label>
                 <br><br>
+                <!--this is for that the backend know the old information of the product--->
+                <input type="text" class="form-control" name="barcode_old"
+                    placeholder="Código de Barras" required value="{{barcode}}" hidden>
+                <input type="text" class="form-control"  name="name_old"
+                    placeholder="Nombre del producto" required value="{{name}}" hidden>
+
+                <!--this is for that the user add new information--->
                 <div class="row g-3">
                     <div class="col-md-6">
                         <div class="form-floating">

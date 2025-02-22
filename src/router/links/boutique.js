@@ -481,7 +481,7 @@ async function get_data_table_boutique_with_id(id_boutique) {
 /*---------------------------form edit boutique--------------------------*/
 router.post('/:id_company/:id_branch/:id_boutique/edit-boutique', isLoggedIn, async (req, res) => {
     const {id_company,id_branch,id_boutique}=req.params;
-    console.log(req.body)
+    await update_the_boutique(id_boutique,req.body.barcode,req.body.name,req.body.price,req.body.description,req.body.max_inventary);
     await update_old_product_to_boutique(req);
 
     //we will see if can save all the products 
@@ -495,7 +495,30 @@ router.post('/:id_company/:id_branch/:id_boutique/edit-boutique', isLoggedIn, as
     res.redirect(`/links/${id_company}/${id_branch}/boutique`);
 })
 
+async function update_the_boutique(id_boutique,barcode,name,price,description,max_inventary){
+    const queryText = `
+        UPDATE "Inventory".boutique 
+        SET barcode = $1, name = $2, purchase_sale = $3, description = $4, max_inventary = $5
+        WHERE id = $6
+    `;
+    const values = [barcode, name, price, description, max_inventary, id_boutique];
+
+    try {
+        await database.query(queryText, values);
+        return true;
+    } catch (error) {
+        console.error('Error to update the boutique in update_the_boutique:', error);
+        return false;
+    }
+}
+
 async function update_old_product_to_boutique(req){
+    //get tha old information of the form. This is for update the information of the product
+    const oldName=req.body.name_old;
+    const oldBarCode=req.body.barcode_old;
+    const newName=req.body.name;
+    const newBarCode=req.body.barcode;
+
     //if can added the boutique to the database, so we will save all the variants in the database
     //get the variants of the clothes
     const id_dish_and_combo_features_form = req.body['id_dish_and_combo_features[]'];    
@@ -519,9 +542,91 @@ async function update_old_product_to_boutique(req){
         const price = prices[i];
         const existence = existences[i];
 
+        //her we will create the new name and bracode if the user change the name or the barcode
+        const newNameProduct = name.replace(oldName, newName);
+        const newBarcodeProduct = barcode.replace(oldBarCode, newBarCode);
+        
         //we will see if can update the information of the product
+        const id_dishes_and_combos=await get_id_combo(id_dish_and_combo_features);
+        const id_product_and_suppiles=await get_id_supplies(id_product_and_suppiles_features);
+
+        //her we will update all the inventory of the product and his data
+        await update_the_name_and_barcode_of_the_product(newNameProduct, newBarcodeProduct, id_dishes_and_combos);
+        await update_the_name_and_barcode_of_the_product_in_the_inventory(newNameProduct, newBarcodeProduct, id_product_and_suppiles);
         await update_the_inventory_of_the_product(existence, id_product_and_suppiles_features);
         await update_the_price_of_the_product(price, id_dish_and_combo_features);
+    }
+}
+
+async function update_the_name_and_barcode_of_the_product(newNameProduct, newBarcodeProduct, id_dishes_and_combos){
+    const queryText = `
+        UPDATE "Kitchen".dishes_and_combos
+        SET name = $1, barcode = $2 
+        WHERE id = $3 
+    `;
+    const values = [newNameProduct, newBarcodeProduct, id_dishes_and_combos];
+
+    try {
+        await database.query(queryText, values);
+        return true;
+    } catch (error) {
+        console.error('Error to update the name and barcode of the product in update_the_name_and_barcode_of_the_product:', error);
+        return false;
+    }
+}
+
+async function update_the_name_and_barcode_of_the_product_in_the_inventory(newNameProduct, newBarcodeProduct, id_product_and_suppiles){
+    const queryText = `
+        UPDATE "Kitchen".products_and_supplies
+        SET name = $1, barcode = $2 
+        WHERE id = $3 
+    `;
+    const values = [newNameProduct, newBarcodeProduct, id_product_and_suppiles];
+
+    try {
+        await database.query(queryText, values);
+        return true;
+    } catch (error) {
+        console.error('Error to update the name and barcode of the product in update_the_name_and_barcode_of_the_product:', error);
+        return false;
+    }
+}
+
+async function get_id_combo(id_dish_and_combo_features) {
+    const query = 'SELECT id_dishes_and_combos FROM "Inventory".dish_and_combo_features WHERE id=$1';
+    const values = [id_dish_and_combo_features];
+
+    try {
+        const result = await database.query(query, values);
+        
+        // Verifica si hay resultados
+        if (result.rows.length > 0) {
+            return result.rows[0].id_dishes_and_combos; // Devuelve el ID correcto
+        } else {
+            return null; // No se encontró el registro
+        }
+    } catch (error) {
+        console.error('Error al obtener id_dishes_and_combos:', error);
+        return null;
+    }
+}
+
+async function get_id_supplies(id_product_and_suppiles_features) {
+    const query = 'SELECT id_products_and_supplies FROM "Inventory".product_and_suppiles_features WHERE id=$1';
+    const values = [id_product_and_suppiles_features];
+
+    try {
+        const result = await database.query(query, values);
+        
+        // Verifica si hay resultados
+        if (result.rows.length > 0) {
+            return result.rows[0].id_products_and_supplies; // Devuelve el ID correcto
+        } else {
+            return null; // No se encontró el registro
+        }
+    } catch (error) {
+        console.error('Error al obtener id_dishes_and_combos:', error);
+        return null;
     }
 }
 
