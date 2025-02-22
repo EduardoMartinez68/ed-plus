@@ -38,6 +38,8 @@
                     placeholder="Código de Barras" required value="{{barcode}}" hidden>
                 <input type="text" class="form-control"  name="name_old"
                     placeholder="Nombre del producto" required value="{{name}}" hidden>
+                <input type="text" class="form-control"  id="id-boutique"
+                    placeholder="Nombre del producto" required value="{{id}}" hidden>
 
                 <!--this is for that the user add new information--->
                 <div class="row g-3">
@@ -87,7 +89,7 @@
                         <div class="card-body position-relative variant-old">
                             <button type="button"
                                 class="btn btn-sm btn-danger position-absolute top-0 end-0 m-0 remove-variant"
-                                onclick="delete_icon(this)">
+                                onclick="delete_product('{{id}}','{{id_dish_and_combo_features}}','{{id_product_and_suppiles_features}}','{{name}}')">
                                 x
                             </button>
                             <!--this information is for get the id of the products-->
@@ -99,7 +101,7 @@
                                 <div class="col-md-1">
                                     <div class="form-floating">
                                         {{#if img}}
-                                            <img src="/img/upload/{{img}}" alt="" class="icon-boutique">
+                                            <img src="{{img}}" alt="" class="icon-boutique">
                                         {{else}}
                                             <img src="/img/icons_first/product.webp" alt="" class="icon-boutique">
                                         {{/if}}
@@ -173,7 +175,7 @@
     function agregarVariante() {
         const container = document.getElementById("variantes");
         const variantCard = document.createElement("div");
-        const price = document.getElementById('price').value;
+        const price = 0;
         variantCard.className = "card variant-card mb-3";
         variantCard.innerHTML = `
         <div class="card-body position-relative">
@@ -229,7 +231,7 @@
         const variantCardsOld=document.querySelectorAll('.variant-old');
 
         // Si no hay variantes, cancelar el envío y alertar al usuario.
-        if ((variantCards.length + variantCardsOld.length)< 2) {
+        if (variantCards.length>0 && variantCards.length<2) {
             event.preventDefault();
             errorMessage('Ups! 😅', "Por favor, agrega al menos dos variante de talla y color.");
             return false;
@@ -263,5 +265,15 @@
         const id_branch = document.getElementById('id-branch').value;
 
         window.location.href = `/links/${id_company}/${id_branch}/${id_dish_and_combo_features}/edit-products-free`;
+    }
+
+    async function delete_product(id_table_boutique,id_dish_and_combo_features,id_product_and_suppiles_features,name){
+        if(await questionMessage('👁️ Eliminar variación', `¿Deseas eliminar la variante ${name}?`)){
+            const id_company = document.getElementById('id-company').value;
+            const id_branch = document.getElementById('id-branch').value;
+            const id_boutique=document.getElementById('id-boutique').value;
+
+            window.location.href = `/links/${id_company}/${id_branch}/${id_boutique}/${id_table_boutique}/${id_dish_and_combo_features}/${id_product_and_suppiles_features}/delete-products-boutique`;
+        }
     }
 </script>

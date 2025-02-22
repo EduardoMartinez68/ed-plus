@@ -12,6 +12,12 @@ const {
     get_all_box_of_the_branch_with_his_id
 } = require('../../services/branch');
 
+const {
+    delate_image_upload,
+} = require('../../services/connectionWithDatabaseImage');
+const { get } = require('node-persist');
+
+
 router.get('/:id_company/:id_branch/boutique', isLoggedIn, async (req, res) => {
     const {id_company,id_branch}=req.params;
     const branchFree = await get_data_branch(id_branch);
@@ -420,8 +426,7 @@ router.get('/:id_company/:id_branch/:id_boutique/edit-boutique', isLoggedIn, asy
     const branchFree = await get_data_branch(id_branch);
     const boutique=await get_data_boutique_with_id(id_boutique);
     const tableBoutique=await get_data_table_boutique_with_id(id_boutique);
-    console.log(boutique)
-    console.log(tableBoutique)
+
     res.render('links/boutique/editBoutique.hbs',{branchFree,boutique,tableBoutique});
 })
 
@@ -481,8 +486,14 @@ async function get_data_table_boutique_with_id(id_boutique) {
 /*---------------------------form edit boutique--------------------------*/
 router.post('/:id_company/:id_branch/:id_boutique/edit-boutique', isLoggedIn, async (req, res) => {
     const {id_company,id_branch,id_boutique}=req.params;
+
+    //update the information of the boutique
     await update_the_boutique(id_boutique,req.body.barcode,req.body.name,req.body.price,req.body.description,req.body.max_inventary);
-    await update_old_product_to_boutique(req);
+
+
+    //we will see if exist new variant in the boutique 
+    await add_new_product_to_boutique(req); //her is for add the new product to the boutique 
+    await update_old_product_to_boutique(req); //update the old product in the boutique 
 
     //we will see if can save all the products 
     let canAdd=true;
@@ -509,6 +520,48 @@ async function update_the_boutique(id_boutique,barcode,name,price,description,ma
     } catch (error) {
         console.error('Error to update the boutique in update_the_boutique:', error);
         return false;
+    }
+}
+
+async function add_new_product_to_boutique(req){
+    const {id_company,id_branch,id_boutique}=req.params;
+    const {barcode,name,description,max_inventary}=req.body;
+    //if can added the boutique to the database, so we will save all the variants in the database
+    //get the variants of the clothes
+    const tallas = req.body['talla[]'];    
+    const colores = req.body['color[]'];
+    const prices = req.body['prices[]'];
+    const existences = req.body['existence[]'];
+
+    if(colores){
+        //use this variable for know if we could add all the variants of the product 
+        let canAdd=true;
+        let productsThatNoWasAdd='';
+
+        //her we will read all the variants of the clothes
+        for (let i = 0; i < colores.length; i++) {
+            //get the data of the variants
+            const size=tallas[i];
+            const color=colores[i];
+            const priceProduct=prices[i];
+            const existence=existences[i];
+
+            //make the new barcode and the new name use the size and the color of the product
+            const newBarcode=`${barcode}-${color}-${size}`;
+            const newName=`${name}-color ${color} talla ${size}`;
+            
+            //her we will save all the new product and the new combo in the company and in the branch
+            const result=await add_product_to_boutique(id_company, id_branch, newBarcode,newName,description,priceProduct,1,priceProduct,existence,max_inventary);
+
+            //if the product can save in the database, we will save in the table of the boutique
+            if(result !=null){
+                await add_product_to_the_table_of_boutique(id_boutique,result.idComboFacture,result.idSuppliesFactures);
+            }else{
+                //if the product no can save in the database, we will save the name of the product for show to the user after
+                canAdd=false;
+                productsThatNoWasAdd+=newName+',';
+            }
+        }
     }
 }
 
@@ -541,18 +594,24 @@ async function update_old_product_to_boutique(req){
         const barcode = barcodes[i];
         const price = prices[i];
         const existence = existences[i];
+    
 
-        //her we will create the new name and bracode if the user change the name or the barcode
-        const newNameProduct = name.replace(oldName, newName);
-        const newBarcodeProduct = barcode.replace(oldBarCode, newBarCode);
-        
-        //we will see if can update the information of the product
-        const id_dishes_and_combos=await get_id_combo(id_dish_and_combo_features);
-        const id_product_and_suppiles=await get_id_supplies(id_product_and_suppiles_features);
+        //her we will see if exist a change in the name or in the barcode of the product, if exist we will update the name and the barcode
+        //this is for that the backend not have problems of speed
+        if(oldName!=newName || oldBarCode!=newBarCode){
+            //her we will create the new name and bracode if the user change the name or the barcode
+            const newNameProduct = name.replace(oldName, newName);
+            const newBarcodeProduct = barcode.replace(oldBarCode, newBarCode);
+
+            //we will see if can update the information of the product
+            const id_dishes_and_combos=await get_id_combo(id_dish_and_combo_features);
+            const id_product_and_suppiles=await get_id_supplies(id_product_and_suppiles_features);
+
+            await update_the_name_and_barcode_of_the_product(newNameProduct, newBarcodeProduct, id_dishes_and_combos);
+            await update_the_name_and_barcode_of_the_product_in_the_inventory(newNameProduct, newBarcodeProduct, id_product_and_suppiles);
+        }
 
         //her we will update all the inventory of the product and his data
-        await update_the_name_and_barcode_of_the_product(newNameProduct, newBarcodeProduct, id_dishes_and_combos);
-        await update_the_name_and_barcode_of_the_product_in_the_inventory(newNameProduct, newBarcodeProduct, id_product_and_suppiles);
         await update_the_inventory_of_the_product(existence, id_product_and_suppiles_features);
         await update_the_price_of_the_product(price, id_dish_and_combo_features);
     }
@@ -666,4 +725,65 @@ async function update_the_price_of_the_product(price_1, id_dish_and_combo_featur
 }
 
 
+router.get('/:id_company/:id_branch/:id_boutique/:id_table_boutique/:id_dish_and_combo_features/:id_product_and_suppiles_features/delete-products-boutique', isLoggedIn, async (req, res) => {
+    
+    const {id_company,id_branch,id_boutique,id_table_boutique,id_dish_and_combo_features,id_product_and_suppiles_features}=req.params;
+
+    const idSupplies=await get_id_supplies(id_product_and_suppiles_features);
+    const idCombos=await get_id_combo(id_dish_and_combo_features);
+
+    //this is for delete tha image of the product
+    const pathImage=await get_path_image_combo(idCombos);
+    await delate_image_upload(pathImage);
+
+    //her we will delete all the data of the product
+    let canDelete=true;
+    canDelete=await delete_table_boutique(id_table_boutique);
+    await delete_all_supplies_combo(idCombos);
+    await delete_product_combo_company(idCombos);
+    await delete_product_and_suppiles_features(id_product_and_suppiles_features);
+    await delete_supplies_company(idSupplies);
+
+    
+    if(canDelete){
+        req.flash('success', 'El producto fue eliminado con éxito de tu boutique 😉');
+    }else{
+        req.flash('message', `Ocurrió un error al momento de eliminar el producto 🤕`);
+    }
+
+    res.redirect(`/links/${id_company}/${id_branch}/${id_boutique}/edit-boutique`);
+})
+
+async function delete_table_boutique(id){
+    const queryText = 'DELETE FROM "Inventory".table_boutique WHERE id = $1';
+    const values = [id];
+
+    try {
+        await database.query(queryText, values);
+        return true;        
+    }
+    catch (error) {
+        console.error('Error al eliminar en la base de datos:', error);
+        return false;
+    }
+}
+
+async function get_path_image_combo(idCombos){
+    const query = 'SELECT img FROM "Kitchen".dishes_and_combos WHERE id=$1';
+    const values = [idCombos];
+
+    try {
+        const result = await database.query(query, values);
+        
+        // Verifica si hay resultados
+        if (result.rows.length > 0) {
+            return result.rows[0].img; // Devuelve el ID correcto
+        } else {
+            return null; // No se encontró el registro
+        }
+    } catch (error) {
+        console.error('Error al obtener id_dishes_and_combos:', error);
+        return null;
+    }
+}
 module.exports = router;
