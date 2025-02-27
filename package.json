@@ -73,6 +73,7 @@
     "electron": "^25.9.8",
     "electron-builder": "^25.1.8",
     "electron-packager": "^17.1.2",
+    "javascript-obfuscator": "^4.1.1",
     "nodemon": "^2.0.22"
   }
 }

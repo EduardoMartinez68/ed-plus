@@ -559,6 +559,7 @@ const showActivationWindow = () => {
     });
 };
 
+
 // whne Electron is ready, load the web in the screen
 app.on('ready', async () => {
 
