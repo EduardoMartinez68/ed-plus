@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activación de Software</title>
+</head>
+<body>
+    <h2>Ingrese su Token de Activación</h2>
+    <input type="text" id="token" placeholder="Ingrese su token aquí">
+    <button id="enviar">Activar</button>
+    <p id="mensaje"></p>
+</body>
+<script>
+    const { ipcRenderer } = require('electron');
+
+    document.getElementById('enviar').addEventListener('click', () => {
+        const token = document.getElementById('token').value;
+        ipcRenderer.send('validar-token', token);
+    });
+
+    // Escuchar la respuesta del proceso principal para mostrar mensajes
+    ipcRenderer.on('token-invalido', (event, mensaje) => {
+        document.getElementById('mensaje').innerText = mensaje;
+    });
+
+    ipcRenderer.on('token-valido', (event, mensaje) => {
+        document.getElementById('mensaje').innerText = mensaje;
+    });
+</script>
+</html>

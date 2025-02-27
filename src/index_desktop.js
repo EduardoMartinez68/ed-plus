@@ -27,6 +27,28 @@ nodePersist.init({
   dir: path.join(__dirname, 'data')
 });
 
+async function initialize_software() {
+    const initialToken = await nodePersist.get('installToken');
+
+    //we will see if exist the token in the database
+    if (!initialToken) {
+      await nodePersist.set('installToken', 'false');
+    }
+}
+
+async function the_software_have_a_token() {
+    const initialToken = await nodePersist.get('installToken');
+    if (!initialToken) {
+      return false;
+    }
+    
+    return initialToken=='true';
+}
+
+async function initialize_token() {
+    const installDate = await nodePersist.get('installToken');
+    await nodePersist.set('installToken', 'true');
+}
 
 async function initialize_demo() {
     const installDate = await nodePersist.get('installDate');
@@ -84,7 +106,7 @@ serverExpress.set('view engine','.hbs');
 
 //*-----------------------------------------------------------middlewares-----------------------------------------//
 require('dotenv').config();
-const {APP_PG_USER,APP_PG_HOST,APP_PG_DATABASE,APP_PG_PASSWORD,APP_PG_PORT}=process.env; //this code is for get the data of the database
+const {APP_PG_USER,APP_PG_HOST,APP_PG_DATABASE,APP_PG_PASSWORD,APP_PG_PORT, TOKEN}=process.env; //this code is for get the data of the database
 
 const pg = require('pg');
 const pgPool = new pg.Pool({
@@ -394,6 +416,41 @@ serverExpress.listen(serverExpress.get('port'), '0.0.0.0', () => {
     console.log(`Server running on http://${getLocalIP()}:${serverExpress.get('port')}`);
 });
 
+//*------------------------------------------------------------DATABASE SERVER--------------------------------------------//
+const mysql = require('mysql');
+const { promisify } = require('util');
+const pool = mysql.createPool({
+    host: '193.203.166.165',
+    user: 'u995592926_bestpoint',
+    password: 'Bobesponja48*',
+    database: 'u995592926_bestpoint',
+    waitForConnections: true,
+    connectionLimit: 10,  // Puedes ajustar el número según tus necesidades
+    queueLimit: 0
+});
+
+pool.getConnection((err, connection) => {
+    if (err) {
+        if (err.code === 'PROTOCOL_CONNECTION_LOST') {
+            console.error('La conexión a la base de datos fue cerrada.');
+        }
+        if (err.code === 'ER_CON_COUNT_ERROR') {
+            console.error('La base de datos tiene muchas conexiones.');
+        }
+        if (err.code === 'ECONNREFUSED') {
+            console.error('La conexión a la base de datos fue rechazada.');
+        }
+    }
+
+    if (connection) {
+        connection.release();
+        console.log('Conexión a la base de datos exitosa MYSQL.');
+    }
+
+    return;
+})
+
+pool.query=promisify(pool.query)
 
 //*-----------------------------------------------------------Desktop application-----------------------------------------//
 //we will see if the APP is for desktop
@@ -405,16 +462,21 @@ serverExpress.listen(serverExpress.get('port'), '0.0.0.0', () => {
     "dev": "nodemon src/",
     "electron": "electron ."
   },
+
+
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
 */
 //this is for create the UI in the windows
 let mainWindow;
+let activationWindow;
 const createMainWindow = () => {
     mainWindow = new BrowserWindow({
         width: 800,
         height: 600,
-        webPreferences: {
-            nodeIntegration: true,
-        },
     });
 
     //This is to make the screen grow to full screen
@@ -422,6 +484,79 @@ const createMainWindow = () => {
 
     // load the URL of the server Express
     mainWindow.loadURL(`http://localhost:${serverExpress.get('port')}`);
+};
+
+
+// Manejar la validación del token desde la ventana de activación
+async function verificarTokenActivo() {
+    const query = `
+        SELECT * FROM pagos 
+        WHERE token = ?
+    `;
+
+    try {
+        const results = await pool.query(query, [TOKEN]);
+        console.log(results[0])
+
+        if (results[0].active === 1) {
+            console.log('Token encontrado y activo.');
+            return true;  // El token está activo
+        } else {
+            console.log('El token no está activo o no existe.');
+            return false;  // El token no está activo o no existe
+        }
+    } catch (err) {
+        console.error('Error al verificar el token:', err);
+        return false;  // Si hay un error, retorna false
+    }
+}
+
+
+
+
+async function actualizarToken() {
+    const query = `
+        UPDATE pagos 
+        SET active = false
+        WHERE token = ?
+    `;
+    
+    await pool.query(query, [TOKEN]);
+}
+
+ipcMain.on('validar-token', async (event, token) => {
+    const esValido = await actualizarToken(token);
+
+    if (esValido) {
+        event.reply('token-valido', '¡Token activado correctamente!');
+    } else {
+        event.reply('token-invalido', 'Token inválido o ya utilizado. Por favor, verifique e intente de nuevo.');
+    }
+});
+
+const showActivationWindow = () => {
+    activationWindow = new BrowserWindow({
+        width: 400,
+        height: 300,
+        parent: mainWindow,
+        modal: true,
+        webPreferences: {
+            nodeIntegration: true,
+        },
+    });
+
+    // Usar path.join para asegurar la ruta correcta
+    const activationPagePath = path.join(__dirname, 'activation.html');
+
+    // Cargar la página de activación desde la ruta correcta
+    activationWindow.loadFile(activationPagePath);
+
+    // Prevenir que la ventana principal se cargue hasta que el token sea validado
+    activationWindow.on('close', (e) => {
+        if (!tokenValidado) {
+            e.preventDefault();
+        }
+    });
 };
 
 // whne Electron is ready, load the web in the screen
@@ -447,8 +582,25 @@ app.on('ready', async () => {
         */
     }
 
-    // load the windows if the demo no was expired
-    createMainWindow();
+    initialize_software(); //this is for initialize the token of the software
+    if(await the_software_have_a_token()){
+        // load the windows if the demo no was expired
+        createMainWindow();
+    }else{
+        if(await verificarTokenActivo()){
+            await actualizarToken();
+            await initialize_token();
+            createMainWindow();
+        }else{
+            dialog.showMessageBoxSync({
+                type: 'warning',
+                title: 'Token Invalido',
+                message: 'Su Token es iunvalido.',
+            });
+            app.quit(); // close the application
+            return;
+        }
+    }
 });
 
 // clouse the screen
