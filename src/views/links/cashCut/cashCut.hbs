@@ -51,9 +51,9 @@
     <h4 class="text-center mb-4">Corte de Caja</h4>
     <div class="row text-end">
         <p class="fw-bold mb-1">Calculado por el sistema:</p>
-        <h5 class="text-primary">$1,200.00</h5>
+        <h5 class="text-primary" id="total-for-system">$1,200.00</h5>
         <p class="fw-bold mt-3 mb-1">Diferencia Total:</p>
-        <h5 id="diferencia" class="diferencia text-danger">$0.00</h5>
+        <h5 class="diferencia text-danger" id="total-for-user">$0.00</h5>
         <br>
         <div class="d-flex justify-content-end">
             <button class="btn btn-edit">Hacer Corte</button>
@@ -61,6 +61,8 @@
     </div>
     <br>
     <div class="row">
+
+        {{#each salesForMoney}}
         <div class="col">
             <!-- Tarjeta Efectivo -->
             <div class="card mb-3 bg-efectivo">
@@ -68,19 +70,18 @@
                     <h5 class="card-title">💵 Efectivo</h5>
 
                     <div class="form-floating">
-                        <input type="text" class="form-control" id="nombre" name="name"
-                            placeholder="Nombre del producto" required>
+                        <input type="text" class="form-control money" id="money" name="name" placeholder="Efectivo"
+                            required>
                         <label for="nombre">Efectivo contado *</label>
                     </div>
 
                     <hr>
-                    <label class="fw-bold">Calculado por el sistema: $1,200.00</label><br>
+                    <label class="fw-bold">Calculado por el sistema: ${{total_cash_sales}}</label><br>
+                    <input type="hidden" value="{{total_cash_sales}}" id="total_cash_sales">
                     <label for="">Diferencia: $</label><label for="">0</label>
                 </div>
             </div>
         </div>
-
-
         <div class="col">
             <!-- Tarjeta Tarjeta de Crédito -->
             <div class="card mb-3 bg-efectivo">
@@ -88,20 +89,18 @@
                     <h5 class="card-title">💳 Tarjeta de Crédito</h5>
 
                     <div class="form-floating">
-                        <input type="text" class="form-control" id="nombre" name="name"
-                            placeholder="Nombre del producto" required>
+                        <input type="text" class="form-control credit" id="credit" name="name" placeholder="Efectivo"
+                            required>
                         <label for="nombre">Efectivo contado *</label>
                     </div>
 
                     <hr>
-                    <label class="fw-bold">Calculado por el sistema: $1,200.00</label><br>
+                    <label class="fw-bold">Calculado por el sistema: ${{total_credit_sales}}</label><br>
+                    <input type="hidden" value="{{total_credit_sales}}" id="total_credit_sales">
                     <label for="">Diferencia: $</label><label for="">0</label>
                 </div>
             </div>
         </div>
-
-
-
 
         <div class="col">
             <!-- Tarjeta Tarjeta de Débito -->
@@ -110,54 +109,98 @@
                     <h5 class="card-title">💳 Tarjeta de Débito</h5>
 
                     <div class="form-floating">
-                        <input type="text" class="form-control" id="nombre" name="name"
-                            placeholder="Nombre del producto" required>
+                        <input type="text" class="form-control debit" id="debit" name="name" placeholder="Debito"
+                            required>
                         <label for="nombre">Efectivo contado *</label>
                     </div>
 
                     <hr>
-                    <label class="fw-bold">Calculado por el sistema: $1,200.00</label><br>
+                    <label class="fw-bold">Calculado por el sistema: ${{total_debit_sales}}</label><br>
+                    <input type="hidden" value="{{total_debit_sales}}" id="total_debit_sales">
                     <label for="">Diferencia: $</label><label for="">0</label>
                 </div>
             </div>
         </div>
+        {{/each}}
     </div>
 
 
     <!-- Resumen -->
     <div class="card summary-card">
         <div class="card-body">
-            <center><h5 class="fw-bold">Resumen</h5></center>
-            
+            <center>
+                <h5 class="fw-bold">Resumen</h5>
+            </center>
+
             <div class="container mt-4">
                 <!-- Tabla de Movimientos en Caja -->
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <table class="table table-bordered">
-                            <thead class="table-primary ">
-                                <tr>
-                                    <th>Movimiento de caja</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Numero de ventas</td>
-                                    <td class="text-success">100</td>
-                                </tr>
-                                <tr>
-                                    <td>Numero de devoluciones</td>
-                                    <td class="text-danger">200</td>
-                                </tr>
-                                <tr>
-                                    <td>Entradas</td>
-                                    <td class="text-success">$100</td>
-                                </tr>
-                                <tr>
-                                    <td>Salidas</td>
-                                    <td class="text-danger">$200</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                <div class="row">
+                    <div class="col">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <table class="table table-bordered">
+                                    <thead class="table-primary ">
+                                        <tr>
+                                            <th>Movimiento de caja</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Numero de Ventas</td>
+                                            <td class="text-success">100</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Numero de devoluciones</td>
+                                            <td class="text-danger">1</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Numero de Entradas</td>
+                                            <td class="text-success">5</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Numero de Salidas</td>
+                                            <td class="text-danger">0</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <table class="table table-bordered">
+                                    <thead class="table-primary ">
+                                        <tr>
+                                            <th>Dinero en Caja</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Ventas</td>
+                                            <td class="text-success">$100</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Entradas</td>
+                                            <td class="text-success">$200</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Devoluciones</td>
+                                            <td class="text-danger">$100</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Salidas</td>
+                                            <td class="text-danger">$200</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>TOTAL:</b></td>
+                                            <td class="text-primarity">$200</td>                 
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -233,16 +276,35 @@
 <br><br><br>
 
 <script>
+    const total_cash_sales = parseFloat(document.getElementById('total_cash_sales').value) || 0;
+    const total_credit_sales = parseFloat(document.getElementById('total_credit_sales').value) || 0;
+    const total_debit_sales = parseFloat(document.getElementById('total_debit_sales').value) || 0;
+
+    const total = total_cash_sales + total_credit_sales + total_debit_sales;
+
+    function calculate_the_total() {
+        document.getElementById('total-for-system').textContent = `$${total.toFixed(2)}`;
+
+
+
+        const totalUser = 100 - total;
+        document.getElementById('total-for-user').textContent = `$${totalUser.toFixed(2)}`;
+    }
+
+    function calculate_total_user() {
+
+    }
+
     function calcularDiferencia() {
-        let efectivo = parseFloat(document.getElementById('efectivo').value) || 0;
-        let credito = parseFloat(document.getElementById('credito').value) || 0;
-        let debito = parseFloat(document.getElementById('debito').value) || 0;
+        let efectivo = parseFloat(document.getElementById('money').value) || 0;
+        let credito = parseFloat(document.getElementById('credit').value) || 0;
+        let debito = parseFloat(document.getElementById('debit').value) || 0;
 
         let totalIngresado = efectivo + credito + debito;
-        let calculado = 1200.00;
+        let calculado = total;
         let diferencia = totalIngresado - calculado;
 
-        let diferenciaElemento = document.getElementById('diferencia');
+        let diferenciaElemento = document.getElementById('total-for-user');
         diferenciaElemento.textContent = `$${diferencia.toFixed(2)}`;
 
         if (diferencia < 0) {
@@ -255,4 +317,24 @@
             diferenciaElemento.classList.remove('text-danger', 'text-success');
         }
     }
+
+
+
+    calculate_the_total();
+    calcularDiferencia();
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Seleccionar los inputs
+        const inputs = document.querySelectorAll('#money, #credit, #debit');
+
+        // Agregar un event listener a cada input
+        inputs.forEach(input => {
+            input.addEventListener('input', calcularDiferencia);
+        });
+
+        // Llamar la función al cargar la página (por si ya hay valores)
+        calcularDiferencia();
+    });
+
 </script>
