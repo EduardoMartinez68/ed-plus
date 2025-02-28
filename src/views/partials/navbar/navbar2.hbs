@@ -153,14 +153,7 @@
                             {{/each}}
                         {{/if}}
                         
-                        {{#if user.view_provider}}
-                            {{#each branchFree}}
-                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/providers-free')">
-                                    <img src="/img/apps/providers.webp" alt="Proveedores">
-                                    <span>Proveedores</span>
-                                </div>
-                            {{/each}}
-                        {{/if}}
+
                         {{#if user.view_food_departament}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/food-department-free')">
@@ -187,7 +180,25 @@
                             {{/each}}
                         {{/if}}
                         
-                        
+
+                        {{#if user.view_inventory}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/inventory')">
+                                    <img src="/img/apps/lots.webp" alt="Impresoras">
+                                    <span>Lotes y Series</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+
+                        {{#if user.view_provider}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/providers-free')">
+                                    <img src="/img/apps/providers.webp" alt="Proveedores">
+                                    <span>Proveedores</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+
                         {{#if user.view_employee}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/employees-branch')">
@@ -234,7 +245,15 @@
                                 </div>
                             {{/each}}
                         {{/if}}
-                        
+
+                        {{#if user.employee_roles}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/type-employees-free')">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/6136/6136178.png" alt="Roles de empleados">
+                                    <span>Cortes de Caja</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
 
                         <!--
                         {{#if user.accounting}}
@@ -245,7 +264,7 @@
                                 </div>
                             {{/each}}
                         {{/if}}
-                        
+                        --->
 
                         {{#if user.view_customer_credits}}
                             {{#each branchFree}}
@@ -255,6 +274,7 @@
                                 </div>
                             {{/each}}
                         {{/if}}
+                        <!---
                         {{#if user.crm}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/CRM')">
@@ -359,7 +379,8 @@
                                 </div>
                             {{/each}}
                         {{/if}}
-                        
+                        --->
+
                         {{#if user.view_supplies}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/supplies-free')">
@@ -378,7 +399,7 @@
                             {{/each}}
                         {{/if}}
 
-                        
+                        <!---
                         {{#if user.ecommerce}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('myrestaurant/{{id_companies}}/{{id}}')">

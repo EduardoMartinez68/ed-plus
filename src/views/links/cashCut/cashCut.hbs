@@ -1,0 +1,258 @@
+<style>
+    .card {
+        border-radius: 12px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        border: none;
+    }
+
+    .card-title {
+        font-weight: bold;
+    }
+
+    .diferencia {
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
+    .bg-efectivo {
+        background-color: #edf4fa;
+    }
+
+    .input-custom {
+        font-size: 1.2rem;
+        /* Tamaño de texto más grande */
+        font-weight: bold;
+        /* Hace que los números resalten */
+
+        /* Centrar el texto */
+        border: 2px solid #007bff;
+        /* Borde azul */
+        border-radius: 8px;
+        /* Bordes redondeados */
+        padding: 10px;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .input-custom:focus {
+        border-color: #0056b3;
+        /* Borde más oscuro al enfocar */
+        box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+        /* Efecto glow */
+    }
+
+    .input-group-text {
+        font-size: 1.2rem;
+        border-radius: 8px 0 0 8px;
+    }
+</style>
+
+
+<div class="container mt-5">
+    <h4 class="text-center mb-4">Corte de Caja</h4>
+    <div class="row text-end">
+        <p class="fw-bold mb-1">Calculado por el sistema:</p>
+        <h5 class="text-primary">$1,200.00</h5>
+        <p class="fw-bold mt-3 mb-1">Diferencia Total:</p>
+        <h5 id="diferencia" class="diferencia text-danger">$0.00</h5>
+        <br>
+        <div class="d-flex justify-content-end">
+            <button class="btn btn-edit">Hacer Corte</button>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col">
+            <!-- Tarjeta Efectivo -->
+            <div class="card mb-3 bg-efectivo">
+                <div class="card-body">
+                    <h5 class="card-title">💵 Efectivo</h5>
+
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="nombre" name="name"
+                            placeholder="Nombre del producto" required>
+                        <label for="nombre">Efectivo contado *</label>
+                    </div>
+
+                    <hr>
+                    <label class="fw-bold">Calculado por el sistema: $1,200.00</label><br>
+                    <label for="">Diferencia: $</label><label for="">0</label>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col">
+            <!-- Tarjeta Tarjeta de Crédito -->
+            <div class="card mb-3 bg-efectivo">
+                <div class="card-body">
+                    <h5 class="card-title">💳 Tarjeta de Crédito</h5>
+
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="nombre" name="name"
+                            placeholder="Nombre del producto" required>
+                        <label for="nombre">Efectivo contado *</label>
+                    </div>
+
+                    <hr>
+                    <label class="fw-bold">Calculado por el sistema: $1,200.00</label><br>
+                    <label for="">Diferencia: $</label><label for="">0</label>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <div class="col">
+            <!-- Tarjeta Tarjeta de Débito -->
+            <div class="card mb-3 bg-efectivo">
+                <div class="card-body">
+                    <h5 class="card-title">💳 Tarjeta de Débito</h5>
+
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="nombre" name="name"
+                            placeholder="Nombre del producto" required>
+                        <label for="nombre">Efectivo contado *</label>
+                    </div>
+
+                    <hr>
+                    <label class="fw-bold">Calculado por el sistema: $1,200.00</label><br>
+                    <label for="">Diferencia: $</label><label for="">0</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Resumen -->
+    <div class="card summary-card">
+        <div class="card-body">
+            <center><h5 class="fw-bold">Resumen</h5></center>
+            
+            <div class="container mt-4">
+                <!-- Tabla de Movimientos en Caja -->
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <table class="table table-bordered">
+                            <thead class="table-primary ">
+                                <tr>
+                                    <th>Movimiento de caja</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Numero de ventas</td>
+                                    <td class="text-success">100</td>
+                                </tr>
+                                <tr>
+                                    <td>Numero de devoluciones</td>
+                                    <td class="text-danger">200</td>
+                                </tr>
+                                <tr>
+                                    <td>Entradas</td>
+                                    <td class="text-success">$100</td>
+                                </tr>
+                                <tr>
+                                    <td>Salidas</td>
+                                    <td class="text-danger">$200</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col">
+                        <!-- Tabla de Entradas de Efectivo -->
+                        <div class="card shadow-sm mt-4">
+                            <div class="card-body">
+                                <table class="table table-hover">
+                                    <thead class="table-success">
+                                        <tr>
+                                            <th>Entrada de Efectivo</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Venta de productos</td>
+                                            <td>$50</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Pago de clientes</td>
+                                            <td>$50</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>TOTAL: </b></td>
+                                            <td class="text-success">$100</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col">
+                        <!-- Tabla de Salidas de Efectivo -->
+                        <div class="card shadow-sm mt-4">
+                            <div class="card-body">
+                                <table class="table table-hover">
+                                    <thead class="table-danger">
+                                        <tr>
+                                            <th>Salidas de Efectivo</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Compra de insumos</td>
+                                            <td>$100</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Pago de servicios</td>
+                                            <td>$100</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>TOTAL: </b></td>
+                                            <td class="text-danger">$100</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <br>
+</div>
+<br><br><br>
+
+<script>
+    function calcularDiferencia() {
+        let efectivo = parseFloat(document.getElementById('efectivo').value) || 0;
+        let credito = parseFloat(document.getElementById('credito').value) || 0;
+        let debito = parseFloat(document.getElementById('debito').value) || 0;
+
+        let totalIngresado = efectivo + credito + debito;
+        let calculado = 1200.00;
+        let diferencia = totalIngresado - calculado;
+
+        let diferenciaElemento = document.getElementById('diferencia');
+        diferenciaElemento.textContent = `$${diferencia.toFixed(2)}`;
+
+        if (diferencia < 0) {
+            diferenciaElemento.classList.add('text-danger');
+            diferenciaElemento.classList.remove('text-success');
+        } else if (diferencia > 0) {
+            diferenciaElemento.classList.add('text-success');
+            diferenciaElemento.classList.remove('text-danger');
+        } else {
+            diferenciaElemento.classList.remove('text-danger', 'text-success');
+        }
+    }
+</script>

@@ -308,6 +308,7 @@ serverExpress.use(companyName,require('./router/links/app'))
 serverExpress.use(companyName,require('./router/links/CRM'))
 serverExpress.use(companyName,require('./router/links/desktop'))
 serverExpress.use(companyName,require('./router/links/boutique'))
+serverExpress.use(companyName,require('./router/links/cashCut'))
 
 serverExpress.use(require('./lib/addFrom'));
 
