@@ -49,14 +49,54 @@
 
 <div class="container mt-5">
     <h4 class="text-center mb-4">Corte de Caja</h4>
+    {{#each dataEmployee}}
+        <h6 class="text-center mb-4">{{first_name}} {{second_name}} {{last_name}}</h6>
+    {{/each}}
+    {{#each datesCut}}
+        <h6 class="text-center mb-4">Del {{dateStart}} al {{dateFinish}}</h6>
+    {{/each}}
+    <!---this is for select the day and the time-->
+    <form action="/links/{{user.id_company}}/{{user.id_branch}}/cash-cut-date" method="post">
+        <div class="row">
+            <div class="col">
+                <div class="form-floating">
+                    <input type="datetime-local" class="form-control"  name="dateStart" placeholder="Efectivo"
+                        required>
+                    <label for="nombre">Fecha de inicio *</label>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-floating">
+                    <input type="datetime-local" class="form-control"  name="dateFinish" placeholder="Efectivo"
+                        required>
+                    <label for="nombre">Fecha de Final *</label>
+                </div>
+            </div>
+            <div class="col">
+                <label for="nombre">Selecciona al empleado *</label>
+                <select name="idEmployee" id="" class="form-select" aria-label="Default select example">
+                    <option value="{{user.id_employee}}">{{user.first_name}} {{user.second_name}} {{user.last_name}}</option>
+                    {{#each employees}}
+                        <option value="{{employee_id}}">{{first_name}} {{second_name}} {{last_name}}</option>
+                    {{/each}}
+                </select>
+            </div>
+            <div class="col">
+                <button class="btn btn-edit">Crear</button>
+            </div>
+        </div>
+    </form>
+    <hr>
     <div class="row text-end">
-        <p class="fw-bold mb-1">Calculado por el sistema:</p>
-        <h5 class="text-primary" id="total-for-system">$1,200.00</h5>
-        <p class="fw-bold mt-3 mb-1">Diferencia Total:</p>
-        <h5 class="diferencia text-danger" id="total-for-user">$0.00</h5>
-        <br>
-        <div class="d-flex justify-content-end">
-            <button class="btn btn-edit">Hacer Corte</button>
+        <div class="col text-end">
+            <p class="fw-bold mb-1">Calculado por el sistema:</p>
+            <h5 class="text-primary" id="total-for-system">$1,200.00</h5>
+            <p class="fw-bold mt-3 mb-1">Diferencia Total:</p>
+            <h5 class="diferencia text-danger" id="total-for-user">$0.00</h5>
+            <br>
+            <div class="d-flex justify-content-end">
+                <button class="btn btn-edit">Hacer Corte</button>
+            </div>
         </div>
     </div>
     <br>
@@ -185,6 +225,7 @@
                 </div>
 
                 <div class="row">
+                    <!---money of sales--->
                     <div class="col">
                         <div class="card shadow-sm">
                             <div class="card-body">
@@ -195,28 +236,33 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>Numero de Ventas</td>
-                                            <td class="text-success">100</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Numero de devoluciones</td>
-                                            <td class="text-danger">1</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Numero de Entradas</td>
-                                            <td class="text-success">5</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Numero de Salidas</td>
-                                            <td class="text-danger">0</td>
-                                        </tr>
+                                        {{#each numberOfSales}}
+                                            <tr>
+                                                <td>Numero de Ventas</td>
+                                                <td class="text-success">{{count}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Numero de devoluciones</td>
+                                                <td class="text-danger">0</td>
+                                            </tr>
+                                        {{/each}}
+                                        {{#each numberInputOutput}}
+                                            <tr>
+                                                <td>Numero de Entradas</td>
+                                                <td class="text-success">{{positive}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Numero de Salidas</td>
+                                                <td class="text-danger">{{negative}}</td>
+                                            </tr>
+                                        {{/each}}
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
 
+                    <!---money of sales--->
                     <div class="col">
                         <div class="card shadow-sm">
                             <div class="card-body">
@@ -248,7 +294,7 @@
 
 
 
-
+                <!---output and input money--->
                 <div class="row">
                     <div class="col">
                         <!-- Tabla de Entradas de Efectivo -->

@@ -5,12 +5,12 @@ let cartTotal = 0;
 
 async function buy_my_car() {
     //get the price of the car with all the combo
-    const cash = document.getElementById('cash').value;
-    const credit = document.getElementById('credit').value;
-    const debit = document.getElementById('debit').value;
-    const moneyReceived=cash+credit+debit;
+    const cash = parseFloat(document.getElementById('cash').value);
+    const credit = parseFloat(document.getElementById('credit').value);
+    const debit = parseFloat(document.getElementById('debit').value);
+    const moneyReceived = (cash + credit + debit).toFixed(2);
     const total = parseFloat(document.getElementById('total').textContent);
-    const change=moneyReceived-total;
+    const change = moneyReceived - total;
 
     //we will see if the user can buy all the shooping cart
     if (change>=0) {
