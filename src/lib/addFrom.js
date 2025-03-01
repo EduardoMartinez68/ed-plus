@@ -2499,6 +2499,8 @@ router.post('/fud/client', isLoggedIn, async (req, res) => {
 })
 
 router.post('/fud/car-post', isLoggedIn, async (req, res) => {
+    await add_table_box_history(); //this is for create the table that the new user neeed
+
     var commander = ''
     var text = ''
 
@@ -2534,8 +2536,9 @@ router.post('/fud/car-post', isLoggedIn, async (req, res) => {
                     totalPrice 
                 });
 
-                //save the buy in the database 
+                //save the buy in the database
                 await addDatabase.add_buy_history(idCompany, idBranch, idEmployee, id_customer, product.id_dishes_and_combos,product.price,product.quantity,totalPrice,day);
+                await save_box_history(idEmployee, id_customer, req.body.cash, req.body.credit, req.body.debit, req.body.comment, day, req.body.change);
             }
 
             //save the comander
@@ -2550,6 +2553,59 @@ router.post('/fud/car-post', isLoggedIn, async (req, res) => {
         res.status(500).json({ error: 'Hubo un error al procesar la solicitud' });
     }
 })
+
+async function save_box_history(idEmployee, id_customer,cash, credit, debit, comment, day, change) {
+    const idCustomerParam = id_customer === "null" ? null : id_customer;
+
+    //this is for that the format is a number
+    const parseToFloat = (value) => {
+        if (value === null || value === undefined || value === '') return 0; 
+        return parseFloat(value) || 0;
+    };
+
+    cash = parseToFloat(cash);
+    credit = parseToFloat(credit);
+    debit = parseToFloat(debit);
+    change = parseToFloat(change);
+
+    //this is for save the data in the database
+    const queryText = `
+        INSERT INTO "Box".box_history 
+        (id_employee, id_customers, buy_for_cash, buy_for_credit_card, buy_for_debit_card, comment, date_sales, change_of_sale)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+    `;
+
+    try {
+        await database.query(queryText, [idEmployee, idCustomerParam,cash, credit, debit, comment, day, change]);
+    } catch (error) {
+        console.error('Error save_box_history in file addFrom:', error);
+    }
+}
+
+async function add_table_box_history() {
+    const queryText = `
+        CREATE TABLE IF NOT EXISTS "Box".box_history (
+            id BIGSERIAL PRIMARY KEY,
+            id_employee INTEGER NOT NULL,
+            id_customers INTEGER,
+            buy_for_cash NUMERIC(10,2) NOT NULL,
+            buy_for_credit_card NUMERIC(10,2) NOT NULL,
+            buy_for_debit_card NUMERIC(10,2) NOT NULL,
+            change_of_sale NUMERIC(10,2) DEFAULT 0,
+            comment TEXT,
+            date_sales TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+    `;
+
+    try {
+        await database.query(queryText);
+        return true;
+    } catch (error) {
+        console.error('Error adding column "cut" to add_table_box_history:', error);
+        return false;
+    }
+}
+
 
 
 function create_commander(id_branch, id_employee, id_customer, commanderDish, total, moneyReceived, change, comment, date) {

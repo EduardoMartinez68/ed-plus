@@ -20,7 +20,7 @@ async function buy_my_car() {
         const id_customer=emailClient.getAttribute('idClient');
         
         //we will see if the user can buy all the shooping cart
-        if(await send_buy_to_the_server(total,moneyReceived,change,comment,id_customer)){
+        if(await send_buy_to_the_server(total,moneyReceived,change,comment,id_customer,cash,credit,debit)){
             //we will print ticket
             printTicket(total,moneyReceived,change,comment);
             
@@ -48,13 +48,13 @@ async function buy_my_car() {
     }
 }
 
-async function send_buy_to_the_server(total,moneyReceived,exchange,comment,id_customer){
+async function send_buy_to_the_server(total,moneyReceived,exchange,comment,id_customer,cash,credit,debit){
     // Show loading overlay
     loadingOverlay.style.display = "flex";
 
     try {
         //we will watching if the server can complete the pay and setting the inventory
-        const answerServer = await get_answer_server({products:cartItems,total:total,moneyReceived:moneyReceived,change:exchange,comment:comment,id_customer:id_customer},`/fud/car-post`);
+        const answerServer = await get_answer_server({products:cartItems,total:total,moneyReceived:moneyReceived,change:exchange,comment:comment,id_customer:id_customer,cash,credit,debit},`/fud/car-post`);
 
         //we will see if save the commander 
         if (!isNaN(answerServer.message)) {

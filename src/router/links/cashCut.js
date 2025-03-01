@@ -27,7 +27,8 @@ router.get('/:id_company/:id_branch/cashCut', isLoggedIn, async (req, res) => {
 
 
     //now if exist the table, we will get all the information of the user
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Establece hora en 00:00:00.000
     const idEmployee=req.user.id_employee;
 
     const salesForMoney=await get_all_the_buy(idEmployee,today);
@@ -50,7 +51,8 @@ async function get_all_the_buy(id_employee, date) {
         SELECT 
             COALESCE(SUM(buy_for_cash), 0) AS total_cash_sales,
             COALESCE(SUM(buy_for_credit_card), 0) AS total_credit_sales,
-            COALESCE(SUM(buy_for_debit_card), 0) AS total_debit_sales
+            COALESCE(SUM(buy_for_debit_card), 0) AS total_debit_sales,
+            COALESCE(SUM(change_of_sale), 0) AS total_change_of_sale
         FROM "Box".box_history
         WHERE id_employee = $1
         AND DATE(date_sales) = $2;
@@ -59,18 +61,12 @@ async function get_all_the_buy(id_employee, date) {
     try {
         const result = await database.query(queryText, [id_employee, date]);
         return result.rows;
-        /*
-        return {
-            cash: result.rows[0].total_cash_sales,
-            credit: result.rows[0].total_credit_sales,
-            debit: result.rows[0].total_debit_sales
-        };
-        */
     } catch (error) {
         console.error('Error getting total sales:', error);
-        return { cash: 0, credit: 0, debit: 0 };
+        return { cash: 0, credit: 0, debit: 0 , total_change_of_sale:0};
     }
 }
+
 
 async function get_total_movements_by_employee(id_employee, date) {
     const queryText = `
@@ -84,10 +80,10 @@ async function get_total_movements_by_employee(id_employee, date) {
 
     try {
         const result = await database.query(queryText, [id_employee, date]);
-        return {
+        return [{
             entries: result.rows[0].total_entries,
             exits: result.rows[0].total_exits
-        };
+        }];
     } catch (error) {
         console.error('Error getting total movements:', error);
         return { entries: 0, exits: 0 };
@@ -100,11 +96,11 @@ async function get_all_the_movements_positive(id_employee, date) {
         FROM "Box".movement_history
         WHERE id_employees = $1
         AND DATE(date_move) = $2
-        AND move >=0;
+        AND move>=0;
     `;
 
     try {
-        const result = await database.query(queryText, [id_employee, date]);
+        const result = await database.query(queryText, [id_employee,date]);
         return result.rows; 
     } catch (error) {
         console.error('Error getting positive movements:', error);
@@ -140,6 +136,7 @@ async function add_table_box_history() {
             buy_for_cash NUMERIC(10,2) NOT NULL,
             buy_for_credit_card NUMERIC(10,2) NOT NULL,
             buy_for_debit_card NUMERIC(10,2) NOT NULL,
+            change_of_sale NUMERIC(10,2) DEFAULT 0,
             comment TEXT,
             date_sales TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
