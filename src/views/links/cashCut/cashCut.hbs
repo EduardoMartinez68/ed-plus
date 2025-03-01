@@ -50,11 +50,15 @@
 <div class="container mt-5">
     <h4 class="text-center mb-4">Corte de Caja</h4>
     {{#each dataEmployee}}
-        <h6 class="text-center mb-4">{{first_name}} {{second_name}} {{last_name}}</h6>
+        <h6 class="text-center mb-4" id="employee-cut">{{first_name}} {{second_name}} {{last_name}}</h6>
     {{/each}}
     {{#each datesCut}}
-        <h6 class="text-center mb-4">Del {{dateStart}} al {{dateFinish}}</h6>
+        <h6 class="text-center mb-4" id="date-cut">Del {{dateStart}} al {{dateFinish}}</h6>
     {{/each}}
+
+    <input type="hidden" value="{{user.first_name}} {{user.second_name}} {{user.last_name}}" id="nameEmployee">
+    
+
     <!---this is for select the day and the time-->
     <form action="/links/{{user.id_company}}/{{user.id_branch}}/cash-cut-date" method="post">
         <div class="row">
@@ -87,6 +91,8 @@
         </div>
     </form>
     <hr>
+
+
     <div class="row text-end">
         <div class="col text-end">
             <p class="fw-bold mb-1">Calculado por el sistema:</p>
@@ -95,7 +101,7 @@
             <h5 class="diferencia text-danger" id="total-for-user">$0.00</h5>
             <br>
             <div class="d-flex justify-content-end">
-                <button class="btn btn-edit">Hacer Corte</button>
+                <button class="btn btn-edit" onclick="create_cut()">Hacer Corte</button>
             </div>
         </div>
     </div>
@@ -168,7 +174,7 @@
         <div class="card">
             <div class="card-body">
                 <div class="form-floating">
-                    <textarea type="text" class="form-control" name="note" placeholder="Nota para el corte"></textarea>
+                    <textarea type="text" class="form-control" name="note" placeholder="Nota para el corte" id="comment"></textarea>
                     <label for="nombre">Comentario</label>
                 </div>
             </div>
@@ -188,10 +194,11 @@
                     <div class="col">
                         <div class="card shadow-sm">
                             <div class="card-body">
-                                <table class="table table-bordered">
+                                <table class="table table-bordered" id="table-money-in-box">
                                     <thead class="table-primary ">
                                         <tr>
                                             <th>Dinero en Caja</th>
+                                            <th></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -229,10 +236,11 @@
                     <div class="col">
                         <div class="card shadow-sm">
                             <div class="card-body">
-                                <table class="table table-bordered">
-                                    <thead class="table-primary ">
+                                <table class="table table-bordered" id="table-move-in-box">
+                                    <thead class="table-primary">
                                         <tr>
                                             <th>Movimiento de caja</th>
+                                            <th></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -266,10 +274,11 @@
                     <div class="col">
                         <div class="card shadow-sm">
                             <div class="card-body">
-                                <table class="table table-bordered">
-                                    <thead class="table-primary ">
+                                <table class="table table-bordered" id="table-move-sales">
+                                    <thead class="table-primary">
                                         <tr>
                                             <th>Movimiento Ventas</th>
+                                            <th></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -300,7 +309,7 @@
                         <!-- Tabla de Entradas de Efectivo -->
                         <div class="card shadow-sm mt-4">
                             <div class="card-body">
-                                <table class="table table-hover">
+                                <table class="table table-hover" id="table-input-money">
                                     <thead class="table-success">
                                         <tr>
                                             <th>Entrada de Efectivo</th>
@@ -331,7 +340,7 @@
                         <!-- Tabla de Salidas de Efectivo -->
                         <div class="card shadow-sm mt-4">
                             <div class="card-body">
-                                <table class="table table-hover">
+                                <table class="table table-hover" id="table-output-money">
                                     <thead class="table-danger">
                                         <tr>
                                             <th>Salidas de Efectivo</th>
@@ -490,4 +499,112 @@
         calcularDiferencia();
     });
 
+</script>
+
+
+
+<!--this is for create a PDF--->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+<script>
+    function create_cut() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        // Encabezado
+        doc.setFontSize(18);
+        doc.setTextColor(22, 72, 255); 
+        doc.text("Corte de Caja", 14, 10);
+        doc.setTextColor(0, 0, 0); 
+        doc.setFontSize(12);
+        doc.text(`${document.getElementById('date-cut').textContent}`, 14, 20);
+        doc.text(`Reporte detallado de ventas y movimientos de ${document.getElementById('employee-cut').textContent}`, 14, 30);
+        doc.text(`Reporte generado por el usuario ${document.getElementById('nameEmployee').value}`, 14, 40);
+
+        //her we will show the information of tha cut
+        const money = parseFloat(document.getElementById('money').value) || 0;
+        const credit = parseFloat(document.getElementById('credit').value) || 0;
+        const debit = parseFloat(document.getElementById('debit').value) || 0;
+        doc.setFontSize(12);
+        doc.setTextColor(22, 72, 255); 
+        doc.text('Total de Dinero en caja:', 14, 50);
+        doc.setFontSize(10);
+        doc.setTextColor(0, 0, 0); 
+        doc.text(`Calculado por el sistema: ${document.getElementById('total-for-system').textContent}`, 14, 60);
+        doc.text(`Calculado por el usuario: ${money+credit+debit}`, 14, 70);
+        doc.text(`Diferencia: ${document.getElementById('total-for-user').textContent}`, 14, 80);
+
+        //her we will print the total of tha money 
+        let y = 90; // Posición inicial
+
+        // Datos para la tabla
+        const tableData = [
+            ["Método de Pago", "Calculado por el usuario", "Calculado por el sistema"],
+            ["Efectivo", money, document.getElementById('total_cash_sales').value],
+            ["Tarjeta de Crédito", credit, document.getElementById('total_credit_sales').value],
+            ["Tarjeta de Débito", debit, document.getElementById('total_debit_sales').value]
+        ];
+
+        // Estilos personalizados
+        doc.autoTable({
+            startY: y,
+            head: [tableData[0]], // Encabezado
+            body: tableData.slice(1), // Cuerpo
+            theme: 'grid',
+            styles: { fontSize: 10 },
+            headStyles: { fillColor: [22, 72, 255], textColor: 255 }, // Azul con texto blanco
+            alternateRowStyles: { fillColor: [240, 240, 240] }, // Filas alternas gris claro
+            margin: { top: 40 }
+        });
+
+        //her we will print all the tables
+        y = y+40;
+
+        doc.setTextColor(22, 72, 255); 
+        doc.text(`Reporte detallado de ventas y movimientos de ${document.getElementById('employee-cut').textContent}`, 14, y);
+        doc.setTextColor(0, 0, 0); 
+        y = y+10;
+
+        //this is for print all the table
+        function addTableToPDF(tableId, title) {
+            const table = document.getElementById(tableId);
+            if (!table) return; // Si la tabla no existe, omitirla
+
+            doc.setFontSize(14);
+            doc.text(title, 14, y);
+            y += 6;
+
+            doc.autoTable({
+                html: `#${tableId}`,
+                startY: y,
+                theme: 'grid',
+                styles: { fontSize: 10 },
+                headStyles: { fillColor: [22, 72, 255] }, // Color azul en encabezados
+                didDrawPage: function (data) {
+                    // Agregar leyenda al pie de cada página
+                    const pageHeight = doc.internal.pageSize.height;
+                    doc.setFontSize(8);
+                    doc.setTextColor(22, 72, 255);
+                    doc.text("Power by PLUS ERP from {ED} Software Developer", 10, pageHeight - 10);
+                }
+            });
+
+            y = doc.lastAutoTable.finalY + 10; // Ajustar posición para la siguiente tabla
+        }
+        addTableToPDF("table-money-in-box", "Dinero en Caja");
+        addTableToPDF("table-move-in-box", "Movimientos en Caja");
+
+        //show the comment
+        doc.text('Comentario:', 14, y);
+        y+=10;
+        doc.setFontSize(10);
+        doc.text(`${document.getElementById('comment').value}`, 14, y);
+
+        y+=50; //this is for that tha next table is in the next page
+        addTableToPDF("table-move-sales", "Ventas Registradas");
+        addTableToPDF("table-input-money", "Ingresos de Dinero");
+        addTableToPDF("table-output-money", "Salidas de Dinero");
+
+        doc.save("corte-de-caja.pdf");
+    }
 </script>

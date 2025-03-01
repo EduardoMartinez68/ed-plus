@@ -46,7 +46,8 @@ router.get('/:id_company/:id_branch/cashCut', isLoggedIn, async (req, res) => {
     const employees=await get_all_the_user_of_the_branch(id_branch);
 
     const datesCut=[{dateStart:formatDate(dateStart),dateFinish:formatDate(dateFinish)}];
-    res.render('links/cashCut/cashCut.hbs',{branchFree, salesForMoney,moveUser,movePositive,moveNegative,numberOfSales,numberInputOutput,employees,datesCut});
+    const dataEmployee=[{first_name:req.user.first_name,second_name:req.user.second_name,last_name:req.user.last_name}];
+    res.render('links/cashCut/cashCut.hbs',{branchFree, salesForMoney,moveUser,movePositive,moveNegative,numberOfSales,numberInputOutput,employees,datesCut,dataEmployee});
 })
 
 async function get_all_the_user_of_the_branch(id_branch){
