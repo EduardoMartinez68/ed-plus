@@ -15,68 +15,6 @@ const path=require('path');
 
 //ReCAPTCHA of Google
 const { RecaptchaV2 } = require('express-recaptcha');
-
-//*------------------UPDATES-----------------------------------------//
-const simpleGit = require('simple-git');
-const fs = require('fs');
-
-const repoPath = path.join(__dirname); //this change when are a version of desktop
-const git = simpleGit(repoPath);
-
-//this is for get the repository of github
-const repoURL = 'https://github.com/EduardoMartinez68/ed-plus'; // Reemplaza con la URL de tu repositorio
-const remote = 'origin';
-
-//if not have a repository remote, we can setting her
-/*
-git.addRemote(remote, repoURL).then(() => {
-    console.log('Repositorio remoto configurado correctamente');
-}).catch(err => {
-    console.error('Error al agregar el repositorio remoto', err);
-});
-*/
-
-async function check_if_exist_updates(){
-    try {
-
-        // Make sure the remote repository is configured correctly
-        await git.fetch(remote);
-
-        //ignore change in the folder 'img/'
-        await git.raw(['update-index', '--assume-unchanged', '/src/public/img/uploads/']);
-
-        //Compare if there are remote changes
-        const log = await git.log(['origin/main', '-1']);
-        const localLog = await git.log(['HEAD', '-1']);
-
-        //we will see if us has is the last has of the repository
-        if (log.latest.hash !== localLog.latest.hash) {
-            console.log('🔄 Nueva versión encontrada, actualizando...');
-
-            await git.pull('origin', 'main', { '--rebase': null });
-            
-            //show a dialog for that the user know that exist a new version of PLUS
-            dialog.showMessageBoxSync({
-                type: 'info',
-                title: 'Actualización',
-                message: 'Se ha descargado una nueva versión. Reinicia la aplicación para aplicar los cambios.',
-                buttons: ['Reiniciar ahora']
-            });
-
-            app.relaunch();
-            app.quit();
-        } else {
-            console.log('✅ La aplicación ya está actualizada.');
-        }
-    } catch (error) {
-        console.error('❌ Error verificando actualizaciones:', error);
-    }
-}
-
-
-
-
-
 //*------------------initializations-----------------------------------------//
 const serverExpress =express();
 

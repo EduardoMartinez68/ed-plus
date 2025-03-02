@@ -98,37 +98,38 @@ const repoPath = path.join(__dirname); //this change when are a version of deskt
 const git = simpleGit(repoPath);
 
 //this is for get the repository of github
-const repoURL = 'https://github.com/EduardoMartinez68/ed-plus'; // Reemplaza con la URL de tu repositorio
+const repoURL = 'https://github.com/EduardoMartinez68/VERSIONES_PLUS'; // Reemplaza con la URL de tu repositorio
 const remote = 'origin';
 
 //if not have a repository remote, we can setting her
-/*
 git.addRemote(remote, repoURL).then(() => {
     console.log('Repositorio remoto configurado correctamente');
 }).catch(err => {
     console.error('Error al agregar el repositorio remoto', err);
 });
-*/
 
-async function check_if_exist_updates(){
+async function check_if_exist_updates() {
     try {
         // Make sure the remote repository is configured correctly
         await git.fetch(remote);
 
-        //ignore change in the folder 'img/'
-        await git.raw(['update-index', '--assume-unchanged', '../src/public/img/uploads/']);
+        // Ignore changes in the folder 'img/'
+        await git.raw(['update-index', '--assume-unchanged', 'src/public/img/uploads/']);
 
-        //Compare if there are remote changes
+        // Stash local changes to avoid rebase errors
+        await git.stash();
+
+        // Compare if there are remote changes
         const log = await git.log(['origin/main', '-1']);
         const localLog = await git.log(['HEAD', '-1']);
 
-        //we will see if us has is the last has of the repository
+        // Check if the current commit is the same as the remote commit
         if (log.latest.hash !== localLog.latest.hash) {
             console.log('🔄 Nueva versión encontrada, actualizando...');
 
             await git.pull('origin', 'main', { '--rebase': null });
-            
-            //show a dialog for that the user know that exist a new version of PLUS
+
+            // Show a dialog to inform the user that an update is available
             dialog.showMessageBoxSync({
                 type: 'info',
                 title: 'Actualización',
@@ -141,10 +142,14 @@ async function check_if_exist_updates(){
         } else {
             console.log('✅ La aplicación ya está actualizada.');
         }
+
+        // Apply stashed changes (if any)
+        await git.stash(['pop']);
     } catch (error) {
         console.error('❌ Error verificando actualizaciones:', error);
     }
 }
+
 
 
 //*------------------initializations-----------------------------------------//
