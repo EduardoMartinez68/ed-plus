@@ -1,5 +1,5 @@
 const system=require('./lib/system');
-const thiIsADemo=true;
+const thiIsADemo=false;
 
 //----------------------desktop application
 const { app, BrowserWindow, dialog, ipcMain  } = require('electron');
@@ -27,6 +27,7 @@ nodePersist.init({
   dir: path.join(__dirname, 'data')
 });
 
+//*------------------TOKEN-----------------------------------------//
 async function initialize_software() {
     const initialToken = await nodePersist.get('installToken');
 
@@ -42,21 +43,38 @@ async function the_software_have_a_token() {
       return false;
     }
     
-    return initialToken=='true';
+    return initialToken!='false';
+}
+
+async function create_expiration_date_of_the_token(date){
+    const expirationDateOFTheToken = await nodePersist.get('expirationDateOFTheToken');
+
+    //we will see if exist the token in the database
+    if (!expirationDateOFTheToken) {
+      await nodePersist.set('expirationDateOFTheToken', date);
+    }
+}
+
+async function token_expired(){
+    const expirationDateOFTheToken = await nodePersist.get('expirationDateOFTheToken');
+    const expirationDate = new Date(expirationDateOFTheToken);
+    const currentDate = new Date();
+    return (currentDate < expirationDate);
 }
 
 async function remove_install_token() {
     await nodePersist.removeItem('installToken');
+    await nodePersist.removeItem('expirationDateOFTheToken');
     console.log('installToken eliminado');
 }
 
-async function initialize_token() {
+async function initialize_token(token) {
     const installDate = await nodePersist.get('installToken');
-    await nodePersist.set('installToken', 'true');
+    await nodePersist.set('installToken', token);
 }
 
 async function initialize_demo() {
-    const installDate = await nodePersist.get('installDate');
+    const installDate = await nodePersist.get('installDemo');
 
     if (!installDate) {
       // Si no existe la fecha de instalación, la guarda
@@ -69,7 +87,7 @@ async function initialize_demo() {
 }
 
 async function is_demo_expired() {
-    const installDate = await nodePersist.get('installDate');
+    const installDate = await nodePersist.get('installDemo');
     if (!installDate) {
       console.log("No se encontró la fecha de instalación");
       return false;
@@ -80,13 +98,59 @@ async function is_demo_expired() {
     const diffTime = currentDate - installDateObj;
     const diffDays = diffTime / (1000 * 60 * 60 * 24); // Convertir la diferencia a días
   
-    if (diffDays > 15) {
+    if (diffDays > 30) {
       console.log("La demo ha expirado.");
       return true;
     } else {
       console.log("La demo aún está activa.");
       return false;
     }
+}
+
+async function this_software_count_have_a_count(){
+
+}
+
+async function the_user_have_a_token_active_in_the_database(){
+
+}
+
+async function verify_membership_of_user(){
+    //this is for initialize the token of the software when the user the install for first time
+    initialize_software();
+    
+    //now we will see if the user have a token in the count of the user
+    if(await the_software_have_a_token()){
+        return await token_expired();
+    }
+
+    return false;
+
+    /*
+    //now we will see if the user have a token in the count of the user
+    if(await this_software_count_have_a_count()){
+        if(await the_software_have_a_token()){
+            //if the software have a token, we will see if the token expired
+            if(await token_expired()){
+                //if the token not is expired, we can show the software
+                return true;
+            }else{
+                //if the token is expired, we will see if in the database is active a new token
+                if(await the_user_have_a_token_active_in_the_database()){
+                    //if the user have a token active in the database, we will update the data of token 
+                    await actualizarToken();
+                    await initialize_token();
+                }else{
+                    return false;
+                }
+            }
+        }else{
+            //we will see if the user have a token active in the database
+        }
+    }else{
+        return false;
+    }
+    */
 }
 
 
@@ -481,10 +545,11 @@ function getLocalIP() {
 }
 
 //starting the server in the computer
+/*
 serverExpress.listen(serverExpress.get('port'), '0.0.0.0', () => {
     console.log(`Server running on http://${getLocalIP()}:${serverExpress.get('port')}`);
 });
-
+*/
 //*------------------------------------------------------------DATABASE SERVER--------------------------------------------//
 const mysql = require('mysql');
 const { promisify } = require('util');
@@ -542,6 +607,7 @@ pool.query=promisify(pool.query)
 //this is for create the UI in the windows
 let mainWindow;
 let activationWindow;
+let loginWindow;
 const createMainWindow = () => {
     mainWindow = new BrowserWindow({
         width: 800,
@@ -555,6 +621,203 @@ const createMainWindow = () => {
     mainWindow.loadURL(`http://localhost:${serverExpress.get('port')}`);
 };
 
+//*-----------------------------------------------------------Save Token and user in the application-----------------------------------------//
+const createMainWindowRegister = () => {
+    loginWindow = new BrowserWindow({
+        width: 800,
+        height: 600,
+        parent: mainWindow,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js'),
+            nodeIntegration: true,
+            contextIsolation: false,
+        }
+    });
+
+    //This is to make the screen grow to full screen
+    loginWindow.maximize();
+
+    loginWindow.loadFile(path.join(__dirname, 'activation.html')); // load the form of login
+};
+
+// this is for that we know if the user login from the same computer use a UUID
+//const { v4: uuidv4 } = require('uuid');
+const { machineIdSync } = require('node-machine-id');
+const deviceId = machineIdSync();//uuidv4();
+
+ipcMain.on('login-from-render-token', async (event, datos) => {
+    //her we will save all the information of the software
+    const token=datos.token;
+    const answer=await see_if_exist_this_token_in_the_database_of_the_web(token);
+
+    //we will see if exist a token of activation
+    if(answer.token){
+        let canUpdate=true;
+
+        //now we will see if the user is login from the same computer
+        if (answer.uuid){
+            if(answer.uuid !== deviceId) {
+                answer.message='Este usuario ya tiene un TOKEN registrado en un equipo.'
+                canUpdate=false;
+            }
+        }
+
+        //save the uui in the database
+        if(canUpdate){
+            if(await save_the_uui_of_the_user_in_the_database(token,deviceId)){
+                //now save all the information of the user in the website
+                await initialize_token(token);
+                await create_expiration_date_of_the_token(answer.activation_date);
+                answer.message='Datos actualizados con éxito. Cierra y vuelve a abrir el programa 😄'
+            }
+        }
+    }
+
+    // answer to the server
+    event.reply('answer-from-login-render-token', answer.message);
+});
+
+
+
+
+
+ipcMain.on('login-from-render', async (event, datos) => {
+    //her we will save all the information of the software
+    const email=datos.username;
+    const password=datos.password;
+    const answer=await see_if_exist_this_user_in_the_database_of_the_web(email,password);
+
+    //we will see if exist a token of activation
+    if(answer.token){
+        //now we will see if the user is login from the same computer
+        if (answer.uuid &&  answer.uuid !== deviceId) {
+            answer.message='Este usuario ya tiene un TOKEN registrado en un equipo.'
+        }else{
+            //save the uui in the database
+            if(await save_the_uui_of_the_user_in_the_database(email,deviceId)){
+                //now save all the information of the user in the website
+            }
+        }
+    }
+
+    // answer to the server
+    event.reply('answer-from-login-render', answer.message);
+});
+
+const bcrypt = require('bcrypt'); //this is for encrypt the password of the user
+async function see_if_exist_this_user_in_the_database_of_the_web(email, password) {
+    const query = `
+        SELECT token, type_membresy, password AS hashedPassword, activation_date 
+        FROM users 
+        WHERE email = ?
+    `;
+
+    try {
+        const rows = await pool.query(query, [email]); // pool.query devuelve un array de resultados
+        if (rows.length === 0) {
+            return {token:null,message:'Usuario no encontrado.'};
+        }
+
+        const user = rows[0];
+
+        // Comparar la contraseña con la almacenada en la base de datos
+        const match = await bcrypt.compare(password, user.hashedPassword);
+        if (!match) {
+            return {token:null,message:'Contraseña incorrecta.'};
+        }
+
+        // Verificar si el usuario está activo
+        const oneYearAgo = new Date();
+        oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1); // Restamos 1 año a la fecha actual
+        
+        if (new Date(user.activation_date) < oneYearAgo) {
+            return { token: null, message: 'Suscripción expirada. Por favor, vuelve a activar tu membresía.' };
+        }
+
+        console.log('Usuario autenticado con éxito.');
+        return {
+            token: user.token,
+            type_membresy: user.type_membresy,
+            message:'Usuario autenticado con éxito.'
+        };
+    } catch (err) {
+        console.error('Error al verificar usuario:', err);
+        return {token:null};
+    }
+}
+
+async function see_if_exist_this_token_in_the_database_of_the_web(token) {
+    const query = `
+        SELECT token, type_membresy, activation_date , device_id
+        FROM pagos 
+        WHERE token = ?
+    `;
+
+    try {
+        const rows = await pool.query(query, [token]); // pool.query devuelve un array de resultados
+        if (rows.length === 0) {
+            return {token:null,message:'Token no encontrado.'};
+        }
+
+        const user = rows[0];
+
+        // Verificar si el usuario está activo
+        const oneYearAgo = new Date();
+        oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1); // Restamos 1 año a la fecha actual
+        
+        if (user.activation_date!='0000-00-00' && new Date(user.activation_date) < oneYearAgo) {
+            return { token: null, message: 'Suscripción expirada. Por favor, vuelve a activar tu membresía.' };
+        }
+
+        //see if the activation_date not have date of expiration
+        if (user.activation_date === '0000-00-00') {
+            const suscripcion = new Date(); // Fecha actual
+            suscripcion.setFullYear(suscripcion.getFullYear() + 1); // Sumamos 1 año a la fecha actual
+        
+            // Actualizar la fecha en la base de datos
+            const updateQuery = `
+                UPDATE users 
+                SET activation_date = ?
+                WHERE token = ?
+            `;
+            await pool.query(updateQuery, [suscripcion.toISOString().split('T')[0], user.token]);
+
+            user.activation_date=suscripcion; //update the activation_date;
+        }
+        
+
+        console.log('Usuario autenticado con éxito.');
+        return {
+            token: true,
+            type_membresy: user.type_membresy,
+            uuid:user.device_id,
+            activation_date:user.activation_date,
+            message:'Usuario autenticado con éxito.'
+        };
+    } catch (err) {
+        console.error('Error al verificar usuario:', err);
+        return {token:null};
+    }
+}
+
+
+async function save_the_uui_of_the_user_in_the_database(token, deviceId) {
+    // Consulta para actualizar el device_id del usuario en la base de datos
+    const query = `
+        UPDATE pagos 
+        SET device_id = ? , active = false
+        WHERE token = ?
+    `;
+
+    try {
+        // Ejecuta la consulta de actualización
+        const result = await pool.query(query, [deviceId, token]);
+        return true;
+    } catch (err) {
+        console.error('Error al actualizar el UUID del dispositivo:', err);
+        return false;
+    }
+}
 
 // Manejar la validación del token desde la ventana de activación
 async function verificarTokenActivo() {
@@ -590,44 +853,11 @@ async function actualizarToken() {
     await pool.query(query, [TOKEN]);
 }
 
-ipcMain.on('validar-token', async (event, token) => {
-    const esValido = await actualizarToken(token);
-
-    if (esValido) {
-        event.reply('token-valido', '¡Token activado correctamente!');
-    } else {
-        event.reply('token-invalido', 'Token inválido o ya utilizado. Por favor, verifique e intente de nuevo.');
-    }
-});
-
-const showActivationWindow = () => {
-    activationWindow = new BrowserWindow({
-        width: 400,
-        height: 300,
-        parent: mainWindow,
-        modal: true,
-        webPreferences: {
-            nodeIntegration: true,
-        },
-    });
-
-    // Usar path.join para asegurar la ruta correcta
-    const activationPagePath = path.join(__dirname, 'activation.html');
-
-    // Cargar la página de activación desde la ruta correcta
-    activationWindow.loadFile(activationPagePath);
-
-    // Prevenir que la ventana principal se cargue hasta que el token sea validado
-    activationWindow.on('close', (e) => {
-        if (!tokenValidado) {
-            e.preventDefault();
-        }
-    });
-};
-
 
 // whne Electron is ready, load the web in the screen
 app.on('ready', async () => {
+
+    //this is for update the code from github
     await check_if_exist_updates();
 
     //we will see if the software is a demo
@@ -637,37 +867,24 @@ app.on('ready', async () => {
 
 
         //we will see if the demo expired
-        /*
         if (await is_demo_expired()) {
             dialog.showMessageBoxSync({
                 type: 'warning',
                 title: 'Demo Expirada',
-                message: 'Tu demo de 15 días ha expirado. Por favor, compra la versión completa y sigue creciendo con ED PLUS 🚀.',
+                message: 'Tu demo de 30 días ha expirado. Por favor, compra la versión completa y sigue creciendo con ED PLUS 🚀.',
             });
             app.quit(); // close the application
             return;
         }
-        */
-    }
-
-    //await remove_install_token();
-    initialize_software(); //this is for initialize the token of the software
-    if(await the_software_have_a_token()){
-        // load the windows if the demo no was expired
-        createMainWindow();
     }else{
-        if(await verificarTokenActivo()){
-            await actualizarToken();
-            await initialize_token();
+        //await remove_install_token();
+        if(await verify_membership_of_user()){
+            serverExpress.listen(serverExpress.get('port'), '0.0.0.0', () => {
+                console.log(`Server running on http://${getLocalIP()}:${serverExpress.get('port')}`);
+            });
             createMainWindow();
         }else{
-            dialog.showMessageBoxSync({
-                type: 'warning',
-                title: 'Token Invalido',
-                message: 'Su Token es iunvalido.',
-            });
-            app.quit(); // close the application
-            return;
+            createMainWindowRegister();
         }
     }
 });

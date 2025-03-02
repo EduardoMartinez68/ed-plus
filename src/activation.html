@@ -3,29 +3,208 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Activación de Software</title>
+    <title>Iniciar Sesión en PLUS</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #f0f0f0;
+        }
+        .login-container {
+            width: 20%;
+            margin: 50px auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        input {
+            width: 90%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #1648FF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: rgb(1, 63, 129);
+        }
+        .error {
+            color: red;
+        }
+
+        .img-cion {
+            width: 50%;
+            height: auto;
+            border-radius: 50%;
+        }
+
+        /* 🎡 Estilos para la pantalla de carga */
+        .loading {
+            display: none;
+            font-size: 14px;
+            color: #1648FF;
+        }
+    </style>
 </head>
 <body>
-    <h2>Ingrese su Token de Activación</h2>
-    <input type="text" id="token" placeholder="Ingrese su token aquí">
-    <button id="enviar">Activar</button>
-    <p id="mensaje"></p>
+    <div class="login-container">
+        <img src="public/img/ed-icon.webp" alt="" class="img-cion">
+        <h2>Iniciar Sesión</h2>
+        <hr>
+        
+        <input type="text" id="token" placeholder="TOKEN" />
+        <p class="error" id="error-message"></p>
+        
+        <p class="loading" id="loading-message">Verificando TOKEN... ⏳</p>
+
+        <button id="sendMessage">Activar</button>
+        
+        <br><br>
+        <label for="">¿No tienes un TOKEN? Manda un mensaje a +52 444 304 2129</label>
+    </div>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        document.getElementById('sendMessage').addEventListener('click', () => {
+            const token = document.getElementById('token').value;
+            const errorMessage = document.getElementById('error-message');
+            const loadingMessage = document.getElementById('loading-message');
+
+            // 🔹 Limpiar mensajes previos y mostrar carga
+            errorMessage.innerText = "";
+            loadingMessage.style.display = "block";
+
+            ipcRenderer.send('login-from-render-token', { token });
+        });
+
+        ipcRenderer.on('answer-from-login-render-token', (event, response) => {
+            const errorMessage = document.getElementById('error-message');
+            const loadingMessage = document.getElementById('loading-message');
+
+            // 🔹 Ocultar la pantalla de carga
+            loadingMessage.style.display = "none";
+
+            // 🔹 Mostrar respuesta del backend
+            errorMessage.innerText = response;
+        });
+    </script>
 </body>
-<script>
-    const { ipcRenderer } = require('electron');
-
-    document.getElementById('enviar').addEventListener('click', () => {
-        const token = document.getElementById('token').value;
-        ipcRenderer.send('validar-token', token);
-    });
-
-    // Escuchar la respuesta del proceso principal para mostrar mensajes
-    ipcRenderer.on('token-invalido', (event, mensaje) => {
-        document.getElementById('mensaje').innerText = mensaje;
-    });
-
-    ipcRenderer.on('token-valido', (event, mensaje) => {
-        document.getElementById('mensaje').innerText = mensaje;
-    });
-</script>
 </html>
+
+
+<!-------
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión en PLUS</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #f0f0f0;
+        }
+        .login-container {
+            width: 20%;
+            margin: 50px auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        input {
+            width: 90%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #1648FF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: rgb(1, 63, 129);
+        }
+        .error {
+            color: red;
+        }
+
+        .img-cion {
+            width: 50%;
+            height: auto;
+            border-radius: 50%;
+        }
+
+        /* 🎡 Estilos para la pantalla de carga */
+        .loading {
+            display: none;
+            font-size: 14px;
+            color: #1648FF;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <img src="public/img/ed-icon.webp" alt="" class="img-cion">
+        <h2>Iniciar Sesión</h2>
+        <hr>
+        
+        <input type="email" id="email" placeholder="Email de tu cuenta" />
+        <input type="password" id="password" placeholder="Contraseña" />
+        <p class="error" id="error-message"></p>
+        
+        <p class="loading" id="loading-message">Verificando usuario... ⏳</p>
+
+        <button id="sendMessage">Ingresar</button>
+        
+        <br><br>
+        <a href="https://capacitatkocina.com/web/index.php" target="_blank">¿No tienes una cuenta? Crear una cuenta AHORA</a>
+    </div>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        document.getElementById('sendMessage').addEventListener('click', () => {
+            const username = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('error-message');
+            const loadingMessage = document.getElementById('loading-message');
+
+            // 🔹 Limpiar mensajes previos y mostrar carga
+            errorMessage.innerText = "";
+            loadingMessage.style.display = "block";
+
+            ipcRenderer.send('login-from-render', { username, password });
+        });
+
+        ipcRenderer.on('answer-from-login-render', (event, response) => {
+            const errorMessage = document.getElementById('error-message');
+            const loadingMessage = document.getElementById('loading-message');
+
+            // 🔹 Ocultar la pantalla de carga
+            loadingMessage.style.display = "none";
+
+            // 🔹 Mostrar respuesta del backend
+            errorMessage.innerText = response;
+        });
+    </script>
+</body>
+</html>
+---------->
