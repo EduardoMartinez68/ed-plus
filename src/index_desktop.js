@@ -509,6 +509,7 @@ serverExpress.use(companyName,require('./router/links/CRM'))
 serverExpress.use(companyName,require('./router/links/desktop'))
 serverExpress.use(companyName,require('./router/links/boutique'))
 serverExpress.use(companyName,require('./router/links/cashCut'))
+serverExpress.use(companyName,require('./router/links/orders'))
 
 serverExpress.use(require('./lib/addFrom'));
 

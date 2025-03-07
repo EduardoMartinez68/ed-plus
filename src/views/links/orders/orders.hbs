@@ -42,21 +42,12 @@
         .normal { border-left: 6px solid #28a745; }
         .warning { border-left: 6px solid #ffc107; background-color: #fff3cd; }
         .danger { border-left: 6px solid #dc3545; background-color: #f8d7da; }
-        button { 
-            padding: 10px; 
-            border: none; 
-            border-radius: 5px; 
-            cursor: pointer; 
-            background-color: #007bff; 
-            color: white;
-            transition: background 0.3s;
-            font-size: 14px;
-        }
-        button:hover { background-color: #0056b3; }
+
     </style>
 </head>
 <body>
     <h1>📋 Comandas</h1>
+    <hr>
     <div class="container" id="comandas"></div>
     
     <script>
@@ -80,7 +71,7 @@
                     <h3>Mesa ${comanda.mesa}</h3>
                     <p>${comanda.detalle}</p>
                     <p><strong>⏳ ${comanda.tiempo} min</strong></p>
-                    <button onclick="terminarComanda(${index})">✔ Terminar</button>
+                    <button onclick="terminarComanda(${index},${comanda.mesa})" class="btn-edit">✔ Terminar</button>
                 `;
                 container.appendChild(div);
             });
@@ -91,9 +82,18 @@
             renderComandas();
         }
 
-        function terminarComanda(index) {
-            comandas.splice(index, 1);
-            renderComandas();
+        async function terminarComanda(index,table) {
+            if(await questionMessage(`Entregar el pedido de la mesa ${table} 👀`, '¿Deseas entregar este pedido?')){
+                comandas.splice(index, 1);
+                renderComandas();
+            }
+        }
+
+        async function terminarComanda2(index) {
+            if(await questionMessage('Eliminar comanda 👁️', '¿Deseas cancelar esta comanda?')){
+                comandas.splice(index, 1);
+                renderComandas();
+            }
         }
 
         setInterval(actualizarTiempo, 60000); // Actualiza cada minuto
