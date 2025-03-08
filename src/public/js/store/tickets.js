@@ -1,3 +1,4 @@
+let lastTicket='';
 const selectPrinter=document.getElementById('dataPrinter');
 const apiRouther="http://127.0.0.1:5656/";
 
@@ -20,6 +21,19 @@ const get_all_my_printers=()=>{
 
 
 get_all_my_printers();
+
+print_the_last_ticket = () => {
+    try {
+        var printer = new PrinterEscPos(apiRouther);
+        printer.printerIn(lastTicket);
+        regularMessage('Impresión con éxito 😁', 'El último ticket fue impreso con éxito.');
+        console.log('Contenido del ticket:\n', lastTicket);
+    } catch (error) {
+        console.error('Error al imprimir el ticket:', error);
+        notificationMessageError('👁️ Error al imprimir el Ticket', error);
+    }
+};
+
 
 
 //get the information of the company and of the employee
@@ -96,7 +110,9 @@ const printTicket=(total, receivedMoney,exchange,comment)=>{
         }
         printer.setText('----------------------------\n');
         printer.setText('Gracias por su compra\n\n');
-    
+        
+        lastTicket = ticketContent; //update the last ticket
+
         // Enviar a la impresora
         printer.printerIn(selectPrinter.value);
     
@@ -125,3 +141,4 @@ function getCurrentDateTime() {
     // Formatear en DD/MM/YYYY HH:mm:ss
     return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
 }
+

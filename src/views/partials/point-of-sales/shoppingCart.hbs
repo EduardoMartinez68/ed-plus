@@ -36,9 +36,9 @@
                             onclick="select_customer('{{id_companies}}')"><i class="fi-icon fi-sr-following"></i>
                             Buscar Cliente</a></li>
                     --->
-                    <li class="li-link"><a class="dropdown-item" onclick="select_customer('{{id_companies}}')"><i class="fi-icon fi-sr-following"></i> Buscar Cliente</a></li>
-                    <li class="li-link"><a class="dropdown-item" onclick="cash_movement('{{id}}','{{id_branches}}')"><i
-                                class="fi-icon fi-sr-hand-holding-usd"></i> Movimiento de caja</a></li>
+                    <li class="li-link"><a class="dropdown-item" onclick="print_the_last_ticket()">Imprimir Ultimo Ticket</a></li>
+                    <li class="li-link"><a class="dropdown-item" onclick="select_customer('{{id_companies}}')">Buscar Cliente</a></li>
+                    <li class="li-link"><a class="dropdown-item" onclick="cash_movement('{{id}}','{{id_branches}}')">Movimiento de caja</a></li>
                     {{/each}}
                 </ul>
             </div>
@@ -104,4 +104,30 @@ async function select_customer(idCompany) {
         errorMessage('UPS 😅', 'El cliente no fue encontrado. Por favor busque de nuevo');
     }
 }
+
+async function edit_client_car(email) {
+    return new Promise((resolve, reject) => {
+        Swal.fire({
+            title: 'Selecciona al cliente para esta compra.',
+            html:
+                `
+            <img src="https://cdn-icons-png.flaticon.com/512/8339/8339939.png" class="img-message"><br>
+            <label>Escribe el email de el usuario</label>
+            <input id="email" type="text" class="swal2-input" placeholder="Escribe el correo electrónico del cliente." value=${email}>
+            `,
+            focusConfirm: false,
+            showCancelButton: true,
+            confirmButtonText: 'search',
+            confirmButtonColor: 'rgb(25, 135, 84)',
+            cancelButtonColor: 'rgb(220, 53, 69)',
+            preConfirm: () => {
+                const emailInput = Swal.getPopup().querySelector('#email').value;
+                const data = [emailInput];
+                resolve(data);
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+        });
+    });
+}
+
 </script>

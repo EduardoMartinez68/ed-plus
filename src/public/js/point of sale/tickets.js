@@ -1,6 +1,6 @@
 const selectPrinter=document.getElementById('dataPrinter');
 const apiRouther="http://127.0.0.1:5656/";
-
+let lastTicket='';
 const get_all_my_printers=()=>{
     PrinterEscPos.getPrinters().then(response=>{
         if(response.status=='OK'){
@@ -21,14 +21,45 @@ const get_all_my_printers=()=>{
 
 get_all_my_printers();
 
+async function print_the_last_ticket(){
+    try {
+        // we will see if the user would like not print ticket
+        const selectedPrinterValue = selectPrinter.value;
+        if (selectedPrinterValue === "") {
+            notificationMessageError('👁️ Error al imprimir el Ticket', 'Selecciona o conecta una impresora.');
+        }
+
+        var printer = new PrinterEscPos(apiRouther);
+        await printer.printerIn(lastTicket);
+        regularMessage('Impresión con éxito 😁', 'El último ticket fue impreso con éxito.');
+        console.log('TICKET')
+        console.log(lastTicket)
+    } catch (error) {
+        console.error('Error al imprimir el ticket:', error);
+
+        // Detectar error de conexión
+        if (error.message.includes("Failed to fetch") || error.message.includes("ERR_CONNECTION_REFUSED")) {
+            notificationMessageError('🚨 Error de conexión', 'No se pudo conectar con la impresora. Verifica que el servidor de impresión está activo.');
+        } else {
+            notificationMessageError('👁️ Error al imprimir el Ticket', error);
+        }
+    }
+};
+
 
 //get the information of the company and of the employee
 //const urlIconCompany=document.getElementById('path-icon-company').value;
 const companyName=document.getElementById('name-company').value;
 
-const printTicket=(total, receivedMoney,exchange,comment)=>{
+const printTicket=async(total, receivedMoney,exchange,comment)=>{
     try {
         
+        // we will see if the user would like not print ticket
+        const selectedPrinterValue = selectPrinter.value;
+        if (selectedPrinterValue === "") {
+            return; 
+        }
+
         const employeeName=document.getElementById('employee-name').textContent;
         const dateTicket=getCurrentDateTime();
 
@@ -95,7 +126,7 @@ const printTicket=(total, receivedMoney,exchange,comment)=>{
         printer.setText('Gracias por su compra\n\n');
     
         // Enviar a la impresora
-        printer.printerIn(selectPrinter.value);
+        await printer.printerIn(selectPrinter.value);
     
         // Imprimir el contenido del ticket en consola
         console.log('Contenido del ticket:\n', ticketContent);

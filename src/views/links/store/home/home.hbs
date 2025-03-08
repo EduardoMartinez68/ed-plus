@@ -11,6 +11,8 @@
 {{/each}}
 <h6 id="employee-name" style="display: none;">{{user.first_name}} {{user.second_name}} {{user.last_name}}</h6>
 
+
+
 <!--this is the container of the point of sale-->
 <div class="container-point-of-sales">
     <!-- menu (left) -->
@@ -24,16 +26,19 @@
 {{>point-of-sales/messagePopSales}}
 {{>point-of-sales/weightScale}}
 
+
+<!---js for print tickets--->
+<script src="/js/point of sale/JQuery.js"></script>
+<script src="/js/point of sale/escops.js"></script>
+<script src="/js/point of sale/tickets.js"></script>
+
 <!--SHOOPING CART--->
 <script src="/js/point of sale/shoppingCart.js"></script>
 <script src="/js/point of sale/editCantOfProductShoppingCart.js"></script>
 <script src="/js/point of sale/searchMenu.js"></script>
 
 
-<!---js for print tickets--->
-<script src="/js/point of sale/JQuery.js"></script>
-<script src="/js/point of sale/escops.js"></script>
-<script src="/js/point of sale/tickets.js"></script>
+
 
 
 <!------------------------->

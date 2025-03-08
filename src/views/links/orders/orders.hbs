@@ -1,103 +1,150 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comandas</title>
-    <style>
-        body { 
-            font-family: 'Arial', sans-serif; 
-            background-color: #f4f4f4; 
-            margin: 0; 
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 24px;
-        }
-        .container { 
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 15px;
-            width: 100%;
-            max-width: 1100px;
-        }
-        .comanda { 
-            padding: 20px; 
-            border-radius: 10px; 
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            background-color: white;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: transform 0.2s ease-in-out;
-        }
-        .comanda:hover {
-            transform: scale(1.03);
-        }
-        .normal { border-left: 6px solid #28a745; }
-        .warning { border-left: 6px solid #ffc107; background-color: #fff3cd; }
-        .danger { border-left: 6px solid #dc3545; background-color: #f8d7da; }
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
 
-    </style>
-</head>
-<body>
-    <h1>📋 Comandas</h1>
-    <hr>
-    <div class="container" id="comandas"></div>
-    
-    <script>
-        let comandas = [
-            { id: 1, mesa: 5, detalle: "Pizza y refresco", tiempo: 0 },
-            { id: 2, mesa: 2, detalle: "Ensalada y jugo", tiempo: 0 },
-            { id: 3, mesa: 8, detalle: "Hamburguesa y papas", tiempo: 0 }
-        ];
+    h1 {
+        color: #333;
+        margin-bottom: 20px;
+        font-size: 24px;
+    }
 
-        function renderComandas() {
-            const container = document.getElementById("comandas");
-            container.innerHTML = "";
-            comandas.forEach((comanda, index) => {
-                let color = "normal";
-                if (comanda.tiempo >= 5) color = "warning";
-                if (comanda.tiempo >= 10) color = "danger";
+    .container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 15px;
+        width: 100%;
+        max-width: 1100px;
+    }
 
-                const div = document.createElement("div");
-                div.className = `comanda ${color}`;
-                div.innerHTML = `
+    .comanda {
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        background-color: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: transform 0.2s ease-in-out;
+    }
+
+    .comanda:hover {
+        transform: scale(1.03);
+    }
+
+    .normal {
+        border-left: 6px solid #28a745;
+    }
+
+    .warning {
+        border-left: 6px solid #ffc107;
+        background-color: #fff3cd;
+    }
+
+    .danger {
+        border-left: 6px solid #dc3545;
+        background-color: #f8d7da;
+    }
+</style>
+
+<h1>📋 Comandas</h1>
+<hr>
+<div class="container" id="comandas"></div>
+
+<script>
+    let comandas = [
+        { id: 1, mesa: 5, detalle: "Pizza y refresco", tiempo: 0 },
+        { id: 2, mesa: 2, detalle: "Ensalada y jugo", tiempo: 0 },
+        { id: 3, mesa: 8, detalle: "Hamburguesa y papas", tiempo: 0 }
+    ];
+
+    function renderComandas() {
+        const container = document.getElementById("comandas");
+        container.innerHTML = "";
+        comandas.forEach((comanda, index) => {
+            let color = "normal";
+            if (comanda.tiempo >= 5) color = "warning";
+            if (comanda.tiempo >= 10) color = "danger";
+
+            const div = document.createElement("div");
+            div.className = `comanda ${color}`;
+            div.innerHTML = `
                     <h3>Mesa ${comanda.mesa}</h3>
                     <p>${comanda.detalle}</p>
                     <p><strong>⏳ ${comanda.tiempo} min</strong></p>
                     <button onclick="terminarComanda(${index},${comanda.mesa})" class="btn-edit">✔ Terminar</button>
                 `;
-                container.appendChild(div);
-            });
-        }
+            container.appendChild(div);
+        });
+    }
 
-        function actualizarTiempo() {
-            comandas.forEach(comanda => comanda.tiempo++);
+    function actualizarTiempo() {
+        comandas.forEach(comanda => comanda.tiempo++);
+        renderComandas();
+    }
+
+    async function terminarComanda(index, table) {
+        if (await questionMessage(`Entregar el pedido de la mesa ${table} 👀`, '¿Deseas entregar este pedido?')) {
+            comandas.splice(index, 1);
+            renderComandas();
+            notificationMessage(`Pedido entregado ❤️`, `Lleva el pedido a la mesa ${table}`)
+        }
+    }
+
+    async function terminarComanda2(index) {
+        if (await questionMessage('Eliminar comanda 👁️', '¿Deseas cancelar esta comanda?')) {
+            comandas.splice(index, 1);
             renderComandas();
         }
+    }
 
-        async function terminarComanda(index,table) {
-            if(await questionMessage(`Entregar el pedido de la mesa ${table} 👀`, '¿Deseas entregar este pedido?')){
-                comandas.splice(index, 1);
-                renderComandas();
-            }
-        }
+    setInterval(actualizarTiempo, 60000); // Actualiza cada minuto
+    renderComandas();
+</script>
+<script>
+const socket = io('http://localhost:4000');
 
-        async function terminarComanda2(index) {
-            if(await questionMessage('Eliminar comanda 👁️', '¿Deseas cancelar esta comanda?')){
-                comandas.splice(index, 1);
-                renderComandas();
-            }
-        }
+// Cuando se recibe un mensaje del servidor
+socket.onmessage = function(event) {
+    const comandas = JSON.parse(event.data);
+    renderComandas(comandas);
+};
 
-        setInterval(actualizarTiempo, 60000); // Actualiza cada minuto
-        renderComandas();
-    </script>
-</body>
-</html>
+// Función para renderizar las comandas en la UI
+function renderComandas(comandas) {
+    const container = document.getElementById("comandas");
+    container.innerHTML = "";
+    comandas.forEach((comanda, index) => {
+        let color = "normal";
+        if (comanda.tiempo >= 5) color = "warning";
+        if (comanda.tiempo >= 10) color = "danger";
+
+        const div = document.createElement("div");
+        div.className = `comanda ${color}`;
+        div.innerHTML = `
+                <h3>Mesa ${comanda.mesa}</h3>
+                <p>${comanda.detalle}</p>
+                <p><strong>⏳ ${comanda.tiempo} min</strong></p>
+                <button onclick="terminarComanda(${index},${comanda.mesa})" class="btn-edit">✔ Terminar</button>
+            `;
+        container.appendChild(div);
+    });
+}
+
+// Enviar nueva comanda al servidor cuando un cajero la agregue
+function agregarComanda() {
+    const nuevaComanda = {
+        mesa: 4,
+        detalle: "Tacos y agua",
+        tiempo: 0
+    };
+
+    socket.send(JSON.stringify(nuevaComanda)); // Enviar al servidor
+}
+</script>

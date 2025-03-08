@@ -365,31 +365,6 @@ async function edit_cant_car(title, cant) {
     });
 }
 
-async function edit_client_car(email) {
-    return new Promise((resolve, reject) => {
-        Swal.fire({
-            title: 'Select the client for this buy',
-            html:
-                `
-            <img src="https://cdn-icons-png.flaticon.com/512/8339/8339939.png" class="img-message"><br>
-            <label>Escribe el email de el usuario</label>
-            <input id="email" type="text" class="swal2-input" placeholder="write the email of the client" value=${email}>
-            `,
-            focusConfirm: false,
-            showCancelButton: true,
-            confirmButtonText: 'search',
-            confirmButtonColor: 'rgb(25, 135, 84)',
-            cancelButtonColor: 'rgb(220, 53, 69)',
-            preConfirm: () => {
-                const emailInput = Swal.getPopup().querySelector('#email').value;
-                const data = [emailInput];
-                resolve(data);
-            },
-            allowOutsideClick: () => !Swal.isLoading()
-        });
-    });
-}
-
 async function edit_price_car(title, price1, price2, price3) {
     return new Promise((resolve, reject) => {
         Swal.fire({
@@ -682,32 +657,6 @@ async function show_message_buy_car(title, customer, total, typeOfCurrency) {
             customClass: {
                 content: 'my-content-class'
             }
-        });
-    });
-}
-
-async function cash_movement_message() {
-    return new Promise((resolve, reject) => {
-        Swal.fire({
-            title: 'Movimiento de caja',
-            html:
-                '<img src="https://cdn-icons-png.flaticon.com/512/6149/6149018.png" class="img-message">' +
-                '<br> <label>Dinero ingresado o retirado *</label>' +
-                '<input id="money" class="swal2-input" placeholder="Dinero que movere">' +
-                '<br><br> <label>Motivo del movimiento de caja *</label>' +
-                '<br> <textarea class="form-control" id="comment" rows="3" placeholder="Comentario"></textarea>',
-            focusConfirm: false,
-            showCancelButton: true,
-            confirmButtonText: 'Save',
-            confirmButtonColor: 'rgb(25, 135, 84)',
-            cancelButtonColor: 'rgb(220, 53, 69)',
-            preConfirm: () => {
-                const cash = Swal.getPopup().querySelector('#money').value;
-                const comment = Swal.getPopup().querySelector('#comment').value;
-                const data = [cash, comment];
-                resolve(data);
-            },
-            allowOutsideClick: () => !Swal.isLoading()
         });
     });
 }

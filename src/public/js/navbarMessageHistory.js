@@ -12,10 +12,12 @@ chatIcon.addEventListener('click', () => {
         chatHistory.style.display = 'none';
     } else {
         chatHistory.style.display = 'block';
+        /*
         //we will see if the user have pending messages, if not have pending messages we show the icon red
         if (iconsMessages.classList.contains('alert-message')) {
             iconsMessages.classList.remove('alert-message');
         }
+        */
     }
 });
 
@@ -24,6 +26,7 @@ function is_valid_email(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
 }
+
 /**
      socket.on('privateMessage', (dataMessage) => {
         //we will see if the user have pending messages, if not have pending messages we show the icon red
@@ -42,7 +45,8 @@ function is_valid_email(email) {
     in this code, We manage the inputs and outputs of the message and notification for the user. We will socket for read the
     the connection of the message in the users.
 */
-document.addEventListener('DOMContentLoaded', () => {
+
+//document.addEventListener('DOMContentLoaded', () => {
     //get the icon of new message for on or off after
     const iconsMessages=document.getElementById('icons-message-history');
 
@@ -50,7 +54,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const userId = document.getElementById('userIdChat').value;
     const idCompanyPackService=document.getElementById('id-company-ed-clouded').value;
 
-    if(userId && idCompanyPackService){
+
+    if(!(userId && idCompanyPackService)){
+        infoMessagePack('Oh oh... 😅','Ups, parece que alcanzaste tu límite de dispositivos conectados. Por favor, actualiza tu membresía.')
+    }
+
+    //if(userId && idCompanyPackService){
         const socket = io('http://localhost:4000');
         socket.emit('registerUser', userId,idCompanyPackService); //send information to the server for save the socket of the user
 
@@ -63,10 +72,14 @@ document.addEventListener('DOMContentLoaded', () => {
         //-----------------------------------NOTIFICATIONS------------------------------
         // we listen the private message of the user
         socket.on('privateNotification', (dataNotification) => {
+            /*
             //we will see if the user have pending a notification, if not have pending notifications we not show the icon red
             if (!iconsMessages.classList.contains('alert-message')) {
                 iconsMessages.classList.add('alert-message');
             }
+            */
+            console.log('dataNotification')
+            console.log(dataNotification)
 
             //we will see read all the notification for add the UI
             create_new_notification(dataNotification.from, dataNotification.message);
@@ -199,104 +212,12 @@ document.addEventListener('DOMContentLoaded', () => {
             audio.play();
         }
 
-        function show_send_message_to_user(){
-            var containerHtml = `
-            <style>
-                .swal2-textarea {
-                    width: 50%;
-                    min-height: 100px;
-                    max-height: 300px;
-                    background-color: #f9f9f9;
-                    outline: none;
-                    transition: border-color 0.3s ease-in-out;
-                }
-                .swal2-container {
-                    font-family: Arial, sans-serif;
-                }
-                .form-group {
-                    margin-bottom: 15px;
-                }
-                .email-flask-input, .email-flask-select {
-                    border-radius: 5px;
-                    border: 1px solid #ced4da;
-                    padding: 8px;
-                    width: 100%;
-                    font-size: 14px;
-                }
-                .email-flask-input:focus, .email-flask-select:focus {
-                    border-color: #80bdff;
-                    outline: none;
-                    box-shadow: 0 0 5px rgba(128, 189, 255, 0.5);
-                }
-            </style>
-
-            <div class="row">
-                <div class="col-3">
-                    <label for="email">Para: </label>
-                </div>
-                <div class="col">
-                    <input type="email" class="email-flask-input" id="email-to-message" name="email" placeholder="Introduce el email para enviar el mensaje" required>
-                </div>
-            </div>
-            <hr>
-            <div class="row">
-                <div class="col">
-                    <div class="form-group">
-                        <label for="grades">Mensaje</label>
-                        <textarea class="form-control" id="text-to-message" rows="3" name="notes" placeholder="Escribe un mensaje"></textarea>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-success" onclick="send_message_to_user()">Enviar mensaje <i class="fi fi-rs-paper-plane"></i></button>
-                    </div>
-                </div>
-            </div>
-            `;
-
-            return Swal.fire({
-                title: 'Enviar mensaje 💬',
-                html: containerHtml,
-                focusConfirm: false,
-                showConfirmButton: false,
-                showCancelButton: false,
-                allowOutsideClick: () => !Swal.isLoading()
-            }).then((result) => {
-                // Espera que el usuario envíe el mensaje
-                return new Promise((resolve) => {
-                    document.querySelector('.send-button').addEventListener('click', () => {
-                        const message = document.getElementById('message').value;
-                        resolve(message);
-                    });
-                });
-            });
-        }
-
-        function send_message_to_user(){
-            //we will see if exist the email and the message
-            const toUserId = document.getElementById('email-to-message').value;
-            const message=document.getElementById('text-to-message').value;
-
-            //we will see if the email is success
-            if(toUserId && is_valid_email(toUserId)){
-                if(message){
-                    socket.emit('sendMessageToUser', { userId, toUserId , message });
-                }else{
-                    warningMessage('ERROR','Necesitamos que ingreses un mensaje valido 👁️')
-                }
-            }
-            else{
-                warningMessage('ERROR','Necesitamos que ingreses un email valido 👁️')
-            }
-        }
-    }else{
-        infoMessagePack('Oh oh... 😅','Ups, parece que alcanzaste tu límite de dispositivos conectados. Por favor, actualiza tu membresía.')
-    }
+    //}else{
+        //infoMessagePack('Oh oh... 😅','Ups, parece que alcanzaste tu límite de dispositivos conectados. Por favor, actualiza tu membresía.')
+    //}
 
     update_view_all_messages();
-
+    
     function infoMessagePack(title, text) {
         Swal.fire({
             title: title,
@@ -309,4 +230,100 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-});
+
+//});
+
+    /**** */
+    function show_send_message_to_user(){
+        var containerHtml = `
+        <style>
+            .swal2-textarea {
+                width: 50%;
+                min-height: 100px;
+                max-height: 300px;
+                background-color: #f9f9f9;
+                outline: none;
+                transition: border-color 0.3s ease-in-out;
+            }
+            .swal2-container {
+                font-family: Arial, sans-serif;
+            }
+            .form-group {
+                margin-bottom: 15px;
+            }
+            .email-flask-input, .email-flask-select {
+                border-radius: 5px;
+                border: 1px solid #ced4da;
+                padding: 8px;
+                width: 100%;
+                font-size: 14px;
+            }
+            .email-flask-input:focus, .email-flask-select:focus {
+                border-color: #80bdff;
+                outline: none;
+                box-shadow: 0 0 5px rgba(128, 189, 255, 0.5);
+            }
+        </style>
+    
+        <div class="row">
+            <div class="col-3">
+                <label for="email">Para: </label>
+            </div>
+            <div class="col">
+                <input type="email" class="email-flask-input" id="email-to-message" name="email" placeholder="Introduce el email para enviar el mensaje" required>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label for="grades">Mensaje</label>
+                    <textarea class="form-control" id="text-to-message" rows="3" name="notes" placeholder="Escribe un mensaje"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <button type="submit" class="btn btn-success" onclick="send_message_to_user()">Enviar mensaje <i class="fi fi-rs-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+        `;
+    
+        return Swal.fire({
+            title: 'Enviar mensaje 💬',
+            html: containerHtml,
+            focusConfirm: false,
+            showConfirmButton: false,
+            showCancelButton: false,
+            allowOutsideClick: () => !Swal.isLoading()
+        }).then((result) => {
+            // Espera que el usuario envíe el mensaje
+            return new Promise((resolve) => {
+                document.querySelector('.send-button').addEventListener('click', () => {
+                    const message = document.getElementById('message').value;
+                    resolve(message);
+                });
+            });
+        });
+    }
+    
+    function send_message_to_user(){
+        //we will see if exist the email and the message
+        const userId = document.getElementById('userIdChat').value;
+        const toUserId = document.getElementById('email-to-message').value;
+        const message=document.getElementById('text-to-message').value;
+    
+        //we will see if the email is success
+        if(toUserId && is_valid_email(toUserId)){
+            if(message){
+                socket.emit('sendMessageToUser', { userId, toUserId , message });
+            }else{
+                warningMessage('ERROR','Necesitamos que ingreses un mensaje valido 👁️')
+            }
+        }
+        else{
+            warningMessage('ERROR','Necesitamos que ingreses un email valido 👁️')
+        }
+    }

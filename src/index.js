@@ -16,7 +16,7 @@ const path=require('path');
 //ReCAPTCHA of Google
 const { RecaptchaV2 } = require('express-recaptcha');
 //*------------------initializations-----------------------------------------//
-const serverExpress =express();
+const serverExpress=express();
 
 require('./lib/passport');
 require('./lib/editFrom');
@@ -103,17 +103,22 @@ serverExpress.use((req,res,next)=>{
 
 //*-----------------------------------------chat online-----------------------------------------//
 const http = require('http');
-const server = http.createServer(serverExpress);
+const serverSocket = http.createServer(serverExpress);
 const { Server } = require("socket.io");
-const io = new Server(server);
+const io = new Server(serverSocket);
 const users = {}; // object for  mapear users IDs with Socket IDs
 const connectedEmployees = {}; //this is for that we know how many employees is connection
 const companyLimitsCache = {}; //this is for save the limit of employees for company. This is for that we not need to search in the database
-
+const orderKitchen = {};
 const chat = require('./services/chat.js');
 
-io.on('connection', async(socket) =>{
+serverSocket.listen(serverExpress.get('port'), () => {
+    console.log(`Server running on port ${serverExpress.get('port')}`);
+});
 
+
+io.on('connection', async(socket) =>{
+    console.log('Un usuario se ha conectado');
     //*-----------------------------------LOGIN-----------------------------------
     // save the relation with the user and his socket ID
     socket.on('registerUser', async(userId,companyId) => {
@@ -241,7 +246,7 @@ io.on('connection', async(socket) =>{
         if(canSend){
             // get the data of the  sender (user that send the message)
             const chatId = await chat.create_new_chat(userId, toUserId); //Method to obtain or create a chat between both users
-
+            
             //we will see if can save the new message in the database
             if(await chat.send_new_message(chatId, userId, message)){
                 //if the user is connection send the notification 
@@ -288,6 +293,18 @@ io.on('connection', async(socket) =>{
         socket.broadcast.emit('newNotification', notification); 
     });
 
+
+    //*-----------------------------------ORDERS-----------------------------------
+    // Recibir nuevas comandas del cliente
+    socket.on('sendAllTheOrders', message => {
+        socket.emit('getAllTheOrders', {orderKitchen});
+    });
+
+    socket.on('saveANewOrder', order => {
+        const newOrder = JSON.parse(order);
+        newOrder.id = orderKitchen.length + 1; // Asigna un nuevo ID
+        orderKitchen.push(newOrder);
+    });
 });
 
 //*-----------------------------------------------------------routes-----------------------------------------//

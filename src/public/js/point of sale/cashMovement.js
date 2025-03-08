@@ -11,6 +11,32 @@ async function cash_movement(idEmployee,idBranch){
     }
 }
 
+async function cash_movement_message() {
+    return new Promise((resolve, reject) => {
+        Swal.fire({
+            title: 'Movimiento de caja',
+            html:
+                '<img src="https://cdn-icons-png.flaticon.com/512/6149/6149018.png" class="img-message">' +
+                '<br><label>Dinero ingresado o retirado *</label>' +
+                '<input id="money" class="swal2-input" placeholder="Dinero que movere">' +
+                '<br><br> <label>Motivo del movimiento de caja *</label>' +
+                '<br> <textarea class="form-control" id="comment" rows="3" placeholder="Comentario"></textarea>',
+            focusConfirm: false,
+            showCancelButton: true,
+            confirmButtonText: 'Save',
+            confirmButtonColor: 'rgb(25, 135, 84)',
+            cancelButtonColor: 'rgb(220, 53, 69)',
+            preConfirm: () => {
+                const cash = Swal.getPopup().querySelector('#money').value;
+                const comment = Swal.getPopup().querySelector('#comment').value;
+                const data = [cash, comment];
+                resolve(data);
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+        });
+    });
+}
+
 function the_employee_entered_all_the_data(data){
     //0 is the cash, 1 is the comment 
     return data[0]!='' && data[1]!='';
