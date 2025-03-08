@@ -1,3 +1,9 @@
 node_modules
 .env
 PLUS Punto de venta.zip
+
+# Ignorar todo el contenido dentro de build/installers
+build/installers/*
+
+# Ignorar todo el contenido dentro de dist
+dist/*

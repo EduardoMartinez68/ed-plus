@@ -11,6 +11,14 @@
     "appId": "com.ed_software_developer.id",
     "productName": "PLUS Punto de Venta",
     "copyright": "© 2025 {ED} Software Developer",
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "script": "build/installer.nsi"
+    },
     "files": [
       "**/*",
       "node_modules/**/*"
