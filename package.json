@@ -1,18 +1,23 @@
 {
-  "name": "web",
+  "name": "PLUS",
   "version": "1.0.0",
   "description": "",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js",
+    "build": "electron-builder"
   },
   "build": {
     "appId": "com.ed_software_developer.id",
     "productName": "PLUS Punto de Venta",
+    "icon": "build/icon.ico",
     "copyright": "© 2025 {ED} Software Developer",
     "win": {
-      "target": "nsis"
+      "target": [
+        "nsis",
+        "portable"
+      ]
     },
     "nsis": {
       "oneClick": false,
@@ -20,7 +25,7 @@
       "script": "build/installer.nsi"
     },
     "files": [
-      "**/*",
+      "dist/**/*", 
       "node_modules/**/*"
     ],
     "directories": {
