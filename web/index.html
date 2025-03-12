@@ -3,101 +3,317 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comandas</title>
+    <title>Diagrama de Nodos con GoJS</title>
+    <script src="https://unpkg.com/gojs/release/go.js"></script>
     <style>
-        body { 
-            font-family: 'Arial', sans-serif; 
-            background-color: #f4f4f4; 
-            margin: 0; 
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
         }
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 24px;
-        }
-        .container { 
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 15px;
-            width: 100%;
-            max-width: 1100px;
-        }
-        .comanda { 
-            padding: 20px; 
-            border-radius: 10px; 
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            background-color: white;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: transform 0.2s ease-in-out;
-        }
-        .comanda:hover {
-            transform: scale(1.03);
-        }
-        .normal { border-left: 6px solid #28a745; }
-        .warning { border-left: 6px solid #ffc107; background-color: #fff3cd; }
-        .danger { border-left: 6px solid #dc3545; background-color: #f8d7da; }
-        button { 
-            padding: 10px; 
-            border: none; 
-            border-radius: 5px; 
-            cursor: pointer; 
-            background-color: #007bff; 
+        header {
+            background-color: #2C3E50;
             color: white;
-            transition: background 0.3s;
-            font-size: 14px;
+            padding: 20px 0;
+            text-align: center;
+            font-size: 24px;
+            letter-spacing: 1px;
         }
-        button:hover { background-color: #0056b3; }
+        #myDiagramDiv {
+            width: 100%;
+            height: 600px;
+            border: 2px solid #ddd;
+            margin-top: 30px;
+            background-color: #F6F6F6;
+            border-radius: 8px;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px;
+        }
+        .add-node-btn, .delete-node-btn, .edit-node-btn {
+            background-color: #1649FF;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 16px;
+            margin: 0 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .add-node-btn:hover, .delete-node-btn:hover, .edit-node-btn:hover {
+            background-color: #113bd1;
+            transform: translateY(-2px);
+        }
+        .add-node-btn:active, .delete-node-btn:active, .edit-node-btn:active {
+            background-color: #1649FF;
+            transform: translateY(2px);
+        }
+        /* Estilo del formulario emergente */
+        #nodeForm {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 9999;
+            width: 300px;
+            text-align: center;
+        }
+        #nodeForm input {
+            padding: 12px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            width: 100%;
+            box-sizing: border-box;
+            transition: border 0.3s ease;
+        }
+        #nodeForm input:focus {
+            border: 1px solid #113bd1;
+        }
+        #nodeForm button {
+            padding: 12px 24px;
+            background-color: #1649FF;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        #nodeForm button:hover {
+            background-color: #1238c0;
+        }
+        /* Fondo del modal */
+        #overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.3);
+            z-index: 9998;
+        }
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 22px;
+            font-weight: bold;
+            color: #aaa;
+            cursor: pointer;
+        }
+        .close-btn:hover {
+            color: #333;
+        }
+        .node {
+            font-size: 14px;
+            padding: 12px;
+            background-color: #FFFFFF;
+            color: #6F6F6F;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+        .node:hover {
+            background-color: #1649FF;
+            transform: scale(1.05);
+        }
+        .node.selected {
+            background-color: #e74c3c !important;
+            border: 2px solid #c0392b;
+        }
+        .node .go-gojs-expand {
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 5px;
+            transition: transform 0.3s ease;
+        }
+        .node .go-gojs-expand:hover {
+            transform: scale(1.2);
+        }
     </style>
 </head>
 <body>
-    <h1>📋 Comandas</h1>
-    <div class="container" id="comandas"></div>
+<header>Diagrama de Nodos Interactivo</header>
+
+<div class="button-container">
+    <button class="add-node-btn" onclick="showForm()">Agregar Nodo Hijo</button>
+    <button class="delete-node-btn" onclick="deleteNode()">Eliminar Nodo</button>
+    <button class="edit-node-btn" onclick="editNode()">Editar Nodo</button>
+</div>
+
+<!-- Fondo y formulario emergente -->
+<div id="overlay"></div>
+<div id="nodeForm">
+    <span class="close-btn" onclick="closeForm()">&times;</span>
+    <input type="text" id="nodeName" placeholder="Nombre del Nodo" />
+    <button onclick="addChildNode()">Agregar Nodo</button>
+</div>
+
+<div id="myDiagramDiv"></div>
+
+<script>
+    var selectedNode = null; // Variable para almacenar el nodo seleccionado
+    var nodeIdCounter = 8; // Contador para generar nuevos IDs de nodo
     
-    <script>
-        let comandas = [
-            { id: 1, mesa: 5, detalle: "Pizza y refresco", tiempo: 0 },
-            { id: 2, mesa: 2, detalle: "Ensalada y jugo", tiempo: 0 },
-            { id: 3, mesa: 8, detalle: "Hamburguesa y papas", tiempo: 0 }
+    // Crea el diagrama de GoJS
+    function init() {
+        var $ = go.GraphObject.make;
+
+        var myDiagram = $(go.Diagram, "myDiagramDiv", {
+            "undoManager.isEnabled": true, // Habilita deshacer y rehacer
+            layout: $(go.TreeLayout, { angle: 0, layerSpacing: 35 }), // Configura el layout de izquierda a derecha
+            "click": function(e) {
+                var part = e.subject.part;
+                if (part instanceof go.Node) {
+                    selectNode(part);
+                }
+            }
+        });
+
+        // Definimos cómo deben verse los nodos
+        myDiagram.nodeTemplate =
+            $(go.Node, "Auto", {
+                    click: function(e, obj) {
+                        //selectNode(obj);
+                    }
+                },
+                $(go.Shape, "RoundedRectangle", {
+                    fill: "#FFFFFF", // Color de fondo
+                    stroke: "#DDDDDD",  // Borde gris
+                    strokeWidth: 2,
+                }),
+                $(go.TextBlock, {
+                    margin: 10,
+                    font: "14px sans-serif",
+                    stroke: "#464646"
+                }, new go.Binding("text"))
+            );
+
+        // Definir la conexión entre los nodos con flechas sutiles
+        myDiagram.linkTemplate =
+            $(go.Link, {
+                    routing: go.Link.Orthogonal,
+                    corner: 15,
+                    toShortLength: 1
+                },
+                $(go.Shape, { strokeWidth: 1, stroke: "#BDC3C7" }), // Flecha gris suave
+                $(go.Shape, { toArrow: "Standard", fill: "#BDC3C7" }) // Flecha al final
+            );
+
+        // Definir los datos de los nodos y sus conexiones iniciales
+        var nodeDataArray = [
+            { key: 1, text: "Usuario Contacta" },
+            { key: 2, text: "Atención al Cliente" },
+            { key: 3, text: "Comprar Algo" },
+            { key: 4, text: "Reembolso" },
+            { key: 5, text: "Responder Pregunta" },
+            { key: 6, text: "Ayuda con Producto" },
+            { key: 7, text: "Devolver Producto" }
         ];
 
-        function renderComandas() {
-            const container = document.getElementById("comandas");
-            container.innerHTML = "";
-            comandas.forEach((comanda, index) => {
-                let color = "normal";
-                if (comanda.tiempo >= 5) color = "warning";
-                if (comanda.tiempo >= 10) color = "danger";
+        var linkDataArray = [
+            { from: 1, to: 2 },
+            { from: 1, to: 3 },
+            { from: 1, to: 4 },
+            { from: 2, to: 5 },
+            { from: 3, to: 6 },
+            { from: 4, to: 7 },
+            { from: 3, to: 5 },  // Ejemplo de conexión entre nodos de diferentes filas
+        ];
 
-                const div = document.createElement("div");
-                div.className = `comanda ${color}`;
-                div.innerHTML = `
-                    <h3>Mesa ${comanda.mesa}</h3>
-                    <p>${comanda.detalle}</p>
-                    <p><strong>⏳ ${comanda.tiempo} min</strong></p>
-                    <button onclick="terminarComanda(${index})">✔ Terminar</button>
-                `;
-                container.appendChild(div);
+        // Asignar los datos al diagrama
+        myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
+
+        myDiagram.addDiagramListener("ChangedSelection", function(e) {
+            nodes = myDiagram.selection;
+            nodes.each(function(node) {
+                selectedNode = node;
+                console.log("Nodo seleccionado:", node);
             });
+        });
+
+        // Guardamos el diagrama en una variable global para usarla en otras funciones
+        window.myDiagram = myDiagram;
+    }
+
+    // Función para mostrar el formulario emergente
+    function showForm() {
+        if (!selectedNode) {
+            alert("Selecciona un nodo primero.");
+            return;
+        }
+        document.getElementById('overlay').style.display = 'block'; // Mostrar el fondo oscuro
+        document.getElementById('nodeForm').style.display = 'block'; // Mostrar el formulario
+    }
+
+    // Función para agregar un nodo hijo al nodo seleccionado
+    function addChildNode() {
+        var nodeName = document.getElementById('nodeName').value;
+        if (!nodeName) {
+            alert("Debes ingresar un nombre para el nodo.");
+            return;
         }
 
-        function actualizarTiempo() {
-            comandas.forEach(comanda => comanda.tiempo++);
-            renderComandas();
-        }
+        var myDiagram = window.myDiagram;
+        var parentPosition = selectedNode.location;
+        var newNode = {
+            key: nodeIdCounter++, 
+            text: nodeName, 
+            parent: selectedNode.data.key, // Establecer el nodo padre
+            loc: new go.Point(parentPosition.x + 150, parentPosition.y) // Ajusta la posición para que esté a la derecha
+        };
+        myDiagram.model.addNodeData(newNode);
+        closeForm();
+    }
 
-        function terminarComanda(index) {
-            comandas.splice(index, 1);
-            renderComandas();
-        }
+    // Función para cerrar el formulario
+    function closeForm() {
+        document.getElementById('overlay').style.display = 'none'; // Ocultar el fondo
+        document.getElementById('nodeForm').style.display = 'none'; // Ocultar el formulario
+    }
 
-        setInterval(actualizarTiempo, 60000); // Actualiza cada minuto
-        renderComandas();
-    </script>
+    // Función para eliminar el nodo seleccionado
+    function deleteNode() {
+        let selectedNodes = myDiagram.selection;
+        if (selectedNode) {
+            var myDiagram = window.myDiagram;
+            myDiagram.model.removeNodeData(selectedNode.data);
+            selectedNode = null;
+        } else {
+            alert("Selecciona un nodo para eliminar.");
+        }
+    }
+
+    // Función para editar el nodo seleccionado
+    function editNode() {
+        let selectedNodes = myDiagram.selection;
+        if (!selectedNode) {
+            alert("Selecciona un nodo primero.");
+            return;
+        }
+        var newText = prompt("Edita el texto del nodo:", selectedNode.text);
+        if (newText !== null) {
+            selectedNode.data.text = newText;
+            window.myDiagram.model.updateData(selectedNode.data);
+        }
+    }
+
+    // Inicializa el diagrama cuando la página cargue
+    window.onload = init;
+</script>
 </body>
 </html>

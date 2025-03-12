@@ -525,7 +525,15 @@ serverExpress.use(express.static(path.join(__dirname,'public')));
   "main": "index_desktop.js",
   "scripts": {
     "start": "node src/index_desktop.js",
-    "dev": "nodemon src/"
+    "dev": "nodemon src/",
+    "build": "electron-builder"
+  },
+
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "build": "electron-builder"
   },
 */
 

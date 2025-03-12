@@ -1,0 +1,321 @@
+<!--this is the table of the data of the providers-->
+<div class="card">
+    <div class="card-body">
+        <div class="container">
+            <label for="">Busca un lote</label>
+            {{#each branchFree}}
+            <div class="row">
+                <div class="col-sm-11">
+                    <input type="text" class="form-control" placeholder="Buscar..." id="search">
+                </div>
+                <div class="col-sm-1">
+                    <button class="btn-add" id="{{id}}" onclick="openPopup()" type="button"><i
+                            class="fi-icon fi-br-plus"></i></button>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+        <br>
+        <table width="100%" border="1" class="table-information" id="myTable">
+            <thead>
+                <tr>
+                    <th><label>Lote</label></th>
+                    <th><label>F. de creación</label></th>
+                    <th><label>F. de caducidad</label></th>
+                    <th><label>Existencia</label></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each providers}}
+                <tr id="{{name}}">
+                    <td><label><strong>{{name}}/{{representative}}</strong></label></td>
+                    <td><label>{{email}}</label></th>
+                    <td><label>{{cell_phone}}/{{phone}}</label></td>
+                    <td><label>{{business_address}}</label></td>
+                    <td>
+                        <button id="{{id}}" onclick="nextWeb('{{id_companies}}/{{id_branches}}/{{id}}/edit-provider')"
+                            class="btn-table-employee-edit"><i class="fi-department fi-sr-pencil"></i></button>
+                        <button id="{{id}}" onclick="delete_provider('{{id_companies}}','{{id}}','{{name}}')"
+                            class="btn-table-employee-delete"><i class="fi-department fi-sr-trash"></i></button>
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+
+        {{#if providers}}
+
+        {{else}}
+        <center><label for="" id="text-info-table">No se encontraron registros.</label></center>
+        {{/if}}
+    </div>
+</div>
+
+<!---MESSAGE POP--->
+
+    <style>
+        /* Fondo de pantalla para el popup */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(3px);
+            z-index: 999;
+        }
+
+        /* Estilos del popup */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+            width: 40%;
+            max-width: 490px;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .popup.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .popup h2 {
+            color: #075DA8;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .popup label {
+            font-weight: bold;
+            display: block;
+            margin: 10px 0 5px;
+        }
+
+        .popup input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        /* Contenedor de cantidad */
+        .quantity-container {
+ 
+        }
+
+        .quantity-btn {
+            background: #075DA8;
+            color: white;
+            border: none;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .quantity-btn:hover {
+            background: #06498A;
+        }
+
+        #cantidad {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        /* Botón Guardar */
+        .pop-save {
+            width: 100%;
+            background: #075DA8;
+            color: white;
+            border: none;
+            padding: 12px;
+            margin-top: 15px;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        .pop-save:hover {
+            background: #06498A;
+        }
+
+        /* Botón de abrir formulario */
+        .open-btn {
+            background: #075DA8;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 8px;
+            display: block;
+            margin: 50px auto;
+            transition: background 0.3s ease;
+        }
+
+        .open-btn:hover {
+            background: #06498A;
+        }
+
+        .number-input{
+            text-align: center;
+            font-size: 6rem;
+        }
+
+        /* Responsividad */
+        @media (max-width: 600px) {
+            .popup {
+                width: 90%;
+            }
+        }
+    </style>
+
+    <div class="overlay" id="overlay" onclick="closePopup()"></div>
+    <div class="popup" id="popup">
+        <h2>Registrar Lote</h2>
+
+        <label for="lote">Lote *</label>
+        <input type="text" id="lot">
+
+        <div class="row">
+            <div class="col">
+                <label for="fecha_creacion">Fecha de Creación *</label>
+                <input type="date" id="creation_date">
+            </div>
+            <div class="col">
+                <label for="fecha_caducidad">Fecha de Caducidad *</label>
+                <input type="date" id="expiration_date">
+            </div>
+        </div>
+
+        <label for="cantidad">Cantidad* </label>
+        <div class="row">
+            <div class="col">
+                <button class="quantity-btn" onclick="changeQuantity(-1)" type="button">-</button>
+            </div>
+            <div class="col">
+                <input type="number" id="amount" value="0" min="0" class="number-input">
+            </div>
+            <div class="col">
+                <button class="quantity-btn" onclick="changeQuantity(1)" type="button">+</button>
+            </div>
+        </div>
+        
+
+        <button class="pop-save" onclick="saveForm()" type="button">Crear</button>
+    </div>
+
+    <script>
+        function openPopup() {
+            document.getElementById('popup').classList.add('show');
+            document.getElementById('popup').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        function closePopup() {
+            document.getElementById('popup').classList.remove('show');
+            setTimeout(() => {
+                document.getElementById('popup').style.display = 'none';
+                document.getElementById('overlay').style.display = 'none';
+            }, 200);
+        }
+
+        function changeQuantity(amount) {
+            let input = document.getElementById('amount');
+            let newValue = parseInt(input.value) + amount;
+            if (newValue >= 0) {
+                input.value = newValue;
+            }
+        }
+
+        function saveForm() {
+            //get all the data of the form
+            const lot=document.getElementById('lot');
+            const creation_date=document.getElementById('creation_date');
+            const expiration_date=document.getElementById('expiration_date');
+            const amount=document.getElementById('amount');
+
+            // we will create the list of element
+            const fields = [lot, creation_date, expiration_date, amount];
+            let allFilled = true;
+
+            // we will read all the list and we will remake the input
+            fields.forEach(field => {
+                if (!field.value.trim()) {
+                    field.style.border = "2px solid red";
+                    allFilled = false;
+                } else {
+                    field.style.border = "1px solid #ccc"; // reset the color
+                }
+            });
+
+            // if all the inputs have data close the pop and add the information to the table
+            if (allFilled) {
+                //now, her we will see if date is success
+                const creationDateValue = new Date(creation_date.value);
+                const expirationDateValue = new Date(expiration_date.value);
+
+                if (creationDateValue >= expirationDateValue) {
+                    errorMessage('👁️ ERROR','La fecha de creación debe ser menor a la fecha de caducidad.');
+                    creation_date.style.border = "2px solid red";
+                    expiration_date.style.border = "2px solid red";
+                    return;
+                }
+
+                add_lot_to_my_table(fields,lot, creation_date, expiration_date, amount);
+                closePopup();
+            }else{
+                errorMessage('👁️ ERROR','Debes llenar todos los datos del formulario.');
+                return;
+            }
+        }
+
+        function add_lot_to_my_table(fields,lot, creation_date, expiration_date, amount){
+            //get the table
+            let table = document.getElementById('myTable').getElementsByTagName('tbody')[0];
+
+            // create a new row
+            let newRow = table.insertRow();
+
+            // add cell with the value
+            newRow.innerHTML = `
+                <td><label><strong>${lot.value}</strong></label></td>
+                <td><label>${creation_date.value}</label></td>
+                <td><label>${expiration_date.value}</label></td>
+                <td><label>${amount.value}</label></td>
+                <td>
+                    <button onclick="deleteRow(this)" class="btn-deneger" type="button">
+                        <i class="fi-department fi-sr-trash"></i>
+                    </button>
+                </td>
+            `;
+
+            // clear the inputs after of add the data to the table
+            fields.forEach(field => field.value = '');
+
+            //if exist text of information we will clean the text
+            const textInfo=document.getElementById('text-info-table')
+            if(textInfo){
+                textInfo.textContent='';
+            }
+        }
+    </script>

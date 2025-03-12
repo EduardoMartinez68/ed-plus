@@ -78,44 +78,38 @@
                     <label for=""><i class="fi fi-sr-ballot-check"></i> Información de facturación</label>
                     <hr>
 
-                    <!---navbar--->
-                    <ul class="nav nav-tabs" id="myTab" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home-t" role="tab" aria-controls="home"
-                                aria-selected="true"><i class="fi-icon fi-sr-usd-circle"></i> Precios de venta</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="character-tab" data-toggle="tab" href="#character-t" role="tab" aria-controls="character"
-                                aria-selected="false"><i class="fi-icon fi-sr-file-invoice-dollar"></i> Caracteristicas</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile-t" role="tab" aria-controls="profile"
-                                aria-selected="false"><i class="fi-icon fi-sr-box-alt"></i> Lista de Producto</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="other-tab" data-toggle="tab" href="#other-t" role="tab" aria-controls="other"
-                                aria-selected="false"><i class="fi-icon fi-ss-settings"></i> Otro</a>
-                        </li>
-                    </ul>
+                    <!---dashboard--->
+                    <div class="btn-group">
+                        <button class="btn-select btn-active" onclick="showSection('select-1', this)" type="button"><i class="fi-icon fi-sr-usd-circle"></i> Precios de venta</button>
+                        <button class="btn-select" onclick="showSection('select-2', this)" type="button"><i class="fi-icon fi-sr-file-invoice-dollar"></i> Caracteristicas</button>
+                        <button class="btn-select" onclick="showSection('select-3', this)" type="button"><i class="fi-icon fi-sr-box-alt"></i> Lista de Producto</button>
+                        <button class="btn-select" onclick="showSection('select-4', this)" type="button"><i class="fi fi-sr-truck-loading"></i> Lotes y Series</button>
+                        <button class="btn-select" onclick="showSection('select-5', this)" type="button"><i class="fi-icon fi-ss-settings"></i> Otro</button>
+                    </div>
+
 
                     <!---container navbar--->
                     <div class="tab-content" id="myTabContent">
-                        <div class="tab-pane fade show active" id="home-t" role="tabpanel" aria-labelledby="home-tab">
+                        <div id="select-1" class="content-section active">
                             {{>manager/combo/prices}}
                         </div>
                     {{/each}}
 
 
-                    <div class="tab-pane fade" id="character-t" role="tabpanel" aria-labelledby="character-tab">
+                    <div id="select-2" class="content-section">
                         {{>products/informationSuppliesForm}}
                     </div>
 
-                    <div class="tab-pane fade" id="profile-t" role="tabpanel" aria-labelledby="profile-tab">
+                    <div id="select-3" class="content-section">
                         {{>manager/combo/supplies}}
                     </div>
 
+                    <div id="select-4" class="content-section">
+                        {{>products/lote}}
+                    </div>
+
                     {{#each comboFeactures}}
-                        <div class="tab-pane fade" id="other-t" role="tabpanel" aria-labelledby="other-tab">
+                        <div id="select-5" class="content-section">
                             {{>manager/combo/other}}
                         </div>
                     </div>

@@ -335,12 +335,6 @@ serverExpress.use(express.static(path.join(__dirname,'public')));
 
 //*-----------------------------------------------------------Server application-----------------------------------------//
 /*
-    SETTING IN PACKAGE.JSON
-  "main": "index.js",
-  "scripts": {
-    "start": "node src/index.js",
-    "dev": "nodemon src/"
-  },
 */
 
 //this is for get the IP of the computer that is the server
@@ -373,7 +367,16 @@ serverExpress.listen(serverExpress.get('port'), '0.0.0.0', () => {
   "scripts": {
     "start": "npx electron .",
     "dev": "nodemon src/",
-    "electron": "electron ."
+    "electron": "electron .",
+    "build": "electron-builder"
+  },
+
+
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "build": "electron-builder"
   },
 */
 
