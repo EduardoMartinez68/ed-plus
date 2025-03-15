@@ -1,3 +1,10 @@
+<style>
+    .icon-lot{
+        color:var(--color-company)
+    }
+</style>
+<link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-straight/css/uicons-solid-straight.css'>
+
 <!-- menu (left) -->
 <div class="menu-point-of-sales">
     <div class="product-cards-point-of-sales">
@@ -9,6 +16,7 @@
                     onclick="addToCart('product-{{id}}','{{name}}', '{{barcode}}', {{price_1}},'{{purchase_unit}}','{{this_product_is_sold_in_bulk}}','{{id_dishes_and_combos}}')"
                     id="{{barcode}}" id-product="{{id}}" data-price-1='{{price_1}}' data-price-2="{{price_2}}"
                     data-price-3="{{price_3}}" purchase_unit="{{purchase_unit}}" this_product_is_sold_in_bulk="{{this_product_is_sold_in_bulk}}" id_dishes_and_combos="{{id_dishes_and_combos}}">
+    
                     <!--we will see if the product have a image-->
                     {{#if img}}
                         <img src="{{img}}" alt="Producto 1" id="product-{{id}}">
@@ -20,6 +28,29 @@
                     <div class="product-name-point-of-sales">{{name}}</div>
                     <div class="product-barcode-point-of-sales">{{barcode}}</div>
                     <input type="hidden" class="this_product_is_sold_in_bulk" value="{{this_product_is_sold_in_bulk}}">
+
+                    <!--if exist lot of this product, we will show his information-->
+                    {{#if lots.length}}
+                        <i class="fi fi-ss-dolly-flatbed icon-lot"></i>
+                        <div class="lots-info">
+                            <strong>Lotes:</strong>
+                            <ul class="lot-list">
+                                {{#each lots}}
+                                    <li class="lot-item"
+                                        data-lot-number="{{number_lote}}"
+                                        data-current-existence="{{current_existence}}"
+                                        data-manufacture-date="{{date_of_manufacture}}"
+                                        data-expiration-date="{{expiration_date}}">
+                                        
+                                        <strong>Lote:</strong> {{number_lote}} <br>
+                                        <strong>Existencia:</strong> {{current_existence}} <br>
+                                        <strong>Fabricado:</strong> {{date_of_manufacture}} <br>
+                                        <strong>Expira:</strong> {{expiration_date}}
+                                    </li>
+                                {{/each}}
+                            </ul>
+                        </div>
+                    {{/if}}
                 </div>
             {{/each}}
         {{else}}
@@ -33,3 +64,202 @@
         {{/if}}
     </div>
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+<!---------LOT------------>
+<div id="lotPopup" class="lot-popup-container">
+    <div class="lot-popup-content">
+        <button class="lot-popup-close" onclick="closeLotPopup()">✖</button>
+        <h2 class="lot-popup-title">Lotes</h2>
+        <table class="lot-table">
+            <thead>
+                <tr>
+                    <th>Lote</th>
+                    <th>Fecha Inicio</th>
+                    <th>Fecha Expiración</th>
+                    <th>Existencia</th>
+                    <th>Cantidad</th>
+                </tr>
+            </thead>
+            <tbody id="lotTableBody">
+                <!-- Aquí se insertarán dinámicamente los lotes -->
+            </tbody>
+        </table>
+        <br>
+        <button class="btn btn-success" onclick="acceptLotSelection()">Aceptar</button>
+    </div>
+</div>
+
+<style>
+    .lot-popup-container {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+    }
+
+    .lot-popup-content {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        width: 60%;
+        max-height: 80vh;
+        overflow-y: auto;
+        position: relative;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .lot-popup-title {
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    .lot-popup-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: transparent;
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+        color: #888;
+        transition: color 0.3s ease;
+    }
+
+    .lot-popup-close:hover {
+        color: #d9534f;
+    }
+
+    .lot-table {
+        width: 100%;
+        border-collapse: collapse;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .lot-table th {
+        background-color: var(--color-company);
+        color: white;
+        padding: 12px;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .lot-table td {
+        border-bottom: 1px solid #ddd;
+        padding: 12px;
+        text-align: center;
+        font-size: 14px;
+    }
+
+    .lot-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    .lot-table tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    .lot-table input {
+        width: 50px;
+        text-align: center;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 5px;
+        font-size: 14px;
+    }
+
+    .lot-table button {
+        background-color: var(--color-company);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 5px 10px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+
+    .lot-table button:hover {
+        background-color: var(--color-hover);
+    }
+
+    .lot-popup-accept {
+        display: block;
+        margin: 10px auto;
+        padding: 10px 20px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+</style>
+
+<script>
+    function openLotPopup(lots) {
+        let tableBody = document.getElementById('lotTableBody');
+        tableBody.innerHTML = '';
+
+        if (!Array.isArray(lots) || lots.length === 0) {
+            alert("No hay lotes disponibles.");
+            return;
+        }
+
+        lots.forEach(lot => {
+            let row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${lot.nombre}</td>
+                <td>${lot.fechaInicio}</td>
+                <td>${lot.fechaFinal}</td>
+                <td>${lot.existencia}</td>
+                <td>
+                    <button onclick="adjustLotQuantity(this, -1)">-</button>
+                    <input type="number" value="0" min="0" max="${lot.existencia}">
+                    <button onclick="adjustLotQuantity(this, 1)">+</button>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+
+        document.getElementById('lotPopup').style.display = 'flex';
+    }
+
+    function closeLotPopup() {
+        document.getElementById('lotPopup').style.display = 'none';
+    }
+
+    function adjustLotQuantity(button, change) {
+        let input = button.parentElement.querySelector('input');
+        let newValue = parseInt(input.value) + change;
+        if (newValue >= 1 && newValue <= parseInt(input.max)) {
+            input.value = newValue;
+        }
+    }
+
+    function acceptLotSelection() {
+        closeLotPopup();
+    }
+    
+    const lotesEjemplo = [
+            { nombre: "Lote 1", fechaInicio: "2024-03-01", fechaFinal: "2024-12-31", existencia: 50 },
+            { nombre: "Lote 2", fechaInicio: "2024-05-15", fechaFinal: "2025-01-10", existencia: 30 }
+    ];
+    //openLotPopup(lotesEjemplo)
+</script>

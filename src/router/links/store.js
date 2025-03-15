@@ -62,6 +62,8 @@ router.get('/:id_user/:id_company/:id_branch/:id_employee/:id_role/store-home', 
         const dataEmployee = await get_data_employee(req);
 
         const dishAndCombo = await get_all_dish_and_combo(id_company, id_branch);
+        console.log(dishAndCombo)
+        
         const newCombos = await get_data_recent_combos(id_company);
         const mostSold = await get_all_data_combo_most_sold(id_branch);
         const offerAd = await get_all_ad(id_branch, 'offer');

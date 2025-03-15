@@ -222,8 +222,6 @@ router.get('/:id_company/:id_branch/add-products-free', isLoggedIn, async (req, 
     res.render('links/free/products/addFormProducts', { branchFree, supplies,departments,category});
 });
 
-
-
 router.get('/:id_company/:id_branch/upload-products', isLoggedIn, async (req, res) => {
     const {id_company, id_branch } = req.params;
 
@@ -357,6 +355,13 @@ async function get_lots_by_dish_and_combo_features(idDishAndComboFeatures) {
         return [];
     }
 }
+
+router.get('/:id_company/:id_branch/lot', isLoggedIn, async (req, res) => {
+    
+    const { id_combo_features, id_company, id_branch } = req.params;
+
+    res.render('links/branch/products/lot', {});
+})
 
 router.post('/:id_combo_features/add-lot', isLoggedIn, async (req, res) => {
     const { id_combo_features} = req.params;

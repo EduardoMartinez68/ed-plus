@@ -41,7 +41,9 @@ async function this_data_employee_is_user(req) {
 }
 
 async function get_all_dish_and_combo(idCompany, idBranch) {
-    var queryText = `
+    await create_table_lot();
+
+    var queryText1 = `
         SELECT 
             i.*,
             d.barcode,
@@ -54,6 +56,35 @@ async function get_all_dish_and_combo(idCompany, idBranch) {
         FROM "Inventory".dish_and_combo_features i
         INNER JOIN "Kitchen".dishes_and_combos d ON i.id_dishes_and_combos = d.id
         WHERE i.id_branches = $1
+    `;
+
+    const queryText = `
+        SELECT 
+            i.*,
+            d.barcode,
+            d.name,
+            d.description,
+            d.img,
+            d.id_product_department,
+            d.id_product_category,
+            d.this_product_is_sold_in_bulk,
+            COALESCE(
+                json_agg(
+                    jsonb_build_object(
+                        'id', l.id,
+                        'number_lote', l.number_lote,
+                        'initial_existence', l.initial_existence,
+                        'current_existence', l.current_existence,
+                        'date_of_manufacture', l.date_of_manufacture,
+                        'expiration_date', l.expiration_date
+                    )
+                ) FILTER (WHERE l.id IS NOT NULL), '[]'
+            ) AS lots
+        FROM "Inventory".dish_and_combo_features i
+        INNER JOIN "Kitchen".dishes_and_combos d ON i.id_dishes_and_combos = d.id
+        LEFT JOIN "Inventory".lots l ON l.id_dish_and_combo_features = i.id
+        WHERE i.id_branches = $1
+        GROUP BY i.id, d.id;
     `;
     var values = [idBranch];
     const result = await database.query(queryText, values);
@@ -179,6 +210,39 @@ async function get_all_products_in_sales(idBranch) {
     var values = [idBranch];
     const result = await database.query(queryText, values);
     return result.rows;
+}
+
+async function create_table_lot(){
+    const queryText = `
+        CREATE TABLE IF NOT EXISTS "Inventory".lots (
+            id bigserial PRIMARY KEY,
+            number_lote Text,
+            initial_existence double precision,
+            current_existence double precision NOT NULL,
+            date_of_manufacture date NOT NULL,
+            expiration_date date NOT NULL,
+            id_dish_and_combo_features bigint,
+            id_branches bigint,
+            id_companies bigint,
+            CONSTRAINT key_number_lote UNIQUE (id),
+            CONSTRAINT dish_and_combo_features_fk FOREIGN KEY (id_dish_and_combo_features)
+                REFERENCES "Inventory".dish_and_combo_features (id) MATCH FULL
+                ON DELETE SET NULL ON UPDATE CASCADE,
+            CONSTRAINT branches_fk FOREIGN KEY (id_branches)
+                REFERENCES "Company".branches (id) MATCH FULL
+                ON DELETE SET NULL ON UPDATE CASCADE,
+            CONSTRAINT companies_fk FOREIGN KEY (id_companies)
+                REFERENCES "User".companies (id) MATCH FULL
+                ON DELETE SET NULL ON UPDATE CASCADE
+        );
+    `;
+    
+    try {
+        await database.query(queryText);
+        return true;
+    } catch (error) {
+        return false;
+    }
 }
 
 module.exports = {

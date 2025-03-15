@@ -158,11 +158,51 @@
         //id_combo delete the combo
         //id_comboFeactures delete combo in the facture
         //id_productFacture delete supplies
-        
-        if(await questionMessage('Eliminar Producto  😳','¿Quieres eliminar este Producto?')){
-            const id_comboFeactures=document.getElementById('id_comboFeactures').value;
-            const id_productFacture=document.getElementById('id_productFacture').value;
-            window.location.href = `/links/${id_company}/${id_branch}/${id_combo}/${id_comboFeactures}/${id_productFacture}/delete-product-free`
+        if(this_product_have_lot()){
+            if(await questionMessage('Eliminar Producto  😳','¿Quieres eliminar este Producto?')){
+                const id_comboFeactures=document.getElementById('id_comboFeactures').value;
+                const id_productFacture=document.getElementById('id_productFacture').value;
+                window.location.href = `/links/${id_company}/${id_branch}/${id_combo}/${id_comboFeactures}/${id_productFacture}/delete-product-free`
+            }
+        }else{
+            warningMessage('Ups! 😅',"No puedes eliminar este producto porque aún tiene lotes.");
         }
     }
+
+    function this_product_have_lot() {
+        let table = document.getElementById("myTable");
+        let tbody = table.querySelector("tbody"); // Obtener el tbody de la tabla
+
+        if (!tbody || tbody.rows.length === 0) {
+            return true; // La tabla está vacía
+        }
+        return false; // La tabla tiene datos
+    }
+
+    function update_inventory(){
+        const input=document.getElementById('input-ammount');
+        input.disabled = !this_product_have_lot(); //we will see if exist lot for this product
+
+        if(input.disabled){
+            input.value=sum_all_the_lot();
+        }
+    }
+
+    function sum_all_the_lot() {
+        let table = document.getElementById("myTable");
+        let rows = table.getElementsByTagName("tr");
+        let total = 0;
+
+        for (let i = 1; i < rows.length; i++) { // Empieza en 1 para evitar la fila de encabezado
+            let cell = rows[i].getElementsByTagName("td")[3]; // 4ª columna (current_existence)
+            if (cell) {
+                let value = parseFloat(cell.textContent) || 0; // Convierte a número y evita NaN
+                total += value;
+            }
+        }
+
+        return total;
+    }
+
+    update_inventory();
 </script>

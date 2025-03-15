@@ -169,6 +169,7 @@ async function delete_all_car(total,moneyReceived,exchange,comment) {
 
 async function addToCart(img, name, barcode, price, purchaseUnit, this_product_is_sold_in_bulk,id_dishes_and_combos) {
     const existingItem = cartItems.find(item => item.barcode === barcode);
+    
     if (existingItem) {
         //we will see if the product is sold in bulk
         if(this_product_is_sold_in_bulk=='true'){
@@ -187,11 +188,68 @@ async function addToCart(img, name, barcode, price, purchaseUnit, this_product_i
                 existingItem.quantity = quantityForSales; //update the product in the cart
             }
         }else{
-            existingItem.quantity += 1; //update the product in the cart
+            // Buscar el producto en la página
+            let productElement = document.getElementById(barcode);
+
+            // Verificar si el producto tiene lotes
+            let lotsInfo = productElement.querySelector(".lots-info");
+            
+            if (lotsInfo) {
+                // Extraer los lotes
+                let lots = [];
+                let lotElements = lotsInfo.querySelectorAll("li");
+                
+                lotElements.forEach(lotElement => {
+                    let lotNumber = lotElement.querySelector("strong:nth-child(1)").nextSibling.nodeValue.trim();
+                    let existence = parseInt(lotElement.querySelector("strong:nth-child(3)").nextSibling.nodeValue.trim(), 10);
+                    let manufactureDate = lotElement.querySelector("strong:nth-child(5)").nextSibling.nodeValue.trim();
+                    let expirationDate = lotElement.querySelector("strong:nth-child(7)").nextSibling.nodeValue.trim();
+
+                    lots.push({
+                        nombre: lotNumber,
+                        fechaInicio: manufactureDate,
+                        fechaFinal: expirationDate,
+                        existencia: existence
+                    });
+                });
+
+                // Abrir el popup de selección de lotes
+                openLotPopup(lots);
+            } else {
+                existingItem.quantity += 1; //update the product in the cart
+            } 
         }
 
         notificationMessage(`${existingItem.name} fue agregado ❤️`, 'El Producto fue agregado correctamente');
     } else {
+            // Buscar el producto en la página
+            let productElement = document.getElementById(barcode);
+
+            // Verificar si el producto tiene lotes
+            let lotsInfo = productElement.querySelector(".lots-info");
+            
+            if (lotsInfo) {
+                // Extraer los lotes
+                let lots = [];
+                let lotElements = lotsInfo.querySelectorAll("li");
+                
+                lotElements.forEach(lotElement => {
+                    let lotNumber = lotElement.querySelector("strong:nth-child(1)").nextSibling.nodeValue.trim();
+                    let existence = parseInt(lotElement.querySelector("strong:nth-child(3)").nextSibling.nodeValue.trim(), 10);
+                    let manufactureDate = lotElement.querySelector("strong:nth-child(5)").nextSibling.nodeValue.trim();
+                    let expirationDate = lotElement.querySelector("strong:nth-child(7)").nextSibling.nodeValue.trim();
+
+                    lots.push({
+                        nombre: lotNumber,
+                        fechaInicio: manufactureDate,
+                        fechaFinal: expirationDate,
+                        existencia: existence
+                    });
+                });
+
+                // Abrir el popup de selección de lotes
+                openLotPopup(lots);
+            } else {
         let quantityForSales=1; //this is for the product that are sale for unit
 
         //we will see if the product is sold in bulk
@@ -213,6 +271,7 @@ async function addToCart(img, name, barcode, price, purchaseUnit, this_product_i
         });
 
         notificationMessage(`${name} fue agregado ❤️`, 'El Producto fue agregado correctamente');
+    }
     }
     updateCart();
 }
