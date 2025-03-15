@@ -32,9 +32,9 @@
                         <td><label>{{current_existence}}</label></td>
                         <td>
                             <button onclick="editLot('{{id}}',this)"  type="button"
-                                class="btn-table-employee-edit"><i class="fi-department fi-sr-pencil"></i></button>
+                                class="btn btn-edit"><i class="fi-department fi-sr-pencil"></i></button>
                             <button onclick="deleteLot('this')" type="button"
-                                class="btn-table-employee-delete"><i class="fi-department fi-sr-trash"></i></button>
+                                class="btn btn-danger"><i class="fi-department fi-sr-trash"></i></button>
                         </td>
                     </tr>
                 {{/each}}
@@ -244,13 +244,13 @@
         <label for="cantidad">Cantidad* </label>
         <div class="row">
             <div class="col">
-                <button class="quantity-btn" onclick="changeQuantity(-1)" type="button">-</button>
+                <button class="quantity-btn" onclick="changeQuantityEdit(-1)" type="button">-</button>
             </div>
             <div class="col">
                 <input type="number" id="amount-edit" value="0" min="0" class="number-input">
             </div>
             <div class="col">
-                <button class="quantity-btn" onclick="changeQuantity(1)" type="button">+</button>
+                <button class="quantity-btn" onclick="changeQuantityEdit(1)" type="button">+</button>
             </div>
         </div>
         
@@ -284,6 +284,14 @@
 
     function changeQuantity(amount) {
         let input = document.getElementById('amount');
+        let newValue = parseInt(input.value) + amount;
+        if (newValue >= 0) {
+            input.value = newValue;
+        }
+    }
+
+    function changeQuantityEdit(amount) {
+        let input = document.getElementById('amount-edit');
         let newValue = parseInt(input.value) + amount;
         if (newValue >= 0) {
             input.value = newValue;
@@ -332,45 +340,47 @@
 }
 
     async function add_lot_to_my_table(fields,lot, creation_date, expiration_date, amount){
-    //her we will know if we can send this information to the server
-    const answer=await send_information_to_the_server(lot.value, creation_date.value, expiration_date.value, amount.value);
+        //her we will know if we can send this information to the server
+        const answer=await send_information_to_the_server(lot.value, creation_date.value, expiration_date.value, amount.value);
 
-    //know if could add the lot to the database 
-    if(answer.answer){
-        //get the table
-        let table = document.getElementById('myTable').getElementsByTagName('tbody')[0];
+        //know if could add the lot to the database 
+        if(answer.answer){
+            //get the table
+            let table = document.getElementById('myTable').getElementsByTagName('tbody')[0];
 
-        // create a new row
-        let newRow = table.insertRow();
+            // create a new row
+            let newRow = table.insertRow();
 
-        // add cell with the value
-        newRow.innerHTML = `
-            <td><label><strong>${lot.value}</strong></label></td>
-            <td><label>${creation_date.value}</label></td>
-            <td><label>${expiration_date.value}</label></td>
-            <td><label>${amount.value}</label></td>
-            <td>
-                <button onclick="deleteRow(this)" class="btn-deneger" type="button">
-                    <i class="fi-department fi-sr-trash"></i>
-                </button>
-            </td>
-        `;
+            // add cell with the value
+            newRow.innerHTML = `
+                <td><label><strong>${lot.value}</strong></label></td>
+                <td><label date_of_manufacture="${answer.lot.current_existence}">${formatDateForm(creation_date.value)}</label></td>
+                <td><label expiration_date="${answer.lot.date_of_manufacture}">${formatDateForm(expiration_date.value)}</label></td>
+                <td><label>${amount.value}</label></td>
+                <td>
+                    <button onclick="editLot('${answer.id}',this)"  type="button"
+                        class="btn btn-edit"><i class="fi-department fi-sr-pencil"></i></button>
+                    <button onclick="deleteLot('this')" type="button"
+                        class="btn btn-danger"><i class="fi-department fi-sr-trash"></i></button>
+                </td>
+            `;
 
-        // clear the inputs after of add the data to the table
-        fields.forEach(field => field.value = '');
+            // clear the inputs after of add the data to the table
+            fields.forEach(field => field.value = '');
 
-        //if exist text of information we will clean the text
-        const textInfo=document.getElementById('text-info-table')
-        if(textInfo){
-            textInfo.textContent='';
+            //if exist text of information we will clean the text
+            const textInfo=document.getElementById('text-info-table')
+            if(textInfo){
+                textInfo.textContent='';
+            }
+
+            closePopup();
+            confirmationMessage('Lote agregado 😁',answer.message)
+        }else{
+            //show a message of error in the server
+            errorMessage('👁️ ERROR',answer.message);
         }
-    
-        closePopup();
-    }else{
-        //show a message of error in the server
-        errorMessage('👁️ ERROR',answer.message);
     }
-}
 
     async function send_information_to_the_server(lot, creation_date, expiration_date, amount) {
         try {
@@ -397,7 +407,7 @@
             const data = await response.json();
 
             if (data.message) {
-                return { answer: true, message: `El lote fue agregado con éxito` };
+                return { answer: true, message: `El lote fue agregado con éxito` ,id:data.id, lot:data.lot};
             } else {
                 return { answer: false, message: "No se recibió mensaje del servidor." };
             }
@@ -430,13 +440,18 @@
     }
 
     //----------------------------------
+    let cellEditLot;
+    let idLotForEdit;
+
     async function editLot(idLot,button){
+        idLotForEdit=idLot;
         openPopupEdit(button);
     }
 
     function openPopupEdit(button) {
         let row = button.closest("tr"); // get the row most close
         let cells = row.getElementsByTagName("td");
+        cellEditLot=cells; //her save the cell for update after
 
         //get all the value of the lot
         let numberLote = cells[0].textContent.trim();
@@ -467,7 +482,7 @@
         return formattedDate;
     }
     
-    function update_lot(){
+    async function update_lot(){
         //her get the data that the user would like update
         const lot=document.getElementById('lot-edit');
         const creation_date=document.getElementById('creation_date-edit');
@@ -508,46 +523,38 @@
         } 
     }
 
+
     async function update_lot_in_the_table(fields,lot, creation_date, expiration_date, amount){
-    //her we will know if we can send this information to the server
-    const answer=await send_information_to_the_server_for_edit_the_lot(lot.value, creation_date.value, expiration_date.value, amount.value);
+        
+        //her we will know if we can send this information to the server
+        const answer=await send_information_to_the_server_for_edit_the_lot(lot.value, creation_date.value, expiration_date.value, amount.value);
 
-    //know if could add the lot to the database 
-    if(answer.answer){
-        //get the table
-        let table = document.getElementById('myTable').getElementsByTagName('tbody')[0];
+        //know if could add the lot to the database 
+        if(answer.answer){
+            // edit all the cell with the value
+            cellEditLot[0].textContent=lot.value;
+            cellEditLot[1].setAttribute("date_of_manufacture",creation_date.value);
+            cellEditLot[2].setAttribute("expiration_date",expiration_date.value);
+            cellEditLot[1].textContent=formatDateForm(creation_date.value);
+            cellEditLot[2].textContent=formatDateForm(expiration_date.value);
+            cellEditLot[3].textContent=amount.value;
 
-        // create a new row
-        let newRow = table.insertRow();
+            // clear the inputs after of add the data to the table
+            fields.forEach(field => field.value = '');
 
-        // add cell with the value
-        newRow.innerHTML = `
-            <td><label><strong>${lot.value}</strong></label></td>
-            <td><label>${creation_date.value}</label></td>
-            <td><label>${expiration_date.value}</label></td>
-            <td><label>${amount.value}</label></td>
-            <td>
-                <button onclick="deleteRow(this)" class="btn-deneger" type="button">
-                    <i class="fi-department fi-sr-trash"></i>
-                </button>
-            </td>
-        `;
-
-        // clear the inputs after of add the data to the table
-        fields.forEach(field => field.value = '');
-
-        //if exist text of information we will clean the text
-        const textInfo=document.getElementById('text-info-table')
-        if(textInfo){
-            textInfo.textContent='';
+            //if exist text of information we will clean the text
+            const textInfo=document.getElementById('text-info-table')
+            if(textInfo){
+                textInfo.textContent='';
+            }
+        
+            closePopup();
+            confirmationMessage('Lote actualizado 😁',answer.message)
+        }else{
+            //show a message of error in the server
+            errorMessage('👁️ ERROR',answer.message);
         }
-    
-        closePopup();
-    }else{
-        //show a message of error in the server
-        errorMessage('👁️ ERROR',answer.message);
     }
-}
 
     async function send_information_to_the_server_for_edit_the_lot(lot, creation_date, expiration_date, amount) {
         try {
@@ -559,7 +566,7 @@
             const current_existence=amount;
             const date_of_manufacture=creation_date;
 
-            const response = await fetch(`/links/${id_productFacture}/edit-lot`, { // Se eliminó el paréntesis incorrecto aquí
+            const response = await fetch(`/links/${id_productFacture}/${idLotForEdit}/edit-lot`, { // Se eliminó el paréntesis incorrecto aquí
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -574,7 +581,7 @@
             const data = await response.json();
 
             if (data.message) {
-                return { answer: true, message: `El lote fue agregado con éxito` };
+                return { answer: true, message: `El lote fue actualizado con éxito.` };
             } else {
                 return { answer: false, message: "No se recibió mensaje del servidor." };
             }
@@ -585,9 +592,21 @@
     }
 
     
-    
     //--------------------------------------------------------
-    
+    // Función para formatear la fecha
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        return date.toLocaleDateString('es-ES', options);
+    }
+
+    function formatDateForm(dateString) {
+        const date = new Date(dateString);
+        date.setDate(date.getDate() + 1); // Aumenta un día
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        return date.toLocaleDateString('es-ES', options);
+    }
+
     //this is for change the date of the date
     document.addEventListener('DOMContentLoaded', function() {
         const rows = document.querySelectorAll('#myTable tbody tr');
@@ -596,13 +615,6 @@
             // Obtener las celdas que contienen las fechas
             const expirationDateCell = row.cells[1]; // Columna de fecha de caducidad
             const existenceDateCell = row.cells[2]; // Columna de existencia
-
-            // Función para formatear la fecha
-            function formatDate(dateString) {
-                const date = new Date(dateString);
-                const options = { year: 'numeric', month: 'long', day: 'numeric' };
-                return date.toLocaleDateString('es-ES', options);
-            }
 
             // Aplicar el formato a las fechas
             if (expirationDateCell) {
