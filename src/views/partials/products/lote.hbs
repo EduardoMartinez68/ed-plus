@@ -33,7 +33,7 @@
                         <td>
                             <button onclick="editLot('{{id}}',this)"  type="button"
                                 class="btn btn-edit"><i class="fi-department fi-sr-pencil"></i></button>
-                            <button onclick="deleteLot('this')" type="button"
+                            <button onclick="deleteLot('{{id}}',this)" type="button"
                                 class="btn btn-danger"><i class="fi-department fi-sr-trash"></i></button>
                         </td>
                     </tr>
@@ -354,13 +354,13 @@
             // add cell with the value
             newRow.innerHTML = `
                 <td><label><strong>${lot.value}</strong></label></td>
-                <td><label date_of_manufacture="${answer.lot.current_existence}">${formatDateForm(creation_date.value)}</label></td>
-                <td><label expiration_date="${answer.lot.date_of_manufacture}">${formatDateForm(expiration_date.value)}</label></td>
+                <td><label date_of_manufacture="${answer.current_existence}">${formatDateForm(creation_date.value)}</label></td>
+                <td><label expiration_date="${answer.date_of_manufacture}">${formatDateForm(expiration_date.value)}</label></td>
                 <td><label>${amount.value}</label></td>
                 <td>
                     <button onclick="editLot('${answer.id}',this)"  type="button"
                         class="btn btn-edit"><i class="fi-department fi-sr-pencil"></i></button>
-                    <button onclick="deleteLot('this')" type="button"
+                    <button onclick="deleteLot('${answer.id}',this)" type="button"
                         class="btn btn-danger"><i class="fi-department fi-sr-trash"></i></button>
                 </td>
             `;
@@ -407,7 +407,7 @@
             const data = await response.json();
 
             if (data.message) {
-                return { answer: true, message: `El lote fue agregado con éxito` ,id:data.id, lot:data.lot};
+                return { answer: true, message: `El lote fue agregado con éxito` ,id:data.id, date_of_manufacture:data.date_of_manufacture, expiration_date:data.expiration_date};
             } else {
                 return { answer: false, message: "No se recibió mensaje del servidor." };
             }
@@ -418,27 +418,76 @@
     }
 
     //----------------------------------
-    async function deleteLot(button){
+    async function deleteLot(idLot,button){
+        let row = button.closest("tr"); // Obtiene la fila más cercana
+        let currentExistenceCell = row.querySelector("td:nth-child(4) label"); // Obtiene la celda de existencia actual
+
+        if (!currentExistenceCell) {
+            warningMessage('Ups! 😅',"No se pudo verificar la existencia actual.");
+            return;
+        }
+
+        let currentExistence = parseInt(currentExistenceCell.textContent.trim(), 10) || 0; // Convierte el valor a número
+
+        if (currentExistence > 0) {
+            warningMessage('Ups! 😅',"No puedes eliminar este lote porque aún tiene existencias.");
+            return;
+        }
+
         if(await questionMessage('🗑️ Eliminar el Lote','¿Deseas eliminar este lote?')){
-            let row = button.closest("tr"); // get the row most close
-            let table = row.closest("table"); // get tha table most close
+            const answer=await send_information_to_the_server_for_delete_the_lot(idLot);
 
-            if (row) {
-                row.remove(); // delete the row
-            }
+            if(answer.message){
+                let row = button.closest("tr"); // get the row most close
+                let table = row.closest("table"); // get tha table most close
 
-            //now we will see if the table is empty
-            let tbody = table.querySelector("tbody");
-            if (tbody && tbody.rows.length === 0) {
-                //if the table is empty, show a message of that not exist tha data in the table
-                const textInfo=document.getElementById('text-info-table')
-                if(textInfo){
-                    textInfo.textContent='No se encontraron registros.';
+                if (row) {
+                    row.remove(); // delete the row
                 }
+
+                //now we will see if the table is empty
+                let tbody = table.querySelector("tbody");
+                if (tbody && tbody.rows.length === 0) {
+                    //if the table is empty, show a message of that not exist tha data in the table
+                    const textInfo=document.getElementById('text-info-table')
+                    if(textInfo){
+                        textInfo.textContent='No se encontraron registros.';
+                    }
+                }
+
+                confirmationMessage('El fue eliminado 😁',answer.message)
             }
         }
     }
 
+    async function send_information_to_the_server_for_delete_the_lot(idLot) {
+        try {
+            const response = await fetch(`/links/${idLot}/delete-lot`, { // Se eliminó el paréntesis incorrecto aquí
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ idLot: idLot})
+            });
+
+            if (!response.ok) {
+                return { answer: false, message: `Error en la solicitud: ${response.status} ${response.statusText}` };
+            }
+
+            const data = await response.json();
+
+            if (data.message) {
+                return { answer: true, message: `El lote fue eliminado con éxito.` };
+            } else {
+                return { answer: false, message: "No se recibió mensaje del servidor." };
+            }
+
+        } catch (error) {
+            return { answer: false, message: `Error al guardar el lote: ${error.message}` }; // Mostrar error real
+        }
+    }
+
+    
     //----------------------------------
     let cellEditLot;
     let idLotForEdit;
@@ -522,7 +571,6 @@
             return;
         } 
     }
-
 
     async function update_lot_in_the_table(fields,lot, creation_date, expiration_date, amount){
         

@@ -392,6 +392,8 @@ router.post('/:id_combo_features/add-lot', isLoggedIn, async (req, res) => {
         res.status(201).json({ 
             message: "Lote agregado con éxito", 
             lot: newLot, 
+            date_of_manufacture:newLot.date_of_manufacture,
+            expiration_date:newLot.expiration_date,
             id: newLot.id 
         });
     } catch (error) {
@@ -433,6 +435,31 @@ router.post('/:id_combo_features/:id_lot/edit-lot', isLoggedIn, async (req, res)
         res.status(500).json({ error: "Error al actualizar el lote" });
     }
 })
+
+router.post('/:id_lot/delete-lot', isLoggedIn, async (req, res) => {
+    const { id_lot } = req.params;
+
+    if (!id_lot) {
+        return res.status(400).json({ error: "El ID del lote es obligatorio" });
+    }
+
+    const queryText = `DELETE FROM "Inventory".lots WHERE id = $1;`;
+
+    try {
+        const result = await database.query(queryText, [id_lot]);
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({ error: "Lote no encontrado" });
+        }
+
+        res.status(200).json({ message: "Lote eliminado con éxito"});
+    } catch (error) {
+        console.error("Error al eliminar el lote:", error);
+        res.status(500).json({ error: "Error al eliminar el lote" });
+    }
+});
+
+
 
 //--this is for when the user would like delete the product (supplies)
 router.get('/:id_company/:id_branch/:id_combo/:id_comboFeactures/:id_productFacture/delete-product-free', isLoggedIn, async (req, res) => {
