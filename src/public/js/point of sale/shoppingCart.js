@@ -7,31 +7,31 @@ async function buy_my_car() {
     //get the price of the car with all the combo
     const cash = parseFloat(document.getElementById('cash').value) || 0;
     const credit = parseFloat(document.getElementById('credit').value) || 0;
-    const debit = parseFloat(document.getElementById('debit').value) || 0;    
+    const debit = parseFloat(document.getElementById('debit').value) || 0;
     const moneyReceived = (cash + credit + debit).toFixed(2);
     const total = parseFloat(document.getElementById('total').textContent);
     const change = moneyReceived - total;
 
     //we will see if the user can buy all the shooping cart
-    if (change>=0) {
+    if (change >= 0) {
         //we will to get the email of the client 
-        const comment=document.getElementById('comment-sales').value;
-        const emailClient=document.getElementById('emailClient');
-        const id_customer=emailClient.getAttribute('idClient');
-        
+        const comment = document.getElementById('comment-sales').value;
+        const emailClient = document.getElementById('emailClient');
+        const id_customer = emailClient.getAttribute('idClient');
+
         //we will see if the user can buy all the shooping cart
-        if(await send_buy_to_the_server(total,moneyReceived,change,comment,id_customer,cash,credit,debit)){
+        if (await send_buy_to_the_server(total, moneyReceived, change, comment, id_customer, cash, credit, debit)) {
             //we will print ticket
-            printTicket(total,moneyReceived,change,comment);
-            
+            printTicket(total, moneyReceived, change, comment);
+
             //this is for delete all the shooping cart
-            cartItems.splice(0, cartItems.length); 
+            cartItems.splice(0, cartItems.length);
             updateCart(); //update the UI of the shooping cart for delete all the products
-            
+
             //delete the customer
             emailClient.setAttribute('idClient', null);
-            emailClient.textContent='';
-            document.getElementById('comment-sales').value=''; //delete the comment
+            emailClient.textContent = '';
+            document.getElementById('comment-sales').value = ''; //delete the comment
 
             closePopSales(); //close the UI of the shooping cart for that the user get the Purchase money
 
@@ -43,18 +43,18 @@ async function buy_my_car() {
             var text = (change != 0) ? 'Tu Cambio es de ' + change + '💲' : 'Vuelve pronto 😄';
             confirmationMessage(text, 'Gracias por su compra ❤️');
         }
-    }else{
+    } else {
         errorMessage('ERROR 👁️', 'El dinero no es suficiente para la compra');
     }
 }
 
-async function send_buy_to_the_server(total,moneyReceived,exchange,comment,id_customer,cash,credit,debit){
+async function send_buy_to_the_server(total, moneyReceived, exchange, comment, id_customer, cash, credit, debit) {
     // Show loading overlay
     loadingOverlay.style.display = "flex";
 
     try {
         //we will watching if the server can complete the pay and setting the inventory
-        const answerServer = await get_answer_server({products:cartItems,total:total,moneyReceived:moneyReceived,change:exchange,comment:comment,id_customer:id_customer,cash,credit,debit},`/fud/car-post`);
+        const answerServer = await get_answer_server({ products: cartItems, total: total, moneyReceived: moneyReceived, change: exchange, comment: comment, id_customer: id_customer, cash, credit, debit }, `/fud/car-post`);
 
         //we will see if save the commander 
         if (!isNaN(answerServer.message)) {
@@ -71,7 +71,7 @@ async function send_buy_to_the_server(total,moneyReceived,exchange,comment,id_cu
     } finally {
         // Hide loading overlay regardless of success or failure
         loadingOverlay.style.display = "none";
-    }  
+    }
 }
 
 async function get_answer_server(dataToTheServer, link) {
@@ -102,7 +102,7 @@ async function get_answer_server(dataToTheServer, link) {
     }
 }
 
-async function delete_all_car(total,moneyReceived,exchange,comment) {
+async function delete_all_car(total, moneyReceived, exchange, comment) {
     /*
     // Show loading overlay
     loadingOverlay.style.display = "flex";
@@ -167,97 +167,58 @@ async function delete_all_car(total,moneyReceived,exchange,comment) {
     return true;
 }
 
-async function addToCart(img, name, barcode, price, purchaseUnit, this_product_is_sold_in_bulk,id_dishes_and_combos) {
+async function addToCart(img, name, barcode, price, purchaseUnit, this_product_is_sold_in_bulk, id_dishes_and_combos,thisIsProductWithLot=true) {
+    //her we will see if exist a product in the cart
     const existingItem = cartItems.find(item => item.barcode === barcode);
-    
+
+    //now her, we will see if the product is sale for lot
+    let lotsInfo = get_the_lot_of_the_product(barcode) // get the lot of the product
+
+    //we will see if exit lot of the product
+    if (lotsInfo && thisIsProductWithLot) {
+        if(existingItem){
+            warningMessage('Mucho Ojo 👁️','Para agregar más cantidad de este producto, debes eliminarlo y volver a seleccionar los lotes.')
+            return;
+        }
+
+        show_all_the_lot_of_the_product(lotsInfo,img, name, barcode, price, purchaseUnit, this_product_is_sold_in_bulk, id_dishes_and_combos);
+        return;
+    }
+
+    //we will see if exist this item in the cart for add a new quantity 
     if (existingItem) {
         //we will see if the product is sold in bulk
-        if(this_product_is_sold_in_bulk=='true'){
+        if (this_product_is_sold_in_bulk == 'true') {
             //update the cant of the product in the scale 
-            document.getElementById('scales-store-weight-input').value=existingItem.quantity;
+            document.getElementById('scales-store-weight-input').value = existingItem.quantity;
             update_weight_of_the_scale();
 
             //get the new cant that the user would like buy
-            let quantityForSales=await open_ui_weight_scale(barcode, name, price, 0, 0, 1);
+            let quantityForSales = await open_ui_weight_scale(barcode, name, price, 0, 0, 1);
 
             //we will see if the user delete the product
-            if(quantityForSales<=0){
+            if (quantityForSales <= 0) {
                 await removeItem(barcodeEditProduct);
             }
-            else{
+            else {
                 existingItem.quantity = quantityForSales; //update the product in the cart
             }
-        }else{
-            // Buscar el producto en la página
-            let productElement = document.getElementById(barcode);
-
-            // Verificar si el producto tiene lotes
-            let lotsInfo = productElement.querySelector(".lots-info");
-            
-            if (lotsInfo) {
-                // Extraer los lotes
-                let lots = [];
-                let lotElements = lotsInfo.querySelectorAll("li");
-                
-                lotElements.forEach(lotElement => {
-                    let lotNumber = lotElement.querySelector("strong:nth-child(1)").nextSibling.nodeValue.trim();
-                    let existence = parseInt(lotElement.querySelector("strong:nth-child(3)").nextSibling.nodeValue.trim(), 10);
-                    let manufactureDate = lotElement.querySelector("strong:nth-child(5)").nextSibling.nodeValue.trim();
-                    let expirationDate = lotElement.querySelector("strong:nth-child(7)").nextSibling.nodeValue.trim();
-
-                    lots.push({
-                        nombre: lotNumber,
-                        fechaInicio: manufactureDate,
-                        fechaFinal: expirationDate,
-                        existencia: existence
-                    });
-                });
-
-                // Abrir el popup de selección de lotes
-                openLotPopup(lots);
-            } else {
-                existingItem.quantity += 1; //update the product in the cart
-            } 
+        } else {
+            //if not exist lot of the product, we will add a new product to the cart
+            existingItem.quantity += 1; //update the product in the cart
         }
 
         notificationMessage(`${existingItem.name} fue agregado ❤️`, 'El Producto fue agregado correctamente');
     } else {
-            // Buscar el producto en la página
-            let productElement = document.getElementById(barcode);
-
-            // Verificar si el producto tiene lotes
-            let lotsInfo = productElement.querySelector(".lots-info");
-            
-            if (lotsInfo) {
-                // Extraer los lotes
-                let lots = [];
-                let lotElements = lotsInfo.querySelectorAll("li");
-                
-                lotElements.forEach(lotElement => {
-                    let lotNumber = lotElement.querySelector("strong:nth-child(1)").nextSibling.nodeValue.trim();
-                    let existence = parseInt(lotElement.querySelector("strong:nth-child(3)").nextSibling.nodeValue.trim(), 10);
-                    let manufactureDate = lotElement.querySelector("strong:nth-child(5)").nextSibling.nodeValue.trim();
-                    let expirationDate = lotElement.querySelector("strong:nth-child(7)").nextSibling.nodeValue.trim();
-
-                    lots.push({
-                        nombre: lotNumber,
-                        fechaInicio: manufactureDate,
-                        fechaFinal: expirationDate,
-                        existencia: existence
-                    });
-                });
-
-                // Abrir el popup de selección de lotes
-                openLotPopup(lots);
-            } else {
-        let quantityForSales=1; //this is for the product that are sale for unit
+        let quantityForSales = 1; //this is for the product that are sale for unit
 
         //we will see if the product is sold in bulk
-        if(this_product_is_sold_in_bulk=='true'){
+        if (this_product_is_sold_in_bulk == 'true') {
             //if the product is sould in bulk, we will ask the user the quantity of the product
-            quantityForSales=await open_ui_weight_scale(barcode, name, price, 0, 0, 1);
+            quantityForSales = await open_ui_weight_scale(barcode, name, price, 0, 0, 1);
         }
-
+        
+        //add a new product to the cart
         cartItems.push({
             img: document.getElementById(img).src,
             name,
@@ -266,39 +227,98 @@ async function addToCart(img, name, barcode, price, purchaseUnit, this_product_i
             quantity: quantityForSales,
             discount: 0,
             purchaseUnit,
-            this_product_is_sold_in_bulk:this_product_is_sold_in_bulk,
-            id_dishes_and_combos:id_dishes_and_combos
+            this_product_is_sold_in_bulk: this_product_is_sold_in_bulk,
+            id_dishes_and_combos: id_dishes_and_combos
         });
 
+        //show a new notification
         notificationMessage(`${name} fue agregado ❤️`, 'El Producto fue agregado correctamente');
+    
     }
-    }
-    updateCart();
+
+    updateCart(lotsInfo);
 }
 
-function updateCart() {
+function get_the_lot_of_the_product(barcode) {
+    // search the product in the menu
+    let productElement = document.getElementById(barcode);
+
+    //we will see if the product have lot
+    let lotsInfo = productElement.querySelector(".lots-info");
+    return lotsInfo;
+}
+
+function show_all_the_lot_of_the_product(lotsInfo,img, name, barcode, price, purchaseUnit, this_product_is_sold_in_bulk, id_dishes_and_combos) {
+    // get all the lots
+    let lots = [];
+    let lotElements = lotsInfo.querySelectorAll("li");
+
+    //in this for we will get all the information of the lot
+    lotElements.forEach(lotElement => {
+        let idLot = lotElement.querySelector("strong:nth-child(8)").nextSibling.nodeValue.trim();
+        let lotNumber = lotElement.querySelector("strong:nth-child(1)").nextSibling.nodeValue.trim();
+        let existence = parseInt(lotElement.querySelector("strong:nth-child(3)").nextSibling.nodeValue.trim(), 10);
+        let manufactureDate = lotElement.querySelector("strong:nth-child(5)").nextSibling.nodeValue.trim();
+        let expirationDate = lotElement.querySelector("strong:nth-child(7)").nextSibling.nodeValue.trim();
+
+        //save the information in the array of the lot
+        lots.push({
+            id:idLot,
+            nombre: lotNumber,
+            fechaInicio: manufactureDate,
+            fechaFinal: expirationDate,
+            existencia: existence
+        });
+    });
+
+    // open the popup and show the lot
+    openLotPopup(lots,img, name, barcode, price, purchaseUnit, this_product_is_sold_in_bulk, id_dishes_and_combos);
+}
+
+function updateCart(lotsInfo=null) {
     const cartItemsContainer = document.getElementById('cart-items');
     cartItemsContainer.innerHTML = '';
 
     cartItems.forEach(item => {
         const itemTotal = (item.price - item.discount) * item.quantity;
-        cartItemsContainer.innerHTML += `
+        if(lotsInfo){
+            cartItemsContainer.innerHTML += `
             <div class="cart-item-point-of-sales">
                 <img src="${item.img}" alt="${item.name}">
                 <div class="cart-item-info-point-of-sales">
                 <div class="cart-item-name-point-of-sales">${item.name}</div>
                 <div class="cart-item-barcode-point-of-sales">Código: ${item.barcode}</div>
                 Cant.
-                <input type="button" class="cart-item-quantity-point-of-sales" value="${item.quantity}" onclick="editCant(this,'${item.barcode}')" onchange="updateItemQuantity('${item.barcode}', this.value)"> ${item.purchaseUnit}
+                <input type="button" class="cart-item-quantity-point-of-sales" value="${item.quantity}"> ${item.purchaseUnit}
                 <br>
                 Desc.
-                <input type="button" class="cart-item-discount-point-of-sales" value="${item.discount}" onchange="updateItemDiscount('${item.barcode}', this.value)">
+                <input type="button" class="cart-item-discount-point-of-sales" value="${item.discount}">
                 <div class="cart-item-price-point-of-sales">Precio: $${item.price.toFixed(2)}</div> 
                 <div class="cart-item-total-point-of-sales">Total: $${itemTotal.toFixed(2)}</div>
                 </div>
                 <button class="cart-item-remove-point-of-sales" onclick="removeItem('${item.barcode}')">X</button>
             </div>
         `;
+        }else{
+                cartItemsContainer.innerHTML += `
+                <div class="cart-item-point-of-sales">
+                    <img src="${item.img}" alt="${item.name}">
+                    <div class="cart-item-info-point-of-sales">
+                    <div class="cart-item-name-point-of-sales">${item.name}</div>
+                    <div class="cart-item-barcode-point-of-sales">Código: ${item.barcode}</div>
+                    Cant.
+                    <input type="button" class="cart-item-quantity-point-of-sales" value="${item.quantity}" onclick="editCant(this,'${item.barcode}')" onchange="updateItemQuantity('${item.barcode}', this.value)"> ${item.purchaseUnit}
+                    <br>
+                    Desc.
+                    <input type="button" class="cart-item-discount-point-of-sales" value="${item.discount}" onchange="updateItemDiscount('${item.barcode}', this.value)">
+                    <div class="cart-item-price-point-of-sales">Precio: $${item.price.toFixed(2)}</div> 
+                    <div class="cart-item-total-point-of-sales">Total: $${itemTotal.toFixed(2)}</div>
+                    </div>
+                    <button class="cart-item-remove-point-of-sales" onclick="removeItem('${item.barcode}')">X</button>
+                </div>
+            `;
+        }
+
     });
 
     //her we update the price of the shopping cart

@@ -40,12 +40,14 @@
                                         data-lot-number="{{number_lote}}"
                                         data-current-existence="{{current_existence}}"
                                         data-manufacture-date="{{date_of_manufacture}}"
-                                        data-expiration-date="{{expiration_date}}">
+                                        data-expiration-date="{{expiration_date}}"
+                                        data-lot-id="{{id}}">
                                         
                                         <strong>Lote:</strong> {{number_lote}} <br>
                                         <strong>Existencia:</strong> {{current_existence}} <br>
                                         <strong>Fabricado:</strong> {{date_of_manufacture}} <br>
                                         <strong>Expira:</strong> {{expiration_date}}
+                                        <strong>Id:</strong> {{id}} <br>
                                     </li>
                                 {{/each}}
                             </ul>
@@ -210,10 +212,26 @@
         border-radius: 5px;
         cursor: pointer;
     }
+    
+    .lots-info {
+        display: none;
+    }
+
 </style>
 
 <script>
-    function openLotPopup(lots) {
+    let characterOfTheProductLot;
+    function openLotPopup(lots,img, name, barcode, price, purchaseUnit, this_product_is_sold_in_bulk, id_dishes_and_combos) {
+        characterOfTheProductLot={
+            img: img,
+            name: name,
+            barcode: barcode,
+            price: price,
+            purchaseUnit: purchaseUnit,
+            this_product_is_sold_in_bulk: this_product_is_sold_in_bulk,
+            id_dishes_and_combos: id_dishes_and_combos
+        }; 
+        //her save the barcode of the product that selected 
         let tableBody = document.getElementById('lotTableBody');
         tableBody.innerHTML = '';
 
@@ -225,7 +243,7 @@
         lots.forEach(lot => {
             let row = document.createElement('tr');
             row.innerHTML = `
-                <td>${lot.nombre}</td>
+                <td id_lot=${lot.id}>${lot.nombre}</td>
                 <td>${lot.fechaInicio}</td>
                 <td>${lot.fechaFinal}</td>
                 <td>${lot.existencia}</td>
@@ -253,13 +271,34 @@
         }
     }
 
+
+    let selectedLots = []; //her we will save all the data of the lot 
     function acceptLotSelection() {
+        let selectedLotsAux = [];
+        let quantityTotal=0;
+
+        //her we will get all the input that have quantity
+        document.querySelectorAll('#lotTableBody tr').forEach(row => {
+            let input = row.querySelector('input[type="number"]');
+            let quantity = parseInt(input.value, 10);
+            
+            //if the input is greater than 0
+            if (quantity > 0) {
+                let idLot = row.cells[0].getAttribute('id_lot');
+                let barcode=characterOfTheProductLot.barcode;
+                selectedLotsAux.push({ idLot, quantity , barcode}); //save the id and the quantity
+                selectedLots.push({ idLot, quantity , barcode}); //save the id and the quantity
+                quantityTotal+=quantity;
+            }
+        });
+
+
+        //now, use selectedLotsAux for add the product to the car
+        for(var i=0;i<quantityTotal;i++){
+            addToCart(characterOfTheProductLot.img, characterOfTheProductLot.name, characterOfTheProductLot.barcode, characterOfTheProductLot.price, characterOfTheProductLot.purchaseUnit, characterOfTheProductLot.this_product_is_sold_in_bulk, characterOfTheProductLot.id_dishes_and_combos,false)
+        }
+
         closeLotPopup();
     }
-    
-    const lotesEjemplo = [
-            { nombre: "Lote 1", fechaInicio: "2024-03-01", fechaFinal: "2024-12-31", existencia: 50 },
-            { nombre: "Lote 2", fechaInicio: "2024-05-15", fechaFinal: "2025-01-10", existencia: 30 }
-    ];
-    //openLotPopup(lotesEjemplo)
+
 </script>
