@@ -21,6 +21,8 @@ async function buy_my_car() {
 
         //we will see if the user can buy all the shooping cart
         if (await send_buy_to_the_server(total, moneyReceived, change, comment, id_customer, cash, credit, debit)) {
+            await update_the_lots_of_the_product_in_the_car();
+
             //we will print ticket
             printTicket(total, moneyReceived, change, comment);
 
@@ -73,6 +75,66 @@ async function send_buy_to_the_server(total, moneyReceived, exchange, comment, i
         loadingOverlay.style.display = "none";
     }
 }
+
+
+async function update_the_lots_of_the_product_in_the_car() {
+    for (let lotElement of document.querySelectorAll('.lot-item')) { // Usar 'for...of' en lugar de 'forEach'
+        let lotId = lotElement.getAttribute('data-lot-id'); // ID del lote en el DOM
+        
+        let foundLot = selectedLots.find(lot => lot.idLot == lotId); // Buscar en la lista de lotes seleccionados
+        
+        if (foundLot) {
+            let currentExistence = parseInt(lotElement.getAttribute('data-current-existence'), 10);
+            
+            if (!isNaN(currentExistence)) { // Asegurar que sea un número válido
+                let newQuantity = currentExistence - foundLot.quantity;
+
+                // Evitar valores negativos
+                newQuantity = newQuantity < 0 ? 0 : newQuantity;
+
+                // Actualizar el atributo y mostrar en el HTML
+                lotElement.setAttribute('data-current-existence', newQuantity);
+                
+                // Llamar a la función asíncrona
+                await get_answer_server_for_lot({newQuantity:newQuantity}, `/links/${lotId}/edit-lot-quantity`);
+            } else {
+                console.warn(`Error: El lote con ID ${lotId} no tiene una existencia válida.`);
+            }
+        }
+    }
+}
+
+
+
+
+async function get_answer_server_for_lot(dataToTheServer, link) {
+    try {
+        const url = link;
+        // Configurar la solicitud
+        const options = {
+            method: 'POST', // Puedes usar POST en lugar de GET si necesitas enviar muchos datos
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataToTheServer)
+        };
+
+        // Realizar la solicitud y esperar la respuesta
+        const response = await fetch(url, options);
+
+        if (!response.ok) {
+            throw new Error('Error en la solicitud');
+        }
+
+        // Convertir la respuesta a JSON y devolverla
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error:', error);
+        throw error;
+    }
+}
+
 
 async function get_answer_server(dataToTheServer, link) {
     try {
@@ -257,7 +319,7 @@ function show_all_the_lot_of_the_product(lotsInfo,img, name, barcode, price, pur
     lotElements.forEach(lotElement => {
         let idLot = lotElement.querySelector("strong:nth-child(8)").nextSibling.nodeValue.trim();
         let lotNumber = lotElement.querySelector("strong:nth-child(1)").nextSibling.nodeValue.trim();
-        let existence = parseInt(lotElement.querySelector("strong:nth-child(3)").nextSibling.nodeValue.trim(), 10);
+        let existence = parseInt(lotElement.getAttribute('data-current-existence'),10);
         let manufactureDate = lotElement.querySelector("strong:nth-child(5)").nextSibling.nodeValue.trim();
         let expirationDate = lotElement.querySelector("strong:nth-child(7)").nextSibling.nodeValue.trim();
 
@@ -354,6 +416,9 @@ async function removeItem(barcode) {
             cartItems.splice(index, 1);
             updateCart();
         }
+
+        //delete all the data of the lot
+        selectedLots = selectedLots.filter(lot => lot.barcode !== barcode);
         notificationMessage('Producto eliminado 👍', 'El Producto fue eliminado correctamente')
     }
 }

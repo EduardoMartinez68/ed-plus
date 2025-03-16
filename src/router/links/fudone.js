@@ -307,6 +307,28 @@ router.get('/:id_company/:id_branch/:id_combo_features/edit-products-free', isLo
     }
 })
 
+router.post('/:id_lot/edit-lot-quantity', isLoggedIn, async (req, res) => {
+    const { id_lot } = req.params;
+    const { newQuantity } = req.body;
+
+    const queryText = `
+        UPDATE "Inventory".lots 
+        SET current_existence = $1
+        WHERE id = $2
+    `;
+
+    try {
+        const result = await database.query(queryText, [
+            newQuantity,
+            id_lot
+        ]);
+
+        res.status(201).json({ message: "Lote actualizado con éxito", lot: result.rows[0] });
+    } catch (error) {
+        console.error("Error al actualizar el lote:", error);
+        res.status(500).json({ error: "Error al actualizar el lote" });
+    }
+})
 
 async function create_table_lot(){
     const queryText = `
