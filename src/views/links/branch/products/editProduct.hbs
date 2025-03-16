@@ -180,11 +180,14 @@
     }
 
     function update_inventory(){
-        const input=document.getElementById('input-ammount');
-        input.disabled = !this_product_have_lot(); //we will see if exist lot for this product
+        const input = document.getElementById('input-ammount');
+        const hasLot = this_product_have_lot(); // Verificar si hay lote para el producto
 
-        if(input.disabled){
-            input.value=sum_all_the_lot();
+        if (hasLot) {
+            input.removeAttribute('readonly'); // Habilitar edición si hay lotes
+        } else {
+            input.setAttribute('readonly', true); // Hacerlo solo lectura si no hay lotes
+            input.value = sum_all_the_lot(); // Asignar el valor calculado
         }
     }
 

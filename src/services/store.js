@@ -78,6 +78,7 @@ async function get_all_dish_and_combo(idCompany, idBranch) {
                         'date_of_manufacture', l.date_of_manufacture,
                         'expiration_date', l.expiration_date
                     )
+                    ORDER BY l.expiration_date ASC -- Ordenar lotes por fecha de expiración
                 ) FILTER (WHERE l.id IS NOT NULL), '[]'
             ) AS lots
         FROM "Inventory".dish_and_combo_features i

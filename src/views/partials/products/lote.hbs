@@ -1,3 +1,4 @@
+
 <!--this is the table of the data of the providers-->
 <div class="card">
     <div class="card-body">
@@ -53,6 +54,13 @@
 <!---MESSAGE POP FOR ADD A NEW LOT-->
 
     <style>
+        #myTable tbody tr.expired-lot {
+            color: #d9534f !important; /* Rojo suave tipo Bootstrap */
+            font-weight: bold; /* Opcional, para resaltar más */
+            background-color: #ffcccc; /* Rojo claro */
+            color: #990000; /* Rojo oscuro */
+        }
+
         /* Fondo de pantalla para el popup */
         .overlay {
             display: none;
@@ -700,6 +708,32 @@
                 } else {
                     rows[i].style.display = 'none'; // Ocultar la fila si no coincide
                 }
+            }
+        });
+    });
+
+    //this is for draw the lot that is expired
+    document.addEventListener("DOMContentLoaded", function () {
+        let table = document.getElementById("myTable"); //get tha table
+        
+        if (!table) {
+            console.error("No se encontró la tabla con id 'myTable'");
+            return;
+        }
+
+        //we will read all the lot for know if is expired
+        table.querySelectorAll("tbody tr").forEach(row => {
+            let expirationCell = row.querySelector("[expiration_date]");
+            
+            if (!expirationCell) return; //if not have the class expiration_date
+
+            //get the expiration date of the lot
+            let expirationDate = new Date(expirationCell.getAttribute("expiration_date"));
+            let today = new Date();
+
+            //if the lot is expired we will draw of color red
+            if (expirationDate < today) {
+                row.classList.add("expired-lot");
             }
         });
     });

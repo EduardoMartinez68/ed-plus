@@ -242,22 +242,46 @@
 
         lots.forEach(lot => {
             let row = document.createElement('tr');
+
+            // Convertir la fecha de expiración a un objeto Date
+            let expirationDate = new Date(lot.fechaFinal);
+            let today = new Date();
+
+            // Verificar si el lote está caducado
+            let isExpired = expirationDate < today;
+            
             row.innerHTML = `
-                <td id_lot=${lot.id}>${lot.nombre}</td>
-                <td>${lot.fechaInicio}</td>
-                <td>${lot.fechaFinal}</td>
+                <td id_lot="${lot.id}">${lot.nombre}</td>
+                <td>${formatDate(lot.fechaInicio)}</td>
+                <td>${formatDate(lot.fechaFinal)}</td>
                 <td>${lot.existencia}</td>
                 <td>
-                    <button onclick="adjustLotQuantity(this, -1)">-</button>
-                    <input type="number" value="0" min="0" max="${lot.existencia}">
-                    <button onclick="adjustLotQuantity(this, 1)">+</button>
+                    <button onclick="adjustLotQuantity(this, -1)" ${isExpired ? 'disabled' : ''}>-</button>
+                    <input type="number" value="0" min="0" max="${lot.existencia}" ${isExpired ? 'disabled' : ''}>
+                    <button onclick="adjustLotQuantity(this, 1)" ${isExpired ? 'disabled' : ''}>+</button>
                 </td>
             `;
+
+            // Si el lote está caducado, cambiar el color de la fila con un rojo más suave
+            if (isExpired) {
+                row.style.backgroundColor = '#ffcccc'; // Rojo claro
+                row.style.color = '#990000'; // Rojo oscuro para el texto
+            }
+
             tableBody.appendChild(row);
         });
 
+
+
         document.getElementById('lotPopup').style.display = 'flex';
     }
+
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        return date.toLocaleDateString('es-ES', options);
+    }
+
 
     function closeLotPopup() {
         document.getElementById('lotPopup').style.display = 'none';

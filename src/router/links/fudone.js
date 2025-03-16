@@ -366,7 +366,8 @@ async function create_table_lot(){
 async function get_lots_by_dish_and_combo_features(idDishAndComboFeatures) {
     const queryText = `
         SELECT * FROM "Inventory".lots 
-        WHERE id_dish_and_combo_features = $1;
+        WHERE id_dish_and_combo_features = $1
+        ORDER BY expiration_date ASC;
     `;
     
     try {
