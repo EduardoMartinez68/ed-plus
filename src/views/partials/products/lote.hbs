@@ -611,7 +611,8 @@
             if(textInfo){
                 textInfo.textContent='';
             }
-        
+
+            draw_lot_expired_in_my_table(); //update the table
             closePopup();
             confirmationMessage('Lote actualizado 😁',answer.message)
         }else{
@@ -671,6 +672,33 @@
         return date.toLocaleDateString('es-ES', options);
     }
 
+    function draw_lot_expired_in_my_table(){
+        let table = document.getElementById("myTable"); //get tha table
+        
+        if (!table) {
+            console.error("No se encontró la tabla con id 'myTable'");
+            return;
+        }
+
+        //we will read all the lot for know if is expired
+        table.querySelectorAll("tbody tr").forEach(row => {
+            let expirationCell = row.querySelector("[expiration_date]");
+            
+            if (!expirationCell) return; //if not have the class expiration_date
+
+            //get the expiration date of the lot
+            let expirationDate = new Date(expirationCell.getAttribute("expiration_date"));
+            let today = new Date();
+
+            //if the lot is expired we will draw of color red
+            if (expirationDate < today) {
+                row.classList.add("expired-lot");
+            } else {
+                row.classList.remove("expired-lot");
+            }
+        });
+    }
+
     //this is for change the date of the date
     document.addEventListener('DOMContentLoaded', function() {
         const rows = document.querySelectorAll('#myTable tbody tr');
@@ -714,28 +742,7 @@
 
     //this is for draw the lot that is expired
     document.addEventListener("DOMContentLoaded", function () {
-        let table = document.getElementById("myTable"); //get tha table
-        
-        if (!table) {
-            console.error("No se encontró la tabla con id 'myTable'");
-            return;
-        }
-
-        //we will read all the lot for know if is expired
-        table.querySelectorAll("tbody tr").forEach(row => {
-            let expirationCell = row.querySelector("[expiration_date]");
-            
-            if (!expirationCell) return; //if not have the class expiration_date
-
-            //get the expiration date of the lot
-            let expirationDate = new Date(expirationCell.getAttribute("expiration_date"));
-            let today = new Date();
-
-            //if the lot is expired we will draw of color red
-            if (expirationDate < today) {
-                row.classList.add("expired-lot");
-            }
-        });
+        draw_lot_expired_in_my_table();
     });
 
 </script>

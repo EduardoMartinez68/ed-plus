@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const JavaScriptObfuscator = require('javascript-obfuscator');
 const directoryPath = path.join(__dirname,'src');  // Carpeta de tus archivos JS
-const outputPath = path.join(__dirname, 'dist', 'PLUS 1.0.5', 'resources', 'app', 'src');  
+const outputPath = path.join(__dirname, 'dist', 'PLUS-win32-x64', 'resources', 'app', 'src');  
 
 fs.readdirSync(directoryPath).forEach(file => {
     const filePath = path.join(directoryPath, file);

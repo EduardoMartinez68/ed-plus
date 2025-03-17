@@ -199,7 +199,7 @@ router.get('/:id/employees', isLoggedIn, async (req, res) => {
         res.render('links/manager/employee/employee', { company, employees });
     }
     else {
-        res.redirect('/fud/home');
+        res.redirect('/links/home');
     }
 })
 
@@ -215,7 +215,7 @@ router.get('/:id/add-employee', isLoggedIn, async (req, res) => {
         res.render('links/manager/employee/addEmployee', { company, roles, departments, country, branches });
     }
     else {
-        res.redirect('/fud/home');
+        res.redirect('/links/home');
     }
 })
 
@@ -335,7 +335,7 @@ router.get('/:id/:id_branch/:idTypeEmployee/delete-role-user', isLoggedIn, async
         } else {
             req.flash('message', 'El rol no fue eliminado con éxito 😮')
         }
-        res.redirect(`/fud/${id}/${id_branch}/type-employees-free`);
+        res.redirect(`/links/${id}/${id_branch}/type-employees-free`);
     }
     else {
         res.redirect('/links/home');

@@ -2,35 +2,36 @@
   "name": "PLUS",
   "version": "1.0.0",
   "description": "",
-  "main": "src/index.js",
+  "main": "src/index_desktop.js",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "nodemon src/index.js",
-    "build": "electron-builder"
+    "start": "npx electron .",
+    "dev": "nodemon src/",
+    "electron": "electron ."
   },
   "build": {
     "appId": "com.ed_software_developer.id",
     "productName": "PLUS Punto de Venta",
     "icon": "build/icon.ico",
     "copyright": "© 2025 {ED} Software Developer",
-    "win": {
-      "target": [
-        "nsis",
-        "portable"
-      ]
-    },
-    "nsis": {
-      "oneClick": false,
-      "allowToChangeInstallationDirectory": true,
-      "script": "build/installer.nsi"
-    },
-    "files": [
-      "dist/**/*", 
-      "node_modules/**/*"
-    ],
     "directories": {
       "output": "dist"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "build/icon.ico"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.ico"
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "build/icon.ico"
     }
+  },
+  "devDependencies": {
+    "electron": "^version",
+    "electron-builder": "^version"
   },
   "keywords": [],
   "author": "",

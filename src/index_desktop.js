@@ -174,26 +174,24 @@ git.addRemote(remote, repoURL).then(() => {
 
 async function check_if_exist_updates() {
     try {
-        // Make sure the remote repository is configured correctly
+        // Asegúrate de que el repositorio remoto esté configurado correctamente
         await git.fetch(remote);
 
-        // Ignore changes in the folder 'img/'
-        await git.raw(['update-index', '--assume-unchanged', 'src/public/img/uploads/']);
-
-        // Stash local changes to avoid rebase errors
-        await git.stash();
-
-        // Compare if there are remote changes
-        const log = await git.log(['origin/main', '-1']);
+        // Obtener el último commit del repositorio remoto
+        const remoteLog = await git.log([`${remote}/main`, '-1']);
         const localLog = await git.log(['HEAD', '-1']);
 
-        // Check if the current commit is the same as the remote commit
-        if (log.latest.hash !== localLog.latest.hash) {
+        // Compara los commits local y remoto
+        if (remoteLog.latest.hash !== localLog.latest.hash) {
             console.log('🔄 Nueva versión encontrada, actualizando...');
 
+            // Resetear cualquier cambio local y sincronizar con el repositorio remoto
+            await git.raw(['reset', '--hard', `${remote}/main`]); // Esto descarta los cambios locales y sincroniza con el remoto
+
+            // Realiza el pull para obtener la última versión
             await git.pull('origin', 'main', { '--rebase': null });
 
-            // Show a dialog to inform the user that an update is available
+            // Mostrar mensaje informando que se ha descargado la nueva versión
             dialog.showMessageBoxSync({
                 type: 'info',
                 title: 'Actualización',
@@ -206,15 +204,19 @@ async function check_if_exist_updates() {
         } else {
             console.log('✅ La aplicación ya está actualizada.');
         }
-
-        // Apply stashed changes (if any)
-        await git.stash(['pop']);
     } catch (error) {
+        const logFilePath = path.join(__dirname, 'logfile.txt'); // Ruta para el archivo de log
+        fs.appendFileSync(logFilePath, `Error verificando actualizaciones: ${error.message}\n${error.stack}\n\n`, 'utf8');
         console.error('❌ Error verificando actualizaciones:', error);
+
+        // Mostrar mensaje de error
+        dialog.showMessageBoxSync({
+            type: 'warning',  // Tipo de mensaje (puede ser 'info', 'warning', 'error', etc.)
+            title: 'Error verificando actualizaciones!',  // Título de la ventana
+            message: `Error verificando actualizaciones: ${error.message}\n${error.stack}\n\n` // Mensaje que se mostrará
+        });
     }
 }
-
-
 
 //*------------------initializations-----------------------------------------//
 const serverExpress =express();
@@ -509,7 +511,7 @@ serverExpress.use(companyName,require('./router/links/CRM'))
 serverExpress.use(companyName,require('./router/links/desktop'))
 serverExpress.use(companyName,require('./router/links/boutique'))
 serverExpress.use(companyName,require('./router/links/cashCut'))
-serverExpress.use(companyName,require('./router/links/orders'))
+//serverExpress.use(companyName,require('./router/links/orders'))
 
 serverExpress.use(require('./lib/addFrom'));
 
@@ -522,19 +524,6 @@ serverExpress.use(express.static(path.join(__dirname,'public')));
 //*-----------------------------------------------------------Server application-----------------------------------------//
 /*
     SETTING IN PACKAGE.JSON
-  "main": "index_desktop.js",
-  "scripts": {
-    "start": "node src/index_desktop.js",
-    "dev": "nodemon src/",
-    "build": "electron-builder"
-  },
-
-  "main": "src/index.js",
-  "scripts": {
-    "start": "node src/index.js",
-    "dev": "nodemon src/index.js",
-    "build": "electron-builder"
-  },
 */
 
 //this is for get the IP of the computer that is the server
