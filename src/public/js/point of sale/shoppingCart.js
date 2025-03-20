@@ -230,6 +230,8 @@ async function delete_all_car(total, moneyReceived, exchange, comment) {
 }
 
 async function addToCart(img, name, barcode, price, purchaseUnit, this_product_is_sold_in_bulk, id_dishes_and_combos,thisIsProductWithLot=true) {
+    show_recipe();
+    
     //her we will see if exist a product in the cart
     const existingItem = cartItems.find(item => item.barcode === barcode);
 
