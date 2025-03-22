@@ -2629,7 +2629,6 @@ router.post('/fud/recipe-post', isLoggedIn, async (req, res) => {
     const idEmployee=req.user.id_employee;
     const idBranch=req.user.id_branch;
     const information_of_recipe = req.body;
-    console.log(req.body)
 
     //her we will read all the recipe and we will save in the database
     for (let recipe of information_of_recipe) {

@@ -47,7 +47,6 @@
 
                     <!--if exist lot of this product, we will show his information-->
                     {{#if lots.length}}
-                        <i class="fi fi-ss-dolly-flatbed icon-lot"></i>
                         <div class="lots-info">
                             <strong>Lotes:</strong>
                             <ul class="lot-list">
@@ -69,9 +68,13 @@
                             </ul>
                         </div>
                     {{/if}}
-                    
+
                     {{#if this_product_need_recipe}}
                         <i class="fi fi-ss-pharmacy icon-lot"></i>
+                    {{else}}
+                        {{#if lots.length}}
+                            <i class="fi fi-ss-dolly-flatbed icon-lot"></i>
+                        {{/if}}
                     {{/if}}
                 </div>
             {{/each}}

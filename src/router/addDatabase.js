@@ -697,35 +697,78 @@ async function add_message_to_the_customer_history(id_users,id_prospects,comment
 
 
 async function add_recipe( id_companies, id_branches, id_employees,recipe) {
-    // SQL Query to insert the new recipe into the database
-    const queryText = `
-        INSERT INTO "Branch".prescription 
-        (recipe_folio, doctor_id, doctor_name, date, retained, comment, id_dishes_and_combos, id_companies, id_branches, id_employees) 
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
-    `;
 
-    // Values to insert
-    const values = [
-        recipe.recipeId,       // recipe_folio
-        recipe.doctorLicense,  // doctor_id
-        recipe.doctorName,     // doctor_name
-        recipe.prescriptionDate, // date
-        recipe.retained,       // retained
-        recipe.comments,       // comment
-        recipe.id_dishes_and_combos, // id_dishes_and_combos,
-        id_companies, 
-        id_branches, 
-        id_employees
-    ];
+    // Verificar si recipe.id_customer es un valor numérico y asignar null si no lo es
+    recipe.id_customer = isNaN(recipe.id_customer) ? null : recipe.id_customer;
+    if(recipe.id_customer){
+        // SQL Query to insert the new recipe into the database
+        const queryText = `
+            INSERT INTO "Branch".prescription 
+            (recipe_folio, doctor_id, doctor_name, date_prescription, retained, comment, id_dishes_and_combos, id_companies, id_branches, id_employees,id_lots,id_customers,amount) 
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10,$11,$12,$13) 
+        `;
 
-    try {
-        // Insert the recipe into the database
-        const result = await database.query(queryText, values);
-        return true;
-    } catch (error) {
-        console.error("Error adding recipe: ", error);
-        return null;
+
+        // Values to insert
+        const values = [
+            recipe.recipeId,       // recipe_folio
+            recipe.doctorLicense,  // doctor_id
+            recipe.doctorName,     // doctor_name
+            recipe.prescriptionDate, // date
+            recipe.retained,       // retained
+            recipe.comments,       // comment
+            recipe.id_dishes_and_combos, // id_dishes_and_combos,
+            id_companies, 
+            id_branches, 
+            id_employees,
+            recipe.id_lot,
+            recipe.id_customer,
+            recipe.amount
+        ];
+
+        try {
+            // Insert the recipe into the database
+            const result = await database.query(queryText, values);
+            return true;
+        } catch (error) {
+            console.error("Error adding recipe: ", error);
+            return null;
+        }
+    }else{
+        // SQL Query to insert the new recipe into the database
+        const queryText = `
+            INSERT INTO "Branch".prescription 
+            (recipe_folio, doctor_id, doctor_name, date_prescription, retained, comment, id_dishes_and_combos, id_companies, id_branches, id_employees,id_lots,amount) 
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10,$11,$12) 
+        `;
+
+
+        // Values to insert
+        const values = [
+            recipe.recipeId,       // recipe_folio
+            recipe.doctorLicense,  // doctor_id
+            recipe.doctorName,     // doctor_name
+            recipe.prescriptionDate, // date
+            recipe.retained,       // retained
+            recipe.comments,       // comment
+            recipe.id_dishes_and_combos, // id_dishes_and_combos,
+            id_companies, 
+            id_branches, 
+            id_employees,
+            recipe.id_lot,
+            recipe.amount
+        ];
+
+        try {
+            // Insert the recipe into the database
+            const result = await database.query(queryText, values);
+            return true;
+        } catch (error) {
+            console.error("Error adding recipe: ", error);
+            return null;
+        }    
     }
+
 }
 
 

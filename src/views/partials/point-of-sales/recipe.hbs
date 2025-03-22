@@ -180,7 +180,7 @@
     const closeModalRecipe = document.getElementById("closeModalRecipe");
     const recetaModalRecipe = document.getElementById("recetaModalRecipe");
     let productRecipe=null; //this is for save the product that need a recipe
-
+    
     function show_recipe(img, name, barcode, price, purchaseUnit, this_product_is_sold_in_bulk, id_dishes_and_combos,thisIsProductWithLot,this_product_need_a_recipe){
         //her we will save all the data of the product that need a recipe
         productRecipe={
@@ -213,6 +213,7 @@
     });
 
     let information_of_recipe=[]; //this array save all the information of the recipe
+    let information_of_recipe_for_sned_to_the_server=[]; //this array is for save all the data complete that send to the server
 
     async function save_recipe(){
         //we will see if exist a product 
@@ -250,7 +251,10 @@
             doctorName,
             prescriptionDate,
             retained,
-            comments
+            comments,
+            id_customer:null,
+            id_lot:null,
+            amount:null
         };
 
         return newRecipe;
