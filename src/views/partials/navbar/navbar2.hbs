@@ -116,8 +116,8 @@
                         {{#if user.view_food_category}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/food-area-free')">
-                                    <img src="/img/apps/food-department.webp" alt="Departamentos">
-                                    <span>Área de productos</span>
+                                    <img src="/img/apps/food-area.webp" alt="Departamentos">
+                                    <span>Categoría de productos</span>
                                 </div>
                             {{/each}}
                         {{/if}}
@@ -127,6 +127,15 @@
                                 <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/providers-free')">
                                     <img src="/img/apps/providers.webp" alt="Proveedores">
                                     <span>Proveedores</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+
+                        {{#if user.view_movement_history}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/0/sales')">
+                                    <img src="/img/apps/prescription.webp" alt="Ventas">
+                                    <span>Recetas médicas</span>
                                 </div>
                             {{/each}}
                         {{/if}}
@@ -181,7 +190,7 @@
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/type-employees-free')">
                                     <img src="/img/apps/type-employees.webp" alt="Roles de empleados">
-                                    <span>Roles de empleados</span>
+                                    <span>Roles y permisos</span>
                                 </div>
                             {{/each}}
                         {{/if}}
@@ -253,7 +262,6 @@
                         {{/if}}
                        --->
 
-                        
                         {{#if user.view_movement_history}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/0/sales')">

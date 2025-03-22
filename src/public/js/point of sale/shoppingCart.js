@@ -22,7 +22,11 @@ async function buy_my_car() {
         //we will see if the user can buy all the shooping cart
         if (await send_buy_to_the_server(total, moneyReceived, change, comment, id_customer, cash, credit, debit)) {
             await update_the_lots_of_the_product_in_the_car();
-            await save_the_recipe_in_the_database();
+
+            //we will see if exist product that need prescription in the cart
+            if (information_of_recipe.length > 0) {
+                await save_the_recipe_in_the_database();
+            }
 
             //we will print ticket
             printTicket(total, moneyReceived, change, comment);
