@@ -131,30 +131,30 @@
                 <div class="row">
                     <div class="col">
                         <label class="recipe-form-label">Folio de Receta *</label>
-                        <input type="text" class="recipe-form-control" required>
+                        <input type="text" class="recipe-form-control" required id="recipe-recipeId">
                     </div>
                     <div class="col">
                         <label class="recipe-form-label">Cédula del Médico *</label>
-                        <input type="text" class="recipe-form-control" required>
+                        <input type="text" class="recipe-form-control" required id="recipe-doctorLicense">
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col">
                         <label class="recipe-form-label">Nombre del Médico *</label>
-                        <input type="text" class="recipe-form-control" required>
+                        <input type="text" class="recipe-form-control" required id="recipe-doctorName">
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col">
                         <label class="recipe-form-label">Fecha de la receta *</label>
-                        <input type="date" class="recipe-form-control" required>
+                        <input type="date" class="recipe-form-control" required id="recipe-prescriptionDate">
                     </div>
                     <div class="col">
                         <label class="recipe-form-label">Retenida</label>
                         <div class="recipe-form-check">
-                            <input type="checkbox" class="recipe-form-check-input" id="retenidaSwitch">
+                            <input type="checkbox" class="recipe-form-check-input" id="recipe-retenidaSwitch">
                             <label for="retenidaSwitch">Sí</label>
                         </div>
                     </div>
@@ -164,11 +164,11 @@
                 <div class="row">
                     <div class="col">
                         <label class="recipe-form-label">Comentario</label>
-                        <textarea class="recipe-form-control" rows="3"></textarea>
+                        <textarea class="recipe-form-control" rows="3" id="recipe-comments"></textarea>
                     </div>
                 </div>
 
-                <button type="submit" class="recipe-btn-primary">Guardar</button>
+                <button type="button" class="recipe-btn-primary" onclick="save_recipe()">Guardar</button>
             </form>
         </div>
     </div>
@@ -179,21 +179,91 @@
 
     const closeModalRecipe = document.getElementById("closeModalRecipe");
     const recetaModalRecipe = document.getElementById("recetaModalRecipe");
+    let productRecipe=null; //this is for save the product that need a recipe
+
+    function show_recipe(img, name, barcode, price, purchaseUnit, this_product_is_sold_in_bulk, id_dishes_and_combos,thisIsProductWithLot,this_product_need_a_recipe){
+        //her we will save all the data of the product that need a recipe
+        productRecipe={
+            img,
+            name,
+            barcode,
+            price,
+            purchaseUnit,
+            this_product_is_sold_in_bulk,
+            id_dishes_and_combos,
+            thisIsProductWithLot,
+            this_product_need_a_recipe
+        }
 
 
-    function show_recipe(){
         recetaModalRecipe.classList.add("show");
     }
 
     closeModalRecipe.addEventListener("click", function () {
         recetaModalRecipe.classList.remove("show");
+        reset_recipe_form(); //clean the form
     });
 
     // Cerrar modal al hacer clic fuera del contenido
     recetaModalRecipe.addEventListener("click", function (e) {
         if (e.target === recetaModalRecipe) {
             recetaModalRecipe.classList.remove("show");
+            reset_recipe_form(); //clean the form
         }
     });
+
+    let information_of_recipe=[]; //this array save all the information of the recipe
+
+    async function save_recipe(){
+        //we will see if exist a product 
+        if(productRecipe){
+            const recipe=create_recipe(); //her get all the data of the form
+
+            //save the data of the recipe in the array
+            information_of_recipe.push(recipe);
+
+            //hidden the message pop
+            recetaModalRecipe.classList.remove("show");
+
+            //her we will add the product in the cart
+            await addToCart(productRecipe.img, productRecipe.name, productRecipe.barcode, productRecipe.price, productRecipe.purchaseUnit, productRecipe.this_product_is_sold_in_bulk, productRecipe.id_dishes_and_combos,productRecipe.thisIsProductWithLot,false);
+            productRecipe=null;  //clean the id of the product
+            reset_recipe_form(); //clean the form
+        }
+    }
+
+    function create_recipe(){
+        //get all the data of the form 
+        let recipeId = document.getElementById("recipe-recipeId").value;
+        let doctorLicense = document.getElementById("recipe-doctorLicense").value;
+        let doctorName = document.getElementById("recipe-doctorName").value;
+        let prescriptionDate = document.getElementById("recipe-prescriptionDate").value;
+        let retained = document.getElementById("recipe-retenidaSwitch").checked;
+        let comments = document.getElementById("recipe-comments").value;
+
+        // Create recipe object
+        let newRecipe = {
+            id_dishes_and_combos:productRecipe.id_dishes_and_combos,
+            barcode:productRecipe.barcode,
+            recipeId,
+            doctorLicense,
+            doctorName,
+            prescriptionDate,
+            retained,
+            comments
+        };
+
+        return newRecipe;
+    }
+
+    function reset_recipe_form() {
+        document.getElementById("recipe-recipeId").value = "";
+        document.getElementById("recipe-doctorLicense").value = "";
+        document.getElementById("recipe-doctorName").value = "";
+        document.getElementById("recipe-prescriptionDate").value = "";
+        document.getElementById("recipe-retenidaSwitch").checked = false;
+        document.getElementById("recipe-comments").value = "";
+    }
+
 
 </script>

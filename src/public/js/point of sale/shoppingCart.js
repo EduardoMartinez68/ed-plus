@@ -229,9 +229,7 @@ async function delete_all_car(total, moneyReceived, exchange, comment) {
     return true;
 }
 
-async function addToCart(img, name, barcode, price, purchaseUnit, this_product_is_sold_in_bulk, id_dishes_and_combos,thisIsProductWithLot=true) {
-    show_recipe();
-    
+async function addToCart(img, name, barcode, price, purchaseUnit, this_product_is_sold_in_bulk, id_dishes_and_combos,thisIsProductWithLot=true,this_product_need_a_recipe=false) {
     //her we will see if exist a product in the cart
     const existingItem = cartItems.find(item => item.barcode === barcode);
 
@@ -274,6 +272,13 @@ async function addToCart(img, name, barcode, price, purchaseUnit, this_product_i
 
         notificationMessage(`${existingItem.name} fue agregado ❤️`, 'El Producto fue agregado correctamente');
     } else {
+        //her we will see if the product need a recipe 
+        if (this_product_need_a_recipe=='true'){
+            show_recipe(img, name, barcode, price, purchaseUnit, this_product_is_sold_in_bulk, id_dishes_and_combos,thisIsProductWithLot,this_product_need_a_recipe); //this is for show the message pop for get the data of the recipe
+            return;
+        }
+
+
         let quantityForSales = 1; //this is for the product that are sale for unit
 
         //we will see if the product is sold in bulk
@@ -300,7 +305,17 @@ async function addToCart(img, name, barcode, price, purchaseUnit, this_product_i
     
     }
 
+    //update the cart
     updateCart(lotsInfo);
+}
+
+function remove_all_the_item_in_the_cart_that_not_exist_in_the_array_of_the_recipe(){
+    //her code is for that not exist a product in the cart that not exist in the array of the recipe. 
+    //This is for not save recipe that the user no have in the cart
+    information_of_recipe = information_of_recipe.filter(recipe => 
+        cartItems.some(item => item.barcode === recipe.barcode)
+    );
+    console.log(information_of_recipe);
 }
 
 function get_the_lot_of_the_product(barcode) {
@@ -340,6 +355,8 @@ function show_all_the_lot_of_the_product(lotsInfo,img, name, barcode, price, pur
 }
 
 function updateCart(lotsInfo=null) {
+    remove_all_the_item_in_the_cart_that_not_exist_in_the_array_of_the_recipe(); //clear the list
+
     const cartItemsContainer = document.getElementById('cart-items');
     cartItemsContainer.innerHTML = '';
 

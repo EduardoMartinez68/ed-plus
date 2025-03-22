@@ -13,9 +13,25 @@
             <!-- her we will read all the information of the products and we will print the information in the screen-->
             {{#each dishAndCombo}}
                 <div class="product-card-point-of-sales"
-                    onclick="addToCart('product-{{id}}','{{name}}', '{{barcode}}', {{price_1}},'{{purchase_unit}}','{{this_product_is_sold_in_bulk}}','{{id_dishes_and_combos}}')"
-                    id="{{barcode}}" id-product="{{id}}" data-price-1='{{price_1}}' data-price-2="{{price_2}}"
-                    data-price-3="{{price_3}}" purchase_unit="{{purchase_unit}}" this_product_is_sold_in_bulk="{{this_product_is_sold_in_bulk}}" id_dishes_and_combos="{{id_dishes_and_combos}}">
+                    onclick="addToCart(
+                        'product-{{id}}', 
+                        '{{name}}', 
+                        '{{barcode}}', 
+                        {{price_1}}, 
+                        '{{purchase_unit}}', 
+                        '{{this_product_is_sold_in_bulk}}', 
+                        '{{id_dishes_and_combos}}', 
+                        true,  <!-- Pass boolean instead of assignment -->
+                        '{{this_product_need_recipe}}'
+                    )"
+                    id="{{barcode}}" 
+                    id-product="{{id}}" 
+                    data-price-1='{{price_1}}' 
+                    data-price-2="{{price_2}}"
+                    data-price-3="{{price_3}}" 
+                    purchase_unit="{{purchase_unit}}" 
+                    this_product_is_sold_in_bulk="{{this_product_is_sold_in_bulk}}" 
+                    id_dishes_and_combos="{{id_dishes_and_combos}}">
     
                     <!--we will see if the product have a image-->
                     {{#if img}}
@@ -52,10 +68,11 @@
                                 {{/each}}
                             </ul>
                         </div>
-                    {{else}}
-                        <i class="fi fi-ss-pharmacy icon-lot"></i>
                     {{/if}}
                     
+                    {{#if this_product_need_recipe}}
+                        <i class="fi fi-ss-pharmacy icon-lot"></i>
+                    {{/if}}
                 </div>
             {{/each}}
         {{else}}
