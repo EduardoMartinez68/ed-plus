@@ -2606,8 +2606,6 @@ async function add_table_box_history() {
     }
 }
 
-
-
 function create_commander(id_branch, id_employee, id_customer, commanderDish, total, moneyReceived, change, comment, date) {
     const commander = {
         id_branch,
@@ -2623,6 +2621,27 @@ function create_commander(id_branch, id_employee, id_customer, commanderDish, to
     }
     return commander;
 }
+
+//this is for save the recipe of the product that need recipe
+router.post('/fud/recipe-post', isLoggedIn, async (req, res) => {
+    //get the data of the user
+    const idCompany=req.user.id_company;
+    const idEmployee=req.user.id_employee;
+    const idBranch=req.user.id_branch;
+    const information_of_recipe = req.body;
+    console.log(req.body)
+
+    //her we will read all the recipe and we will save in the database
+    for (let recipe of information_of_recipe) {
+        try {
+            await addDatabase.add_recipe(idCompany, idBranch, idEmployee, recipe);
+            res.status(200).json({ message: true});
+        } catch (error) {
+            console.error('Error:', error);
+            res.status(500).json({ error: 'Hubo un error al procesar la solicitud' });
+        }
+    }
+})
 
 /*
 router.post('/fud/:id_customer/car-post', isLoggedIn, async (req, res) => {
@@ -2823,6 +2842,7 @@ async function get_id_employee(idUser) {
         throw error; // Lanzar el error para que sea manejado en otro lugar si es necesario
     }
 }
+
 async function watch_if_can_create_all_the_combo(combos) {
     // Iterate through all the combos
     var arrayCombo = await get_all_supplies_of_the_combos(combos)

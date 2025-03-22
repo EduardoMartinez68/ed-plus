@@ -696,6 +696,38 @@ async function add_message_to_the_customer_history(id_users,id_prospects,comment
 }
 
 
+async function add_recipe( id_companies, id_branches, id_employees,recipe) {
+    // SQL Query to insert the new recipe into the database
+    const queryText = `
+        INSERT INTO "Branch".prescription 
+        (recipe_folio, doctor_id, doctor_name, date, retained, comment, id_dishes_and_combos, id_companies, id_branches, id_employees) 
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
+    `;
+
+    // Values to insert
+    const values = [
+        recipe.recipeId,       // recipe_folio
+        recipe.doctorLicense,  // doctor_id
+        recipe.doctorName,     // doctor_name
+        recipe.prescriptionDate, // date
+        recipe.retained,       // retained
+        recipe.comments,       // comment
+        recipe.id_dishes_and_combos, // id_dishes_and_combos,
+        id_companies, 
+        id_branches, 
+        id_employees
+    ];
+
+    try {
+        // Insert the recipe into the database
+        const result = await database.query(queryText, values);
+        return true;
+    } catch (error) {
+        console.error("Error adding recipe: ", error);
+        return null;
+    }
+}
+
 
 async function add_app(app){
     
@@ -732,5 +764,6 @@ module.exports={
     add_appointment,
     this_customer_exists,
     add_message_to_the_customer_history,
-    add_product_combo_company
+    add_product_combo_company,
+    add_recipe
 };

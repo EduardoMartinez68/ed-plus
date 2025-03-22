@@ -97,6 +97,7 @@ router.get('/:id_user/:id_company/:id_branch/:id_employee/:id_role/store-home', 
     }
 });
 
+
 router.get('/store-home', isLoggedIn, async (req, res) => {
     res.render('links/store/home/home');
 })
