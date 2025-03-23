@@ -310,6 +310,10 @@ router.get('/:id_company/:id_branch/:id_combo_features/edit-products-free', isLo
 router.post('/:id_lot/edit-lot-quantity', isLoggedIn, async (req, res) => {
     const { id_lot } = req.params;
     const { newQuantity } = req.body;
+    const id_company=req.user.id_company;
+    const id_branch=req.user.id_branch;
+    const id_employees=req.user.id_employee;
+
 
     const queryText = `
         UPDATE "Inventory".lots 
@@ -323,12 +327,38 @@ router.post('/:id_lot/edit-lot-quantity', isLoggedIn, async (req, res) => {
             id_lot
         ]);
 
+        await add_move_to_the_history(id_company,id_branch,id_employees,id_lot,newQuantity,'Venta'); //this is for save the move in the history when the lot are for a prescription 
         res.status(201).json({ message: "Lote actualizado con éxito", lot: result.rows[0] });
     } catch (error) {
         console.error("Error al actualizar el lote:", error);
         res.status(500).json({ error: "Error al actualizar el lote" });
     }
 })
+
+async function add_move_to_the_history(id_companies, id_branches, id_employees, id_lots, newCant, type_move) {
+    const queryText = `
+        INSERT INTO "Branch".history_move_lot 
+        (id_companies, id_branches, id_employees, id_lots, "newCant", type_move) 
+        VALUES ($1, $2, $3, $4, $5, $6)
+        RETURNING *;
+    `;
+
+    try {
+        const result = await database.query(queryText, [
+            id_companies,
+            id_branches,
+            id_employees,
+            id_lots,
+            newCant,
+            type_move
+        ]);
+
+        return { success: true, message: "Movimiento agregado con éxito", data: result.rows[0] };
+    } catch (error) {
+        console.error("Error al agregar movimiento al historial:", error);
+        return { success: false, error: "Error al agregar movimiento al historial" };
+    }
+}
 
 async function create_table_lot(){
     const queryText = `
@@ -433,6 +463,9 @@ router.post('/:id_combo_features/add-lot', isLoggedIn, async (req, res) => {
 router.post('/:id_combo_features/:id_lot/edit-lot', isLoggedIn, async (req, res) => {
     const { id_combo_features, id_lot} = req.params;
     const { number_lote, current_existence, date_of_manufacture, expiration_date} = req.body;
+    const id_company=req.user.id_company;
+    const id_branch=req.user.id_branch;
+    const id_employees=req.user.id_employee;
 
     if (!number_lote || !current_existence || !date_of_manufacture || !expiration_date) {
         return res.status(400).json({ error: "Todos los campos son obligatorios" });
@@ -456,7 +489,7 @@ router.post('/:id_combo_features/:id_lot/edit-lot', isLoggedIn, async (req, res)
             expiration_date,
             id_lot
         ]);
-
+        await add_move_to_the_history(id_company,id_branch,id_employees,id_lot,current_existence,'Ajuste de inventario'); //this is for save the move in the history when the lot are for a prescription
         res.status(201).json({ message: "Lote actualizado con éxito", lot: result.rows[0] });
     } catch (error) {
         console.error("Error al actualizar el lote:", error);

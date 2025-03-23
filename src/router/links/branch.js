@@ -1296,7 +1296,7 @@ router.get('/:id_company/:id_branch/:idScheduleEmployee/:idSchedule/edit-schedul
             req.flash('message', 'El horario no pudo ser actualizado 😮')
         }
 
-        res.redirect('/fud/' + id_company + '/' + id_branch + '/schedules-employees');
+        res.redirect('/links/' + id_company + '/' + id_branch + '/schedules-employees');
     }
 })
 
