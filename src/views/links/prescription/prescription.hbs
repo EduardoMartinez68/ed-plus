@@ -1,0 +1,63 @@
+<br><br>
+<div class="container">
+    <label for="">Generar Reporte de Medicamentos para Cofepris en PLUS</label>
+    <hr>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-6">
+                    <label for="sucursalSelect" class="form-label">Sucursal *</label>
+                    <select id="branchSelect" class="form-select">
+                        {{#each branchFree}}
+                            <option value="{{id}}">{{name_branch}}</option>
+                        {{/each}}
+                    </select>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col">
+                    <div class="mb-3">
+                        <label for="fechaInicio" class="form-label">Fecha Inicial *</label>
+                        <input type="date" id="dateStart" class="form-control">
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="mb-3">
+                        <label for="fechaFin" class="form-label">Fecha Final *</label>
+                        <input type="date" id="dateFinish" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <br><br>
+            <div class="row">
+                <div class="col">
+                    <button class="btn btn-success" onclick="createExcel()">Crear Excel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    //this script is for create the file excel with the data of the form 
+    async function createExcel() {
+        let branch = document.getElementById('branchSelect').value;
+        let dateStart = document.getElementById('dateStart').value;
+        let dateFinish = document.getElementById('dateFinish').value;
+
+        if (!branch || !dateStart || !dateFinish) {
+            alert('Por favor, completa todos los campos.');
+            return;
+        }
+
+        let url = `/links/report-prescription?branch=${encodeURIComponent(branch)}&dateStart=${encodeURIComponent(dateStart)}&dateFinish=${encodeURIComponent(dateFinish)}`;
+
+        // Crear un enlace para descargar el archivo
+        let newTab = window.open(url, '_blank');
+        if (!newTab) {
+            alert('No se pudo abrir la pestaña. Asegúrate de que tu navegador permite pop-ups.');
+        }
+    }
+</script>
