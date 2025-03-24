@@ -1881,6 +1881,8 @@ router.post('/fud/:id_company/:id_branch/:id_combo/update-product-branch', isLog
         await update_supplies_image(idSuppliesCompany,image);
     }
 
+    await update_other_information_of_combo(req,idComboCompany);
+    
     //update the combo of the company
     const thisProductIsSoldInBulk=req.body.thisProductIsSoldInBulk; //get is the product is sold in bulk
     await update_information_combo_product(name,barcode,description,thisProductIsSoldInBulk,idComboCompany);
@@ -1947,6 +1949,25 @@ async function get_data_photo(id_combo) {
         return null;
     }
 }
+
+async function update_other_information_of_combo(req,id_combo){
+    var queryText = `
+    UPDATE "Kitchen".dishes_and_combos
+    SET 
+        this_product_need_recipe=$1
+    WHERE 
+        id=$2
+    `;
+
+    const this_product_need_recipe = req.body.this_product_need_recipe === 'on' || req.body.this_product_need_recipe === 'true';
+    console.log(this_product_need_recipe)
+    console.log(id_combo)
+    var values = [this_product_need_recipe,id_combo];
+    const result = await database.query(queryText, values);
+    const data = result.rows;
+    return data;
+}
+
 
 async function update_combo_image(id_combo,image){
     var queryText = `

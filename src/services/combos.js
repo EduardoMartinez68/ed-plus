@@ -154,7 +154,8 @@ async function get_data_combo_factures(idComboFacture) {
             d.img AS dish_img,
             d.barcode AS dish_barcode,
             d.id_product_department AS dish_product_department,
-            d.id_product_category AS dish_product_category
+            d.id_product_category AS dish_product_category,
+            d.this_product_need_recipe AS this_product_need_recipe
         FROM 
             "Inventory".dish_and_combo_features f
         INNER JOIN 
