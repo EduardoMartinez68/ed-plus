@@ -135,7 +135,7 @@
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/report-prescription')">
                                     <img src="/img/apps/prescription.webp" alt="Ventas">
-                                    <span>Recetas médicas</span>
+                                    <span>Reportes médicos</span>
                                 </div>
                             {{/each}}
                         {{/if}}
@@ -450,7 +450,14 @@
                             {{/each}}
                         {{/if}}
 
-
+                        {{#if user.give_permissions}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/options')">
+                                    <img src="/img/apps/options.webp" alt="Departamentos">
+                                    <span>Configuración</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
                         <!--
                         {{#if user.modify_hardware_kitchen}}
                             {{#each branchFree}}

@@ -1,40 +1,30 @@
-<br><br>
-<div class="container">
-    <label for="">Generar Reporte de Medicamentos para Cofepris en PLUS</label>
+<br>
+<div class="container py-5">
+    <h2 class="text-center text-dark fw-bold mb-3">Reporte de Medicamentos</h2>
+    <p class="text-center text-muted fs-5">Genera un reporte detallado para Cofepris en PLUS</p>
     <hr>
-    <div class="card">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-6">
-                    <label for="sucursalSelect" class="form-label">Sucursal *</label>
-                    <select id="branchSelect" class="form-select">
-                        {{#each branchFree}}
-                            <option value="{{id}}">{{name_branch}}</option>
-                        {{/each}}
-                    </select>
+    <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-body p-5">
+            <div class="mb-4">
+                <label for="branchSelect" class="form-label fw-semibold text-primary">Sucursal *</label>
+                <select id="branchSelect" class="form-select rounded-pill px-4 py-3 border-0 shadow-sm bg-light">
+                    {{#each branchFree}}
+                        <option value="{{id}}">{{name_branch}}</option>
+                    {{/each}}
+                </select>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <label for="dateStart" class="form-label fw-semibold text-primary">Fecha Inicial *</label>
+                    <input type="date" id="dateStart" class="form-control rounded-pill px-4 py-3 border-0 shadow-sm bg-light">
+                </div>
+                <div class="col-md-6">
+                    <label for="dateFinish" class="form-label fw-semibold text-primary">Fecha Final *</label>
+                    <input type="date" id="dateFinish" class="form-control rounded-pill px-4 py-3 border-0 shadow-sm bg-light">
                 </div>
             </div>
-            <br>
-            <div class="row">
-                <div class="col">
-                    <div class="mb-3">
-                        <label for="fechaInicio" class="form-label">Fecha Inicial *</label>
-                        <input type="date" id="dateStart" class="form-control">
-                    </div>
-                </div>
-
-                <div class="col">
-                    <div class="mb-3">
-                        <label for="fechaFin" class="form-label">Fecha Final *</label>
-                        <input type="date" id="dateFinish" class="form-control">
-                    </div>
-                </div>
-            </div>
-            <br><br>
-            <div class="row">
-                <div class="col">
-                    <button class="btn btn-success" onclick="createExcel()">Crear Excel</button>
-                </div>
+            <div class="text-center mt-5">
+                <button class="btn btn-success px-5 py-3 rounded-pill shadow-lg fw-semibold" onclick="createExcel()">📊 Generar Reporte</button>
             </div>
         </div>
     </div>
@@ -48,7 +38,7 @@
         let dateFinish = document.getElementById('dateFinish').value;
 
         if (!branch || !dateStart || !dateFinish) {
-            alert('Por favor, completa todos los campos.');
+            warningMessage('Ups! 😅','Por favor, completa todos los campos.');
             return;
         }
 
@@ -57,7 +47,7 @@
         // Crear un enlace para descargar el archivo
         let newTab = window.open(url, '_blank');
         if (!newTab) {
-            alert('No se pudo abrir la pestaña. Asegúrate de que tu navegador permite pop-ups.');
+            warningMessage('Ups! 😰','No se pudo abrir la pestaña. Asegúrate de que tu navegador permite pop-ups.');
         }
     }
 </script>
