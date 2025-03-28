@@ -98,6 +98,7 @@
                         <button class="btn-select" onclick="showSection('select-2', this)" type="button"><i class="fi-icon fi-sr-file-invoice-dollar"></i> Inventario</button>
                         <button class="btn-select" onclick="showSection('select-3', this)" type="button"><i class="fi-icon fi-sr-box-alt"></i> Lista de Producto</button>
                         <button class="btn-select" onclick="showSection('select-4', this)" type="button"><i class="fi fi-sr-truck-loading"></i> Lotes y Series</button>
+                        <button class="btn-select" onclick="showSection('select-6', this)" type="button"><i class="fi fi-sr-badge-percent"></i> Promociones</button>
                         <button class="btn-select" onclick="showSection('select-5', this)" type="button"><i class="fi-icon fi-ss-settings"></i> Otro</button>
                     </div>
 
@@ -122,6 +123,9 @@
                         {{>products/lote}}
                     </div>
 
+                    <div id="select-6" class="content-section">
+                        {{>products/promotions}}
+                    </div>
                     
                         <div id="select-5" class="content-section">
                             {{>manager/combo/other}}

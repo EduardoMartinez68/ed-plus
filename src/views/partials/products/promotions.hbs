@@ -1,0 +1,197 @@
+<style>
+    .promotion-card {
+    margin-bottom: 20px; /* Agrega espacio entre las tarjetas */
+}
+
+.container {
+    padding-top: 20px; /* Agrega un poco de espacio al principio de la sección */
+}
+
+</style>
+
+<hr>
+<div class="container">
+
+    <div class="row">
+        <div class="col-sm-5">
+            <label for="">Busca promoción</label>
+            <input type="text" class="form-control" placeholder="Buscar..." id="search-promotions">
+        </div>
+        <div class="col-sm-5">
+            <label for="filterActive">Filtrar promociones:</label>
+            <select id="filterActive" class="form-select" onchange="filterPromotions()">
+                <option value="all">Todas</option>
+                <option value="active">Activas</option>
+                <option value="inactive">Inactivas</option>
+            </select>           
+        </div>
+        <div class="col-sm-2">
+            <br>
+            <button class="btn btn-confirm-message" type="button">Agregar <i class="bi bi-plus"></i> </button>
+
+        </div>
+    </div>
+    <br>
+
+    <!-- Card de promociones -->
+    <div class="card border-0 shadow-lg rounded-4 p-4 promotion-card" data-active="true" style="background-color: #f8f9fa;">
+        <button class="btn-close position-absolute top-0 end-0 m-2" aria-label="Close"></button>
+        <div class="card-body">
+            <div class="d-flex justify-content-start gap-3 align-items-center mt-2">
+                <label class="fw-bold">Nombre de la promoción:</label>
+                <input type="text" class="form-control w-100 rounded-3 shadow-sm promotion-name" placeholder="Nombre de la promoción" value="Promoción de Verano"> 
+            </div>
+
+            <!-- Sección de cantidades -->
+            <div class="d-flex justify-content-start gap-3 align-items-center mt-2">
+                <label class="fw-bold">Cuando la cantidad vaya desde:</label>
+                <input type="number" class="form-control text-center w-25 rounded-3 shadow-sm" placeholder="Desde">
+                <label class="fw-bold">hasta</label>
+                <input type="number" class="form-control text-center w-25 rounded-3 shadow-sm" placeholder="Hasta">
+            </div>
+
+            <!-- Sección de descuento -->
+            <div class="d-flex justify-content-start gap-3 align-items-center mt-3">
+                <label class="fw-bold">Usa este descuento:</label>
+                <input type="number" class="form-control text-center w-25 rounded-3 shadow-sm" placeholder="% de descuento">
+
+                <label class="fw-bold">Desde:</label>
+                <input type="date" class="form-control text-center w-25 rounded-3 shadow-sm">
+                <label class="fw-bold">hasta</label>
+                <input type="date" class="form-control text-center w-25 rounded-3 shadow-sm">
+            </div>
+
+            <!-- Sección de checkbox para activar la promoción -->
+            <div class="d-flex justify-content-start align-items-center mt-4">
+                <input type="checkbox" class="form-check-input promotion-toggle" onchange="togglePromocionStatus(this)">
+                <label class="fw-bold ms-2">Promoción activada</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Otra card de ejemplo inactiva -->
+    <div class="card border-0 shadow-lg rounded-4 p-4 promotion-card" data-active="false" style="background-color: #f8f9fa;">
+        <button class="btn-close position-absolute top-0 end-0 m-2" aria-label="Close"></button>
+        <div class="card-body">
+            <div class="d-flex justify-content-start gap-3 align-items-center mt-2">
+                <label class="fw-bold">Nombre de la promoción:</label>
+                <input type="text" class="form-control w-100 rounded-3 shadow-sm promotion-name" placeholder="Nombre de la promoción" disabled value="Promoción de Verano"> 
+            </div>
+
+            <!-- Sección de cantidades -->
+            <div class="d-flex justify-content-start gap-3 align-items-center mt-2">
+                <label class="fw-bold">Cuando la cantidad vaya desde:</label>
+                <input type="number" class="form-control text-center w-25 rounded-3 shadow-sm" placeholder="Desde" disabled>
+                <label class="fw-bold">hasta</label>
+                <input type="number" class="form-control text-center w-25 rounded-3 shadow-sm" placeholder="Hasta" disabled>
+            </div>
+
+            <!-- Sección de descuento -->
+            <div class="d-flex justify-content-start gap-3 align-items-center mt-3">
+                <label class="fw-bold">Usa este descuento:</label>
+                <input type="number" class="form-control text-center w-25 rounded-3 shadow-sm" placeholder="% de descuento" disabled>
+
+                <label class="fw-bold">Desde:</label>
+                <input type="date" class="form-control text-center w-25 rounded-3 shadow-sm" disabled>
+                <label class="fw-bold">hasta</label>
+                <input type="date" class="form-control text-center w-25 rounded-3 shadow-sm" disabled>
+            </div>
+
+            <!-- Sección de checkbox para activar la promoción -->
+            <div class="d-flex justify-content-start align-items-center mt-4">
+                <input type="checkbox" class="form-check-input promotion-toggle" onchange="togglePromocionStatus(this)">
+                <label class="fw-bold ms-2">Promoción activada</label>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // Función para mostrar/ocultar las promociones basadas en su estado activo
+    function togglePromocionStatus(checkbox) {
+        var card = checkbox.closest('.promotion-card');
+        var isActive = checkbox.checked;
+        if (isActive) {
+            card.setAttribute('data-active', 'true');
+            enableInputs(card);
+        } else {
+            card.setAttribute('data-active', 'false');
+            disableInputs(card);
+        }
+        filterPromotions(); // Filtra las promociones al cambiar el estado
+
+        checkbox.disabled = false;
+    }
+
+    // Función para habilitar los campos de entrada de una tarjeta
+    function enableInputs(card) {
+        var inputs = card.querySelectorAll('input');
+        inputs.forEach(function(input) {
+            input.disabled = false; // Habilita los inputs
+        });
+    }
+
+    // Función para deshabilitar los campos de entrada de una tarjeta
+    function disableInputs(card) {
+        var inputs = card.querySelectorAll('input');
+        inputs.forEach(function(input) {
+            input.disabled = true; // Deshabilita los inputs
+        });
+    }
+
+    // Función para filtrar las promociones
+    function filterPromotions() {
+        var filter = document.getElementById('filterActive').value;
+        var cards = document.querySelectorAll('.promotion-card');
+        cards.forEach(function(card) {
+            var isActive = card.getAttribute('data-active') === 'true';
+            if (filter === 'all') {
+                card.style.display = 'block';
+                card.style.opacity = 1; // No se oscurece
+            } else if (filter === 'active') {
+                if (isActive) {
+                    card.style.display = 'block';
+                    card.style.opacity = 1; // No se oscurece
+                } else {
+                    card.style.display = 'none';
+                }
+            } else if (filter === 'inactive') {
+                if (!isActive) {
+                    card.style.display = 'block';
+                    card.style.opacity = 0.5; // Se oscurece si está inactiva
+                } else {
+                    card.style.display = 'none';
+                }
+            }
+        });
+    }
+
+    // Inicializa el filtro al cargar la página
+    document.addEventListener('DOMContentLoaded', function() {
+        filterPromotions();
+    });
+</script>
+<script>
+// Obtén el input de búsqueda y las tarjetas
+const searchInputPromotion = document.getElementById('search-promotions');
+const cardsPromotions = document.querySelectorAll('.promotion-card');
+
+// Añadir un evento que escuche los cambios en el input de búsqueda
+searchInputPromotion.addEventListener('input', function() {
+    const searchTerm = searchInputPromotion.value.toLowerCase(); // Lo que el usuario escribe (en minúsculas)
+
+    cardsPromotions.forEach(card => {
+        // Obtén el nombre o el texto que deseas filtrar (en minúsculas)
+        const promotionName = card.querySelector('.promotion-name').value.toLowerCase();
+
+        // Compara si el término de búsqueda está incluido en el nombre de la promoción
+        if (promotionName.includes(searchTerm)) {
+            card.style.display = ''; // Mostrar la tarjeta
+        } else {
+            card.style.display = 'none'; // Ocultar la tarjeta
+        }
+    });
+});
+
+</script>
