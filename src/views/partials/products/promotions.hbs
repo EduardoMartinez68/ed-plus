@@ -1,111 +1,147 @@
 <style>
     .promotion-card {
-    margin-bottom: 20px; /* Agrega espacio entre las tarjetas */
-}
+        margin-bottom: 20px;
+        /* Agrega espacio entre las tarjetas */
+    }
 
-.container {
-    padding-top: 20px; /* Agrega un poco de espacio al principio de la sección */
-}
-
+    .container {
+        padding-top: 20px;
+        /* Agrega un poco de espacio al principio de la sección */
+    }
 </style>
 
 <hr>
+
 <div class="container">
-
-    <div class="row">
-        <div class="col-sm-5">
-            <label for="">Busca promoción</label>
-            <input type="text" class="form-control" placeholder="Buscar..." id="search-promotions">
-        </div>
-        <div class="col-sm-5">
-            <label for="filterActive">Filtrar promociones:</label>
-            <select id="filterActive" class="form-select" onchange="filterPromotions()">
-                <option value="all">Todas</option>
-                <option value="active">Activas</option>
-                <option value="inactive">Inactivas</option>
-            </select>           
-        </div>
-        <div class="col-sm-2">
+    <div class="card">
+        <div class="card-body">
+            <div class="container">
+            <div class="row">
+                <div class="col-sm-5">
+                    <label for="">Busca promoción</label>
+                    <input type="text" class="form-control" placeholder="Buscar..." id="search-promotions">
+                </div>
+                <div class="col-sm-5">
+                    <label for="filterActive">Filtrar promociones:</label>
+                    <select id="filterActive" class="form-select" onchange="filterPromotions()">
+                        <option value="all">Todas</option>
+                        <option value="active">Activas</option>
+                        <option value="inactive">Inactivas</option>
+                    </select>
+                </div>
+                <div class="col-sm-2">
+                    <br>
+                    <button class="btn btn-confirm-message" type="button" onclick="openPopupPromotions()">Agregar </button>
+                </div>
+            </div>
             <br>
-            <button class="btn btn-confirm-message" type="button">Agregar <i class="bi bi-plus"></i> </button>
+            <table width="100%" border="1" class="table-information" id="table-promotions">
+                <thead>
+                    <tr>
+                        <th><label>Nombre de la promoción</label></th>
+                        <th><label>Cantidad</label></th>
+                        <th><label>% Descuento</label></th>
+                        <th><label>Fecha</label></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                        <tr id="{{name}}">
+                            <td><label><strong>Promocion 1</strong></label></td>
+                            <td><label>Cuando la cantidad vaya desde 5 hasta 5</label></th>
+                            <td><label>30%</label></td>
+                            <td><label>Desde 29/03/2025 Hasta 29/03/2025</label></th>
+                            <th>
+                                
+                                    <input type="checkbox" class="form-check-input promotion-toggle" onchange="togglePromocionStatus(this)">
+                                    <label class="fw-bold ms-2">Promoción activada</label>
+                                
+                            </th>
+                            <td>
+                                <button onclick="editLot('{{id}}',this)"  type="button"
+                                    class="btn btn-edit"><i class="fi-department fi-sr-pencil"></i></button>
+                                <button onclick="deleteLot('{{id}}',this)" type="button"
+                                    class="btn btn-danger"><i class="fi-department fi-sr-trash"></i></button>
+                            </td>
+                        </tr>
 
-        </div>
-    </div>
-    <br>
-
-    <!-- Card de promociones -->
-    <div class="card border-0 shadow-lg rounded-4 p-4 promotion-card" data-active="true" style="background-color: #f8f9fa;">
-        <button class="btn-close position-absolute top-0 end-0 m-2" aria-label="Close"></button>
-        <div class="card-body">
-            <div class="d-flex justify-content-start gap-3 align-items-center mt-2">
-                <label class="fw-bold">Nombre de la promoción:</label>
-                <input type="text" class="form-control w-100 rounded-3 shadow-sm promotion-name" placeholder="Nombre de la promoción" value="Promoción de Verano"> 
-            </div>
-
-            <!-- Sección de cantidades -->
-            <div class="d-flex justify-content-start gap-3 align-items-center mt-2">
-                <label class="fw-bold">Cuando la cantidad vaya desde:</label>
-                <input type="number" class="form-control text-center w-25 rounded-3 shadow-sm" placeholder="Desde">
-                <label class="fw-bold">hasta</label>
-                <input type="number" class="form-control text-center w-25 rounded-3 shadow-sm" placeholder="Hasta">
-            </div>
-
-            <!-- Sección de descuento -->
-            <div class="d-flex justify-content-start gap-3 align-items-center mt-3">
-                <label class="fw-bold">Usa este descuento:</label>
-                <input type="number" class="form-control text-center w-25 rounded-3 shadow-sm" placeholder="% de descuento">
-
-                <label class="fw-bold">Desde:</label>
-                <input type="date" class="form-control text-center w-25 rounded-3 shadow-sm">
-                <label class="fw-bold">hasta</label>
-                <input type="date" class="form-control text-center w-25 rounded-3 shadow-sm">
-            </div>
-
-            <!-- Sección de checkbox para activar la promoción -->
-            <div class="d-flex justify-content-start align-items-center mt-4">
-                <input type="checkbox" class="form-check-input promotion-toggle" onchange="togglePromocionStatus(this)">
-                <label class="fw-bold ms-2">Promoción activada</label>
-            </div>
-        </div>
-    </div>
-
-    <!-- Otra card de ejemplo inactiva -->
-    <div class="card border-0 shadow-lg rounded-4 p-4 promotion-card" data-active="false" style="background-color: #f8f9fa;">
-        <button class="btn-close position-absolute top-0 end-0 m-2" aria-label="Close"></button>
-        <div class="card-body">
-            <div class="d-flex justify-content-start gap-3 align-items-center mt-2">
-                <label class="fw-bold">Nombre de la promoción:</label>
-                <input type="text" class="form-control w-100 rounded-3 shadow-sm promotion-name" placeholder="Nombre de la promoción" disabled value="Promoción de Verano"> 
-            </div>
-
-            <!-- Sección de cantidades -->
-            <div class="d-flex justify-content-start gap-3 align-items-center mt-2">
-                <label class="fw-bold">Cuando la cantidad vaya desde:</label>
-                <input type="number" class="form-control text-center w-25 rounded-3 shadow-sm" placeholder="Desde" disabled>
-                <label class="fw-bold">hasta</label>
-                <input type="number" class="form-control text-center w-25 rounded-3 shadow-sm" placeholder="Hasta" disabled>
-            </div>
-
-            <!-- Sección de descuento -->
-            <div class="d-flex justify-content-start gap-3 align-items-center mt-3">
-                <label class="fw-bold">Usa este descuento:</label>
-                <input type="number" class="form-control text-center w-25 rounded-3 shadow-sm" placeholder="% de descuento" disabled>
-
-                <label class="fw-bold">Desde:</label>
-                <input type="date" class="form-control text-center w-25 rounded-3 shadow-sm" disabled>
-                <label class="fw-bold">hasta</label>
-                <input type="date" class="form-control text-center w-25 rounded-3 shadow-sm" disabled>
-            </div>
-
-            <!-- Sección de checkbox para activar la promoción -->
-            <div class="d-flex justify-content-start align-items-center mt-4">
-                <input type="checkbox" class="form-check-input promotion-toggle" onchange="togglePromocionStatus(this)">
-                <label class="fw-bold ms-2">Promoción activada</label>
-            </div>
+                        <tr id="{{name}}">
+                            <td><label><strong>Paquete 1</strong></label></td>
+                            <td><label>Cuando la cantidad vaya desde 5 hasta 5</label></th>
+                            <td><label>30%</label></td>
+                            <td><label>Desde 29/03/2025 Hasta 29/03/2025</label></th>
+                            <th>
+                                
+                                    <input type="checkbox" class="form-check-input promotion-toggle" onchange="togglePromocionStatus(this)">
+                                    <label class="fw-bold ms-2">Promoción activada</label>
+                                
+                            </th>
+                            <td>
+                                <button onclick="editPromotion('{{id}}',this)"  type="button"
+                                    class="btn btn-edit"><i class="fi-department fi-sr-pencil"></i></button>
+                                <button onclick="deleteLot('{{id}}',this)" type="button"
+                                    class="btn btn-danger"><i class="fi-department fi-sr-trash"></i></button>
+                            </td>
+                        </tr>
+                
+                </tbody>
+            </table>
         </div>
     </div>
 
+    </div>
 </div>
+
+<!---MESSAGE POP--->
+<div class="overlay" id="overlay-promotions" onclick="closePopupPromotion()"></div>
+<div class="popup" id="popup-promotions" style="min-width: 1000px; max-width: 1000px;">
+    <div class="card border-0 shadow-lg rounded-4 p-4 promotion-card" data-active="true"
+        style="background-color: #f8f9fa;">
+        <button class="btn-close position-absolute top-0 end-0 m-2" aria-label="Close" onclick="closePopupPromotion()" type="button"></button>
+        <div class="card-body">
+            <div class="d-flex justify-content-start gap-3 align-items-center mt-2">
+                <label class="fw-bold">Nombre de la promoción:</label>
+                <input type="text" class="form-control w-100 rounded-3 shadow-sm promotion-name"
+                    placeholder="Nombre de la promoción" id="promotionName">
+            </div>
+
+
+            <div class="d-flex justify-content-start gap-3 align-items-center mt-2">
+                <label class="fw-bold">Cuando la cantidad vaya desde:</label>
+                <input type="number" class="form-control text-center w-25 rounded-3 shadow-sm" placeholder="Desde" id="fromQuantity">
+                <label class="fw-bold">hasta</label>
+                <input type="number" class="form-control text-center w-25 rounded-3 shadow-sm" placeholder="Hasta" id="toQuantity">
+            </div>
+
+
+            <div class="d-flex justify-content-start gap-3 align-items-center mt-3">
+                <label class="fw-bold">Usa este descuento:</label>
+                <input type="number" class="form-control text-center w-25 rounded-3 shadow-sm"
+                    placeholder="% de descuento" id="discountPercentage">
+
+                <label class="fw-bold">Desde:</label>
+                <input type="date" class="form-control text-center w-25 rounded-3 shadow-sm" id="fromDate">
+                <label class="fw-bold">hasta</label>
+                <input type="date" class="form-control text-center w-25 rounded-3 shadow-sm" id="toDate">
+            </div>
+
+            <div class="row">
+                <div class="col-2">
+                    <div class="d-flex justify-content-start align-items-center mt-4">
+                        <input type="checkbox" class="form-check-input promotion-toggle" id="promotionStatus">
+                        <label class="fw-bold ms-2">Promoción activada</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <br>
+        <button class="btn btn-success" onclick="savePromotion()">Guardar Promoción</button>
+    </div>
+</div>
+
 
 <script>
     // Función para mostrar/ocultar las promociones basadas en su estado activo
@@ -127,7 +163,7 @@
     // Función para habilitar los campos de entrada de una tarjeta
     function enableInputs(card) {
         var inputs = card.querySelectorAll('input');
-        inputs.forEach(function(input) {
+        inputs.forEach(function (input) {
             input.disabled = false; // Habilita los inputs
         });
     }
@@ -135,7 +171,7 @@
     // Función para deshabilitar los campos de entrada de una tarjeta
     function disableInputs(card) {
         var inputs = card.querySelectorAll('input');
-        inputs.forEach(function(input) {
+        inputs.forEach(function (input) {
             input.disabled = true; // Deshabilita los inputs
         });
     }
@@ -144,7 +180,7 @@
     function filterPromotions() {
         var filter = document.getElementById('filterActive').value;
         var cards = document.querySelectorAll('.promotion-card');
-        cards.forEach(function(card) {
+        cards.forEach(function (card) {
             var isActive = card.getAttribute('data-active') === 'true';
             if (filter === 'all') {
                 card.style.display = 'block';
@@ -168,30 +204,89 @@
     }
 
     // Inicializa el filtro al cargar la página
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         filterPromotions();
     });
 </script>
+
+<!---this script is for search the promotion with the search bar-->
 <script>
-// Obtén el input de búsqueda y las tarjetas
-const searchInputPromotion = document.getElementById('search-promotions');
-const cardsPromotions = document.querySelectorAll('.promotion-card');
+document.getElementById('search-promotions').addEventListener('input', filterPromotions);
+document.getElementById('filterActive').addEventListener('change', filterPromotions);
 
-// Añadir un evento que escuche los cambios en el input de búsqueda
-searchInputPromotion.addEventListener('input', function() {
-    const searchTerm = searchInputPromotion.value.toLowerCase(); // Lo que el usuario escribe (en minúsculas)
+function filterPromotions() {
+    const searchTerm = document.getElementById('search-promotions').value.toLowerCase();
+    const filterValue = document.getElementById('filterActive').value;
+    const rows = document.querySelectorAll('#table-promotions tbody tr');
 
-    cardsPromotions.forEach(card => {
-        // Obtén el nombre o el texto que deseas filtrar (en minúsculas)
-        const promotionName = card.querySelector('.promotion-name').value.toLowerCase();
-
-        // Compara si el término de búsqueda está incluido en el nombre de la promoción
-        if (promotionName.includes(searchTerm)) {
-            card.style.display = ''; // Mostrar la tarjeta
-        } else {
-            card.style.display = 'none'; // Ocultar la tarjeta
-        }
+    rows.forEach(row => {
+        const name = row.cells[0].innerText.toLowerCase();
+        const isActive = row.querySelector('.promotion-toggle')?.checked;
+        
+        let matchesSearch = name.includes(searchTerm);
+        let matchesFilter = 
+            filterValue === 'all' || 
+            (filterValue === 'active' && isActive) || 
+            (filterValue === 'inactive' && !isActive);
+        
+        row.style.display = matchesSearch && matchesFilter ? '' : 'none';
     });
-});
+}
+</script>
 
+
+<!---->
+<script>
+    function openPopupPromotions() {
+        document.getElementById('popup-promotions').classList.add('show');
+        document.getElementById('popup-promotions').style.display = 'block';
+        document.getElementById('overlay-promotions').style.display = 'block';
+    }
+
+    function resetInformationFormPromotion(){
+        document.getElementById('promotionName').value = '';
+        document.getElementById('fromQuantity').value = '';
+        document.getElementById('toQuantity').value = '';
+        document.getElementById('discountPercentage').value = '';
+        document.getElementById('fromDate').value = '';
+        document.getElementById('toDate').value = '';
+        document.getElementById('promotionStatus').checked = false;
+    }
+
+    function closePopupPromotion() {
+        //her we will hidden the pop for add
+        document.getElementById('popup-promotions').classList.remove('show');
+        setTimeout(() => {
+            document.getElementById('popup-promotions').style.display = 'none';
+            document.getElementById('overlay-promotions').style.display = 'none';
+        }, 200);
+
+        resetInformationFormPromotion();
+    }
+
+    async function savePromotion(){
+        closePopupPromotion();
+    }
+
+    function editPromotion(idPromotion,button){
+        const row = button.closest('tr'); // get the row of the promotion
+
+        //her we going to get all the information of the promotion
+        const name = row.cells[0].innerText.trim();
+        const quantity = row.cells[1].innerText.trim();
+        const discount = row.cells[2].innerText.trim();
+        const dateRange = row.cells[3].innerText.trim();
+        const isActive = row.querySelector('.promotion-toggle')?.checked;
+
+        //her we will update the input of the promotion
+        document.getElementById('promotionName').value = name;
+        document.getElementById('fromQuantity').value = 0;
+        document.getElementById('toQuantity').value = 0;
+        document.getElementById('discountPercentage').value = discount.replace('%','').trim();
+        document.getElementById('fromDate').value = dateRange.split(' ')[1].trim();
+        document.getElementById('toDate').value = dateRange.split(' ')[3].trim();
+        document.getElementById('promotionStatus').checked = isActive;
+
+        openPopupPromotions();
+    }
 </script>
