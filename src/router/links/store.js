@@ -31,7 +31,8 @@ const {
     get_all_dish_and_combo,
     get_all_data_combo_most_sold,
     get_data_recent_combos,
-    get_all_products_in_sales
+    get_all_products_in_sales,
+    get_all_the_promotions
 } = require('../../services/store');
 
 const {
@@ -62,7 +63,6 @@ router.get('/:id_user/:id_company/:id_branch/:id_employee/:id_role/store-home', 
         const dataEmployee = await get_data_employee(req);
 
         const dishAndCombo = await get_all_dish_and_combo(id_company, id_branch);
-        console.log(dishAndCombo)
         
         const newCombos = await get_data_recent_combos(id_company);
         const mostSold = await get_all_data_combo_most_sold(id_branch);
@@ -72,9 +72,11 @@ router.get('/:id_user/:id_company/:id_branch/:id_employee/:id_role/store-home', 
         const specialsAd = await get_all_ad(id_branch, 'special');
         const addition = '{"nombre": "Juan", "edad": 30, "ciudad": "Madrid"}'; // Ejemplo de datos adicionales
         const boxes=await get_all_box_of_the_branch_with_his_id(id_branch);
+        const promotions=await get_all_the_promotions(id_branch);
 
         //const productsSales=await get_all_products_in_sales(id_branch);
         const dataCompany=await get_data_company_with_id(id_company);
+        console.log(promotions)
         const templateData = {
             branchFree,
             dishAndCombo,
@@ -87,6 +89,7 @@ router.get('/:id_user/:id_company/:id_branch/:id_employee/:id_role/store-home', 
             specialsAd,
             boxes,
             dataCompany,
+            promotions,
             addition: JSON.stringify(addition)
         };
 

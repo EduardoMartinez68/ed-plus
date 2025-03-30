@@ -91,7 +91,27 @@
 </div>
 
 
-
+<!---her we will save all the promotions in our store--->
+{{#each promotions}}
+    <div
+        hidden
+        class="div-promotions"
+         id_promotion="{{id}}"
+         id_dishes_and_combos="{{id_dishes_and_combos}}"
+         id_dish_and_combo_features="{{id_dish_and_combo_features}}"
+         active_promotion="{{active_promotion}}"
+         name_promotion="{{name_promotion}}"
+         fromTime="{{fromTime}}"
+         toTime="{{toTime}}"
+         promotions_from="{{promotions_from}}"
+         promotions_to="{{promotions_to}}"
+         discount_percentage="{{discount_percentage}}"
+         date_from="{{date_from}}"
+         date_to="{{date_to}}">
+         Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem fugiat magnam maiores repellendus. Suscipit, numquam voluptatibus pariatur aliquid minus doloremque voluptatum ipsam natus facilis velit officia magni quasi veritatis quo.
+    </div>
+{{/each}}
+<!----->
 
 
 

@@ -541,7 +541,8 @@ async function get_all_the_promotions(id_dish_and_combo_features) {
 router.post('/:id_dish_and_combo_features/add-promotion-free', isLoggedIn, async (req, res) => {
     const { newPromotion } = req.body;
     const { id_dish_and_combo_features } = req.params;
-
+    const id_company=req.user.id_company;
+    const id_branch=req.user.id_branch;
     //we will see if the promotion have name
     if(newPromotion.promotionName==undefined || newPromotion.promotionName==null || newPromotion.promotionName==''){
         return res.status(500).json({ error: 'Necesitas agregar un nombre a tu promoción 😅', message: 'Necesitas agregar un nombre a tu promoción 😅' });
@@ -556,13 +557,15 @@ router.post('/:id_dish_and_combo_features/add-promotion-free', isLoggedIn, async
 
     const queryText = `
         INSERT INTO "Inventory".promotions
-        (id_dish_and_combo_features, name_promotion, promotions_from, promotions_to, discount_percentage, date_from, date_to, "fromTime", "toTime", active_promotion) 
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
+        (id_companies,id_branches ,id_dish_and_combo_features, name_promotion, promotions_from, promotions_to, discount_percentage, date_from, date_to, "fromTime", "toTime", active_promotion) 
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) 
         RETURNING id;
     `;
 
     try {
         const result = await database.query(queryText, [
+            id_company, // bigint
+            id_branch, // bigint
             id_dish_and_combo_features, // bigint
             newPromotion.promotionName, // varchar
             parseFloat(newPromotion.fromQuantity), // double precision
@@ -575,7 +578,6 @@ router.post('/:id_dish_and_combo_features/add-promotion-free', isLoggedIn, async
             newPromotion.promotionStatus// boolean
         ]);
 
-        console.log("✅ Promoción insertada con éxito:", result.rows[0]);
         res.status(201).json({ message: "Agregado con éxito", idPromotion: result.rows[0] });
     } catch (err) {
         console.log("❌ Error al agregar la promoción:", err);
@@ -640,7 +642,7 @@ router.post('/:id_promotion/delete-promotion', isLoggedIn, async (req, res) => {
         res.status(201).json({ message: "Eliminado con éxito"});
     } catch (err) {
         console.log("Error al eliminar la promoción:", err);
-        res.status(500).json({ error: 'Error en el servidor al actualizar la promoción. Inténtalo más tarde. 💀', message: err });
+        res.status(500).json({ error: 'Error en el servidor al eliminar la promoción. Inténtalo más tarde. 💀', message: err });
     }
 });
 

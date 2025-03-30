@@ -405,14 +405,15 @@ function show_all_the_lot_of_the_product(lotsInfo,img, name, barcode, price, pur
     // open the popup and show the lot
     openLotPopup(lots,img, name, barcode, price, purchaseUnit, this_product_is_sold_in_bulk, id_dishes_and_combos);
 }
-
-function updateCart(lotsInfo=null) {
+//promotionsList
+function updateCart2(lotsInfo=null) {
     remove_all_the_item_in_the_cart_that_not_exist_in_the_array_of_the_recipe(); //clear the list
 
     const cartItemsContainer = document.getElementById('cart-items');
     cartItemsContainer.innerHTML = '';
 
     cartItems.forEach(item => {
+        
         const itemTotal = (item.price - item.discount) * item.quantity;
         if(lotsInfo){
             cartItemsContainer.innerHTML += `
@@ -461,6 +462,127 @@ function updateCart(lotsInfo=null) {
     //her we update the number of product that exist in the shopping cart
     document.getElementById('products-total').textContent = cartItems.length;
 }
+
+function getAllPromotions() {
+    const promotionsList = [];
+    
+    document.querySelectorAll('.div-promotions').forEach(div => {
+        const promotion = {
+            id: div.getAttribute('id_promotion'),
+            id_dishes_and_combos: div.getAttribute('id_dishes_and_combos'),
+            id_dish_and_combo_features: div.getAttribute('id_dish_and_combo_features'),
+            active_promotion: div.getAttribute('active_promotion') === "true", // Convertir a booleano
+            name_promotion: div.getAttribute('name_promotion'),
+            fromTime: div.getAttribute('fromTime'),
+            toTime: div.getAttribute('toTime'),
+            promotions_from: parseFloat(div.getAttribute('promotions_from')),
+            promotions_to: parseFloat(div.getAttribute('promotions_to')),
+            discount_percentage: parseFloat(div.getAttribute('discount_percentage')),
+            date_from: div.getAttribute('date_from'),
+            date_to: div.getAttribute('date_to')
+        };
+
+        promotionsList.push(promotion);
+    });
+
+    return promotionsList;
+}
+
+const promotionsList=getAllPromotions();
+console.log('------------------')
+console.log(promotionsList)
+function updateCart(lotsInfo = null) {
+    remove_all_the_item_in_the_cart_that_not_exist_in_the_array_of_the_recipe(); // Limpiar lista
+
+    const cartItemsContainer = document.getElementById('cart-items');
+    cartItemsContainer.innerHTML = '';
+
+    const now = new Date();
+    const today = now.toISOString().split('T')[0]; // Obtener fecha actual (YYYY-MM-DD)
+    const currentTime = now.toTimeString().split(' ')[0]; // Obtener hora actual (HH:MM:SS)
+
+    cartItems.forEach(item => {
+        let discount = 0;
+        // Buscar promociones aplicables
+        const applicablePromotions = promotionsList.filter(promo => {
+            // Convertir fechas a objetos Date para comparación
+            const promoDateFrom = promo.date_from ? new Date(promo.date_from) : null;
+            const promoDateTo = promo.date_to ? new Date(promo.date_to) : null;
+
+            // Convertir horas a minutos totales
+            const promoFromTime = promo.fromTime ? parseInt(promo.fromTime.split(':')[0]) * 60 + parseInt(promo.fromTime.split(':')[1]) : null;
+            const promoToTime = promo.toTime ? parseInt(promo.toTime.split(':')[0]) * 60 + parseInt(promo.toTime.split(':')[1]) : null;
+
+            return (
+                promo.id_dishes_and_combos === item.id_dishes_and_combos &&
+                item.quantity >= promo.promotions_from &&
+                item.quantity <= promo.promotions_to &&
+                (promoDateFrom === null || promoDateFrom <= now) &&
+                (promoDateTo === null || promoDateTo >= now) &&
+                (promoFromTime === null || promoFromTime <= currentTime) &&
+                (promoToTime === null || promoToTime >= currentTime)
+            );
+        });
+
+        // Aplicar el mayor descuento disponible
+
+        if (applicablePromotions.length > 0) {
+            discount = Math.max(...applicablePromotions.map(promo => promo.discount_percentage));
+        }
+
+        item.discount = (item.price * discount) / 100; // Calcular descuento
+        const itemTotal = (item.price - item.discount) * item.quantity;
+
+        // Crear la estructura HTML
+        if(lotsInfo){
+            cartItemsContainer.innerHTML += `
+            <div class="cart-item-point-of-sales">
+                <img src="${item.img}" alt="${item.name}">
+                <div class="cart-item-info-point-of-sales">
+                <div class="cart-item-name-point-of-sales">${item.name}</div>
+                <div class="cart-item-barcode-point-of-sales">Código: ${item.barcode}</div>
+                Cant.
+                <input type="button" class="cart-item-quantity-point-of-sales" value="${item.quantity}"> ${item.purchaseUnit}
+                <br>
+                Desc.
+                <input type="button" class="cart-item-discount-point-of-sales" value="${discount.toFixed(2)}">
+                <div class="cart-item-price-point-of-sales">Precio: $${item.price.toFixed(2)}</div> 
+                <div class="cart-item-total-point-of-sales">Total: $${itemTotal.toFixed(2)}</div>
+                </div>
+                <button class="cart-item-remove-point-of-sales" onclick="removeItem('${item.barcode}')">X</button>
+            </div>
+        `;
+        }else{
+                cartItemsContainer.innerHTML += `
+                <div class="cart-item-point-of-sales">
+                    <img src="${item.img}" alt="${item.name}">
+                    <div class="cart-item-info-point-of-sales">
+                    <div class="cart-item-name-point-of-sales">${item.name}</div>
+                    <div class="cart-item-barcode-point-of-sales">Código: ${item.barcode}</div>
+                    Cant.
+                    <input type="button" class="cart-item-quantity-point-of-sales" value="${item.quantity}" onclick="editCant(this,'${item.barcode}')" onchange="updateItemQuantity('${item.barcode}', this.value)"> ${item.purchaseUnit}
+                    <br>
+                    Desc.
+                    <input type="button" class="cart-item-discount-point-of-sales" value="${discount.toFixed(2)}" onchange="updateItemDiscount('${item.barcode}', this.value)">
+                    <div class="cart-item-price-point-of-sales">Precio: $${item.price.toFixed(2)}</div> 
+                    <div class="cart-item-total-point-of-sales">Total: $${itemTotal.toFixed(2)}</div>
+                    </div>
+                    <button class="cart-item-remove-point-of-sales" onclick="removeItem('${item.barcode}')">X</button>
+                </div>
+            `;
+        }
+        
+    });
+
+    // Actualizar el total del carrito
+    cartTotal = cartItems.reduce((total, item) => total + (item.price - item.discount) * item.quantity, 0);
+    document.getElementById('cart-total').textContent = cartTotal.toFixed(2);
+
+    // Actualizar número de productos en el carrito
+    document.getElementById('products-total').textContent = cartItems.length;
+}
+
+
 
 function updateItemQuantity(barcode, quantity) {
     const item = cartItems.find(item => item.barcode === barcode);

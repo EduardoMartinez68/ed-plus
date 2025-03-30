@@ -71,13 +71,13 @@
                                 {{#if active_promotion}}
                                     <th>
                                         <input type="checkbox" class="form-check-input promotion-toggle"
-                                            onchange="togglePromocionStatus(this)" checked>
+                                            onchange="togglePromocionStatus(this)" checked disabled>
                                         <label class="fw-bold ms-2">Promoción activada</label>
                                     </th>
                                 {{else}}
                                     <th>
                                         <input type="checkbox" class="form-check-input promotion-toggle"
-                                            onchange="togglePromocionStatus(this)">
+                                            onchange="togglePromocionStatus(this)" disabled>
                                         <label class="fw-bold ms-2">Promoción activada</label>
                                     </th>
                                 {{/if}}
@@ -152,8 +152,7 @@
             <div class="row">
                 <div class="col-2">
                     <div class="d-flex justify-content-start align-items-center mt-4">
-                        <input type="checkbox" class="form-check-input promotion-toggle" id="promotionStatus"
-                            onchange="togglePromocionStatus(this)">
+                        <input type="checkbox" class="form-check-input promotion-toggle" id="promotionStatus">
                         <label class="fw-bold ms-2">Promoción activada</label>
                     </div>
                 </div>
@@ -328,7 +327,9 @@
 
         //know if could add the lot to the database 
         if (answer.answer) {
-            add_the_promotion_to_the_table(newPromotion,answer.idPromotion); //add the promotion to the table
+            console.log(answer)
+            console.log(answer.idPromotion.id)
+            add_the_promotion_to_the_table(newPromotion,answer.idPromotion.id); //add the promotion to the table
             closePopupPromotion();
             confirmationMessage('Promoción agregada 😁', '')
         } else {
@@ -380,26 +381,36 @@
         // create a new row
         let newRow = table.insertRow();
 
-        // add cell with the value
+        // Asignar atributos directamente a la fila
+        newRow.setAttribute('idPromotions', idPromotion);
+        newRow.setAttribute('name_promotion', newPromotion.promotionName);
+        newRow.setAttribute('promotions_from', newPromotion.fromQuantity);
+        newRow.setAttribute('promotions_to', newPromotion.toQuantity); // Aquí usabas `fromQuantity` en ambas
+        newRow.setAttribute('discount_percentage', newPromotion.discountPercentage);
+        newRow.setAttribute('date_from', newPromotion.fromDate);
+        newRow.setAttribute('date_to', newPromotion.toDate);
+        newRow.setAttribute('fromTime', newPromotion.fromTime);
+        newRow.setAttribute('toTime', newPromotion.toTime);
+        newRow.setAttribute('active_promotion', newPromotion.promotionStatus);
+
+        // Agregar contenido a la fila
         newRow.innerHTML = `
-            <tr idPromotions="${idPromotion}" name_promotion="${newPromotion.promotionName}" promotions_from="${newPromotion.fromQuantity}" promotions_to="${newPromotion.fromQuantity}" discount_percentage='${newPromotion.discountPercentage}' date_from="${newPromotion.fromDate}" date_to="${newPromotion.toDate}" fromTime="${newPromotion.fromTime}" toTime="${newPromotion.toTime}" active_promotion="${newPromotion.promotionStatus}">
-                <td><label><strong>${newPromotion.promotionName}</strong></label></td>
-                <td><label>Cuando la cantidad vaya desde  ${formatDateForm(newPromotion.fromQuantity)} hasta ${formatDateForm(newPromotion.fromQuantity)}</label></td>
-                <td><label>${newPromotion.discountPercentage}%</label></td>
-                <td><label>Desde ${formatDateForm(newPromotion.fromDate)} Hasta ${formatDateForm(newPromotion.toDate)}</label></th>
-                <td><label>Desde las ${newPromotion.fromTime} Hasta las ${newPromotion.toTime}</label></th>
-                <td>
-                    <input type="checkbox" class="form-check-input promotion-toggle" 
-                        onchange="togglePromocionStatus(this)" ${newPromotion.promotionStatus ? 'checked' : ''}>
-                    <label class="fw-bold ms-2">Promoción activada</label>
-                </td>
-                <td>
-                    <button onclick="editPromotion('${idPromotion}',this)"  type="button"
-                        class="btn btn-edit"><i class="fi-department fi-sr-pencil"></i></button>
-                    <button onclick="deletePromotion('${idPromotion}',this)" type="button"
-                        class="btn btn-danger"><i class="fi-department fi-sr-trash"></i></button>
-                </td>
-            </tr>
+            <td><label><strong>${newPromotion.promotionName}</strong></label></td>
+            <td><label>Cuando la cantidad vaya desde  ${newPromotion.fromQuantity} hasta ${newPromotion.toQuantity}</label></td>
+            <td><label>${newPromotion.discountPercentage}%</label></td>
+            <td><label>Desde ${newPromotion.fromDate} Hasta ${newPromotion.toDate}</label></td>
+            <td><label>Desde las ${newPromotion.fromTime} Hasta las ${newPromotion.toTime}</label></td>
+            <td>
+                <input type="checkbox" disabled class="form-check-input promotion-toggle" 
+                    onchange="togglePromocionStatus(this)" ${newPromotion.promotionStatus ? 'checked' : ''}>
+                <label class="fw-bold ms-2">Promoción activada</label>
+            </td>
+            <td>
+                <button onclick="editPromotion('${idPromotion}',this)" type="button"
+                    class="btn btn-edit"><i class="fi-department fi-sr-pencil"></i></button>
+                <button onclick="deletePromotion('${idPromotion}',this)" type="button"
+                    class="btn btn-danger"><i class="fi-department fi-sr-trash"></i></button>
+            </td>
         `;
 
         //if exist text of information we will clean the text
@@ -553,6 +564,19 @@
         selectedRow.cells[2].innerText = `${updatedData.discountPercentage}%`;
         selectedRow.cells[3].innerText = `Desde ${updatedData.fromDate} Hasta ${updatedData.toDate}`;
         selectedRow.cells[4].innerText = `Desde las ${updatedData.fromTime} Hasta las ${updatedData.toTime}`;
+
+        const checkboxCell = selectedRow.cells[5]; // Asumiendo que la celda 5 contiene el checkbox
+        const checkbox = checkboxCell.querySelector('.promotion-toggle');
+        
+        if (checkbox) {
+            checkbox.checked = updatedData.promotionStatus;
+        } else {
+            checkboxCell.innerHTML = `
+                <input type="checkbox" class="form-check-input promotion-toggle" 
+                    onchange="togglePromocionStatus(this)" ${updatedData.promotionStatus ? "checked" : ""}>
+                <label class="fw-bold ms-2">Promoción activada</label>
+            `;
+        }
     }
 
     /**-----------------------------------DELETE PROMOTIONS-----------------------------------**/

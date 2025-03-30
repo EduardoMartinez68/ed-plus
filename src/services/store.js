@@ -248,6 +248,26 @@ async function create_table_lot(){
     }
 }
 
+async function get_all_the_promotions(id_branch) {
+    const queryText = `
+        SELECT 
+            p.*, 
+            d.id_dishes_and_combos 
+        FROM "Inventory".promotions AS p
+        INNER JOIN "Inventory".dish_and_combo_features AS d 
+            ON p.id_dish_and_combo_features = d.id
+        WHERE p.id_branches = $1 AND p.active_promotion = true;
+    `;
+
+    try {
+        const result = await database.query(queryText, [id_branch]);
+        return result.rows;
+    } catch (error) {
+        console.error("Error al obtener los datos de la tabla 'promotions':", error);
+        return [];
+    }
+}
+
 module.exports = {
     this_employee_works_here,
     this_data_employee_is_user,
@@ -258,5 +278,6 @@ module.exports = {
     get_recent_combos,
     get_all_combo_most_sold,
     get_dish_and_combo_with_id,
-    get_all_products_in_sales
+    get_all_products_in_sales,
+    get_all_the_promotions
 };
