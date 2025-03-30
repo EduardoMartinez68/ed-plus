@@ -294,14 +294,15 @@ router.get('/:id_company/:id_branch/:id_combo_features/edit-products-free', isLo
 
     //her, we will get all the lot that the product have in the database
     const lots=await get_lots_by_dish_and_combo_features(id_combo_features);
-
+    const promotions = await get_all_the_promotions(id_combo_features); //this is the data of the combo
+    console.log("promotions", promotions);
     //we will see if the user have a suscription free
     if(req.user.rol_user==rolFree){
         const branchFree = await get_data_branch(id_branch); //get data of rol free
         //get the data of the product that is in the combo. This is the information of the product 
-        const productFacture=await get_supplies_or_features_with_id_products_and_supplies(suppliesCombo[0].id_products_and_supplies);
+        const productFacture=await get_supplies_or_features_with_id_products_and_supplies(suppliesCombo[0].id_products_and_supplies,promotions);
         
-        res.render('links/branch/products/editProduct', { comboFeactures, suppliesCombo , branchFree, productFacture,lots});      
+        res.render('links/branch/products/editProduct', { comboFeactures, suppliesCombo , branchFree, productFacture,lots,promotions});      
     }else{
         const branch = await get_data_branch(id_branch);
         res.render('links/branch/products/editProduct', { comboFeactures, suppliesCombo, branch,lots});
@@ -520,6 +521,55 @@ router.post('/:id_lot/delete-lot', isLoggedIn, async (req, res) => {
         res.status(500).json({ error: "Error al eliminar el lote" });
     }
 });
+
+
+async function get_all_the_promotions(id_dish_and_combo_features) {
+    const queryText = `
+        SELECT * FROM "Inventory".promotions
+        WHERE id_dish_and_combo_features = $1;
+    `;
+
+    try {
+        const result = await database.query(queryText, [id_dish_and_combo_features]);
+        return result.rows;
+    } catch (error) {
+        console.error("Error al obtener los datos de la tabla 'promotions':", error);
+        return [];
+    }
+}
+
+router.post('/:id_dish_and_combo_features/add-promotion-free', isLoggedIn, async (req, res) => {
+    const { newPromotion } = req.body;
+    const { id_dish_and_combo_features } = req.params;
+    const queryText = `
+        INSERT INTO "Inventory".promotions
+        (id_dish_and_combo_features, name_promotion, promotions_from, promotions_to, discount_percentage, date_from, date_to, fromTime, toTime, active_promotion) 
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
+        RETURNING id;
+    `;
+
+    try {
+        const result = await database.query(queryText, [
+            id_dish_and_combo_features, // bigint
+            newPromotion.promotionName, // varchar
+            parseFloat(newPromotion.fromQuantity), // double precision
+            parseFloat(newPromotion.toQuantity), // double precision
+            parseFloat(newPromotion.discountPercentage), // double precision
+            newPromotion.fromDate, // date (YYYY-MM-DD)
+            newPromotion.toDate, // date (YYYY-MM-DD)
+            newPromotion.fromTime, // time (HH:MM:SS)
+            newPromotion.toTime, // time (HH:MM:SS)
+            newPromotion.promotionStatus// boolean
+        ]);
+
+        console.log("✅ Promoción insertada con éxito:", result.rows[0]);
+        res.status(201).json({ message: "Agregado con éxito", lot: result.rows[0] });
+    } catch (err) {
+        console.log("❌ Error al agregar la promoción:", err);
+        res.status(500).json({ error: err, message: err });
+    }
+});
+
 
 
 

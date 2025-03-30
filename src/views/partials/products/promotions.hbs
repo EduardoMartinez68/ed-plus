@@ -8,6 +8,18 @@
         padding-top: 20px;
         /* Agrega un poco de espacio al principio de la sección */
     }
+
+    .pop-promotions {
+        min-width: 45%;
+        max-width: 45%;
+    }
+
+    @media (max-width: 600px) {
+        .pop-promotions {
+            min-width: 90%;
+            max-width: 90%;
+        }
+    }
 </style>
 
 <hr>
@@ -16,90 +28,91 @@
     <div class="card">
         <div class="card-body">
             <div class="container">
-            <div class="row">
-                <div class="col-sm-5">
-                    <label for="">Busca promoción</label>
-                    <input type="text" class="form-control" placeholder="Buscar..." id="search-promotions">
+                <div class="row">
+                    <div class="col-sm-5">
+                        <label for="">Busca promoción</label>
+                        <input type="text" class="form-control" placeholder="Buscar..." id="search-promotions">
+                    </div>
+                    <div class="col-sm-5">
+                        <label for="filterActive">Filtrar promociones:</label>
+                        <select id="filterActive" class="form-select" onchange="filterPromotions()">
+                            <option value="all">Todas</option>
+                            <option value="active">Activas</option>
+                            <option value="inactive">Inactivas</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-2">
+                        <br>
+                        <button class="btn btn-confirm-message" type="button" onclick="openPopupPromotions()">Agregar
+                        </button>
+                    </div>
                 </div>
-                <div class="col-sm-5">
-                    <label for="filterActive">Filtrar promociones:</label>
-                    <select id="filterActive" class="form-select" onchange="filterPromotions()">
-                        <option value="all">Todas</option>
-                        <option value="active">Activas</option>
-                        <option value="inactive">Inactivas</option>
-                    </select>
-                </div>
-                <div class="col-sm-2">
-                    <br>
-                    <button class="btn btn-confirm-message" type="button" onclick="openPopupPromotions()">Agregar </button>
-                </div>
-            </div>
-            <br>
-            <table width="100%" border="1" class="table-information" id="table-promotions">
-                <thead>
-                    <tr>
-                        <th><label>Nombre de la promoción</label></th>
-                        <th><label>Cantidad</label></th>
-                        <th><label>% Descuento</label></th>
-                        <th><label>Fecha</label></th>
-                        <th></th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    
-                        <tr id="{{name}}">
-                            <td><label><strong>Promocion 1</strong></label></td>
-                            <td><label>Cuando la cantidad vaya desde 5 hasta 5</label></th>
-                            <td><label>30%</label></td>
-                            <td><label>Desde 29/03/2025 Hasta 29/03/2025</label></th>
+                <br>
+                <table width="100%" border="1" class="table-information" id="table-promotions">
+                    <thead>
+                        <tr>
+                            <th><label>Nombre de la promoción</label></th>
+                            <th><label>Cantidad</label></th>
+                            <th><label>% Descuento</label></th>
+                            <th><label>Fecha</label></th>
+                            <th><label>Horario</label></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each promotions}}
+                        <tr>
+                            <td><label><strong>{{name_promotion}}</strong></label></td>
+                            <td><label>Cuando la cantidad vaya desde {{promotions_from}} hasta {{promotions_to}}</label>
+                                </th>
+                            <td><label>{{discount_percentage}}%</label></td>
+                            <td><label>Desde {{date_from}} Hasta {{date_from}}</label></th>
+                            <td><label>Desde las {{fromTime}} Hasta las {{toTime}}</label></th>
+                                {{#if active_promotion}}
                             <th>
-                                
-                                    <input type="checkbox" class="form-check-input promotion-toggle" onchange="togglePromocionStatus(this)">
-                                    <label class="fw-bold ms-2">Promoción activada</label>
-                                
+                                <input type="checkbox" class="form-check-input promotion-toggle"
+                                    onchange="togglePromocionStatus(this)" checked>
+                                <label class="fw-bold ms-2">Promoción activada</label>
                             </th>
+                            {{else}}
+                            <th>
+                                <input type="checkbox" class="form-check-input promotion-toggle"
+                                    onchange="togglePromocionStatus(this)">
+                                <label class="fw-bold ms-2">Promoción activada</label>
+                            </th>
+                            {{/if}}
                             <td>
-                                <button onclick="editLot('{{id}}',this)"  type="button"
-                                    class="btn btn-edit"><i class="fi-department fi-sr-pencil"></i></button>
-                                <button onclick="deleteLot('{{id}}',this)" type="button"
-                                    class="btn btn-danger"><i class="fi-department fi-sr-trash"></i></button>
+                                <button onclick="editLot('{{id}}',this)" type="button" class="btn btn-edit"><i
+                                        class="fi-department fi-sr-pencil"></i></button>
+                                <button onclick="deleteLot('{{id}}',this)" type="button" class="btn btn-danger"><i
+                                        class="fi-department fi-sr-trash"></i></button>
                             </td>
                         </tr>
+                        {{/each}}
 
-                        <tr id="{{name}}">
-                            <td><label><strong>Paquete 1</strong></label></td>
-                            <td><label>Cuando la cantidad vaya desde 5 hasta 5</label></th>
-                            <td><label>30%</label></td>
-                            <td><label>Desde 29/03/2025 Hasta 29/03/2025</label></th>
-                            <th>
-                                
-                                    <input type="checkbox" class="form-check-input promotion-toggle" onchange="togglePromocionStatus(this)">
-                                    <label class="fw-bold ms-2">Promoción activada</label>
-                                
-                            </th>
-                            <td>
-                                <button onclick="editPromotion('{{id}}',this)"  type="button"
-                                    class="btn btn-edit"><i class="fi-department fi-sr-pencil"></i></button>
-                                <button onclick="deleteLot('{{id}}',this)" type="button"
-                                    class="btn btn-danger"><i class="fi-department fi-sr-trash"></i></button>
-                            </td>
-                        </tr>
-                
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+
+                <!---we will create the message of the table-->
+                {{#if promotions}}
+                <center><label for="" id="text-info-table-promotions"></label></center>
+                {{else}}
+                <center><label for="" id="text-info-table-promotions">No se encontraron registros.</label></center>
+                {{/if}}
+            </div>
         </div>
-    </div>
 
     </div>
 </div>
 
 <!---MESSAGE POP--->
 <div class="overlay" id="overlay-promotions" onclick="closePopupPromotion()"></div>
-<div class="popup" id="popup-promotions" style="min-width: 1000px; max-width: 1000px;">
+<div class="popup pop-promotions" id="popup-promotions">
     <div class="card border-0 shadow-lg rounded-4 p-4 promotion-card" data-active="true"
         style="background-color: #f8f9fa;">
-        <button class="btn-close position-absolute top-0 end-0 m-2" aria-label="Close" onclick="closePopupPromotion()" type="button"></button>
+        <button class="btn-close position-absolute top-0 end-0 m-2" aria-label="Close" onclick="closePopupPromotion()"
+            type="button"></button>
         <div class="card-body">
             <div class="d-flex justify-content-start gap-3 align-items-center mt-2">
                 <label class="fw-bold">Nombre de la promoción:</label>
@@ -110,9 +123,11 @@
 
             <div class="d-flex justify-content-start gap-3 align-items-center mt-2">
                 <label class="fw-bold">Cuando la cantidad vaya desde:</label>
-                <input type="number" class="form-control text-center w-25 rounded-3 shadow-sm" placeholder="Desde" id="fromQuantity">
+                <input type="number" class="form-control text-center w-25 rounded-3 shadow-sm" placeholder="Desde"
+                    id="fromQuantity">
                 <label class="fw-bold">hasta</label>
-                <input type="number" class="form-control text-center w-25 rounded-3 shadow-sm" placeholder="Hasta" id="toQuantity">
+                <input type="number" class="form-control text-center w-25 rounded-3 shadow-sm" placeholder="Hasta"
+                    id="toQuantity">
             </div>
 
 
@@ -120,6 +135,7 @@
                 <label class="fw-bold">Usa este descuento:</label>
                 <input type="number" class="form-control text-center w-25 rounded-3 shadow-sm"
                     placeholder="% de descuento" id="discountPercentage">
+                <label for="">%</label>
 
                 <label class="fw-bold">Desde:</label>
                 <input type="date" class="form-control text-center w-25 rounded-3 shadow-sm" id="fromDate">
@@ -127,18 +143,36 @@
                 <input type="date" class="form-control text-center w-25 rounded-3 shadow-sm" id="toDate">
             </div>
 
+            <div class="d-flex justify-content-start gap-3 align-items-center mt-3">
+                <label class="fw-bold">Apartir de la hora:</label>
+                <input type="time" class="form-control text-center w-25 rounded-3 shadow-sm" id="fromTime">
+                <label class="fw-bold">hasta: </label>
+                <input type="time" class="form-control text-center w-25 rounded-3 shadow-sm" id="toTime">
+            </div>
+
             <div class="row">
                 <div class="col-2">
                     <div class="d-flex justify-content-start align-items-center mt-4">
-                        <input type="checkbox" class="form-check-input promotion-toggle" id="promotionStatus">
+                        <input type="checkbox" class="form-check-input promotion-toggle" id="promotionStatus"
+                            onchange="togglePromocionStatus(this)">
                         <label class="fw-bold ms-2">Promoción activada</label>
                     </div>
                 </div>
             </div>
         </div>
 
+        <button onclick="toggleInfo()" class="btn" type="button"><span id="icon"><i
+                    class="fi fi-rr-angle-small-down"></i></span> Mucho ojo 👁‍🗨</button>
+        <div class="div-information" id="infoDiv" style="display: none;">
+            <center>
+                <label for="">Si deseas que la promoción esté activa todos los días, limpia los datos de las
+                    fechas</label>
+                <label for="">Si deseas que la promoción esté activa todo el día, limpia los datos de las horas</label>
+            </center>
+        </div>
+
         <br>
-        <button class="btn btn-success" onclick="savePromotion()">Guardar Promoción</button>
+        <button class="btn btn-success" onclick="savePromotion()" type="button">Guardar Promoción</button>
     </div>
 </div>
 
@@ -211,27 +245,27 @@
 
 <!---this script is for search the promotion with the search bar-->
 <script>
-document.getElementById('search-promotions').addEventListener('input', filterPromotions);
-document.getElementById('filterActive').addEventListener('change', filterPromotions);
+    document.getElementById('search-promotions').addEventListener('input', filterPromotions);
+    document.getElementById('filterActive').addEventListener('change', filterPromotions);
 
-function filterPromotions() {
-    const searchTerm = document.getElementById('search-promotions').value.toLowerCase();
-    const filterValue = document.getElementById('filterActive').value;
-    const rows = document.querySelectorAll('#table-promotions tbody tr');
+    function filterPromotions() {
+        const searchTerm = document.getElementById('search-promotions').value.toLowerCase();
+        const filterValue = document.getElementById('filterActive').value;
+        const rows = document.querySelectorAll('#table-promotions tbody tr');
 
-    rows.forEach(row => {
-        const name = row.cells[0].innerText.toLowerCase();
-        const isActive = row.querySelector('.promotion-toggle')?.checked;
-        
-        let matchesSearch = name.includes(searchTerm);
-        let matchesFilter = 
-            filterValue === 'all' || 
-            (filterValue === 'active' && isActive) || 
-            (filterValue === 'inactive' && !isActive);
-        
-        row.style.display = matchesSearch && matchesFilter ? '' : 'none';
-    });
-}
+        rows.forEach(row => {
+            const name = row.cells[0].innerText.toLowerCase();
+            const isActive = row.querySelector('.promotion-toggle')?.checked;
+
+            let matchesSearch = name.includes(searchTerm);
+            let matchesFilter =
+                filterValue === 'all' ||
+                (filterValue === 'active' && isActive) ||
+                (filterValue === 'inactive' && !isActive);
+
+            row.style.display = matchesSearch && matchesFilter ? '' : 'none';
+        });
+    }
 </script>
 
 
@@ -243,13 +277,15 @@ function filterPromotions() {
         document.getElementById('overlay-promotions').style.display = 'block';
     }
 
-    function resetInformationFormPromotion(){
+    function resetInformationFormPromotion() {
         document.getElementById('promotionName').value = '';
         document.getElementById('fromQuantity').value = '';
         document.getElementById('toQuantity').value = '';
         document.getElementById('discountPercentage').value = '';
         document.getElementById('fromDate').value = '';
         document.getElementById('toDate').value = '';
+        document.getElementById('fromTime').value = '';
+        document.getElementById('toTime').value = '';
         document.getElementById('promotionStatus').checked = false;
     }
 
@@ -264,11 +300,138 @@ function filterPromotions() {
         resetInformationFormPromotion();
     }
 
-    async function savePromotion(){
-        closePopupPromotion();
+    async function savePromotion() {
+        //first we will see if can add the promotion
+        if (!we_can_save_the_promotion()) {
+            //show a message of error in the server
+            errorMessage('👁️ ERROR', 'No se puede guardar la promoción, por favor verifica los datos.');
+            return;
+        }
+
+        //if we can save the promotion we will send the information to the server
+        const newPromotion = create_a_new_promotion(); //save the data of the form
+
+        //we will send to the server the information of the promotion
+        console.log(newPromotion);
+        const answer = await send_information_to_the_server_for_save_the_promotion(newPromotion);
+
+        //know if could add the lot to the database 
+        if (answer.answer) {
+            add_the_promotion_to_the_table(newPromotion); //add the promotion to the table
+            closePopupPromotion();
+            confirmationMessage('Promoción agregada 😁', '')
+        } else {
+            //show a message of error in the server
+            errorMessage('👁️ ERROR', answer.message);
+        }
     }
 
-    function editPromotion(idPromotion,button){
+    async function send_information_to_the_server_for_save_the_promotion(newPromotion) {
+        try {
+            const id_product = document.getElementById('id_comboFeactures').value; // Obtener el ID del producto
+            console.log("ID del producto:", id_product);  // Verifica el ID
+
+            const response = await fetch(`/links/${id_product}/add-promotion-free`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ newPromotion: newPromotion })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json(); // Si el servidor envía un mensaje de error
+                console.log(errorData.error)
+                return {
+                    answer: false,
+                    message: `Error: ${errorData.error || 'Hubo un problema con la solicitud'}`
+                };
+                
+            }
+
+            const data = await response.json();
+
+            if (data.message) {
+                return { answer: true, message: data.message };  // Usar el mensaje del servidor
+            } else {
+                return { answer: false, message: "Hubo un error al conectarse con el servidor. Inténtalo de nuevo más tarde." };
+            }
+
+        } catch (error) {
+            return { answer: false, message: `Hubo un error al conectarse con el servidor. Inténtalo de nuevo más tarde. ${error.message}` };
+        }
+    }
+
+
+    function add_the_promotion_to_the_table() {
+        //get the table
+        let table = document.getElementById('table-promotions').getElementsByTagName('tbody')[0];
+
+        // create a new row
+        let newRow = table.insertRow();
+
+        // add cell with the value
+        newRow.innerHTML = `
+            <td><label><strong>${newPromotion.promotionName}</strong></label></td>
+            <td><label>Cuando la cantidad vaya desde  ${formatDateForm(newPromotion.fromQuantity)} hasta ${formatDateForm(newPromotion.fromQuantity)}</label></td>
+            <td><label>${newPromotion.discountPercentage}%</label></td>
+            <td><label>Desde ${formatDateForm(newPromotion.fromDate)} Hasta ${formatDateForm(newPromotion.toDate)}</label></th>
+            <td><label>Desde las ${newPromotion.fromTime} Hasta las ${newPromotion.toTime}</label></th>
+            <td>
+                <input type="checkbox" class="form-check-input promotion-toggle" 
+                    onchange="togglePromocionStatus(this)" ${newPromotion.promotionStatus ? 'checked' : ''}>
+                <label class="fw-bold ms-2">Promoción activada</label>
+            </td>
+            <td>
+                <button onclick="editPromotion('{{id}}',this)"  type="button"
+                    class="btn btn-edit"><i class="fi-department fi-sr-pencil"></i></button>
+                <button onclick="deleteLot('{{id}}',this)" type="button"
+                    class="btn btn-danger"><i class="fi-department fi-sr-trash"></i></button>
+            </td>
+        `;
+
+        //if exist text of information we will clean the text
+        const textInfo = document.getElementById('text-info-table-promotions')
+        if (textInfo) {
+            textInfo.textContent = '';
+        }
+    }
+
+    function create_a_new_promotion() {
+
+        //now we will get all the information in the form
+        const promotionName = document.getElementById('promotionName').value;
+        const fromQuantity = document.getElementById('fromQuantity').value;
+        const toQuantity = document.getElementById('toQuantity').value;
+        const discountPercentage = document.getElementById('discountPercentage').value;
+        const fromDate = document.getElementById('fromDate').value;
+        const toDate = document.getElementById('toDate').value;
+        const fromTime = document.getElementById('fromTime').value;
+        const toTime = document.getElementById('toTime').value;
+        const promotionStatus = document.getElementById('promotionStatus').checked;
+
+        return {
+            promotionName,
+            fromQuantity,
+            toQuantity,
+            discountPercentage,
+            fromDate,
+            toDate,
+            fromTime,
+            toTime,
+            promotionStatus
+        }
+    }
+
+    function we_can_save_the_promotion() {
+        const promotionName = document.getElementById('promotionName').value;
+        const fromQuantity = document.getElementById('fromQuantity').value;
+        const toQuantity = document.getElementById('toQuantity').value;
+        const discountPercentage = document.getElementById('discountPercentage').value;
+        return promotionName && fromQuantity && toQuantity && discountPercentage;
+    }
+
+    function editPromotion(idPromotion, button) {
         const row = button.closest('tr'); // get the row of the promotion
 
         //her we going to get all the information of the promotion
@@ -282,11 +445,19 @@ function filterPromotions() {
         document.getElementById('promotionName').value = name;
         document.getElementById('fromQuantity').value = 0;
         document.getElementById('toQuantity').value = 0;
-        document.getElementById('discountPercentage').value = discount.replace('%','').trim();
+        document.getElementById('discountPercentage').value = discount.replace('%', '').trim();
         document.getElementById('fromDate').value = dateRange.split(' ')[1].trim();
         document.getElementById('toDate').value = dateRange.split(' ')[3].trim();
         document.getElementById('promotionStatus').checked = isActive;
 
         openPopupPromotions();
+    }
+</script>
+
+
+<script>
+    function toggleInfo() {
+        const div = document.getElementById('infoDiv');
+        div.style.display = (div.style.display === "none" || div.style.display === "") ? "block" : "none";
     }
 </script>
