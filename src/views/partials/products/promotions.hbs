@@ -561,7 +561,7 @@
         if(await questionMessage('🗑️ Eliminar la promoción','¿Deseas eliminar esta promoción?')){
             const answer=await send_information_to_the_server_for_delete_the_promoción(idPromotion);
 
-            if(answer.message){
+            if(answer.answer){
                 let row = button.closest("tr"); // get the row most close
                 let table = row.closest("table"); // get tha table most close
 
@@ -573,13 +573,16 @@
                 let tbody = table.querySelector("tbody");
                 if (tbody && tbody.rows.length === 0) {
                     //if the table is empty, show a message of that not exist tha data in the table
-                    const textInfo=document.getElementById('text-info-table')
+                    const textInfo=document.getElementById('text-info-table-promotions')
                     if(textInfo){
                         textInfo.textContent='No se encontraron registros.';
                     }
                 }
 
                 confirmationMessage('La promoción fue eliminada 😁',answer.message)
+            }else{
+                //show a message of error in the server
+                errorMessage('👁️ ERROR', answer.message);      
             }
         }
 
@@ -588,7 +591,35 @@
     }
 
     async function send_information_to_the_server_for_delete_the_promoción(idPromotion){
-        return {message:true};
+        try {
+            const response = await fetch(`/links/${idPromotion}/delete-promotion`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json(); // Si el servidor envía un mensaje de error
+                console.log(errorData.error)
+                return {
+                    answer: false,
+                    message: `${errorData.error || 'Hubo un problema con la solicitud'}`
+                };
+                
+            }
+
+            const data = await response.json();
+
+            if (data.message) {
+                return { answer: true, message: data.message, idPromotion:data.idPromotion };  // Usar el mensaje del servidor
+            } else {
+                return { answer: false, message: "Hubo un error al conectarse con el servidor. Inténtalo de nuevo más tarde." };
+            }
+
+        } catch (error) {
+            return { answer: false, message: `Hubo un error al conectarse con el servidor. Inténtalo de nuevo más tarde. ${error.message}` };
+        }
     }
 
 

@@ -618,7 +618,28 @@ router.post('/update-promotion', isLoggedIn, async (req, res) => {
 
         res.status(201).json({ message: "Agregado con éxito", idPromotion: result.rows[0] });
     } catch (err) {
-        console.log("❌ Error al agregar la promoción:", err);
+        console.log("❌ Error al actualizar la promoción:", err);
+        res.status(500).json({ error: 'Error en el servidor al actualizar la promoción. Inténtalo más tarde. 💀', message: err });
+    }
+});
+
+router.post('/:id_promotion/delete-promotion', isLoggedIn, async (req, res) => {
+    const { id_promotion } = req.params;
+
+    const queryText = `
+        DELETE FROM "Inventory".promotions
+        WHERE id = $1
+        RETURNING id;
+    `;
+
+    try {
+        const result = await database.query(queryText, [
+            id_promotion
+        ]);
+
+        res.status(201).json({ message: "Eliminado con éxito"});
+    } catch (err) {
+        console.log("Error al eliminar la promoción:", err);
         res.status(500).json({ error: 'Error en el servidor al actualizar la promoción. Inténtalo más tarde. 💀', message: err });
     }
 });
