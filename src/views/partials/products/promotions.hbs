@@ -62,33 +62,32 @@
                     </thead>
                     <tbody>
                         {{#each promotions}}
-                        <tr>
-                            <td><label><strong>{{name_promotion}}</strong></label></td>
-                            <td><label>Cuando la cantidad vaya desde {{promotions_from}} hasta {{promotions_to}}</label>
-                                </th>
-                            <td><label>{{discount_percentage}}%</label></td>
-                            <td><label>Desde {{date_from}} Hasta {{date_from}}</label></th>
-                            <td><label>Desde las {{fromTime}} Hasta las {{toTime}}</label></th>
+                            <tr idPromotions="{{id}}" name_promotion="{{name_promotion}}" promotions_from="{{promotions_from}}" promotions_to="{{promotions_to}}" discount_percentage='{{discount_percentage}}' date_from="{{date_from}}" date_to="{{date_to}}" fromTime="{{fromTime}}" toTime="{{toTime}}" active_promotion="{{active_promotion}}">
+                                <td><label><strong>{{name_promotion}}</strong></label></td>
+                                <td><label>Cuando la cantidad vaya desde {{promotions_from}} hasta {{promotions_to}}</label></th>
+                                <td><label>{{discount_percentage}}%</label></td>
+                                <td><label>Desde {{date_from}} Hasta {{date_from}}</label></th>
+                                <td><label>Desde las {{fromTime}} Hasta las {{toTime}}</label></th>
                                 {{#if active_promotion}}
-                            <th>
-                                <input type="checkbox" class="form-check-input promotion-toggle"
-                                    onchange="togglePromocionStatus(this)" checked>
-                                <label class="fw-bold ms-2">Promoción activada</label>
-                            </th>
-                            {{else}}
-                            <th>
-                                <input type="checkbox" class="form-check-input promotion-toggle"
-                                    onchange="togglePromocionStatus(this)">
-                                <label class="fw-bold ms-2">Promoción activada</label>
-                            </th>
-                            {{/if}}
-                            <td>
-                                <button onclick="editLot('{{id}}',this)" type="button" class="btn btn-edit"><i
-                                        class="fi-department fi-sr-pencil"></i></button>
-                                <button onclick="deleteLot('{{id}}',this)" type="button" class="btn btn-danger"><i
-                                        class="fi-department fi-sr-trash"></i></button>
-                            </td>
-                        </tr>
+                                    <th>
+                                        <input type="checkbox" class="form-check-input promotion-toggle"
+                                            onchange="togglePromocionStatus(this)" checked>
+                                        <label class="fw-bold ms-2">Promoción activada</label>
+                                    </th>
+                                {{else}}
+                                    <th>
+                                        <input type="checkbox" class="form-check-input promotion-toggle"
+                                            onchange="togglePromocionStatus(this)">
+                                        <label class="fw-bold ms-2">Promoción activada</label>
+                                    </th>
+                                {{/if}}
+                                <td>
+                                    <button onclick="editPromotion('{{id}}',this)" type="button" class="btn btn-edit"><i
+                                            class="fi-department fi-sr-pencil"></i></button>
+                                    <button onclick="deletePromotion('{{id}}',this)" type="button" class="btn btn-danger"><i
+                                            class="fi-department fi-sr-trash"></i></button>
+                                </td>
+                            </tr>
                         {{/each}}
 
                     </tbody>
@@ -287,6 +286,8 @@
         document.getElementById('fromTime').value = '';
         document.getElementById('toTime').value = '';
         document.getElementById('promotionStatus').checked = false;
+        idPromotionsEdit=null; //reset the id of the promotion that edit
+        selectedRow=null;
     }
 
     function closePopupPromotion() {
@@ -300,7 +301,18 @@
         resetInformationFormPromotion();
     }
 
+    /**-----------------------------------SAVE PROMOTIONS-----------------------------------**/
     async function savePromotion() {
+        //first we will see if the user would like update a promotion or add a new one
+        //if exist a id of the promotion that edit, we will update the promotion
+        if(idPromotionsEdit){
+            await update_promotion();
+        }else{ //if not exist a id, we will add a new promotion
+            await add_a_new_promotion();
+        }
+    }
+
+    async function add_a_new_promotion(){
         //first we will see if can add the promotion
         if (!we_can_save_the_promotion()) {
             //show a message of error in the server
@@ -316,7 +328,7 @@
 
         //know if could add the lot to the database 
         if (answer.answer) {
-            add_the_promotion_to_the_table(newPromotion); //add the promotion to the table
+            add_the_promotion_to_the_table(newPromotion,answer.idPromotion); //add the promotion to the table
             closePopupPromotion();
             confirmationMessage('Promoción agregada 😁', '')
         } else {
@@ -361,8 +373,7 @@
         }
     }
 
-
-    function add_the_promotion_to_the_table(newPromotion) {
+    function add_the_promotion_to_the_table(newPromotion,idPromotion) {
         //get the table
         let table = document.getElementById('table-promotions').getElementsByTagName('tbody')[0];
 
@@ -371,22 +382,24 @@
 
         // add cell with the value
         newRow.innerHTML = `
-            <td><label><strong>${newPromotion.promotionName}</strong></label></td>
-            <td><label>Cuando la cantidad vaya desde  ${formatDateForm(newPromotion.fromQuantity)} hasta ${formatDateForm(newPromotion.fromQuantity)}</label></td>
-            <td><label>${newPromotion.discountPercentage}%</label></td>
-            <td><label>Desde ${formatDateForm(newPromotion.fromDate)} Hasta ${formatDateForm(newPromotion.toDate)}</label></th>
-            <td><label>Desde las ${newPromotion.fromTime} Hasta las ${newPromotion.toTime}</label></th>
-            <td>
-                <input type="checkbox" class="form-check-input promotion-toggle" 
-                    onchange="togglePromocionStatus(this)" ${newPromotion.promotionStatus ? 'checked' : ''}>
-                <label class="fw-bold ms-2">Promoción activada</label>
-            </td>
-            <td>
-                <button onclick="editPromotion('{{id}}',this)"  type="button"
-                    class="btn btn-edit"><i class="fi-department fi-sr-pencil"></i></button>
-                <button onclick="deleteLot('{{id}}',this)" type="button"
-                    class="btn btn-danger"><i class="fi-department fi-sr-trash"></i></button>
-            </td>
+            <tr idPromotions="${idPromotion}" name_promotion="${newPromotion.promotionName}" promotions_from="${newPromotion.fromQuantity}" promotions_to="${newPromotion.fromQuantity}" discount_percentage='${newPromotion.discountPercentage}' date_from="${newPromotion.fromDate}" date_to="${newPromotion.toDate}" fromTime="${newPromotion.fromTime}" toTime="${newPromotion.toTime}" active_promotion="${newPromotion.promotionStatus}">
+                <td><label><strong>${newPromotion.promotionName}</strong></label></td>
+                <td><label>Cuando la cantidad vaya desde  ${formatDateForm(newPromotion.fromQuantity)} hasta ${formatDateForm(newPromotion.fromQuantity)}</label></td>
+                <td><label>${newPromotion.discountPercentage}%</label></td>
+                <td><label>Desde ${formatDateForm(newPromotion.fromDate)} Hasta ${formatDateForm(newPromotion.toDate)}</label></th>
+                <td><label>Desde las ${newPromotion.fromTime} Hasta las ${newPromotion.toTime}</label></th>
+                <td>
+                    <input type="checkbox" class="form-check-input promotion-toggle" 
+                        onchange="togglePromocionStatus(this)" ${newPromotion.promotionStatus ? 'checked' : ''}>
+                    <label class="fw-bold ms-2">Promoción activada</label>
+                </td>
+                <td>
+                    <button onclick="editPromotion('${idPromotion}',this)"  type="button"
+                        class="btn btn-edit"><i class="fi-department fi-sr-pencil"></i></button>
+                    <button onclick="deletePromotion('${idPromotion}',this)" type="button"
+                        class="btn btn-danger"><i class="fi-department fi-sr-trash"></i></button>
+                </td>
+            </tr>
         `;
 
         //if exist text of information we will clean the text
@@ -430,27 +443,155 @@
         return promotionName && fromQuantity && toQuantity && discountPercentage;
     }
 
+    /**-----------------------------------EDIT PROMOTIONS-----------------------------------**/
+    let idPromotionsEdit = null; // variable for save the ID of the promotion that edit
+    let selectedRow = null;
+
     function editPromotion(idPromotion, button) {
         const row = button.closest('tr'); // get the row of the promotion
+        selectedRow=row;
 
         //her we going to get all the information of the promotion
-        const name = row.cells[0].innerText.trim();
-        const quantity = row.cells[1].innerText.trim();
-        const discount = row.cells[2].innerText.trim();
-        const dateRange = row.cells[3].innerText.trim();
-        const isActive = row.querySelector('.promotion-toggle')?.checked;
+        const idPromotions = row.getAttribute('idPromotions').trim();
+        idPromotionsEdit=idPromotions; //save the id of the promotion that edit
+        const name = row.getAttribute('name_promotion').trim();
+        const fromQuantity = row.getAttribute('promotions_from').trim();
+        const toQuantity = row.getAttribute('promotions_to').trim();
+        const discount = row.getAttribute('discount_percentage').trim();
+        const fromDate = row.getAttribute('date_from').trim();
+        const toDate = row.getAttribute('date_to').trim();
+        const fromTime = row.getAttribute('fromTime').trim();
+        const toTime = row.getAttribute('toTime').trim();
+        const isActive = row.getAttribute('active_promotion') === 'true'; // asumiendo que el valor es 'true' o 'false'
 
         //her we will update the input of the promotion
         document.getElementById('promotionName').value = name;
-        document.getElementById('fromQuantity').value = 0;
-        document.getElementById('toQuantity').value = 0;
+        document.getElementById('fromQuantity').value = fromQuantity;
+        document.getElementById('toQuantity').value = toQuantity;
         document.getElementById('discountPercentage').value = discount.replace('%', '').trim();
-        document.getElementById('fromDate').value = dateRange.split(' ')[1].trim();
-        document.getElementById('toDate').value = dateRange.split(' ')[3].trim();
+        document.getElementById('fromDate').value = fromDate;
+        document.getElementById('toDate').value = toDate;
+        document.getElementById('fromTime').value = fromTime;
+        document.getElementById('toTime').value = toTime;
         document.getElementById('promotionStatus').checked = isActive;
 
         openPopupPromotions();
     }
+
+    async function update_promotion(){
+        //first we will see if can update the promotion
+        if (!we_can_save_the_promotion()) {
+            //show a message of error in the server
+            errorMessage('👁️ ERROR', 'No se puede actualizar la promoción, por favor verifica los datos.');
+            return;
+        }
+
+        //if we can update the promotion we will send the information to the server
+        const newPromotion = create_a_new_promotion(); //save the data of the form
+        newPromotion.idPromotions=idPromotionsEdit; //add the id of the promotion that edit
+        const answer=await send_information_to_the_server_for_update_the_promotion(newPromotion); //send the information to the server
+
+        //know if could add the lot to the database 
+        if (answer.answer) {
+            update_information_of_the_table(newPromotion); //update the information of the table
+            closePopupPromotion();
+            confirmationMessage('Promoción actualizada 😁', '')
+        } else {
+            //show a message of error in the server
+            errorMessage('👁️ ERROR', answer.message);
+        }
+    }
+
+    async function send_information_to_the_server_for_update_the_promotion(newPromotion) {
+        try {
+            const response = await fetch(`/links/update-promotion`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ newPromotion: newPromotion })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json(); // Si el servidor envía un mensaje de error
+                console.log(errorData.error)
+                return {
+                    answer: false,
+                    message: `Error: ${errorData.error || 'Hubo un problema con la solicitud'}`
+                };
+                
+            }
+
+            const data = await response.json();
+
+            if (data.message) {
+                return { answer: true, message: data.message, idPromotion:data.idPromotion };  // Usar el mensaje del servidor
+            } else {
+                return { answer: false, message: "Hubo un error al conectarse con el servidor. Inténtalo de nuevo más tarde." };
+            }
+
+        } catch (error) {
+            return { answer: false, message: `Hubo un error al conectarse con el servidor. Inténtalo de nuevo más tarde. ${error.message}` };
+        }
+    }
+
+    function update_information_of_the_table(updatedData) {
+        if (!selectedRow) return;
+
+        selectedRow.setAttribute('name_promotion', updatedData.promotionName);
+        selectedRow.setAttribute('promotions_from', updatedData.fromQuantity);
+        selectedRow.setAttribute('promotions_to', updatedData.toQuantity);
+        selectedRow.setAttribute('discount_percentage', updatedData.discountPercentage);
+        selectedRow.setAttribute('date_from', updatedData.fromDate);
+        selectedRow.setAttribute('date_to', updatedData.toDate);
+        selectedRow.setAttribute('fromTime', updatedData.fromTime);
+        selectedRow.setAttribute('toTime', updatedData.toTime);
+        selectedRow.setAttribute('active_promotion', updatedData.promotionStatus);
+
+        selectedRow.cells[0].innerText = updatedData.promotionName;
+        selectedRow.cells[1].innerText = `Cuando la cantidad vaya desde ${updatedData.fromQuantity} hasta ${updatedData.toQuantity}`;
+        selectedRow.cells[2].innerText = `${updatedData.discountPercentage}%`;
+        selectedRow.cells[3].innerText = `Desde ${updatedData.fromDate} Hasta ${updatedData.toDate}`;
+        selectedRow.cells[4].innerText = `Desde las ${updatedData.fromTime} Hasta las ${updatedData.toTime}`;
+    }
+
+    /**-----------------------------------DELETE PROMOTIONS-----------------------------------**/
+    async function deletePromotion(idPromotion,button){
+
+        if(await questionMessage('🗑️ Eliminar la promoción','¿Deseas eliminar esta promoción?')){
+            const answer=await send_information_to_the_server_for_delete_the_promoción(idPromotion);
+
+            if(answer.message){
+                let row = button.closest("tr"); // get the row most close
+                let table = row.closest("table"); // get tha table most close
+
+                if (row) {
+                    row.remove(); // delete the row
+                }
+
+                //now we will see if the table is empty
+                let tbody = table.querySelector("tbody");
+                if (tbody && tbody.rows.length === 0) {
+                    //if the table is empty, show a message of that not exist tha data in the table
+                    const textInfo=document.getElementById('text-info-table')
+                    if(textInfo){
+                        textInfo.textContent='No se encontraron registros.';
+                    }
+                }
+
+                confirmationMessage('La promoción fue eliminada 😁',answer.message)
+            }
+        }
+
+
+        update_inventory();
+    }
+
+    async function send_information_to_the_server_for_delete_the_promoción(idPromotion){
+        return {message:true};
+    }
+
+
 </script>
 
 

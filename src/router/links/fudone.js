@@ -541,6 +541,19 @@ async function get_all_the_promotions(id_dish_and_combo_features) {
 router.post('/:id_dish_and_combo_features/add-promotion-free', isLoggedIn, async (req, res) => {
     const { newPromotion } = req.body;
     const { id_dish_and_combo_features } = req.params;
+
+    //we will see if the promotion have name
+    if(newPromotion.promotionName==undefined || newPromotion.promotionName==null || newPromotion.promotionName==''){
+        return res.status(500).json({ error: 'Necesitas agregar un nombre a tu promoción 😅', message: 'Necesitas agregar un nombre a tu promoción 😅' });
+    }
+
+    //first we will see if can add the promotion
+    const fromQuantity=parseFloat(newPromotion.fromQuantity)
+    const toQuantity=parseFloat(newPromotion.toQuantity)
+    if(fromQuantity>toQuantity){
+        return res.status(500).json({ error: 'La cantidad de la promoción no es correcta 😅', message: 'La cantidad de la promoción no es correcta 😅' });
+    }
+
     const queryText = `
         INSERT INTO "Inventory".promotions
         (id_dish_and_combo_features, name_promotion, promotions_from, promotions_to, discount_percentage, date_from, date_to, "fromTime", "toTime", active_promotion) 
@@ -566,10 +579,49 @@ router.post('/:id_dish_and_combo_features/add-promotion-free', isLoggedIn, async
         res.status(201).json({ message: "Agregado con éxito", idPromotion: result.rows[0] });
     } catch (err) {
         console.log("❌ Error al agregar la promoción:", err);
-        res.status(500).json({ error: err, message: err });
+        res.status(500).json({ error: 'Error en el servidor al agregar la promoción. Inténtalo más tarde. 💀', message: err });
     }
 });
 
+router.post('/update-promotion', isLoggedIn, async (req, res) => {
+    const { newPromotion } = req.body;
+
+    const queryText = `
+        UPDATE "Inventory".promotions
+        SET 
+            name_promotion = $1, 
+            promotions_from = $2, 
+            promotions_to = $3, 
+            discount_percentage = $4, 
+            date_from = $5, 
+            date_to = $6, 
+            "fromTime" = $7, 
+            "toTime" = $8, 
+            active_promotion = $9
+        WHERE id = $10
+        RETURNING id;
+    `;
+
+    try {
+        const result = await database.query(queryText, [
+            newPromotion.promotionName, // varchar
+            parseFloat(newPromotion.fromQuantity), // double precision
+            parseFloat(newPromotion.toQuantity), // double precision
+            parseFloat(newPromotion.discountPercentage), // double precision
+            newPromotion.fromDate || null, // date (YYYY-MM-DD)
+            newPromotion.toDate || null, // date (YYYY-MM-DD)
+            newPromotion.fromTime || null, // time (HH:MM:SS)
+            newPromotion.toTime || null, // time (HH:MM:SS)
+            newPromotion.promotionStatus, // boolean
+            newPromotion.idPromotions
+        ]);
+
+        res.status(201).json({ message: "Agregado con éxito", idPromotion: result.rows[0] });
+    } catch (err) {
+        console.log("❌ Error al agregar la promoción:", err);
+        res.status(500).json({ error: 'Error en el servidor al actualizar la promoción. Inténtalo más tarde. 💀', message: err });
+    }
+});
 
 
 
