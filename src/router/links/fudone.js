@@ -543,7 +543,7 @@ router.post('/:id_dish_and_combo_features/add-promotion-free', isLoggedIn, async
     const { id_dish_and_combo_features } = req.params;
     const queryText = `
         INSERT INTO "Inventory".promotions
-        (id_dish_and_combo_features, name_promotion, promotions_from, promotions_to, discount_percentage, date_from, date_to, fromTime, toTime, active_promotion) 
+        (id_dish_and_combo_features, name_promotion, promotions_from, promotions_to, discount_percentage, date_from, date_to, "fromTime", "toTime", active_promotion) 
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
         RETURNING id;
     `;
@@ -555,15 +555,15 @@ router.post('/:id_dish_and_combo_features/add-promotion-free', isLoggedIn, async
             parseFloat(newPromotion.fromQuantity), // double precision
             parseFloat(newPromotion.toQuantity), // double precision
             parseFloat(newPromotion.discountPercentage), // double precision
-            newPromotion.fromDate, // date (YYYY-MM-DD)
-            newPromotion.toDate, // date (YYYY-MM-DD)
-            newPromotion.fromTime, // time (HH:MM:SS)
-            newPromotion.toTime, // time (HH:MM:SS)
+            newPromotion.fromDate || null, // date (YYYY-MM-DD)
+            newPromotion.toDate || null, // date (YYYY-MM-DD)
+            newPromotion.fromTime || null, // time (HH:MM:SS)
+            newPromotion.toTime || null, // time (HH:MM:SS)
             newPromotion.promotionStatus// boolean
         ]);
 
         console.log("✅ Promoción insertada con éxito:", result.rows[0]);
-        res.status(201).json({ message: "Agregado con éxito", lot: result.rows[0] });
+        res.status(201).json({ message: "Agregado con éxito", idPromotion: result.rows[0] });
     } catch (err) {
         console.log("❌ Error al agregar la promoción:", err);
         res.status(500).json({ error: err, message: err });

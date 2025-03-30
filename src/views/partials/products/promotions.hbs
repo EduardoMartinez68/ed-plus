@@ -312,7 +312,6 @@
         const newPromotion = create_a_new_promotion(); //save the data of the form
 
         //we will send to the server the information of the promotion
-        console.log(newPromotion);
         const answer = await send_information_to_the_server_for_save_the_promotion(newPromotion);
 
         //know if could add the lot to the database 
@@ -352,7 +351,7 @@
             const data = await response.json();
 
             if (data.message) {
-                return { answer: true, message: data.message };  // Usar el mensaje del servidor
+                return { answer: true, message: data.message, idPromotion:data.idPromotion };  // Usar el mensaje del servidor
             } else {
                 return { answer: false, message: "Hubo un error al conectarse con el servidor. Inténtalo de nuevo más tarde." };
             }
@@ -363,7 +362,7 @@
     }
 
 
-    function add_the_promotion_to_the_table() {
+    function add_the_promotion_to_the_table(newPromotion) {
         //get the table
         let table = document.getElementById('table-promotions').getElementsByTagName('tbody')[0];
 
