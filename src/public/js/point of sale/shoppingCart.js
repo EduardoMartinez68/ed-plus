@@ -513,10 +513,32 @@ function updateCart(lotsInfo = null) {
             const promoFromTime = promo.fromTime ? parseInt(promo.fromTime.split(':')[0]) * 60 + parseInt(promo.fromTime.split(':')[1]) : null;
             const promoToTime = promo.toTime ? parseInt(promo.toTime.split(':')[0]) * 60 + parseInt(promo.toTime.split(':')[1]) : null;
 
+            //first we will see if the promotion need a quantity equal how 3,6,9,12,
+            if(promo.promotions_from==promo.promotions_to){
+                return (
+                    //her is for know if the product is the promotion
+                    promo.id_dishes_and_combos === item.id_dishes_and_combos &&
+    
+                    //her is for know if the quantity is the success
+                    item.quantity % promo.promotions_from== 0 &&
+    
+                    //her is for know the date and hour of the promotion
+                    (promoDateFrom === null || promoDateFrom <= now) &&
+                    (promoDateTo === null || promoDateTo >= now) &&
+                    (promoFromTime === null || promoFromTime <= currentTime) &&
+                    (promoToTime === null || promoToTime >= currentTime)
+                );               
+            }
+            
             return (
+                //her is for know if the product is the promotion
                 promo.id_dishes_and_combos === item.id_dishes_and_combos &&
+
+                //her is for know if the quantity is the success
                 item.quantity >= promo.promotions_from &&
-                item.quantity <= promo.promotions_to &&
+                (item.quantity <= promo.promotions_to || promo.promotions_to===null) &&
+
+                //her is for know the date and hour of the promotion
                 (promoDateFrom === null || promoDateFrom <= now) &&
                 (promoDateTo === null || promoDateTo >= now) &&
                 (promoFromTime === null || promoFromTime <= currentTime) &&
