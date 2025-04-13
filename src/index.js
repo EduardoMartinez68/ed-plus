@@ -39,6 +39,60 @@ require('dotenv').config();
 const {APP_PG_USER,APP_PG_HOST,APP_PG_DATABASE,APP_PG_PASSWORD,APP_PG_PORT}=process.env; //this code is for get the data of the database
 
 const pg = require('pg');
+const fs = require('fs');
+
+//this is for know if the APP is in the desktop or in the server
+const adminPool = new pg.Pool({
+    user: APP_PG_USER,
+    host: APP_PG_HOST,
+    password: APP_PG_PASSWORD,
+    port: APP_PG_PORT,
+    database: 'postgres' // base por defecto
+ });
+
+//now import the database
+const importSQLFile = async (pool) => {
+    const filePath = path.join(__dirname, 'database', 'edplus.sql');
+  // Leemos el archivo SQL
+  const sql = fs.readFileSync(filePath, 'utf8');
+  
+  // Dividimos el archivo en sentencias SQL
+  const statements = sql
+    .split(/;\s*$/m)  // Divide por el punto y coma seguido de espacio (cada sentencia SQL)
+    .map(stmt => stmt.trim())  // Quitamos los espacios extra
+    .filter(stmt => stmt.length > 0);  // Eliminamos las sentencias vacías
+  
+  // Conectamos al pool de PostgreSQL
+  const client = await pool.connect();
+  try {
+    // Ejecutamos cada sentencia SQL
+    for (const stmt of statements) {
+      await client.query(stmt);
+    }
+    console.log('✅ SQL ejecutado correctamente');
+  } catch (err) {
+    console.error('❌ Error ejecutando SQL:', err.message);
+  } finally {
+    client.release();  // Liberamos la conexión
+  }
+};
+
+//this is for create the table EDPLUS in the database of postgres
+const createDatabase = async () => {
+    const result = await adminPool.query("SELECT 1 FROM pg_database WHERE datname = 'edplus'");
+    //we will see if the database exist
+    if (result.rowCount === 0) {
+      await adminPool.query('CREATE DATABASE edplus'); //if not exist, we will create the database
+      importSQLFile(adminPool); //this is for import the database of EDPLUS.sql
+      console.log('📦 Base de datos EDPLUS creada');
+    } else {
+      console.log('📂 La base de datos EDPLUS ya existe, no se creó nuevamente.');
+      
+    }
+};
+createDatabase(); //if not exist the database we will create the database
+
+//her now we will connect with the database of EDPLUS when be created
 const pgPool = new pg.Pool({
     user: APP_PG_USER,
     host: APP_PG_HOST,
@@ -51,6 +105,8 @@ const pgPool = new pg.Pool({
     }*/
     
 });
+
+
 
 
 serverExpress.use(session({

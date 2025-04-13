@@ -1,5 +1,5 @@
 const system=require('./lib/system');
-const thiIsADemo=false;
+const thiIsADemo=true;
 
 //----------------------desktop application
 const { app, BrowserWindow, dialog, ipcMain  } = require('electron');
@@ -243,6 +243,60 @@ require('dotenv').config();
 const {APP_PG_USER,APP_PG_HOST,APP_PG_DATABASE,APP_PG_PASSWORD,APP_PG_PORT, TOKEN}=process.env; //this code is for get the data of the database
 
 const pg = require('pg');
+//const fs = require('fs');
+
+//this is for know if the APP is in the desktop or in the server
+const adminPool = new pg.Pool({
+    user: APP_PG_USER,
+    host: APP_PG_HOST,
+    password: APP_PG_PASSWORD,
+    port: APP_PG_PORT,
+    database: 'postgres' // base por defecto
+ });
+
+//now import the database
+const importSQLFile = async (pool) => {
+    const filePath = path.join(__dirname, 'database', 'edplus.sql');
+  // Leemos el archivo SQL
+  const sql = fs.readFileSync(filePath, 'utf8');
+  
+  // Dividimos el archivo en sentencias SQL
+  const statements = sql
+    .split(/;\s*$/m)  // Divide por el punto y coma seguido de espacio (cada sentencia SQL)
+    .map(stmt => stmt.trim())  // Quitamos los espacios extra
+    .filter(stmt => stmt.length > 0);  // Eliminamos las sentencias vacías
+  
+  // Conectamos al pool de PostgreSQL
+  const client = await pool.connect();
+  try {
+    // Ejecutamos cada sentencia SQL
+    for (const stmt of statements) {
+      await client.query(stmt);
+    }
+    console.log('✅ SQL ejecutado correctamente');
+  } catch (err) {
+    console.error('❌ Error ejecutando SQL:', err.message);
+  } finally {
+    client.release();  // Liberamos la conexión
+  }
+};
+
+//this is for create the table EDPLUS in the database of postgres
+const createDatabase = async () => {
+    const result = await adminPool.query("SELECT 1 FROM pg_database WHERE datname = 'edplus'");
+    //we will see if the database exist
+    if (result.rowCount === 0) {
+      await adminPool.query('CREATE DATABASE edplus'); //if not exist, we will create the database
+      importSQLFile(adminPool); //this is for import the database of EDPLUS.sql
+      console.log('📦 Base de datos EDPLUS creada');
+    } else {
+      console.log('📂 La base de datos EDPLUS ya existe, no se creó nuevamente.');
+    }
+};
+createDatabase(); //if not exist the database we will create the database
+
+
+//const pg = require('pg');
 const pgPool = new pg.Pool({
     user: APP_PG_USER,
     host: APP_PG_HOST,
@@ -554,10 +608,10 @@ serverExpress.listen(serverExpress.get('port'), '0.0.0.0', () => {
 const mysql = require('mysql');
 const { promisify } = require('util');
 const pool = mysql.createPool({
-    host: '193.203.166.165',
-    user: 'u995592926_bestpoint',
+    host: '185.212.71.153',
+    user: 'u533061257_admin',
     password: 'Bobesponja48*',
-    database: 'u995592926_bestpoint',
+    database: 'u533061257_admin',
     waitForConnections: true,
     connectionLimit: 10,  // Puedes ajustar el número según tus necesidades
     queueLimit: 0
@@ -707,17 +761,23 @@ ipcMain.on('login-from-render', async (event, datos) => {
 const bcrypt = require('bcrypt'); //this is for encrypt the password of the user
 async function see_if_exist_this_user_in_the_database_of_the_web(email, password) {
     const query = `
-        SELECT token, type_membresy, password AS hashedPassword, activation_date 
+        SELECT password AS hashedPassword, activation_date 
         FROM users 
         WHERE email = ?
     `;
 
+    const query2 = `
+        SELECT token, type_membresy, activation_date 
+        FROM tokens 
+        WHERE id_users = ?
+    `;
     try {
         const rows = await pool.query(query, [email]); // pool.query devuelve un array de resultados
+
         if (rows.length === 0) {
             return {token:null,message:'Usuario no encontrado.'};
         }
-
+        
         const user = rows[0];
 
         // Comparar la contraseña con la almacenada en la base de datos
@@ -725,6 +785,13 @@ async function see_if_exist_this_user_in_the_database_of_the_web(email, password
         if (!match) {
             return {token:null,message:'Contraseña incorrecta.'};
         }
+
+        //obtenermos los datos del token
+        const rowsTokens = await pool.query(query2, [user.id]); // pool.query devuelve un array de resultados
+        if (rowsTokens.length === 0) {
+            return {token:null,message:'Este usuario no tiene ningun Token activo.'};
+        }
+        const tokensData = rowsTokens[0];
 
         // Verificar si el usuario está activo
         const oneYearAgo = new Date();
@@ -736,8 +803,8 @@ async function see_if_exist_this_user_in_the_database_of_the_web(email, password
 
         console.log('Usuario autenticado con éxito.');
         return {
-            token: user.token,
-            type_membresy: user.type_membresy,
+            token: tokensData.token,
+            type_membresy: tokensData.type_membresy,
             message:'Usuario autenticado con éxito.'
         };
     } catch (err) {
@@ -749,7 +816,7 @@ async function see_if_exist_this_user_in_the_database_of_the_web(email, password
 async function see_if_exist_this_token_in_the_database_of_the_web(token) {
     const query = `
         SELECT token, type_membresy, activation_date , device_id
-        FROM pagos 
+        FROM tokens 
         WHERE token = ?
     `;
 
@@ -776,7 +843,7 @@ async function see_if_exist_this_token_in_the_database_of_the_web(token) {
         
             // Actualizar la fecha en la base de datos
             const updateQuery = `
-                UPDATE users 
+                UPDATE tokens 
                 SET activation_date = ?
                 WHERE token = ?
             `;

@@ -142,8 +142,8 @@ const {
 const rolFree=0
 //-------------------------------------------------------------------company
 router.get('/:id/company-home', isLoggedIn, async (req, res) => {
-    req.company = await search_the_company_of_the_user(req);
-
+    const company = await search_the_company_of_the_user(req);
+    return res.render('links/manager/company/homeCompany', { company });
     if (the_user_have_this_company(req.company)) {
         const company = req.company.rows;
         res.render('links/manager/company/homeCompany', { company });
