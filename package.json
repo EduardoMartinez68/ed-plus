@@ -29,8 +29,11 @@
     }
   },
   "devDependencies": {
-    "electron": "^version",
-    "electron-builder": "^version"
+    "electron": "^25.9.8",
+    "electron-builder": "^25.1.8",
+    "electron-packager": "^17.1.2",
+    "javascript-obfuscator": "^4.1.1",
+    "nodemon": "^2.0.22"
   },
   "keywords": [],
   "author": "",
@@ -43,7 +46,7 @@
     "@fullcalendar/timegrid": "^6.1.8",
     "@zxing/text-encoding": "^0.9.0",
     "aws-sdk": "^2.1624.0",
-    "axios": "^1.7.2",
+    "axios": "^1.8.4",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "connect-flash": "^0.1.1",
@@ -84,12 +87,5 @@
     "usb": "^2.12.1",
     "uuid": "^9.0.1",
     "xlsx": "^0.18.5"
-  },
-  "devDependencies": {
-    "electron": "^25.9.8",
-    "electron-builder": "^25.1.8",
-    "electron-packager": "^17.1.2",
-    "javascript-obfuscator": "^4.1.1",
-    "nodemon": "^2.0.22"
   }
 }

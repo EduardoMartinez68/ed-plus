@@ -1,5 +1,5 @@
 const system=require('./lib/system');
-const thiIsADemo=true;
+const thiIsADemo=false;
 
 //----------------------desktop application
 const { app, BrowserWindow, dialog, ipcMain  } = require('electron');
@@ -605,40 +605,27 @@ serverExpress.listen(serverExpress.get('port'), '0.0.0.0', () => {
 });
 */
 //*------------------------------------------------------------DATABASE SERVER--------------------------------------------//
-const mysql = require('mysql');
-const { promisify } = require('util');
-const pool = mysql.createPool({
-    host: '185.212.71.153',
-    user: 'u533061257_admin',
-    password: 'Bobesponja48*12456*',
-    database: 'u533061257_admin',
-    waitForConnections: true,
-    connectionLimit: 10,  // Puedes ajustar el número según tus necesidades
-    queueLimit: 0
-});
+const axios = require('axios');
 
-pool.getConnection((err, connection) => {
-    if (err) {
-        if (err.code === 'PROTOCOL_CONNECTION_LOST') {
-            console.error('La conexión a la base de datos fue cerrada.');
-        }
-        if (err.code === 'ER_CON_COUNT_ERROR') {
-            console.error('La base de datos tiene muchas conexiones.');
-        }
-        if (err.code === 'ECONNREFUSED') {
-            console.error('La conexión a la base de datos fue rechazada.');
-        }
+async function get_answer_of_my_api(api,data){
+    const logFilePath = path.join(__dirname, 'logfile.txt'); // Ruta para el archivo de log
+    fs.appendFileSync(logFilePath, `ENTRE`, 'utf8');
+    try {
+        const rows = await axios.post(`https://www.pluspuntodeventa.com/api/${api}`, data, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        // Guardar los resultados en un archivo de log
+        fs.appendFileSync(logFilePath, `Error verificando actualizaciones: ${rows.data}\n\n\n`, 'utf8');
+
+        return rows;
+    } catch (error) {
+        fs.appendFileSync(logFilePath, `Error verificando actualizaciones: ${error.message}\n${error.stack}\n\n`, 'utf8');
+        return { success: false, message: "Hubo un error al hacer la solicitud." };
     }
-
-    if (connection) {
-        connection.release();
-        console.log('Conexión a la base de datos exitosa MYSQL.');
-    }
-
-    return;
-})
-
-pool.query=promisify(pool.query)
+}
 
 //*-----------------------------------------------------------Desktop application-----------------------------------------//
 //we will see if the APP is for desktop
@@ -698,30 +685,52 @@ const createMainWindowRegister = () => {
 //const { v4: uuidv4 } = require('uuid');
 const { machineIdSync } = require('node-machine-id');
 const deviceId = machineIdSync();//uuidv4();
+ipcMain.on('get_my_deviceId', async (event) => {
+    console.log("📥 Petición recibida para obtener el deviceId");
+    event.reply('answer_get_my_deviceId', deviceId);
+});
+
+ipcMain.on('update_data_of_the_token_in_this_drive', async (event, datos) => {
+    const dataToken=datos.dataToken; //this is for get the data of the token
+
+    //her we will save all the information of the software
+    await initialize_token(dataToken.token); //this is for save the token in the software
+    await create_expiration_date_of_the_token(dataToken.expiration_date); //this is for save the expiration date of the token in the software
+    const message='Datos actualizados con éxito. Cierra y vuelve a abrir el programa 😄'
+
+    event.reply('update_data_of_the_token_in_this_drive', message);
+});
+
+
+
+
 
 ipcMain.on('login-from-render-token', async (event, datos) => {
     //her we will save all the information of the software
     const token=datos.token;
-    const answer=await see_if_exist_this_token_in_the_database_of_the_web(token);
+    const answer=await see_if_exist_this_token_in_the_database_of_the_web(token); //send a message to the server for get the data of the token
 
-    //we will see if exist a token of activation
+    //we will see if exist a token of activation in our database in the web server 
     if(answer.token){
-        let canUpdate=true;
+        let canUpdate=true; //this is for know if the token not have a drive activate in the database
 
         //now we will see if the user is login from the same computer
         if (answer.uuid){
+
+            //we will see if the uuid is the same that the uuid of the token. Only one user can be login in one computer with the token
             if(answer.uuid !== deviceId) {
                 answer.message='Este usuario ya tiene un TOKEN registrado en un equipo.'
                 canUpdate=false;
             }
         }
 
-        //save the uui in the database
+        //if the token not have any drive, we will save this uui in the database
         if(canUpdate){
+            //this is for burn the Token and that not can used again
             if(await save_the_uui_of_the_user_in_the_database(token,deviceId)){
                 //now save all the information of the user in the website
-                await initialize_token(token);
-                await create_expiration_date_of_the_token(answer.activation_date);
+                await initialize_token(token); //this is for save the token in the software
+                await create_expiration_date_of_the_token(answer.activation_date); //this is for save the expiration date of the token in the software
                 answer.message='Datos actualizados con éxito. Cierra y vuelve a abrir el programa 😄'
             }
         }
@@ -730,10 +739,6 @@ ipcMain.on('login-from-render-token', async (event, datos) => {
     // answer to the server
     event.reply('answer-from-login-render-token', answer.message);
 });
-
-
-
-
 
 ipcMain.on('login-from-render', async (event, datos) => {
     //her we will save all the information of the software
@@ -760,43 +765,36 @@ ipcMain.on('login-from-render', async (event, datos) => {
 
 const bcrypt = require('bcrypt'); //this is for encrypt the password of the user
 async function see_if_exist_this_user_in_the_database_of_the_web(email, password) {
-    const query = `
-        SELECT password AS hashedPassword, activation_date 
-        FROM users 
-        WHERE email = ?
-    `;
-
-    const query2 = `
-        SELECT token, type_membresy, activation_date 
-        FROM tokens 
-        WHERE id_users = ?
-    `;
     try {
-        const rows = await pool.query(query, [email]); // pool.query devuelve un array de resultados
+        //now we will send to my api in the server for get the data of the user
+        const rows = await get_answer_of_my_api('get_information_of_the_user.php', {email: email});
 
-        if (rows.length === 0) {
+        //we will see if the user exist in the database
+        if (!rows.data.success) {
             return {token:null,message:'Usuario no encontrado.'};
         }
-        
-        const user = rows[0];
 
-        // Comparar la contraseña con la almacenada en la base de datos
+        //convert the answer of the server to a object
+        const user = rows.data;
+
+        //Compare the password with the one stored in the database
         const match = await bcrypt.compare(password, user.hashedPassword);
         if (!match) {
             return {token:null,message:'Contraseña incorrecta.'};
         }
 
-        //obtenermos los datos del token
-        const rowsTokens = await pool.query(query2, [user.id]); // pool.query devuelve un array de resultados
-        if (rowsTokens.length === 0) {
+        //get the data of the token from the database
+        const rowsTokens = await get_answer_of_my_api('get_data_of_the_token_with_the_user_id.php', {userId: user.id});
+        if (rowsTokens.data.success) {
             return {token:null,message:'Este usuario no tiene ningun Token activo.'};
         }
-        const tokensData = rowsTokens[0];
 
-        // Verificar si el usuario está activo
+        //convert the answer of the server to a object
+        const tokensData = rowsTokens.data;
+
+        //we will see if the user is activated in the database
         const oneYearAgo = new Date();
-        oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1); // Restamos 1 año a la fecha actual
-        
+        oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);//We subtract 1 year from the current date
         if (new Date(user.activation_date) < oneYearAgo) {
             return { token: null, message: 'Suscripción expirada. Por favor, vuelve a activar tu membresía.' };
         }
@@ -814,72 +812,75 @@ async function see_if_exist_this_user_in_the_database_of_the_web(email, password
 }
 
 async function see_if_exist_this_token_in_the_database_of_the_web(token) {
-    const query = `
-        SELECT token, type_membresy, activation_date , device_id
-        FROM tokens 
-        WHERE token = ?
-    `;
-
     try {
-        const rows = await pool.query(query, [token]); // pool.query devuelve un array de resultados
-        if (rows.length === 0) {
+        //send a message to our api in the web for get the data of the token
+        const rows = await get_answer_of_my_api('see_if_exist_this_token_in_the_database_of_the_web.php', {token: token});
+
+        //we will see if the token exist in the database
+        if (!rows.data.success) {
             return {token:null,message:'Token no encontrado.'};
         }
 
-        const user = rows[0];
+        //convert the answer of the server to a object 
+        const user = rows.data;
 
-        // Verificar si el usuario está activo
+        //we will see if the user is active
         const oneYearAgo = new Date();
-        oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1); // Restamos 1 año a la fecha actual
+
+        //change the date for the date of the token
+        if(user.type_membresy==0){
+            oneYearAgo.setDate(oneYearAgo.getDate() - 30); //We add 30 days to the current date. This is for demos
+        }else{
+            oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1); //We subtract 1 year from the current date. This is for customers
+        }
         
+        //we will see if the activation_date is expired
         if (user.activation_date!='0000-00-00' && new Date(user.activation_date) < oneYearAgo) {
             return { token: null, message: 'Suscripción expirada. Por favor, vuelve a activar tu membresía.' };
         }
 
-        //see if the activation_date not have date of expiration
+
+        //see if the activation_date not have date of expiration, if not have date, we will set the date of expiration to 1 year or 30 days if is a demo
         if (user.activation_date === '0000-00-00') {
-            const suscripcion = new Date(); // Fecha actual
-            suscripcion.setFullYear(suscripcion.getFullYear() + 1); // Sumamos 1 año a la fecha actual
-        
-            // Actualizar la fecha en la base de datos
-            const updateQuery = `
-                UPDATE tokens 
-                SET activation_date = ?
-                WHERE token = ?
-            `;
-            await pool.query(updateQuery, [suscripcion.toISOString().split('T')[0], user.token]);
+            const suscripcion = new Date(); //current date
 
-            user.activation_date=suscripcion; //update the activation_date;
+            //change the date for the date of the token
+            if(user.type_membresy==0){
+                suscripcion.setDate(oneYearAgo.getDate() + 30); //We add 30 days to the current date. This is for demos
+            }else{
+                suscripcion.setFullYear(suscripcion.getFullYear() + 1); //We add 1 year to the current date
+            }
+
+            //upate the expiration_date in the database with our api
+            const answerApiActivationDate=await get_answer_of_my_api('update_activation_date.php', {suscripcion: suscripcion.toISOString().split('T')[0],token:token});
+            
+            //we will see if we caned update the activation_date in the database
+            if(answerApiActivationDate.data.success){
+                user.activation_date=suscripcion; //update the activation_date;
+                console.log('Usuario autenticado con éxito.');
+                //retur  the answer of the server for save in the software
+                return {
+                    token: true,
+                    type_membresy: user.type_membresy,
+                    uuid:user.device_id,
+                    activation_date:user.activation_date,
+                    message:'Usuario autenticado con éxito.'
+                };
+            }else{
+                return {token:null, message: 'Ocurrio un error al verificar tu Token en el ultimo paso, intentalo otra vez.' };
+            }
         }
-        
-
-        console.log('Usuario autenticado con éxito.');
-        return {
-            token: true,
-            type_membresy: user.type_membresy,
-            uuid:user.device_id,
-            activation_date:user.activation_date,
-            message:'Usuario autenticado con éxito.'
-        };
     } catch (err) {
         console.error('Error al verificar usuario:', err);
-        return {token:null};
+        return {token:null,message:err};
     }
 }
 
-
 async function save_the_uui_of_the_user_in_the_database(token, deviceId) {
     // Consulta para actualizar el device_id del usuario en la base de datos
-    const query = `
-        UPDATE pagos 
-        SET device_id = ? , active = false
-        WHERE token = ?
-    `;
-
     try {
-        // Ejecuta la consulta de actualización
-        const result = await pool.query(query, [deviceId, token]);
-        return true;
+        const rows = await get_answer_of_my_api('see_if_exist_this_token_in_the_database_of_the_web.php', {token: token,deviceId:deviceId});
+        return rows.data.success;
     } catch (err) {
         console.error('Error al actualizar el UUID del dispositivo:', err);
         return false;
@@ -925,7 +926,7 @@ async function actualizarToken() {
 app.on('ready', async () => {
 
     //this is for update the code from github
-    await check_if_exist_updates();
+    //await check_if_exist_updates();
 
     //we will see if the software is a demo
     if(thiIsADemo){
@@ -945,12 +946,17 @@ app.on('ready', async () => {
         }
     }else{
         //await remove_install_token();
+
+        //we going to watch if the user have a membreship in this drive
         if(await verify_membership_of_user()){
+
+            //open the server of the application
             serverExpress.listen(serverExpress.get('port'), '0.0.0.0', () => {
                 console.log(`Server running on http://${getLocalIP()}:${serverExpress.get('port')}`);
             });
-            createMainWindow();
+            createMainWindow(); //create the UI of electron 
         }else{
+            //if the user not have a membership, we will show the form of login
             createMainWindowRegister();
         }
     }
