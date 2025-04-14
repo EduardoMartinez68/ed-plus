@@ -610,7 +610,7 @@ const { promisify } = require('util');
 const pool = mysql.createPool({
     host: '185.212.71.153',
     user: 'u533061257_admin',
-    password: 'Bobesponja48*',
+    password: 'Bobesponja48*12456*',
     database: 'u533061257_admin',
     waitForConnections: true,
     connectionLimit: 10,  // Puedes ajustar el número según tus necesidades
