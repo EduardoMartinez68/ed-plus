@@ -172,7 +172,8 @@
             });
 
             //get the anser of the server
-            return response.success;
+            const data = await response.json();
+            return data.success;
         }
 
 

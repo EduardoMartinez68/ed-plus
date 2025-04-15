@@ -269,6 +269,7 @@
     </div>
 </div>
 <script>
+    let companyRechange=null;
     const menuServicesRecargas = [
         { nombre: "Telcel", logo: "https://yt3.googleusercontent.com/je7RNk1GeegHqDmmppc3HVbYIE9_Nh2pS64Mz6fkk-RcK29wbWujnx3HooDa0vqyu5tfXffxCA=s900-c-k-c0x00ffffff-no-rj" },
         { nombre: "Movistar", logo: "https://cdn2.downdetector.com/static/uploads/c/300/a2e0d/MovistarGreen_1.png" },
@@ -313,11 +314,12 @@
         contenedor.innerHTML = `<h3>Selecciona un servicio</h3><div class="menu-services-cards-container">${cardsHTML}</div>`;
     }
 
-    function mostrarFormularioRecarga(compañia) {
+    function mostrarFormularioRecarga(company) {
+        companyRechange=company;
         const contenedor = document.getElementById('menu-services-contenido-dinamico');
         contenedor.innerHTML = `
         <center><h6>Saldo disponible 1,500$</h6></center>
-        <h3>Recarga para ${compañia}</h3>
+        <h3>Recarga para ${company}</h3>
         <div class="menu-services-formulario">
           <div class="menu-services-recargas-rapidas">
             ${[10, 20, 30, 50, 100].map(monto => `
@@ -340,7 +342,7 @@
             <input type="number" id="menu-services-recarga" placeholder="Ej. 50">
           </div>
   
-          <button class="menu-services-btn-comprar" onclick="comprarRecarga('${compañia}')">Comprar recarga</button>
+          <button class="menu-services-btn-comprar" onclick="comprarRecarga('${company}')">Comprar recarga</button>
         </div>
       `;
     }
@@ -352,26 +354,35 @@
         return regex.test(tel); // Retorna true si el teléfono es válido, de lo contrario, false
     }
 
-    function comprarRecarga(compañia) {
+    async function comprarRecarga(compañia) {
         const tel = document.getElementById('menu-services-telefono-1').value;
         const tel2 = document.getElementById('menu-services-telefono-2').value;
-        const monto = document.getElementById('menu-services-recarga').value;
+        const amount = document.getElementById('menu-services-recarga').value;
 
         //first we will see if the fields are empty
-        if (!tel || !monto || !tel2) {
+        if (!tel || !amount || !tel2) {
             warningMessage('¡Ey, esperaaa! 😅', 'Parece que olvidaste llenar todos los campos. ¡No te preocupes, solo falta un pasito más!');
             return;
         }
 
         //now we will see if the number is valid
         if (!validarTelefono(tel)) {
-            errorMessage('¡Ey, esperaaa! 😅', 'Parece que el número de teléfono no es válido. Por favor verifica el número e intenta nuevamente.');
+            warningMessage('¡Ey, esperaaa! 😅', 'Parece que el número de teléfono no es válido. Por favor verifica el número e intenta nuevamente.');
             return;
         }
 
         //now we will see if the number is equal
         if (tel !== tel2) {
-            errorMessage('¡Ey, esperaaa! 😅', 'Los números de teléfono no coinciden. Por favor verifica e intenta nuevamente.');
+            warningMessage('¡Ey, esperaaa! 😅', 'Los números de teléfono no coinciden. Por favor verifica e intenta nuevamente.');
+            return;
+        }
+
+
+        //now will send a message to our API in the web
+        const answerApi=await send_soliciutd_to_my_api(tel,amount,companyRechange);
+        if(!answerApi.success){
+            //if when send the message to the api and an error occurred, show the mssage of the API 
+            warningMessage('¡Atención! ⚠️', answerApi.message);
             return;
         }
 
@@ -382,10 +393,38 @@
         if (xange > 0) {
             confirmationMessage('¡Compra exitosa! 🎉', `El cambio total es de $${xange}. ¡Gracias por tu compra!`);
         } else if (xange === 0) {
-            confirmationMessage('¡Compra exitosa! 🎉', `Tu recarga de $${monto} para ${tel} con la compañía ${compañia} ha sido procesada. ¡Gracias por tu compra!`);
+            confirmationMessage('¡Compra exitosa! 🎉', `Tu recarga de $${monto} para ${tel} con la compañía ${companyRechange} ha sido procesada. ¡Gracias por tu compra!`);
         } else {
             errorMessage('¡Atención! ⚠️', 'Parece que el pago es insuficiente. Por favor ingresa un monto mayor.');
         }
     }
 
+
+    async function send_soliciutd_to_my_api(cellphone,amount,company){
+        const loadingOverlay = document.getElementById("loadingOverlay");
+        loadingOverlay.style.display = "flex";
+        try {
+            //get the infomration of the form
+            const email = 'eduardoa4848@Outlook.es' //document.getElementById('email').value;
+
+            //send a message to our api in the web for activate the token
+            const response = await fetch("https://www.pluspuntodeventa.com/api/prontiPagos/rechange_prontipagos.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ email:email, cellphone: cellphone, amount: amount, company: company })
+            });
+
+            //get the anser of the server
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Error:', error);
+            return false;
+        } finally {
+            // Hide loading overlay regardless of success or failure
+            loadingOverlay.style.display = "none";
+        }
+    }
 </script>

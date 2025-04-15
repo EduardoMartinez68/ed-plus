@@ -489,8 +489,7 @@ function getAllPromotions() {
 }
 
 const promotionsList=getAllPromotions();
-console.log('------------------')
-console.log(promotionsList)
+
 function updateCart(lotsInfo = null) {
     remove_all_the_item_in_the_cart_that_not_exist_in_the_array_of_the_recipe(); // Limpiar lista
 
