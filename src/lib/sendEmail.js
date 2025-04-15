@@ -430,7 +430,7 @@ async function send_email_for_parthner(email,name) {
 
                 <div class='welcome-box'>
                     <p><strong>Hola, ${name} 👋</strong></p>
-                    <p>Estamos muy emocionados de enviarte esta propuesta para que formes parte de nuestra red de distribuidores oficiales de <strong>PLUS</strong> ❤️. 
+                    <p>Mi nombre es Eduardo y estoy muy emocionado de enviarte esta propuesta para que formes parte de nuestra red de distribuidores oficiales de <strong>PLUS</strong> ❤️. 
                     Creemos que tu empresa es ideal para representar un sistema innovador, rentable y fácil de vender 🌟</p>
                 </div>
 

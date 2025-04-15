@@ -1,0 +1,391 @@
+<style>
+    :root {
+        --menu-services-primary: #1649FF;
+    }
+
+    .menu-services-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 999;
+    }
+
+    .menu-services-popup {
+        position: relative;
+        background: white;
+        padding: 40px;
+        border-radius: 16px;
+        width: 90%;
+        max-width: 600px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        animation: menu-services-fadeIn 0.4s ease-in-out;
+    }
+
+    .menu-services-close-btn {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        font-size: 22px;
+        color: #555;
+        background: none;
+        border: none;
+        cursor: pointer;
+        background-color: transparent;
+        padding: 0.5rem;
+        border-radius: 50%;
+        transition: background-color 0.3s, transform 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .menu-services-close-btn:hover {
+        background-color: #eee;
+        transform: scale(1.1);
+    }
+
+    .menu-services-close-btn svg {
+        width: 20px;
+        height: 20px;
+        stroke: #333;
+        stroke-width: 2;
+    }
+
+    @keyframes menu-services-fadeIn {
+        from {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    .menu-services-options {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 30px;
+    }
+
+    .menu-services-btn-half {
+        flex: 1;
+        margin: 0 10px;
+        padding: 16px;
+        background: #f0f2ff;
+        color: var(--color-company);
+        border: 2px solid var(--color-company);
+        border-radius: 12px;
+        font-size: 18px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s, color 0.3s;
+    }
+
+    .menu-services-btn-half:hover {
+        background: rgba(22, 73, 255, 0.1);
+    }
+
+    .menu-services-cards-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 20px;
+        gap: 20px;
+    }
+
+    .menu-services-card {
+        width: 120px;
+        padding: 15px;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        text-align: center;
+        cursor: pointer;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        transition: transform 0.2s ease;
+    }
+
+    .menu-services-card:hover {
+        transform: scale(1.05);
+    }
+
+    .menu-services-card img {
+        width: 80px;
+        height: 80px;
+        object-fit: contain;
+        margin-bottom: 10px;
+    }
+
+    .menu-services-formulario {
+        margin-top: 30px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        text-align: left;
+    }
+
+    .menu-services-formulario label {
+        font-size: 15px;
+        color: #444;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    .menu-services-formulario input {
+        width: 100%;
+        padding: 12px 16px;
+        font-size: 16px;
+        background-color: #fafbfc;
+        border: 1.5px solid #d1d5db;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        color: #111827;
+        font-family: 'Inter', sans-serif;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+    }
+
+    .menu-services-formulario input::placeholder {
+        color: #9ca3af;
+        opacity: 1;
+    }
+
+    .menu-services-formulario input:focus {
+        border-color: var(--color-company, #3b82f6);
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+        outline: none;
+        background-color: #fff;
+    }
+
+    .menu-services-recargas-rapidas {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    .menu-services-recargas-rapidas button {
+        padding: 12px 20px;
+        font-size: 15px;
+        background-color: #fff;
+        color: var(--color-company, #3b82f6);
+        border: 1.5px solid var(--color-company, #3b82f6);
+        border-radius: 9999px;
+        cursor: pointer;
+        font-weight: 500;
+        font-family: 'Inter', sans-serif;
+        transition: all 0.25s ease;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    }
+
+    .menu-services-recargas-rapidas button:hover {
+        background-color: var(--color-company, #3b82f6);
+        color: #ffffff;
+        box-shadow: 0 4px 10px rgba(59, 130, 246, 0.15);
+    }
+
+    .menu-services-btn-comprar {
+        background: var(--color-company);
+        color: white;
+        border: none;
+        padding: 14px 20px;
+        font-size: 17px;
+        border-radius: 12px;
+        cursor: pointer;
+        width: 100%;
+        margin-top: 10px;
+        transition: background 0.3s, transform 0.3s;
+    }
+
+    .menu-services-btn-comprar:hover {
+        background: var(--color-hover);
+        ;
+        transform: scale(1.02);
+    }
+
+    .menu-services-open-popup-btn {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: var(--color-company);
+        color: white;
+        border: none;
+        padding: 14px 20px;
+        border-radius: 50px;
+        font-size: 16px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        z-index: 998;
+        transition: background 0.3s ease;
+    }
+
+    .menu-services-open-popup-btn:hover {
+        background: var(--color-hover);
+    }
+
+    h2,
+    h3 {
+        text-align: center;
+        color: #333;
+    }
+</style>
+
+
+<!-- Primer Popup -->
+<div class="menu-services-overlay" id="menu-services-popup-1" style="display: none;">
+    <div class="menu-services-popup">
+        <button class="menu-services-close-btn" onclick="cerrarPopups()" aria-label="Cerrar ventana">
+            <svg viewBox="0 0 24 24" fill="none">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+        </button>
+        <h2>¿Qué deseas hacer?</h2>
+        <div class="menu-services-options">
+            <button class="menu-services-btn-half" onclick="seleccionarOpcion('recargas')">Pagar Recargas</button>
+            <button class="menu-services-btn-half" onclick="seleccionarOpcion('servicios')">Pagar Servicios</button>
+        </div>
+    </div>
+</div>
+
+<!-- Segundo Popup (dinámico) -->
+<div class="menu-services-overlay" id="menu-services-popup-2" style="display: none;">
+    <div class="menu-services-popup">
+        <button class="menu-services-close-btn" onclick="cerrarPopups()" aria-label="Cerrar ventana">
+            <svg viewBox="0 0 24 24" fill="none">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+        </button>
+        <div id="menu-services-contenido-dinamico"></div>
+    </div>
+</div>
+<script>
+    const menuServicesRecargas = [
+        { nombre: "Telcel", logo: "https://yt3.googleusercontent.com/je7RNk1GeegHqDmmppc3HVbYIE9_Nh2pS64Mz6fkk-RcK29wbWujnx3HooDa0vqyu5tfXffxCA=s900-c-k-c0x00ffffff-no-rj" },
+        { nombre: "Movistar", logo: "https://cdn2.downdetector.com/static/uploads/c/300/a2e0d/MovistarGreen_1.png" },
+        { nombre: "AT&T", logo: "https://assets.weforum.org/organization/image/hRiZoy6qNMv7D-YblWFRXINkKb_3-9aj8xSMjID05kk.jpg" }
+    ];
+
+    const menuServicesPago = [
+        { nombre: "CFE", logo: "https://elinpc.com.mx/wp-content/uploads/cfe.gif" },
+        { nombre: "Telmex", logo: "https://play-lh.googleusercontent.com/lw3V8SWtYDFGLzomt2G_p_E6qUJhvuQHezp3bW-ewsQ0-cHPfimnLij6yP2gD_UCKfYj" },
+        { nombre: "Sky", logo: "https://upload.wikimedia.org/wikipedia/commons/7/74/SKY_Basic_Logo.svg" }
+    ];
+
+    function openPopServices() {
+        document.getElementById('menu-services-popup-1').style.display = 'flex';
+        document.getElementById('menu-services-popup-2').style.display = 'none';
+    }
+
+    function cerrarPopups() {
+        document.getElementById('menu-services-popup-1').style.display = 'none';
+        document.getElementById('menu-services-popup-2').style.display = 'none';
+    }
+
+    function seleccionarOpcion(tipo) {
+        document.getElementById('menu-services-popup-1').style.display = 'none';
+        document.getElementById('menu-services-popup-2').style.display = 'flex';
+        mostrarCategoria(tipo);
+    }
+
+    function mostrarCategoria(tipo) {
+        const contenedor = document.getElementById('menu-services-contenido-dinamico');
+        contenedor.innerHTML = '';
+
+        let servicios = tipo === 'recargas' ? menuServicesRecargas : menuServicesPago;
+
+        const cardsHTML = servicios.map(serv => `
+        <div class="menu-services-card" onclick="${tipo === 'recargas' ? `mostrarFormularioRecarga('${serv.nombre}')` : ''}">
+          <img src="${serv.logo}" alt="${serv.nombre}">
+          <p>${serv.nombre}</p>
+        </div>
+      `).join('');
+
+        contenedor.innerHTML = `<h3>Selecciona un servicio</h3><div class="menu-services-cards-container">${cardsHTML}</div>`;
+    }
+
+    function mostrarFormularioRecarga(compañia) {
+        const contenedor = document.getElementById('menu-services-contenido-dinamico');
+        contenedor.innerHTML = `
+        <center><h6>Saldo disponible 1,500$</h6></center>
+        <h3>Recarga para ${compañia}</h3>
+        <div class="menu-services-formulario">
+          <div class="menu-services-recargas-rapidas">
+            ${[10, 20, 30, 50, 100].map(monto => `
+              <button onclick="document.getElementById('menu-services-recarga').value=${monto}">$${monto}</button>
+            `).join('')}
+          </div>
+  
+          <div>
+            <label for="menu-services-telefono">Número de teléfono *</label>
+            <input type="tel" id="menu-services-telefono-1" placeholder="Ej. 5544332211">
+          </div>
+  
+          <div>
+            <label for="menu-services-telefono-2">Confirmar número de teléfono *</label>
+            <input type="tel" id="menu-services-telefono-2" placeholder="Ej. 5544332211">
+          </div>
+  
+          <div>
+            <label for="menu-services-recarga">Monto</label>
+            <input type="number" id="menu-services-recarga" placeholder="Ej. 50">
+          </div>
+  
+          <button class="menu-services-btn-comprar" onclick="comprarRecarga('${compañia}')">Comprar recarga</button>
+        </div>
+      `;
+    }
+
+    function validarTelefono(tel) {
+        // Expresión regular para validar números de celular en México (10 dígitos)
+        const regex = /^(\+?52|52)?(1)?(\d{10})$/;
+
+        return regex.test(tel); // Retorna true si el teléfono es válido, de lo contrario, false
+    }
+
+    function comprarRecarga(compañia) {
+        const tel = document.getElementById('menu-services-telefono-1').value;
+        const tel2 = document.getElementById('menu-services-telefono-2').value;
+        const monto = document.getElementById('menu-services-recarga').value;
+
+        //first we will see if the fields are empty
+        if (!tel || !monto || !tel2) {
+            warningMessage('¡Ey, esperaaa! 😅', 'Parece que olvidaste llenar todos los campos. ¡No te preocupes, solo falta un pasito más!');
+            return;
+        }
+
+        //now we will see if the number is valid
+        if (!validarTelefono(tel)) {
+            errorMessage('¡Ey, esperaaa! 😅', 'Parece que el número de teléfono no es válido. Por favor verifica el número e intenta nuevamente.');
+            return;
+        }
+
+        //now we will see if the number is equal
+        if (tel !== tel2) {
+            errorMessage('¡Ey, esperaaa! 😅', 'Los números de teléfono no coinciden. Por favor verifica e intenta nuevamente.');
+            return;
+        }
+
+        const xange = 10; // Calculando el cambio
+
+
+        cerrarPopups();
+        if (xange > 0) {
+            confirmationMessage('¡Compra exitosa! 🎉', `El cambio total es de $${xange}. ¡Gracias por tu compra!`);
+        } else if (xange === 0) {
+            confirmationMessage('¡Compra exitosa! 🎉', `Tu recarga de $${monto} para ${tel} con la compañía ${compañia} ha sido procesada. ¡Gracias por tu compra!`);
+        } else {
+            errorMessage('¡Atención! ⚠️', 'Parece que el pago es insuficiente. Por favor ingresa un monto mayor.');
+        }
+    }
+
+</script>

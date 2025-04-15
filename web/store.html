@@ -1,779 +1,368 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Categorías</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background: #f4f4f4;
-            margin: 0;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .category-menu {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-            margin-bottom: 40px;
-        }
-
-        .category-card {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            width: 220px;
-            cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .category-card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
-        }
-
-        .category-card img {
-            width: 240px;
-            height: 240px;
-            object-fit: cover;
-            margin-bottom: 10px;
-        }
-
-        .category-title {
-            font-size: 16px;
-            font-weight: bold;
-            margin-top: 5px;
-            color: #0066CC;
-        }
-
-        .category-content {
-            display: none;
-        }
-
-        .back-button {
-            margin-bottom: 20px;
-            cursor: pointer;
-            color: #0066CC;
-            font-weight: bold;
-            display: inline-block;
-        }
-
-        .back-button:hover {
-            text-decoration: underline;
-        }
-    </style>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            text-align: center;
-            margin: 0;
-            padding: 20px;
-        }
-
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 40px;
-        }
-
-        .product {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            width: 300px;
-            text-align: center;
-        }
-
-        .product img {
-            width: 100%;
-            border-radius: 8px;
-        }
-
-        .buy-btn {
-            display: inline-block;
-            padding: 16px 32px;
-            background-color: #0066CC;
-            /* Color de la empresa */
-            color: white;
-            font-size: 18px;
-            font-weight: bold;
-            text-decoration: none;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            /* Transición suave */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            /* Sombra para mayor profundidad */
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            /* Espaciado de letras */
-            margin-top: 15px;
-        }
-
-        .buy-btn:hover {
-            background-color: #005bb5;
-            /* Cambio de color cuando pasa el ratón */
-            transform: translateY(-3px);
-            /* Efecto de elevación al pasar el ratón */
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
-            /* Aumento de sombra */
-        }
-
-        .buy-btn:active {
-            background-color: #004a8b;
-            /* Color más oscuro cuando se hace clic */
-            transform: translateY(0);
-            /* Sin efecto de elevación al hacer clic */
-        }
-
-        .buy-btn:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.5);
-            /* Sombra de enfoque para accesibilidad */
-        }
-
-        .product .price {
-            font-size: 20px;
-            font-weight: bold;
-            color: #0066CC;
-            margin: 8px 0;
-        }
-
-        .product p {
-            font-size: 16px;
-            color: #444;
-            margin: 5px 0;
-        }
-
-        .read-more {
-            cursor: pointer;
-            color: #007bff;
-            text-decoration: underline;
-            display: block;
-            margin-top: 10px;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            display: none;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 600px;
-            text-align: center;
-        }
-
-        .close {
-            float: right;
-            font-size: 20px;
-            cursor: pointer;
-        }
-
-        .carousel {
-            display: flex;
-            overflow: hidden;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-
-        .carousel img {
-            width: 100px;
-            height: auto;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        .features {
-            list-style: none;
-            padding: 0;
-            text-align: left;
-        }
-
-        .features li::before {
-            content: '\2714\0020';
-            color: green;
-        }
-
-        .whatsapp {
-            margin-top: 15px;
-            font-weight: bold;
-        }
-
-        .title-pop {
-            color: #0563c9;
-        }
-
-        .description-pop {
-            color: rgba(0, 0, 0, 0.7);
-        }
-
-        .title-store {
-            font-size: 36px;
-            font-weight: bold;
-            color: #333;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 10px;
-        }
-
-        .title-store hr {
-            width: 50%;
-            border: none;
-            height: 3px;
-            background-color: #0066CC;
-            margin: auto;
-        }
-    </style>
-</head>
-
-<body>
-    <!-- Menú de categorías -->
-    <div id="categoryMenu" class="category-menu">
-        <div class="category-card" onclick="showCategory('licencias')">
-            <img src="https://storage.googleapis.com/strong-summer-176917.appspot.com/1/2019/08/Categoria_Servidor_Terminal_Restaurante-1-300x300.png"
-                alt="Licencias">
-            <div class="category-title">Licencias</div>
-        </div>
-
-        <div class="category-card" onclick="showCategory('hardware')">
-            <img src="https://storage.googleapis.com/strong-summer-176917.appspot.com/1/2014/04/Kit-Punto-de-Venta-Caj%C3%B3n-300x300.png"
-                alt="Hardware">
-            <div class="category-title">Kits Punto de Venta</div>
-        </div>
-
-        <div class="category-card" onclick="showCategory('sistemas')">
-            <img src="https://storage.googleapis.com/strong-summer-176917.appspot.com/1/2019/08/SICAR_Polizas-300x300.png"
-                alt="Sistemas">
-            <div class="category-title">Pólizas de Soporte & Asesorías</div>
-        </div>
-
-        <div class="category-card" onclick="showCategory('servicios')">
-            <img src="https://storage.googleapis.com/strong-summer-176917.appspot.com/1/2014/04/Kit-Punto-de-Venta-Caj%C3%B3n-300x300.png"
-                alt="Servicios">
-            <div class="category-title">Servicios</div>
-        </div>
-
-    <!--form-->
-    <br><br>      
-
-      
-    <div style="max-width: 800px; margin: auto; text-align: center; padding: 30px; background: white; box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1); border-radius: 12px; position: relative; overflow: hidden;">
+  <meta charset="UTF-8">
+  <title>Servicios</title>
+  <style>
+    :root {
+      --menu-services-primary: #1649FF;
+    }
   
-        <h2 style="margin-bottom: 5px; font-size: 24px; font-weight: bold; color: #222;">¿Necesitas una cotización?</h2>
-        <p style="color: #555; font-size: 14px; margin-bottom: 20px;">Déjanos tus datos y te contactaremos pronto.</p>
-      
-        <form id="contactForm" style="display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap;">
-          
-          <input type="text" name="name" placeholder="Tu Nombre" required 
-            style="padding: 14px; border: 2px solid #ddd; border-radius: 8px; flex: 1; min-width: 220px; font-size: 14px; transition: 0.3s;">
-          
-          <input type="email" name="email" placeholder="Correo Electrónico" required 
-            style="padding: 14px; border: 2px solid #ddd; border-radius: 8px; flex: 1; min-width: 220px; font-size: 14px; transition: 0.3s;">
-          
-          <input type="tel" name="phone" placeholder="Número de Teléfono" required 
-            style="padding: 14px; border: 2px solid #ddd; border-radius: 8px; flex: 1; min-width: 220px; font-size: 14px; transition: 0.3s;">
-          
-          <button type="submit" 
-            style="padding: 14px 24px; background: #007bff; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; transition: 0.3s; min-width: 150px;">
-            Enviar
-          </button>
-      
-        </form>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f2f4f8;
+    }
+  
+    .menu-services-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+  
+    .menu-services-popup {
+      position: relative;
+      background: white;
+      padding: 40px;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      animation: menu-services-fadeIn 0.4s ease-in-out;
+    }
+  
+    .menu-services-close-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      font-size: 22px;
+      color: #555;
+      background: none;
+      border: none;
+      cursor: pointer;
+      background-color: transparent;
+      padding: 0.5rem;
+      border-radius: 50%;
+      transition: background-color 0.3s, transform 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  
+    .menu-services-close-btn:hover {
+      background-color: #eee;
+      transform: scale(1.1);
+    }
+  
+    .menu-services-close-btn svg {
+      width: 20px;
+      height: 20px;
+      stroke: #333;
+      stroke-width: 2;
+    }
+  
+    @keyframes menu-services-fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+  
+    .menu-services-options {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 30px;
+    }
+  
+    .menu-services-btn-half {
+      flex: 1;
+      margin: 0 10px;
+      padding: 16px;
+      background: #f0f2ff;
+      color: var(--menu-services-primary);
+      border: 2px solid var(--menu-services-primary);
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s;
+    }
+  
+    .menu-services-btn-half:hover {
+      background: rgba(22, 73, 255, 0.1);
+    }
+  
+    .menu-services-cards-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 20px;
+      gap: 20px;
+    }
+  
+    .menu-services-card {
+      width: 120px;
+      padding: 15px;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      text-align: center;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+      transition: transform 0.2s ease;
+    }
+  
+    .menu-services-card:hover {
+      transform: scale(1.05);
+    }
+  
+    .menu-services-card img {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+      margin-bottom: 10px;
+    }
+  
+    .menu-services-formulario {
+      margin-top: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      text-align: left;
+    }
+  
+    .menu-services-formulario label {
+      font-size: 15px;
+      color: #444;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+  
+    .menu-services-formulario input {
+      width: 100%;
+      padding: 12px 16px;
+      font-size: 16px;
+      background-color: #fafbfc;
+      border: 1.5px solid #d1d5db;
+      border-radius: 10px;
+      transition: all 0.3s ease;
+      color: #111827;
+      font-family: 'Inter', sans-serif;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+    }
+  
+    .menu-services-formulario input::placeholder {
+      color: #9ca3af;
+      opacity: 1;
+    }
+  
+    .menu-services-formulario input:focus {
+      border-color: var(--menu-services-primary, #3b82f6);
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+      outline: none;
+      background-color: #fff;
+    }
+  
+    .menu-services-recargas-rapidas {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+  
+    .menu-services-recargas-rapidas button {
+      padding: 12px 20px;
+      font-size: 15px;
+      background-color: #fff;
+      color: var(--menu-services-primary, #3b82f6);
+      border: 1.5px solid var(--menu-services-primary, #3b82f6);
+      border-radius: 9999px;
+      cursor: pointer;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.25s ease;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    }
+  
+    .menu-services-recargas-rapidas button:hover {
+      background-color: var(--menu-services-primary, #3b82f6);
+      color: #ffffff;
+      box-shadow: 0 4px 10px rgba(59, 130, 246, 0.15);
+    }
+  
+    .menu-services-btn-comprar {
+      background: var(--menu-services-primary);
+      color: white;
+      border: none;
+      padding: 14px 20px;
+      font-size: 17px;
+      border-radius: 12px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 10px;
+      transition: background 0.3s, transform 0.3s;
+    }
+  
+    .menu-services-btn-comprar:hover {
+      background: #0f35c9;
+      transform: scale(1.02);
+    }
+  
+    .menu-services-open-popup-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--menu-services-primary);
+      color: white;
+      border: none;
+      padding: 14px 20px;
+      border-radius: 50px;
+      font-size: 16px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      cursor: pointer;
+      z-index: 998;
+      transition: background 0.3s ease;
+    }
+  
+    .menu-services-open-popup-btn:hover {
+      background: #0f35c9;
+    }
+  
+    h2, h3 {
+      text-align: center;
+      color: #333;
+    }
+  </style>
+  
+</head>
+<body>
+<!-- Botón flotante para abrir -->
+<button class="menu-services-open-popup-btn" onclick="abrirPopup()">Abrir menú</button>
+
+<!-- Primer Popup -->
+<div class="menu-services-overlay" id="menu-services-popup-1" style="display: none;">
+  <div class="menu-services-popup">
+    <button class="menu-services-close-btn" onclick="cerrarPopups()" aria-label="Cerrar ventana">
+      <svg viewBox="0 0 24 24" fill="none">
+        <line x1="18" y1="6" x2="6" y2="18" />
+        <line x1="6" y1="6" x2="18" y2="18" />
+      </svg>
+    </button>
+    <h2>¿Qué deseas hacer?</h2>
+    <div class="menu-services-options">
+      <button class="menu-services-btn-half" onclick="seleccionarOpcion('recargas')">Pagar Recargas</button>
+      <button class="menu-services-btn-half" onclick="seleccionarOpcion('servicios')">Pagar Servicios</button>
     </div>
-    </div>
+  </div>
+</div>
 
-    <!-- Contenido por categoría -->
-    <div id="licencias" class="category-content">
-        <div class="back-button" onclick="goBack()">← Volver al menú</div>
-        <h2>Productos de Licencias</h2>
-        <div class="container">
-            <!---LICENS-->
-            <div class="product">
-                <img src="https://http2.mlstatic.com/D_726444-MLM49479252060_032022-C.jpg" alt="Software 1">
-                <button class="buy-btn" onclick="openModal('modal-demo')">Descargar</button>
-                <p class="price">MX$0</p>
-                <p>PLUS DEMO</p>
-                <span class="read-more" onclick="openModal('modal-demo')">Leer más</span>
-            </div>
-
-            <div class="product">
-                <img src="https://storage.googleapis.com/strong-summer-176917.appspot.com/1/2014/03/Licencia_Servidor.png"
-                    alt="Software 1">
-                <button class="buy-btn" onclick="openModal('modal1')">Comprar</button>
-                <p class="price">MX$1,399</p>
-                <p>Licencia Principal / Servidor</p>
-                <span class="read-more" onclick="openModal('modal1')">Leer más</span>
-            </div>
-
-            <div class="product">
-                <img src="https://storage.googleapis.com/strong-summer-176917.appspot.com/1/2014/03/Licencia_Terminal.png"
-                    alt="Software 1">
-                <button class="buy-btn" onclick="openModal('modal-terminal')">Comprar</button>
-                <p class="price">MX$599</p>
-                <p>Licencia Caja Extra / Terminal</p>
-                <span class="read-more" onclick="openModal('modal-terminal')">Leer más</span>
-            </div>
+<!-- Segundo Popup (dinámico) -->
+<div class="menu-services-overlay" id="menu-services-popup-2" style="display: none;">
+  <div class="menu-services-popup">
+    <button class="menu-services-close-btn" onclick="cerrarPopups()" aria-label="Cerrar ventana">
+      <svg viewBox="0 0 24 24" fill="none">
+        <line x1="18" y1="6" x2="6" y2="18" />
+        <line x1="6" y1="6" x2="18" y2="18" />
+      </svg>
+    </button>
+    <div id="menu-services-contenido-dinamico"></div>
+  </div>
+</div>
+<script>
+    const menuServicesRecargas = [
+      { nombre: "Telcel", logo: "https://yt3.googleusercontent.com/je7RNk1GeegHqDmmppc3HVbYIE9_Nh2pS64Mz6fkk-RcK29wbWujnx3HooDa0vqyu5tfXffxCA=s900-c-k-c0x00ffffff-no-rj" },
+      { nombre: "Movistar", logo: "https://cdn2.downdetector.com/static/uploads/c/300/a2e0d/MovistarGreen_1.png" },
+      { nombre: "AT&T", logo: "https://assets.weforum.org/organization/image/hRiZoy6qNMv7D-YblWFRXINkKb_3-9aj8xSMjID05kk.jpg" }
+    ];
+  
+    const menuServicesPago = [
+      { nombre: "CFE", logo: "https://elinpc.com.mx/wp-content/uploads/cfe.gif" },
+      { nombre: "Telmex", logo: "https://play-lh.googleusercontent.com/lw3V8SWtYDFGLzomt2G_p_E6qUJhvuQHezp3bW-ewsQ0-cHPfimnLij6yP2gD_UCKfYj" },
+      { nombre: "Sky", logo: "https://upload.wikimedia.org/wikipedia/commons/7/74/SKY_Basic_Logo.svg" }
+    ];
+  
+    function abrirPopup() {
+      document.getElementById('menu-services-popup-1').style.display = 'flex';
+      document.getElementById('menu-services-popup-2').style.display = 'none';
+    }
+  
+    function cerrarPopups() {
+      document.getElementById('menu-services-popup-1').style.display = 'none';
+      document.getElementById('menu-services-popup-2').style.display = 'none';
+    }
+  
+    function seleccionarOpcion(tipo) {
+      document.getElementById('menu-services-popup-1').style.display = 'none';
+      document.getElementById('menu-services-popup-2').style.display = 'flex';
+      mostrarCategoria(tipo);
+    }
+  
+    function mostrarCategoria(tipo) {
+      const contenedor = document.getElementById('menu-services-contenido-dinamico');
+      contenedor.innerHTML = '';
+  
+      let servicios = tipo === 'recargas' ? menuServicesRecargas : menuServicesPago;
+  
+      const cardsHTML = servicios.map(serv => `
+        <div class="menu-services-card" onclick="${tipo === 'recargas' ? `mostrarFormularioRecarga('${serv.nombre}')` : ''}">
+          <img src="${serv.logo}" alt="${serv.nombre}">
+          <p>${serv.nombre}</p>
         </div>
-        <!---LICENS-->
-        <div id="modal-demo" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="closeModal('modal-demo')">&times;</span>
-
-
-                <h3 class="title-pop">PLUS DEMO</h3>
-                <img class="main-image"
-                    src="https://storage.googleapis.com/strong-summer-176917.appspot.com/1/2014/03/Licencia_Terminal.png"
-                    width="50%" alt="Main">
-
-                <div class="carousel">
-                    <img src="https://img.freepik.com/vector-gratis/caja-software-carton-blanco_3446-339.jpg"
-                        onclick="setImage(this.src, 'modal-terminal')" alt="Extra 1">
-                    <img src="https://img.freepik.com/vector-gratis/caja-software-carton-blanco_3446-339.jpg"
-                        onclick="setImage(this.src, 'modal-terminal')" alt="Extra 2">
-                    <img src="https://img.freepik.com/vector-gratis/caja-software-carton-blanco_3446-339.jpg"
-                        onclick="setImage(this.src, 'modal-terminal')" alt="Extra 3">
-                    <img src="https://img.freepik.com/vector-gratis/caja-software-carton-blanco_3446-339.jpg"
-                        onclick="setImage(this.src, 'modal-terminal')" alt="Extra 4">
-                </div>
-                <hr>
-                <p class="description-pop">
-                    Esta licencia te sirve para tener una prueba de 30 días gratis de PLUS al crear tu cuenta
-                </p>
-
-                <ul class="features">
-                    <li>Una Licencia con validez de 30 días</li>
-                    <li>Instalación y Configuración con ayuda de nuestro manual/video de soporte</li>
-                    <li>Ultima versión de PLUS</li>
-                </ul>
-                <button class="buy-btn" onclick="openModal('modal-demo')">Registrarse</button>
-            </div>
+      `).join('');
+  
+      contenedor.innerHTML = `<h3>Selecciona un servicio</h3><div class="menu-services-cards-container">${cardsHTML}</div>`;
+    }
+  
+    function mostrarFormularioRecarga(compañia) {
+      const contenedor = document.getElementById('menu-services-contenido-dinamico');
+      contenedor.innerHTML = `
+        <h3>Recarga para ${compañia}</h3>
+        <div class="menu-services-formulario">
+          <div class="menu-services-recargas-rapidas">
+            ${[10, 20, 30, 50, 100].map(monto => `
+              <button onclick="document.getElementById('menu-services-recarga').value=${monto}">$${monto}</button>
+            `).join('')}
+          </div>
+  
+          <div>
+            <label for="menu-services-telefono">Número de teléfono *</label>
+            <input type="tel" id="menu-services-telefono" placeholder="Ej. 5544332211">
+          </div>
+  
+          <div>
+            <label for="menu-services-telefono-2">Confirmar número de teléfono *</label>
+            <input type="tel" id="menu-services-telefono-2" placeholder="Ej. 5544332211">
+          </div>
+  
+          <div>
+            <label for="menu-services-recarga">Monto</label>
+            <input type="number" id="menu-services-recarga" placeholder="Ej. 50">
+          </div>
+  
+          <button class="menu-services-btn-comprar" onclick="comprarRecarga('${compañia}')">Comprar recarga</button>
         </div>
-
-        <div id="modal1" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="closeModal('modal1')">&times;</span>
-
-
-                <h3 class="title-pop">Licencia Principal / Servidor</h3>
-                <img class="main-image"
-                    src="https://storage.googleapis.com/strong-summer-176917.appspot.com/1/2014/03/Licencia_Servidor-300x300.png"
-                    width="50%" alt="Main">
-                <div class="carousel">
-                    <img src="https://img.freepik.com/vector-gratis/caja-software-carton-blanco_3446-339.jpg"
-                        onclick="setImage(this.src, 'modal1')" alt="Extra 1">
-                    <img src="https://img.freepik.com/vector-gratis/caja-software-carton-blanco_3446-339.jpg"
-                        onclick="setImage(this.src, 'modal1')" alt="Extra 2">
-                    <img src="https://img.freepik.com/vector-gratis/caja-software-carton-blanco_3446-339.jpg"
-                        onclick="setImage(this.src, 'modal1')" alt="Extra 3">
-                    <img src="https://img.freepik.com/vector-gratis/caja-software-carton-blanco_3446-339.jpg"
-                        onclick="setImage(this.src, 'modal1')" alt="Extra 4">
-                </div>
-                <hr>
-                <p class="description-pop">
-                    Esta licencia te sirve para iniciar a administrar tu negocio, también te servirá para que en un
-                    futuro o
-                    desde este momento administres las cajas adicionales que tengas en tu negocio.
-                </p>
-
-                <ul class="features">
-                    <li>Una Licencia con validez de por vida</li>
-                    <li>Instalación y Configuración con ayuda de nuestro equipo de soporte</li>
-                    <li>Actualizaciones gratuitas por 12 meses</li>
-                    <li>Soporte 24/7 por 12 meses</li>
-                </ul>
-
-                <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-                    <input type="hidden" name="cmd" value="_s-xclick" />
-                    <input type="hidden" name="hosted_button_id" value="CTF85GMKRC3WE" />
-                    <input type="hidden" name="currency_code" value="MXN" />
-                    <input type="image" src="https://www.paypalobjects.com/es_XC/MX/i/btn/btn_buynowCC_LG.gif"
-                        border="0" name="submit" title="PayPal es una forma segura y fácil de pagar en línea."
-                        alt="Comprar ahora" />
-                </form>
-
-
-            </div>
-        </div>
-
-        <div id="modal-terminal" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="closeModal('modal-terminal')">&times;</span>
-
-
-                <h3 class="title-pop">Licencia PLUS Tipo Terminal</h3>
-                <img class="main-image"
-                    src="https://storage.googleapis.com/strong-summer-176917.appspot.com/1/2014/03/Licencia_Terminal.png"
-                    width="50%" alt="Main">
-
-                <div class="carousel">
-                    <img src="https://img.freepik.com/vector-gratis/caja-software-carton-blanco_3446-339.jpg"
-                        onclick="setImage(this.src, 'modal-terminal')" alt="Extra 1">
-                    <img src="https://img.freepik.com/vector-gratis/caja-software-carton-blanco_3446-339.jpg"
-                        onclick="setImage(this.src, 'modal-terminal')" alt="Extra 2">
-                    <img src="https://img.freepik.com/vector-gratis/caja-software-carton-blanco_3446-339.jpg"
-                        onclick="setImage(this.src, 'modal-terminal')" alt="Extra 3">
-                    <img src="https://img.freepik.com/vector-gratis/caja-software-carton-blanco_3446-339.jpg"
-                        onclick="setImage(this.src, 'modal-terminal')" alt="Extra 4">
-                </div>
-                <hr>
-                <p class="description-pop">
-                    Esta licencia te sirve para hacer una extensión de tu información en otra computadora y así trabajar
-                    en
-                    varias cajas a la vez en tu negocio.
-                </p>
-
-                <ul class="features">
-                    <li>¡Úsala para trabajar en una caja adicional de tu negocio!</li>
-                    <li>Una Licencia con validez de por vida</li>
-                    <li>Instalación y Configuración con ayuda de nuestro equipo de soporte</li>
-                    <li>Actualizaciones gratuitas por 12 meses</li>
-                </ul>
-
-                <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-                    <input type="hidden" name="cmd" value="_s-xclick" />
-                    <input type="hidden" name="hosted_button_id" value="CTF85GMKRC3WE" />
-                    <input type="hidden" name="currency_code" value="MXN" />
-                    <input type="image" src="https://www.paypalobjects.com/es_XC/MX/i/btn/btn_buynowCC_LG.gif"
-                        border="0" name="submit" title="PayPal es una forma segura y fácil de pagar en línea."
-                        alt="Comprar ahora" />
-                </form>
-
-
-            </div>
-        </div>
-    </div>
-
-    <div id="hardware" class="category-content">
-        <div class="back-button" onclick="goBack()">← Volver al menú</div>
-        <h2>Productos de Hardware</h2>
-        <div class="container">
-            <!---KITS-->
-            <div class="product">
-                <img src="https://capacitatkocina.com/web/img/26.png" alt="Software 1">
-                <button class="buy-btn" onclick="openModal('modal-kit')">Comprar</button>
-                <p class="price">MX$6,399</p>
-                <p>PLUS KIT</p>
-                <span class="read-more" onclick="openModal('modal-kit')">Leer más</span>
-            </div>
-
-            <div class="product">
-                <img src="https://capacitatkocina.com/web/img/ED%20PLUS%20(2).png" alt="Software 1">
-                <button class="buy-btn" onclick="openModal('modal-screen-touch')">Comprar</button>
-                <p class="price">MX$15,199</p>
-                <p>PANTALLA TOUCH</p>
-                <span class="read-more" onclick="openModal('modal-screen-touch')">Leer más</span>
-            </div>
-
-            <div class="product">
-                <img src="https://capacitatkocina.com/web/img/ED%20PLUS%20(2).png" alt="Software 1">
-                <button class="buy-btn" onclick="openModal('modal-kit-screen-touch')">Comprar</button>
-                <p class="price">MX$18,599</p>
-                <p>PANTALLA TOUCH CON KIT</p>
-                <span class="read-more" onclick="openModal('modal-kit-screen-touch')">Leer más</span>
-            </div>
-
-        </div>
-
-        <!---KITS-->
-        <div id="modal-kit" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="closeModal('modal-kit')">&times;</span>
-
-
-                <h3 class="title-pop">PLUS KIT Punto de Venta</h3>
-                <img class="main-image" src="https://capacitatkocina.com/web/img/26.png" width="50%" alt="Main">
-
-                <div class="carousel">
-                    <img src="https://capacitatkocina.com/web/img/26.png" onclick="setImage(this.src, 'modal-terminal')"
-                        alt="Extra 1">
-                    <img src="https://img.freepik.com/vector-gratis/caja-software-carton-blanco_3446-339.jpg"
-                        onclick="setImage(this.src, 'modal-terminal')" alt="Extra 2">
-                    <img src="https://img.freepik.com/vector-gratis/caja-software-carton-blanco_3446-339.jpg"
-                        onclick="setImage(this.src, 'modal-terminal')" alt="Extra 3">
-                    <img src="https://img.freepik.com/vector-gratis/caja-software-carton-blanco_3446-339.jpg"
-                        onclick="setImage(this.src, 'modal-terminal')" alt="Extra 4">
-                </div>
-                <hr>
-                <p class="description-pop">
-                    Todo lo que necesitas para iniciar a vender en tu negocio. Kit Punto de Venta – Está diseñado para
-                    que
-                    cualquier empresario pueda empezar a trabajar con nuestra solución en cuestión de minutos
-                </p>
-
-                <ul class="features">
-                    <li>1 licencia de PLUS Servidor</li>
-                    <li>1 licencia de PLUS Infinity</li>
-                </ul>
-
-                <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-                    <input type="hidden" name="cmd" value="_s-xclick" />
-                    <input type="hidden" name="hosted_button_id" value="CTF85GMKRC3WE" />
-                    <input type="hidden" name="currency_code" value="MXN" />
-                    <input type="image" src="https://www.paypalobjects.com/es_XC/MX/i/btn/btn_buynowCC_LG.gif"
-                        border="0" name="submit" title="PayPal es una forma segura y fácil de pagar en línea."
-                        alt="Comprar ahora" />
-                </form>
-
-
-            </div>
-        </div>
-
-        <div id="modal-screen-touch" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="closeModal('modal-screen-touch')">&times;</span>
-
-
-                <h3 class="title-pop">PANTALLA TOUCH</h3>
-                <img class="main-image" src="https://capacitatkocina.com/web/img/26.png" width="50%" alt="Main">
-
-                <div class="carousel">
-                    <img src="https://capacitatkocina.com/web/img/26.png" onclick="setImage(this.src, 'modal-terminal')"
-                        alt="Extra 1">
-                    <img src="https://img.freepik.com/vector-gratis/caja-software-carton-blanco_3446-339.jpg"
-                        onclick="setImage(this.src, 'modal-terminal')" alt="Extra 2">
-                    <img src="https://img.freepik.com/vector-gratis/caja-software-carton-blanco_3446-339.jpg"
-                        onclick="setImage(this.src, 'modal-terminal')" alt="Extra 3">
-                    <img src="https://img.freepik.com/vector-gratis/caja-software-carton-blanco_3446-339.jpg"
-                        onclick="setImage(this.src, 'modal-terminal')" alt="Extra 4">
-                </div>
-                <hr>
-                <p class="description-pop">
-                    La pantalla Touch está diseñada para generar un completo y ágil proceso
-                    de venta, contiene los elementos necesario para la funcionalidad del sistema de venta PLUS.
-                </p>
-
-                <ul class="features">
-                    <li>1 licencia de PLUS Servidor</li>
-                    <li>1 licencia de PLUS Infinity</li>
-                </ul>
-
-                <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-                    <input type="hidden" name="cmd" value="_s-xclick" />
-                    <input type="hidden" name="hosted_button_id" value="CTF85GMKRC3WE" />
-                    <input type="hidden" name="currency_code" value="MXN" />
-                    <input type="image" src="https://www.paypalobjects.com/es_XC/MX/i/btn/btn_buynowCC_LG.gif"
-                        border="0" name="submit" title="PayPal es una forma segura y fácil de pagar en línea."
-                        alt="Comprar ahora" />
-                </form>
-
-
-            </div>
-        </div>
-
-        <div id="modal-kit-screen-touch" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="closeModal('modal-kit-screen-touch')">&times;</span>
-
-
-                <h3 class="title-pop">PANTALLA TOUCH CON KIT</h3>
-                <img class="main-image" src="https://capacitatkocina.com/web/img/26.png" width="50%" alt="Main">
-
-                <div class="carousel">
-                    <img src="https://capacitatkocina.com/web/img/26.png" onclick="setImage(this.src, 'modal-terminal')"
-                        alt="Extra 1">
-                    <img src="https://img.freepik.com/vector-gratis/caja-software-carton-blanco_3446-339.jpg"
-                        onclick="setImage(this.src, 'modal-terminal')" alt="Extra 2">
-                    <img src="https://img.freepik.com/vector-gratis/caja-software-carton-blanco_3446-339.jpg"
-                        onclick="setImage(this.src, 'modal-terminal')" alt="Extra 3">
-                    <img src="https://img.freepik.com/vector-gratis/caja-software-carton-blanco_3446-339.jpg"
-                        onclick="setImage(this.src, 'modal-terminal')" alt="Extra 4">
-                </div>
-                <hr>
-                <p class="description-pop">
-                    Pantalla Touch + Kit Basico de Punto de Venta está diseñada para generar un completo y ágil proceso
-                    de venta, contiene los elementos necesario para la funcionalidad del sistema de venta PLUS.
-                </p>
-
-                <ul class="features">
-                    <li>1 licencia de PLUS Servidor</li>
-                    <li>1 licencia de PLUS Infinity</li>
-                </ul>
-
-                <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-                    <input type="hidden" name="cmd" value="_s-xclick" />
-                    <input type="hidden" name="hosted_button_id" value="CTF85GMKRC3WE" />
-                    <input type="hidden" name="currency_code" value="MXN" />
-                    <input type="image" src="https://www.paypalobjects.com/es_XC/MX/i/btn/btn_buynowCC_LG.gif"
-                        border="0" name="submit" title="PayPal es una forma segura y fácil de pagar en línea."
-                        alt="Comprar ahora" />
-                </form>
-
-
-            </div>
-        </div>
-    </div>
-
-    <div id="sistemas" class="category-content">
-        <div class="back-button" onclick="goBack()">← Volver al menú</div>
-        <h2>Productos de Sistemas</h2>
-        <div class="container">
-
-            <!---SUBSCRIPTIONS-->
-            <div class="product">
-                <img src="https://capacitatkocina.com/web/img/soporte.png" alt="Software 1">
-                <button class="buy-btn" onclick="openModal('modal-soport')">Comprar</button>
-                <p class="price">MX$9,999</p>
-                <p>PLUS SOPORTE</p>
-                <span class="read-more" onclick="openModal('modal-soport')">Leer más</span>
-            </div>
-
-
-        </div>
-
-        <!--SUBSCRIPTIONS-->
-        <div id="modal-soport" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="closeModal('modal-soport')">&times;</span>
-
-
-                <h3 class="title-pop">PLUS SOPORTE</h3>
-                <img class="main-image" src="https://capacitatkocina.com/web/img/soporte.png" width="50%" alt="Main">
-
-                <div class="carousel">
-                    <img src="https://capacitatkocina.com/web/img/soporte.png"
-                        onclick="setImage(this.src, 'modal-soport')" alt="Extra 1">
-                    <img src="https://img.freepik.com/vector-gratis/caja-software-carton-blanco_3446-339.jpg"
-                        onclick="setImage(this.src, 'modal-soport')" alt="Extra 2">
-                    <img src="https://img.freepik.com/vector-gratis/caja-software-carton-blanco_3446-339.jpg"
-                        onclick="setImage(this.src, 'modal-soport')" alt="Extra 3">
-                    <img src="https://img.freepik.com/vector-gratis/caja-software-carton-blanco_3446-339.jpg"
-                        onclick="setImage(this.src, 'modal-soport')" alt="Extra 4">
-                </div>
-                <hr>
-                <p class="description-pop">
-                    Recibe ayuda de nuestro equipo de soporte técnico por 12 meses para tu licencia tipo servidor.
-                    Al contar con tu póliza de soporte y asesoría podrás recibir de nuestro equipo la ayuda necesaria
-                    para
-                    solucionar tus problemas.
-                </p>
-
-                <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-                    <input type="hidden" name="cmd" value="_s-xclick" />
-                    <input type="hidden" name="hosted_button_id" value="CTF85GMKRC3WE" />
-                    <input type="hidden" name="currency_code" value="MXN" />
-                    <input type="image" src="https://www.paypalobjects.com/es_XC/MX/i/btn/btn_buynowCC_LG.gif"
-                        border="0" name="submit" title="PayPal es una forma segura y fácil de pagar en línea."
-                        alt="Comprar ahora" />
-                </form>
-
-
-            </div>
-        </div>
-
-        <div id="modal-cloud" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="closeModal('modal-cloud')">&times;</span>
-
-
-                <h3 class="title-pop">PLUS SOPORTE</h3>
-                <img class="main-image" src="https://capacitatkocina.com/web/img/soporte.png" width="50%" alt="Main">
-
-                <div class="carousel">
-                    <img src="https://capacitatkocina.com/web/img/soporte.png"
-                        onclick="setImage(this.src, 'modal-cloud')" alt="Extra 1">
-                    <img src="https://img.freepik.com/vector-gratis/caja-software-carton-blanco_3446-339.jpg"
-                        onclick="setImage(this.src, 'modal-cloud')" alt="Extra 2">
-                    <img src="https://img.freepik.com/vector-gratis/caja-software-carton-blanco_3446-339.jpg"
-                        onclick="setImage(this.src, 'modal-cloud')" alt="Extra 3">
-                    <img src="https://img.freepik.com/vector-gratis/caja-software-carton-blanco_3446-339.jpg"
-                        onclick="setImage(this.src, 'modal-cloud')" alt="Extra 4">
-                </div>
-                <hr>
-                <p class="description-pop">
-                    Punto de venta simple. gestioná tu inventario, crea tu catálogo en línea y sube tus ventas.
-                    Configúralo
-                    en minutos y accede desde cualquier lugar y dispositivo. Computador o Celular.
-                    Con una interfaz amigable y diseñada para la máxima eficiencia, llevar a cabo tus transacciones
-                    nunca ha
-                    sido tan sencillo y rápido.
-                </p>
-
-                <ul class="features">
-                    <li>Suscripción Anual.</li>
-                    <li>Gestión para 1 solo Negocio.</li>
-                    <li>Ten tu sistema PLUS en la nube para acceder desde cualquier dispositivo y lugar.</li>
-                    <li>Soporte Técnico por Llamada o WhatsApp.</li>
-                </ul>
-
-                <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-                    <input type="hidden" name="cmd" value="_s-xclick" />
-                    <input type="hidden" name="hosted_button_id" value="CTF85GMKRC3WE" />
-                    <input type="hidden" name="currency_code" value="MXN" />
-                    <input type="image" src="https://www.paypalobjects.com/es_XC/MX/i/btn/btn_buynowCC_LG.gif"
-                        border="0" name="submit" title="PayPal es una forma segura y fácil de pagar en línea."
-                        alt="Comprar ahora" />
-                </form>
-
-
-            </div>
-        </div>
-    </div>
-
-    <div id="servicios" class="category-content">
-        <div class="back-button" onclick="goBack()">← Volver al menú</div>
-        <h2>Productos de Servicios</h2>
-        <div class="product">
-            <img src="https://sicar.la/Nube%20SICAR_files/nube_sicar.png" alt="Software 1">
-            <button class="buy-btn" onclick="openModal('modal-cloud')">Comprar</button>
-            <p class="price">MX$2,999/año</p>
-            <p>PLUS CLOUD</p>
-            <span class="read-more" onclick="openModal('modal-cloud')">Leer más</span>
-        </div>
-    </div>
-
-
-
-    <script>
-        function showCategory(categoryId) {
-            document.getElementById('categoryMenu').style.display = 'none';
-            document.querySelectorAll('.category-content').forEach(div => div.style.display = 'none');
-            document.getElementById(categoryId).style.display = 'block';
-        }
-
-        function goBack() {
-            document.getElementById('categoryMenu').style.display = 'flex';
-            document.querySelectorAll('.category-content').forEach(div => div.style.display = 'none');
-        }
-    </script>
-
-
-    <script>
-        function openModal(id) {
-            document.getElementById(id).style.display = 'flex';
-        }
-        function closeModal(id) {
-            document.getElementById(id).style.display = 'none';
-        }
-        function setImage(src, modalId) {
-            document.querySelector(`#${modalId} .main-image`).src = src;
-        }
-    </script>
+      `;
+    }
+  
+    function comprarRecarga(compañia) {
+      const tel = document.getElementById('menu-services-telefono').value;
+      const monto = document.getElementById('menu-services-recarga').value;
+  
+      if (!tel || !monto) {
+        alert('Por favor completa todos los campos');
+        return;
+      }
+  
+      alert(`Comprando recarga de $${monto} para ${tel} con compañía ${compañia}`);
+    }
+  
+    window.onload = () => abrirPopup();
+  </script>
+  
 </body>
-
 </html>

@@ -21,27 +21,34 @@
                 {{/each}}
             </select>
         </div>
+
+        {{>point-of-sales/menuServices}}
         <div class="col-6">
             <label for=""></label>
+            {{>point-of-sales/menuFunction}}
+            <!--
             <div class="dropdown">
                 <button class="btn btn-edit button-spacing dropdown-toggle" type="button" data-bs-toggle="dropdown"
                     aria-expanded="false">
                     Funciones
                 </button>
+
+                
                 <ul class="dropdown-menu">
                     {{#each dataEmployee}}
                     <input type="text" value="{{id_branches}}" style="display: none;" id="id_branch">
-                    <!--
+                    
                     <li class="li-link"><a class="dropdown-item" id="emailClient" email="" idClient="null"
                             onclick="select_customer('{{id_companies}}')"><i class="fi-icon fi-sr-following"></i>
                             Buscar Cliente</a></li>
-                    --->
+                    
                     <li class="li-link"><a class="dropdown-item" onclick="print_the_last_ticket()">Imprimir Ultimo Ticket</a></li>
                     <li class="li-link"><a class="dropdown-item" onclick="select_customer('{{id_companies}}')">Buscar Cliente</a></li>
                     <li class="li-link"><a class="dropdown-item" onclick="cash_movement('{{id}}','{{id_branches}}')">Movimiento de caja</a></li>
                     {{/each}}
                 </ul>
             </div>
+            --->
         </div>
     </div>
     <br>

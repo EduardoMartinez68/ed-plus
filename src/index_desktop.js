@@ -926,7 +926,7 @@ async function actualizarToken() {
 app.on('ready', async () => {
 
     //this is for update the code from github
-    //await check_if_exist_updates();
+    await check_if_exist_updates();
 
     //we will see if the software is a demo
     if(thiIsADemo){

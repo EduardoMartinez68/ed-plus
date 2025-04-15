@@ -1,39 +1,23 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Menú Elegante</title>
+
   <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-straight/css/uicons-regular-straight.css">
   <style>
     :root {
       --primary: #3b82f6;
       --bg: #f9fafb;
-      --shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
-    }
-
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: var(--bg);
-      height: 100vh;
-      margin: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      --shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
     }
 
     .menu-most-oprtions-container {
       position: relative;
+      z-index: 150;
     }
 
     .menu-most-oprtions-toggle {
-      background: white;
+      background: transparent;
       border: none;
-      border-radius: 50%;
-      padding: 12px;
+      padding: 6px;
       font-size: 22px;
       cursor: pointer;
-      box-shadow: var(--shadow);
       transition: background 0.25s, transform 0.25s;
     }
 
@@ -42,7 +26,7 @@
     }
 
     .menu-most-oprtions-toggle:hover {
-      background: #f0f0f0;
+      /*background: #f0f0f0;*/
     }
 
     .menu-most-oprtions-options {
@@ -83,18 +67,20 @@
       border-top: 1px solid #f0f0f0;
     }
   </style>
-</head>
-<body>
+
 
   <div class="menu-most-oprtions-container">
     <button class="menu-most-oprtions-toggle" onclick="toggleMenu()">
       <i class="fi fi-rs-menu-dots"></i>
     </button>
     <div class="menu-most-oprtions-options" id="menuMostOptions">
-      <a href="#">🔌 Pagos de servicios</a>
-      <a href="#">📊 Movimientos</a>
-      <a href="#">⚙️ Configuración</a>
-      <a href="#">🚪 Cerrar sesión</a>
+        {{#each dataEmployee}}
+            <input type="text" value="{{id_branches}}" style="display: none;" id="id_branch">
+            <a onclick="openPopServices()">Pagos de servicios</a>
+            <a onclick="select_customer('{{id_companies}}')">Buscar Cliente</a>
+            <a  onclick="cash_movement('{{id}}','{{id_branches}}')">Movimiento de caja</a>
+            <a onclick="print_the_last_ticket()">Imprimir Ultimo Ticket</a>
+        {{/each}}
     </div>
   </div>
 
@@ -120,5 +106,3 @@
       }
     });
   </script>
-</body>
-</html>
