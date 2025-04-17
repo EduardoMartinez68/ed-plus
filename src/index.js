@@ -368,19 +368,18 @@ const companyName='/links' //links
 serverExpress.use(require('./router'))
 serverExpress.use(require('./router/authentication'))
 serverExpress.use(companyName,require('./router/links'))
-serverExpress.use(companyName,require('./router/links/fudone'))
-serverExpress.use(companyName,require('./router/links/ceo'))
-serverExpress.use(companyName,require('./router/links/branch'))
-serverExpress.use(companyName,require('./router/links/subscription'))
-serverExpress.use(companyName,require('./router/links/store'))
-serverExpress.use(companyName,require('./router/links/delivery'))
-serverExpress.use(companyName,require('./router/links/app'))
-serverExpress.use(companyName,require('./router/links/CRM'))
-serverExpress.use(companyName,require('./router/links/desktop'))
-serverExpress.use(companyName,require('./router/links/boutique'))
-serverExpress.use(companyName,require('./router/links/cashCut'))
-serverExpress.use(companyName,require('./router/links/orders'))
-serverExpress.use(companyName,require('./router/links/prescription'))
+
+const routesPath = path.join(__dirname, 'router/links');
+
+//her we will read all the file of the links
+fs.readdirSync(routesPath).forEach(file => {
+  const filePath = path.join(routesPath, file);
+
+  //we will see if the file is a js file
+  if (fs.statSync(filePath).isFile() && file.endsWith('.js')) {
+    serverExpress.use(companyName, require(filePath)); //run the file
+  }
+});
 
 serverExpress.use(require('./lib/addFrom'));
 

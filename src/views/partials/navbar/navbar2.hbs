@@ -97,6 +97,15 @@
                             {{/each}}
                         {{/if}}
                         
+                        {{#if user.view_inventory}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/warehouses')">
+                                    <img src="/img/apps/warehouses.webp" alt="Impresoras">
+                                    <span>Almacenes</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+
                         <!--
                         {{#if user.view_inventory}}
                             {{#each branchFree}}
