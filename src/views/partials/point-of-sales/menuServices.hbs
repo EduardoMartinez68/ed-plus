@@ -298,7 +298,7 @@
 
 <script>
     let companyRechange=null;
-    let myCreditForRechange=0;
+    let myCreditForRechange=null;
 
     const menuServicesRecargas = [
         { name: "Telcel", icon: "https://yt3.googleusercontent.com/je7RNk1GeegHqDmmppc3HVbYIE9_Nh2pS64Mz6fkk-RcK29wbWujnx3HooDa0vqyu5tfXffxCA=s900-c-k-c0x00ffffff-no-rj" },
@@ -339,7 +339,8 @@
     ];
 
 
-    function openPopServices() {
+
+    async function openPopServices() {
         document.getElementById('menu-services-popup-1').style.display = 'flex';
         document.getElementById('menu-services-popup-2').style.display = 'none';
     }
@@ -349,10 +350,20 @@
         document.getElementById('menu-services-popup-2').style.display = 'none';
     }
 
-    function seleccionarOpcion(tipo) {
+    async function seleccionarOpcion(tipo) {
+        await get_data_of_the_services();
+        mostrarCategoria(tipo);
+    }
+
+    async function get_data_of_the_services(){
+        //if not have the rechange of the user, we will get from our api
+        if(myCreditForRechange==null){
+            const answerApi=await get_the_credit_of_the_server();
+            myCreditForRechange=answerApi.credit;
+        }
+
         document.getElementById('menu-services-popup-1').style.display = 'none';
         document.getElementById('menu-services-popup-2').style.display = 'flex';
-        mostrarCategoria(tipo);
     }
 
     function mostrarCategoria(tipo) {
@@ -362,7 +373,7 @@
         let servicios = tipo === 'recargas' ? menuServicesRecargas : menuServicesPago;
 
         const cardsHTML = servicios.map(serv => `
-        <div class="menu-services-card" onclick="${tipo === 'recargas' ? `mostrarFormularioRecarga('${serv.name}')` : ''}">
+        <div class="menu-services-card" onclick="${tipo === 'recargas' ? `mostrarFormularioRecarga('${serv.name}')` : `show_buy_services('${serv.name}')`}">
           <img src="${serv.icon}" alt="${serv.name}">
           <p>${serv.name}</p>
         </div>
@@ -371,7 +382,142 @@
         contenedor.innerHTML = `<h3>Selecciona un servicio</h3><div class="menu-services-cards-container">${cardsHTML}</div>`;
     }
 
-    function mostrarFormularioRecarga(company) {
+
+    //---buy services-------//
+    //this variable save all the input that the form need for buy this service
+    const serviciosCampos = {
+        "CFE": [
+            { label: "Número de servicio", id: "number-service", type: "text", placeholder: "Ej. 123456789012" }
+        ],
+        "Telmex": [
+            { label: "Número Telmex", id: "number-service", type: "text", placeholder: "Ej. 5544332211" }
+        ],
+        "Sky": [
+            { label: "Número de cliente", id: "number-service", type: "text", placeholder: "Ej. 40123456789" }
+        ],
+        "Dish": [
+            { label: "Número de contrato", id: "number-service", type: "text", placeholder: "Ej. 1234567890" }
+        ],
+        "Totalplay": [
+            { label: "Número de cuenta", id: "number-service", type: "text", placeholder: "Ej. 123456789" }
+        ],
+        "Izzi": [
+            { label: "Número de suscriptor", id: "number-service", type: "text", placeholder: "Ej. 123456789" }
+        ],
+        "Megacable": [
+            { label: "Número de suscriptor", id: "number-service", type: "text", placeholder: "Ej. 123456789" }
+        ],
+        "VeTV": [
+            { label: "Número de tarjeta VeTV", id: "number-service", type: "text", placeholder: "Ej. 40123456789" }
+        ],
+        "Agua y Drenaje": [
+            { label: "Número de cuenta", id: "number-service", type: "text", placeholder: "Ej. 123456789" }
+        ],
+        "Infonavit": [
+            { label: "Número de crédito", id: "number-service", type: "text", placeholder: "Ej. 1234567890" }
+        ],
+        "SAT / Impuestos": [
+            { label: "Línea de captura", id: "number-service", type: "text", placeholder: "Ej. 123456789012345678" }
+        ],
+        "Coppel Servicios": [
+            { label: "Número de referencia", id: "number-service", type: "text", placeholder: "Ej. 123456789012345678" }
+        ],
+        "Telnor": [
+            { label: "Número Telnor", id: "number-service", type: "text", placeholder: "Ej. 6641234567" }
+        ]
+    };
+
+    async function show_buy_services(serviceName) {
+        await get_data_of_the_services();
+
+        const contenedor = document.getElementById('menu-services-contenido-dinamico');
+
+        //get the camp of the services
+        const campos = serviciosCampos[serviceName] || [];
+
+        //her we wil print the input that the form need
+        const camposHTML = campos.map(campo => `
+            <div>
+                <label for="${campo.id}">${campo.label}</label>
+                <input type="${campo.type}" id="${campo.id}" placeholder="${campo.placeholder}">
+            </div>
+        `).join('');
+
+        //her we will print all the container of the form 
+        contenedor.innerHTML = `
+            <center><h6>Saldo disponible ${myCreditForRechange}$</h6></center>
+            <h3>Pagar servicio de ${serviceName}</h3>
+            <div class="menu-services-formulario">
+
+            <div class="menu-services-recargas-rapidas">
+                ${[10, 20, 30, 50, 100].map(monto => `
+                <button onclick="document.getElementById('menu-services-recarga').value=${monto}">$${monto}</button>
+                `).join('')}
+            </div>
+
+            ${camposHTML}
+
+            <div>
+                <label for="menu-services-recarga">Monto</label>
+                <input type="number" id="menu-services-recarga" placeholder="Ej. 50">
+            </div>
+
+            <button class="menu-services-btn-comprar" onclick="showMoneyForRechangeAService('${serviceName}')">Pagar servicio</button>
+            </div>
+        `;
+    }
+
+    async function showMoneyForRechangeAService(companyRechange) {
+        const numberService=document.getElementById('number-service').value;
+        const amount=document.getElementById('menu-services-recarga').value;
+
+        const contenedor = document.getElementById('menu-services-contenido-dinamico');
+        contenedor.innerHTML = `
+            <center><h6>Recarga para ${numberService}$</h6></center>
+            <h3>Recarga ${amount}$</h3>
+            <div class="menu-services-formulario">
+                <div>
+                    <label for="moneyReceived">Dinero Recibido *</label>
+                    <input type="number" id="moneyReceived" placeholder="Ej. 50" oninput="calculate_change_for_services(${amount})">
+                </div>
+        
+                <div>
+                    <label for="moneyCommission">Comisión *</label>
+                    <input type="number" id="moneyCommission" placeholder="Ej. 10" oninput="calculate_change_for_services(${amount})">
+                </div>
+
+                <div>
+                    <label><strong>Cambio para el cliente:</strong> <span id="cambioCliente">0.00</span> $</label>
+                </div>
+        
+                <button class="menu-services-btn-comprar" onclick="buy_services('${numberService}','${amount}','${companyRechange}')">Comprar recarga</button>
+            </div>
+        `;
+    }
+
+    async function buy_services(numberService, amount, serviceName){
+        amount=parseFloat(amount);
+        const moneyReceived=parseFloat(document.getElementById('moneyReceived').value);
+        const moneyCommission=parseFloat(document.getElementById('moneyCommission').value);
+
+        const moneyEarning=moneyCommission+amount; //this is the money that earning for the buy
+        const changeOFTheBuy=moneyReceived-moneyEarning; //this is the change of the buy
+
+        //we will see if exist change. If not exist change, show a message of error
+        if (changeOFTheBuy < 0) {
+            errorMessage('¡Atención! ⚠️', 'Parece que el pago es insuficiente. Por favor ingresa un monto mayor.');
+            return;
+        }
+
+        //if the service was success, show a message success and show the change of the customer
+        cerrarPopups();
+        confirmationMessage('¡Compra exitosa! 🎉', `El cambio total es de $${changeOFTheBuy.toFixed(2)}. ¡Gracias por tu compra!`);
+    }
+
+    //---change for cellphone---
+    async function mostrarFormularioRecarga(company) {
+        await get_data_of_the_services();
+
         companyRechange=company;
         const contenedor = document.getElementById('menu-services-contenido-dinamico');
         contenedor.innerHTML = `
@@ -404,6 +550,8 @@
       `;
     }
 
+
+
     function validarTelefono(tel) {
         // Expresión regular para validar números de celular en México (10 dígitos)
         const regex = /^(\+?52|52)?(1)?(\d{10})$/;
@@ -411,7 +559,45 @@
         return regex.test(tel); // Retorna true si el teléfono es válido, de lo contrario, false
     }
 
-    async function comprarRecarga(compañia) {
+    async function showMoneyForRechange(tel, amount, companyRechange) {
+        const contenedor = document.getElementById('menu-services-contenido-dinamico');
+        contenedor.innerHTML = `
+            <center><h6>Recarga para ${tel}$</h6></center>
+            <h3>Recarga ${amount}$</h3>
+            <div class="menu-services-formulario">
+                <div>
+                    <label for="moneyReceived">Dinero Recibido *</label>
+                    <input type="number" id="moneyReceived" placeholder="Ej. 50" oninput="calculate_change_for_services(${amount})">
+                </div>
+        
+                <div>
+                    <label for="moneyCommission">Comisión *</label>
+                    <input type="number" id="moneyCommission" placeholder="Ej. 10" oninput="calculate_change_for_services(${amount})">
+                </div>
+
+                <div>
+                    <label><strong>Cambio para el cliente:</strong> <span id="cambioCliente">0.00</span> $</label>
+                </div>
+        
+                <button class="menu-services-btn-comprar" onclick="buy_rechange('${tel}','${amount}','${companyRechange}')">Comprar recarga</button>
+            </div>
+        `;
+    }
+
+    function calculate_change_for_services(amountChange) {
+        amountChange = parseFloat(amountChange) || 0;
+        const received = parseFloat(document.getElementById('moneyReceived').value) || 0;
+        const commission = parseFloat(document.getElementById('moneyCommission').value) || 0;
+
+
+        const cambio = received - commission- amountChange;
+
+        document.getElementById('cambioCliente').textContent = cambio.toFixed(2);
+    }
+
+
+
+    async function comprarRecarga(company) {
         const tel = document.getElementById('menu-services-telefono-1').value;
         const tel2 = document.getElementById('menu-services-telefono-2').value;
         const amount = document.getElementById('menu-services-recarga').value;
@@ -434,6 +620,23 @@
             return;
         }
 
+        //now show a new message pop for get the money and the change 
+        showMoneyForRechange(tel,amount,company);
+    }
+
+    async function buy_rechange(tel,amount,companyRechange){
+        amount=parseFloat(amount);
+        const moneyReceived=parseFloat(document.getElementById('moneyReceived').value);
+        const moneyCommission=parseFloat(document.getElementById('moneyCommission').value);
+
+        const moneyEarning=moneyCommission+amount; //this is the money that earning for the buy
+        const changeOFTheBuy=moneyReceived-moneyEarning; //this is the change of the buy
+
+        //we will see if exist change. If not exist change, show a message of error
+        if (changeOFTheBuy < 0) {
+            errorMessage('¡Atención! ⚠️', 'Parece que el pago es insuficiente. Por favor ingresa un monto mayor.');
+            return;
+        }
 
         //now will send a message to our API in the web
         const answerApi=await send_soliciutd_to_my_api(tel,amount,companyRechange);
@@ -443,17 +646,9 @@
             return;
         }
 
-        const xange = 10; // Calculando el cambio
-
-
+        //if the service was success, show a message success and show the change of the customer
         cerrarPopups();
-        if (xange > 0) {
-            confirmationMessage('¡Compra exitosa! 🎉', `El cambio total es de $${xange}. ¡Gracias por tu compra!`);
-        } else if (xange === 0) {
-            confirmationMessage('¡Compra exitosa! 🎉', `Tu recarga de $${monto} para ${tel} con la compañía ${companyRechange} ha sido procesada. ¡Gracias por tu compra!`);
-        } else {
-            errorMessage('¡Atención! ⚠️', 'Parece que el pago es insuficiente. Por favor ingresa un monto mayor.');
-        }
+        confirmationMessage('¡Compra exitosa! 🎉', `El cambio total es de $${changeOFTheBuy.toFixed(2)}. ¡Gracias por tu compra!`);
     }
 
     async function send_soliciutd_to_my_api(cellphone,amount,company){
@@ -484,6 +679,8 @@
         }
     }
 
+
+    //----
     async function get_the_credit_of_the_server(){
         const loadingOverlay = document.getElementById("loadingOverlay");
         loadingOverlay.style.display = "flex";
@@ -545,4 +742,7 @@
             return 0;
         }
     }
+
+
+
 </script>

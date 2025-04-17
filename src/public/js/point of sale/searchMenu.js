@@ -1,6 +1,45 @@
 document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('search');
     const cards = document.querySelectorAll('.product-card-point-of-sales');
+    const dictionaryIdServices = [
+        { key: ".s", icon: `seleccionarOpcion('servicios')` },
+        { key: ".r", icon: `seleccionarOpcion('recargas')` },
+
+        { key: ".cfe", icon: `show_buy_services('CFE')` },
+        { key: ".telmex", icon: `show_buy_services('Telmex')` },
+        { key: ".sky", icon: `show_buy_services('Sky')` },
+        { key: ".dis", icon: `show_buy_services('Dish')` },
+        { key: ".tot", icon: `show_buy_services('Totalplay')` },
+        { key: ".izz", icon: `show_buy_services('Izzi')` },
+        { key: ".meg", icon: `show_buy_services('Megacable')` },
+        { key: ".vet", icon: `show_buy_services('VeTV')` },
+        { key: ".agua", icon: `show_buy_services('Agua y Drenaje')` },
+        { key: ".inf", icon: `show_buy_services('Infonavit')` },
+        { key: ".sat", icon: `show_buy_services('SAT / Impuestos')` },
+        { key: ".cop", icon: `show_buy_services('Coppel Servicios')` },
+        { key: ".nor", icon: `show_buy_services('Telnor')` },
+
+
+        { key: ".tel", icon: `mostrarFormularioRecarga('Telcel')` },
+        { key: ".mov", icon: `mostrarFormularioRecarga('Movistar')` },
+        { key: ".att", icon: `mostrarFormularioRecarga('AT&T')` },
+        { key: ".une", icon: `mostrarFormularioRecarga('Unefon')` },
+        { key: ".bait", icon: `mostrarFormularioRecarga('Bait')` },
+        { key: ".pil", icon: `mostrarFormularioRecarga('PilloFon')` },
+        { key: ".fre", icon: `mostrarFormularioRecarga('FreedomPop')` },
+        { key: ".fla", icon: `mostrarFormularioRecarga('Flash Mobile')` },
+        { key: ".dir", icon: `mostrarFormularioRecarga('Diri')` },
+        { key: ".oui", icon: `mostrarFormularioRecarga('Oui')` },
+        { key: ".wma", icon: `mostrarFormularioRecarga('Walmart Bodega Aurrera (Bait)')` },
+        { key: ".maz", icon: `mostrarFormularioRecarga('Maz Tiempo')` },
+        { key: ".her", icon: `mostrarFormularioRecarga('Her Mobile')` },
+        { key: ".wib", icon: `mostrarFormularioRecarga('Wibo')` },
+        { key: ".ald", icon: `mostrarFormularioRecarga('Aldi')` },
+        { key: ".wee", icon: `mostrarFormularioRecarga('Weex')` },
+        { key: ".net", icon: `mostrarFormularioRecarga('Netwey')` },
+        { key: ".sim", icon: `mostrarFormularioRecarga('Simplii')` }
+    ];
+
 
     //this is for the search in cellphone
     searchInput.addEventListener('input', () => {
@@ -22,6 +61,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const valueInputBarcode = searchInput.value.toLowerCase();
             let barcodeInput = valueInputBarcode; //save the barcode that the user would like search
 
+            //firs we will see if the user write a key of a services for open the pop
+            const idService = dictionaryIdServices.find(item => item.key === barcodeInput);
+            if (idService) {
+                searchInput.value = ""; //delete the value of the input
+
+                //Execute the function that is as a string
+                eval(idService.icon);
+                return;
+            }
+
+            //if the user not would like open a service, we will next with the code of search for products
             /*
             ----now this is for know if the user write a barcode and a number----
                     example: milk*10
