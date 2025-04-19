@@ -1,368 +1,210 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Servicios</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formulario Dinámico en Popup</title>
   <style>
-    :root {
-      --menu-services-primary: #1649FF;
-    }
-  
+    /* Estilos generales */
     body {
-      font-family: 'Segoe UI', sans-serif;
+      font-family: 'Inter', sans-serif;
+      background: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
       margin: 0;
-      padding: 0;
-      background: #f2f4f8;
     }
-  
-    .menu-services-overlay {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.4);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 999;
-    }
-  
-    .menu-services-popup {
-      position: relative;
-      background: white;
-      padding: 40px;
-      border-radius: 16px;
-      width: 90%;
-      max-width: 600px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-      animation: menu-services-fadeIn 0.4s ease-in-out;
-    }
-  
-    .menu-services-close-btn {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      font-size: 22px;
-      color: #555;
-      background: none;
+
+    .open-form-btn {
+      padding: 10px 20px;
+      background: #1648FF;
+      color: white;
       border: none;
+      border-radius: 10px;
       cursor: pointer;
-      background-color: transparent;
-      padding: 0.5rem;
-      border-radius: 50%;
-      transition: background-color 0.3s, transform 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      transition: transform 0.2s;
     }
-  
-    .menu-services-close-btn:hover {
-      background-color: #eee;
+
+    .open-form-btn:hover {
       transform: scale(1.1);
     }
-  
-    .menu-services-close-btn svg {
-      width: 20px;
-      height: 20px;
-      stroke: #333;
-      stroke-width: 2;
-    }
-  
-    @keyframes menu-services-fadeIn {
-      from { opacity: 0; transform: scale(0.95); }
-      to { opacity: 1; transform: scale(1); }
-    }
-  
-    .menu-services-options {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 30px;
-    }
-  
-    .menu-services-btn-half {
-      flex: 1;
-      margin: 0 10px;
-      padding: 16px;
-      background: #f0f2ff;
-      color: var(--menu-services-primary);
-      border: 2px solid var(--menu-services-primary);
-      border-radius: 12px;
-      font-size: 18px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.3s, color 0.3s;
-    }
-  
-    .menu-services-btn-half:hover {
-      background: rgba(22, 73, 255, 0.1);
-    }
-  
-    .menu-services-cards-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin-top: 20px;
-      gap: 20px;
-    }
-  
-    .menu-services-card {
-      width: 120px;
-      padding: 15px;
-      background: #fff;
-      border: 1px solid #ddd;
-      border-radius: 12px;
-      text-align: center;
-      cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-      transition: transform 0.2s ease;
-    }
-  
-    .menu-services-card:hover {
-      transform: scale(1.05);
-    }
-  
-    .menu-services-card img {
-      width: 80px;
-      height: 80px;
-      object-fit: contain;
-      margin-bottom: 10px;
-    }
-  
-    .menu-services-formulario {
-      margin-top: 30px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      text-align: left;
-    }
-  
-    .menu-services-formulario label {
-      font-size: 15px;
-      color: #444;
-      margin-bottom: 5px;
-      font-weight: bold;
-    }
-  
-    .menu-services-formulario input {
-      width: 100%;
-      padding: 12px 16px;
-      font-size: 16px;
-      background-color: #fafbfc;
-      border: 1.5px solid #d1d5db;
-      border-radius: 10px;
-      transition: all 0.3s ease;
-      color: #111827;
-      font-family: 'Inter', sans-serif;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
-    }
-  
-    .menu-services-formulario input::placeholder {
-      color: #9ca3af;
-      opacity: 1;
-    }
-  
-    .menu-services-formulario input:focus {
-      border-color: var(--menu-services-primary, #3b82f6);
-      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
-      outline: none;
-      background-color: #fff;
-    }
-  
-    .menu-services-recargas-rapidas {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-      margin-bottom: 20px;
-    }
-  
-    .menu-services-recargas-rapidas button {
-      padding: 12px 20px;
-      font-size: 15px;
-      background-color: #fff;
-      color: var(--menu-services-primary, #3b82f6);
-      border: 1.5px solid var(--menu-services-primary, #3b82f6);
-      border-radius: 9999px;
-      cursor: pointer;
-      font-weight: 500;
-      font-family: 'Inter', sans-serif;
-      transition: all 0.25s ease;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
-    }
-  
-    .menu-services-recargas-rapidas button:hover {
-      background-color: var(--menu-services-primary, #3b82f6);
-      color: #ffffff;
-      box-shadow: 0 4px 10px rgba(59, 130, 246, 0.15);
-    }
-  
-    .menu-services-btn-comprar {
-      background: var(--menu-services-primary);
-      color: white;
-      border: none;
-      padding: 14px 20px;
-      font-size: 17px;
-      border-radius: 12px;
-      cursor: pointer;
-      width: 100%;
-      margin-top: 10px;
-      transition: background 0.3s, transform 0.3s;
-    }
-  
-    .menu-services-btn-comprar:hover {
-      background: #0f35c9;
-      transform: scale(1.02);
-    }
-  
-    .menu-services-open-popup-btn {
+
+    /* Estilo para el popup */
+    .popup-overlay {
       position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: var(--menu-services-primary);
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.4);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0s 0.3s;
+    }
+
+    .popup-overlay.active {
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 0.3s ease, visibility 0s 0s;
+    }
+
+    .popup {
+      background: #fff;
+      border-radius: 10px;
+      padding: 20px;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      position: relative;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #FF4C4C;
       color: white;
       border: none;
-      padding: 14px 20px;
-      border-radius: 50px;
-      font-size: 16px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      padding: 5px 10px;
+      border-radius: 50%;
+      font-size: 18px;
       cursor: pointer;
-      z-index: 998;
-      transition: background 0.3s ease;
     }
-  
-    .menu-services-open-popup-btn:hover {
-      background: #0f35c9;
+
+    .close-btn:hover {
+      background: #ff2121;
     }
-  
-    h2, h3 {
-      text-align: center;
-      color: #333;
+
+    .form-group {
+      margin-bottom: 15px;
+      position: relative;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      transition: border-color 0.3s;
+    }
+
+    .form-group input:focus {
+      border-color: #1648FF;
+    }
+
+    .form-group label {
+      position: absolute;
+      left: 10px;
+      top: 10px;
+      font-size: 16px;
+      color: #777;
+      pointer-events: none;
+      transition: 0.2s ease all;
+    }
+
+    .form-group input:focus ~ label,
+    .form-group input:not(:placeholder-shown) ~ label {
+      top: -10px;
+      font-size: 12px;
+      color: #1648FF;
+    }
+
+    .submit-btn {
+      background: #1648FF;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      width: 100%;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .submit-btn:hover {
+      background: #0f39d4;
     }
   </style>
-  
 </head>
 <body>
-<!-- Botón flotante para abrir -->
-<button class="menu-services-open-popup-btn" onclick="abrirPopup()">Abrir menú</button>
 
-<!-- Primer Popup -->
-<div class="menu-services-overlay" id="menu-services-popup-1" style="display: none;">
-  <div class="menu-services-popup">
-    <button class="menu-services-close-btn" onclick="cerrarPopups()" aria-label="Cerrar ventana">
-      <svg viewBox="0 0 24 24" fill="none">
-        <line x1="18" y1="6" x2="6" y2="18" />
-        <line x1="6" y1="6" x2="18" y2="18" />
-      </svg>
-    </button>
-    <h2>¿Qué deseas hacer?</h2>
-    <div class="menu-services-options">
-      <button class="menu-services-btn-half" onclick="seleccionarOpcion('recargas')">Pagar Recargas</button>
-      <button class="menu-services-btn-half" onclick="seleccionarOpcion('servicios')">Pagar Servicios</button>
+  <!-- Botones para abrir los formularios -->
+  <button class="open-form-btn" onclick="openPopup('addBranch')">Create New Branch</button>
+  <button class="open-form-btn" onclick="openPopup('editBranch')">Edit Branch</button>
+
+  <!-- Estructura del popup -->
+  <div class="popup-overlay" id="popupOverlay">
+    <div class="popup" id="popupForm">
+      <button class="close-btn" onclick="closePopup()">×</button>
+      <!-- El formulario será insertado aquí dinámicamente -->
     </div>
   </div>
-</div>
 
-<!-- Segundo Popup (dinámico) -->
-<div class="menu-services-overlay" id="menu-services-popup-2" style="display: none;">
-  <div class="menu-services-popup">
-    <button class="menu-services-close-btn" onclick="cerrarPopups()" aria-label="Cerrar ventana">
-      <svg viewBox="0 0 24 24" fill="none">
-        <line x1="18" y1="6" x2="6" y2="18" />
-        <line x1="6" y1="6" x2="18" y2="18" />
-      </svg>
-    </button>
-    <div id="menu-services-contenido-dinamico"></div>
-  </div>
-</div>
-<script>
-    const menuServicesRecargas = [
-      { nombre: "Telcel", logo: "https://yt3.googleusercontent.com/je7RNk1GeegHqDmmppc3HVbYIE9_Nh2pS64Mz6fkk-RcK29wbWujnx3HooDa0vqyu5tfXffxCA=s900-c-k-c0x00ffffff-no-rj" },
-      { nombre: "Movistar", logo: "https://cdn2.downdetector.com/static/uploads/c/300/a2e0d/MovistarGreen_1.png" },
-      { nombre: "AT&T", logo: "https://assets.weforum.org/organization/image/hRiZoy6qNMv7D-YblWFRXINkKb_3-9aj8xSMjID05kk.jpg" }
-    ];
-  
-    const menuServicesPago = [
-      { nombre: "CFE", logo: "https://elinpc.com.mx/wp-content/uploads/cfe.gif" },
-      { nombre: "Telmex", logo: "https://play-lh.googleusercontent.com/lw3V8SWtYDFGLzomt2G_p_E6qUJhvuQHezp3bW-ewsQ0-cHPfimnLij6yP2gD_UCKfYj" },
-      { nombre: "Sky", logo: "https://upload.wikimedia.org/wikipedia/commons/7/74/SKY_Basic_Logo.svg" }
-    ];
-  
-    function abrirPopup() {
-      document.getElementById('menu-services-popup-1').style.display = 'flex';
-      document.getElementById('menu-services-popup-2').style.display = 'none';
-    }
-  
-    function cerrarPopups() {
-      document.getElementById('menu-services-popup-1').style.display = 'none';
-      document.getElementById('menu-services-popup-2').style.display = 'none';
-    }
-  
-    function seleccionarOpcion(tipo) {
-      document.getElementById('menu-services-popup-1').style.display = 'none';
-      document.getElementById('menu-services-popup-2').style.display = 'flex';
-      mostrarCategoria(tipo);
-    }
-  
-    function mostrarCategoria(tipo) {
-      const contenedor = document.getElementById('menu-services-contenido-dinamico');
-      contenedor.innerHTML = '';
-  
-      let servicios = tipo === 'recargas' ? menuServicesRecargas : menuServicesPago;
-  
-      const cardsHTML = servicios.map(serv => `
-        <div class="menu-services-card" onclick="${tipo === 'recargas' ? `mostrarFormularioRecarga('${serv.nombre}')` : ''}">
-          <img src="${serv.logo}" alt="${serv.nombre}">
-          <p>${serv.nombre}</p>
-        </div>
-      `).join('');
-  
-      contenedor.innerHTML = `<h3>Selecciona un servicio</h3><div class="menu-services-cards-container">${cardsHTML}</div>`;
-    }
-  
-    function mostrarFormularioRecarga(compañia) {
-      const contenedor = document.getElementById('menu-services-contenido-dinamico');
-      contenedor.innerHTML = `
-        <h3>Recarga para ${compañia}</h3>
-        <div class="menu-services-formulario">
-          <div class="menu-services-recargas-rapidas">
-            ${[10, 20, 30, 50, 100].map(monto => `
-              <button onclick="document.getElementById('menu-services-recarga').value=${monto}">$${monto}</button>
-            `).join('')}
-          </div>
-  
-          <div>
-            <label for="menu-services-telefono">Número de teléfono *</label>
-            <input type="tel" id="menu-services-telefono" placeholder="Ej. 5544332211">
-          </div>
-  
-          <div>
-            <label for="menu-services-telefono-2">Confirmar número de teléfono *</label>
-            <input type="tel" id="menu-services-telefono-2" placeholder="Ej. 5544332211">
-          </div>
-  
-          <div>
-            <label for="menu-services-recarga">Monto</label>
-            <input type="number" id="menu-services-recarga" placeholder="Ej. 50">
-          </div>
-  
-          <button class="menu-services-btn-comprar" onclick="comprarRecarga('${compañia}')">Comprar recarga</button>
-        </div>
+  <!-- Formularios definidos con <popForm> -->
+  <popForm id="addBranch" form="/add-branch" method="post">
+    <input type="text" required name="branchName" placeholder="Nombre de sucursal">
+    <input type="text" required name="branchAddress" placeholder="Dirección">
+  </popForm>
+
+  <popForm id="editBranch" form="/edit-branch" method="post">
+    <input type="text" required name="branchName" placeholder="Nuevo nombre de sucursal">
+    <input type="text" required name="branchAddress" placeholder="Nueva dirección">
+  </popForm>
+
+  <!-- Script de comportamiento para abrir y cerrar el popup -->
+  <script>
+    // Función para abrir el popup con el formulario correspondiente
+    function openPopup(formId) {
+      const popupOverlay = document.getElementById('popupOverlay');
+      const formElement = document.getElementById(formId);
+      const popupForm = document.getElementById('popupForm');
+
+      // Limpiar el popup y agregar el formulario correspondiente
+      popupForm.innerHTML = `
+        <button class="close-btn" onclick="closePopup()">×</button>
       `;
+
+      // Convertir la etiqueta <popForm> en un formulario HTML tradicional
+      const form = document.createElement('form');
+      form.setAttribute('action', formElement.getAttribute('form'));
+      form.setAttribute('method', formElement.getAttribute('method'));
+
+      // Obtener los inputs dentro del <popForm>
+      const inputs = formElement.querySelectorAll('input');
+      inputs.forEach(input => {
+        const div = document.createElement('div');
+        div.classList.add('form-group');
+        
+        const label = document.createElement('label');
+        label.setAttribute('for', input.name);
+        label.textContent = input.placeholder;
+        input.placeholder='';
+        
+        div.appendChild(input);
+        div.appendChild(label);
+        form.appendChild(div);
+      });
+
+      // Crear el botón de submit
+      const submitBtn = document.createElement('button');
+      submitBtn.setAttribute('type', 'submit');
+      submitBtn.classList.add('submit-btn');
+      submitBtn.textContent = formElement.getAttribute('go') === 'addBranch' ? 'Crear Sucursal' : 'Editar Sucursal';
+      form.appendChild(submitBtn);
+
+      // Agregar el formulario al popup
+      popupForm.appendChild(form);
+      popupOverlay.classList.add('active');
     }
-  
-    function comprarRecarga(compañia) {
-      const tel = document.getElementById('menu-services-telefono').value;
-      const monto = document.getElementById('menu-services-recarga').value;
-  
-      if (!tel || !monto) {
-        alert('Por favor completa todos los campos');
-        return;
-      }
-  
-      alert(`Comprando recarga de $${monto} para ${tel} con compañía ${compañia}`);
+
+    // Función para cerrar el popup
+    function closePopup() {
+      document.getElementById('popupOverlay').classList.remove('active');
     }
-  
-    window.onload = () => abrirPopup();
   </script>
-  
+
 </body>
 </html>

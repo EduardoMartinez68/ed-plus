@@ -140,6 +140,12 @@
 </style>
 <br><br>
 <div class="container">
+    <!--her we will save the information of the server-->
+    {{#each dataServer}}
+        <input type="text" value="{{token}}" hidden id="dataServerToken">
+    {{/each}}
+
+
     <label><i class="fi fi-ss-warehouse-alt"></i> Almacenes</label>
     <hr>
     <div class="card">
@@ -191,3 +197,95 @@
         </div>
     </div>
 </div>
+
+
+<script>
+    const tokenServer=document.getElementById('dataServerToken')
+    function getMyNotifications() {
+        alert(tokenServer)
+    }
+
+    
+    getMyNotifications();
+
+    async function get_my_notification(date){
+        const loadingOverlay = document.getElementById("loadingOverlay");
+        loadingOverlay.style.display = "flex";
+
+        try {
+            //we will watching if the server can complete the pay and setting the inventory
+            const answerServer = await get_answer_server({ }, `https://pluspuntodeventa.com/app/api_transfer/get_all_the_branch.php`);
+
+            //we will see if save the commander 
+            if (!isNaN(answerServer.message)) {
+                return true;
+            } else {
+                //if the server not can complete the pay we going to send a message of error
+                errorMessage('ERROR 👁️', answerServer.message + ' 👉👈');
+                return false;
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            errorMessage('ERROR ⚠️', 'Se produjo un error al procesar tu solicitud.');
+            return false;
+        } finally {
+            // Hide loading overlay regardless of success or failure
+            loadingOverlay.style.display = "none";
+        }
+    }
+
+    async function get_all_my_branch(){
+        const loadingOverlay = document.getElementById("loadingOverlay");
+        loadingOverlay.style.display = "flex";
+        const token;
+
+        try {
+            //we will watching if the server can complete the pay and setting the inventory
+            const answerServer = await get_answer_server({token}, `https://pluspuntodeventa.com/app/api_transfer/get_all_the_branch.php`);
+
+            //we will see if save the commander 
+            if (!isNaN(answerServer.message)) {
+                return true;
+            } else {
+                //if the server not can complete the pay we going to send a message of error
+                errorMessage('ERROR 👁️', answerServer.message + ' 👉👈');
+                return false;
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            errorMessage('ERROR ⚠️', 'Se produjo un error al procesar tu solicitud.');
+            return false;
+        } finally {
+            // Hide loading overlay regardless of success or failure
+            loadingOverlay.style.display = "none";
+        }
+    }
+
+    async function get_answer_server(dataToTheServer, link) {
+        try {
+            const url = link;
+            // Configurar la solicitud
+            const options = {
+                method: 'POST', // Puedes usar POST en lugar de GET si necesitas enviar muchos datos
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dataToTheServer)
+            };
+
+            // Realizar la solicitud y esperar la respuesta
+            const response = await fetch(url, options);
+
+            if (!response.ok) {
+                throw new Error('Error en la solicitud');
+            }
+
+            // Convertir la respuesta a JSON y devolverla
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Error:', error);
+            throw error;
+        }
+    }
+</script>

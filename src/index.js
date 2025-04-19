@@ -15,6 +15,14 @@ const path=require('path');
 
 //ReCAPTCHA of Google
 const { RecaptchaV2 } = require('express-recaptcha');
+
+//this is for create a demo of PLUS
+const nodePersist = require('node-persist');
+nodePersist.init({
+  dir: path.join(__dirname, 'data')
+});
+
+
 //*------------------initializations-----------------------------------------//
 const serverExpress=express();
 

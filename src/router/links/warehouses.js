@@ -9,12 +9,21 @@ const {
     get_branch
 } = require('../../services/branch');
 
+const path=require('path');
+const nodePersist = require('node-persist');
+nodePersist.init({
+  dir: path.join(__dirname, '../../data')
+});
+
 /*
 *----------------------links-----------------*/ 
 router.get('/:id_company/:id_branch/warehouses', isLoggedIn, async (req, res) => {
     const {id_branch}=req.params;
     const branchFree = await get_data_branch(id_branch);
-    res.render('links/warehouses/warehouses', { branchFree });
+
+    const token = await nodePersist.get('installToken');
+    const dataServer={token:token};
+    res.render('links/warehouses/warehouses', { branchFree, dataServer});
 })
 
 router.get('/:id_company/:id_branch/evaluateDelivery', isLoggedIn, async (req, res) => {
