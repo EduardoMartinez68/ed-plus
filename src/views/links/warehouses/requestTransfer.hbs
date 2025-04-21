@@ -6,41 +6,133 @@
 
   <div class="container my-5">
     <h2>Transporte de Mercancía</h2>
+      {{#each dataServer}}
+        <input type="text" value="{{token}}" id="dataServerToken" hidden>
+    {{/each}}
+
+
+  {{#each branchFree}}
+    <div class="text my-3">
+      <span class="traspaso-info">
+        Desde <strong>{{name_branch}}</strong> hasta
+        <strong>
+          <select name="branch" id="branchSelect" class="branchSelect form-select" aria-label="Default select example">
+            <option value="">Selecciona una sucursal</option>
+          </select>
+        </strong>
+      </span>
+      <button class="btn btn-primary update-branch" onclick="getMyNotifications()">Actualizar Sucursales</button>
+    </div>
+  {{/each}}
+
+
     {{>warehouses/tableSendTransport}}
     {{>warehouses/messagePop}}
   </div>
 
+<script>
+    const tokenServer = document.getElementById('dataServerToken').value; //her get the token of the software
+    let listbranch = null;
 
+    async function getMyNotifications() {
+        //we will see if have the information of our branch save
+        if (listbranch === null) {
+            //if not have save the information of the branch, we will get the information from the database
+            const answerApi = await get_answer_server({ token: tokenServer }, `https://pluspuntodeventa.com/app/api_transfer/get_all_the_branch.php`);
 
-  <script>
-    function toggleCompleto(checkbox) {
+            //we will see if the server return most branch
+            if (answerApi.success) {
+                listbranch = answerApi.branches;
+            } else {
+                alert('Ocurrio un error al obtener sucursales');
+                return;
+            }
+        }
 
+        //create the select
+        const select = document.getElementById('branchSelect');
+
+        // Limpiamos por si acaso
+        select.innerHTML = '';
+
+        // Agregar opción por defecto
+        const defaultOption = document.createElement('option');
+        defaultOption.text = 'Selecciona una sucursal';
+        defaultOption.disabled = true;
+        defaultOption.selected = true;
+        select.appendChild(defaultOption);
+
+        //if exist data save, get show the information in the screen
+        for (var i = 0; i < listbranch.length; i++) {
+            const option = document.createElement('option');
+            option.value = listbranch[i].token_id;
+            option.text = listbranch[i].name;
+            select.appendChild(option);
+        }
     }
 
+      async function get_answer_server(dataToTheServer, link) {
+        try {
+            const url = link;
+            // Configurar la solicitud
+            const options = {
+                method: 'POST', // Puedes usar POST en lugar de GET si necesitas enviar muchos datos
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dataToTheServer)
+            };
 
-    document.getElementById('busqueda').addEventListener('input', function () {
-        /*
-      const filtro = this.value.toLowerCase();
-      const filas = document.querySelectorAll('.table tbody tr'); // Cambié aquí el selector
+            // Realizar la solicitud y esperar la respuesta
+            const response = await fetch(url, options);
 
-      filas.forEach(fila => {
-        const codigo = fila.querySelector('.codigo-barras')?.textContent.toLowerCase() || '';
-        fila.style.display = codigo.includes(filtro) ? '' : 'none';
-      });
-      */
+            if (!response.ok) {
+                throw new Error('Error en la solicitud');
+            }
+
+            // Convertir la respuesta a JSON y devolverla
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Error:', error);
+            throw error;
+        }
+    }
+</script>
+
+
+
+
+
+<script>
+  function toggleCompleto(checkbox) {
+
+  }
+
+
+  document.getElementById('busqueda').addEventListener('input', function () {
+      /*
+    const filtro = this.value.toLowerCase();
+    const filas = document.querySelectorAll('.table tbody tr'); // Cambié aquí el selector
+
+    filas.forEach(fila => {
+      const codigo = fila.querySelector('.codigo-barras')?.textContent.toLowerCase() || '';
+      fila.style.display = codigo.includes(filtro) ? '' : 'none';
     });
+    */
+  });
 
 
-    function seleccionarTodos(masterCheckbox) {
-      const checkboxes = document.querySelectorAll('.check-fila');
-      checkboxes.forEach(cb => cb.checked = masterCheckbox.checked);
-    }
+  function seleccionarTodos(masterCheckbox) {
+    const checkboxes = document.querySelectorAll('.check-fila');
+    checkboxes.forEach(cb => cb.checked = masterCheckbox.checked);
+  }
 
-    // Puedes usar esta función si más adelante quieres hacer una acción masiva
-    function obtenerFilasSeleccionadas() {
-      return Array.from(document.querySelectorAll('.check-fila:checked')).map(cb => cb.closest('tr'));
-    }
-  </script>
+  // Puedes usar esta función si más adelante quieres hacer una acción masiva
+  function obtenerFilasSeleccionadas() {
+    return Array.from(document.querySelectorAll('.check-fila:checked')).map(cb => cb.closest('tr'));
+  }
+</script>
 
 <script>
 

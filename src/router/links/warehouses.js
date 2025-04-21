@@ -42,6 +42,7 @@ router.get('/:id_company/:id_branch/requesShipping', isLoggedIn, async (req, res
 router.get('/:id_company/:id_branch/request_transfer', isLoggedIn, async (req, res) => {
     const {id_branch}=req.params;
     const branchFree = await get_data_branch(id_branch);
-    res.render('links/warehouses/requestTransfer', { branchFree});
+    const dataServer=[{token:'5a39270b'}];
+    res.render('links/warehouses/requestTransfer', { branchFree,dataServer});
 })
 module.exports = router;
