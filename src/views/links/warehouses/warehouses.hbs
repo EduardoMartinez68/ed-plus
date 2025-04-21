@@ -142,7 +142,7 @@
 <div class="container">
     <!--her we will save the information of the server-->
     {{#each dataServer}}
-        <input type="text" value="{{token}}" hidden id="dataServerToken">
+        <input type="text" value="{{token}}" id="dataServerToken" hidden>
     {{/each}}
 
 
@@ -152,11 +152,14 @@
         <div class="card-body">
             <h2>Centro de Notificaciones</h2>
 
-            <div class="notification-actions">
-                <a href="#">Solicitar traspaso</a>
-                <a href="#">Enviar traspaso</a>
-                <a onclick="location.reload()">Actualizar</a>
-            </div>
+            {{#each branchFree}}
+                <div class="notification-actions">
+                    <a href="#" onclick="nextWeb('/{{id_companies}}/{{id}}/request_transfer')">Solicitar traspaso</a>
+                    <a href="#" onclick="getMyNotifications()">Enviar traspaso</a>
+                    <a onclick="location.reload()">Actualizar</a>
+                </div>
+            {{/each}}
+
 
             <div class="notification-list">
 
@@ -199,15 +202,51 @@
 </div>
 
 
+<select id="branchSelect" name="branch">
+</select>
+
 <script>
-    const tokenServer=document.getElementById('dataServerToken')
-    function getMyNotifications() {
-        alert(tokenServer)
+    const tokenServer=document.getElementById('dataServerToken').value; //her get the token of the software
+    let listbranch=null;
+
+    async function getMyNotifications() {
+        //we will see if have the information of our branch save
+        if(listbranch==null){
+            //if not have save the information of the branch, we will get the information from the database
+            const answerApi=await get_answer_server({token:tokenServer},`https://pluspuntodeventa.com/app/api_transfer/get_all_the_branch.php`);
+
+            //we will see if the server return most branch
+            if(answerApi.success){
+                listbranch=answerApi.branches;
+            }else{
+                alert('Ocurrio un error al obtener sucursales');
+                return;
+            }         
+        }
+
+        //create the select
+        const select = document.getElementById('branchSelect');
+
+        // Limpiamos por si acaso
+        select.innerHTML = '';
+
+        // Agregar opción por defecto
+        const defaultOption = document.createElement('option');
+        defaultOption.text = 'Selecciona una sucursal';
+        defaultOption.disabled = true;
+        defaultOption.selected = true;
+        select.appendChild(defaultOption);
+
+        //if exist data save, get show the information in the screen
+        for(var i=0;i<listbranch.length;i++){
+            const option = document.createElement('option');
+            option.value = listbranch[i].token_id;
+            option.text = listbranch[i].name;
+            select.appendChild(option);
+        }
     }
 
-    
-    getMyNotifications();
-
+    /*
     async function get_my_notification(date){
         const loadingOverlay = document.getElementById("loadingOverlay");
         loadingOverlay.style.display = "flex";
@@ -286,6 +325,34 @@
         } catch (error) {
             console.error('Error:', error);
             throw error;
+        }
+    }
+    */
+    async function get_answer_server(dataToTheServer, link) {
+        try {
+            const url = link;
+            // Configurar la solicitud
+            const options = {
+                method: 'POST', // Puedes usar POST en lugar de GET si necesitas enviar muchos datos
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dataToTheServer)
+            };
+
+            // Realizar la solicitud y esperar la respuesta
+            const response = await fetch(url, options);
+
+            if (!response.ok) {
+                throw new Error('Error en la solicitud');
+            }
+
+            // Convertir la respuesta a JSON y devolverla
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Error:', error);
+            return false;
         }
     }
 </script>

@@ -1,0 +1,399 @@
+  <style>
+    :root {
+      --azul: #1649FF;
+      --gris-fondo: #f0f2f5;
+      --gris-borde: #dcdcdc;
+      --blanco: #ffffff;
+      --gris-claro: #f9f9fb;
+      --borde-radio: 12px;
+      --sombra-suave: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .container {
+      background: var(--blanco);
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    h2 {
+      color: var(--color-company);;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      font-weight: 500;
+    }
+
+    input,
+    textarea {
+      border-radius: 8px !important;
+    }
+
+    /*TABLE*/
+    .table {
+      border-collapse: separate;
+      border-spacing: 0 8px;
+      width: 100%;
+      font-size: 14px;
+    }
+
+    .table thead {
+      background-color: var(--color-company);
+      color: white;
+      text-align: center;
+      border-radius: var(--borde-radio);
+    }
+
+    .table thead th {
+      padding: 12px;
+      border: none;
+    }
+
+    .table tbody tr {
+      background-color: white;
+      box-shadow: var(--sombra-suave);
+      transition: transform 0.1s ease-in-out;
+      border-radius: var(--borde-radio);
+    }
+
+    .table tbody tr:hover {
+      background-color: #cdd6ee;
+    }
+
+    .table tbody td {
+      padding: 12px;
+      border-top: 1px solid var(--gris-borde);
+      border-bottom: 1px solid var(--gris-borde);
+      text-align: center;
+      vertical-align: middle;
+      background-color: white;
+      border-left: none !important;
+      border-right: none !important;
+    }
+
+    .table tbody tr:first-child td {
+      border-top: none;
+    }
+
+    .table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Bordes redondeados en filas */
+    .table tbody tr td:first-child {
+      border-top-left-radius: var(--borde-radio);
+      border-bottom-left-radius: var(--borde-radio);
+    }
+
+    .table tbody tr td:last-child {
+      border-top-right-radius: var(--borde-radio);
+      border-bottom-right-radius: var(--borde-radio);
+    }
+
+    /*------------*/
+
+    .switch input {
+      display: none;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 42px;
+      height: 24px;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      background-color: #ccc;
+      border-radius: 34px;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      transition: .4s;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    .switch input:checked+.slider {
+      background-color: var(--color-company);;
+    }
+
+    .switch input:checked+.slider:before {
+      transform: translateX(18px);
+    }
+
+    .input-group .btn {
+      border-radius: 6px !important;
+    }
+
+    .estado {
+      font-size: 1.2rem;
+    }
+
+    .btn-primary {
+      background-color: var(--color-company);;
+      border: none;
+    }
+
+    .btn-outline-primary {
+      color: var(--color-company);;
+      border-color: var(--color-company);;
+    }
+
+    .btn-outline-primary:hover {
+      background-color: var(--color-hover);;
+      color: white;
+    }
+
+    textarea {
+      resize: none;
+    }
+
+    .btn-full {
+      font-size: 0.85rem;
+      padding: 0.25rem 0.5rem;
+    }
+
+    @media(max-width: 768px) {
+      .input-group .btn-full {
+        display: none;
+      }
+    }
+
+    .traspaso-info {
+      font-size: 1rem;
+      color: #444;
+      background-color: #f7f9ff;
+      border-left: 4px solid var(--color-company);
+      padding: 8px 12px;
+      display: inline-block;
+      border-radius: 6px;
+      font-weight: 500;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    /*search bar*/
+    #busqueda {
+      border-radius: 8px 0 0 8px;
+      border: 1px solid #ccc;
+    }
+
+    .input-group-text {
+      background-color: var(--color-company);;
+      color: white;
+      border-radius: 0 8px 8px 0;
+      border: 1px solid var(--color-company);;
+    }
+
+
+    /*cehck select*/
+    /* Ocultar el checkbox por defecto */
+    /* Base del checkbox oculto */
+    .check-fila {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--color-company);;
+      border-radius: 4px;
+      background-color: #fff;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.2s ease-in-out;
+      outline: none;
+      vertical-align: middle;
+    }
+
+    /* Sombra sutil al hacer hover */
+    .check-fila:hover {
+      box-shadow: 0 0 0 4px rgba(22, 73, 255, 0.1);
+    }
+
+    /* Estilo cuando está marcado */
+    .check-fila:checked {
+      background-color: var(--color-company);;
+      border-color: var(--color-company);;
+    }
+
+    /* Ícono de check (sutil, elegante) */
+    .check-fila:checked::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 6px;
+      width: 4px;
+      height: 9px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+
+
+
+    tr:has(.check-fila:checked) {
+      background-color: #eaf1ff;
+    }
+
+
+    /*message pop comment*/
+    .message-pop-comment-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(2px);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .text-comment {
+      height: 100%;
+    }
+
+    .message-pop-comment-box {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 50%;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      animation: slideUp 0.4s ease-out;
+      position: relative;
+    }
+
+    .message-pop-comment-close {
+      position: absolute;
+      top: 10px;
+      right: 14px;
+      border: none;
+      background: none;
+      font-size: 24px;
+      color: #555;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    .message-pop-comment-close:hover {
+      color: var(--color-hover);;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(40px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+.information-product {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.product-table-img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.product-text {
+  display: flex;
+  flex-direction: column; /* ← esto cambia de fila a columna */
+  gap: 0px; /* Menos espacio entre líneas */
+  line-height: 0.7; /* Ajusta altura entre líneas */
+}
+
+.product-text label {
+  font-weight: bold;
+  font-size: 14px;
+  color: #333;
+}
+
+.product-text span {
+  font-size: 14px;
+  color: #666;
+}
+  </style>
+
+<!---search bar-->
+<hr>
+<div class="input-group mb-4" style="max-width: 50%; margin: 0;">
+    <input type="text" id="busqueda" class="form-control" placeholder="Buscar por código de barras...">
+    <button class="btn"><i class="fi fi-rr-barcode-read"></i></button>
+</div>
+
+<!--table product-->
+<div class="table-responsive mb-4">
+    <table class="table table-bordered align-middle">
+        <thead>
+            <tr>
+                <th>
+                    <input type="checkbox" id="check-todos" onclick="seleccionarTodos(this)" class="check-fila">
+                </th>
+                <th>Producto</th>
+                <th>Solicitadas</th>
+                <th>Ext. Origen</th>
+                <th>Cant. Enviar</th>
+                <th>Precio de Venta</th>
+                <th>Precio Total</th>
+            </tr>
+        </thead>
+        <tbody id="tabla">
+        </tbody>
+    </table>
+
+    <div class="d-flex justify-content-end">
+        <label>Total de precios: <span>$</span><span>400</span></label>
+    </div>
+    <br>
+    <div class="d-flex justify-content-between gap-3 flex-wrap">
+      <button class="btn btn-primary px-4" style="width: 100%;">Enviar Productos</button>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

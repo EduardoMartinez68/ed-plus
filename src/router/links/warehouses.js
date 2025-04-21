@@ -22,7 +22,8 @@ router.get('/:id_company/:id_branch/warehouses', isLoggedIn, async (req, res) =>
     const branchFree = await get_data_branch(id_branch);
 
     const token = await nodePersist.get('installToken');
-    const dataServer={token:token};
+    //const dataServer={token:token};
+    const dataServer=[{token:'5a39270b'}];
     res.render('links/warehouses/warehouses', { branchFree, dataServer});
 })
 
@@ -30,5 +31,17 @@ router.get('/:id_company/:id_branch/evaluateDelivery', isLoggedIn, async (req, r
     const {id_branch}=req.params;
     const branchFree = await get_data_branch(id_branch);
     res.render('links/warehouses/evaluateDelivery', { branchFree});
+})
+
+router.get('/:id_company/:id_branch/requesShipping', isLoggedIn, async (req, res) => {
+    const {id_branch}=req.params;
+    const branchFree = await get_data_branch(id_branch);
+    res.render('links/warehouses/requesShipping', { branchFree});
+})
+
+router.get('/:id_company/:id_branch/request_transfer', isLoggedIn, async (req, res) => {
+    const {id_branch}=req.params;
+    const branchFree = await get_data_branch(id_branch);
+    res.render('links/warehouses/requestTransfer', { branchFree});
 })
 module.exports = router;

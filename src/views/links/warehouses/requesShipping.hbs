@@ -1,0 +1,625 @@
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+    :root {
+        --azul: #1649FF;
+        --gris-fondo: #f0f2f5;
+        --gris-borde: #dcdcdc;
+        --blanco: #ffffff;
+        --gris-claro: #f9f9fb;
+        --borde-radio: 12px;
+        --sombra-suave: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .container {
+        background: var(--blanco);
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    h2 {
+        color: var(--color-company);
+        ;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        font-weight: 500;
+    }
+
+    input,
+    textarea {
+        border-radius: 8px !important;
+    }
+
+    /*TABLE*/
+    .table {
+        border-collapse: separate;
+        border-spacing: 0 8px;
+        width: 100%;
+        font-size: 14px;
+    }
+
+    .table thead {
+        background-color: var(--color-company);
+        color: white;
+        text-align: center;
+        border-radius: var(--borde-radio);
+    }
+
+    .table thead th {
+        padding: 12px;
+        border: none;
+    }
+
+    .table tbody tr {
+        background-color: white;
+        box-shadow: var(--sombra-suave);
+        transition: transform 0.1s ease-in-out;
+        border-radius: var(--borde-radio);
+    }
+
+    .table tbody tr:hover {
+        background-color: #cdd6ee;
+    }
+
+    .table tbody td {
+        padding: 12px;
+        border-top: 1px solid var(--gris-borde);
+        border-bottom: 1px solid var(--gris-borde);
+        text-align: center;
+        vertical-align: middle;
+        background-color: white;
+        border-left: none !important;
+        border-right: none !important;
+    }
+
+    .table tbody tr:first-child td {
+        border-top: none;
+    }
+
+    .table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* Bordes redondeados en filas */
+    .table tbody tr td:first-child {
+        border-top-left-radius: var(--borde-radio);
+        border-bottom-left-radius: var(--borde-radio);
+    }
+
+    .table tbody tr td:last-child {
+        border-top-right-radius: var(--borde-radio);
+        border-bottom-right-radius: var(--borde-radio);
+    }
+
+    /*------------*/
+
+    .switch input {
+        display: none;
+    }
+
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 42px;
+        height: 24px;
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        background-color: #ccc;
+        border-radius: 34px;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        transition: .4s;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+    }
+
+    .switch input:checked+.slider {
+        background-color: var(--color-company);
+        ;
+    }
+
+    .switch input:checked+.slider:before {
+        transform: translateX(18px);
+    }
+
+    .input-group .btn {
+        border-radius: 6px !important;
+    }
+
+    .estado {
+        font-size: 1.2rem;
+    }
+
+    .btn-primary {
+        background-color: var(--color-company);
+        ;
+        border: none;
+    }
+
+    .btn-outline-primary {
+        color: var(--color-company);
+        ;
+        border-color: var(--color-company);
+        ;
+    }
+
+    .btn-outline-primary:hover {
+        background-color: var(--color-hover);
+        ;
+        color: white;
+    }
+
+    textarea {
+        resize: none;
+    }
+
+    .btn-full {
+        font-size: 0.85rem;
+        padding: 0.25rem 0.5rem;
+    }
+
+    @media(max-width: 768px) {
+        .input-group .btn-full {
+            display: none;
+        }
+    }
+
+    .traspaso-info {
+        font-size: 1rem;
+        color: #444;
+        background-color: #f7f9ff;
+        border-left: 4px solid var(--color-company);
+        padding: 8px 12px;
+        display: inline-block;
+        border-radius: 6px;
+        font-weight: 500;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    /*search bar*/
+    #busqueda {
+        border-radius: 8px 0 0 8px;
+        border: 1px solid #ccc;
+    }
+
+    .input-group-text {
+        background-color: var(--color-company);
+        ;
+        color: white;
+        border-radius: 0 8px 8px 0;
+        border: 1px solid var(--color-company);
+        ;
+    }
+
+
+    /*cehck select*/
+    /* Ocultar el checkbox por defecto */
+    /* Base del checkbox oculto */
+    .check-fila {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 18px;
+        height: 18px;
+        border: 2px solid var(--color-company);
+        ;
+        border-radius: 4px;
+        background-color: #fff;
+        cursor: pointer;
+        position: relative;
+        transition: all 0.2s ease-in-out;
+        outline: none;
+        vertical-align: middle;
+    }
+
+    /* Sombra sutil al hacer hover */
+    .check-fila:hover {
+        box-shadow: 0 0 0 4px rgba(22, 73, 255, 0.1);
+    }
+
+    /* Estilo cuando está marcado */
+    .check-fila:checked {
+        background-color: var(--color-company);
+        ;
+        border-color: var(--color-company);
+        ;
+    }
+
+    /* Ícono de check (sutil, elegante) */
+    .check-fila:checked::after {
+        content: '';
+        position: absolute;
+        top: 2px;
+        left: 6px;
+        width: 4px;
+        height: 9px;
+        border: solid white;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+    }
+
+
+
+    tr:has(.check-fila:checked) {
+        background-color: #eaf1ff;
+    }
+
+
+    /*message pop comment*/
+    .message-pop-comment-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(2px);
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+        animation: fadeIn 0.3s ease-out;
+    }
+
+    .text-comment {
+        height: 100%;
+    }
+
+    .message-pop-comment-box {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 50%;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        animation: slideUp 0.4s ease-out;
+        position: relative;
+    }
+
+    .message-pop-comment-close {
+        position: absolute;
+        top: 10px;
+        right: 14px;
+        border: none;
+        background: none;
+        font-size: 24px;
+        color: #555;
+        cursor: pointer;
+        transition: color 0.3s;
+    }
+
+    .message-pop-comment-close:hover {
+        color: var(--color-hover);
+        ;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideUp {
+        from {
+            transform: translateY(40px);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+</style>
+
+<link rel='stylesheet'
+    href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+
+<div class="container my-5">
+    <h2>Traspaso de Salida</h2>
+
+    <!--her we will save the information of the server-->
+    {{#each dataServer}}
+        <input type="text" value="{{token}}" id="dataServerToken" hidden>
+    {{/each}}
+
+    <div class="text my-3">
+        <span class="traspaso-info">
+            <select id="branchSelect" name="branch">
+            </select>
+        </span>
+        <button class="btn" onclick="getMyNotifications()">Actualizar Sucursales</button>
+    </div>
+
+
+
+
+
+    <!---search bar-->
+    <hr>
+    <div class="input-group mb-4" style="max-width: 50%; margin: 0;">
+        <input type="text" id="busqueda" class="form-control" placeholder="Buscar por código de barras...">
+    </div>
+
+    <!--table product-->
+    <div class="table-responsive mb-4">
+        <table class="table table-bordered align-middle">
+            <thead>
+                <tr>
+                    <th>
+                        <input type="checkbox" id="check-todos" onclick="seleccionarTodos(this)">
+                    </th>
+                    <th>✔</th>
+                    <th>Código</th>
+                    <th>Producto</th>
+                    <th>Lote</th>
+                    <th>Caducidad</th>
+                    <th>Enviada</th>
+                    <th>Recibida</th>
+                </tr>
+            </thead>
+            <tbody id="tabla">
+                <tr>
+                    <td>
+                        <input type="checkbox" class="check-fila">
+                    </td>
+                    <td><label class="switch"><input type="checkbox" onchange="toggleCompleto(this)"><span
+                                class="slider"></span></label></td>
+                    <td class="codigo-barras">123456789</td>
+                    <td>Producto A</td>
+                    <td>Lote 0</td>
+                    <td>2025-12-30</td>
+                    <td>50 pz</td>
+                    <td>
+                        <div class="input-group">
+                            <button class="btn btn-outline-primary" onclick="modificar(this, -1)">−</button>
+                            <input type="number" class="form-control text-center" value="0" min="0" max="50"
+                                onchange="validar(this, 50)">
+                            <button class="btn btn-outline-primary" onclick="modificar(this, 1)">+</button>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <input type="checkbox" class="check-fila">
+                    </td>
+                    <td><label class="switch"><input type="checkbox" onchange="toggleCompleto(this)"><span
+                                class="slider"></span></label></td>
+                    <td class="codigo-barras">76767676</td>
+                    <td>Producto A</td>
+                    <td>Lote 0</td>
+                    <td>2025-12-30</td>
+                    <td>30 pz</td>
+                    <td>
+                        <div class="input-group">
+                            <button class="btn btn-outline-primary" onclick="modificar(this, -1)">−</button>
+                            <input type="number" class="form-control text-center" value="0" min="0" max="30"
+                                onchange="validar(this, 30)">
+                            <button class="btn btn-outline-primary" onclick="modificar(this, 1)">+</button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="message-pop-comment-overlay" id="popupComentario">
+        <div class="message-pop-comment-box">
+            <button class="message-pop-comment-close" onclick="cerrarPopupComentario()">×</button>
+            <div class="mb-4">
+                <label for="comentario" class="form-label">Comentario General</label>
+                <textarea id="comentario" rows="4" class="form-control text-comment"
+                    placeholder="Describe cualquier detalle o situación relevante durante la recepción..."></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between gap-3 flex-wrap">
+        <button class="btn btn-primary px-4">Confirmar mercancía recibida</button>
+        <button class="btn btn-outline-danger px-4">🚫 Rechazar mercancía</button>
+    </div>
+</div>
+
+
+
+
+
+
+<script>
+    const tokenServer = document.getElementById('dataServerToken').value; //her get the token of the software
+    let listbranch = null;
+
+    async function getMyNotifications() {
+        //we will see if have the information of our branch save
+        if (listbranch === null) {
+            //if not have save the information of the branch, we will get the information from the database
+            const answerApi = await get_answer_server({ token: tokenServer }, `https://pluspuntodeventa.com/app/api_transfer/get_all_the_branch.php`);
+
+            //we will see if the server return most branch
+            if (answerApi.success) {
+                listbranch = answerApi.branches;
+            } else {
+                alert('Ocurrio un error al obtener sucursales');
+                return;
+            }
+        }
+
+        //create the select
+        const select = document.getElementById('branchSelect');
+
+        // Limpiamos por si acaso
+        select.innerHTML = '';
+
+        // Agregar opción por defecto
+        const defaultOption = document.createElement('option');
+        defaultOption.text = 'Selecciona una sucursal';
+        defaultOption.disabled = true;
+        defaultOption.selected = true;
+        select.appendChild(defaultOption);
+
+        //if exist data save, get show the information in the screen
+        for (var i = 0; i < listbranch.length; i++) {
+            const option = document.createElement('option');
+            option.value = listbranch[i].token_id;
+            option.text = listbranch[i].name;
+            select.appendChild(option);
+        }
+    }
+</script>
+
+
+<script>
+    document.getElementById('fecha').value = new Date().toLocaleString();
+
+    function toggleCompleto(checkbox) {
+        const fila = checkbox.closest('tr');
+        const input = fila.querySelector('input[type="number"]');
+        const esperado = parseInt(input.max);
+
+        if (checkbox.checked) {
+            input.value = esperado;
+            rellenarCantidadSeleccionados(); //this is for update all the item that the user have marked
+        } else {
+            input.value = 0;
+            reiniciarFilasSeleccionadas(); //this is for update all the item that the user have marked
+        }
+
+        validar(input, esperado);
+    }
+
+
+    function modificar(btn, valor) {
+        const filas = obtenerFilasSeleccionadas();
+        const input = btn.parentNode.querySelector('input[type="number"]');
+        const max = parseInt(input.max);
+        let actual = parseInt(input.value);
+        actual = Math.max(0, Math.min(max, actual + valor));
+        input.value = actual;
+
+        if (filas.length == 0) {
+            validar(input, max);
+            return;
+        }
+
+        modificarFilasSeleccionadas(filas, actual)
+    }
+
+    function llenar(btn, cantidad) {
+        const input = btn.parentNode.querySelector('input[type="number"]');
+        input.value = cantidad;
+        validar(input, cantidad);
+    }
+
+    function validar(input, esperado) {
+        const fila = input.closest('tr');
+        const actual = parseInt(input.value);
+
+        // Actualizar el switch visual si existe
+        const switchInput = fila.querySelector('.switch input[type="checkbox"]');
+        if (switchInput) {
+            switchInput.checked = actual === esperado;
+        }
+
+
+    }
+</script>
+<script>
+    document.getElementById('busqueda').addEventListener('input', function () {
+        const filtro = this.value.toLowerCase();
+        const filas = document.querySelectorAll('.table tbody tr'); // Cambié aquí el selector
+
+        filas.forEach(fila => {
+            const codigo = fila.querySelector('.codigo-barras')?.textContent.toLowerCase() || '';
+            fila.style.display = codigo.includes(filtro) ? '' : 'none';
+        });
+    });
+
+</script>
+
+<script>
+    function seleccionarTodos(masterCheckbox) {
+        const checkboxes = document.querySelectorAll('.check-fila');
+        checkboxes.forEach(cb => cb.checked = masterCheckbox.checked);
+    }
+
+    // Puedes usar esta función si más adelante quieres hacer una acción masiva
+    function obtenerFilasSeleccionadas() {
+        return Array.from(document.querySelectorAll('.check-fila:checked')).map(cb => cb.closest('tr'));
+    }
+</script>
+<script>
+    // Obtener todas las filas marcadas
+    function obtenerFilasSeleccionadas() {
+        return Array.from(document.querySelectorAll('.check-fila:checked')).map(cb => cb.closest('tr'));
+    }
+
+    // Rellenar la cantidad recibida con la enviada
+    function rellenarCantidadSeleccionados() {
+        const filas = obtenerFilasSeleccionadas();
+        filas.forEach(fila => {
+            const enviada = parseInt(fila.cells[7].textContent.trim());
+            const input = fila.querySelector('input[type="number"]');
+            input.value = enviada;
+            input.dispatchEvent(new Event('change')); // para que se actualice visualmente si usas alguna lógica
+        });
+    }
+
+    // Marcar como completos (activar el switch)
+    function reiniciarFilasSeleccionadas() {
+        const filas = obtenerFilasSeleccionadas();
+        filas.forEach(fila => {
+            // Reiniciar cantidad recibida a 0
+            const inputCantidad = fila.querySelector('input[type="number"]');
+            if (inputCantidad) {
+                inputCantidad.value = 0;
+                inputCantidad.dispatchEvent(new Event('change'));
+            }
+
+            // Desmarcar switch de completo
+            const switchInput = fila.querySelector('.switch input[type="checkbox"]');
+            if (switchInput && switchInput.checked) {
+                switchInput.checked = false;
+                switchInput.dispatchEvent(new Event('change'));
+            }
+        });
+    }
+
+    function modificarFilasSeleccionadas(filas, valor) {
+        filas.forEach(fila => {
+            const input = fila.querySelector('input[type="number"]');
+            if (input) {
+                input.value = valor;
+            }
+        });
+    }
+</script>
+<script>
+    function abrirPopupComentario() {
+        const popup = document.getElementById('popupComentario');
+        popup.style.display = 'flex';
+    }
+
+    function cerrarPopupComentario() {
+        const popup = document.getElementById('popupComentario');
+        popup.style.display = 'none';
+    }
+</script>
