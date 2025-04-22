@@ -1,239 +1,115 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Create Branch</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <title>Pantalla de Carga</title>
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-solid-straight/css/uicons-solid-straight.css">
   <style>
     * {
+      margin: 0;
+      padding: 0;
       box-sizing: border-box;
     }
 
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Inter', sans-serif;
-      background: linear-gradient(to right, #eef1f9, #e4e8f8);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-    }
-
-    .open-form-btn {
-      padding: 14px 32px;
-      background: #1648FF;
+    body, html {
+      height: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+      overflow: hidden;
       color: white;
-      font-size: 16px;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      box-shadow: 0 8px 20px rgba(22, 72, 255, 0.3);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-    .open-form-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 25px rgba(22, 72, 255, 0.4);
-    }
-
-    .popup-overlay {
-      position: fixed;
-      inset: 0;
-      background-color: rgba(0, 0, 0, 0.45);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      visibility: hidden;
-      opacity: 0;
-      transition: all 0.3s ease-in-out;
-      z-index: 999;
-    }
-
-    .popup-overlay.active {
-      visibility: visible;
-      opacity: 1;
-    }
-
-    .popup {
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(16px);
-      border-radius: 20px;
-      padding: 40px 35px;
-      width: 100%;
-      max-width: 450px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-      position: relative;
-      animation: fadeSlide 0.5s ease forwards;
-    }
-
-    @keyframes fadeSlide {
-      from {
-        opacity: 0;
-        transform: translateY(-20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .close-btn {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      background: #fff;
-      border: none;
-      font-size: 18px;
-      font-weight: bold;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      color: #444;
-      cursor: pointer;
-      transition: background 0.3s, transform 0.2s;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-
-    .close-btn:hover {
-      background: #f0f0f0;
-      transform: rotate(90deg);
-    }
-
-    form {
+    .loader-container {
       display: flex;
       flex-direction: column;
-    }
-
-    .form-group {
+      justify-content: center;
+      align-items: center;
+      height: 100%;
       position: relative;
-      margin-top: 30px;
     }
 
-    .form-group input {
-      width: 100%;
-      padding: 14px 10px 10px 0;
-      font-size: 16px;
-      background: transparent;
-      border: none;
-      border-bottom: 2px solid #ccc;
-      outline: none;
-      transition: border-color 0.3s ease;
+    .rocket {
+      font-size: 80px;
+      animation: fly 4s ease-in-out infinite;
+      color: #ffffff;
+      z-index: 2;
     }
 
-    .form-group input:focus {
-      border-bottom-color: #1648FF;
+    @keyframes fly {
+      0% {
+        transform: translateY(0) translateX(0) rotate(-5deg);
+      }
+      50% {
+        transform: translateY(-50px) translateX(40px) rotate(5deg);
+      }
+      100% {
+        transform: translateY(0) translateX(0) rotate(-5deg);
+      }
     }
 
-    .form-group label {
+    .loading-text {
+      margin-top: 20px;
+      font-size: 24px;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.4; }
+      50% { opacity: 1; }
+      100% { opacity: 0.4; }
+    }
+
+    .stars {
       position: absolute;
-      top: 14px;
-      left: 0;
-      font-size: 16px;
-      color: #777;
-      pointer-events: none;
-      transition: 0.2s ease all;
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      z-index: 1;
     }
 
-    .form-group input:focus ~ label,
-    .form-group input:not(:placeholder-shown) ~ label {
-      top: -14px;
-      font-size: 12px;
-      color: #1648FF;
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle 2s infinite ease-in-out;
     }
 
-    .submit-btn {
-      margin-top: 40px;
-      padding: 14px;
-      background-color: #1648FF;
-      color: white;
-      font-size: 16px;
-      font-weight: 600;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: background 0.3s ease;
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.2; }
+      50% { opacity: 1; }
     }
 
-    .submit-btn:hover {
-      background-color: #0f39d4;
+    .powered {
+      position: absolute;
+      bottom: 20px;
+      font-size: 14px;
+      color: #aaa;
+      z-index: 2;
     }
   </style>
 </head>
 <body>
-
-  <button class="open-form-btn" onclick="openPopup()">Create New Branch</button>
-
-  <div class="popup-overlay" id="popupOverlay">
-    <div class="popup">
-      <button class="close-btn" onclick="closePopupForm()">×</button>
-      <form action="/create-branch" method="POST">
-        <div class="form-group">
-          <input type="text" id="branch_name" name="name" placeholder=" " required>
-          <label for="branch_name">Nombre de sucursal</label>
-        </div>
-
-        <div class="form-group">
-          <input type="text" id="branch_address" name="address" placeholder=" " required>
-          <label for="branch_address">Dirección</label>
-        </div>
-
-        <div class="form-group">
-          <input type="number" id="token_id" name="token_id" placeholder=" ">
-          <label for="token_id">ID del token</label>
-        </div>
-
-        <div class="form-group">
-          <input type="number" id="owner_user_id" name="owner_user_id" placeholder=" ">
-          <label for="owner_user_id">ID del usuario dueño</label>
-        </div>
-
-        <button type="submit" class="submit-btn">Guardar sucursal</button>
-      </form>
-    </div>
+  <div class="loader-container">
+    <div class="rocket"><i class="fi fi-ss-rocket-lunch"></i></div>
+    <div class="loading-text">Cargando...</div>
+    <div class="powered">Power by {ED} Software Developer</div>
+    <div class="stars" id="stars"></div>
   </div>
 
   <script>
-    // Función para abrir el popup
-    function openPopup() {
-      document.getElementById('popupOverlay').classList.add('active');
-      loadForm();
-    }
+    const starsContainer = document.getElementById('stars');
 
-    // Función para cerrar el popup
-    function closePopup() {
-      document.getElementById('popupOverlay').classList.remove('active');
-    }
-
-    // Función que se encarga de cargar el formulario dinámico
-    function loadForm() {
-      const popupForm = document.getElementById('popupForm');
-      
-      // Limpiar cualquier contenido previo en el popup
-      popupForm.innerHTML = `
-        <button class="close-btn" onclick="closePopup()">×</button>
-        <form action="/add-branch" method="POST">
-          <div class="form-group">
-            <input type="text" name="branchName" required placeholder="Escribe el nombre de tu sucursal">
-            <label>Nombre de la sucursal</label>
-          </div>
-          <div class="form-group">
-            <input type="text" name="address" required placeholder="Dirección">
-            <label>Dirección</label>
-          </div>
-          <div class="form-group">
-            <input type="number" name="token_id" required placeholder="ID del token">
-            <label>ID del token</label>
-          </div>
-          <div class="form-group">
-            <input type="number" name="owner_user_id" required placeholder="ID del propietario">
-            <label>ID del propietario</label>
-          </div>
-          <button type="submit" class="submit-btn">Guardar Sucursal</button>
-        </form>
-      `;
+    // Crear estrellas aleatorias
+    for (let i = 0; i < 100; i++) {
+      const star = document.createElement('div');
+      star.className = 'star';
+      star.style.top = `${Math.random() * 100}%`;
+      star.style.left = `${Math.random() * 100}%`;
+      star.style.animationDuration = `${1 + Math.random() * 2}s`;
+      starsContainer.appendChild(star);
     }
   </script>
-
 </body>
 </html>

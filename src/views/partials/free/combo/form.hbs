@@ -21,7 +21,14 @@
     <div class="col">
         <div class="form-group">
             <label for="">Barcode</label>
-            <input type="text" class="form-control" placeholder="Barcode" name="barcode" required>
+            <div class="row">
+                <div class="col-10">
+                    <input type="text" class="form-control" placeholder="Barcode" name="barcode" required id="barcodeProduct"> 
+                </div>
+                <div class="col-2">
+                    <button class="btn" type="button" onclick="search_product_in_my_api()"><i class="fi fi-sr-cloud-back-up"></i></button>
+                </div>
+            </div>
         </div>
         <div class="form-group">
             <label for="">Nombre</label>
@@ -36,7 +43,7 @@
                 <label for="">Categoria</label>
                 <select class="form-control" name="category">
                     {{#each category}}
-                    <option value="{{id}}" selected>{{name}}</option>
+                    <option value="{{id}}">{{name}}</option>
                     {{/each}}
                 </select>
             </div>
@@ -44,7 +51,7 @@
                 <label for="">Departamento</label>
                 <select class="form-control" name="department">
                     {{#each departments}}
-                    <option value="{{id}}" selected>{{name}}</option>
+                    <option value="{{id}}">{{name}}</option>
                     {{/each}}
                 </select>
             </div>
@@ -66,4 +73,251 @@
     $(document).ready(function () {
         $(".chosen-select").chosen({ no_results_text: 'No hay resultados para ' });
     });
+</script>
+
+
+
+
+<!---message pop for my API--->
+<!---this message pop is for that we show the information that get from the API to the user--->
+<style>
+  :root {
+    --color-gray-light: #f4f4f4;
+    --color-gray-dark: #333;
+    --color-border: #ddd;
+  }
+
+  .information-pop-api-container {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+
+  .information-pop-api-content {
+    background: #fff;
+    border-radius: 16px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 600px;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+    position: relative;
+    animation: fadeIn 0.3s ease-in-out;
+    font-family: "Segoe UI", sans-serif;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .information-pop-api-close {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    font-size: 22px;
+    color: var(--color-gray-dark);
+    cursor: pointer;
+    transition: color 0.3s;
+  }
+
+  .information-pop-api-close:hover {
+    color: #111;
+  }
+
+  .information-pop-api-content h3 {
+    margin-top: 0;
+    font-size: 22px;
+    text-align: center;
+    margin-bottom: 1rem;
+    color: var(--color-gray-dark);
+  }
+
+  .information-pop-api-data {
+
+  }
+
+  .information-pop-api-data img {
+    width: 180px;
+    height: 180px;
+    object-fit: contain;
+    margin: 0 auto 10px;
+    border-radius: 12px;
+    border: 1px solid var(--color-border);
+  }
+
+  .information-pop-api-data label {
+    font-size: 14px;
+    color: var(--color-gray-dark);
+    font-weight: bold;
+  }
+
+  .information-pop-api-data input, 
+  .information-pop-api-data textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    transition: border-color 0.3s;
+  }
+
+  .information-pop-api-data input:focus, 
+  .information-pop-api-data textarea:focus {
+    border-color: var(--color-company);
+    outline: none;
+  }
+
+  .information-pop-api-button {
+    margin-top: 1rem;
+    background-color: var(--color-company);
+    color: white;
+    border: none;
+    padding: 0.75rem;
+    width: 100%;
+    font-size: 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .information-pop-api-button:hover {
+    background-color: #123ccc;
+  }
+</style>
+
+<div class="information-pop-api-container" id="informationPopApi" style="display:none;">
+  <div class="information-pop-api-content">
+    <span class="information-pop-api-close" onclick="closeInformationPop()">×</span>
+    <h3>Información de sugerencia</h3>
+    <div class="information-pop-api-data" id="informationPopApiData">
+      <!-- Inputs se insertan dinámicamente -->
+    </div>
+
+
+    <button onclick="useProductData()" class="information-pop-api-button" style="width: 100%;" type="button">Utilizar</button>
+  </div>
+</div>
+
+
+<script>
+let selectedProductData = {}; // Variable global para guardar la info
+
+async function search_product_in_my_api() {
+    const barcodeProduct = document.getElementById('barcodeProduct').value.trim();
+    const loadingOverlay = document.getElementById("loadingOverlay");
+
+    if (!barcodeProduct) {
+        errorMessage("👁️ Mucho Ojo", "Por favor, introduce un código de barras.");
+        return;
+    }
+
+    //her we will see if exist a search 
+    if (selectedProductData.barcode==barcodeProduct){
+        useProductData();
+        return;
+    }
+
+
+    try {
+        loadingOverlay.style.display = "flex";
+        const response = await fetch('https://pluspuntodeventa.com/api/plus/search_product.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ barcode: barcodeProduct })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            selectedProductData = result.product; // Guardamos la data globalmente
+            showInformationPop();
+        } else {
+            errorMessage("❌ Producto no encontrado:", result.message);
+        }
+
+    } catch (error) {
+        console.error("💥 Error al buscar el producto:", error);
+        errorMessage("💥 Error al buscar el producto:", error);
+    }finally {
+        // Hide loading overlay regardless of success or failure
+        loadingOverlay.style.display = "none";
+    }
+}
+
+function showInformationPop() {
+  const container = document.getElementById('informationPopApiData');
+  const imageUrl = selectedProductData.image_url || 'https://cdn-icons-png.flaticon.com/512/679/679922.png';
+  const data = selectedProductData || {};
+
+  container.innerHTML = `
+    <div class="row">
+        <!-- Columna para la imagen -->
+        <div class="col-12 col-md-4 d-flex justify-content-center mb-4 mb-md-0">
+            <img src="${imageUrl}" alt="Imagen del producto" class="img-fluid" style="max-width: 100%; height: auto; border-radius: 12px; border: 1px solid #ddd;">
+        </div>
+
+        <!-- Columna para los campos de datos -->
+        <div class="col-12 col-md-8">
+            <div class="mb-2">
+                <label for="productBarcodePop" class="form-label">Código de barras:</label>
+                <input type="text" id="productBarcodePop" value="${data.barcode || ''}" class="form-control" placeholder="Código de barras">
+            </div>
+
+            <div class="mb-2">
+                <label for="productNamePop" class="form-label">Nombre del producto:</label>
+                <input type="text" id="productNamePop" value="${data.name || ''}" class="form-control" placeholder="Nombre del producto">
+            </div>
+
+            <div class="mb-2">
+                <label for="productPricePop" class="form-label">Precio:</label>
+                <input type="text" id="productPricePop" value="${data.price || ''}" class="form-control" placeholder="Precio">
+            </div>
+        </div>
+
+        <!-- Descripción -->
+        <div class="col-12 mt-3">
+            <label for="productDescriptionPop" class="form-label">Descripción del producto:</label>
+            <textarea id="productDescriptionPop" class="form-control" rows="3" placeholder="Descripción">${data.description || ''}</textarea>
+        </div>
+    </div>
+  `;
+
+  document.getElementById('informationPopApi').style.display = 'flex';
+}
+
+
+function closeInformationPop() {
+    document.getElementById('informationPopApi').style.display = 'none';
+}
+
+function useProductData() {
+    selectedProductData.name = document.getElementById('productNamePop').value;
+    selectedProductData.description = document.getElementById('productDescriptionPop').value;
+    selectedProductData.price = document.getElementById('productPricePop').value;
+    selectedProductData.barcode = document.getElementById('productBarcodePop').value;
+
+    // Asignamos los datos al formulario
+    document.querySelector('input[name="name"]').value = selectedProductData.name || "";
+    document.querySelector('textarea[name="description"]').value = selectedProductData.description || "";
+    document.querySelector('input[name="barcode"]').value = selectedProductData.barcode || "";
+    document.getElementById('sale_price').value = selectedProductData.price || "";
+  
+    // También podrías actualizar el preview de imagen si se proporciona una URL:
+    if (selectedProductData.image_url) {
+        document.getElementById('imgEmployee').src = selectedProductData.image_url;
+    }
+
+    // ⚠️ No se modifican los select de categoría y departamento
+
+    // Cerramos el popup
+    closeInformationPop();
+}
+
+// Función que ejecuta la búsqueda del producto
 </script>

@@ -6,37 +6,45 @@
 
   <div class="container my-5">
     <h2>Transporte de Mercancía</h2>
+
+      <!--her we will save the data of the token that the user use-->
       {{#each dataServer}}
         <input type="text" value="{{token}}" id="dataServerToken" hidden>
-    {{/each}}
+      {{/each}}
 
-
-  {{#each branchFree}}
-    <div class="text my-3">
-      <span class="traspaso-info">
-        Desde <strong>{{name_branch}}</strong> hasta
-        <strong>
-          <select name="branch" id="branchSelect" class="branchSelect form-select" aria-label="Default select example">
-            <option value="">Selecciona una sucursal</option>
-          </select>
-        </strong>
-      </span>
-      <button class="btn btn-primary update-branch" onclick="getMyNotifications()">Actualizar Sucursales</button>
-    </div>
-  {{/each}}
+      <!--now we will show my branch and the other branch of the company--->
+      {{#each branchFree}}
+        <div class="text my-3">
+          <span class="traspaso-info">
+            Desde <strong>{{name_branch}}</strong> hasta
+            <strong>
+              <select name="branch" id="branchSelect" class="branchSelect form-select" aria-label="Default select example">
+                <option value="">Selecciona una sucursal</option>
+              </select>
+            </strong>
+          </span>
+          <button class="btn btn-primary update-branch" onclick="get_all_the_branch()">Actualizar Sucursales</button>
+        </div>
+      {{/each}}
 
 
     {{>warehouses/tableSendTransport}}
     {{>warehouses/messagePop}}
+    {{>warehouses/popSearchProducts}}
+    {{>loading}}
   </div>
 
 <script>
+    // in this script we will get all the branch of the company
     const tokenServer = document.getElementById('dataServerToken').value; //her get the token of the software
     let listbranch = null;
 
-    async function getMyNotifications() {
+    async function get_all_the_branch() {
         //we will see if have the information of our branch save
         if (listbranch === null) {
+            const loadingOverlay = document.getElementById("loadingOverlay");
+            loadingOverlay.style.display = "flex";
+
             //if not have save the information of the branch, we will get the information from the database
             const answerApi = await get_answer_server({ token: tokenServer }, `https://pluspuntodeventa.com/app/api_transfer/get_all_the_branch.php`);
 
@@ -44,9 +52,11 @@
             if (answerApi.success) {
                 listbranch = answerApi.branches;
             } else {
-                alert('Ocurrio un error al obtener sucursales');
+                await informationMessage('Uy... 😢', 'No pudimos cargar las sucursales disponibles. Pero no te preocupes, inténtalo de nuevo más tarde.');
                 return;
             }
+
+            loadingOverlay.style.display = "none";
         }
 
         //create the select
@@ -69,9 +79,12 @@
             option.text = listbranch[i].name;
             select.appendChild(option);
         }
+
+        confirmationMessage('¡Todo listo! 😍', 'Las sucursales disponibles se han actualizado con éxito.');
     }
 
       async function get_answer_server(dataToTheServer, link) {
+
         try {
             const url = link;
             // Configurar la solicitud
@@ -132,131 +145,4 @@
   function obtenerFilasSeleccionadas() {
     return Array.from(document.querySelectorAll('.check-fila:checked')).map(cb => cb.closest('tr'));
   }
-</script>
-
-<script>
-
-    const listProducts = [
-        {
-            id: 1,
-            image: 'https://panoli.mx/cdn/shop/products/00750105862010L.jpg?v=1618500354',
-            name: 'Producto 1',
-            code: '1234567890',
-            requested: 0,
-            amountToSend: 0,
-            stock: 10,
-            salePrice: 10,
-            total: 10,
-        },
-        {
-            id: 2,
-            image: 'https://panoli.mx/cdn/shop/products/00750105862010L.jpg?v=1618500354',
-            name: 'Producto 2',
-            code: '8783682456',
-            requested: 0,
-            amountToSend: 0,
-            stock: 10,
-            salePrice: 10,
-            total: 10,
-        }
-    ];
-
-    function openPopRequest(barcode) {
-        document.getElementById('pop-request-overlay').style.display = 'flex';
-        const producto = listProducts.find(product => product.code === barcode); //search the product by barcode
-
-        //now we will see if exist this product in the list
-        if (!producto) {
-            console.error('Producto no encontrado');
-            return;
-        }
-
-        //her we will update the data of the message pop with the data of the product selected
-        document.getElementById('pop-request-img').src = producto.image;
-        document.getElementById('pop-request-name').textContent = producto.name;
-        document.getElementById('pop-request-code').textContent = producto.code;
-        document.getElementById('pop-request-stock').textContent = producto.stock;
-    }
-
-    function closePopRequest() {
-        document.getElementById('pop-request-overlay').style.display = 'none';
-    }
-
-    function adjustQty(amount) {
-        const input = document.getElementById('pop-request-qty');
-        let value = parseInt(input.value) || 0;
-        value += amount;
-        if (value < 0) value = 0;
-        input.value = value;
-    }
-
-    function renderizarTablaCompleta() {
-        const tbody = document.getElementById('tabla');
-        tbody.innerHTML = ''; // Limpiar tabla
-
-        listProducts.forEach((product, index) => {
-            const tr = document.createElement('tr');
-            tr.setAttribute('data-index', index); // Lo usamos luego para editar
-
-            tr.innerHTML = `
-            <td>
-                <input type="checkbox" class="check-fila">
-            </td>
-            <td class="information-product">
-                <img src="${product.image}" alt="" class="product-table-img">
-                <div class="product-text">
-                    <label>${product.code}</label><br>
-                    <span>${product.name}</span>
-                </div>
-            </td>
-            <td>${product.requested} pz</td>
-            <td>${product.stock} pz</td>
-            <td>
-                <div class="input-group">
-                    <button onclick="openPopRequest('${product.code}')" class="form-control text-center">${product.amountToSend}</button>
-                </div>
-            </td>
-            <td>${product.salePrice}</td>
-            <td>${product.total}</td>
-            </tr>
-        `;
-
-            tbody.appendChild(tr);
-        });
-    }
-
-    
-    renderizarTablaCompleta();
-
-
-    function actualizarFilaPorCantidad(code, nuevaCantidad) {
-        // Buscar el producto por su código
-        const index = listProducts.findIndex(p => p.code === code);
-        if (index === -1) return;
-
-        // Actualizar los valores en el array
-        listProducts[index].amountToSend = nuevaCantidad;
-        listProducts[index].total = nuevaCantidad * listProducts[index].salePrice;
-
-        // Actualizar la fila en la tabla (sin volver a renderizar todo)
-        const tbody = document.getElementById('tabla');
-        const filas = tbody.querySelectorAll('tr');
-
-        for (let fila of filas) {
-            const filaIndex = parseInt(fila.getAttribute('data-index'));
-            if (filaIndex === index) {
-                const btnCantidad = fila.querySelector('button');
-                const tdTotal = fila.querySelectorAll('td')[6]; // Última celda
-
-                btnCantidad.textContent = nuevaCantidad;
-                tdTotal.textContent = listProducts[index].total;
-                break;
-            }
-        }
-    }
-
-
-
-
-    
 </script>

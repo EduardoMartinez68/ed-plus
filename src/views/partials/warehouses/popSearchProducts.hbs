@@ -1,0 +1,193 @@
+
+  <style>
+    /* POPUP */
+    #pop-search-products-popup {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+      justify-content: center; align-items: center;
+      z-index: 9999;
+    }
+
+    .pop-search-products-content {
+      background: #fff;
+      width: 90%;
+      max-width: 700px;
+      max-height: 90vh;
+      overflow-y: auto;
+      border-radius: 10px;
+      padding: 20px;
+    }
+
+    .pop-search-products-input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      font-size: 16px;
+    }
+
+    .pop-search-products-item {
+      display: flex;
+      align-items: center;
+      border: 1px solid #ccc;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      padding: 10px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .pop-search-products-item.selected {
+      background-color: #e0e0ff;
+      border-color: #5f5fff;
+    }
+
+    .pop-search-products-item img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      margin-right: 15px;
+      border-radius: 8px;
+    }
+
+    .pop-search-products-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .pop-search-products-buttons {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+
+    .pop-search-products-buttons button {
+      padding: 10px 20px;
+      margin-left: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+  </style>
+
+  <!-- POPUP -->
+  <div id="pop-search-products-popup">
+    <div class="pop-search-products-content">
+      <input type="text" id="pop-search-products-input" class="pop-search-products-input" placeholder="Buscar producto..." oninput="filterPopSearchProducts()" />
+
+      <div id="pop-search-products-list">
+        <!-- Productos aquí -->
+      </div>
+
+      <div class="pop-search-products-buttons">
+        <button onclick="closePopSearchProducts()">Cancelar</button>
+        <button onclick="confirmPopSearchProducts()">Aceptar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const listProductsInMyStore = [ 
+      {
+          id: 1,
+          image: 'https://panoli.mx/cdn/shop/products/00750105862010L.jpg?v=1618500354',
+          name: 'Producto 1',
+          code: '1234567890',
+          requested: 0,
+          amountToSend: 0,
+          stock: 10,
+          salePrice: 10,
+          total: 10,
+      },
+      {
+          id: 2,
+          image: 'https://panoli.mx/cdn/shop/products/00750105862010L.jpg?v=1618500354',
+          name: 'Producto 2',
+          code: '8783682456',
+          requested: 0,
+          amountToSend: 0,
+          stock: 10,
+          salePrice: 10,
+          total: 10,
+      }
+    ];
+
+    let popSearchSelectedProducts = [];
+    let listProducts = [];
+    document.getElementById('pop-search-products-popup').style.display = 'flex';
+    function openPopSearchProducts() {
+      document.getElementById('pop-search-products-popup').style.display = 'flex';
+      renderPopSearchProducts(listProductsInMyStore);
+    }
+
+    function closePopSearchProducts() {
+      document.getElementById('pop-search-products-popup').style.display = 'none';
+      document.getElementById('pop-search-products-input').value = '';
+      popSearchSelectedProducts = [];
+    }
+
+    function filterPopSearchProducts() {
+      const search = document.getElementById('pop-search-products-input').value.toLowerCase();
+      const filtered = listProductsInMyStore.filter(p => 
+        p.name.toLowerCase().includes(search) || p.code.includes(search)
+      );
+      renderPopSearchProducts(filtered);
+    }
+
+    function renderPopSearchProducts(products) {
+      const container = document.getElementById('pop-search-products-list');
+      container.innerHTML = '';
+      products.forEach(product => {
+        const isSelected = popSearchSelectedProducts.some(p => p.id === product.id);
+        const div = document.createElement('div');
+        div.className = `pop-search-products-item ${isSelected ? 'selected' : ''}`;
+        div.onclick = () => toggleProductSelection(product);
+        div.innerHTML = `
+          <img src="${product.image}" alt="${product.name}" />
+          <div class="pop-search-products-info">
+            <strong>${product.name}</strong>
+            <span>Código: ${product.code}</span>
+            <span>Precio: $${product.salePrice}</span>
+            <span>Stock: ${product.stock}</span>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function toggleProductSelection(product) {
+      const index = popSearchSelectedProducts.findIndex(p => p.id === product.id);
+      if (index >= 0) {
+        popSearchSelectedProducts.splice(index, 1);
+      } else {
+        popSearchSelectedProducts.push(product);
+      }
+      renderPopSearchProducts(listProductsInMyStore);
+    }
+
+    function confirmPopSearchProducts() {
+      popSearchSelectedProducts.forEach(p => {
+        if (!listProducts.some(item => item.id === p.id)) {
+          listProducts.push(p);
+        }
+      });
+      updateProductTable();
+      closePopSearchProducts();
+    }
+
+    function updateProductTable() {
+      const tbody = document.getElementById('tabla');
+      tbody.innerHTML = '';
+      listProducts.forEach(product => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><img src="${product.image}" width="50" /></td>
+          <td>${product.name}</td>
+          <td>${product.code}</td>
+          <td>$${product.salePrice}</td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+  </script>

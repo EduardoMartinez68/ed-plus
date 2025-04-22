@@ -1,124 +1,116 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Menú Elegante</title>
-  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-straight/css/uicons-regular-straight.css">
+  <meta charset="UTF-8">
+  <title>Cargando - PLUS</title>
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-solid-straight/css/uicons-solid-straight.css">
   <style>
     :root {
-      --primary: #3b82f6;
-      --bg: #f9fafb;
-      --shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+      --primary-color: #1648FE;
+      --background-color: #f4f9ff;
+      --rocket-color: #ffffff;
     }
 
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: var(--bg);
-      height: 100vh;
+    * {
       margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body, html {
+      height: 100%;
+      background: var(--background-color);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #333;
+      overflow: hidden;
+    }
+
+    .loader-container {
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
-    }
-
-    .menu-most-oprtions-container {
+      height: 100%;
       position: relative;
+      text-align: center;
     }
 
-    .menu-most-oprtions-toggle {
-      background: white;
-      border: none;
+    .rocket-wrapper {
+      position: relative;
+      animation: lift 2s infinite ease-in-out;
+    }
+
+    .rocket {
+      font-size: 80px;
+      color: var(--primary-color);
+      padding: 25px;
       border-radius: 50%;
-      padding: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    @keyframes lift {
+      0%   { transform: translateY(0); }
+      50%  { transform: translateY(-50px); }
+      100% { transform: translateY(0); }
+    }
+
+    .flame {
+      width: 6px;
+      height: 20px;
+      background: var(--primary-color);
+      margin: 0 auto;
+      margin-top: -5px;
+      border-radius: 50px;
+      filter: blur(1px);
+      animation: flame-mini 0.2s alternate infinite;
+    }
+
+    @keyframes flame-mini {
+      0% { transform: scaleY(1); opacity: 0.7; }
+      100% { transform: scaleY(1.5); opacity: 0.3; }
+    }
+
+    .loading-text {
+      margin-top: 30px;
       font-size: 22px;
-      cursor: pointer;
-      box-shadow: var(--shadow);
-      transition: background 0.25s, transform 0.25s;
+      color: var(--primary-color);
+      font-weight: 500;
+      animation: blink 1.2s infinite;
     }
 
-    .menu-most-oprtions-toggle.open {
-      transform: rotate(90deg);
+    @keyframes blink {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
     }
 
-    .menu-most-oprtions-toggle:hover {
-      background: #f0f0f0;
-    }
-
-    .menu-most-oprtions-options {
+    .powered {
       position: absolute;
-      top: 110%;
-      right: 0;
-      background: white;
-      border-radius: 12px;
-      padding: 8px 0;
-      box-shadow: var(--shadow);
-      min-width: 200px;
-      opacity: 0;
-      transform: translateY(-10px);
-      pointer-events: none;
-      transition: all 0.25s ease;
+      bottom: 20px;
+      font-size: 13px;
+      color: #888;
     }
 
-    .menu-most-oprtions-options.show {
-      opacity: 1;
-      transform: translateY(0);
-      pointer-events: auto;
-    }
-
-    .menu-most-oprtions-options a {
-      display: block;
-      padding: 12px 18px;
-      color: #333;
-      text-decoration: none;
-      font-size: 15px;
-      transition: background 0.2s;
-    }
-
-    .menu-most-oprtions-options a:hover {
-      background: #f1f5f9;
-    }
-
-    .menu-most-oprtions-options a + a {
-      border-top: 1px solid #f0f0f0;
+    .logo-plus {
+      position: absolute;
+      top: 30px;
+      font-size: 28px;
+      font-weight: bold;
+      color: var(--primary-color);
+      letter-spacing: 2px;
     }
   </style>
 </head>
 <body>
+  <div class="loader-container">
+    <div class="logo-plus">PLUS</div>
 
-  <div class="menu-most-oprtions-container">
-    <button class="menu-most-oprtions-toggle" onclick="toggleMenu()">
-      <i class="fi fi-rs-menu-dots"></i>
-    </button>
-    <div class="menu-most-oprtions-options" id="menuMostOptions">
-      <a href="#">🔌 Pagos de servicios</a>
-      <a href="#">📊 Movimientos</a>
-      <a href="#">⚙️ Configuración</a>
-      <a href="#">🚪 Cerrar sesión</a>
+    <div class="rocket-wrapper">
+      <div class="rocket"><i class="fi fi-ss-rocket-lunch"></i></div>
+      <div class="flame"></div>
     </div>
+
+    <div class="loading-text">Cargando...</div>
+    <div class="powered">Power by PLUS Software Developer</div>
   </div>
-
-  <script>
-    function toggleMenu() {
-      const menu = document.getElementById("menuMostOptions");
-      const toggleButton = document.querySelector(".menu-most-oprtions-toggle");
-
-      // Mostrar/ocultar el menú
-      menu.classList.toggle("show");
-      
-      // Cambiar el estado de rotación del botón
-      toggleButton.classList.toggle("open");
-    }
-
-    // Cerrar el menú si haces clic fuera
-    document.addEventListener("click", (e) => {
-      const menu = document.getElementById("menuMostOptions");
-      const toggle = document.querySelector(".menu-most-oprtions-toggle");
-      if (!menu.contains(e.target) && !toggle.contains(e.target)) {
-        menu.classList.remove("show");
-        toggle.classList.remove("open");
-      }
-    });
-  </script>
 </body>
 </html>

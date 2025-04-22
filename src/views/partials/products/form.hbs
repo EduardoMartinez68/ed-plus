@@ -15,6 +15,7 @@
         </label>
     </div>
 </div>
+
 <div class="row">
     <hr>
     <label for="">Informacion de Venta</label>
@@ -52,7 +53,7 @@
                 <div class="col">
                     <label>Monto de Venta *</label><br>
                     <input type="tex" class="form-control" name="sale_amount" placeholder="Monto de Venta" required
-                        value="{{purchase_price}}">
+                        value="{{purchase_price}}" value="1">
                 </div>
                 <div class="col">
                     <label>Unidad de Venta</label>
@@ -63,7 +64,7 @@
                 <div class="col">
                     <label>Precio de Venta</label><br>
                     <input type="tex" class="form-control" name="sale_price" placeholder="Precio de Venta" required
-                        value="{{sale_price}}">
+                        value="{{sale_price}}" id="sale_price">
                 </div>
                 <div class="col">
                     <label>Moneda de uso</label>
@@ -108,3 +109,40 @@
     </div>
 </div>
 </form>
+
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const inventoryToggle = document.getElementById('invalidCheck2');
+  const formSection = document.querySelector('.content-sales');
+
+  // Encuentra todos los inputs y selects dentro de la sección
+  const inputs = formSection.querySelectorAll('input');
+  const selects = formSection.querySelectorAll('select');
+
+  function toggleInventorySection(enabled) {
+    inputs.forEach(input => {
+      input.disabled = !enabled;
+      if (!enabled) {
+        input.value = input.type === 'number' || input.type === 'text' ? '0' : '';
+      }
+    });
+
+    selects.forEach(select => {
+      select.disabled = !enabled;
+      if (!enabled) {
+        select.selectedIndex = 0; // Reinicia al primer option
+      }
+    });
+  }
+
+  // Inicializar
+  toggleInventorySection(inventoryToggle.checked);
+
+  // Escuchar cambios en el checkbox
+  inventoryToggle.addEventListener('change', () => {
+    toggleInventorySection(inventoryToggle.checked);
+  });
+});
+</script>
