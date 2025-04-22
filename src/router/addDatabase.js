@@ -206,9 +206,9 @@ async function add_product_combo_company(combo){
 }
 
 async function save_product_combo_company(combo) {
-    var queryText = 'INSERT INTO "Kitchen".dishes_and_combos (id_companies, img, barcode, name, description,is_a_product) VALUES ($1, $2, $3, $4, $5,$6) RETURNING id';
+    var queryText = 'INSERT INTO "Kitchen".dishes_and_combos (id_companies, img, barcode, name, description, is_a_product, id_product_department, id_product_category) VALUES ($1, $2, $3, $4, $5,$6,$7,$8) RETURNING id';
 
-    var values = [combo.id_company, combo.path_image, combo.barcode, combo.name, combo.description,true];
+    var values = [combo.id_company, combo.path_image, combo.barcode, combo.name, combo.description,true, combo.id_product_department, combo.id_product_category];
 
     try {
         const result = await database.query(queryText, values);

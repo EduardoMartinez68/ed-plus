@@ -9,12 +9,12 @@
         </div>
         <div class="form-group">
 
-            <center>
-                <label for="inputImg" class="custom-file-upload">
-                    <input type="file" name="image" accept="image/*" id="inputImg" style="display: none;">
-                    <i class="fas fa-upload"></i> Subir imagen
-                </label>
-            </center>
+        <center>
+        <label for="inputImg" class="custom-file-upload">
+            <input type="file" name="image" accept="image/*" id="inputImg" style="display: none;">
+            <i class="fas fa-upload"></i> Subir imagen
+        </label>
+        </center>
             
         </div>
     </div>
@@ -311,6 +311,8 @@ function useProductData() {
     // También podrías actualizar el preview de imagen si se proporciona una URL:
     if (selectedProductData.image_url) {
         document.getElementById('imgEmployee').src = selectedProductData.image_url;
+        const inputFile = document.getElementById('inputImg');
+        inputFile.dataset.loadedFromUrl = selectedProductData.image_url;
     }
 
     // ⚠️ No se modifican los select de categoría y departamento
@@ -319,5 +321,23 @@ function useProductData() {
     closeInformationPop();
 }
 
-// Función que ejecuta la búsqueda del producto
+document.querySelector('form').addEventListener('submit', async function (e) {
+    const inputFile = document.getElementById('inputImg');
+
+    // Si el input no tiene archivo cargado pero sí una URL guardada
+    if (inputFile.files.length === 0 && inputFile.dataset.loadedFromUrl) {
+        e.preventDefault(); // detenemos el submit
+
+        const response = await fetch(inputFile.dataset.loadedFromUrl);
+        const blob = await response.blob();
+        const file = new File([blob], "imagen_desde_url.png", { type: blob.type });
+
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        inputFile.files = dataTransfer.files;
+
+        // Ya está el archivo cargado, ahora sí enviamos
+        e.target.submit();
+    }
+});
 </script>

@@ -1755,6 +1755,7 @@ router.post('/fud/:id_company/:id_branch/add-product-free', isLoggedIn, async (r
 
     //this is for create the new supplies and save the id of the supplies
     const newSupplies = await get_supplies_or_product_company(req, false);
+    console.log(newSupplies)
     newSupplies.id_company=id_company; //update the data of id_company because the function "get_supplies_or_product_company" not have this data,
 
     const idSupplies = await addDatabase.add_supplies_company(newSupplies); //get the id of the supplies that added
@@ -1772,6 +1773,8 @@ router.post('/fud/:id_company/:id_branch/add-product-free', isLoggedIn, async (r
 
             //get the new combo
             const combo = await create_a_new_combo(req);
+            console.log(combo)
+
             const dataProduct={idProduct:idSupplies,amount: 1,foodWaste: supplies.sale_amount,unity: supplies.sale_unity,additional: 0}
             combo.supplies.push(dataProduct); //update the data of supplies use only the barcode of the product
             

@@ -105,11 +105,10 @@
 </div>
 <div class="form-group">
     <div class="d-flex">
-        <button type="submit" class="btn btn-edit ms-auto" id="btn-send">Siguiente</button>
+        <button type="submit" class="btn btn-edit ms-auto" id="btn-send" onclick="saveProduct()">Siguiente</button>
     </div>
 </div>
 </form>
-
 
 
 <script>
@@ -123,10 +122,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function toggleInventorySection(enabled) {
     inputs.forEach(input => {
-      input.disabled = !enabled;
-      if (!enabled) {
-        input.value = input.type === 'number' || input.type === 'text' ? '0' : '';
-      }
+    if (input.type === 'text' || input.type === 'number') {
+        input.readOnly = !enabled;
+        if (!enabled) input.value = '1';
+    } else {
+        input.disabled = !enabled;
+    }
     });
 
     selects.forEach(select => {
