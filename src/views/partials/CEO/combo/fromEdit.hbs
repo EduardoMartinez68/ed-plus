@@ -44,7 +44,9 @@
 <div class="row">
     <div class="col">
         <label for="">Categoria</label>
-        <select class="form-control" name="category">
+        {{#each combo}}
+        <select class="form-control" name="category" value="{{id_product_category}}">
+        {{/each}}
             {{#each category}}
                 <option value="{{id}}">{{name}}</option>
             {{/each}}
@@ -52,7 +54,9 @@
     </div>
     <div class="col">
         <label for="">Departamento</label>
-        <select class="form-control"  name="department">
+        {{#each combo}}
+        <select class="form-control"  name="department" value="{{id_product_department}}">
+        {{/each}}
             {{#each departments}}
                 <option value="{{id}}">{{name}}</option>
             {{/each}}

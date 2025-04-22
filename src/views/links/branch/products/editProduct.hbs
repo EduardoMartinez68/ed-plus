@@ -50,7 +50,32 @@
                                 <label for="">Description:</label>
                                 <textarea for="" name="description" class="form-control">{{dish_description}}</textarea>
                             </div>
+                            {{/each}}
 
+                            <div class="row">
+                                <div class="col">
+                                    <label for="">Categoria</label>
+                                    {{#each comboFeactures}}
+                                    <select class="form-control" name="category"  value="{{dish_product_category}}">
+                                    {{/each}}
+                                        {{#each category}}
+                                            <option value="{{id}}">{{name}}</option>
+                                        {{/each}}
+                                    </select>
+                                </div>
+                                <div class="col">
+                                    <label for="">Departamento</label>
+                                    {{#each comboFeactures}}
+                                    <select class="form-control"  name="department"  value="{{dish_product_department}}">
+                                    {{/each}}
+                                        {{#each departments}}
+                                            <option value="{{id}}">{{name}}</option>
+                                        {{/each}}
+                                    </select>
+                                </div>
+                            </div>
+                        
+                        {{#each comboFeactures}}
                             <div class="form-group">
                                 <div class="form-check" name="">
                                     {{#if this_product_need_recipe}}
@@ -63,7 +88,7 @@
                                     </label>
                                 </div>
                             </div>
-
+                            
                             <div class="form-group">
                                 <div class="form-check" name="">
                                     {{#if this_product_is_sold_in_bulk}}

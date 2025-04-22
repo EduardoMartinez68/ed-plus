@@ -295,17 +295,18 @@ router.get('/:id_company/:id_branch/:id_combo_features/edit-products-free', isLo
     //her, we will get all the lot that the product have in the database
     const lots=await get_lots_by_dish_and_combo_features(id_combo_features);
     const promotions = await get_all_the_promotions(id_combo_features); //this is the data of the combo
-    console.log("promotions", promotions);
+    const departments=await get_department(id_company);
+    const category=await get_category(id_company);
+
     //we will see if the user have a suscription free
     if(req.user.rol_user==rolFree){
         const branchFree = await get_data_branch(id_branch); //get data of rol free
         //get the data of the product that is in the combo. This is the information of the product 
         const productFacture=await get_supplies_or_features_with_id_products_and_supplies(suppliesCombo[0].id_products_and_supplies,promotions);
-        
-        res.render('links/branch/products/editProduct', { comboFeactures, suppliesCombo , branchFree, productFacture,lots,promotions});      
+        res.render('links/branch/products/editProduct', { comboFeactures, suppliesCombo , branchFree, productFacture,lots,promotions, departments, category});      
     }else{
         const branch = await get_data_branch(id_branch);
-        res.render('links/branch/products/editProduct', { comboFeactures, suppliesCombo, branch,lots});
+        res.render('links/branch/products/editProduct', { comboFeactures, suppliesCombo, branch, lots});
     }
 })
 
@@ -733,7 +734,7 @@ router.get('/:id_company/:id_branch/:id_dishes_and_combos/edit-data-combo-free',
     const suppliesCombo = await search_supplies_combo(id_dishes_and_combos);
     const combo = await search_combo(id_company, id_dishes_and_combos);
 
-
+    console.log(combo)
     res.render('links/manager/combo/editCombo', { branchFree, dataForm, departments, category, supplies, products, combo, suppliesCombo });
 })
 

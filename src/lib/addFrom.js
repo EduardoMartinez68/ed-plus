@@ -1818,6 +1818,8 @@ router.post('/fud/:id_company/:id_branch/add-product-free', isLoggedIn, async (r
 router.post('/fud/:id_company/:id_branch/:id_combo/update-product-branch', isLoggedIn, async (req, res) => {
     const {id_company,id_branch,id_combo}=req.params;
     const {name,barcode,description}=req.body;
+    console.log(req.body)
+
 
     //get the id of the supplies and of the combo for edit his data in the company
     const idSuppliesCompany=req.body.id_products_and_supplies;
@@ -1957,15 +1959,17 @@ async function update_other_information_of_combo(req,id_combo){
     var queryText = `
     UPDATE "Kitchen".dishes_and_combos
     SET 
-        this_product_need_recipe=$1
+        this_product_need_recipe=$1,
+        id_product_department=$2,
+        id_product_category=$3
     WHERE 
-        id=$2
+        id=$4
     `;
 
     const this_product_need_recipe = req.body.this_product_need_recipe === 'on' || req.body.this_product_need_recipe === 'true';
-    console.log(this_product_need_recipe)
-    console.log(id_combo)
-    var values = [this_product_need_recipe,id_combo];
+    const id_product_department = req.body.department;
+    const id_product_category = req.body.category;
+    var values = [this_product_need_recipe,id_product_department,id_product_category,id_combo];
     const result = await database.query(queryText, values);
     const data = result.rows;
     return data;
