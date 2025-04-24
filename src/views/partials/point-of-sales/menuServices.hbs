@@ -332,7 +332,7 @@
         { name: "Megacable", icon: "https://www.mtcenter.com.mx/wp-content/uploads/MEGACABLE.png" },
         { name: "VeTV", icon: "https://ruedadelafortuna.com.mx/wp-content/uploads/2010/04/vetv.png?w=584" },
         { name: "Agua y Drenaje", icon: "https://interapas.mx/wp-content/uploads/2019/09/LOGO-INTERAPAS-01.jpg" },
-        { name: "Infonavit", icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQY7lqX1V4cVJgpZUKqrCC-SkQP6JNZeX9PTQ&s" },
+        { name: "Infonavit", icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQY7lqX1V4cVJgpZUKqrCC-SkQP6JNZeX9PTQ&s"},
         { name: "SAT / Impuestos", icon: "https://yt3.googleusercontent.com/V39NGHtva-UIWfaCPcQ5biRWyzNWmGv-VA4DFUYjTNa_GUAXKonqxBBLThcwyXFKT6CRDkelTA=s900-c-k-c0x00ffffff-no-rj" },
         { name: "Coppel Servicios", icon: "https://play-lh.googleusercontent.com/1m2FHx_SyuMy2qEGfs_8WL-eptgd18w8VXy0pMnJGNItIFk9voa9AumHmnyRxW0_q2QY" },
         { name: "Telnor", icon: "https://farmaciasroma.com/wp-content/uploads/2022/10/Pago-de-servicios-Telnor-776x470.png" }
@@ -414,7 +414,7 @@
             { label: "Número de cuenta", id: "number-service", type: "text", placeholder: "Ej. 123456789" }
         ],
         "Infonavit": [
-            { label: "Número de crédito", id: "number-service", type: "text", placeholder: "Ej. 1234567890" }
+            { label: "Número de crédito", id: "number-service", type: "text", placeholder: "Ej. 1234567890", "sku": "S3CREDHIPOTECAMXN"}
         ],
         "SAT / Impuestos": [
             { label: "Línea de captura", id: "number-service", type: "text", placeholder: "Ej. 123456789012345678" }
@@ -516,6 +516,8 @@
 
     //---change for cellphone---
     async function mostrarFormularioRecarga(company) {
+        await get_menu_of_prontipagos();
+
         await get_data_of_the_services();
 
         companyRechange=company;
@@ -744,5 +746,57 @@
     }
 
 
+
+    /*----------------------------*/
+    const urlBase = "https://prontipagos-api-dev.domainscm.com";
+    const username = "api.desarrollo";
+    const password = "1hFdcv4G*";
+
+    async function get_token_prontipagos(){
+      try {
+        const response = await fetch(`${urlBase}/prontipagos-external-api-ws/ws/v1/auth/login`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ username, password })
+        });
+
+        const data = await response.json();
+
+        if (data.code === 0 && data.payload?.accessToken) {
+          return data.payload.accessToken;
+        } else {
+          throw new Error("Error al obtener el token: " + JSON.stringify(data));
+        }
+      } catch (error) {
+        throw new Error("Fallo en la solicitud del token: " + error.message);
+      }
+    }
+
+
+    async function get_menu_of_prontipagos(page = 0) {
+      const resultado = document.getElementById('resultado');
+
+      try {
+        const token = await get_token_prontipagos();
+
+        const response = await fetch(`${urlBase}/prontipagos-external-api-ws/ws/protected/v1/product/list?page=${page}&pageSize=100`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        const data = await response.json();
+        const resultado = JSON.stringify(data, null, 2);
+        console.log(resultado);
+
+      } catch (error) {
+        resultado.textContent = `❌ Error: ${error.message}`;
+      }
+    }
 
 </script>
