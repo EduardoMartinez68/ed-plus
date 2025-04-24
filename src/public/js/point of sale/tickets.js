@@ -30,6 +30,7 @@ async function print_the_last_ticket(){
         }
 
         var printer = new PrinterEscPos(apiRouther);
+
         await printer.printerIn(lastTicket);
         regularMessage('Impresión con éxito 😁', 'El último ticket fue impreso con éxito.');
         console.log('TICKET')
@@ -64,6 +65,10 @@ const printTicket=async(total, receivedMoney,exchange,comment)=>{
         const dateTicket=getCurrentDateTime();
 
         var printer = new PrinterEscPos(apiRouther);
+
+        //her we will open the cash drawer
+        printer.openCash();
+        printer.openCashPartial();
 
         // Variable para almacenar todo el contenido del ticket
         let ticketContent = '';

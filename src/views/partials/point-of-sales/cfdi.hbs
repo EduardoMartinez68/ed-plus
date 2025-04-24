@@ -1,0 +1,335 @@
+<!-- Popup -->
+<div class="pop-cfdi-overlay" id="pop-cfdi-overlay">
+  <div class="pop-cfdi-modal">
+    <span class="pop-cfdi-close" onclick="closeCFDIPopup()">&times;</span>
+    <h2>Generar CFDI</h2>
+
+    <form id="form-cfdi">
+      <!-- ▶️ Sección oculta expandible -->
+      <div class="pop-cfdi-field">
+        <div class="pop-cfdi-advanced-toggle" onclick="toggleAdvancedFiscalFields()"><span id="arrow">→</span> <span id="toggle-text">Datos de facturación (Editar)</span></div>
+        <div class="pop-cfdi-advanced-fields" id="advancedFiscalFields" style="display: none;">
+          <label for="rfcReceptor">RFC *</label>
+          <input type="text" name="rfcReceptor" required>
+
+          <label for="razonSocial">Razón Social *</label>
+          <input type="text" name="rfcReceptor" required>
+
+
+          <label for="razonSocial">Régimen Fiscal *</label>
+            <select name="regimenFiscal" required>
+                <option value="">-- Selecciona el Régimen Fiscal --</option>
+                <option value="601">601 - General de Ley Personas Morales</option>
+                <option value="603">603 - Personas Morales con Fines no Lucrativos</option>
+                <option value="605">605 - Sueldos y Salarios</option>
+                <option value="606">606 - Arrendamiento</option>
+                <option value="607">607 - Regimen de Incorporación Fiscal</option>
+                <option value="608">608 - Actividades Empresariales y Profesionales</option>
+                <option value="609">609 - Regimen de las Personas Físicas con Actividades Empresariales</option>
+                <option value="610">610 - Regimen de las Personas Físicas que perciben ingresos por salarios y en general</option>
+                <option value="611">611 - Regimen de actividades empresariales y profesionales de personas físicas con ingresos menores a $2,000,000</option>
+                <option value="612">612 - Personas Morales con Actividades no lucrativas</option>
+                <option value="613">613 - Personas Físicas que tributan bajo el régimen de sueldos y salarios</option>
+                <option value="615">615 - Personas físicas con actividad profesional</option>
+                <option value="616">616 - Personas físicas con actividad empresarial</option>
+                <option value="620">620 - Otras actividades</option>
+                <option value="621">621 - Personas físicas con ingresos menores a $2,000,000</option>
+            </select>
+
+
+          <label for="codigoPostal">Código Postal *</label>
+          <input type="text" name="codigoPostal" required>
+
+          <label for="domicilio">Domicilio</label>
+          <input type="text" name="domicilio">
+
+          <div class="pop-cfdi-switches">
+            <label class="pop-cfdi-switch">
+              <input type="checkbox" name="retencionImpuesto">
+              <span class="slider"></span>
+              Aplicar retención de impuesto
+            </label>
+
+            <label class="pop-cfdi-switch">
+              <input type="checkbox" name="desglosarIEPS">
+              <span class="slider"></span>
+              Desglosar IEPS
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- 🧾 Datos generales para el CFDI -->
+      <div class="pop-cfdi-advanced-fields" id="advanced-fields">
+        <label for="rfcEmisor">Ventas</label>
+        <input type="text" name="rfcEmisor" required>
+
+        <label for="valorUnitario">Precio Unitario</label>
+        <input type="number" name="valorUnitario" required>
+
+        <div class="row">
+            <div class="col">
+                <label for="formaPago">Forma de Pago</label>
+                <select name="formaPago" required>
+                <option value="">-- Selecciona --</option>
+                <option value="01">01 - Efectivo</option>
+                <option value="03">03 - Transferencia</option>
+                <option value="04">04 - Tarjeta de crédito</option>
+                <option value="28">28 - Tarjeta de débito</option>
+                <option value="99">99 - Por definir</option>
+                </select>
+            </div>
+            <div class="col">
+                <label for="usoCFDI">Uso del CFDI</label>
+                <select name="usoCFDI" required>
+                    <option value="">-- Selecciona --</option>
+                    <option value="G01">G01 - Adquisición de mercancías</option>
+                    <option value="G02">G02 - Devoluciones, descuentos o bonificaciones</option>
+                    <option value="G03">G03 - Gastos en general</option>
+                    <option value="I01">I01 - Construcciones</option>
+                    <option value="I02">I02 - Mobiliario y equipo de oficina por inversiones</option>
+                    <option value="I03">I03 - Equipo de transporte</option>
+                    <option value="I04">I04 - Equipo de computo y accesorios</option>
+                    <option value="I05">I05 - Dados, troqueles, moldes, matrices y herramental</option>
+                    <option value="I06">I06 - Comunicaciones telefónicas</option>
+                    <option value="I07">I07 - Comunicaciones satelitales</option>
+                    <option value="I08">I08 - Otra maquinaria y equipo</option>
+                    <option value="D01">D01 - Honorarios médicos, dentales y gastos hospitalarios</option>
+                    <option value="D02">D02 - Gastos médicos por incapacidad o discapacidad</option>
+                    <option value="D03">D03 - Gastos funerales</option>
+                    <option value="D04">D04 - Donativos</option>
+                    <option value="D05">D05 - Intereses reales efectivamente pagados por créditos hipotecarios</option>
+                    <option value="D06">D06 - Aportaciones voluntarias al SAR</option>
+                    <option value="D07">D07 - Primas por seguros de gastos médicos</option>
+                    <option value="D08">D08 - Gastos de transportación escolar obligatoria</option>
+                    <option value="D09">D09 - Depósitos en cuentas para el ahorro, primas que tengan como base planes de pensiones</option>
+                    <option value="D10">D10 - Pagos por servicios educativos (colegiaturas)</option>
+                    <option value="P01">P01 - Por definir</option>
+                </select>
+            </div>
+        </div>
+      </div>
+
+      <button type="submit" class="pop-cfdi-submit">Generar CFDI</button>
+    </form>
+  </div>
+</div>
+
+<style>
+/* Estilos del popup y formulario */
+.pop-cfdi-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(6px);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+.pop-cfdi-modal {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  font-family: 'Segoe UI', sans-serif;
+  position: relative;
+}
+.pop-cfdi-close {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  font-size: 22px;
+  cursor: pointer;
+  color: #aaa;
+  transition: color 0.3s;
+}
+.pop-cfdi-close:hover {
+  color: #333;
+}
+.pop-cfdi-modal label {
+  display: block;
+  margin-bottom: 6px;
+  margin-top: 18px;
+  font-size: 14px;
+  color: #444;
+}
+.pop-cfdi-modal input,
+.pop-cfdi-modal select {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.1);
+  background: rgba(255,255,255,0.6);
+  box-shadow: inset 2px 2px 5px rgba(0,0,0,0.05);
+  font-size: 15px;
+  transition: border 0.3s, background 0.3s;
+}
+.pop-cfdi-modal input:focus,
+.pop-cfdi-modal select:focus {
+  border-color: var(--color-company) /*#6a5acd;*/
+  background: rgba(255,255,255,0.9);
+  outline: none;
+}
+.pop-cfdi-submit {
+  margin-top: 25px;
+  padding: 12px;
+  background-color: var(--color-company);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100%;
+  font-size: 16px;
+  transition: background-color 0.3s, transform 0.2s;
+}
+.pop-cfdi-submit:hover {
+  background-color:var(--color-hover); /*#5941c5;*/
+}
+.pop-cfdi-advanced-toggle {
+  background: #f0f4ff;
+  border-radius: 10px;
+  padding: 12px 14px;
+  cursor: pointer;
+  margin-top: 20px;
+  font-weight: 600;
+  font-size: 15px;
+  color: #3f51b5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+.pop-cfdi-advanced-toggle.active {
+  background: #e8f0ff;
+  border-color: #3f51b5;
+  color: #1a237e;
+}
+.pop-cfdi-advanced-fields {
+  margin-top: 10px;
+  display: block;
+}
+.pop-cfdi-switch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 15px;
+  font-size: 14px;
+  color: #333;
+}
+
+.pop-cfdi-switch {
+  display: inline-block;
+  position: relative;
+}
+
+.pop-cfdi-switch input[type="checkbox"] {
+  display: none;
+}
+
+.pop-cfdi-switch .slider {
+  width: 44px;
+  height: 24px;
+  background-color: #ccc;
+  border-radius: 50px;
+  position: relative;
+  transition: background-color 0.4s;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.pop-cfdi-switch .slider::before {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background-color: white;
+  border-radius: 50%;
+  top: 3px;
+  left: 3px;
+  transition: transform 0.4s;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.pop-cfdi-switch input:checked + .slider {
+  background-color: var(--color-company);
+}
+
+.pop-cfdi-switch input:checked + .slider::before {
+  transform: translateX(20px);
+}
+@media (max-width: 600px) {
+  .pop-cfdi-modal {
+    padding: 1.2rem;
+  }
+}
+
+.pop-cfdi-advanced-toggle {
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+  padding: 8px;
+}
+</style>
+
+<script>
+function openCFDIPopup() {
+  document.getElementById('pop-cfdi-overlay').style.display = 'flex';
+}
+
+function closeCFDIPopup() {
+  document.getElementById('pop-cfdi-overlay').style.display = 'none';
+}
+
+function toggleAdvancedFiscalFields() {
+  const fields = document.getElementById('advancedFiscalFields');
+  const advancedFields=document.getElementById('advanced-fields');
+
+
+  fields.style.display = fields.style.display === 'none' ? 'block' : 'none';
+  advancedFields.style.display = fields.style.display === 'none' ? 'block' : 'none';
+
+  const arrow = document.getElementById('arrow');
+  const text = document.getElementById('toggle-text');
+
+  if (arrow.textContent === '→') {
+    arrow.textContent = '←';
+    text.textContent = 'Datos Fiscales';
+  } else {
+    arrow.textContent = '→';
+    text.textContent = 'Datos de facturación (Editar)';
+  }
+}
+
+// Enviar CFDI al backend
+document.getElementById('form-cfdi').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const formData = new FormData(form);
+  try {
+    const response = await fetch('http://localhost:3000/create-facture-cfdi', {
+      method: 'POST',
+      body: formData
+    });
+
+    const result = await response.json();
+    if (result.success) {
+      alert('CFDI generado correctamente');
+      closeCFDIPopup();
+      form.reset();
+    } else {
+      alert('Error al generar CFDI: ' + (result.message || 'Intenta de nuevo'));
+    }
+  } catch (err) {
+    console.error(err);
+    alert('Ocurrió un error al conectar con el servidor.');
+  }
+});
+</script>

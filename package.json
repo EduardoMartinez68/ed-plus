@@ -59,6 +59,7 @@
     "express-session": "^1.17.3",
     "express-validator": "^7.0.1",
     "fullcalendar": "^6.1.15",
+    "generacfdi": "^1.2.5",
     "gridstack": "^10.3.1",
     "ioredis": "^5.4.2",
     "mongodb": "^6.0.0",

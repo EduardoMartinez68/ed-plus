@@ -57,6 +57,15 @@ async function add_the_move_to_the_database(data,idEmployee,idBranch){
     if(answer.message){
         //if we going to can add the cash move show a message of confirmation 
         regularMessage('😄 Efectivo actualizado','Se agrego el movimiento de la caja con exito');
+
+        //now open the cahs drawer. First we will get the data of the printer
+        const selectPrinter=document.getElementById('dataPrinter');
+        const apiRouther="http://127.0.0.1:5656/";
+        var printer = new PrinterEscPos(apiRouther);
+
+        //her we will open the cash drawer
+        printer.openCash();
+        printer.openCashPartial();
     }else{
         //if we going to not can add the cash move show a message of error 
         errorMessage('👉👈 UPS!','No se pudo agregar este movimiento a la base de datos. Intentelo de nuevo.');

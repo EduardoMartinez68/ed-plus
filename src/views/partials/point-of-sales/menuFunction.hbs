@@ -76,9 +76,12 @@
     <div class="menu-most-oprtions-options" id="menuMostOptions">
         {{#each dataEmployee}}
             <input type="text" value="{{id_branches}}" style="display: none;" id="id_branch">
+            <!---
             <a onclick="seleccionarOpcion('recargas')">Recargas Telefonicas</a>
             <a  onclick="seleccionarOpcion('servicios')">Pagos de servicios</a>
             <a onclick="update_credit_for_my_rechange()">Actualizar mis creditos</a>
+            -->
+            <a onclick="openCFDIPopup()">CFDI</a>
             <a onclick="select_customer('{{id_companies}}')">Buscar Cliente</a>
             <a  onclick="cash_movement('{{id}}','{{id_branches}}')">Movimiento de caja</a>
             <a onclick="print_the_last_ticket()">Imprimir Ultimo Ticket</a>

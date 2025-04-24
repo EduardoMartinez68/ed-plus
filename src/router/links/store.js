@@ -76,7 +76,6 @@ router.get('/:id_user/:id_company/:id_branch/:id_employee/:id_role/store-home', 
 
         //const productsSales=await get_all_products_in_sales(id_branch);
         const dataCompany=await get_data_company_with_id(id_company);
-        console.log(promotions)
         const templateData = {
             branchFree,
             dishAndCombo,
@@ -117,11 +116,84 @@ router.get('/:id_company/:id_branch/invoice', isLoggedIn, async (req, res) => {
     res.render('links/store/invoice/invoice',{branchFree,invoice});
 })
 
+//-----------------------------this is cfor create facture CDFI
+const generacfdi = require('generacfdi');
+
+const axios = require('axios');
+const fs = require('fs');
 
 
 
 
 
+
+router.post('/create-facture-cfdi', isLoggedIn,async (req, res) => {
+    try {
+      const {
+        rfcEmisor,
+        nombreEmisor,
+        rfcReceptor,
+        nombreReceptor,
+        passwordCSD,
+        descripcion,
+        cantidad,
+        valorUnitario,
+        regimenFiscal,
+        usoCFDI
+      } = req.body;
+  
+      // Calculamos el importe
+      const importe = parseFloat(cantidad) * parseFloat(valorUnitario);
+  
+      // Generar el XML
+      const cfdiData = {
+        emisor: {
+          rfc: rfcEmisor,
+          nombre: nombreEmisor,
+          regimenFiscal: regimenFiscal
+        },
+        receptor: {
+          rfc: rfcReceptor,
+          nombre: nombreReceptor,
+          usoCFDI: usoCFDI
+        },
+        conceptos: [
+          {
+            claveProdServ: '01010101',
+            cantidad: Number(cantidad),
+            claveUnidad: 'ACT',
+            descripcion,
+            valorUnitario: parseFloat(valorUnitario),
+            importe
+          }
+        ]
+      };
+  
+      const xmlCFDI = generacfdi.generarXML(cfdiData);
+  
+      // Ruta local de los archivos CSD del usuario (puedes personalizar esto según su sesión o ID)
+      const cer = fs.readFileSync(path.join(__dirname, '../../csd/users/certificado.cer'));
+      const key = fs.readFileSync(path.join(__dirname, '../../csd/users/llave.key'));
+  
+      // Enviar al PAC (esto es un ejemplo, reemplaza la URL con la real)
+      const response = await axios.post('https://api.pac.com/timbrar', {
+        xml: xmlCFDI,
+        cer: cer.toString('base64'),
+        key: key.toString('base64'),
+        password: passwordCSD
+      });
+  
+      const xmlTimbrado = response.data.xmlTimbrado;
+  
+      // Puedes guardar el XML timbrado localmente
+      fs.writeFileSync(path.join(__dirname, '../facturas/factura-timbrada.xml'), xmlTimbrado);
+  
+      res.json({ success: true, message: 'CFDI timbrado exitosamente', xml: xmlTimbrado });
+    } catch (error) {
+      console.error('Error al generar/timbrar CFDI:', error);
+      res.status(500).json({ success: false, message: 'Error al timbrar el CFDI', error: error.message });
+    }
+});
 
 
 module.exports = router;
