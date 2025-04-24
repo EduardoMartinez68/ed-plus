@@ -143,15 +143,14 @@ serverExpress.use(express.json());
 serverExpress.use(passport.initialize());
 serverExpress.use(passport.session());
 
-const storage=multer.diskStorage({ //this function is for load a image in the forms
-    destination: path.join(__dirname,'public/img/uploads'),
-    filename: (req,file,cb,filename)=>{
-        cb(null,uuid()+path.extname(file.originalname));
+const storageImages = multer.diskStorage({
+    destination: path.join(__dirname, 'public/img/uploads'),
+    filename: (req, file, cb) => {
+        cb(null, uuid() + path.extname(file.originalname));
     }
 });
 
-serverExpress.use(multer({storage: storage}).single('image'));
-
+serverExpress.use(multer({storage: storageImages}).single('image'));
 
 //*-----------------------------------------------------------global variables-----------------------------------------//
 serverExpress.use((req,res,next)=>{

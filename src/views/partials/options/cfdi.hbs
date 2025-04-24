@@ -1,0 +1,217 @@
+<style>
+    .sat-form-container {
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .sat-form-container h2,
+    .sat-form-container label {
+        color: #2c3e50;
+    }
+
+    .sat-form-container form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .input-wrapper {
+        position: relative;
+    }
+
+    .custom-file-upload {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #ecf0f1;
+        border: 2px dashed #bdc3c7;
+        padding: 12px 15px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+    }
+
+    .custom-file-upload:hover {
+        background: #dde4e7;
+    }
+
+    .custom-file-upload i {
+        margin-right: 10px;
+        color: #3498db;
+    }
+
+    input[type="file"] {
+        display: none;
+    }
+
+    input[type="password"] {
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        width: 100%;
+    }
+
+    button[type="submit"] {
+        background-color: var(--color-company);
+        color: white;
+        border: none;
+        padding: 12px;
+        width: 100%;
+        border-radius: 10px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: 0.3s ease;
+    }
+
+    button[type="submit"]:hover {
+        background-color: var(--color-hover);
+    }
+
+    .file-name {
+        font-style: italic;
+        font-size: 0.9rem;
+        margin-top: 5px;
+        color: #7f8c8d;
+    }
+</style>
+
+<div class="tab-pane fade show" id="navbar-cfdi" role="tabpanel" aria-labelledby="navbar-company-tab">
+    <div class="card">
+        <div class="card-body sat-form-container">
+            <label><i class="fi-icon fi-sr-shield-check"></i> Subir Llaves del SAT</label>
+            <form id="formKey">
+
+                <div class="row">
+                    <div class="col-8">
+                        <label for="keyFile">Archivo .KEY:</label>
+                        <div class="input-wrapper">
+                            <label class="custom-file-upload">
+                                <i class="fi-icon fi-sr-key"></i> Seleccionar archivo .KEY
+                                <input type="file" name="keyFile" id="keyFile" accept=".key" required
+                                    onchange="showFileName(this)">
+                            </label>
+                            <div id="keyFileName" class="file-name"></div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <br>
+                        <button type="submit">Subir y Validar</button>
+                    </div>
+                </div>
+
+            </form>
+
+            <!-- FORM .CER -->
+            <form id="formCer">
+                <div class="row">           
+                    <div class="col-8">
+                        <label for="cerFile">Archivo .CER:</label>
+                        <div class="input-wrapper">
+                            <label class="custom-file-upload">
+                                <i class="fi-icon fi-sr-certificate"></i> Seleccionar archivo .CER
+                                <input type="file" name="cerFile" id="cerFile" accept=".cer" required
+                                    onchange="showFileName(this)">
+                            </label>
+                            <div id="cerFileName" class="file-name"></div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <br>
+                        <button type="submit">Subir y Validar</button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- FORM CONTRASEÑA -->
+            <form id="formPassword">
+                <div class="row">
+                    <div class="col">
+                        <label for="password">Contraseña de la llave .KEY:</label>
+                        <input type="password" name="password" id="password" placeholder="Ingresa tu contraseña" required>
+                    </div>
+                    <div class="col">
+                        <br>
+                        <button type="submit">Actualizar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showFileName(input) {
+        const fileName = input.files[0]?.name || '';
+        const display = input.id === 'keyFile' ? 'keyFileName' : 'cerFileName';
+        document.getElementById(display).textContent = fileName;
+    }
+</script>
+<script>
+
+
+    async function enviarFormularioArchivo(formId, campoArchivo, ruta) {
+        const form = document.getElementById(formId);
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData();
+            const archivo = document.getElementById(campoArchivo).files[0];
+
+            if (!archivo) {
+                return alert('Selecciona un archivo primero');
+            }
+
+            formData.append('image', archivo);
+
+            try {
+                const res = await fetch(ruta, {
+                    method: 'POST',
+                    body: formData
+                });
+
+
+                const data = await res.json();
+
+                if (data.success) {
+                    confirmationMessage('🎉 ¡Subida exitosa!', '¡El archivo se ha subido con éxito!');
+                } else {
+                    errorMessage('🚫 ¡Algo salió mal!', 'Hubo un error al subir el archivo. Por favor, inténtalo nuevamente.');
+                }
+            } catch (error) {
+                alert('Error al subir archivo: ' + error.message);
+            }
+        });
+    }
+
+    async function enviarFormularioPassword() {
+        const form = document.getElementById('formPassword');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const password = document.getElementById('password').value;
+
+            const formData = new URLSearchParams();
+            formData.append('password', password);
+
+            try {
+                const res = await fetch('/links/update-password-sat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: formData.toString()
+                });
+
+                const respuestaTexto = await res.text();
+                alert(respuestaTexto);
+            } catch (error) {
+                alert('Error al enviar contraseña: ' + error.message);
+            }
+        });
+    }
+
+    // Ejecutar todo al cargar
+    window.addEventListener('DOMContentLoaded', () => {
+        enviarFormularioArchivo('formKey', 'keyFile', '/links/subir-sat');
+        enviarFormularioArchivo('formCer', 'cerFile', '/links/subir-sat');
+        enviarFormularioPassword();
+    });
+</script>

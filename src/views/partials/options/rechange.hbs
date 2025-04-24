@@ -1,0 +1,75 @@
+<style>
+    .div-reference {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #ffffff;
+        background: linear-gradient(45deg, #4facfe, #00f2fe);
+        padding: 15px 30px;
+        border-radius: 15px;
+        box-shadow: 0 0 15px rgba(0, 242, 255, 0.7);
+        text-align: center;
+        margin: 20px 0;
+        border: 3px solid #ffffff;
+        animation: pulse 2s infinite;
+        width: 50%;
+    }
+
+    @keyframes pulse {
+        0% {
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.7);
+        }
+        50% {
+            box-shadow: 0 0 25px rgb(0, 132, 255);
+        }
+        100% {
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.7);
+        }
+    }
+
+    .form-section label {
+        font-size: 1rem;
+        color: #555;
+    }
+
+    .form-section span {
+        color: var(--color-company);
+        font-weight: bold;
+    }
+
+    .form-section img {
+        max-width: 100%;
+        margin: 15px 0;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<div class="tab-pane fade show" id="navbar-rechange" role="tabpanel" aria-labelledby="navbar-company-tab">
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col">
+                    <label><i class="fi-icon fi-sr-shield-check"></i> Información de recarga.</label>
+
+                    <p>Tu numero de referencia: </p>
+                    <center>
+                    <div class="div-reference">
+                        1232106
+                    </div>
+
+                    <div class="form-section">
+                        <h5>Nuestras cuentas bancarias están disponibles siempre para ti:</h5>
+                        
+                            <img src="/img/rechange.webp" alt="Recarga bancaria">
+                            <br>
+                            <label>* <span>Banco Azteca</span> y la practicaja de <span>Santander</span> no permiten referenciar los pagos, por lo que debes reportarlos, así como todos los pagos que realices y no tengas referencia.</label>
+                            <br>
+                            <p>Puedes mandar tambien un mensaje de whastapp al numero +52 444 304 2129</p>
+                        
+                    </div>
+                    </center>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

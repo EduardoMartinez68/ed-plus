@@ -196,4 +196,52 @@ router.post('/create-facture-cfdi', isLoggedIn,async (req, res) => {
 });
 
 
+
+
+const path = require('path');
+
+router.post('/subir-sat', isLoggedIn, async (req, res) => {
+  try {
+    const archivoTemporal = req.file.path;
+    const extension = path.extname(req.file.originalname).toLowerCase(); // .key o .cer
+
+    if (!req.file) {
+      res.status(400).json({ success: false, message: 'No se recibió ningún archivo' });
+    }
+
+    if (!['.key', '.cer'].includes(extension)) {
+       return res.status(400).json({ success: false, message: 'Solo se permiten archivos .key o .cer' });
+    }
+
+    const destinoCarpeta = path.join(__dirname, '../../public/sat-uploads');
+    
+    // Crear la carpeta si no existe
+    if (!fs.existsSync(destinoCarpeta)) {
+      fs.mkdirSync(destinoCarpeta, { recursive: true });
+    }
+
+    const rutaFinal = path.join(destinoCarpeta, `sat${extension}`);
+
+    // Si ya existe un archivo con ese nombre, lo elimina
+    if (fs.existsSync(rutaFinal)) {
+      fs.unlinkSync(rutaFinal);
+    }
+
+    // Mueve y renombra el archivo
+    fs.rename(archivoTemporal, rutaFinal, (err) => {
+      if (err) {
+        console.error('Error al mover archivo:', err);
+        return res.status(500).send('Error al mover archivo');
+      }
+
+      res.json({ success: true, message: `Archivo ${extension} subido y reemplazado correctamente` });
+    });
+
+  } catch (err) {
+    console.error('Error general:', err);
+    res.status(500).json({ success: false, message: 'Error interno al mover el archivo' });
+  }
+});
+
+
 module.exports = router;
