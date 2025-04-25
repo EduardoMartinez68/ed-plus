@@ -1,6 +1,93 @@
 const loadingOverlay = document.getElementById("loadingOverlay");
-const cartItems = [];
+let cartItems = [];
 let cartTotal = 0;
+
+const carsInWait=[]
+
+function create_a_sale_in_wait(){
+    const emailClient = document.getElementById('emailClient');
+    const id_customer = emailClient.getAttribute('idClient');
+
+    const now = new Date();
+    const formattedDate = now.toLocaleString(); // Ej: "25/04/2025, 14:32:05"
+    const copyCartItems = [...cartItems];
+
+    const informationCartInWait={
+        emailClient:emailClient.textContent,
+        id_customer:id_customer,
+        date:formattedDate,
+        items:copyCartItems,
+        cartTotal:cartTotal,
+    };
+
+    carsInWait.push(informationCartInWait); //add the cart to the array of cars
+
+    //delete the customer
+    emailClient.setAttribute('idClient', null);
+    emailClient.textContent = '';
+
+    cartItems.length = 0; //restart the cart
+    updateCart(); //update the UI of the shooping cart for delete all the products
+
+    notificationMessage(`Nuevo carrito agregado ❤️`, 'Acabas de agregar un carrito a la lista de espera');
+}
+
+
+function show_popup_cart_in_wait() {
+    // Elimina cualquier popup anterior
+    const existingOverlay = document.querySelector('.pop-cart-wait-overlay');
+    if (existingOverlay) existingOverlay.remove();
+
+    const overlay = document.createElement('div');
+    overlay.className = 'pop-cart-wait-overlay';
+
+    overlay.innerHTML = `
+        <div class="pop-cart-wait-container">
+            <div class="pop-cart-wait-header">
+                <span class="pop-cart-wait-title">Carritos en espera</span>
+                <button class="pop-cart-wait-close">&times;</button>
+            </div>
+            <div class="pop-cart-wait-list">
+                ${carsInWait.map((cart, index) => `
+                    <div class="pop-cart-wait-item" data-index="${index}">
+                        <p><i class="fa-solid fa-user"></i> <strong>Cliente:</strong> ${cart.emailClient || 'Publico General'}</p>
+                        <p><i class="fa-regular fa-clock"></i> <strong>Fecha:</strong> ${cart.date}</p>
+                        <p><i class="fa-solid fa-dollar-sign"></i> <strong>Total:</strong> <span class="pop-cart-wait-bold">$${cart.cartTotal.toFixed(2)}</span></p>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    document.querySelector('.pop-cart-wait-close').addEventListener('click', () => {
+        overlay.remove();
+    });
+
+    // Delegar eventos de clic
+    document.querySelectorAll('.pop-cart-wait-item').forEach(item => {
+        item.addEventListener('click', (e) => {
+            const index = parseInt(item.getAttribute('data-index'));
+            update_cart_in_wait(index);
+            carsInWait.splice(index, 1);
+            overlay.remove(); // cerrar el popup
+        });
+    });
+}
+
+function update_cart_in_wait(index) {  
+    const cart = carsInWait[index];
+    emailClient.setAttribute('idClient', cart.id_customer);
+    emailClient.textContent = cart.emailClient;
+
+    cartItems = [...cart.items]; //copy the cart to the cart of the point of sale
+    cartTotal=cart.cartTotal;
+    updateCart(); //update the UI of the shooping cart for delete all the products
+
+    notificationMessage(`Carrito recuperado ❤️`, 'Acabas de recuperar una compra de la lista de espera');
+}
+
 
 
 async function buy_my_car() {

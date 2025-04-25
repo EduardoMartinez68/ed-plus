@@ -9,7 +9,7 @@
 
     .menu-most-oprtions-container {
       position: relative;
-      z-index: 150;
+      z-index: 10;
     }
 
     .menu-most-oprtions-toggle {
@@ -76,6 +76,8 @@
     <div class="menu-most-oprtions-options" id="menuMostOptions">
         {{#each dataEmployee}}
             <input type="text" value="{{id_branches}}" style="display: none;" id="id_branch">
+            <a onclick="create_a_sale_in_wait()">Venta en espera</a>
+            <a onclick="show_popup_cart_in_wait()">Recuperar Venta</a>
             <a onclick="seleccionarOpcion('recargas')">Recargas Telefonicas</a>
             <!---
             <a onclick="seleccionarOpcion('recargas')">Recargas Telefonicas</a>
