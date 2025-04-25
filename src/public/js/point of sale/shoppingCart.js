@@ -4,7 +4,22 @@ let cartTotal = 0;
 
 const carsInWait=[]
 
+//update value of the cars in wait, this is for that the user can see the cars in wait after refresh the page
+/*
+const storedCarts = localStorage.getItem('carsInWait');
+if (storedCarts) {
+    carsInWait = JSON.parse(storedCarts);
+    alert(`Hay ${carsInWait.length} carritos en espera`);
+}
+*/
+
 function create_a_sale_in_wait(){
+    //first we will see if exist a product in the cart
+    if (cartItems.length === 0) {
+        errorMessage('ERROR 👁️', 'No hay productos en el carrito para guardar en espera.');
+        return;
+    }
+
     const emailClient = document.getElementById('emailClient');
     const id_customer = emailClient.getAttribute('idClient');
 
@@ -21,6 +36,7 @@ function create_a_sale_in_wait(){
     };
 
     carsInWait.push(informationCartInWait); //add the cart to the array of cars
+    localStorage.setItem('carsInWait', JSON.stringify(carsInWait)); //save the cart in the local storage
 
     //delete the customer
     emailClient.setAttribute('idClient', null);
@@ -34,6 +50,18 @@ function create_a_sale_in_wait(){
 
 
 function show_popup_cart_in_wait() {
+    const storedCarts = localStorage.getItem('carsInWait');
+    if (storedCarts) {
+        carsInWait.length = 0; // vaciar el array original
+        carsInWait.push(...JSON.parse(storedCarts)); // llenar con los datos del localStorage
+    }
+
+    //we will see if exist a cart in the cars in wait
+    if (carsInWait.length === 0) {
+        errorMessage('ERROR 👁️', 'No hay carritos en espera.');
+        return;
+    }
+
     // Elimina cualquier popup anterior
     const existingOverlay = document.querySelector('.pop-cart-wait-overlay');
     if (existingOverlay) existingOverlay.remove();
@@ -67,16 +95,29 @@ function show_popup_cart_in_wait() {
 
     // Delegar eventos de clic
     document.querySelectorAll('.pop-cart-wait-item').forEach(item => {
-        item.addEventListener('click', (e) => {
-            const index = parseInt(item.getAttribute('data-index'));
-            update_cart_in_wait(index);
-            carsInWait.splice(index, 1);
+        item.addEventListener('click', async (e) => {
             overlay.remove(); // cerrar el popup
+            const index = parseInt(item.getAttribute('data-index'));
+
+            //we will see if can return the cart to the point of sale
+            if(await update_cart_in_wait(index)){
+                carsInWait.splice(index, 1);
+                localStorage.setItem('carsInWait', JSON.stringify(carsInWait)); // actualizar localStorage
+            }
         });
     });
 }
 
-function update_cart_in_wait(index) {  
+async function update_cart_in_wait(index) {  
+    //first we will see if exist a product in the cart 
+    if (cartItems.length > 0) {
+        //we will see if the user would like delete the product
+        if (!await questionMessage('Tienes productos en este carrito 🛒','¿Estás seguro de querer eliminar el carrito actual?')) {
+            return false; //if the user not would like delete the product, we will return false
+        }
+    }
+
+    //if the user would like delete the product, we will delete the product
     const cart = carsInWait[index];
     emailClient.setAttribute('idClient', cart.id_customer);
     emailClient.textContent = cart.emailClient;
@@ -86,6 +127,7 @@ function update_cart_in_wait(index) {
     updateCart(); //update the UI of the shooping cart for delete all the products
 
     notificationMessage(`Carrito recuperado ❤️`, 'Acabas de recuperar una compra de la lista de espera');
+    return true;
 }
 
 

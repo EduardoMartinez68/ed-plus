@@ -49,6 +49,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let debounceTimeout; //this is for the debounce
 
+
+    function clear_the_menu() {
+        // if the input is empty, we will show all the cards
+        const container = document.querySelector('.product-cards-point-of-sales');
+        container.innerHTML = originalProductHTML; // Reset to original HTML
+    }
+
     //this is for the search in cellphone
     searchInput.addEventListener('input', () => {
         clearTimeout(debounceTimeout); // restar the count of the debounce when the user is writing
@@ -58,8 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
       
           if (query === '') {
             // if the input is empty, we will show all the cards
-            const container = document.querySelector('.product-cards-point-of-sales');
-            container.innerHTML = originalProductHTML; // Reset to original HTML
+            clear_the_menu();
             return;
           }
       
@@ -287,6 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 searchInput.value = ""; //delete the value of the input
+                clear_the_menu(); //clear the menu for show all the products again
             } else {
                 notificationMessageError('😬 Ups!', 'Este articulo no se encuentra en el menu.');
             }
