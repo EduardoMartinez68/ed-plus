@@ -338,6 +338,35 @@ router.post('/:id_lot/edit-lot-quantity', isLoggedIn, async (req, res) => {
     }
 })
 
+router.post('/:id_lot/update-lot-quantity-for-sale', isLoggedIn, async (req, res) => {
+    const { id_lot } = req.params;
+    const { newQuantity } = req.body;
+    const id_company = req.user.id_company;
+    const id_branch = req.user.id_branch;
+    const id_employees = req.user.id_employee;
+
+    const queryText = `
+        UPDATE "Inventory".lots 
+        SET current_existence = current_existence - $1
+        WHERE id = $2
+        RETURNING *
+    `;
+
+    try {
+        const result = await database.query(queryText, [
+            newQuantity,
+            id_lot
+        ]);
+
+        await add_move_to_the_history(id_company, id_branch, id_employees, id_lot, newQuantity, 'Venta');
+
+        res.status(201).json({ message: "Lote actualizado con éxito", lot: result.rows[0] });
+    } catch (error) {
+        console.error("Error al actualizar el lote:", error);
+        res.status(500).json({ error: "Error al actualizar el lote" });
+    }
+})
+
 async function add_move_to_the_history(id_companies, id_branches, id_employees, id_lots, newCant, type_move) {
     const queryText = `
         INSERT INTO "Branch".history_move_lot 

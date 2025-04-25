@@ -33,7 +33,8 @@ const {
     get_data_recent_combos,
     get_all_products_in_sales,
     get_all_the_promotions,
-    get_the_products_most_sales_additions
+    get_the_products_most_sales_additions,
+    get_all_dish_and_combo_without_lots
 } = require('../../services/store');
 
 const {
@@ -63,7 +64,7 @@ router.get('/:id_user/:id_company/:id_branch/:id_employee/:id_role/store-home', 
         const branchFree = await get_data_branch(id_branch);
         const dataEmployee = await get_data_employee(req);
 
-        const dishAndCombo = await get_the_products_most_sales_additions(id_branch);
+        const dishAndCombo = await get_all_dish_and_combo_without_lots(id_branch) //get_the_products_most_sales_additions(id_branch);
         /*
         const newCombos = await get_data_recent_combos(id_company);
         const mostSold = await get_all_data_combo_most_sold(id_branch);

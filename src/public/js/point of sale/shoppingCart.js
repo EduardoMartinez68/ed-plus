@@ -27,12 +27,15 @@ function create_a_sale_in_wait(){
     const formattedDate = now.toLocaleString(); // Ej: "25/04/2025, 14:32:05"
     const copyCartItems = [...cartItems];
 
+
+    const copyRecipe=[...information_of_recipe];
     const informationCartInWait={
         emailClient:emailClient.textContent,
         id_customer:id_customer,
         date:formattedDate,
         items:copyCartItems,
         cartTotal:cartTotal,
+        recipe:copyRecipe
     };
 
     carsInWait.push(informationCartInWait); //add the cart to the array of cars
@@ -43,6 +46,7 @@ function create_a_sale_in_wait(){
     emailClient.textContent = '';
 
     cartItems.length = 0; //restart the cart
+    information_of_recipe.length=0; //restart the recipe
     updateCart(); //update the UI of the shooping cart for delete all the products
 
     notificationMessage(`Nuevo carrito agregado ❤️`, 'Acabas de agregar un carrito a la lista de espera');
@@ -124,6 +128,9 @@ async function update_cart_in_wait(index) {
 
     cartItems = [...cart.items]; //copy the cart to the cart of the point of sale
     cartTotal=cart.cartTotal;
+
+    information_of_recipe=[...cart.recipe]; //copy the recipe to the recipe of the point of sale
+
     updateCart(); //update the UI of the shooping cart for delete all the products
 
     notificationMessage(`Carrito recuperado ❤️`, 'Acabas de recuperar una compra de la lista de espera');
@@ -214,6 +221,7 @@ async function send_buy_to_the_server(total, moneyReceived, exchange, comment, i
 }
 
 async function update_the_lots_of_the_product_in_the_car(id_customer) {
+
     const existProductThatNeedPrescription = information_of_recipe.length > 0;
     for (let lotElement of document.querySelectorAll('.lot-item')) { // Usar 'for...of' en lugar de 'forEach'
         let lotId = lotElement.getAttribute('data-lot-id'); // ID del lote en el DOM
@@ -223,17 +231,16 @@ async function update_the_lots_of_the_product_in_the_car(id_customer) {
             let currentExistence = parseInt(lotElement.getAttribute('data-current-existence'), 10);
             
             if (!isNaN(currentExistence)) { // Asegurar que sea un número válido
-                let newQuantity = currentExistence - foundLot.quantity;
+                let newQuantity = foundLot.quantity //currentExistence - foundLot.quantity;
 
                 // Evitar valores negativos
                 newQuantity = newQuantity < 0 ? 0 : newQuantity;
-
-                // Actualizar el atributo y mostrar en el HTML
-                lotElement.setAttribute('data-current-existence', newQuantity);
                 
                 // Llamar a la función asíncrona
-                await get_answer_server_for_lot({newQuantity:newQuantity}, `/links/${lotId}/edit-lot-quantity`);
+                await get_answer_server_for_lot({newQuantity:newQuantity}, `/links/${lotId}/update-lot-quantity-for-sale`);
 
+                // Actualizar el atributo y mostrar en el HTML
+                //lotElement.setAttribute('data-current-existence', newQuantity);
                 
                 //we will see if exist product that need prescription in the cart
                 if (existProductThatNeedPrescription) {
@@ -248,7 +255,6 @@ async function update_the_lots_of_the_product_in_the_car(id_customer) {
             }
         }
     }
-
 
 
     //we will see if exist product that need prescription in the cart
@@ -497,6 +503,10 @@ function remove_all_the_item_in_the_cart_that_not_exist_in_the_array_of_the_reci
 function get_the_lot_of_the_product(barcode) {
     // search the product in the menu
     let productElement = document.getElementById(barcode);
+
+    if (!productElement) {
+        return null;
+    }
 
     //we will see if the product have lot
     let lotsInfo = productElement.querySelector(".lots-info");

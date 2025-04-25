@@ -97,13 +97,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function update_the_menu(query){
         try {
-            const response = await fetch('/search-products', {
+            const response = await fetch('/links/search-products', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    id_branch: ID_BRANCH, // asegúrate de que esta variable esté definida
+                    id_branch: ID_BRANCH,
                     barcode: query
                 })
             });
