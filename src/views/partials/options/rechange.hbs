@@ -42,6 +42,79 @@
         border-radius: 10px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
+
+
+
+    .message-pop-rechange {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .popup-container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+      position: relative;
+      animation: scaleIn 0.3s ease;
+    }
+
+    @keyframes scaleIn {
+      0% { transform: scale(0.8); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes fadeIn {
+      from { background-color: rgba(0, 0, 0, 0); }
+      to { background-color: rgba(0, 0, 0, 0.6); }
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: transparent;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      color: rgba(0, 0, 0, 0.7);
+    }
+
+    .popup-container h2 {
+      margin-top: 0;
+      text-align: center;
+      color: #333;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 12px 15px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    .extra-link {
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .link-rechange{
+        text-decoration: none;
+        color: var(--color-company);
+        font-weight: bold;
+    }
 </style>
 
 <div class="tab-pane fade show" id="navbar-rechange" role="tabpanel" aria-labelledby="navbar-company-tab">
@@ -49,12 +122,11 @@
         <div class="card-body">
             <div class="row">
                 <div class="col">
-                    <label><i class="fi-icon fi-sr-shield-check"></i> Información de recarga.</label>
-
-                    <p>Tu numero de referencia: </p>
+                    <label><i class="fi-icon fi-sr-shield-check"></i> Información de Multiservicios.</label>
+                    <br>
                     <center>
                     <div class="div-reference">
-                        1232106
+                        <button onclick="openPopupRechange()" class="btn">Vincular cuenta de prontiPagos</button>
                     </div>
 
                     <div class="form-section">
@@ -63,9 +135,7 @@
                             <img src="/img/rechange.webp" alt="Recarga bancaria">
                             <br>
                             <label>* <span>Banco Azteca</span> y la practicaja de <span>Santander</span> no permiten referenciar los pagos, por lo que debes reportarlos, así como todos los pagos que realices y no tengas referencia.</label>
-                            <br>
-                            <p>Puedes mandar tambien un mensaje de whastapp al numero +52 444 304 2129</p>
-                        
+                            <br>      
                     </div>
                     </center>
                 </div>
@@ -73,3 +143,30 @@
         </div>
     </div>
 </div>
+
+<div class="message-pop-rechange" id="message-pop-rechange">
+  <div class="popup-container">
+    <button class="close-btn" onclick="closePopup()">x</button>
+    <label>Activa tu Cuenta de Prontipagos</label>
+    <form id="form-rechange-pop" onsubmit="event.preventDefault(); console.log('Form enviado');">
+      <input type="text" placeholder="Usuario" class="form-control" id="user" name="user" required>
+      <input type="password" placeholder="Contraseña" class="form-control" id="password" name="password" required>
+      <button class="btn-edit" type="submit">Activar Cuenta</button>
+    </form>
+    <br>
+    <div class="extra-link">
+      <a href="https://www.prontipagos.com/registro/?landingId=57" class="link-rechange"  target="_blank">No tengo una cuenta de Prontipagos</a>
+    </div>
+  </div>
+</div>
+
+<!-- JS PARA ABRIR Y CERRAR -->
+<script>
+  function openPopupRechange() {
+    document.getElementById("message-pop-rechange").style.display = "flex";
+  }
+
+  function closePopup() {
+    document.getElementById("message-pop-rechange").style.display = "none";
+  }
+</script>

@@ -84,7 +84,6 @@ async function send_buy_to_the_server(total, moneyReceived, exchange, comment, i
     }
 }
 
-
 async function update_the_lots_of_the_product_in_the_car(id_customer) {
     const existProductThatNeedPrescription = information_of_recipe.length > 0;
     for (let lotElement of document.querySelectorAll('.lot-item')) { // Usar 'for...of' en lugar de 'forEach'
@@ -154,9 +153,6 @@ function update_the_prescription_for_save_after(barcode, newIdLot, newAmount, ne
     return false;
 }
 
-
-
-
 async function get_answer_server_for_lot(dataToTheServer, link) {
     try {
         const url = link;
@@ -184,7 +180,6 @@ async function get_answer_server_for_lot(dataToTheServer, link) {
         throw error;
     }
 }
-
 
 async function get_answer_server(dataToTheServer, link) {
     try {
@@ -386,15 +381,14 @@ function show_all_the_lot_of_the_product(lotsInfo,img, name, barcode, price, pur
 
     //in this for we will get all the information of the lot
     lotElements.forEach(lotElement => {
-        let idLot = lotElement.querySelector("strong:nth-child(8)").nextSibling.nodeValue.trim();
-        let lotNumber = lotElement.querySelector("strong:nth-child(1)").nextSibling.nodeValue.trim();
-        let existence = parseInt(lotElement.getAttribute('data-current-existence'),10);
-        let manufactureDate = lotElement.querySelector("strong:nth-child(5)").nextSibling.nodeValue.trim();
-        let expirationDate = lotElement.querySelector("strong:nth-child(7)").nextSibling.nodeValue.trim();
-
-        //save the information in the array of the lot
+        let idLot = lotElement.getAttribute('data-lot-id');
+        let lotNumber = lotElement.getAttribute('data-lot-number');
+        let existence = parseInt(lotElement.getAttribute('data-current-existence'), 10);
+        let manufactureDate = lotElement.getAttribute('data-manufacture-date');
+        let expirationDate = lotElement.getAttribute('data-expiration-date');
+    
         lots.push({
-            id:idLot,
+            id: idLot,
             nombre: lotNumber,
             fechaInicio: manufactureDate,
             fechaFinal: expirationDate,

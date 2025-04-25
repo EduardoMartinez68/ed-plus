@@ -32,7 +32,8 @@ const {
     get_all_data_combo_most_sold,
     get_data_recent_combos,
     get_all_products_in_sales,
-    get_all_the_promotions
+    get_all_the_promotions,
+    get_the_products_most_sales_additions
 } = require('../../services/store');
 
 const {
@@ -62,14 +63,16 @@ router.get('/:id_user/:id_company/:id_branch/:id_employee/:id_role/store-home', 
         const branchFree = await get_data_branch(id_branch);
         const dataEmployee = await get_data_employee(req);
 
-        const dishAndCombo = await get_all_dish_and_combo(id_company, id_branch);
-        
+        const dishAndCombo = await get_the_products_most_sales_additions(id_branch);
+        /*
         const newCombos = await get_data_recent_combos(id_company);
         const mostSold = await get_all_data_combo_most_sold(id_branch);
         const offerAd = await get_all_ad(id_branch, 'offer');
         const newAd = await get_all_ad(id_branch, 'new');
         const combosAd = await get_all_ad(id_branch, 'combo');
         const specialsAd = await get_all_ad(id_branch, 'special');
+        */
+
         const addition = '{"nombre": "Juan", "edad": 30, "ciudad": "Madrid"}'; // Ejemplo de datos adicionales
         const boxes=await get_all_box_of_the_branch_with_his_id(id_branch);
         const promotions=await get_all_the_promotions(id_branch);
@@ -80,12 +83,16 @@ router.get('/:id_user/:id_company/:id_branch/:id_employee/:id_role/store-home', 
             branchFree,
             dishAndCombo,
             dataEmployee,
+
+            /*
             mostSold,
             newCombos,
             offerAd,
             newAd,
             combosAd,
             specialsAd,
+            */
+
             boxes,
             dataCompany,
             promotions,
@@ -115,6 +122,66 @@ router.get('/:id_company/:id_branch/invoice', isLoggedIn, async (req, res) => {
     const invoice=await get_all_invoice_with_the_id_of_the_branch(id_branch);
     res.render('links/store/invoice/invoice',{branchFree,invoice});
 })
+
+
+
+
+const database = require('../../database');
+
+router.post('/search-products', isLoggedIn, async (req, res) => {
+  const {id_branch,barcode}=req.body;
+
+  try {
+    const products = await get_the_products_with_barcode(id_branch, barcode);
+    res.json({ success: true, products });
+  } catch (error) {
+    console.error('Error searching products:', error);
+    res.status(500).json({ success: false, error: 'Error interno del servidor' });
+  }
+})
+
+async function get_the_products_with_barcode(id_branch,barcode) {
+  const queryText = `
+    SELECT 
+        i.*,
+        d.barcode,
+        d.name,
+        d.description,
+        d.img,
+        d.id_product_department,
+        d.id_product_category,
+        d.this_product_is_sold_in_bulk,
+        d.this_product_need_recipe,
+        COALESCE(
+            json_agg(
+                jsonb_build_object(
+                    'id', l.id,
+                    'number_lote', l.number_lote,
+                    'initial_existence', l.initial_existence,
+                    'current_existence', l.current_existence,
+                    'date_of_manufacture', l.date_of_manufacture,
+                    'expiration_date', l.expiration_date
+                )
+                ORDER BY l.expiration_date ASC
+            ) FILTER (WHERE l.id IS NOT NULL), '[]'
+        ) AS lots
+    FROM "Inventory".dish_and_combo_features i
+    INNER JOIN "Kitchen".dishes_and_combos d ON i.id_dishes_and_combos = d.id
+    LEFT JOIN "Inventory".lots l ON l.id_dish_and_combo_features = i.id
+    WHERE i.id_branches = $1 AND d.barcode ILIKE $2
+    GROUP BY i.id, d.id
+    LIMIT 20;
+  `;
+
+  try {
+    const values = [id_branch, `%${barcode}%`]; // Agregamos % para el LIKE dinámico
+    const result = await database.query(queryText, values);
+    return result.rows;
+  } catch (error) {
+    console.error('Error filtering products by barcode:', error);
+    return [];
+  }
+}
 
 //-----------------------------this is cfor create facture CDFI
 const generacfdi = require('generacfdi');

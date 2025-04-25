@@ -41,24 +41,6 @@ async function this_data_employee_is_user(req) {
 }
 
 async function get_all_dish_and_combo(idCompany, idBranch) {
-    await create_table_lot();
-
-    var queryText1 = `
-        SELECT 
-            i.*,
-            d.barcode,
-            d.name,
-            d.description,
-            d.img,
-            d.id_product_department,
-            d.id_product_category,
-            d.this_product_is_sold_in_bulk,
-            d.this_product_need_recipe
-        FROM "Inventory".dish_and_combo_features i
-        INNER JOIN "Kitchen".dishes_and_combos d ON i.id_dishes_and_combos = d.id
-        WHERE i.id_branches = $1
-    `;
-
     const queryText = `
         SELECT 
             i.*,
@@ -89,6 +71,43 @@ async function get_all_dish_and_combo(idCompany, idBranch) {
         WHERE i.id_branches = $1
         GROUP BY i.id, d.id;
     `;
+    var values = [idBranch];
+    const result = await database.query(queryText, values);
+    return result.rows;
+}
+
+async function get_the_products_most_sales_additions(idBranch) {
+    const queryText = `
+    SELECT 
+        i.*,
+        d.barcode,
+        d.name,
+        d.description,
+        d.img,
+        d.id_product_department,
+        d.id_product_category,
+        d.this_product_is_sold_in_bulk,
+        d.this_product_need_recipe,
+        COALESCE(
+            json_agg(
+                jsonb_build_object(
+                    'id', l.id,
+                    'number_lote', l.number_lote,
+                    'initial_existence', l.initial_existence,
+                    'current_existence', l.current_existence,
+                    'date_of_manufacture', l.date_of_manufacture,
+                    'expiration_date', l.expiration_date
+                )
+                ORDER BY l.expiration_date ASC
+            ) FILTER (WHERE l.id IS NOT NULL), '[]'
+        ) AS lots
+    FROM "Inventory".dish_and_combo_features i
+    INNER JOIN "Kitchen".dishes_and_combos d ON i.id_dishes_and_combos = d.id
+    LEFT JOIN "Inventory".lots l ON l.id_dish_and_combo_features = i.id
+    WHERE i.id_branches = $1
+    GROUP BY i.id, d.id
+    LIMIT 50;
+`;
     var values = [idBranch];
     const result = await database.query(queryText, values);
     return result.rows;
@@ -279,5 +298,6 @@ module.exports = {
     get_all_combo_most_sold,
     get_dish_and_combo_with_id,
     get_all_products_in_sales,
-    get_all_the_promotions
+    get_all_the_promotions,
+    get_the_products_most_sales_additions
 };
