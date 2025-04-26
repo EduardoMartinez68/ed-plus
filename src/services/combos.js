@@ -80,29 +80,48 @@ async function delete_all_supplies_combo(id) {
     }
 }
 
-async function get_combo_features(idBranche,is_a_product) {
-    var queryText = `
-    SELECT 
-        f.*,
-        d.img,
-        d.barcode,
-        d.name,
-        d.description,
-        d.this_product_is_sold_in_bulk,
-        pc_cat.name as category_name,
-        pd_dept.name as department_name
-    FROM 
-        "Inventory".dish_and_combo_features f
-    INNER JOIN 
-        "Kitchen".dishes_and_combos d ON f.id_dishes_and_combos = d.id
-    LEFT JOIN
-        "Kitchen".product_category pc_cat ON d.id_product_category = pc_cat.id
-    LEFT JOIN
-        "Kitchen".product_department pd_dept ON d.id_product_department = pd_dept.id
-    WHERE 
-        f.id_branches = $1 and d.is_a_product =$2
+async function get_combo_features(idBranche,is_a_product,barcode = '') {
+    let queryText = `
+        SELECT 
+            f.*,
+            d.img,
+            d.barcode,
+            d.name,
+            d.description,
+            d.this_product_is_sold_in_bulk,
+            pc_cat.name as category_name,
+            pd_dept.name as department_name
+        FROM 
+            "Inventory".dish_and_combo_features f
+        INNER JOIN 
+            "Kitchen".dishes_and_combos d ON f.id_dishes_and_combos = d.id
+        LEFT JOIN
+            "Kitchen".product_category pc_cat ON d.id_product_category = pc_cat.id
+        LEFT JOIN
+            "Kitchen".product_department pd_dept ON d.id_product_department = pd_dept.id
+        WHERE 
+            f.id_branches = $1 
+            AND d.is_a_product = $2
     `;
-    var values = [idBranche,is_a_product];
+
+    let values = [idBranche, is_a_product];
+
+    if (barcode.trim() !== '') {
+        queryText += `
+            AND (
+                LOWER(d.barcode) LIKE $3
+                OR LOWER(d.name) LIKE $3
+            )
+            LIMIT 20
+        `;
+        values.push(`%${barcode.toLowerCase()}%`);
+    } else {
+        queryText += `
+            ORDER BY d.name ASC
+            LIMIT 50
+        `;
+    }
+
     const result = await database.query(queryText, values);
     const data = result.rows;
     return data;

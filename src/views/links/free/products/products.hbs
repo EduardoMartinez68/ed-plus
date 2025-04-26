@@ -15,6 +15,7 @@
 
 <div class="container">
     {{#each branchFree}}
+    <input type="hidden" id="id_branch" value="{{id}}">
     <div class="row">
         <div class="col-6">
             <input type="text" class="form-control" placeholder="Buscar código de barras..." id="search">
@@ -90,5 +91,78 @@
         window.location.href = "/fud/"+id_company+"/"+id+"/edit-combo-company";
     }
 </script>
-
+<!---
 <script src="/js/search.js"></script>
+-->
+<script>
+    let is_a_product = true; // Cambia a false si quieres buscar combos
+
+
+    
+    document.getElementById('search').addEventListener('input', search_combo);
+
+    let searchTimeout = null;
+
+    function search_combo() {
+        const barcodeValue = document.getElementById('search').value;
+
+        // Para no hacer llamadas por cada letra que escriba (esperamos 300ms)
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            fetchCombos(barcodeValue);
+        }, 200);
+    }
+
+    async function fetchCombos(barcode) {
+    const id_branch = document.getElementById('id_branch').value;
+    try {
+        const response = await fetch(`/links/update_table/${id_branch}/combos`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include', // Importante para sesión
+            body: JSON.stringify({ barcode , is_a_product})
+        });
+
+        if (!response.ok) {
+            const text = await response.text();
+            console.error('Server responded with error page:', text);
+            throw new Error(`Server error ${response.status}`);
+        }
+
+        const data = await response.json();
+        renderTable(data);
+    } catch (error) {
+        console.error('Error fetching combos:', error);
+    }
+    }
+
+    function renderTable(combos) {
+        const tbody = document.querySelector('#table-container tbody');
+        tbody.innerHTML = '';
+
+        combos.forEach(combo => {
+            const row = document.createElement('tr');
+            row.id = combo.barcode;
+
+            const imgSrc = combo.img ? combo.img : '/img/icons_first/product.webp';
+
+            row.innerHTML = `
+                <td><img src="${imgSrc}" class="img-s-p"></td>
+                <td>${combo.barcode}</td>
+                <td>${combo.name}</td>
+                <td>${combo.description}</td>
+                <td>${combo.department_name}/${combo.category_name}</td>
+                <td>${combo.price_1}</td>
+                <td>
+                    <button class="btn btn-edit" id="${combo.id}" onclick="nextWeb('${combo.id_companies}/${combo.id_branches}/${combo.id}/edit-products-free')">
+                        <i class="fi-department fi-sr-pencil"></i>
+                    </button>
+                </td>
+            `;
+
+            tbody.appendChild(row);
+        });
+    }
+</script>

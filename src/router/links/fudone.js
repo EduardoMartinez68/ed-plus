@@ -186,6 +186,14 @@ router.get('/:id_company/:id_branch/inventory', isLoggedIn, async (req, res) => 
     res.render('links/free/inventory/inventory', { branchFree, products, supplies});
 });
 
+router.post('/:id_branch/update_table_inventory', isLoggedIn, async (req, res) => {
+    const {id_branch } = req.params;
+    const {barcode}=req.body;
+    const products = await get_inventory_products_branch(id_branch,barcode);
+    const supplies = await get_inventory_supplies_branch(id_branch,barcode);
+    res.json({ products, supplies });
+});
+
 router.get('/:id_company/:id_branch/products-free', isLoggedIn, async (req, res) => {
     const {id_company, id_branch } = req.params;
 
@@ -201,6 +209,28 @@ router.get('/:id_company/:id_branch/products-free', isLoggedIn, async (req, res)
         res.render('links/free/products/products', { branchFree, combos});
     } else {
         res.render('links/store/branchLost');
+    }
+});
+
+router.post('/update_table/:id_branch/combos', isLoggedIn, async (req, res) => {
+    const { barcode , is_a_product} = req.body;
+    const { id_branch } = req.params;
+
+    if (!id_branch) {
+        return res.status(400).json({ error: 'Branch ID missing' });
+    }
+
+    try {
+        const combos = await get_combo_features(id_branch, is_a_product, barcode);
+
+        if (!combos || combos.length === 0) {
+            return res.status(404).json({ error: 'No combos found' });
+        }
+
+        res.json(combos);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error fetching combos' });
     }
 });
 

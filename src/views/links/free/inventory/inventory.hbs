@@ -2,26 +2,29 @@
 <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
 <br><br>
 <div class="container">
-    <label for=""><i class="fi-icon fi-ss-box-alt"></i>Inventario</label>
-    <hr>
-    {{#each branchFree}}
-    <div class="row">
-        <div class="col-8">
-            <input type="text" class="form-control" placeholder="Buscar código de barras..." id="search">
-        </div>
-        <div class="col">
-            <div class="col">
-                <button class="btn btn-confirm-message" onclick="nextWeb('{{id_companies}}/{{id}}/add-products-free')">Agregar producto +</button>
-            </div>
-        </div>
+  <label for=""><i class="fi-icon fi-ss-box-alt"></i>Inventario</label>
+  <hr>
+  {{#each branchFree}}
+  <input type="hidden" id="id_branch" value="{{id}}">
+  <div class="row">
+    <div class="col-8">
+      <input type="text" class="form-control" placeholder="Buscar código de barras..." id="search">
     </div>
-    {{/each}}
+    <div class="col">
+      <div class="col">
+        <button class="btn btn-confirm-message" onclick="nextWeb('{{id_companies}}/{{id}}/add-products-free')">Agregar
+          producto +</button>
+      </div>
+    </div>
+  </div>
+  {{/each}}
 </div>
 <div class="container mt-4">
   <div class="row">
     <ul class="nav nav-tabs" id="myTab" role="tablist">
       <li class="nav-item">
-        <a class="nav-link active" id="lista-insumos-tab" data-toggle="tab" href="#lista-insumos" role="tab" aria-controls="lista-insumos" aria-selected="true">Lista de productos</a>
+        <a class="nav-link active" id="lista-insumos-tab" data-toggle="tab" href="#lista-insumos" role="tab"
+          aria-controls="lista-insumos" aria-selected="true">Lista de productos</a>
       </li>
     </ul>
     <!-- Contenido de las pestañas -->
@@ -32,27 +35,35 @@
 
 
 
-      
+
     </div>
   </div>
 </div>
 <br><br><br>
 <script>
-  async function show_message_edit(id_supplies,id_company,id_branch,img,barcode,nameDepartment,existence,purchaseAmount){
-      //we will to get the data of the new department
-      const data=await edit_supplies_branch('Edita '+nameDepartment,img,barcode,nameDepartment,existence,purchaseAmount);
-      if(data){
-          //get the data of the from 
-          var newExistence = parseFloat(data[0]);
-          if(newExistence>0){
-              window.location.href = `/links/${id_company}/${id_branch}/${id_supplies}/${newExistence}/update-products-branch`;
-          }
+  async function show_message_edit(id_supplies, id_company, id_branch, img, barcode, nameDepartment, existence, purchaseAmount) {
+    //we will to get the data of the new department
+    const data = await edit_supplies_branch('Edita ' + nameDepartment, img, barcode, nameDepartment, existence, purchaseAmount);
+    if (data) {
+      //get the data of the from 
+      var newExistence = parseFloat(data[0]);
+      if (newExistence > 0) {
+        window.location.href = `/links/${id_company}/${id_branch}/${id_supplies}/${newExistence}/update-products-branch`;
       }
+    }
   }
 </script>
 <script src="/js/manager/addEmployee.js"></script>
 <script src="/js/store/other.js"></script>
+
+
+
+
+
+
+
 <script>
+  /*
     const tabs = document.querySelectorAll('.tab_btn');
     const all_content = document.querySelectorAll('.content-sales');
 
@@ -71,11 +82,80 @@
             all_content[index].classList.add('active');
         })
     })
+    */
 </script>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+  const searchInput = document.getElementById('search');
+  const tableBody = document.querySelector('#table-container tbody');
+  let searchTimeout; // Variable global para almacenar el timeout
+
+  searchInput.addEventListener('input', function () {
+    const barcode = this.value.trim();
+    const id_branch = document.getElementById('id_branch').value; // <-- aquí pon la variable o ID dinámico de tu sucursal
+
+    // Evitar hacer la llamada cada vez que se escribe una letra
+    clearTimeout(searchTimeout);
+
+    // Hacer la llamada después de 200 ms desde la última escritura
+    searchTimeout = setTimeout(async function () {
+      try {
+        const response = await fetch(`/links/${id_branch}/update_table_inventory`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ barcode })
+        });
+
+        if (response.ok) {
+          const { products, supplies } = await response.json();
+          renderTable(products, supplies); // Actualiza la tabla con los datos
+        } else {
+          console.error('Error en la búsqueda');
+        }
+      } catch (error) {
+        console.error('Error en la búsqueda:', error);
+      }
+    }, 200); // Esperamos 200 ms después de la última escritura
+  });
+
+  function renderTable(products, supplies) {
+    tableBody.innerHTML = ''; // Limpiar la tabla
+
+    const allItems = [...products, ...supplies];
+
+    allItems.forEach(item => {
+      const row = document.createElement('tr');
+      row.id = item.barcode;
+
+      row.innerHTML = `
+            <td><img src="${item.img ? item.img : '/img/icons_first/product.webp'}" class="img-s-p"></td>
+            <td>${item.barcode}</td>
+            <td>${item.name}</td>
+            <td>${item.description}</td>
+            <td>${item.existence}/${item.sale_unity}</td>
+            <td>${item.sale_price}/${item.currency_sale}</td>
+            <td>
+                <button class="btn btn-edit" onclick="edit_inventory('${item.id_companies}','${item.id_branches}','${item.id}','','${item.barcode}','${item.name}','${item.existence}','${item.sale_unity}')">
+                    <i class="fi-department fi-ss-truck-loading"></i>
+                </button>
+            </td>
+        `;
+
+      tableBody.appendChild(row);
+    });
+  }
+  });
+</script>
+
+<!--
 <script src="/js/search.js"></script>
+-->
 
 
-
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

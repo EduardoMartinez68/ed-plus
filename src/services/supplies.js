@@ -191,8 +191,8 @@ async function delete_dishes_or_combo_of_the_branch(id_dishes_and_combos){
 }
 
 
-async function get_inventory_products_branch(id_branch){
-    var queryText = `
+async function get_inventory_products_branch(id_branch, barcode = '') {
+    let queryText = `
         SELECT 
             f.*,
             p.id_companies,
@@ -203,16 +203,26 @@ async function get_inventory_products_branch(id_branch){
             p.use_inventory
         FROM "Inventory".product_and_suppiles_features f
         INNER JOIN "Kitchen".products_and_supplies p ON f.id_products_and_supplies = p.id
-        WHERE f.id_branches = $1 and p.supplies =$2 and use_inventory=true
+        WHERE f.id_branches = $1 AND p.supplies = $2 AND use_inventory = true
     `;
-    var values = [id_branch, false];
+    
+    let values = [id_branch, false];
+    
+    // Si el barcode existe, se agrega el filtro por barcode
+    if (barcode && barcode.trim() !== '') {
+        queryText += ` AND p.barcode LIKE $3 LIMIT 10`;
+        values.push(`%${barcode}%`);
+    } else {
+        queryText += ` LIMIT 25`;  // Limitar a los primeros 50 si no hay barcode
+    }
+
     const result = await database.query(queryText, values);
     const data = result.rows;
     return data;
 }
 
-async function get_inventory_supplies_branch(id_branch){
-    var queryText = `
+async function get_inventory_supplies_branch(id_branch,barcode=''){
+    let queryText = `
         SELECT 
             f.*,
             p.id_companies,
@@ -223,12 +233,29 @@ async function get_inventory_supplies_branch(id_branch){
             p.use_inventory
         FROM "Inventory".product_and_suppiles_features f
         INNER JOIN "Kitchen".products_and_supplies p ON f.id_products_and_supplies = p.id
-        WHERE f.id_branches = $1 and p.supplies =$2 and use_inventory=true
+        WHERE f.id_branches = $1 AND p.supplies = $2 AND p.use_inventory = true
     `;
-    var values = [id_branch, true];
-    const result = await database.query(queryText, values);
-    const data = result.rows;
-    return data;
+
+    let values = [id_branch, true];
+
+    // Modifica la consulta dependiendo de si barcode está presente o no
+    if (barcode) {
+        // Si hay barcode, obtén los primeros 20 resultados filtrando por el código de barras
+        queryText += ` AND p.barcode LIKE $3 LIMIT 10`;
+        values.push(`%${barcode}%`);
+    } else {
+        // Si no hay barcode, obtén los primeros 50 resultados
+        queryText += ` LIMIT 25`;
+    }
+
+    try {
+        const result = await database.query(queryText, values);
+        const data = result.rows;
+        return data;
+    } catch (err) {
+        console.error('Error al obtener los suministros del inventario:', err);
+        throw err;  // Lanza el error para ser manejado en otro lugar
+    }
 }
 
 module.exports = {

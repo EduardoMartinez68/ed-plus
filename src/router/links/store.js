@@ -186,8 +186,6 @@ async function get_the_products_with_barcode(id_branch,barcode) {
 }
 
 //-----------------------------this is cfor create facture CDFI
-const generacfdi = require('generacfdi');
-
 const axios = require('axios');
 const fs = require('fs');
 
@@ -311,27 +309,6 @@ router.post('/create-facture-cfdi', isLoggedIn,async (req, res) => {
             "Total": 116
           }]	
         }
-      
-      const xmlCFDI = generacfdi.generarXML(cfdiData);
-  
-      // Ruta local de los archivos CSD del usuario (puedes personalizar esto según su sesión o ID)
-      const cer = fs.readFileSync(path.join(__dirname, '../../csd/users/certificado.cer'));
-      const key = fs.readFileSync(path.join(__dirname, '../../csd/users/llave.key'));
-  
-      // Enviar al PAC (esto es un ejemplo, reemplaza la URL con la real)
-      const response = await axios.post('https://api.pac.com/timbrar', {
-        xml: xmlCFDI,
-        cer: cer.toString('base64'),
-        key: key.toString('base64'),
-        password: passwordCSD
-      });
-  
-      const xmlTimbrado = response.data.xmlTimbrado;
-  
-      // Puedes guardar el XML timbrado localmente
-      fs.writeFileSync(path.join(__dirname, '../facturas/factura-timbrada.xml'), xmlTimbrado);
-  
-      res.json({ success: true, message: 'CFDI timbrado exitosamente', xml: xmlTimbrado });
     } catch (error) {
       console.error('Error al generar/timbrar CFDI:', error);
       res.status(500).json({ success: false, message: 'Error al timbrar el CFDI', error: error.message });
