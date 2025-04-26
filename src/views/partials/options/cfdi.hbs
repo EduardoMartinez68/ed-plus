@@ -51,6 +51,13 @@
         width: 100%;
     }
 
+    input[type="text"] {
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        width: 100%;
+    }
+
     button[type="submit"] {
         background-color: var(--color-company);
         color: white;
@@ -73,12 +80,19 @@
         margin-top: 5px;
         color: #7f8c8d;
     }
+
+    .color-link{
+        color: var(--color-company);
+        text-decoration: none;
+    }
 </style>
 
 <div class="tab-pane fade show" id="navbar-cfdi" role="tabpanel" aria-labelledby="navbar-company-tab">
     <div class="card">
         <div class="card-body sat-form-container">
             <label><i class="fi-icon fi-sr-shield-check"></i> Subir Llaves del SAT</label>
+
+            <!---
             <form id="formKey">
 
                 <div class="row">
@@ -101,7 +115,6 @@
 
             </form>
 
-            <!-- FORM .CER -->
             <form id="formCer">
                 <div class="row">           
                     <div class="col-8">
@@ -122,7 +135,7 @@
                 </div>
             </form>
 
-            <!-- FORM CONTRASEÑA -->
+
             <form id="formPassword">
                 <div class="row">
                     <div class="col">
@@ -135,6 +148,46 @@
                     </div>
                 </div>
             </form>
+            --->
+
+
+
+            <form id="formKeyCfdi">
+
+                <label for="keyFile">Archivo .KEY:</label>
+                <div class="input-wrapper">
+                    <label class="custom-file-upload">
+                        <i class="fi-icon fi-sr-key"></i> Seleccionar archivo .KEY
+                        <input type="file" name="keyFile" id="keyFile" accept=".key" required
+                            onchange="showFileName(this)">
+                    </label>
+                    <div id="keyFileName" class="file-name"></div>
+                </div>
+
+                <label for="cerFile">Archivo .CER:</label>
+                <div class="input-wrapper">
+                    <label class="custom-file-upload">
+                        <i class="fi-icon fi-sr-certificate"></i> Seleccionar archivo .CER
+                        <input type="file" name="cerFile" id="cerFile" accept=".cer" required
+                            onchange="showFileName(this)">
+                    </label>
+                    <div id="cerFileName" class="file-name"></div>
+                </div>
+
+                <label for="password">RFC:</label>
+                <input type="text" name="rfc" id="rfcUser" placeholder="Clave del Registro Federal de Contribuyentes" required>
+
+                <label for="password">Contraseña de la llave .KEY:</label>
+                <input type="password" name="password" id="password" placeholder="Ingresa tu contraseña" required>
+                <center>
+                    <label>Al subir tus archivos, aceptas que los datos serán almacenados en nuestros servidores y serán
+                        utilizados para la validación de tu información fiscal. <a href="" class="color-link">Lee nuestros terminos y condiciones para usar este servicio</a>
+                    .Si no tienes los archivos, puedes generarlos desde el portal del SAT.
+                    Si no tienes la contraseña de tu llave .KEY, puedes recuperarla desde el portal del SAT.</label>
+                </center>
+                <button type="submit">Subir Datos</button>
+            </form>
+
         </div>
     </div>
 </div>
@@ -214,4 +267,46 @@
         enviarFormularioArchivo('formCer', 'cerFile', '/links/subir-sat');
         enviarFormularioPassword();
     });
+</script>
+<script>
+
+    //this script is for the new API of Facturama to upload the keys and cer files
+document.getElementById('formKeyCfdi').addEventListener('submit', async function (e) {
+  e.preventDefault();
+  //get the values of the inputs
+  const rfc = document.getElementById('rfcUser').value;
+  const password = document.getElementById('password').value;
+  const keyFile = document.getElementById('keyFile').files[0];
+  const cerFile = document.getElementById('cerFile').files[0];
+  
+  //check if the inputs are empty
+  const formData = new FormData();
+  formData.append('rfc', rfc);
+  formData.append('password', password);
+  formData.append('keyFile', keyFile);
+  formData.append('cerFile', cerFile);
+
+  try {
+    //send the data to the server
+    //using the fetch API to send the data to the server
+    const response = await fetch('https://pluspuntodeventa.com/api/facturama/upload_information_rfc.php', {
+      method: 'POST',
+      body: formData
+    });
+
+    //get the response from the server
+    const data = await response.json();
+
+    //we check if the response is ok and we show a message to the user
+    if (response.ok) {
+      confirmationMessage('✅ Datos enviados correctamente','Tus datos han sido enviados correctamente a nuestros servidores.');
+      console.log(data);
+    } else {
+      errorMessage('❌ Error del servidor: ', (data.message || JSON.stringify(data)));
+    }
+  } catch (error) {
+    errorMessage('❌ Error en la conexión con el servidor', error);
+    console.error(error);
+  }
+});
 </script>

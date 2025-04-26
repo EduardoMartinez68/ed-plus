@@ -208,11 +208,17 @@ router.post('/create-facture-cfdi', isLoggedIn,async (req, res) => {
         cantidad,
         valorUnitario,
         regimenFiscal,
-        usoCFDI
+        usoCFDI,
+        importe,
+        domicilioReceptor,
+        codigoPostalReceptor,
+        razonSocial,
+        Neighborhood,
+        municipioReceptor,
+        estadoReceptor,
+        InteriorNumber,
+        ExteriorNumber,
       } = req.body;
-  
-      // Calculamos el importe
-      const importe = parseFloat(cantidad) * parseFloat(valorUnitario);
   
       // Generar el XML
       const cfdiData = {
@@ -237,7 +243,75 @@ router.post('/create-facture-cfdi', isLoggedIn,async (req, res) => {
           }
         ]
       };
-  
+
+
+
+      const date=new Date();
+      const idSales=1;
+      const rfcUser="URE180429TM6";
+      const nameUser="UNIVERSIDAD ROBOTICA ESPAÑOLA";
+
+      const dt={	    
+        
+          "CfdiType": "I",
+          "PaymentForm": "01",
+          "PaymentMethod": "PUE",
+          "ExpeditionPlace" : "78240",
+          "Date" : date,
+          "Folio": idSales,
+
+            //El Issuer es el emisor, y el emisor es quien vende el producto o servicio y quien timbra la factura con su RFC ante el SAT.
+            //osea mi cliente, el usuario propietario de la licencia plus
+            "Issuer": {
+                "FiscalRegime": "601",
+                "Rfc": rfcUser,
+                "Name": nameUser
+            },
+
+
+          //El receptor es el cliente final de esa tienda (quien compró algo y pidió factura).
+          "Receiver": {
+            "Rfc": rfcEmisor,
+            "CfdiUse": usoCFDI,
+          "Name": nombreReceptor,
+          "FiscalRegime": regimenFiscal,
+
+          //informacion del receptor (el cliente).
+          "TaxZipCode" : codigoPostalReceptor,
+            "Address": {
+              "Street" : domicilioReceptor,
+              "ExteriorNumber" : ExteriorNumber,
+              "InteriorNumber" : InteriorNumber,
+              "Neighborhood": Neighborhood,
+              "ZipCode" : codigoPostalReceptor,
+              "Municipality" : municipioReceptor,
+              "State" : estadoReceptor,
+              "Country" : "México"
+            }
+          },
+
+          //los elementos que compro el receptor (el cliente).
+          "Items": [{        
+            "ProductCode": "25173108",
+            "Description": "GPS estandar pruebas",
+            "UnitCode": "E48",
+            "Quantity": 1.0,
+            "UnitPrice": 100.0,
+            "Subtotal": 100.00,
+          "TaxObject" : "02",
+            "Taxes": [{
+              "Total": 16,
+                    "Name": "IVA",
+                    "Base": 100,
+                    "Rate": 0.16,
+                    "IsRetention": false
+            }],
+
+
+            "Total": 116
+          }]	
+        }
+      
       const xmlCFDI = generacfdi.generarXML(cfdiData);
   
       // Ruta local de los archivos CSD del usuario (puedes personalizar esto según su sesión o ID)

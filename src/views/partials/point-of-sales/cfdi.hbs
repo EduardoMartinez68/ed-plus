@@ -13,7 +13,7 @@
           <input type="text" name="rfcReceptor" required>
 
           <label for="razonSocial">Razón Social *</label>
-          <input type="text" name="rfcReceptor" required>
+          <input type="text" name="razonSocial" required>
 
 
           <label for="razonSocial">Régimen Fiscal *</label>
@@ -38,10 +38,41 @@
 
 
           <label for="codigoPostal">Código Postal *</label>
-          <input type="text" name="codigoPostal" required>
+          <input type="text" name="codigoPostalReceptor" required>
 
-          <label for="domicilio">Domicilio</label>
-          <input type="text" name="domicilio">
+          <div class="row">
+            <div class="col">
+              <label for="municipio">Municipio</label>
+              <input type="text" name="municipioReceptor">
+            </div>
+            <div class="col">
+              <label for="estado">Estado</label>
+              <input type="text" name="estadoReceptor">
+            </div>
+          </div>  
+
+          <div class="row">
+            <div class="col">
+                <label for="domicilio">Domicilio</label>
+                <input type="text" name="domicilioReceptor">
+            </div>
+            <div class="col">
+                <label for="domicilio">Colonia</label>
+                <input type="text" name="Neighborhood">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+                <label for="domicilio">Num. Ext</label>
+                <input type="text" name="ExteriorNumber">
+            </div>
+            <div class="col">
+                <label for="domicilio">Num. Int</label>
+                <input type="text" name="InteriorNumber">
+            </div>
+          </div>
+
 
           <div class="pop-cfdi-switches">
             <label class="pop-cfdi-switch">
@@ -79,6 +110,9 @@
                 <option value="99">99 - Por definir</option>
                 </select>
             </div>
+
+
+
             <div class="col">
                 <label for="usoCFDI">Uso del CFDI</label>
                 <select name="usoCFDI" required>
@@ -107,6 +141,9 @@
                     <option value="P01">P01 - Por definir</option>
                 </select>
             </div>
+
+
+
         </div>
       </div>
 
@@ -279,6 +316,8 @@
 }
 </style>
 
+
+
 <script>
 function openCFDIPopup() {
   document.getElementById('pop-cfdi-overlay').style.display = 'flex';
@@ -314,7 +353,7 @@ document.getElementById('form-cfdi').addEventListener('submit', async (e) => {
   const form = e.target;
   const formData = new FormData(form);
   try {
-    const response = await fetch('http://localhost:3000/create-facture-cfdi', {
+    const response = await fetch('/links/create-facture-cfdi', {
       method: 'POST',
       body: formData
     });
@@ -332,4 +371,9 @@ document.getElementById('form-cfdi').addEventListener('submit', async (e) => {
     alert('Ocurrió un error al conectar con el servidor.');
   }
 });
+
+function create_facture_cfdi(){
+  const linkApi='https://apisandbox.facturama.mx/api-lite/3/cfdis';
+
+}
 </script>
