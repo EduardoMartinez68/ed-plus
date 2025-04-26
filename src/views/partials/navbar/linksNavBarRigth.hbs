@@ -63,6 +63,13 @@
         {{/each}}
     {{/if}}
 
+    {{#if user.view_products}}
+        {{#each branchFree}}
+        <li>
+            <a href="/links/{{id_companies}}/{{id}}/boutique"><i class="fi-icon fi-sr-dress"> Boutique</i></a>
+        </li>
+        {{/each}}
+    {{/if}}
 
     {{#if user.view_combo}}
         {{#each branchFree}}
@@ -207,10 +214,20 @@
     {{#if user.view_movement_history}}
         {{#each branchFree}}
             <li>
-                <a href="/links/{{id_companies}}/{{id}}/0/movements"><i class="fi-icon"> Movimientos</i></a>
+                <a href="/links/{{id_companies}}/{{id}}/0/movements"><i class="fi-icon fi-rr-rotate-right"> Movimientos</i></a>
             </li>
         {{/each}}
     {{/if}}
+
+
+    {{#if user.view_movement_history}}
+        {{#each branchFree}}
+        <li>
+            <a href="/links/{{id_companies}}/{{id}}/report-prescription"><i class="fi-icon fi-sr-comment-alt-medical"> Cofrepis</i></a>
+        </li>
+        {{/each}}
+    {{/if}}
+
 
     {{#if user.accounting}}
         {{#each branchFree}}
