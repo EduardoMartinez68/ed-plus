@@ -1,3 +1,310 @@
+<style>
+    /* Contenedor para el scroll */
+    .table-container {
+        max-height: 500px;
+        overflow-y: auto;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        background: #fff;
+        margin: 20px 0;
+    }
+
+    /* Tabla */
+    #inventory-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    #inventory-table thead {
+        background-color: var(--color-company);
+        color: white;
+        position: sticky;
+        top: 0;
+        z-index: 2;
+    }
+
+    #inventory-table th,
+    #inventory-table td {
+        padding: 16px 12px;
+        text-align: center;
+        border-bottom: 1px solid #eee;
+        font-size: 14px;
+    }
+
+    /* Hover filas */
+    #inventory-table tbody tr:hover {
+        background-color: rgba(0, 0, 0, 0.04);
+    }
+
+    /* Estilo del producto */
+    .product-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        justify-content: start;
+    }
+
+    .product-img {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+    }
+
+    .product-text {
+        display: flex;
+        flex-direction: column;
+        text-align: left;
+    }
+
+    .barcode {
+        font-size: 12px;
+        color: #888;
+    }
+
+    .name {
+        font-size: 14px;
+        font-weight: 600;
+        color: #333;
+    }
+
+    /* Inputs */
+    .nueva-existencia {
+        width: 70px;
+        padding: 5px 8px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        text-align: center;
+        outline: none;
+        transition: border-color 0.3s;
+    }
+
+    .nueva-existencia:focus {
+        border-color: var(--color-company);
+    }
+
+    /* Botón eliminar */
+    .delete-btn {
+        background-color: #ff4d4d;
+        border: none;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .delete-btn:hover {
+        background-color: #ff1a1a;
+        transform: scale(1.1);
+    }
+
+    /* Scroll personalizado */
+    .table-container::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .table-container::-webkit-scrollbar-thumb {
+        background-color: var(--color-company);
+        border-radius: 8px;
+    }
+
+    .table-container::-webkit-scrollbar-track {
+        background: #f5f5f5;
+    }
+
+    /* Check personalizado */
+    .custom-checkbox {
+        display: inline-block;
+        position: relative;
+        padding-left: 24px;
+        margin-right: 8px;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .custom-checkbox input {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+        height: 0;
+        width: 0;
+    }
+
+    .checkmark {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 18px;
+        width: 18px;
+        background-color: #eee;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+    }
+
+    .custom-checkbox input:checked~.checkmark {
+        background-color: var(--color-company);
+        border: 1px solid var(--color-company);
+    }
+
+    .checkmark:after {
+        content: "";
+        position: absolute;
+        display: none;
+    }
+
+    .custom-checkbox input:checked~.checkmark:after {
+        display: block;
+    }
+
+    .custom-checkbox .checkmark:after {
+        left: 6px;
+        top: 2px;
+        width: 5px;
+        height: 10px;
+        border: solid white;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+    }
+
+    .diferencia {
+        cursor: pointer;
+        padding: 6px 10px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        background-color: #f9f9f9;
+        transition: background-color 0.3s, border-color 0.3s;
+    }
+
+    .diferencia:hover {
+        background-color: #eee;
+        border-color: #bbb;
+    }
+
+    /**/
+    #switch-character-products {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 14px;
+        /* Reducir el tamaño del texto */
+    }
+
+    #ignore-limit-toggle {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 30px;
+        /* Reducir el tamaño */
+        height: 20px;
+        /* Reducir el tamaño */
+        border-radius: 15px;
+        background-color: #ccc;
+        position: relative;
+        transition: background-color 0.3s;
+    }
+
+    #ignore-limit-toggle:checked {
+        background-color: var(--color-company);
+        /* Usar la variable para el color */
+    }
+
+    #ignore-limit-toggle:before {
+        content: '';
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 16px;
+        /* Reducir el tamaño */
+        height: 16px;
+        /* Reducir el tamaño */
+        border-radius: 50%;
+        background-color: white;
+        transition: transform 0.3s;
+    }
+
+    #ignore-limit-toggle:checked:before {
+        transform: translateX(10px);
+        /* Ajuste para el tamaño más pequeño */
+    }
+
+    .slider {
+        display: inline-block;
+        height: 20px;
+        width: 30px;
+        background-color: transparent;
+    }
+
+    /**/
+    .empty-message {
+        text-align: center;
+        padding: 40px 20px;
+        background: linear-gradient(145deg, #90C8F7, #3A79B7);
+        /* Usamos un degradado con tonos de azul */
+        border-radius: 20px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        margin-top: 40px;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+        opacity: 0;
+        transform: scale(0.8);
+        animation: fadeInUp 0.6s forwards;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .empty-message h2 {
+        font-size: 30px;
+        color: #075DA8;
+        /* Color base para el título */
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .empty-message p {
+        font-size: 18px;
+        color: #2C4F77;
+        /* Un azul más oscuro para el texto */
+        margin-bottom: 20px;
+        font-style: italic;
+    }
+
+    .empty-message button {
+        background-color: #075DA8;
+        /* Color principal para el botón */
+        color: white;
+        padding: 15px 30px;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        font-size: 18px;
+        font-weight: bold;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .empty-message button:hover {
+        background-color: #064B8D;
+        /* Un azul más oscuro en hover */
+        transform: scale(1.05);
+    }
+
+    .empty-message button:focus {
+        outline: none;
+    }
+</style>
+
+<div class="data-element-table">
 <div class="row">
     <div class="col-4">
         <input type="text" class="form-control" placeholder="Buscar código de barras..." id="search">
@@ -6,16 +313,25 @@
         <button class="btn btn-edit" onclick="openPopSearch()">🔍</button>
     </div>
 </div>
+</div>
 
-    <br><br>
+<br><br>
+<div class="data-element-table">
     <div id="switch-character-products">
         <input type="checkbox" id="ignore-limit-toggle" name="ignore-limit-toggle">
         <label for="ignore-limit-toggle">¿Ignorar límites maximos y minimos de los productos?</label>
         <span class="slider"></span>
     </div>
-
+    <br>
+    <label class="custom-checkbox">
+        <input type="checkbox" class="product-check" id="select-all-the-products">
+        <span class="checkmark"></span>
+        <label for="">Marcar todos los productos</label>
+    </label>
+</div>
 
 <div class="table-container">
+
     <table id="inventory-table">
         <thead>
             <tr>
@@ -37,8 +353,10 @@
     </table>
 </div>
 
-
+<div class="data-element-table">
 <button class="btn btn-success" onclick="update_all_the_inventory()">Actualizar todos los inventarios</button>
+
+</div>
 
 <script>
 
@@ -49,15 +367,113 @@
         }
     }
 
-    async function deleteRow(button) {
+    async function deleteRow(button, idProduct) {
+        // get the row of the button clicked
+        const row = button.closest('tr');
+        const rowCheckbox = row.querySelector('.product-check:checked');
+        
+        //first we will check if the idProduct is a number, if not we will parse it to int
+        if(rowCheckbox){
+            deleteSelectedRows();
+            return;
+        }
+
+        idProduct = parseInt(idProduct);
         if (await questionMessage('¡Ay caramba! 😱', '¿Estás seguro de que quieres eliminar esta fila?')) {
-            // get the row of the button clicked
-            const row = button.closest('tr');
-            
-            // delete the row from the table
             if (row) {
+                // delete the row from the table
                 row.remove();
+                // delete the product from the listProducts array
+                const index = listProducts.findIndex(product => parseInt(product.id) === idProduct);
+                if (index !== -1) {
+                    listProducts.splice(index, 1);
+                    check_if_products_exist();
+                }
             }
         }
     }
+
+    async function deleteSelectedRows() {
+        if (await questionMessage('¡Atención! ⚠️', '¿Estás seguro de que quieres eliminar todos los productos seleccionados?')) {
+            // Seleccionamos todos los checkboxes marcados
+            const checkedCheckboxes = document.querySelectorAll('.product-check:checked');
+            
+            // Para cada checkbox seleccionado, eliminamos la fila
+            checkedCheckboxes.forEach(checkbox => {
+
+                const row = checkbox.closest('tr');
+                const idProduct = row ? row.getAttribute('idProduct') : null;
+                if(idProduct) {
+                    if (row) {
+                        row.remove();
+
+                        // Eliminar el producto de la lista
+                        const index = listProducts.findIndex(product => parseInt(product.id) === parseInt(idProduct));
+                        if (index !== -1) {
+                            listProducts.splice(index, 1);
+                        }
+                    }
+                }
+            });
+
+            // Llamamos a la función que verifica si existen productos
+            check_if_products_exist();
+        }
+    }
+
+
+    function check_if_products_exist() {
+        const dataElements = document.querySelectorAll('.data-element-table');
+        const tableContainer = document.querySelector('.table-container');
+        const tbody = document.querySelector('#inventory-table tbody');
+
+        // Verifica si la lista de productos está vacía
+        if (listProducts.length === 0) {
+            // Oculta la tabla
+            tableContainer.style.display = 'none';
+            dataElements.forEach(element => {
+                element.style.display = 'none';
+            });
+
+            // Crea un mensaje alegre y simpático para mostrar al usuario
+            const message = document.createElement('div');
+            message.classList.add('empty-message');
+            message.innerHTML = `
+                <h2>¡Ups! 😅 No hay productos aún...</h2>
+                <p>¡Vamos! Empieza a buscar artículos y añádelos a la tabla, ¡es muy fácil!</p>
+                <button onclick="openPopSearch()">Empezar a buscar</button>
+            `;
+
+            // Muestra el mensaje debajo de la tabla
+            tableContainer.parentElement.appendChild(message);
+        }
+    }
+
+    function show_table_again() {
+        if (listProducts.length === 1) {
+            const tableContainer = document.querySelector('.table-container');
+            const emptyMessage = document.querySelector('.empty-message');
+            const dataElements = document.querySelectorAll('.data-element-table');
+
+            // Muestra la tabla y oculta el mensaje
+            tableContainer.style.display = 'block';
+                dataElements.forEach(element => {
+                    element.style.display = 'block';
+                });
+            emptyMessage.remove();
+        }
+    }
+
+    /*SELECT SWTICH*/
+    // select the switch and all the checkboxes of the products
+    const selectAllCheckbox = document.getElementById('select-all-the-products');
+
+    // when the switch change of status, on or off all the checkboxes
+    selectAllCheckbox.addEventListener('change', function() {
+        const productCheckboxes = document.querySelectorAll('.product-check');
+        // if the switch is on, we will on all the checkboxes of the products of the table
+        productCheckboxes.forEach(checkbox => {
+            checkbox.checked = selectAllCheckbox.checked;
+        });
+    });
 </script>

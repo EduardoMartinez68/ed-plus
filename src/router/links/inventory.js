@@ -37,7 +37,6 @@ router.post('/:id_branch/search_products_for_update_the_inventory', isLoggedIn, 
     const {barcode}=req.body;
     const products = await get_inventory_products_branch(id_branch,barcode);
     const supplies = await get_inventory_supplies_branch(id_branch,barcode);
-    console.log(products, supplies);
     res.json({ products, supplies });
 });
 

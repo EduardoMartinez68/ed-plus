@@ -224,11 +224,21 @@ function selectProductsInTheTableOfSeacrh(row) {
 }
 
 function addProductToInventoryTable(product) {
+    show_table_again(); // show the table again if it was hidden
   const tbodyInventory = document.querySelector('#inventory-table tbody');
   
   const row = document.createElement('tr');
+    row.setAttribute('idProduct', product.id);
+    row.setAttribute('barcode', product.barcode);
+    row.setAttribute('name', product.name);
+    row.setAttribute('max_inventary', product.max_inventory);
+    row.setAttribute('min_inventary', product.min_inventory);
+    row.setAttribute('existence', product.existence);
+    row.setAttribute('sale_unity', product.sale_unity);
+    row.setAttribute('sale_price', product.sale_price);
+
   row.innerHTML = `
-    <td>
+    <td idProduct="${product.id}" barcode="${product.barcode}" name="${product.name}" max_inventary="${product.max_inventory}" min_inventary="${product.min_inventory}" existence="${product.existence}" sale_unity="${product.sale_unity}" sale_price="${product.sale_price}">
       <div class="product-info">
         <label class="custom-checkbox">
           <input type="checkbox" class="product-check">
@@ -248,7 +258,7 @@ function addProductToInventoryTable(product) {
     <td>$${parseFloat(product.sale_price).toFixed(2)}</td>
     <td class="importe" total="0">$0</td>
     <td>
-      <button class="delete-btn" onclick="deleteRow(this)">🗑️</button>
+      <button class="delete-btn" onclick="deleteRow(this,${product.id})">🗑️</button>
     </td>
   `;
   tbodyInventory.appendChild(row);
