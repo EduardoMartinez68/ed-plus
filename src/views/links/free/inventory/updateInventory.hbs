@@ -1,0 +1,665 @@
+
+<style>
+
+  /* Contenedor para el scroll */
+  .table-container {
+    max-height: 500px;
+    overflow-y: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    background: #fff;
+    margin: 20px 0;
+  }
+
+  /* Tabla */
+  #inventory-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Poppins', sans-serif;
+  }
+
+  #inventory-table thead {
+    background-color: var(--color-company);
+    color: white;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+
+  #inventory-table th, #inventory-table td {
+    padding: 16px 12px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+  }
+
+  /* Hover filas */
+  #inventory-table tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+  }
+
+  /* Estilo del producto */
+  .product-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: start;
+  }
+
+  .product-img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+  }
+
+  .product-text {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+  }
+
+  .barcode {
+    font-size: 12px;
+    color: #888;
+  }
+
+  .name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+  }
+
+  /* Inputs */
+  .nueva-existencia {
+    width: 70px;
+    padding: 5px 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.3s;
+  }
+
+  .nueva-existencia:focus {
+    border-color: var(--color-company);
+  }
+
+  /* Botón eliminar */
+  .delete-btn {
+    background-color: #ff4d4d;
+    border: none;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+  }
+
+  .delete-btn:hover {
+    background-color: #ff1a1a;
+    transform: scale(1.1);
+  }
+
+  /* Scroll personalizado */
+  .table-container::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .table-container::-webkit-scrollbar-thumb {
+    background-color: var(--color-company);
+    border-radius: 8px;
+  }
+
+  .table-container::-webkit-scrollbar-track {
+    background: #f5f5f5;
+  }
+
+  /* Check personalizado */
+  .custom-checkbox {
+    display: inline-block;
+    position: relative;
+    padding-left: 24px;
+    margin-right: 8px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .custom-checkbox input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+
+  .checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 18px;
+    width: 18px;
+    background-color: #eee;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+
+  .custom-checkbox input:checked ~ .checkmark {
+    background-color: var(--color-company);
+    border: 1px solid var(--color-company);
+  }
+
+  .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+  }
+
+  .custom-checkbox input:checked ~ .checkmark:after {
+    display: block;
+  }
+
+  .custom-checkbox .checkmark:after {
+    left: 6px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+
+  .diferencia{
+    cursor: pointer;
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s, border-color 0.3s;
+  }
+
+    .diferencia:hover {
+    background-color: #eee;
+    border-color: #bbb;
+    }
+</style>
+
+<div class="container">
+    <br>
+    <label for=""><i class="fi-icon fi-sr-inventory-alt"></i> Ajuste de inventario de forma masiva</label>
+    <hr>
+    <div class="row">
+        <div class="col-4">
+            <input type="text" class="form-control" placeholder="Buscar código de barras..." id="search">
+        </div>
+        <div class="col-1">
+            <button class="btn btn-edit" onclick="abrirPopBuscarProducto()">🔍</button>
+        </div>
+    </div>
+
+
+<br>
+
+<div class="table-container">
+  <table id="inventory-table">
+    <thead>
+      <tr>
+        <th>Producto</th>
+        <th>Existencia Actual</th>
+        <th>Nueva Existencia</th>
+        <th>Diferencia</th>
+        <th>Precio Compra</th>
+        <th>Importe</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <div class="product-info">
+            <label class="custom-checkbox">
+              <input type="checkbox" class="product-check">
+              <span class="checkmark"></span>
+            </label>
+            <img src="https://i5.walmartimages.com.mx/gr/images/product-images/img_large/00750100015310L.jpg?odnHeight=612&odnWidth=612&odnBg=FFFFFF" class="product-img">
+            <div class="product-text">
+              <div class="barcode">1234567890123</div>
+              <div class="name">Producto Ejemplo</div>
+            </div>
+          </div>
+        </td>
+        <td>50</td>
+        <td><input type="number" value="50" class="nueva-existencia"></td>
+        <td class="diferencia" onclick="abrirPopup(this)">0</td>
+        <td>$10.00</td>
+        <td class="importe">$0.00</td>
+        <td>
+          <button class="delete-btn" onclick="eliminarFila(this)">🗑️</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+  <button class="btn btn-success" onclick="update_all_the_inventory()">Actualizar todos los inventarios</button>
+
+<script>
+
+async function update_all_the_inventory() {
+    if (await questionMessage('📝 Actualizar inventario', 'Esta acción actualizará todos estos productos, ¿continuamos?')) {
+
+    }
+}
+
+
+</script>
+
+
+<!----------->
+<style>
+/* Estilo general del pop */
+.pop-search-product-inventory {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.pop-search-product-content {
+  background: #fff;
+  padding: 30px;
+  width: 90%;
+  max-width: 800px;
+  border-radius: 12px;
+  position: relative;
+  box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; transform: scale(0.9); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.pop-search-product-close {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: transparent;
+  border: none;
+  font-size: 28px;
+  color: #333;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.pop-search-product-close:hover {
+  color: #777; /* Color rojo para hover */
+}
+
+.pop-search-product-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.search-product-input {
+  width: 100%;
+  padding: 12px 18px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+.search-product-input:focus {
+  border-color: #6c757d;
+}
+
+.search-product-table-container {
+  max-height: 400px;
+  overflow-y: auto;
+  margin-top: 20px;
+}
+
+.search-product-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.search-product-table th,
+.search-product-table td {
+  padding: 12px;
+  text-align: left;
+  font-size: 16px;
+  border-bottom: 1px solid #eee;
+}
+
+.search-product-table tr:hover {
+  background-color: #f8f9fa;
+  cursor: pointer;
+}
+
+.product-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.product-info img {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.product-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.product-text .barcode {
+  font-size: 12px;
+  color: #777;
+}
+
+.product-text .name {
+  font-weight: bold;
+  color: #333;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .pop-search-product-content {
+    width: 100%;
+    max-width: 500px;
+  }
+
+  .pop-search-product-title {
+    font-size: 20px;
+  }
+
+  .search-product-input {
+    font-size: 14px;
+    padding: 10px 15px;
+  }
+
+  .search-product-table th, .search-product-table td {
+    font-size: 14px;
+  }
+
+  .product-info img {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+</style>
+<!-- Popup de Buscador de Productos -->
+<div class="pop-search-product-inventory" id="pop-search-product-inventory" style="display: none;">
+  <div class="pop-search-product-content">
+    <button class="pop-search-product-close" onclick="cerrarPopBuscarProducto()">×</button>
+    <label><i class="fi-icon fi-sr-inventory-alt"></i> Buscar Producto</label>
+    <hr>
+    <input type="text" id="search-product-input" class="search-product-input" placeholder="Buscar por nombre o código de barras...">
+
+    <div class="search-product-table-container">
+      <table class="search-product-table">
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Existencia Actual</th>
+            <th>Precio Compra</th>
+          </tr>
+        </thead>
+        <tbody id="search-product-body">
+          <!-- Productos de prueba -->
+          <tr onclick="seleccionarProducto(this)">
+            <td>
+              <div class="product-info">
+                <img src="https://i5.walmartimages.com.mx/gr/images/product-images/img_large/00750100015310L.jpg?odnHeight=612&odnWidth=612&odnBg=FFFFFF" class="product-img">
+                <div class="product-text">
+                  <div class="barcode">750100015310</div>
+                  <div class="name">Agua Bonafont 1L</div>
+                </div>
+              </div>
+            </td>
+            <td>100</td>
+            <td>$12.00</td>
+          </tr>
+          <tr onclick="seleccionarProducto(this)">
+            <td>
+              <div class="product-info">
+                <img src="https://i5.walmartimages.com.mx/gr/images/product-images/img_large/00750100015310L.jpg?odnHeight=612&odnWidth=612&odnBg=FFFFFF" class="product-img">
+                <div class="product-text">
+                  <div class="barcode">750100015311</div>
+                  <div class="name">Coca-Cola 600ml</div>
+                </div>
+              </div>
+            </td>
+            <td>250</td>
+            <td>$14.00</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+<script>
+function abrirPopBuscarProducto() {
+  document.getElementById('pop-search-product-inventory').style.display = 'flex';
+}
+
+function cerrarPopBuscarProducto() {
+  document.getElementById('pop-search-product-inventory').style.display = 'none';
+}
+
+function seleccionarProducto(row) {
+  // Aquí agregarías la lógica para pasar el producto a la tabla principal
+  cerrarPopBuscarProducto();
+  alert('Producto seleccionado: ' + row.querySelector('.name').innerText);
+}
+
+</script>
+
+
+
+
+<!-- Popup para editar diferencia -->
+
+<style>
+
+  .pop-edit-cant-inventory-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.3s ease;
+  }
+
+  .pop-edit-cant-inventory-hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .pop-edit-cant-inventory-content {
+    background: white;
+    padding: 30px 40px;
+    border-radius: 16px;
+    text-align: center;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    animation: popScale 0.3s ease forwards;
+  }
+
+  @keyframes popScale {
+    from { transform: scale(0.7); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .pop-edit-cant-inventory-content h3 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: var(--color-company);
+  }
+
+  .pop-edit-cant-inventory-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+  }
+
+  .pop-edit-cant-inventory-controls input {
+    width: 50%;
+    text-align: center;
+    padding: 8px;
+    font-size: 20px;
+    border: 2px solid var(--color-company);
+    border-radius: 8px;
+  }
+
+  .pop-edit-cant-inventory-controls button {
+    width: 25%;
+    height: 45px;
+    font-size: 26px;
+    background: var(--color-company);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+  }
+
+  .pop-edit-cant-inventory-controls button:hover {
+    background: var(--color-hover);
+  }
+
+  .pop-edit-cant-inventory-actions {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .pop-edit-cant-inventory-save,
+  .pop-edit-cant-inventory-cancel {
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  .pop-edit-cant-inventory-save {
+    background: var(--color-company);
+    color: white;
+  }
+
+  .pop-edit-cant-inventory-save:hover {
+    background: var(--color-hover);
+  }
+
+  .pop-edit-cant-inventory-cancel {
+    background: #ccc;
+    color: #333;
+  }
+
+  .pop-edit-cant-inventory-cancel:hover {
+    background: #bbb;
+  }
+</style>
+
+<!-- Popup para editar diferencia -->
+<div id="pop-edit-cant-inventory-popup" class="pop-edit-cant-inventory-overlay pop-edit-cant-inventory-hidden">
+  <div class="pop-edit-cant-inventory-content">
+    <h3>Editar Diferencia</h3>
+    <div class="pop-edit-cant-inventory-controls">
+      <button onclick="popCambiarCantidad(-1)">-</button>
+      <input type="number" id="pop-edit-cant-inventory-input" value="0">
+      <button onclick="popCambiarCantidad(1)">+</button>
+    </div>
+    <div class="pop-edit-cant-inventory-actions">
+      <button class="pop-edit-cant-inventory-save" onclick="popGuardarDiferencia()">Guardar</button>
+      <button class="pop-edit-cant-inventory-cancel" onclick="popCerrar()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+</div>
+
+
+
+<script>
+let popCeldaSeleccionada = null;
+
+function abrirPopup(td) {
+  popCeldaSeleccionada = td;
+  const valorActual = parseInt(td.innerText) || 0;
+  document.getElementById('pop-edit-cant-inventory-input').value = valorActual;
+  document.getElementById('pop-edit-cant-inventory-popup').classList.remove('pop-edit-cant-inventory-hidden');
+}
+
+function popCerrar() {
+  document.getElementById('pop-edit-cant-inventory-popup').classList.add('pop-edit-cant-inventory-hidden');
+}
+
+function popCambiarCantidad(valor) {
+  const input = document.getElementById('pop-edit-cant-inventory-input');
+  input.value = parseInt(input.value) + valor;
+}
+
+function popGuardarDiferencia() {
+  const nuevaCantidad = parseInt(document.getElementById('pop-edit-cant-inventory-input').value);
+  if (popCeldaSeleccionada) {
+    popCeldaSeleccionada.innerText = nuevaCantidad;
+
+    // Pintar la fila
+    const fila = popCeldaSeleccionada.parentElement;
+    pintarFila(fila, nuevaCantidad);
+  }
+  popCerrar();
+}
+
+function pintarFila(fila, cantidad) {
+  if (cantidad > 0) {
+    fila.style.backgroundColor = "rgba(76, 175, 80, 0.1)"; // --color-company transparente
+  } else if (cantidad < 0) {
+    fila.style.backgroundColor = "rgba(255, 0, 0, 0.1)";
+  } else {
+    fila.style.backgroundColor = ""; // Sin color
+  }
+}
+</script>
