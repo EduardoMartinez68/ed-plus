@@ -389,6 +389,8 @@
                     listProducts.splice(index, 1);
                     check_if_products_exist();
                 }
+
+                notificationMessage('¡Listo! 😊', 'El producto fue eliminado con éxito.');
             }
         }
     }
@@ -418,6 +420,7 @@
 
             // Llamamos a la función que verifica si existen productos
             check_if_products_exist();
+            notificationMessage('¡Listo! 😊', 'Los productos seleccionados han sido eliminados de la tabla.');
         }
     }
 
@@ -446,6 +449,18 @@
 
             // Muestra el mensaje debajo de la tabla
             tableContainer.parentElement.appendChild(message);
+
+            //restart the checkbox of the min and max limits
+            const ignoreLimitToggle = document.getElementById('ignore-limit-toggle');
+            ignoreLimitToggle.checked = false;
+            ignoreLimitToggle.disabled = false;
+
+            //
+            const selectAllCheckbox = document.getElementById('select-all-the-products');
+            selectAllCheckbox.checked = false;
+
+            //
+            document.getElementById('search').value = '';
         }
     }
 
@@ -463,6 +478,25 @@
             emptyMessage.remove();
         }
     }
+    /**/
+    // Referencia al checkbox
+    const ignoreLimitToggle = document.getElementById('ignore-limit-toggle');
+
+    // Agregamos un evento al checkbox
+    ignoreLimitToggle.addEventListener('change', async function() {
+        
+        // Verificamos si se activó el checkbox
+        if (ignoreLimitToggle.checked) {
+            // Mostramos un mensaje de alerta
+            if (!await questionMessage('¡Advertencia! 😱', 'Si decides ignorar los límites máximos y mínimos de los productos, no podrás volver a activarlos. Tendrás que realizar un nuevo inventario para establecer los valores nuevamente. ¿Estás seguro de que deseas continuar?')) {
+                // Si el usuario cancela, desmarcamos el checkbox
+                ignoreLimitToggle.checked = false;
+                
+            }else{
+                ignoreLimitToggle.disabled = true;
+            }
+        }
+    });
 
     /*SELECT SWTICH*/
     // select the switch and all the checkboxes of the products

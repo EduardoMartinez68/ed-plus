@@ -167,7 +167,16 @@
         input.value = nuevaCantidad;
     }
 
-    function popGuardarDiferencia() {
+    function popGuardarDiferencia(valor) {
+        const selectedCheckboxes = document.querySelectorAll('.product-check:checked');
+        if (selectedCheckboxes.length > 0) {
+            popGuardarDiferenciaAll(selectedCheckboxes);
+        } else {
+            popGuardarDiferenciaOnlyOne();
+        }
+    }
+
+    function popGuardarDiferenciaOnlyOne() {
         const input = document.getElementById('pop-edit-cant-inventory-input');
         const cantInput = parseInt(input.value);
         const min = parseInt(input.min); // Obtenemos el valor mínimo
@@ -196,7 +205,7 @@
 
 
                 let nuevaExistencia = existenciaActual + nuevaCantidad;
-                nuevaCannuevaExistenciaidad=nuevaExistencia;
+                nuevaCannuevaExistenciaidad = nuevaExistencia;
 
                 //her we will see if the user would like to ignore the limits of the product
                 const checkbox = document.getElementById('ignore-limit-toggle');
@@ -208,8 +217,8 @@
                     if (nuevaExistencia < min) {
                         //update the new existence to the minimum value
                         nuevaExistencia = min;
-                        nuevaCantidad=nuevaExistencia-existenciaActual;
-                        nuevaCannuevaExistenciaidad=existenciaActual+nuevaCantidad;
+                        nuevaCantidad = nuevaExistencia - existenciaActual;
+                        nuevaCannuevaExistenciaidad = existenciaActual + nuevaCantidad;
                         popCeldaSeleccionada.innerText = nuevaCantidad;
                         //show a message to the user
                         regularMessage('Ups! 😅', `La cantidad no puede ser menor que ${min}`);
@@ -219,15 +228,15 @@
                     if (nuevaExistencia > max) {
                         //update the new existence to the minimum value
                         nuevaCannuevaExistenciaidad = max;
-                        nuevaCantidad=nuevaCannuevaExistenciaidad-existenciaActual;
-                        popCeldaSeleccionada.innerText = nuevaExistencia-existenciaActual;
+                        nuevaCantidad = nuevaCannuevaExistenciaidad - existenciaActual;
+                        popCeldaSeleccionada.innerText = nuevaExistencia - existenciaActual;
                         //show a message to the user
                         regularMessage('Ups! 😅', `La cantidad no puede ser mayor que ${max}`);
                     }
                 }
 
                 //update the data in the table
-                tdQuantity.textContent=nuevaCantidad;
+                tdQuantity.textContent = nuevaCantidad;
                 tdnewExistence.textContent = nuevaCannuevaExistenciaidad; // aquí usamos textContent, no value
 
                 // Disparar evento manual solo si quieres que algo escuche cambios en el DOM
@@ -259,6 +268,78 @@
         }
     }
 
+
+    function popGuardarDiferenciaAll(selectedCheckboxes) {
+        const input = document.getElementById('pop-edit-cant-inventory-input');
+        const cantInput = parseInt(input.value); // Nueva cantidad ingresada por el usuario
+        let nuevaCantidad = cantInput;
+
+        // Cerramos el pop-up
+        popCerrar();
+
+        // Verificamos si hay checkboxes seleccionados
+
+        selectedCheckboxes.forEach(checkbox => {
+            const fila = checkbox.closest('tr'); // <tr> que contiene el producto
+            const idProduct = fila ? fila.getAttribute('idProduct') : null; // Obtenemos el id del producto de la fila
+            if (idProduct) {
+                // Extraemos los valores específicos de cada producto desde los atributos de la fila
+                const name = fila.getAttribute('name'); // Mínimo de inventario del producto
+                const min = parseInt(fila.getAttribute('min_inventary')); // Mínimo de inventario del producto
+                const max = parseInt(fila.getAttribute('max_inventary')); // Máximo de inventario del producto
+
+                // Actualizamos la celda de la cantidad
+                const tdExistencia = fila.querySelector('.existence');
+                const tdnewExistence = fila.querySelector('.newExistence');
+                const tdQuantity = fila.querySelector('.diferencia');
+
+                if (tdExistencia) {
+                    const existenciaActual = parseInt(tdExistencia.textContent) || 0;
+
+                    let nuevaExistencia = existenciaActual + nuevaCantidad;
+
+                    // Si el checkbox "Ignorar límites" no está marcado, validamos los límites
+                    const checkbox = document.getElementById('ignore-limit-toggle');
+                    if (!checkbox.checked) {
+                        // Verificamos que la nueva existencia no sea menor que el mínimo
+                        if (nuevaExistencia < min) {
+                            nuevaExistencia = min;
+                            nuevaCantidad = nuevaExistencia - existenciaActual;
+                            regularMessage('Ups! 😅', `La cantidad de ${name} no puede ser menor que ${min}`);
+                        }
+
+                        // Verificamos que la nueva existencia no sea mayor que el máximo
+                        if (nuevaExistencia > max) {
+                            nuevaExistencia = max;
+                            nuevaCantidad = nuevaExistencia - existenciaActual;
+                            regularMessage('Ups! 😅', `La cantidad de ${name} no puede ser mayor que ${max}`);
+                        }
+                    }
+
+                    // Actualizamos la cantidad y la existencia en la tabla
+                    tdQuantity.textContent = nuevaCantidad;
+                    tdnewExistence.textContent = nuevaExistencia; // Actualizamos la nueva existencia
+                }
+
+                // Actualizar el 'Importe'
+                const celdaImporte = fila.querySelector('.importe');
+                const celdaPrecio = fila.querySelector('td:nth-child(6)'); // 6ta columna es el precio $ (en tu estructura)
+
+                if (celdaImporte && celdaPrecio) {
+                    const precioTexto = celdaPrecio.innerText.replace('$', '').trim();
+                    const precio = parseFloat(precioTexto) || 0;
+
+                    const nuevoTotal = nuevaCantidad * precio;
+
+                    celdaImporte.innerText = `$${nuevoTotal.toFixed(2)}`;
+                    celdaImporte.setAttribute('total', nuevoTotal); // actualizamos el atributo 'total' por si lo usas
+                }
+
+                // Pintar la fila (si es necesario hacer algún cambio de estilo en la fila)
+                pintarFila(fila, nuevaCantidad);
+            }
+        });
+    }
 
     function pintarFila(fila, cantidad) {
         if (cantidad > 0) {
