@@ -1,0 +1,331 @@
+<style>
+/* Estilo general del pop */
+.pop-search-product-inventory {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.pop-search-product-content {
+  background: #fff;
+  padding: 30px;
+  width: 90%;
+  max-width: 800px;
+  border-radius: 12px;
+  position: relative;
+  box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; transform: scale(0.9); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.pop-search-product-close {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: transparent;
+  border: none;
+  font-size: 28px;
+  color: #333;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.pop-search-product-close:hover {
+  color: #777; /* Color rojo para hover */
+}
+
+.pop-search-product-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.search-product-input {
+  width: 100%;
+  padding: 12px 18px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+.search-product-input:focus {
+  border-color: #6c757d;
+}
+
+.search-product-table-container {
+  max-height: 400px;
+  overflow-y: auto;
+  margin-top: 20px;
+}
+
+.search-product-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.search-product-table th,
+.search-product-table td {
+  padding: 12px;
+  text-align: left;
+  font-size: 16px;
+  border-bottom: 1px solid #eee;
+}
+
+.search-product-table tr:hover {
+  background-color: #f8f9fa;
+  cursor: pointer;
+}
+
+.product-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.product-info img {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.product-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.product-text .barcode {
+  font-size: 12px;
+  color: #777;
+}
+
+.product-text .name {
+  font-weight: bold;
+  color: #333;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .pop-search-product-content {
+    width: 100%;
+    max-width: 500px;
+  }
+
+  .pop-search-product-title {
+    font-size: 20px;
+  }
+
+  .search-product-input {
+    font-size: 14px;
+    padding: 10px 15px;
+  }
+
+  .search-product-table th, .search-product-table td {
+    font-size: 14px;
+  }
+
+  .product-info img {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+</style>
+{{#each branchFree}}
+    <input type="text" id="id_branch" value="{{id}}" hidden>
+{{/each}}
+<!-- Popup de Buscador de Productos -->
+<div class="pop-search-product-inventory" id="pop-search-product-inventory" style="display: none;">
+  <div class="pop-search-product-content">
+    <button class="pop-search-product-close" onclick="closePopSearch()">×</button>
+    <label><i class="fi-icon fi-sr-inventory-alt"></i> Buscar Producto</label>
+    <hr>
+    <input type="text" id="search-product-input" class="search-product-input" placeholder="Buscar por nombre o código de barras...">
+
+    <div class="search-product-table-container">
+      <table class="search-product-table">
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Existencia Actual</th>
+            <th>Precio Compra</th>
+          </tr>
+        </thead>
+        <tbody id="search-product-body">
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+<script>
+function openPopSearch() {
+  search_product_in_the_database(''); // run the function for load the first answer of the server
+  document.getElementById('pop-search-product-inventory').style.display = 'flex';
+}
+
+function closePopSearch() {
+  document.getElementById('search-product-body').value = ""; //clear the input text if no exit container
+  document.getElementById('pop-search-product-inventory').style.display = 'none';
+}
+
+const listProducts = [];
+
+function selectProductsInTheTableOfSeacrh(row) {
+  closePopSearch(); // cerrar el popup de búsqueda
+
+  const td = row.querySelector('td');
+
+  // Extraer los datos del producto desde los atributos
+  const product = {
+    id: td.getAttribute('idProduct'),
+    barcode: td.getAttribute('barcode'),
+    name: td.getAttribute('name'),
+    max_inventory: td.getAttribute('max_inventary'),
+    min_inventory: td.getAttribute('min_inventary'),
+    existence: td.getAttribute('existence'),
+    sale_unity: td.getAttribute('sale_unity'),
+    sale_price: td.getAttribute('sale_price'),
+    img: td.querySelector('img') ? td.querySelector('img').src : '/img/icons_first/product.webp'
+  };
+
+  // Evitar agregar el mismo producto 2 veces
+  if (listProducts.some(p => p.id === product.id)) {
+    regularMessage('Ups! 😅','Este producto ya fue agregado.');
+    return;
+  }
+
+  // Agregar el producto a la lista
+  listProducts.push(product);
+
+  // Agregar la fila al inventario
+  addProductToInventoryTable(product);
+}
+
+function addProductToInventoryTable(product) {
+  const tbodyInventory = document.querySelector('#inventory-table tbody');
+  
+  const row = document.createElement('tr');
+  row.innerHTML = `
+    <td>
+      <div class="product-info">
+        <label class="custom-checkbox">
+          <input type="checkbox" class="product-check">
+          <span class="checkmark"></span>
+        </label>
+        <img src="${product.img}" class="product-img">
+        <div class="product-text">
+          <div class="barcode">${product.barcode}</div>
+          <div class="name">${product.name}</div>
+        </div>
+      </div>
+    </td>
+    <td class="existence">${product.existence}</td>
+    <td>${product.sale_unity}</td>
+    <td class="newExistence">${product.existence}</td>
+    <td class="diferencia" onclick="openPopEditQuantity(this,${product.id},${product.max_inventory},${product.min_inventory})">0</td>
+    <td>$${parseFloat(product.sale_price).toFixed(2)}</td>
+    <td class="importe" total="0">$0</td>
+    <td>
+      <button class="delete-btn" onclick="deleteRow(this)">🗑️</button>
+    </td>
+  `;
+  tbodyInventory.appendChild(row);
+}
+
+
+
+//-----------------------her is for search---------------------//
+const tbody = document.getElementById('search-product-body');
+const id_branch = document.getElementById('id_branch').value; // Get the branch ID from the hidden input
+let debounceTimer;
+
+
+document.getElementById('search-product-input').addEventListener('input', function () {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => {
+    search_product_in_the_database(this.value);
+  }, 300); // wait 300ms after that the user stopped writing
+});
+
+function search_product_in_the_database(query) {
+  /*
+  if (query.trim() === "") {
+    document.getElementById('search-product-body').innerHTML = ""; // clean the text of the input if no exit container
+    tbody.innerHTML = ''; // clean the table before adding new products
+    return;
+  }
+  */
+
+    fetch(`/links/${id_branch}/search_products_for_update_the_inventory`, {
+        method: 'POST',
+        headers: {
+        'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ barcode: query }) // AQUÍ: se llama barcode en tu backend
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Aquí recibes { products: [...], supplies: [...] }
+        update_table_search(data.products, data.supplies);
+    })
+    .catch(error => {
+        console.error('Error al buscar productos:', error);
+    });
+}
+
+function update_table_search(products,supplies) {
+  const tbody = document.getElementById('search-product-body');
+  tbody.innerHTML = ''; // limpiar tabla antes de agregar productos
+
+  // Función para construir una fila
+  function createRow(product) {
+    const row = document.createElement('tr');
+    row.onclick = () => selectProductsInTheTableOfSeacrh(row); // tu función para seleccionar
+    row.innerHTML = `
+      <td idProduct="${product.id}" barcode="${product.barcode}" name="${product.name}" max_inventary="${product.max_inventary}" min_inventary="${product.minimum_inventory}" existence="${product.existence}" sale_unity="${product.sale_unity}" sale_price="${product.sale_price}">
+        <div class="product-info">
+          <img src="${product.img ? product.img : '/img/icons_first/product.webp'}" class="product-img">
+          <div class="product-text">
+            <div class="barcode">${product.barcode}</div>
+            <div class="name">${product.name}</div>
+          </div>
+        </div>
+      </td>
+      <td>${product.existence}/${product.sale_unity}</td>
+      <td>$${product.sale_price}</td>
+    `;
+    tbody.appendChild(row);
+  }
+
+  // Agregar productos
+  products.forEach(product => createRow(product));
+
+  // Agregar insumos
+  supplies.forEach(supply => createRow(supply));
+}
+</script>
+
+
+

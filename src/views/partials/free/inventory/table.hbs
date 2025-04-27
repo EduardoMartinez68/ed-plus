@@ -1,0 +1,63 @@
+<div class="row">
+    <div class="col-4">
+        <input type="text" class="form-control" placeholder="Buscar código de barras..." id="search">
+    </div>
+    <div class="col-1">
+        <button class="btn btn-edit" onclick="openPopSearch()">🔍</button>
+    </div>
+</div>
+
+    <br><br>
+    <div id="switch-character-products">
+        <input type="checkbox" id="ignore-limit-toggle" name="ignore-limit-toggle">
+        <label for="ignore-limit-toggle">¿Ignorar límites maximos y minimos de los productos?</label>
+        <span class="slider"></span>
+    </div>
+
+
+<div class="table-container">
+    <table id="inventory-table">
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Existencia Actual</th>
+                <th>Unidad</th>
+                <th>Nueva Existencia</th>
+                <th>Diferencia</th>
+                <th>Precio Compra</th>
+                <th>Importe</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+
+
+
+        </tbody>
+    </table>
+</div>
+
+
+<button class="btn btn-success" onclick="update_all_the_inventory()">Actualizar todos los inventarios</button>
+
+<script>
+
+    async function update_all_the_inventory() {
+
+        if (await questionMessage('📝 Actualizar inventario', 'Esta acción actualizará todos estos productos, ¿continuamos?')) {
+
+        }
+    }
+
+    async function deleteRow(button) {
+        if (await questionMessage('¡Ay caramba! 😱', '¿Estás seguro de que quieres eliminar esta fila?')) {
+            // get the row of the button clicked
+            const row = button.closest('tr');
+            
+            // delete the row from the table
+            if (row) {
+                row.remove();
+            }
+        }
+    }
+</script>
