@@ -305,14 +305,16 @@
 </style>
 
 <div class="data-element-table">
-<div class="row">
-    <div class="col-4">
-        <input type="text" class="form-control" placeholder="Buscar código de barras..." id="search">
+    <div class="row">
+        <div class="col-4">
+            <label for="">Buscar producto en la tabla</label>
+            <input type="text" class="form-control" placeholder="Buscar código de barras o nombre..." id="search-table">
+        </div>
+        <div class="col-3">
+            <br>
+            <button class="btn btn-edit" onclick="openPopSearch()">Agregar Producto</button>
+        </div>
     </div>
-    <div class="col-1">
-        <button class="btn btn-edit" onclick="openPopSearch()">🔍</button>
-    </div>
-</div>
 </div>
 
 <br><br>
@@ -354,26 +356,110 @@
 </div>
 
 <div class="data-element-table">
-<button class="btn btn-success" onclick="update_all_the_inventory()">Actualizar todos los inventarios</button>
+    <button class="btn btn-success" onclick="update_all_the_inventory()">Actualizar todos los inventarios</button>
 
 </div>
 
 <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('search-table');
+        const table = document.getElementById('inventory-table').getElementsByTagName('tbody')[0];
+        let debounceTimeout2;
+
+        searchInput.addEventListener('input', function () {
+            clearTimeout(debounceTimeout2);
+
+            debounceTimeout2 = setTimeout(() => {
+                const filter = searchInput.value.toLowerCase();
+                const rows = table.getElementsByTagName('tr');
+
+                let anyVisible = false;
+
+                for (let i = 0; i < rows.length; i++) {
+                    const firstCell = rows[i].getElementsByTagName('td')[0]; // Nombre
+                    const barcode = rows[i].dataset.barcode ? rows[i].dataset.barcode.toLowerCase() : '';
+
+                    if (firstCell) {
+                        const text = firstCell.textContent.toLowerCase();
+
+                        if (text.includes(filter) || barcode.includes(filter) || filter === '') {
+                            rows[i].style.display = '';
+                            anyVisible = true;
+                        } else {
+                            rows[i].style.display = 'none';
+                        }
+                    }
+                }
+
+                // Si quieres aquí podrías mostrar un mensaje de "No se encontraron resultados" si anyVisible es false
+            }, 300); // Espera 300 milisegundos (0.3 segundos) después de que el usuario deje de escribir
+        });
+    });
+
 
     async function update_all_the_inventory() {
-
         if (await questionMessage('📝 Actualizar inventario', 'Esta acción actualizará todos estos productos, ¿continuamos?')) {
+            const listInventory = await get_all_inventory_data_of_the_table();
 
+            try {
+                const id_branch = document.getElementById('id_branch').value;
+                const id_company = document.getElementById('id_company').value;
+
+                const response = await fetch(`/links/${id_company}/${id_branch}/update_all_the_inventory`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ listInventory })
+                });
+
+                const data = await response.json(); // <- ahora sí espera respuesta
+
+                if (response.ok) {
+                    window.location.href = data.redirectUrl; // <- redirige según lo que mande el backend
+                } else {
+                    errorMessage('❌', 'Error al actualizar el inventario');
+                }
+            } catch (error) {
+                console.error('Error en update_all_the_inventory:', error);
+                errorMessage('❌', 'Error en la conexión con el servidor');
+            }
         }
+    }
+
+    function get_all_inventory_data_of_the_table() {
+        const inventoryTableBody = document.querySelector('#inventory-table tbody');
+        const rows = inventoryTableBody.querySelectorAll('tr');
+        const productsList = [];
+
+        rows.forEach(row => {
+            const productData = {
+                id: row.getAttribute('idProduct'),
+                barcode: row.getAttribute('barcode'),
+                name: row.getAttribute('name'),
+                max_inventary: row.getAttribute('max_inventary'),
+                min_inventary: row.getAttribute('min_inventary'),
+                existence: row.getAttribute('existence'),
+                sale_unity: row.getAttribute('sale_unity'),
+                sale_price: row.getAttribute('sale_price'),
+                newExistence: row.querySelector('.newExistence')?.textContent.trim() || '',
+                diferencia: row.querySelector('.diferencia')?.textContent.trim() || '',
+                importe: row.querySelector('.importe')?.getAttribute('total') || ''
+            };
+
+            productsList.push(productData);
+        });
+
+        return productsList;
     }
 
     async function deleteRow(button, idProduct) {
         // get the row of the button clicked
         const row = button.closest('tr');
         const rowCheckbox = row.querySelector('.product-check:checked');
-        
+
         //first we will check if the idProduct is a number, if not we will parse it to int
-        if(rowCheckbox){
+        if (rowCheckbox) {
             deleteSelectedRows();
             return;
         }
@@ -399,13 +485,13 @@
         if (await questionMessage('¡Atención! ⚠️', '¿Estás seguro de que quieres eliminar todos los productos seleccionados?')) {
             // Seleccionamos todos los checkboxes marcados
             const checkedCheckboxes = document.querySelectorAll('.product-check:checked');
-            
+
             // Para cada checkbox seleccionado, eliminamos la fila
             checkedCheckboxes.forEach(checkbox => {
 
                 const row = checkbox.closest('tr');
                 const idProduct = row ? row.getAttribute('idProduct') : null;
-                if(idProduct) {
+                if (idProduct) {
                     if (row) {
                         row.remove();
 
@@ -472,9 +558,9 @@
 
             // Muestra la tabla y oculta el mensaje
             tableContainer.style.display = 'block';
-                dataElements.forEach(element => {
-                    element.style.display = 'block';
-                });
+            dataElements.forEach(element => {
+                element.style.display = 'block';
+            });
             emptyMessage.remove();
         }
     }
@@ -483,16 +569,16 @@
     const ignoreLimitToggle = document.getElementById('ignore-limit-toggle');
 
     // Agregamos un evento al checkbox
-    ignoreLimitToggle.addEventListener('change', async function() {
-        
+    ignoreLimitToggle.addEventListener('change', async function () {
+
         // Verificamos si se activó el checkbox
         if (ignoreLimitToggle.checked) {
             // Mostramos un mensaje de alerta
             if (!await questionMessage('¡Advertencia! 😱', 'Si decides ignorar los límites máximos y mínimos de los productos, no podrás volver a activarlos. Tendrás que realizar un nuevo inventario para establecer los valores nuevamente. ¿Estás seguro de que deseas continuar?')) {
                 // Si el usuario cancela, desmarcamos el checkbox
                 ignoreLimitToggle.checked = false;
-                
-            }else{
+
+            } else {
                 ignoreLimitToggle.disabled = true;
             }
         }
@@ -503,7 +589,7 @@
     const selectAllCheckbox = document.getElementById('select-all-the-products');
 
     // when the switch change of status, on or off all the checkboxes
-    selectAllCheckbox.addEventListener('change', function() {
+    selectAllCheckbox.addEventListener('change', function () {
         const productCheckboxes = document.querySelectorAll('.product-check');
         // if the switch is on, we will on all the checkboxes of the products of the table
         productCheckboxes.forEach(checkbox => {

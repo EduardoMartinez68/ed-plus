@@ -63,6 +63,14 @@
         {{/each}}
     {{/if}}
 
+    {{#if user.edit_inventory}}
+        {{#each branchFree}}
+            <li>
+                <a href="/links/{{id_companies}}/{{id}}/mass-product-adjustment"><i class="fi-icon fi-sr-package"> Stock</i></a>
+            </li>
+        {{/each}}
+    {{/if}}
+
     {{#if user.view_products}}
         {{#each branchFree}}
         <li>

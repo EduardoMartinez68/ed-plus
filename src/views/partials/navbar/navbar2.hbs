@@ -97,6 +97,15 @@
                             {{/each}}
                         {{/if}}
                         
+                        {{#if user.edit_inventory}}
+                            {{#each branchFree}}
+                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/mass-product-adjustment')">
+                                    <img src="/img/apps/stock.webp" alt="Impresoras">
+                                    <span>Stock</span>
+                                </div>
+                            {{/each}}
+                        {{/if}}
+
                         <!--
                         {{#if user.view_inventory}}
                             {{#each branchFree}}
