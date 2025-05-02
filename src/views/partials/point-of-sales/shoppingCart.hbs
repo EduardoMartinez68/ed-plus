@@ -70,7 +70,7 @@
     <div class="cart-total-point-of-sales">
         <h6>Total de productos: <span id="products-total">0</span></h6>
         <p>Total del Carrito: <span id="cart-total">0.00</span></p>
-        <button class="btn-buy-point-of-sales" onclick="openPopSales()">Comprar</button>
+        <button class="btn-buy-point-of-sales" onclick="openPopSales()">Comprar (F12)</button>
     </div>
 </div>
 
@@ -136,5 +136,44 @@ async function edit_client_car(email) {
         });
     });
 }
+
+</script>
+<script>
+document.addEventListener('keydown', function (event) {
+    const id_branch = document.getElementById('id_branch_menu').value;
+    const id_company = document.getElementById('id_company_menu').value;
+    const id_user = document.getElementById('id_employee_menu').value;
+
+    if (event.altKey) {
+        switch (event.key.toLowerCase()) {
+            case 'g':
+                event.preventDefault();
+                create_a_sale_in_wait();
+                break;
+            case 'w':
+                event.preventDefault();
+                show_popup_cart_in_wait();
+                break;
+            case 'b':
+                event.preventDefault();
+                select_customer(id_company);
+                break;
+            case 'm':
+                event.preventDefault();
+                cash_movement(id_user, id_branch);
+                break;
+            case 'i':
+                event.preventDefault();
+                print_the_last_ticket();
+                break;
+        }
+    }
+
+    // Alt + Enter (cobrar)
+    if ((event.altKey && event.key === 'Enter') || (event.key === 'F12')) {
+        event.preventDefault();
+        openPopSales();
+    }
+});
 
 </script>

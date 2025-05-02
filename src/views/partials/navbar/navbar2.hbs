@@ -1,14 +1,15 @@
 <link rel="stylesheet" href="/css/web/new-navbar.css">
 <style>
-    .container-app{
+    .container-app {
         height: 80%;
         width: 70%;
         overflow-y: auto;
     }
 
-    .descriptionWindow{
-        background: linear-gradient(90deg,#075DA8, #0576F8);
+    .descriptionWindow {
+        background: linear-gradient(90deg, #075DA8, #0576F8);
     }
+
 </style>
 <section class="descriptionWindow">
 
@@ -27,86 +28,92 @@
 
 
 
-                
-                    <div class="container-app">
-                        <!--
+
+                <div class="container-app">
+                    <!--
                         <div class="app-icon" onclick="nextWeb('/home')">
                             <img src="https://cdn-icons-png.flaticon.com/512/5544/5544953.png" alt="Insumos">
                             <span>Menu</span>
                         </div>
                         --->
 
-                        <div class="app-icon" onclick="nextWeb('/home')">
-                            <img src="/img/apps/home.webp" alt="Insumos">
-                            <span>Home</span>
-                        </div>
+                    <div class="app-icon" onclick="nextWeb('/home')">
+                        <img src="/img/apps/home.webp" alt="Insumos">
+                        <span>Home</span>
+                    </div>
 
-                        {{#if user.app_point_sales}}
-                            {{#each branchFree}}
-                                <div class="app-icon" onclick="nextWeb('/point-sales')">
-                                    <img src="/img/apps/point_sales.webp" alt="Insumos">
-                                    <span>Punto de Venta</span>
-                                </div>
-                            {{/each}}
-                        {{/if}}
-                        
-                        {{#if user.view_products}}
-                            {{#each branchFree}}
-                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/products-free')">
-                                    <img src="/img/apps/products.webp" alt="Productos">
-                                    <span>Productos</span>
-                                </div>
-                            {{/each}}
-                        {{/if}}
+                    {{#if user.app_point_sales}}
+                    {{#each branchFree}}
+                    <div class="app-icon" onclick="nextWeb('/point-sales')">
+                        <img src="/img/apps/point_sales.webp" alt="Insumos">
+                        <span>Punto de Venta</span>
+                        <label class="shortcuts-label">F1</label>
+                    </div>
+                    {{/each}}
+                    {{/if}}
 
-                        
-                        {{#if user.view_products}}
-                            {{#each branchFree}}
-                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/boutique')">
-                                    <img src="/img/apps/boutique.webp" alt="Productos">
-                                    <span>Boutique</span>
-                                </div>
-                            {{/each}}
-                        {{/if}}
-                        
-                        {{#if user.view_supplies}}
-                            {{#each branchFree}}
-                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/supplies-free')">
-                                    <img src="/img/apps/supplies.webp" alt="Insumos">
-                                    <span>Insumos</span>
-                                </div>
-                            {{/each}}
-                        {{/if}}
+                    {{#if user.view_products}}
+                    {{#each branchFree}}
+                    <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/products-free')">
+                        <img src="/img/apps/products.webp" alt="Productos">
+                        <span>Productos</span>
+                        <label class="shortcuts-label">F2</label>
+                    </div>
+                    {{/each}}
+                    {{/if}}
 
-                        {{#if user.view_combo}}
-                            {{#each branchFree}}
-                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/combos-free')">
-                                    <img src="/img/apps/combos.webp" alt="Combos">
-                                    <span>Combos</span>
-                                </div>
-                            {{/each}}
-                        {{/if}}
-                        
 
-                        {{#if user.view_inventory}}
-                            {{#each branchFree}}
-                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/inventory')">
-                                    <img src="/img/apps/inventory.webp" alt="Impresoras">
-                                    <span>Inventario</span>
-                                </div>
-                            {{/each}}
-                        {{/if}}
-                        
-                        {{#if user.edit_inventory}}
-                            {{#each branchFree}}
-                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/mass-product-adjustment')">
-                                    <img src="/img/apps/stock.webp" alt="Impresoras">
-                                    <span>Stock</span>
-                                </div>
-                            {{/each}}
-                        {{/if}}
+                    {{#if user.view_products}}
+                    {{#each branchFree}}
+                    <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/boutique')">
+                        <img src="/img/apps/boutique.webp" alt="Productos">
+                        <span>Boutique</span>
+                    </div>
+                    {{/each}}
+                    {{/if}}
 
-                        <!--
+                    {{#if user.view_supplies}}
+                    {{#each branchFree}}
+                    <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/supplies-free')">
+                        <img src="/img/apps/supplies.webp" alt="Insumos">
+                        <span>Insumos</span>
+                        <label class="shortcuts-label">F3</label>
+                    </div>
+                    {{/each}}
+                    {{/if}}
+
+                    {{#if user.view_combo}}
+                    {{#each branchFree}}
+                    <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/combos-free')">
+                        <img src="/img/apps/combos.webp" alt="Combos">
+                        <span>Combos</span>
+                        <label class="shortcuts-label">F4</label>
+                    </div>
+                    {{/each}}
+                    {{/if}}
+
+
+                    {{#if user.view_inventory}}
+                    {{#each branchFree}}
+                    <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/inventory')">
+                        <img src="/img/apps/inventory.webp" alt="Impresoras">
+                        <span>Inventario</span>
+                        <label class="shortcuts-label">F5</label>
+                    </div>
+                    {{/each}}
+                    {{/if}}
+
+                    {{#if user.edit_inventory}}
+                    {{#each branchFree}}
+                    <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/mass-product-adjustment')">
+                        <img src="/img/apps/stock.webp" alt="Impresoras">
+                        <span>Stock</span>
+                        <label class="shortcuts-label">F6</label>
+                    </div>
+                    {{/each}}
+                    {{/if}}
+
+                    <!--
                         {{#if user.view_inventory}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/warehouses')">
@@ -125,53 +132,55 @@
                             {{/each}}
                         {{/if}}
                         --->
-                        
-                        {{#if user.view_food_departament}}
-                            {{#each branchFree}}
-                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/food-department-free')">
-                                    <img src="/img/apps/food-department.webp" alt="Departamentos">
-                                    <span>Departamento de productos</span>
-                                </div>
-                            {{/each}}
-                        {{/if}}
 
-                        {{#if user.view_food_category}}
-                            {{#each branchFree}}
-                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/food-area-free')">
-                                    <img src="/img/apps/food-area.webp" alt="Departamentos">
-                                    <span>Categoría de productos</span>
-                                </div>
-                            {{/each}}
-                        {{/if}}
+                    {{#if user.view_food_departament}}
+                    {{#each branchFree}}
+                    <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/food-department-free')">
+                        <img src="/img/apps/food-department.webp" alt="Departamentos">
+                        <span>Departamento de productos</span>
+                    </div>
+                    {{/each}}
+                    {{/if}}
 
-                        {{#if user.view_provider}}
-                            {{#each branchFree}}
-                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/providers-free')">
-                                    <img src="/img/apps/providers.webp" alt="Proveedores">
-                                    <span>Proveedores</span>
-                                </div>
-                            {{/each}}
-                        {{/if}}
+                    {{#if user.view_food_category}}
+                    {{#each branchFree}}
+                    <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/food-area-free')">
+                        <img src="/img/apps/food-area.webp" alt="Departamentos">
+                        <span>Categoría de productos</span>
+                    </div>
+                    {{/each}}
+                    {{/if}}
 
-                        {{#if user.view_movement_history}}
-                            {{#each branchFree}}
-                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/report-prescription')">
-                                    <img src="/img/apps/prescription.webp" alt="Ventas">
-                                    <span>Reportes médicos</span>
-                                </div>
-                            {{/each}}
-                        {{/if}}
+                    {{#if user.view_provider}}
+                    {{#each branchFree}}
+                    <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/providers-free')">
+                        <img src="/img/apps/providers.webp" alt="Proveedores">
+                        <span>Proveedores</span>
+                        <label class="shortcuts-label">F7</label>
+                    </div>
+                    {{/each}}
+                    {{/if}}
 
-                        {{#if user.view_customer_credits}}
-                            {{#each branchFree}}
-                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/customers-company')">
-                                    <img src="/img/apps/customers.webp" alt="Clientes">
-                                    <span>Clientes</span>
-                                </div>
-                            {{/each}}
-                        {{/if}}
+                    {{#if user.view_movement_history}}
+                    {{#each branchFree}}
+                    <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/report-prescription')">
+                        <img src="/img/apps/prescription.webp" alt="Ventas">
+                        <span>Reportes médicos</span>
+                    </div>
+                    {{/each}}
+                    {{/if}}
 
-                        <!---
+                    {{#if user.view_customer_credits}}
+                    {{#each branchFree}}
+                    <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/customers-company')">
+                        <img src="/img/apps/customers.webp" alt="Clientes">
+                        <span>Clientes</span>
+                        <label class="shortcuts-label">F8</label>
+                    </div>
+                    {{/each}}
+                    {{/if}}
+
+                    <!---
                         {{#if user.view_schedule}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/schedules')">
@@ -191,42 +200,44 @@
                             {{/each}}
                         {{/if}} 
                         --->
-                        {{#if user.view_employee}}
-                            {{#each branchFree}}
-                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/employees-branch')">
-                                    <img src="/img/apps/employees.webp" alt="Empleados">
-                                    <span>Empleados</span>
-                                </div>
-                            {{/each}}
-                        {{/if}}
+                    {{#if user.view_employee}}
+                    {{#each branchFree}}
+                    <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/employees-branch')">
+                        <img src="/img/apps/employees.webp" alt="Empleados">
+                        <span>Empleados</span>
+                        <label class="shortcuts-label">F9</label>
+                    </div>
+                    {{/each}}
+                    {{/if}}
 
-                        {{#if user.employee_department}}
-                            {{#each branchFree}}
-                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/employee-department')">
-                                    <img src="/img/apps/employee-department.webp" alt="Departamento de empleados">
-                                    <span>Departamento de empleados</span>
-                                </div>
-                            {{/each}}
-                        {{/if}}
-                        {{#if user.employee_roles}}
-                            {{#each branchFree}}
-                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/type-employees-free')">
-                                    <img src="/img/apps/type-employees.webp" alt="Roles de empleados">
-                                    <span>Roles y permisos</span>
-                                </div>
-                            {{/each}}
-                        {{/if}}
+                    {{#if user.employee_department}}
+                    {{#each branchFree}}
+                    <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/employee-department')">
+                        <img src="/img/apps/employee-department.webp" alt="Departamento de empleados">
+                        <span>Departamento de empleados</span>
+                    </div>
+                    {{/each}}
+                    {{/if}}
+                    {{#if user.employee_roles}}
+                    {{#each branchFree}}
+                    <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/type-employees-free')">
+                        <img src="/img/apps/type-employees.webp" alt="Roles de empleados">
+                        <span>Roles y permisos</span>
+                    </div>
+                    {{/each}}
+                    {{/if}}
 
-                        {{#if user.employee_roles}}
-                            {{#each branchFree}}
-                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/cashCut')">
-                                    <img src="https://cdn-icons-png.flaticon.com/512/8276/8276278.png" alt="Roles de empleados">
-                                    <span>Cortes de Caja</span>
-                                </div>
-                            {{/each}}
-                        {{/if}}
+                    {{#if user.employee_roles}}
+                    {{#each branchFree}}
+                    <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/cashCut')">
+                        <img src="https://cdn-icons-png.flaticon.com/512/8276/8276278.png" alt="Roles de empleados">
+                        <span>Cortes de Caja</span>
+                        <label class="shortcuts-label">F10</label>
+                    </div>
+                    {{/each}}
+                    {{/if}}
 
-                        <!--
+                    <!--
                         {{#if user.accounting}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/reports')">
@@ -236,7 +247,7 @@
                             {{/each}}
                         {{/if}}
                         --->
-                        <!---
+                    <!---
                         {{#if user.crm}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/CRM')">
@@ -284,25 +295,25 @@
                         {{/if}}
                        --->
 
-                        {{#if user.view_movement_history}}
-                            {{#each branchFree}}
-                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/0/sales')">
-                                    <img src="/img/apps/sales.webp" alt="Ventas">
-                                    <span>Ventas</span>
-                                </div>
-                            {{/each}}
-                        {{/if}}
-                        
-                        {{#if user.view_movement_history}}
-                            {{#each branchFree}}
-                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/0/movements')">
-                                    <img src="/img/apps/movements.webp" alt="Movimientos">
-                                    <span>Movimientos</span>
-                                </div>
-                            {{/each}}
-                        {{/if}}
+                    {{#if user.view_movement_history}}
+                    {{#each branchFree}}
+                    <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/0/sales')">
+                        <img src="/img/apps/sales.webp" alt="Ventas">
+                        <span>Ventas</span>
+                    </div>
+                    {{/each}}
+                    {{/if}}
 
-                        <!---
+                    {{#if user.view_movement_history}}
+                    {{#each branchFree}}
+                    <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/0/movements')">
+                        <img src="/img/apps/movements.webp" alt="Movimientos">
+                        <span>Movimientos</span>
+                    </div>
+                    {{/each}}
+                    {{/if}}
+
+                    <!---
                         {{#if user.movements}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/0/movements')">
@@ -322,16 +333,16 @@
                         {{/if}}
                         --->
 
-                        {{#if user.view_reports}} 
-                            {{#each branchFree}}
-                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/reports')">
-                                    <img src="/img/apps/reports.webp" alt="Contabilidad">
-                                    <span>Reportes</span>
-                                </div>
-                            {{/each}}
-                        {{/if}}
+                    {{#if user.view_reports}}
+                    {{#each branchFree}}
+                    <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/reports')">
+                        <img src="/img/apps/reports.webp" alt="Contabilidad">
+                        <span>Reportes</span>
+                    </div>
+                    {{/each}}
+                    {{/if}}
 
-                        <!---
+                    <!---
                         {{#if user.accounting}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/reports')">
@@ -342,7 +353,7 @@
                         {{/if}}
                         --->
 
-                        <!---
+                    <!---
                         {{#if user.ecommerce}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('myrestaurant/{{id_companies}}/{{id}}')">
@@ -432,7 +443,7 @@
                         {{/each}}
                         -->
 
-                        <!--we will print all the apps of this branch
+                    <!--we will print all the apps of this branch
                         {{#each branchFree}}
                             {{#each apps}}
                                 <div class="app-icon" onclick="nextWeb('{{id_company}}/{{id_branch}}/app/{{name}}')">
@@ -446,18 +457,18 @@
                             {{/each}}
                         {{/each}}
                         --->
-                        
-                        {{#if user.add_box}}
-                            {{#each branchFree}}
-                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/box')">
-                                    <img src="/img/apps/box.webp" alt="Impresoras">
-                                    <span>Impresoras</span>
-                                </div>
-                            {{/each}}
-                        {{/if}}
+
+                    {{#if user.add_box}}
+                    {{#each branchFree}}
+                    <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/box')">
+                        <img src="/img/apps/box.webp" alt="Impresoras">
+                        <span>Impresoras</span>
+                    </div>
+                    {{/each}}
+                    {{/if}}
 
 
-                        <!--
+                    <!--
                         {{#each branchFree}}
                             <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/orders')">
                                 <img src="/img/apps/comanders.webp" alt="Combos">
@@ -466,24 +477,24 @@
                         {{/each}}
                         -->
 
-                        {{#if user.modify_hardware}}
-                            {{#each branchFree}}
-                                <div class="app-icon" onclick="nextWeb('{{id}}/{{id_companies}}/edit-branch-free')">
-                                    <img src="/img/apps/editbranch.webp" alt="Editar Sucursal">
-                                    <span>Editar Sucursal</span>
-                                </div>
-                            {{/each}}
-                        {{/if}}
+                    {{#if user.modify_hardware}}
+                    {{#each branchFree}}
+                    <div class="app-icon" onclick="nextWeb('{{id}}/{{id_companies}}/edit-branch-free')">
+                        <img src="/img/apps/editbranch.webp" alt="Editar Sucursal">
+                        <span>Editar Sucursal</span>
+                    </div>
+                    {{/each}}
+                    {{/if}}
 
-                        {{#if user.give_permissions}}
-                            {{#each branchFree}}
-                                <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/options')">
-                                    <img src="/img/apps/options.webp" alt="Departamentos">
-                                    <span>Configuración</span>
-                                </div>
-                            {{/each}}
-                        {{/if}}
-                        <!--
+                    {{#if user.give_permissions}}
+                    {{#each branchFree}}
+                    <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/options')">
+                        <img src="/img/apps/options.webp" alt="Departamentos">
+                        <span>Configuración</span>
+                    </div>
+                    {{/each}}
+                    {{/if}}
+                    <!--
                         {{#if user.modify_hardware_kitchen}}
                             {{#each branchFree}}
                                 <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/prices')">
@@ -504,7 +515,7 @@
                             {{/each}}
                         {{/if}}
                         --->
-                        <!---
+                    <!---
                         {{#each branchFree}}
                             <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/marketplace')">
                                 <img src="https://cdn-icons-png.flaticon.com/512/4372/4372862.png" alt="Áreas">
@@ -512,15 +523,15 @@
                             </div>
                         {{/each}}
                         --->
-                        <div class="app-icon" onclick="nextWeb('logout')">
-                            <img src="/img/apps/logout.webp" alt="Áreas">
-                            <span>Cerrar Sesion</span>
-                        </div>
+                    <div class="app-icon" onclick="nextWeb('logout')">
+                        <img src="/img/apps/logout.webp" alt="Áreas">
+                        <span>Cerrar Sesion</span>
                     </div>
+                </div>
             </div>
 
             <!--this is for add the name of the company or the branch-->
-            
+
             <ul class="titleDesciption">
                 <!--
                 <span class="color-name-navbar">{{user.email}}</span>
@@ -537,7 +548,10 @@
     </head>
 </section>
 
-
+{{#each branchFree}}
+<input type="hidden" id="id_branch_menu" value="{{id}}">
+<input type="hidden" id="id_company_menu" value="{{id_companies}}">
+{{/each}}
 
 <script src="/js/web/new-navbar.js"></script>
 <script>
@@ -559,4 +573,70 @@
             }
         });
     });
+</script>
+
+
+<script>
+    document.addEventListener('keydown', function (event) {
+
+        //first check if the menu is open
+        if (event.key === "Escape") {
+            //if the menu is open, close it
+            const menu = document.querySelector('.menu');
+            if (menu.classList.contains('active')) {
+                menu.classList.remove('active');
+            } else {
+                open_menu(); //if the menu is not open, open it
+
+            }
+            return;
+        }
+
+        //her we will get the id_company and id_branch from the url
+        const id_company = document.getElementById('id_company_menu').value;
+        const id_branch = document.getElementById('id_branch_menu').value;
+
+        //this is the shortcut of eleventa for open module
+        const simpleShortcuts = {
+            'F1': '/point-sales', //point sales
+            'F2': `${id_company}/${id_branch}/products-free`,
+            'F3': `${id_company}/${id_branch}/supplies-free`,
+            'F4': `${id_company}/${id_branch}/combos-free`,
+            'F5': `${id_company}/${id_branch}/inventory`,
+            'F6': `${id_company}/${id_branch}/mass-product-adjustment`,
+            'F7': `${id_company}/${id_branch}/providers-free`,
+            'F8': `${id_company}/${id_branch}/customers-company`,
+            'F9': `${id_company}/${id_branch}/employees-branch`,
+            'F10': `${id_company}/${id_branch}/cashCut`
+        };
+
+        if (simpleShortcuts[event.key]) {
+            event.preventDefault();
+            const link = simpleShortcuts[event.key];
+            nextWeb(link);
+        }
+
+
+        // Diccionario de atajos simples (F1, F2, etc.)
+        const apps = {
+            '1': '/point-sales', //point sales
+            '2': `${id_company}/${id_branch}/customers-company`,
+            '3': `${id_company}/${id_branch}/products-free`,
+            '4': `${id_company}/${id_branch}/inventory`,
+            '5': `${id_company}/${id_branch}/supplies-free`,
+            '6': `${id_company}/${id_branch}/combos-free`,
+            '7': `${id_company}/${id_branch}/mass-product-adjustment`,
+            '8': `${id_company}/${id_branch}/report-prescription`,
+            '9': `${id_company}/${id_branch}/cashCut`,
+            '0': `${id_company}/${id_branch}/employees-branch`
+        };
+
+        //apps
+        if (event.altKey && apps[event.key]) {
+            event.preventDefault();
+            const link = simpleShortcuts[event.key];
+            nextWeb(link);
+        }
+    });
+
 </script>

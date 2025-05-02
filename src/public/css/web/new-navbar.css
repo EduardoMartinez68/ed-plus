@@ -40,7 +40,7 @@
             position: absolute;
             top: 20px;
             right: 20px;
-            background-color: rgba(255,255,255,.5);
+            background-color: rgba(255, 255, 255, .5);
             color: black;
             border: none;
             border-radius: 5px;
@@ -50,17 +50,21 @@
         }
 
         .close-menu:hover {
-            background-color: rgba(255,255,255,.8);;
+            background-color: rgba(255, 255, 255, .8);
+            ;
         }
 
         .container-app {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); /* Adjusted for larger icons */
-            grid-auto-rows: minmax(120px, auto); /* Adjusted for larger icons */
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            /* Adjusted for larger icons */
+            grid-auto-rows: minmax(120px, auto);
+            /* Adjusted for larger icons */
             gap: 20px;
             max-width: 1000px;
             padding: 20px;
-            grid-template-columns: repeat(6, 1fr); /* Limit to 6 columns */
+            grid-template-columns: repeat(6, 1fr);
+            /* Limit to 6 columns */
             opacity: 0;
             transition: opacity 0.5s ease;
         }
@@ -80,18 +84,23 @@
             transition: transform 0.3s ease;
             text-align: center;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            width: 100px; /* Adjust the size here */
-            height: 100px; /* Adjust the size here */
+            width: 100px;
+            /* Adjust the size here */
+            height: 100px;
+            /* Adjust the size here */
         }
 
         .app-icon img {
-            width: 40px; /* Adjust the size here */
-            height: 40px; /* Adjust the size here */
+            width: 40px;
+            /* Adjust the size here */
+            height: 40px;
+            /* Adjust the size here */
             margin-bottom: 5px;
         }
 
         .app-icon span {
-            font-size: 12px; /* Adjust the font size here */
+            font-size: 12px;
+            /* Adjust the font size here */
             font-weight: bold;
             color: #333;
         }
@@ -104,44 +113,69 @@
         /* Responsive styles */
         @media (max-width: 768px) {
             .container-app {
-                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* Fewer columns on tablets */
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                /* Fewer columns on tablets */
                 grid-auto-rows: minmax(100px, auto);
             }
 
             .app-icon {
-                width: 100px; /* Adjusted size for tablets */
-                height: 100px; /* Adjusted size for tablets */
-                padding: 15px; /* Adjusted padding */
+                width: 100px;
+                /* Adjusted size for tablets */
+                height: 100px;
+                /* Adjusted size for tablets */
+                padding: 15px;
+                /* Adjusted padding */
             }
 
             .app-icon img {
-                width: 50px; /* Adjusted size for tablets */
-                height: 50px; /* Adjusted size for tablets */
+                width: 50px;
+                /* Adjusted size for tablets */
+                height: 50px;
+                /* Adjusted size for tablets */
             }
 
             .app-icon span {
-                font-size: 14px; /* Adjusted font size for tablets */
+                font-size: 14px;
+                /* Adjusted font size for tablets */
             }
         }
 
         @media (max-width: 480px) {
             .container-app {
-                grid-template-columns: 1fr; /* One column on mobile */
-                grid-auto-rows: minmax(120px, auto); /* Adjusted size for mobile */
+                grid-template-columns: 1fr;
+                /* One column on mobile */
+                grid-auto-rows: minmax(120px, auto);
+                /* Adjusted size for mobile */
             }
 
             .app-icon {
-                width: 100%; /* Full width on mobile */
+                width: 100%;
+                /* Full width on mobile */
                 height: auto;
-                padding: 20px; /* Adjusted padding */
+                padding: 20px;
+                /* Adjusted padding */
             }
 
             .app-icon img {
-                width: 70px; /* Larger icons for mobile */
-                height: 70px; /* Larger icons for mobile */
+                width: 70px;
+                /* Larger icons for mobile */
+                height: 70px;
+                /* Larger icons for mobile */
             }
 
             .app-icon span {
-                font-size: 18px; /* Larger font size for mobile */
+                font-size: 18px;
+                /* Larger font size for mobile */
             }
+        }
+
+
+
+        .shortcuts-label {
+            display: none;
+            position: absolute;
+            transform: translateY(280%);
+            font-size: 0.8rem;
+            pointer-events: none;
+            opacity: 0.7;
         }
