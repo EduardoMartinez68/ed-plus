@@ -229,9 +229,19 @@
                 <div class="row">
                     <svg id="barcodeSvg" xmlns="http://www.w3.org/2000/svg" width="0" height="0"></svg>
                     <label for="">Escribe un codigo de barra</label>
-                    <input type="text" id="barcodeInput" placeholder="Escribe un código como 010101101"/>
+                    <input type="text" id="barcodeInput" placeholder="Escribe un código como 010101101" />
                     <button onclick="addBarcode()">Agregar Código de Barras</button>
                 </div>
+                <!---
+                <hr>
+                <div class="row">
+                    <label for="qrInput">Escribe un link para generar un Código QR</label>
+                    <input type="text" id="qrInput" placeholder="https://tusitio.com/pagina" />
+                    <button onclick="addQRCode()">Agregar Código QR</button>
+                    <div id="qrTemp" style="display: none;"></div>
+                </div>
+                --->
+
                 <hr>
                 <div class="upload-container">
                     <label for="input" class="custom-upload">
@@ -246,7 +256,7 @@
                         <button onclick="add_rectangle()" class="add-text">Agregar Rectangulo</button>
                     </div>
                     <div class="col">
-                        
+
                     </div>
                 </div>
 
@@ -254,7 +264,7 @@
                 <div class="row">
                     <div class="col">
                         <button onclick="addText()" class="add-text">Agregar Texto</button>
-                    </div>                   
+                    </div>
                     <div class="col">
                         <select id="fontSelector">
                             <option value="Arial">Arial</option>
@@ -284,6 +294,10 @@
 
 <!--this is for create a barcode in the canva-->
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+
+<!--this is for create a Códigos QR  in the canva-->
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
 
 
 <!--canva-->
@@ -376,7 +390,7 @@
     ///-------------------
     function addBarcode() {
         const value = document.getElementById("barcodeInput").value.trim();
-        if (!value) return alert("Ingresa un código");
+        if (!value) return warningMessage('Espera un momento 😅','Necesitas agregar un codigo de barras.');
 
         // Generar código de barras en el SVG oculto
         JsBarcode("#barcodeSvg", value, {
@@ -405,5 +419,40 @@
             });
             canvas.add(img);
         };
+    }
+
+    function addQRCode() {
+        const value = document.getElementById("qrInput").value.trim();
+        if (!value) return alert("Ingresa un link");
+
+        const container = document.getElementById("qrTemp");
+        container.innerHTML = ""; // Limpiar anterior
+        
+        const canvasEl = document.createElement("canvas");
+        container.appendChild(canvasEl); // Agregamos al DOM (importante)
+        console.log(canvasEl);
+        QRCode.toCanvas(canvasEl, value, {
+            width: 150,
+            margin: 1
+        }, function (error) {
+            if (error) {
+                console.error("Error al generar el código QR", error);
+                return;
+            }
+            alert("Ingresa un link 2");
+            // Ahora convertimos a imagen
+            const img = new Image();
+            img.src = canvasEl.toDataURL("image/png");
+            img.onload = function () {
+                const fabricImg = new fabric.Image(img, {
+                    left: 100,
+                    top: 100,
+                    angle: 0,
+                    scaleX: 1,
+                    scaleY: 1
+                });
+                canvas.add(fabricImg);
+            };
+        });
     }
 </script>

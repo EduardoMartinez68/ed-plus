@@ -255,6 +255,14 @@
     {{/each}}
     --->
 
+    
+    {{#each branchFree}}
+        <li>
+            <a href="/links/{{id_companies}}/{{id}}/labels"><i class="fi-icon fi-sr-label"> Etiquetas</i></a>
+        </li>
+    {{/each}}
+
+
     {{#if user.modify_hardware}}
         {{#each branchFree}}
             <li>
