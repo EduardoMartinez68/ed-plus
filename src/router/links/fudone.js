@@ -1371,10 +1371,6 @@ router.get('/:id_company/:id_branch/options', isLoggedIn, async (req, res) => {
     res.render('links/options/options', { branchFree, dataCompany, country });
 })
 
-
-
-
-
 router.get('/:id_company/:id_branch/prices', isLoggedIn, async (req, res) => {
     const { id_company, id_branch } = req.params;
 
@@ -1388,11 +1384,59 @@ router.get('/:id_company/:id_branch/prices', isLoggedIn, async (req, res) => {
     res.render('links/web/prices',{branchFree});
 })
 
+
+
 router.get('/:id_company/:id_branch/labels', isLoggedIn, async (req, res) => {
     const { id_company, id_branch } = req.params;
 
     const branchFree = await get_data_branch(id_branch);
-    res.render('links/labels/labels',{branchFree});
+    const labels = await get_all_the_lables(id_company, id_branch);
+    res.render('links/labels/labels',{branchFree,labels});
 })
+
+async function get_all_the_lables(id_company,id_branch){
+    const queryText = `
+        SELECT * FROM "Branch".labels WHERE id_companies = $1 AND id_branches = $2
+    `;
+
+    try {
+        const result = await database.query(queryText, [id_company,id_branch]);
+        return result.rows;
+    } catch (error) {
+        console.error('Error getting get_all_the_lables:', error);
+        return [];
+    }
+}
+
+router.get('/:id_company/:id_branch/add-labels', isLoggedIn, async (req, res) => {
+    const { id_company, id_branch } = req.params;
+
+    const branchFree = await get_data_branch(id_branch);
+    res.render('links/labels/addLabels',{branchFree});
+})
+
+router.get('/edit_label/:id', isLoggedIn, async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const queryText = `SELECT * FROM "Branch".labels WHERE id = $1;`;
+        const result = await database.query(queryText, [id]);
+
+        if (result.rows.length === 0) {
+            return res.status(404).send("Etiqueta no encontrada.");
+        }
+
+        const label = result.rows[0];
+
+        const id_branch=req.user.id_branch;
+        const branchFree = await get_data_branch(id_branch);
+        // Puedes renderizar un template con los datos para editar
+        res.render('links/labels/editLabel', { branchFree, label });
+    } catch (error) {
+        console.error("Error al obtener la etiqueta:", error);
+        res.status(500).send("Error interno del servidor.");
+    }
+});
+
 
 module.exports = router;

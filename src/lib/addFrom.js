@@ -3688,6 +3688,97 @@ router.post('/links/update_session_prontipagos', isLoggedIn, async (req, res) =>
     }
 })
 
+
+//-----------------------------------------------------------------------------------labels
+router.post('/links/save_label', isLoggedIn, async (req, res) => {
+    try {
+        const { id_company, name, width, length, label } = req.body;
+        const id_branch = req.user.id_branch;
+
+        const newLabel = {
+            id_company,
+            id_branch,
+            name,
+            width,
+            length,
+            label
+        };
+
+        const insertedId = await insert_label(newLabel);
+        if(insertedId){
+            res.json({ message: "Etiqueta guardada correctamente", id: insertedId });
+        }
+        else{
+            res.status(500).json({ error: "No se pudo guardar la etiqueta" });
+        }
+    } catch (error) {
+        console.error("Error en save_label:", error);
+        res.status(500).json({ error: "No se pudo guardar la etiqueta" });
+    }
+})
+
+async function insert_label(label) {
+    // Validación de campos requeridos
+    if (!label.id_company || !label.name || !label.width || !label.length || !label.label || !label.id_branch) {
+        return false;
+    }
+
+    const queryText = `
+        INSERT INTO "Branch".labels (id_companies, id_branches, name, width, length, label)
+        VALUES ($1, $2, $3, $4, $5, $6)
+        RETURNING id;
+    `;
+
+    const values = [
+        label.id_company,
+        label.id_branch,
+        label.name,
+        parseInt(label.width),
+        parseInt(label.length),
+        label.label // JSON string
+    ];
+
+    try {
+        const result = await database.query(queryText, values);
+        return result.rows[0].id; // Devuelve el ID insertado
+    } catch (error) {
+        console.log('Error al insertar etiqueta:', error);
+        return false;
+    }
+}
+
+router.post('/links/delete_label', isLoggedIn, async (req, res) => {
+    const { id } = req.body;
+
+    if (!id) {
+        return res.status(400).json({ error: "El ID de la etiqueta es obligatorio." });
+    }
+
+    try {
+        const deleted = await delete_label_by_id(id);
+
+        if (deleted) {
+            res.json({ message: "Etiqueta eliminada correctamente." });
+        } else {
+            res.status(404).json({ error: "Etiqueta no encontrada o no se pudo eliminar." });
+        }
+    } catch (error) {
+        console.error("Error al eliminar la etiqueta:", error);
+        res.status(500).json({ error: "Error interno del servidor." });
+    }
+});
+
+async function delete_label_by_id(id) {
+    const queryText = `DELETE FROM "Branch".labels WHERE id = $1`;
+
+    try {
+        const result = await database.query(queryText, [id]);
+        return result.rowCount > 0; // true si se eliminó, false si no existía
+    } catch (error) {
+        console.error("Error al eliminar etiqueta en delete_label_by_id:", error);
+        return false;
+    }
+}
 //-----------------------------------------------apps
 const {
     insert_app_in_my_list,

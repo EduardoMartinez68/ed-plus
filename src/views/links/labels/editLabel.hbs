@@ -1,0 +1,533 @@
+<script src="https://unpkg.com/fabric@5.3.0/dist/fabric.min.js"></script>
+<style>
+    .editor-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+    }
+
+    /* Contenedor del canvas */
+    #canvas-container {
+        flex: 1 1 400px;
+        position: relative;
+        max-width: 420px;
+    }
+
+    #canvas {
+        border: 2px dashed #0676F9;
+        border-radius: 20px;
+        background: white;
+        box-shadow: 0 8px 20px rgb(6 118 249 / 0.25);
+        box-sizing: border-box;
+        max-width: 100%;
+        display: block;
+        margin: 0 auto;
+        position: relative;
+    }
+
+    /* Perforaciones (bordes recortados) */
+    #canvas::before,
+    #canvas::after {
+        content: "";
+        position: absolute;
+        width: 15px;
+        height: 15px;
+        background: white;
+        border: 2px solid #0676F9;
+        border-radius: 50%;
+        top: 20px;
+        box-sizing: border-box;
+        z-index: 10;
+    }
+
+    #canvas::before {
+        left: -12px;
+        box-shadow: 0 35px 0 white, 0 35px 0 #0676F9 inset;
+    }
+
+    #canvas::after {
+        right: -12px;
+        box-shadow: 0 35px 0 white, 0 35px 0 #0676F9 inset;
+    }
+
+    /* Contenedor controles */
+    #controls {
+        flex: 1 1 220px;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    label {
+        font-weight: 600;
+        color: #0676F9;
+        margin-bottom: 4px;
+        display: block;
+        font-size: 14px;
+    }
+
+    select,
+    input[type="color"],
+    input[type="number"],
+    input[type="text"] {
+        width: 100%;
+        padding: 8px 12px;
+        border: 2px solid #0676F9;
+        border-radius: 6px;
+        font-size: 16px;
+        color: #333;
+        box-sizing: border-box;
+        transition: border-color 0.3s ease;
+    }
+
+    select:focus,
+    input[type="color"]:focus,
+    input[type="number"]:focus,
+    input[type="text"]:focus {
+        outline: none;
+        border-color: #055db3;
+    }
+
+    button {
+        padding: 12px;
+        background: #0676F9;
+        border: none;
+        color: white;
+        font-weight: 600;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+        background: #055db3;
+    }
+
+    button:disabled {
+        background: #99b9f9;
+        cursor: not-allowed;
+    }
+
+    /* Input file estilo */
+    input[type="file"] {
+        padding: 6px 8px;
+        border: 2px solid #0676F9;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+
+    /* Responsive */
+    @media (max-width: 720px) {
+        #container {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #canvas-container,
+        #controls {
+            flex: none;
+            width: 100%;
+            max-width: 420px;
+        }
+    }
+
+    .upload-container {
+        position: relative;
+        display: inline-block;
+    }
+
+    .custom-upload {
+        background-color: #4f46e5;
+        /* azul moderno */
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-family: 'Segoe UI', sans-serif;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        display: inline-block;
+    }
+
+    .custom-upload:hover {
+        background-color: #3730a3;
+        /* tono más oscuro al pasar el mouse */
+    }
+
+    #input {
+        display: none;
+        /* Ocultamos el input real */
+    }
+
+
+    .toolbar {
+        background-color: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+
+    }
+
+    .toolbar button,
+    .toolbar select,
+    .toolbar input[type="number"] {
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+        width: 100%;
+    }
+
+    .colorPicker {
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+        width: 100%;
+
+        width: 50px;
+        height: 34px;
+        border: 2px solid #0676F9;
+        border-radius: 6px;
+        cursor: pointer;
+        padding: 0;
+        -webkit-appearance: none;
+        appearance: none;
+    }
+
+    .add-text {
+        background-color: #4f46e5;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-family: 'Segoe UI', sans-serif;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        display: inline-block;
+    }
+
+    .add-text:hover {
+        background-color: #3730a3;
+    }
+</style>
+
+<div class="container">
+    <br>
+    <label><i class="fi-icon fi-sr-label"></i> Editor de Etiquetas</label>
+    <hr>
+    {{#each branchFree}}
+    <input type="hidden" value="{{id_companies}}" id="id_company">
+    {{/each}}
+<div class="row">
+    <div class="col">
+        <div class="toolbar">
+            <form id="labelForm">
+                <input type="hidden" id="labelId" value="{{label.id}}">
+                <div class="row">
+                    <label for="">Nombre de la etiqueta</label>
+                    <input type="text" id="labelName" name="name" value="{{label.name}}" placeholder="Nombre" required>
+                </div>
+                <label for="">Medidas</label>
+                <div class="row">
+                    <div class="col">
+                        <input type="number" id="width" name="width" value="{{label.width}}" placeholder="Ancho (mm)" required>
+                    </div>
+                    <div class="col">
+                        <input type="number" id="length" name="length" value="{{label.length}}" placeholder="Largo (mm)" required>
+                    </div>
+                </div>
+                <br>
+            </form>
+            <hr>
+
+            <div class="row">
+                <svg id="barcodeSvg" xmlns="http://www.w3.org/2000/svg" width="0" height="0"></svg>
+                <div class="col">
+                    <label>Escribe un código de barra</label>
+                    <input type="text" id="barcodeInput" placeholder="Escribe un código como 010101101" />
+                </div>
+                <div class="col">
+                    <br>
+                    <button onclick="addBarcode()" class="add-text">Agregar Código de Barras</button>
+                </div>
+            </div>
+
+            <hr>
+            <div class="upload-container">
+                <label for="input" class="custom-upload">
+                    Subir imagen
+                </label>
+                <input accept="image/*" type="file" name="image" id="input" />
+            </div>
+
+            <hr>
+            <div class="row">
+                <div class="col">
+                    <button onclick="add_rectangle()" class="add-text">Agregar Rectángulo</button>
+                </div>
+            </div>
+
+            <hr>
+            <div class="row">
+                <div class="col">
+                    <button onclick="addText()" class="add-text">Agregar Texto</button>
+                </div>
+                <div class="col">
+                    <select id="fontSelector">
+                        <option value="Arial">Arial</option>
+                        <option value="Courier New">Courier</option>
+                        <option value="Georgia">Georgia</option>
+                        <option value="Impact">Impact</option>
+                        <option value="Verdana">Verdana</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <input type="color" id="colorPicker" value="#000000" class="colorPicker" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <button onclick="update_label()" class="btn btn-confirm-message">Actualizar</button>
+                </div>
+                <div class="col">
+                    <button onclick="printCanvas()" class="btn btn-edit">Imprimir</button>
+                </div>
+            </div>
+            <br>
+        </div>
+    </div>
+    <div class="col">
+        <canvas id="canvas"></canvas>
+    </div>
+</div>
+
+
+    <br><br>
+</div>
+<input type="hidden" id="labelData" value='{{{jsonString}}}' />
+{{>loading}}
+<!--this is for create a barcode in the canva-->
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+
+<!--this is for create a Códigos QR  in the canva-->
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+
+
+<!--canva-->
+<script>
+    const canvas = new fabric.Canvas("canvas");
+    
+    //canvas.setWidth(innerWidth - 1100);
+    canvas.setWidth(innerWidth - 1200);
+    canvas.setHeight(innerHeight - 600);
+
+    input.onchange = (evnt) => {
+        const file = evnt.target.files[0];
+        const url = URL.createObjectURL(file);
+        const imgNode = new Image();
+        imgNode.src = url;
+        imgNode.onload = () => {
+            const img = new fabric.Image(imgNode, {
+                left: 100,
+                top: 100,
+                angle: 0,
+                opacity: 1,
+            });
+            canvas.add(img); // esta es la mágia
+        };
+    };
+
+    function add_rectangle() {
+        var rect = new fabric.Rect({
+            left: 100,
+            top: 100,
+            fill: "black",
+            width: 50,
+            height: 50,
+        });
+        canvas.add(rect);
+    }
+
+    function addText() {
+        const text = new fabric.IText('Texto editable', {
+            left: 100,
+            top: 100,
+            opacity: 1,
+            fontFamily: document.getElementById('fontSelector').value,
+            fill: document.getElementById('colorPicker').value,
+            fontSize: 20,
+            textBackgroundColor: "#fff",
+            cursorColor: "#000",
+            editable: true,
+            visible: true
+        });
+        canvas.add(text).setActiveObject(text);
+        canvas.renderAll();
+    }
+
+    function printCanvas() {
+        const dataUrl = canvas.toDataURL({ format: 'png' });
+        const ventana = window.open('', '', 'width=500,height=400');
+        ventana.document.write(`
+      <html>
+        <head><title>Imprimir Etiqueta</title></head>
+        <body style="margin:0;">
+          <img src="${dataUrl}" style="width:100%;"/>
+          <script>
+            window.onload = function() {
+              window.print();
+              window.onafterprint = () => window.close();
+            }
+          <\/script>
+        </body>
+      </html>
+    `);
+        ventana.document.close();
+    }
+
+    document.getElementById('fontSelector').addEventListener('change', function () {
+        const obj = canvas.getActiveObject();
+        if (obj && obj.type === 'i-text') {
+            obj.set("fontFamily", this.value);
+            canvas.renderAll();
+        }
+    });
+
+    document.getElementById('colorPicker').addEventListener('input', function () {
+        const obj = canvas.getActiveObject();
+        if (obj && obj.type === 'i-text') {
+            obj.set("fill", this.value);
+            canvas.renderAll();
+        }
+    });
+
+    ///-------------------
+    function addBarcode() {
+        const value = document.getElementById("barcodeInput").value.trim();
+        if (!value) return warningMessage('Espera un momento 😅', 'Necesitas agregar un codigo de barras.');
+
+        // Generar código de barras en el SVG oculto
+        JsBarcode("#barcodeSvg", value, {
+            format: "CODE128", // Formato comúnmente escaneable
+            width: 2,
+            height: 100,
+            displayValue: true
+        });
+
+        // Convertir SVG a imagen para Fabric.js
+        const svg = document.getElementById("barcodeSvg");
+        const svgData = new XMLSerializer().serializeToString(svg);
+        const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+        const url = URL.createObjectURL(svgBlob);
+
+        const imgNode = new Image();
+        imgNode.src = url;
+        imgNode.onload = () => {
+            const img = new fabric.Image(imgNode, {
+                left: 100,
+                top: 100,
+                angle: 0,
+                opacity: 1,
+                scaleX: 1,
+                scaleY: 1,
+            });
+            img.customTag = "barcode";
+            canvas.add(img);
+        };
+    }
+
+    function addQRCode() {
+        const value = document.getElementById("qrInput").value.trim();
+        if (!value) return alert("Ingresa un link");
+
+        const container = document.getElementById("qrTemp");
+        container.innerHTML = ""; // Limpiar anterior
+
+        const canvasEl = document.createElement("canvas");
+        container.appendChild(canvasEl); // Agregamos al DOM (importante)
+        console.log(canvasEl);
+        QRCode.toCanvas(canvasEl, value, {
+            width: 150,
+            margin: 1
+        }, function (error) {
+            if (error) {
+                console.error("Error al generar el código QR", error);
+                return;
+            }
+            alert("Ingresa un link 2");
+            // Ahora convertimos a imagen
+            const img = new Image();
+            img.src = canvasEl.toDataURL("image/png");
+            img.onload = function () {
+                const fabricImg = new fabric.Image(img, {
+                    left: 100,
+                    top: 100,
+                    angle: 0,
+                    scaleX: 1,
+                    scaleY: 1
+                });
+                canvas.add(fabricImg);
+            };
+        });
+    }
+
+    function save_label() {
+        const canvasData = JSON.stringify(canvas.toJSON());
+
+        const formData = {
+            id_company: document.getElementById('id_company').value,
+            name: document.getElementById('labelName').value,
+            width: document.getElementById('width').value,
+            length: document.getElementById('length').value,
+            label: canvasData
+        };
+
+        // Mostrar pantalla de carga
+        const loadingOverlay = document.getElementById("loadingOverlay");
+        loadingOverlay.style.display = "flex";
+
+        fetch('/links/save_label', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+            .then(res => {
+                loadingOverlay.style.display = "none";
+                if (!res.ok) errorMessage("🤕 Error al guardar", 'Ocurrio un error al momento de guardar la etiqueta')
+                return res.json();
+            })
+            .then(data => {
+                loadingOverlay.style.display = "none";
+                confirmationMessage('🥳 Etiqueta guardada','Tu etiqueta fue guardada correctamente. Ya puedes empezar a usarla.')
+            })
+            .catch(err => {
+                loadingOverlay.style.display = "none";
+                console.error(err);
+                errorMessage("🤕 Error al guardar", 'Ocurrio un error al momento de guardar la etiqueta')
+            })
+    }
+    function load_label() {
+        canvas.loadFromJSON(label, canvas.renderAll.bind(canvas)); //this is for load the label
+    }
+
+    function remplace_barcode(newBarcode) {
+        // Encuentra y elimina el código de barras anterior
+        const codigos = canvas.getObjects().filter(obj => obj.customTag === 'barcode');
+        codigos.forEach(obj => canvas.remove(obj));
+
+        // Agrega el nuevo código de barras
+        generarNuevoCodigoDeBarras(newBarcode); // usa tu función `addBarcode()` aquí
+    }
+
+</script>

@@ -1,458 +1,155 @@
-<script src="https://unpkg.com/fabric@5.3.0/dist/fabric.min.js"></script>
+<div class="container">
+    <div class="card">
+        <div class="card-body">
+            <label for=""><i class="fi-icon fi-sr-label"></i> Etiquetas</label>
+            <hr>
+            {{#if labels}}
+            <!-- Barra superior con buscador y botón -->
+            <div class="header-bar">
+                <input type="text" id="searchInput" placeholder="Buscar etiqueta por nombre..."
+                    oninput="filterLabels()">
+                {{#each branchFree}}
+                <button onclick="nextWeb('/{{id_companies}}/{{id}}/add-labels')" class="btn btn-edit">Agregar nueva
+                    etiqueta</button>
+                {{/each}}
+            </div>
+
+            <div id="labelsList" class="labels-grid">
+                {{#each labels}}
+                <div class="label-card" id="label-{{id}}">
+                    <h3>{{name}}</h3>
+                    <p><strong>Tamaño:</strong> {{width}} x {{length}} mm</p>
+                    <button onclick="viewLabel({{id}})" class="btn btn-edit">Ver</button>
+                    <button onclick="deleteLabel('{{id}}','{{name}}')" class="btn btn-danger">Eliminar</button>
+                </div>
+                {{/each}}
+            </div>
+            {{else}}
+            <!-- Si no hay etiquetas -->
+            <div class="empty-state">
+                <h2>🎉 ¡Aún no tienes etiquetas creadas!</h2>
+                <p>Empieza haciendo clic en el botón <strong>Agregar</strong> para crear tu primera etiqueta
+                    personalizada.</p>
+                {{#each branchFree}}
+                <button onclick="nextWeb('/{{id_companies}}/{{id}}/add-labels')" class="btn btn-edit">Agregar nueva
+                    etiqueta</button>
+                {{/each}}
+            </div>
+            {{/if}}
+        </div>
+    </div>
+</div>
+{{>loading}}
+
 <style>
-    .editor-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-        justify-content: center;
-    }
-
-    /* Contenedor del canvas */
-    #canvas-container {
-        flex: 1 1 400px;
-        position: relative;
-        max-width: 420px;
-    }
-
-    #canvas {
-        border: 2px dashed #0676F9;
-        border-radius: 20px;
-        background: white;
-        box-shadow: 0 8px 20px rgb(6 118 249 / 0.25);
-        box-sizing: border-box;
-        max-width: 100%;
-        display: block;
-        margin: 0 auto;
-        position: relative;
-    }
-
-    /* Perforaciones (bordes recortados) */
-    #canvas::before,
-    #canvas::after {
-        content: "";
-        position: absolute;
-        width: 15px;
-        height: 15px;
-        background: white;
-        border: 2px solid #0676F9;
-        border-radius: 50%;
-        top: 20px;
-        box-sizing: border-box;
-        z-index: 10;
-    }
-
-    #canvas::before {
-        left: -12px;
-        box-shadow: 0 35px 0 white, 0 35px 0 #0676F9 inset;
-    }
-
-    #canvas::after {
-        right: -12px;
-        box-shadow: 0 35px 0 white, 0 35px 0 #0676F9 inset;
-    }
-
-    /* Contenedor controles */
-    #controls {
-        flex: 1 1 220px;
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-    }
-
-    label {
-        font-weight: 600;
-        color: #0676F9;
-        margin-bottom: 4px;
-        display: block;
-        font-size: 14px;
-    }
-
-    select,
-    input[type="color"],
-    input[type="number"],
-    input[type="text"] {
-        width: 100%;
-        padding: 8px 12px;
-        border: 2px solid #0676F9;
-        border-radius: 6px;
-        font-size: 16px;
-        color: #333;
-        box-sizing: border-box;
-        transition: border-color 0.3s ease;
-    }
-
-    select:focus,
-    input[type="color"]:focus,
-    input[type="number"]:focus,
-    input[type="text"]:focus {
-        outline: none;
-        border-color: #055db3;
-    }
-
-    button {
-        padding: 12px;
-        background: #0676F9;
-        border: none;
-        color: white;
-        font-weight: 600;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 16px;
-        transition: background-color 0.3s ease;
-    }
-
-    button:hover {
-        background: #055db3;
-    }
-
-    button:disabled {
-        background: #99b9f9;
-        cursor: not-allowed;
-    }
-
-    /* Input file estilo */
-    input[type="file"] {
-        padding: 6px 8px;
-        border: 2px solid #0676F9;
-        border-radius: 6px;
-        cursor: pointer;
-    }
-
-    /* Responsive */
-    @media (max-width: 720px) {
-        #container {
-            flex-direction: column;
-            align-items: center;
-        }
-
-        #canvas-container,
-        #controls {
-            flex: none;
-            width: 100%;
-            max-width: 420px;
-        }
-    }
-
-    .upload-container {
-        position: relative;
-        display: inline-block;
-    }
-
-    .custom-upload {
-        background-color: #4f46e5;
-        /* azul moderno */
-        color: white;
-        padding: 10px 20px;
-        border-radius: 8px;
-        font-family: 'Segoe UI', sans-serif;
-        font-size: 16px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-        display: inline-block;
-    }
-
-    .custom-upload:hover {
-        background-color: #3730a3;
-        /* tono más oscuro al pasar el mouse */
-    }
-
-    #input {
-        display: none;
-        /* Ocultamos el input real */
-    }
-
-
-    .toolbar {
-        background-color: white;
+    .container {
         padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        width: 100%;
+        font-family: sans-serif;
+    }
+
+    .header-bar {
         display: flex;
-        flex-direction: column;
-        gap: 15px;
-
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
     }
 
-    .toolbar button,
-    .toolbar select,
-    .toolbar input[type="number"] {
-        padding: 10px;
-        border-radius: 6px;
+    #searchInput {
+        padding: 8px;
+        width: 60%;
         border: 1px solid #ccc;
-        font-size: 14px;
-        width: 100%;
+        border-radius: 6px;
     }
 
-    .colorPicker {
-        padding: 10px;
-        border-radius: 6px;
-        border: 1px solid #ccc;
-        font-size: 14px;
-        width: 100%;
 
-        width: 50px;
-        height: 34px;
-        border: 2px solid #0676F9;
-        border-radius: 6px;
-        cursor: pointer;
-        padding: 0;
-        -webkit-appearance: none;
-        appearance: none;
+    .labels-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 16px;
     }
 
-    .add-text {
-        background-color: #4f46e5;
-        color: white;
-        padding: 10px 20px;
+    .label-card {
+        border: 1px solid #ddd;
         border-radius: 8px;
-        font-family: 'Segoe UI', sans-serif;
-        font-size: 16px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-        display: inline-block;
+        padding: 15px;
+        background-color: #fafafa;
+        box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
     }
 
-    .add-text:hover {
-        background-color: #3730a3;
+    .label-card h3 {
+        margin-top: 0;
+    }
+
+    .empty-state {
+        text-align: center;
+        background-color: #f4f8ff;
+        padding: 40px;
+        border-radius: 10px;
     }
 </style>
 
-<div class="container">
-    <br>
-    <label><i class="fi-icon fi-sr-label"></i> Editor de Etiquetas</label>
-    <hr>
-
-    <div class="row">
-        <div class="col">
-            <div class="toolbar">
-                <div class="row">
-                    <svg id="barcodeSvg" xmlns="http://www.w3.org/2000/svg" width="0" height="0"></svg>
-                    <label for="">Escribe un codigo de barra</label>
-                    <input type="text" id="barcodeInput" placeholder="Escribe un código como 010101101" />
-                    <button onclick="addBarcode()">Agregar Código de Barras</button>
-                </div>
-                <!---
-                <hr>
-                <div class="row">
-                    <label for="qrInput">Escribe un link para generar un Código QR</label>
-                    <input type="text" id="qrInput" placeholder="https://tusitio.com/pagina" />
-                    <button onclick="addQRCode()">Agregar Código QR</button>
-                    <div id="qrTemp" style="display: none;"></div>
-                </div>
-                --->
-
-                <hr>
-                <div class="upload-container">
-                    <label for="input" class="custom-upload">
-                        Subir imagen
-                    </label>
-                    <input accept="image/*" type="file" name="image" id="input" />
-                </div>
-
-                <hr>
-                <div class="row">
-                    <div class="col">
-                        <button onclick="add_rectangle()" class="add-text">Agregar Rectangulo</button>
-                    </div>
-                    <div class="col">
-
-                    </div>
-                </div>
-
-                <hr>
-                <div class="row">
-                    <div class="col">
-                        <button onclick="addText()" class="add-text">Agregar Texto</button>
-                    </div>
-                    <div class="col">
-                        <select id="fontSelector">
-                            <option value="Arial">Arial</option>
-                            <option value="Courier New">Courier</option>
-                            <option value="Georgia">Georgia</option>
-                            <option value="Impact">Impact</option>
-                            <option value="Verdana">Verdana</option>
-                        </select>
-                    </div>
-                    <div class="col">
-                        <input type="color" id="colorPicker" value="#000000" class="colorPicker" />
-                    </div>
-                </div>
-                <button onclick="printCanvas()">Imprimir</button>
-                <br>
-            </div>
-        </div>
-        <div class="col">
-            <canvas id="canvas"></canvas>
-        </div>
-    </div>
-
-
-    <br><br>
-</div>
-
-
-<!--this is for create a barcode in the canva-->
-<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
-
-<!--this is for create a Códigos QR  in the canva-->
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
-
-
-<!--canva-->
 <script>
-    const canvas = new fabric.Canvas("canvas");
-    //canvas.setWidth(innerWidth - 1100);
-    canvas.setWidth(innerWidth - 1200);
-    canvas.setHeight(innerHeight - 600);
-
-    input.onchange = (evnt) => {
-        const file = evnt.target.files[0];
-        const url = URL.createObjectURL(file);
-        const imgNode = new Image();
-        imgNode.src = url;
-        imgNode.onload = () => {
-            const img = new fabric.Image(imgNode, {
-                left: 100,
-                top: 100,
-                angle: 0,
-                opacity: 1,
-            });
-            canvas.add(img); // esta es la mágia
-        };
-    };
-
-    function add_rectangle() {
-        var rect = new fabric.Rect({
-            left: 100,
-            top: 100,
-            fill: "black",
-            width: 50,
-            height: 50,
+    function filterLabels() {
+        const input = document.getElementById("searchInput").value.toLowerCase();
+        const cards = document.querySelectorAll(".label-card");
+        cards.forEach(card => {
+            const title = card.querySelector("h3").textContent.toLowerCase();
+            card.style.display = title.includes(input) ? "block" : "none";
         });
-        canvas.add(rect);
     }
 
-    function addText() {
-        const text = new fabric.IText('Texto editable', {
-            left: 100,
-            top: 100,
-            opacity: 1,
-            fontFamily: document.getElementById('fontSelector').value,
-            fill: document.getElementById('colorPicker').value,
-            fontSize: 20,
-            textBackgroundColor: "#fff",
-            cursorColor: "#000",
-            editable: true,
-            visible: true
-        });
-        canvas.add(text).setActiveObject(text);
-        canvas.renderAll();
+    function openAddLabelModal() {
+        // Aquí deberías abrir un modal o redirigir al formulario
+        alert("Abrir modal o redirigir a formulario de creación.");
     }
 
-    function printCanvas() {
-        const dataUrl = canvas.toDataURL({ format: 'png' });
-        const ventana = window.open('', '', 'width=500,height=400');
-        ventana.document.write(`
-      <html>
-        <head><title>Imprimir Etiqueta</title></head>
-        <body style="margin:0;">
-          <img src="${dataUrl}" style="width:100%;"/>
-          <script>
-            window.onload = function() {
-              window.print();
-              window.onafterprint = () => window.close();
-            }
-          <\/script>
-        </body>
-      </html>
-    `);
-        ventana.document.close();
-    }
-
-    document.getElementById('fontSelector').addEventListener('change', function () {
-        const obj = canvas.getActiveObject();
-        if (obj && obj.type === 'i-text') {
-            obj.set("fontFamily", this.value);
-            canvas.renderAll();
+    function viewLabel(id) {
+        if (!id) {
+            alert("ID de etiqueta no válido.");
+            return;
         }
-    });
 
-    document.getElementById('colorPicker').addEventListener('input', function () {
-        const obj = canvas.getActiveObject();
-        if (obj && obj.type === 'i-text') {
-            obj.set("fill", this.value);
-            canvas.renderAll();
-        }
-    });
-
-    ///-------------------
-    function addBarcode() {
-        const value = document.getElementById("barcodeInput").value.trim();
-        if (!value) return warningMessage('Espera un momento 😅','Necesitas agregar un codigo de barras.');
-
-        // Generar código de barras en el SVG oculto
-        JsBarcode("#barcodeSvg", value, {
-            format: "CODE128", // Formato comúnmente escaneable
-            width: 2,
-            height: 100,
-            displayValue: true
-        });
-
-        // Convertir SVG a imagen para Fabric.js
-        const svg = document.getElementById("barcodeSvg");
-        const svgData = new XMLSerializer().serializeToString(svg);
-        const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
-        const url = URL.createObjectURL(svgBlob);
-
-        const imgNode = new Image();
-        imgNode.src = url;
-        imgNode.onload = () => {
-            const img = new fabric.Image(imgNode, {
-                left: 100,
-                top: 100,
-                angle: 0,
-                opacity: 1,
-                scaleX: 1,
-                scaleY: 1,
-            });
-            canvas.add(img);
-        };
+        window.location.href = `/links/edit_label/${id}`;
     }
+</script>
+<script>
+    async function deleteLabel(id, name) {
+        const confirm = await questionMessage(
+            `Eliminar la etiqueta "${name}"`,
+            '¿Estás seguro de que deseas eliminar esta etiqueta? Esta acción no se puede deshacer.'
+        );
 
-    function addQRCode() {
-        const value = document.getElementById("qrInput").value.trim();
-        if (!value) return alert("Ingresa un link");
+        if (!confirm) return;
 
-        const container = document.getElementById("qrTemp");
-        container.innerHTML = ""; // Limpiar anterior
-        
-        const canvasEl = document.createElement("canvas");
-        container.appendChild(canvasEl); // Agregamos al DOM (importante)
-        console.log(canvasEl);
-        QRCode.toCanvas(canvasEl, value, {
-            width: 150,
-            margin: 1
-        }, function (error) {
-            if (error) {
-                console.error("Error al generar el código QR", error);
-                return;
+        const loadingOverlay = document.getElementById("loadingOverlay");
+        try {
+            loadingOverlay.style.display = "flex"; // Mostrar pantalla de carga
+
+            const response = await fetch('/links/delete_label', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ id })
+            });
+
+            const result = await response.json();
+            loadingOverlay.style.display = "none"; // Ocultar pantalla de carga
+
+            if (response.ok) {
+                confirmationMessage('😉 Etiqueta eliminada',`La etiqueta "${name}" fue eliminada correctamente`);
+
+                // Eliminar el elemento visualmente de la UI
+                const labelElement = document.querySelector(`#label-${id}`);
+                if (labelElement) labelElement.remove();
+            } else {
+                errorMessage('😅 Error',`No se pudo eliminar la etiqueta: ${result.error || 'Error desconocido'}`);
             }
-            alert("Ingresa un link 2");
-            // Ahora convertimos a imagen
-            const img = new Image();
-            img.src = canvasEl.toDataURL("image/png");
-            img.onload = function () {
-                const fabricImg = new fabric.Image(img, {
-                    left: 100,
-                    top: 100,
-                    angle: 0,
-                    scaleX: 1,
-                    scaleY: 1
-                });
-                canvas.add(fabricImg);
-            };
-        });
+
+        } catch (error) {
+            loadingOverlay.style.display = "none";
+            console.error('Error al eliminar la etiqueta:', error);
+            errorMessage('😅 Error','Error al eliminar la etiqueta. Intenta nuevamente.');
+        }
     }
 </script>

@@ -362,6 +362,53 @@ async function create_update_of_the_database(){
         END
         $$;
 
+
+        -- Crear tabla de labels si no existe
+        CREATE TABLE IF NOT EXISTS "Branch".labels (
+            id bigserial PRIMARY KEY,
+            id_companies bigint,
+            id_branches bigint,
+            name varchar(300) NOT NULL,
+            width smallint NOT NULL,
+            length smallint NOT NULL,
+            label json NOT NULL
+        );
+
+        -- Agregar FK a "Company".branches si no existe
+        DO $$
+        BEGIN
+            IF NOT EXISTS (
+                SELECT 1
+                FROM information_schema.table_constraints
+                WHERE constraint_name = 'branches_fk'
+                AND table_schema = 'Branch'
+                AND table_name = 'labels'
+            ) THEN
+                ALTER TABLE "Branch".labels
+                ADD CONSTRAINT branches_fk FOREIGN KEY (id_branches)
+                REFERENCES "Company".branches (id)
+                ON DELETE SET NULL
+                ON UPDATE CASCADE;
+            END IF;
+        END$$;
+
+        -- Agregar FK a "User".companies si no existe
+        DO $$
+        BEGIN
+            IF NOT EXISTS (
+                SELECT 1
+                FROM information_schema.table_constraints
+                WHERE constraint_name = 'companies_fk'
+                AND table_schema = 'Branch'
+                AND table_name = 'labels'
+            ) THEN
+                ALTER TABLE "Branch".labels
+                ADD CONSTRAINT companies_fk FOREIGN KEY (id_companies)
+                REFERENCES "User".companies (id)
+                ON DELETE SET NULL
+                ON UPDATE CASCADE;
+            END IF;
+        END$$;
     `
     await adminPool.query(query);
     console.log('📂 La base de datos EDPLUS fue actualizada.');
