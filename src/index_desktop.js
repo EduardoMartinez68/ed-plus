@@ -239,6 +239,27 @@ serverExpress.set('view engine','.hbs');
 
 
 //*-----------------------------------------------------------middlewares-----------------------------------------//
+const crypto = require('crypto');
+
+// Path file .env
+const envPath = path.resolve(__dirname, '../../../.env');
+
+//read the container update of the file .env
+let envContent = fs.existsSync(envPath) ? fs.readFileSync(envPath, 'utf8') : '';
+
+if (!envContent.includes('ENCRYPTION_KEY=')) {
+  // Generar clave de 32 bytes (256 bits) y codificarla en hexadecimal
+  const newKey = crypto.randomBytes(32).toString('hex');
+
+  // Agregar la nueva clave al final del archivo .env
+  envContent += `\nENCRYPTION_KEY=${newKey}\n`;
+  fs.writeFileSync(envPath, envContent);
+  console.log('✅ ENCRYPTION_KEY generado y guardado en .env');
+} else {
+  console.log('🔐 ENCRYPTION_KEY ya existe en .env');
+}
+
+
 require('dotenv').config();
 const {APP_PG_USER,APP_PG_HOST,APP_PG_DATABASE,APP_PG_PASSWORD,APP_PG_PORT, TOKEN}=process.env; //this code is for get the data of the database
 

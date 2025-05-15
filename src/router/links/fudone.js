@@ -361,6 +361,9 @@ router.post('/:id_lot/edit-lot-quantity', isLoggedIn, async (req, res) => {
         ]);
 
         await add_move_to_the_history(id_company,id_branch,id_employees,id_lot,newQuantity,'Venta'); //this is for save the move in the history when the lot are for a prescription 
+        
+        const id_combo_features = result.rows[0].id_dish_and_combo_features;
+        await update_existence_use_lot(id_combo_features); //this is for update the existence of the product in the table product_and_suppiles_features
         res.status(201).json({ message: "Lote actualizado con éxito", lot: result.rows[0] });
     } catch (error) {
         console.error("Error al actualizar el lote:", error);
@@ -508,7 +511,7 @@ router.post('/:id_combo_features/add-lot', isLoggedIn, async (req, res) => {
         ]);
 
         const newLot = result.rows[0]; // Aquí obtienes el lote insertado con su ID
-
+        await update_existence_use_lot(id_combo_features); //this is for update the existence of the product in the table product_and_suppiles_features
         res.status(201).json({ 
             message: "Lote agregado con éxito", 
             lot: newLot, 
@@ -521,6 +524,31 @@ router.post('/:id_combo_features/add-lot', isLoggedIn, async (req, res) => {
         res.status(500).json({ error: "Error al agregar el lote" });
     }
 })
+
+async function update_existence_use_lot(id_combo_features) {
+    try {
+        // Paso 1: Sumar todas las existencias actuales de los lotes
+        const sumResult = await database.query(`
+            SELECT SUM(current_existence) AS total
+            FROM "Inventory".lots
+            WHERE id_dish_and_combo_features = $1;
+        `, [id_combo_features]);
+
+        const totalExistence = sumResult.rows[0].total || 0;
+
+        // Paso 2: Actualizar el campo 'existence' en product_and_suppiles_features
+        await database.query(`
+            UPDATE "Inventory".product_and_suppiles_features
+            SET existence = $1
+            WHERE id = $2;
+        `, [totalExistence, id_combo_features]);
+
+        console.log(`Existencia actualizada a ${totalExistence} para id ${id_combo_features}`);
+    } catch (err) {
+        console.error("Error al actualizar existencia:", err);
+        throw err;
+    }
+}
 
 router.post('/:id_combo_features/:id_lot/edit-lot', isLoggedIn, async (req, res) => {
     const { id_combo_features, id_lot} = req.params;
@@ -551,6 +579,8 @@ router.post('/:id_combo_features/:id_lot/edit-lot', isLoggedIn, async (req, res)
             expiration_date,
             id_lot
         ]);
+
+        await update_existence_use_lot(id_combo_features); //this is for update the existence of the product in the table product_and_suppiles_features
         await add_move_to_the_history(id_company,id_branch,id_employees,id_lot,current_existence,'Ajuste de inventario'); //this is for save the move in the history when the lot are for a prescription
         res.status(201).json({ message: "Lote actualizado con éxito", lot: result.rows[0] });
     } catch (error) {
@@ -581,7 +611,6 @@ router.post('/:id_lot/delete-lot', isLoggedIn, async (req, res) => {
         res.status(500).json({ error: "Error al eliminar el lote" });
     }
 });
-
 
 async function get_all_the_promotions(id_dish_and_combo_features) {
     const queryText = `
@@ -1120,6 +1149,7 @@ const mainHandelbars=`
 </html>
 `
 const hbs = require('handlebars'); // Para compilar dinámicamente
+const { console } = require('inspector');
 
 router.get('/:id_company/:id_branch/ed-studios', isLoggedIn, async (req, res) => {
     const { id_company, id_branch } = req.params;
@@ -1341,6 +1371,10 @@ router.get('/:id_company/:id_branch/options', isLoggedIn, async (req, res) => {
     res.render('links/options/options', { branchFree, dataCompany, country });
 })
 
+
+
+
+
 router.get('/:id_company/:id_branch/prices', isLoggedIn, async (req, res) => {
     const { id_company, id_branch } = req.params;
 
@@ -1352,6 +1386,13 @@ router.get('/:id_company/:id_branch/prices', isLoggedIn, async (req, res) => {
 
     const branchFree = await get_data_branch(id_branch);
     res.render('links/web/prices',{branchFree});
+})
+
+router.get('/:id_company/:id_branch/labels', isLoggedIn, async (req, res) => {
+    const { id_company, id_branch } = req.params;
+
+    const branchFree = await get_data_branch(id_branch);
+    res.render('links/labels/labels',{branchFree});
 })
 
 module.exports = router;

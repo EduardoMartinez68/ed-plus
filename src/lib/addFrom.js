@@ -3637,7 +3637,56 @@ async function update_appointment(appointment, id_appointment){
     }
 }
 
+//-----------------------------------------------options
+const crypto = require('crypto');
+// Cargar variables de entorno
+require('dotenv').config();
+const ENCRYPTION_KEY = Buffer.from(process.env.ENCRYPTION_KEY, 'hex'); //use the key like buffer
 
+// Clave secreta y vector de inicialización
+const IV = crypto.randomBytes(16); // 16 bytes para AES
+
+function encryptPassword(password) {
+  const cipher = crypto.createCipheriv('aes-256-cbc', ENCRYPTION_KEY, IV);
+  let encrypted = cipher.update(password, 'utf8', 'hex');
+  encrypted += cipher.final('hex');
+  return {
+    iv: IV.toString('hex'),
+    encryptedData: encrypted
+  };
+}
+
+function decryptPassword(encryptedData, iv) {
+  const decipher = crypto.createDecipheriv('aes-256-cbc', ENCRYPTION_KEY, Buffer.from(iv, 'hex'));
+  let decrypted = decipher.update(encryptedData, 'hex', 'utf8');
+  decrypted += decipher.final('utf8');
+  return decrypted;
+}
+
+
+router.post('/links/update_session_prontipagos', isLoggedIn, async (req, res) => {
+    try {
+        const { user, password } = req.body;
+
+        if (!user || !password) {
+            return res.status(400).json({ error: "Usuario y contraseña son obligatorios" });
+        }
+
+        const newPassword=encryptPassword(password); // Encriptar la contraseña
+
+        // Aquí puedes guardar, encriptar, o usar los datos como necesites
+        console.log("Usuario:", user);
+        console.log("Contraseña encriptada:", newPassword.encryptedData);
+        console.log("IV:", newPassword.iv);
+        console.log("Contraseña desencriptada:", decryptPassword(newPassword.encryptedData, newPassword.iv)); // Desencriptar para verificar
+
+        // Si todo sale bien, devuelve un mensaje de éxito
+        res.json({ message: "Cuenta activada correctamente -> "+user+" "+newPassword.encryptedData });
+    } catch (error) {
+        console.error("Error en update_session_prontipagos:", error);
+        res.status(500).json({ error: "Ocurrió un error en el servidor" });
+    }
+})
 
 //-----------------------------------------------apps
 const {
