@@ -204,9 +204,12 @@ router.get('/:id_company/:id_branch/products-free', isLoggedIn, async (req, res)
     }
 
     const branchFree = await get_data_branch(id_branch);
+    
+
     if (branchFree != null) {
         const combos = await get_combo_features(id_branch,true);
-        res.render('links/free/products/products', { branchFree, combos});
+        const labels=await get_all_the_labels(id_branch);
+        res.render('links/free/products/products', { branchFree, combos, labels});
     } else {
         res.render('links/store/branchLost');
     }
@@ -1440,8 +1443,8 @@ router.get('/edit_label/:id', isLoggedIn, async (req, res) => {
 });
 
 
-router.get('/view_label/:id', isLoggedIn, async (req, res) => {
-    const { id } = req.params;
+router.get('/view_label/:id/name=:name/barcode=:barcode/price=:price', isLoggedIn, async (req, res) => {
+    const { id, name, barcode, price } = req.params;
 
     try {
         const queryText = `SELECT * FROM "Branch".labels WHERE id = $1;`;
@@ -1457,12 +1460,32 @@ router.get('/view_label/:id', isLoggedIn, async (req, res) => {
         const id_branch=req.user.id_branch;
         const branchFree = await get_data_branch(id_branch);
         // Puedes renderizar un template con los datos para editar
-        res.render('links/labels/viewLabel', { branchFree, label });
+
+        const product = [{
+            name,
+            barcode,
+            price
+        }];
+
+        res.render('links/labels/viewLabel', { branchFree, label, product});
     } catch (error) {
         console.error("Error al obtener la etiqueta:", error);
         res.status(500).send("Error interno del servidor.");
     }
 });
+
+
+async function get_all_the_labels(id_branch){
+    try {
+        const queryText = `SELECT * FROM "Branch".labels WHERE id_branches=$1`;
+        const result = await database.query(queryText, [id_branch]);
+
+        return result.rows;;
+    } catch (error) {
+        console.error("Error al obtener la etiqueta:", error);
+        return []
+    }
+}
 
 
 module.exports = router;

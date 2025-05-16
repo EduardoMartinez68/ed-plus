@@ -273,10 +273,11 @@
 </div>
 <input id="labelData" value='{{{label.label}}}' type="hidden" />
 
-
-<input id="id_name_product" value="gansito" type="hidden">
-<input id="id_barcdoe_product" value="gansito" type="hidden">
-<input id="id_price_product" value="10" type="hidden">
+{{#each product}}
+    <input id="id_name_product" value="{{name}}" type="hidden">
+    <input id="id_barcdoe_product" value="{{barcode}}" type="hidden">
+    <input id="id_price_product" value="{{price}}" type="hidden">
+{{/each}}
 
 {{>loading}}
 <!--this is for create a barcode in the canva-->
