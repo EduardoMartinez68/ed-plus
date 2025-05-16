@@ -1427,11 +1427,37 @@ router.get('/edit_label/:id', isLoggedIn, async (req, res) => {
         }
 
         const label = result.rows[0];
+        label.label = JSON.stringify(label.label);
 
         const id_branch=req.user.id_branch;
         const branchFree = await get_data_branch(id_branch);
         // Puedes renderizar un template con los datos para editar
         res.render('links/labels/editLabel', { branchFree, label });
+    } catch (error) {
+        console.error("Error al obtener la etiqueta:", error);
+        res.status(500).send("Error interno del servidor.");
+    }
+});
+
+
+router.get('/view_label/:id', isLoggedIn, async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const queryText = `SELECT * FROM "Branch".labels WHERE id = $1;`;
+        const result = await database.query(queryText, [id]);
+
+        if (result.rows.length === 0) {
+            return res.status(404).send("Etiqueta no encontrada.");
+        }
+
+        const label = result.rows[0];
+        label.label = JSON.stringify(label.label);
+
+        const id_branch=req.user.id_branch;
+        const branchFree = await get_data_branch(id_branch);
+        // Puedes renderizar un template con los datos para editar
+        res.render('links/labels/viewLabel', { branchFree, label });
     } catch (error) {
         console.error("Error al obtener la etiqueta:", error);
         res.status(500).send("Error interno del servidor.");

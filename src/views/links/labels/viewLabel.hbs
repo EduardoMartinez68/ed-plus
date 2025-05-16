@@ -220,12 +220,15 @@
 
 <div class="container">
     <br>
-    <label><i class="fi-icon fi-sr-label"></i> Editor de Etiquetas</label>
+    <label><i class="fi-icon fi-sr-label"></i> Ver Etiqueta</label>
     <hr>
     {{#each branchFree}}
     <input type="hidden" value="{{id_companies}}" id="id_company">
     {{/each}}
+
     <input type="hidden" id="labelId" value="{{label.id}}" />
+
+
     <div class="row">
         <div class="col">
             <div class="toolbar">
@@ -234,89 +237,29 @@
                     <div class="row">
                         <label for="">Nombre de la etiqueta</label>
                         <input type="text" id="labelName" name="name" value="{{label.name}}" placeholder="Nombre"
-                            required>
+                            disabled>
                     </div>
                     <label for="">Medidas</label>
                     <div class="row">
                         <div class="col">
                             <input type="number" id="width" name="width" value="{{label.width}}"
-                                placeholder="Ancho (mm)" required>
+                                placeholder="Ancho (mm)" disabled>
                         </div>
                         <div class="col">
                             <input type="number" id="length" name="length" value="{{label.length}}"
-                                placeholder="Largo (mm)" required>
+                                placeholder="Largo (mm)" disabled>
                         </div>
                     </div>
                     <br>
+                    <div class="row">
+                        <svg id="barcodeSvg" xmlns="http://www.w3.org/2000/svg" width="0" height="0"></svg>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <button onclick="printCanvas()" class="btn btn-edit">Imprimir</button>
+                        </div>
+                    </div>
                 </form>
-                <hr>
-
-                <div class="row">
-                    <svg id="barcodeSvg" xmlns="http://www.w3.org/2000/svg" width="0" height="0"></svg>
-                    <div class="col">
-                        <label>Escribe un código de barra de ejemplo</label>
-                        <input type="text" id="barcodeInput" placeholder="Escribe un código como 010101101" />
-                    </div>
-                    <div class="col">
-                        <br>
-                        <button onclick="addBarcode()" class="add-text">Agregar Código de Barras</button>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <button onclick="addInputsCodigo()" class="add-text">Código de barra</button>
-                    </div>
-                    <div class="col">
-                        <button onclick="addInputsName()" class="add-text">Nombre del producto</button>
-                    </div>
-                    <div class="col">
-                        <button onclick="addInputsPrice()" class="add-text">Nombre precio</button>
-                    </div>
-                </div>
-                <!--
-                <hr>
-                <div class="upload-container">
-                    <label for="input" class="custom-upload">
-                        Subir imagen
-                    </label>
-                    <input accept="image/*" type="file" name="image" id="input" />
-                </div>
-                -->
-
-                <hr>
-                <div class="row">
-                    <div class="col">
-                        <button onclick="add_rectangle()" class="add-text">Agregar Rectángulo</button>
-                    </div>
-                </div>
-
-                <hr>
-                <div class="row">
-                    <div class="col">
-                        <button onclick="addText()" class="add-text">Agregar Texto</button>
-                    </div>
-                    <div class="col">
-                        <select id="fontSelector">
-                            <option value="Arial">Arial</option>
-                            <option value="Courier New">Courier</option>
-                            <option value="Georgia">Georgia</option>
-                            <option value="Impact">Impact</option>
-                            <option value="Verdana">Verdana</option>
-                        </select>
-                    </div>
-                    <div class="col">
-                        <input type="color" id="colorPicker" value="#000000" class="colorPicker" />
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col">
-                        <button onclick="updateLabel()" class="btn btn-confirm-message">Actualizar</button>
-                    </div>
-                    <div class="col">
-                        <button onclick="printCanvas()" class="btn btn-edit">Imprimir</button>
-                    </div>
-                </div>
                 <br>
             </div>
         </div>
@@ -329,6 +272,12 @@
     <br><br>
 </div>
 <input id="labelData" value='{{{label.label}}}' type="hidden" />
+
+
+<input id="id_name_product" value="gansito" type="hidden">
+<input id="id_barcdoe_product" value="gansito" type="hidden">
+<input id="id_price_product" value="10" type="hidden">
+
 {{>loading}}
 <!--this is for create a barcode in the canva-->
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
@@ -548,6 +497,75 @@
         } catch (err) {
             console.error('Error al parsear o cargar el JSON del label:', err);
         }
+
+
+
+
+
+
+
+
+        //remplace the data of the product
+        function reemplazarDatosProducto(codigoReal, nombreReal, price) {
+            canvas.getObjects().forEach(obj => {
+                if (obj.type === 'text') {
+                    if (obj.text === '{codigo}') {
+                        obj.set('text', codigoReal);
+                        create_barcode_input(obj, codigoReal);
+                    }
+                    if (obj.text === '{nombre}') {
+                        obj.set('text', nombreReal);
+                    }
+                    if (obj.text === '{precio}') {
+                        obj.set('text', price);
+                    }
+                }
+            });
+            canvas.renderAll();
+        }
+
+        function create_barcode_input(obj, codigoReal) {
+            // Guardar propiedades del texto
+            const { left, top, angle, scaleX, scaleY, width, height } = obj;
+
+            // Generar código de barras
+            JsBarcode("#barcodeSvg", codigoReal, {
+                format: "CODE128",
+                width: 2,
+                height: height || 100,
+                displayValue: true
+            });
+
+            const svg = document.getElementById("barcodeSvg");
+            const svgData = new XMLSerializer().serializeToString(svg);
+            const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+            const url = URL.createObjectURL(svgBlob);
+
+            const imgNode = new Image();
+            imgNode.src = url;
+            imgNode.onload = () => {
+                const img = new fabric.Image(imgNode, {
+                    left: left + width / 2,   // Centrar usando el ancho del texto
+                    top: top,
+                    angle: angle,
+                    scaleX: scaleX,
+                    scaleY: scaleY,
+                    originX: 'center',        // Centrar la imagen horizontalmente
+                    originY: 'center'
+                });
+                img.customTag = "barcode";
+
+                canvas.add(img);
+                canvas.remove(obj); // Eliminar el texto original
+                canvas.renderAll();
+            };
+        }
+
+        //get the data of the product
+        const name = document.getElementById('id_name_product').value;
+        const barcode = document.getElementById('id_barcdoe_product').value;
+        const price = document.getElementById('id_price_product').value;
+        reemplazarDatosProducto(barcode, name, price)
     });
 
     function drawLabelFromData(elements) {
@@ -597,93 +615,4 @@
         ctx.fillText(el.code, el.x + 5, el.y + el.height / 2);
     }
 
-
-    function updateLabel() {
-        const id = document.getElementById('labelId').value;
-        const name = document.getElementById('labelName').value;
-        const width = document.getElementById('width').value;
-        const length = document.getElementById('length').value;
-        const labelJson = JSON.stringify(canvas.toJSON());
-
-        //first we will see if can send the form 
-        if (!name?.trim()) {
-            warningMessage('Espera un momento 😅', 'Necesitas agregar un nombre antes de guardar esta etiqueta.');
-            return;
-        }
-
-        const loadingOverlay = document.getElementById("loadingOverlay");
-        loadingOverlay.style.display = "flex";
-
-        fetch(`/links/update-labels/${id}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                name,
-                width,
-                length,
-                label: labelJson
-            })
-        })
-            .then(response => {
-                loadingOverlay.style.display = "none";
-                if (!response.ok) errorMessage("🤕 Error al actualizar", 'Ocurrió un error al actualizar')
-                return response.json();
-            })
-            .then(data => {
-                loadingOverlay.style.display = "none";
-                if (data.success) {
-                    confirmationMessage('🥳 Etiqueta actualizada', 'Tu etiqueta fue actualizada correctamente. Ya puedes empezar a usarla.')
-                }else{
-                    errorMessage("🤕 Error al actualizar", 'Ocurrió un error al actualizar')
-                }
-            })
-            .catch(err => {
-                loadingOverlay.style.display = "none";
-                console.error('Error al actualizar la etiqueta:', err);
-                errorMessage("🤕 Error al actualizar", 'Ocurrió un error al actualizar')
-            });
-    }
-</script>
-
-
-
-
-<script>
-    function addInputsCodigo() {
-        const text = new fabric.Text('{codigo}', {
-            left: 50,
-            top: 50,
-            fontSize: 16,
-            fill: 'black',
-            fontFamily: 'Arial'
-        });
-        canvas.add(text);
-        canvas.setActiveObject(text);
-    }
-
-    function addInputsName() {
-        const text = new fabric.Text('{nombre}', {
-            left: 50,
-            top: 100,
-            fontSize: 16,
-            fill: 'black',
-            fontFamily: 'Arial'
-        });
-        canvas.add(text);
-        canvas.setActiveObject(text);
-    }
-
-    function addInputsPrice() {
-        const text = new fabric.Text('{precio}', {
-            left: 50,
-            top: 100,
-            fontSize: 16,
-            fill: 'black',
-            fontFamily: 'Arial'
-        });
-        canvas.add(text);
-        canvas.setActiveObject(text);
-    }
 </script>

@@ -248,7 +248,7 @@
                 <div class="row">
                     <svg id="barcodeSvg" xmlns="http://www.w3.org/2000/svg" width="0" height="0"></svg>
                     <div class="col">
-                        <label for="">Escribe un codigo de barra</label>
+                        <label for="">Escribe un codigo de barra de ejemplo</label>
                         <input type="text" id="barcodeInput" placeholder="Escribe un código como 010101101" />
                     </div>
                     <div class="col">
@@ -256,7 +256,17 @@
                         <label for=""></label>
                         <button onclick="addBarcode()" class="add-text">Agregar Código de Barras</button>
                     </div>
-
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <button onclick="addInputsCodigo()" class="add-text">Código de barra</button>
+                    </div>
+                    <div class="col">
+                        <button onclick="addInputsName()" class="add-text">Nombre del producto</button>
+                    </div>
+                    <div class="col">
+                        <button onclick="addInputsPrice()" class="add-text">Nombre precio</button>
+                    </div>
                 </div>
                 <!---
                 <hr>
@@ -266,7 +276,7 @@
                     <button onclick="addQRCode()">Agregar Código QR</button>
                     <div id="qrTemp" style="display: none;"></div>
                 </div>
-                --->
+                
 
                 <hr>
                 <div class="upload-container">
@@ -275,6 +285,7 @@
                     </label>
                     <input accept="image/*" type="file" name="image" id="input" />
                 </div>
+                --->
 
                 <hr>
                 <div class="row">
@@ -355,9 +366,27 @@
                 angle: 0,
                 opacity: 1,
             });
+
+            //this is for scale the image with the canva
+            const maxWidth = canvas.getWidth() - 20;
+            const maxHeight = canvas.getHeight() - 20;
+
+            let scale = Math.min(maxWidth / img.width, maxHeight / img.height);
+            img.scale(scale);
+
             canvas.add(img); // esta es la mágia
         };
     };
+
+    //this is for delete a object in the canva with the keyboard
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Delete') {
+            const activeObject = canvas.getActiveObject();
+            if (activeObject) {
+                canvas.remove(activeObject);
+            }
+        }
+    });
 
     function add_rectangle() {
         var rect = new fabric.Rect({
@@ -504,6 +533,13 @@
             label: canvasData
         };
 
+        //first we will see if can send the form 
+        if (!formData.name?.trim() || !formData.id_company) {
+            warningMessage('Espera un momento 😅', 'Necesitas agregar un nombre antes de guardar esta etiqueta.');
+            return;
+        }
+
+
         // Mostrar pantalla de carga
         const loadingOverlay = document.getElementById("loadingOverlay");
         loadingOverlay.style.display = "flex";
@@ -522,7 +558,12 @@
             })
             .then(data => {
                 loadingOverlay.style.display = "none";
-                confirmationMessage('🥳 Etiqueta guardada','Tu etiqueta fue guardada correctamente. Ya puedes empezar a usarla.')
+                if(data.message){
+                    confirmationMessage('🥳 Etiqueta guardada','Tu etiqueta fue guardada correctamente. Ya puedes empezar a usarla.')
+                }
+                else{
+                    errorMessage("🤕 Error al guardar", 'Ocurrio un error al momento de guardar la etiqueta')
+                }
             })
             .catch(err => {
                 loadingOverlay.style.display = "none";
@@ -543,4 +584,41 @@
         generarNuevoCodigoDeBarras(newBarcode); // usa tu función `addBarcode()` aquí
     }
 
+</script>
+<script>
+    function addInputsCodigo() {
+        const text = new fabric.Text('{codigo}', {
+            left: 50,
+            top: 50,
+            fontSize: 16,
+            fill: 'black',
+            fontFamily: 'Arial'
+        });
+        canvas.add(text);
+        canvas.setActiveObject(text);
+    }
+
+    function addInputsName() {
+        const text = new fabric.Text('{nombre}', {
+            left: 50,
+            top: 100,
+            fontSize: 16,
+            fill: 'black',
+            fontFamily: 'Arial'
+        });
+        canvas.add(text);
+        canvas.setActiveObject(text);
+    }
+
+    function addInputsPrice() {
+        const text = new fabric.Text('{precio}', {
+            left: 50,
+            top: 100,
+            fontSize: 16,
+            fill: 'black',
+            fontFamily: 'Arial'
+        });
+        canvas.add(text);
+        canvas.setActiveObject(text);
+    }
 </script>

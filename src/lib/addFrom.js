@@ -3779,6 +3779,41 @@ async function delete_label_by_id(id) {
         return false;
     }
 }
+
+router.post('/links/update-labels/:id', async (req, res) => {
+    const { id } = req.params;
+    const { name, width, length, label } = req.body;
+
+    const result = await update_label(id, name, width, length, label);
+    console.log(label)
+    if (result.success) {
+        res.json({ success: true, message: 'Etiqueta actualizada correctamente' });
+    } else {
+        res.status(500).json({ success: false, message: 'Error al actualizar etiqueta' });
+    }
+});
+
+async function update_label(id, name, width, length, labelJson) {
+    const queryText = `
+        UPDATE "Branch".labels
+        SET name = $1,
+            width = $2,
+            length = $3,
+            label = $4
+        WHERE id = $5
+    `;
+
+    try {
+        await database.query(queryText, [name, width, length, labelJson, id]);
+        return { success: true };
+    } catch (error) {
+        console.error('Error updating label:', error);
+        return { success: false, error };
+    }
+}
+
+
+
 //-----------------------------------------------apps
 const {
     insert_app_in_my_list,
