@@ -215,6 +215,15 @@
 <script>
 let selectedProductData = {}; // Variable global para guardar la info
 
+
+const barcodeInput = document.getElementById('barcodeProduct')
+barcodeInput.addEventListener('keydown', async function(event) {
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    await search_product_in_my_api();
+  }
+});
+
 async function search_product_in_my_api() {
     const barcodeProduct = document.getElementById('barcodeProduct').value.trim();
     const loadingOverlay = document.getElementById("loadingOverlay");
@@ -229,6 +238,15 @@ async function search_product_in_my_api() {
         return;
     }
 
+
+    //now we will see the product in my api.
+    loadingOverlay.style.display = "flex";
+    if(await search_product_in_my_api_web(barcodeProduct)){
+      loadingOverlay.style.display = "none";
+      return;
+    }
+
+    //if in our api not exist this product, we will search in the API free
     try {
         loadingOverlay.style.display = "flex";
 
@@ -245,7 +263,7 @@ async function search_product_in_my_api() {
 
             selectedProductData = {
                 image_url: product.images?.[0] || "",
-                barcode: product.upc,
+                barcode: barcodeProduct,//product.upc,
                 name: product.title,
                 price: 0,
                 description: product.description
@@ -289,6 +307,30 @@ async function search_product_in_my_api() {
         loadingOverlay.style.display = "none";
     }
     */
+}
+
+async function search_product_in_my_api_web(barcodeProduct){
+  try {
+      const response = await fetch('https://pluspuntodeventa.com/api/plus/search_product.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ barcode: barcodeProduct })
+      });
+
+      const result = await response.json();
+      if (result.success) {
+          selectedProductData = result.product; // Guardamos la data globalmente
+          showInformationPop();
+          return true;
+      } else {
+        return false;
+      }
+
+  } catch (error) {
+      console.error("💥 Error al buscar el producto:", error);
+      errorMessage("💥 Error al buscar el producto:", error);
+      return false;
+  }
 }
 
 function showInformationPop() {
@@ -438,7 +480,12 @@ document.querySelector('form').addEventListener('submit', async function (e) {
   font-size: 26px;
   font-weight: bold;
   cursor: pointer;
-  color: var(--color-company);
+  color: #D1DBE3;
+}
+
+.popup-close:hover{
+  cursor: pointer;
+  color: #b2bac0;
 }
 
 .popup-content h2 {
@@ -525,6 +572,14 @@ document.querySelector('form').addEventListener('submit', async function (e) {
 
 
 <script>
+const nameInput = document.getElementById('nameProductForm')
+nameInput.addEventListener('keydown', async function(event) {
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    await searchProductByName();
+  }
+});
+
 async function searchProductByName() {
   const nameProduct=document.getElementById('nameProductForm').value;
 
