@@ -1488,4 +1488,32 @@ async function get_all_the_labels(id_branch){
 }
 
 
+//--------------------
+const fetch = require('node-fetch');
+router.get('/search-product-with-barcode', async (req, res) => {
+  const upc = req.query.upc;
+
+  try {
+    const response = await fetch(`https://api.upcitemdb.com/prod/trial/lookup?upc=${upc}`);
+    const data = await response.json();
+    res.json(data); // Devuelve los datos al frontend
+  } catch (error) {
+    console.error('Error al buscar producto:', error);
+    res.status(500).json({ error: 'No se pudo obtener el producto' });
+  }
+});
+
+router.get('/search-product-with-name', async (req, res) => {
+  const nameProduct = req.query.nameProduct;
+
+  try {
+    const response = await fetch(`https://api.upcitemdb.com/prod/trial/search?s=${nameProduct}&match_mode=1&type=product`);
+    const data = await response.json();
+    res.json(data); // Devuelve los datos al frontend
+  } catch (error) {
+    console.error('Error al buscar producto:', error);
+    res.status(500).json({ error: 'No se pudo obtener el producto' });
+  }
+});
+
 module.exports = router;

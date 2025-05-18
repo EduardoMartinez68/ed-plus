@@ -1,216 +1,80 @@
-  <style>
-    :root {
-      --primary-color: #0676F9;
-      --bg-color: #f4f4f4;
-      --canvas-bg: #fff;
-    }
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Consulta Barcode Lookup API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 2em;
+            max-width: 600px;
+        }
+        img {
+            max-width: 200px;
+            margin-top: 10px;
+        }
+        #resultado {
+            margin-top: 20px;
+            border-top: 1px solid #ccc;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
 
-    * {
-      box-sizing: border-box;
-    }
+    <h1>Buscar producto por código de barras</h1>
+    <input type="text" id="barcode" placeholder="Ingresa código de barras" />
+    <button onclick="buscarProducto()">Buscar</button>
 
-    .editor-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      justify-content: center;
-    }
+    <div id="resultado"></div>
 
-    #canvas-container {
-      background-color: transparent;
-      border: 2px dashed #ccc;
-      padding: 10px;
-      border-radius: 10px;
-      position: relative;
-    }
+    <script>
+        const apiKey = "8finddblmvxj29259k4wuu4nkw5tc2"; // Reemplaza con tu API Key
 
-    canvas {
-      background-color: var(--canvas-bg);
-      border-radius: 10px;
-      border: 2px dashed #999;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%,
-          0% 10%, 5% 10%, 5% 0%,
-          95% 0%, 95% 10%, 100% 10%,
-          100% 90%, 95% 90%, 95% 100%,
-          5% 100%, 5% 90%, 0% 90%);
-    }
+        async function buscarProducto() {
+            const barcode = document.getElementById("barcode").value.trim();
+            const resultadoDiv = document.getElementById("resultado");
+            resultadoDiv.innerHTML = "Buscando...";
 
-    .toolbar {
-      background-color: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      min-width: 250px;
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-
-    .toolbar button,
-    .toolbar select,
-    .toolbar input[type="number"] {
-      padding: 10px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-size: 14px;
-      width: 100%;
-    }
-
-    .toolbar button {
-      background-color: var(--primary-color);
-      color: white;
-      border: none;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-
-    .toolbar button:hover {
-      background-color: #0558c9;
-    }
-
-    @media (max-width: 768px) {
-      .editor-container {
-        flex-direction: column;
-        align-items: center;
-      }
-
-      .toolbar {
-        width: 100%;
-      }
-
-      canvas {
-        width: 100% !important;
-        height: auto !important;
-      }
-
-
-      .colorPicker{
-        padding: 10px;
-        border-radius: 6px;
-        border: 1px solid #ccc;
-        font-size: 14px;
-        width: 100%;
-
-        width: 50px; 
-        height: 34px; 
-        border: 2px solid #0676F9; 
-        border-radius: 6px; 
-        cursor: pointer;
-        padding: 0;
-        -webkit-appearance: none;
-        appearance: none;       
-      }
-    }
-  </style>
-
-<div class="container">
-<br><br>
-  <label><i class="fi-icon fi-sr-label"></i> Editor de Etiquetas</label>
-    <hr>
-
-  <div class="editor-container">
-    <div id="canvas-container">
-      <canvas id="etiquetaCanvas" width="400" height="200"></canvas>
-    </div>
-
-    <div class="toolbar">
-      <button onclick="addText()">Agregar Texto</button>
-      <input type="file" id="imgUploader" multiple>
-      <select id="fontSelector">
-        <option value="Arial">Arial</option>
-        <option value="Courier New">Courier</option>
-        <option value="Georgia">Georgia</option>
-        <option value="Impact">Impact</option>
-        <option value="Verdana">Verdana</option>
-      </select>
-      <input type="color" id="colorPicker" value="#000000" class="colorPicker"/>
-      <button onclick="printCanvas()">Imprimir</button>
-    </div>
-  </div>
-</div>
-
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/3.6.2/fabric.min.js"></script>
-  <script>
-    const canvas = new fabric.Canvas('etiquetaCanvas', {
-      selection: true,
-      preserveObjectStacking: true
-    });
-
-    function addText() {
-      const text = new fabric.IText('Texto editable', {
-        left: 50,
-        top: 50,
-        fontFamily: document.getElementById('fontSelector').value,
-        fill: document.getElementById('colorPicker').value,
-        fontSize: 20,
-        textBackgroundColor: "#fff",
-        cursorColor: "#000",
-        editable: true,
-        visible: true
-      });
-      canvas.add(text).setActiveObject(text);
-      canvas.renderAll();
-    }
-
-    document.getElementById('imgUploader').addEventListener('change', function (e) {
-      const files = [...e.target.files];
-      files.forEach(file => {
-        const reader = new FileReader();
-        reader.onload = function (f) {
-          fabric.Image.fromURL(f.target.result, function (img) {
-            img.scaleToWidth(100);
-            img.set({ left: 50, top: 50 });
-            canvas.add(img);
-            canvas.renderAll();
-          });
-        };
-        reader.readAsDataURL(file);
-      });
-    });
-
-    document.getElementById('fontSelector').addEventListener('change', function () {
-      const obj = canvas.getActiveObject();
-      if (obj && obj.type === 'i-text') {
-        obj.set("fontFamily", this.value);
-        canvas.renderAll();
-      }
-    });
-
-    document.getElementById('colorPicker').addEventListener('input', function () {
-      const obj = canvas.getActiveObject();
-      if (obj && obj.type === 'i-text') {
-        obj.set("fill", this.value);
-        canvas.renderAll();
-      }
-    });
-
-    document.getElementById('fontSize').addEventListener('change', function () {
-      const obj = canvas.getActiveObject();
-      if (obj && obj.type === 'i-text') {
-        obj.set("fontSize", parseInt(this.value, 10));
-        canvas.renderAll();
-      }
-    });
-
-    function printCanvas() {
-      const dataUrl = canvas.toDataURL({ format: 'png' });
-      const ventana = window.open('', '', 'width=500,height=400');
-      ventana.document.write(`
-      <html>
-        <head><title>Imprimir Etiqueta</title></head>
-        <body style="margin:0;">
-          <img src="${dataUrl}" style="width:100%;"/>
-          <script>
-            window.onload = function() {
-              window.print();
-              window.onafterprint = () => window.close();
+            if (!barcode) {
+                resultadoDiv.innerHTML = "Por favor ingresa un código de barras.";
+                return;
             }
-          <\/script>
-        </body>
-      </html>
-    `);
-      ventana.document.close();
-    }
-  </script>
+
+            try {
+                const url = `https://api.barcodelookup.com/v3/products?barcode=${barcode}&key=${apiKey}`;
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    resultadoDiv.innerHTML = `Error en la solicitud: ${response.status}`;
+                    return;
+                }
+
+                const data = await response.json();
+
+                if (!data.products || data.products.length === 0) {
+                    resultadoDiv.innerHTML = "No se encontró el producto.";
+                    return;
+                }
+
+                const producto = data.products[0];
+                const barcode_number = producto.barcode_number || "No disponible";
+                const title = producto.title || "No disponible";
+                const description = producto.description || "No disponible";
+                const image = producto.images && producto.images.length > 0 ? producto.images[0] : "";
+
+                resultadoDiv.innerHTML = `
+                    <h2>${title}</h2>
+                    <p><strong>Código de barras:</strong> ${barcode_number}</p>
+                    <p><strong>Descripción:</strong> ${description}</p>
+                    ${image ? `<img src="${image}" alt="Imagen del producto" />` : ""}
+                `;
+            } catch (error) {
+                resultadoDiv.innerHTML = "Ocurrió un error: " + error.message;
+            }
+        }
+    </script>
+
+</body>
+</html>
