@@ -22,7 +22,7 @@
         padding: 40px;
         border-radius: 16px;
         width: 90%;
-        max-width: 600px;
+        max-width: 900px;
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
         animation: menu-services-fadeIn 0.4s ease-in-out;
     }
@@ -335,21 +335,26 @@
     */
 
     const menuServicesPago = [
-        { name: "CFE", icon: "https://play-lh.googleusercontent.com/7UppiZcZTNBInAJzU-XG8EpGeU3BlLVJM9LoJTaWiVamvguplwUFMNUg_92lk-0z4g" , sku1: '', sku2: '' },
-        { name: "Telmex", icon: "https://play-lh.googleusercontent.com/lw3V8SWtYDFGLzomt2G_p_E6qUJhvuQHezp3bW-ewsQ0-cHPfimnLij6yP2gD_UCKfYj" , sku1: '', sku2: '' },
-        { name: "Sky", icon: "https://upload.wikimedia.org/wikipedia/commons/7/74/SKY_Basic_Logo.svg" , sku1: '', sku2: '' },
-        { name: "Dish", icon: "https://farmaciasroma.com/wp-content/uploads/2022/10/Pago-de-servicios-Dish-776x470.png" , sku1: '', sku2: '' },
-        { name: "Totalplay", icon: "https://tiendasneto.com.mx/media/wysiwyg/TotalPlay.png" , sku1: '', sku2: '' },
-        { name: "Izzi", icon: "https://play-lh.googleusercontent.com/TvS7cnMS_Qda0d0DQ6IsoM3KEZTiNqF_AiWBuG5x8k_027IlkGLy2T0SR-PzUQQZGg=w240-h480-rw" , imgHelp: "https://ws.prontipagos.mx/siveta-mgmt-web-1.0-SNAPSHOT/icons/IZZI_televisiondepaga.jpg", sku1: '', sku2: '' },
-        { name: "Megacable", icon: "https://www.mtcenter.com.mx/wp-content/uploads/MEGACABLE.png" , sku1: '', sku2: '' },
-        { name: "TeleCable", icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSH3lzgOSCvyMMYKFctqeEudmXLRdHD6gBVWA&s" , sku1: 'S3TELECABLEMXN', sku2: '' },
+        { name: "CFE", icon: "https://play-lh.googleusercontent.com/7UppiZcZTNBInAJzU-XG8EpGeU3BlLVJM9LoJTaWiVamvguplwUFMNUg_92lk-0z4g" , sku1: '', sku2: '' , imgHelp:''},
+        
+        { name: "Telefonia Telmex", icon: "https://www.pandaancha.mx/plds/articulos/bf939f7800c0615f8a42e390482c969a439275547.png" , sku1: 'S3TELEFOTELMEXMXN', sku2: '' , imgHelp:'https://ws.prontipagos.mx/siveta-mgmt-web-1.0-SNAPSHOT/icons/telmex_telefoniafija.jpg'},
+        { name: "TeleCable", icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSH3lzgOSCvyMMYKFctqeEudmXLRdHD6gBVWA&s" , sku1: 'S3TELECABLEMXN', sku2: '' , imgHelp:''},
+        { name: "TELEFONIA AXTEL", icon: "https://comparaiso.mx/sites/comparaiso.mx/files/images/logos/axtel-200x300.png" , sku1: 'S3AXTELMXN', sku2: '' , imgHelp:'https://ws.prontipagos.mx/siveta-mgmt-web-1.0-SNAPSHOT/icons/axtel_telefoniafija1.jpg'},
+        { name: "TELEFONIA MAXCOM", icon: "https://i.blogs.es/1791f4/maxcom/650_1200.jpg" , sku1: 'S3TELEMAXCOMMXN', sku2: '' , imgHelp:'https://ws.prontipagos.mx/siveta-mgmt-web-1.0-SNAPSHOT/icons/MAXCOM_telefoniafija.jpg'},
+        { name: "TELEFONIA TELNOR (BC)", icon: "https://media.licdn.com/dms/image/v2/C560BAQHQWwaljuOq6w/company-logo_200_200/company-logo_200_200/0/1630607585360/telnor_logo?e=2147483647&v=beta&t=r5teaROdy0o78ZaojnuVx95k-BMIIx10B5Wic2wjgiQ" , sku1: 'S3TELEFTELNORMXN', sku2: '' , imgHelp:'https://ws.prontipagos.mx/siveta-mgmt-web-1.0-SNAPSHOT/icons/telnor_telefoniafija.jpg'},
 
-        { name: "VeTV", icon: "https://ruedadelafortuna.com.mx/wp-content/uploads/2010/04/vetv.png?w=584" },
-        { name: "Agua y Drenaje", icon: "https://interapas.mx/wp-content/uploads/2019/09/LOGO-INTERAPAS-01.jpg" },
-        { name: "Infonavit", icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQY7lqX1V4cVJgpZUKqrCC-SkQP6JNZeX9PTQ&s" },
-        { name: "SAT / Impuestos", icon: "https://yt3.googleusercontent.com/V39NGHtva-UIWfaCPcQ5biRWyzNWmGv-VA4DFUYjTNa_GUAXKonqxBBLThcwyXFKT6CRDkelTA=s900-c-k-c0x00ffffff-no-rj" },
-        { name: "Coppel Servicios", icon: "https://play-lh.googleusercontent.com/1m2FHx_SyuMy2qEGfs_8WL-eptgd18w8VXy0pMnJGNItIFk9voa9AumHmnyRxW0_q2QY" },
-        { name: "Telnor", icon: "https://farmaciasroma.com/wp-content/uploads/2022/10/Pago-de-servicios-Telnor-776x470.png" }
+        { name: "IZZI", icon: "https://play-lh.googleusercontent.com/TvS7cnMS_Qda0d0DQ6IsoM3KEZTiNqF_AiWBuG5x8k_027IlkGLy2T0SR-PzUQQZGg=w240-h480-rw" , sku1: 'S3IZIMXN', sku2: '', imgHelp: "https://ws.prontipagos.mx/siveta-mgmt-web-1.0-SNAPSHOT/icons/IZZI_televisiondepaga.jpg"},
+        { name: "TOTAL PLAY", icon: "https://tiendasneto.com.mx/media/wysiwyg/TotalPlay.png" , sku1: 'S3TOTALPLAYMXN', sku2: '' , imgHelp:'https://ws.prontipagos.mx/siveta-mgmt-web-1.0-SNAPSHOT/icons/TOTALPLAY_televisiondepaga.jpg'},
+        { name: "Ve TV", icon: "https://queplan.mx/sites/default/files/inline-images/canales-vetv-hd1%20%281%29.png" , sku1: 'S3TELEVETVMXN', sku2: '' , imgHelp:'https://ws.prontipagos.mx/siveta-mgmt-web-1.0-SNAPSHOT/icons/VETV_televisiondepagaB.jpg'},
+        { name: "DISH", icon: "https://farmaciasroma.com/wp-content/uploads/2022/10/Pago-de-servicios-Dish-776x470.png" , sku1: 'S3TELEVDISHMXN', sku2: '' , imgHelp:'https://ws.prontipagos.mx/siveta-mgmt-web-1.0-SNAPSHOT/icons/DISH_televisiondepaga.jpg'},
+        { name: "SKY/Vtv", icon: "https://upload.wikimedia.org/wikipedia/commons/7/74/SKY_Basic_Logo.svg" , sku1: 'S3TELESKYMXN', sku2: '' , imgHelp: 'https://ws.prontipagos.mx/siveta-mgmt-web-1.0-SNAPSHOT/icons/SKY_televisiondepaga.jpg'},
+        { name: "MEGACABLE", icon: "https://www.mtcenter.com.mx/wp-content/uploads/MEGACABLE.png" , sku1: 'S3TELEMEGACABMXN', sku2: '' , imgHelp: 'https://ws.prontipagos.mx/siveta-mgmt-web-1.0-SNAPSHOT/icons/MEGACABLE_televisiondepaga.jpg'},
+        { name: "CABLEMAS", icon: "https://www.pandaancha.mx/plds/articulos/e853fc308798874fb175094ece8fd24a292941926.jpg" , sku1: 'S3CABLEMASMXN', sku2: '' , imgHelp:'https://ws.prontipagos.mx/siveta-mgmt-web-1.0-SNAPSHOT/icons/CABLEMAS_televisindepaga.jpg'},
+        { name: "cablevision", icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSDxHFEnf3mMrllF4QTlgDPvWP1XrE6PL5BnA&s" , sku1: 'S3CABLEVISIONMXN', sku2: '' , imgHelp:'https://ws.prontipagos.mx/siveta-mgmt-web-1.0-SNAPSHOT/icons/CABLEVISION_televisiondepaga.jpg'},
+
+        { name: "Telefonia NEXTEL", icon: "https://i.blogs.es/19aa83/nextel-mx/650_1200.jpg" , sku1: 'S3NEXTELMXN', sku2: '' , imgHelp:'https://ws.prontipagos.mx/siveta-mgmt-web-1.0-SNAPSHOT/icons/ATTNEXTEL_pagodefactura.jpg'},
+        { name: "Telefonia MOVISTAR", icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-hEYmNGskAc-bkvHAF2vuIGwbl7Xyh4eSuA&s" , sku1: 'S3MOVISTARTELMXN', sku2: '' , imgHelp:'https://ws.prontipagos.mx/siveta-mgmt-web-1.0-SNAPSHOT/icons/MOVISTAR_pagodefactura.jpg'},
+        { name: "Telefonia IUSACELL", icon: "https://i.blogs.es/8e12c8/logo-iusacell-600x330/450_1000.jpeg" , sku1: 'S3IUSACELLMXN', sku2: '' , imgHelp:'https://ws.prontipagos.mx/siveta-mgmt-web-1.0-SNAPSHOT/icons/iusacell_pagodefactura.jpg'},
     ];
 
 
@@ -387,7 +392,7 @@
         let servicios = tipo === 'recargas' ? menuServicesRecargas : menuServicesPago;
 
         const cardsHTML = servicios.map(serv => `
-        <div class="menu-services-card" onclick="${tipo === 'recargas' ? `mostrarFormularioRecarga('${serv.name}')` : `show_buy_services('${serv.name}')`}">
+        <div class="menu-services-card" onclick="${tipo === 'recargas' ? `mostrarFormularioRecarga('${serv.name}')` : `show_buy_services('${serv.name}','${serv.sku1}','${serv.imgHelp}')`}">
           <img src="${serv.icon}" alt="${serv.name}">
           <p>${serv.name}</p>
         </div>
@@ -441,13 +446,13 @@
         ]
     };
 
-    async function show_buy_services(serviceName) {
+    async function show_buy_services(serviceName,sku,imgHelp) {
         await get_data_of_the_services();
 
         const contenedor = document.getElementById('menu-services-contenido-dinamico');
 
         //get the camp of the services
-        const campos = serviciosCampos[serviceName] || [];
+        const campos = serviciosCampos[serviceName] || [{ label: "Número Referencia", id: "number-service", type: "text", placeholder: "Ej. 6641234567" }];
 
         //her we wil print the input that the form need
         const camposHTML = campos.map(campo => `
@@ -461,23 +466,31 @@
         contenedor.innerHTML = `
             <center><h6>Saldo disponible ${myCreditForRechange}$</h6></center>
             <h3>Pagar servicio de ${serviceName}</h3>
-            <div class="menu-services-formulario">
+            <div class="row">
+                <div class="col-8">
+                    <div class="menu-services-formulario">
 
-            <div class="menu-services-recargas-rapidas">
-                ${[10, 20, 30, 50, 100].map(monto => `
-                <button onclick="document.getElementById('menu-services-recarga').value=${monto}">$${monto}</button>
-                `).join('')}
+                    <div class="menu-services-recargas-rapidas">
+                        ${[10, 20, 30, 50, 100].map(monto => `
+                        <button onclick="document.getElementById('menu-services-recarga').value=${monto}">$${monto}</button>
+                        `).join('')}
+                    </div>
+
+                    ${camposHTML}
+
+                    <div>
+                        <label for="menu-services-recarga">Monto</label>
+                        <input type="number" id="menu-services-recarga" placeholder="Ej. 50">
+                    </div>
+
+                    <button class="menu-services-btn-comprar" onclick="showMoneyForRechangeAService('${serviceName}')">Pagar servicio</button>
+                    </div>
+                </div>
+                <div class="col">
+                    <center><img src="${imgHelp}" alt="${serviceName}" style="width: 100%; height: auto;"></center>
+                </div>
             </div>
 
-            ${camposHTML}
-
-            <div>
-                <label for="menu-services-recarga">Monto</label>
-                <input type="number" id="menu-services-recarga" placeholder="Ej. 50">
-            </div>
-
-            <button class="menu-services-btn-comprar" onclick="showMoneyForRechangeAService('${serviceName}')">Pagar servicio</button>
-            </div>
         `;
     }
 
