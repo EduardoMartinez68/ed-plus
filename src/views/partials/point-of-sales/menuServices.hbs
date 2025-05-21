@@ -238,9 +238,11 @@
     }
 
     #menu-services-contenido-dinamico {
-        max-height: 70vh; /* Ajusta según lo que necesites */
+        max-height: 70vh;
+        /* Ajusta según lo que necesites */
         overflow-y: auto;
-        padding-right: 10px; /* espacio para que el scroll no tape contenido */
+        padding-right: 10px;
+        /* espacio para que el scroll no tape contenido */
     }
 
     /* Estiliza el scrollbar (opcional pero bonito) */
@@ -295,44 +297,56 @@
 </div>
 
 
-
 <script>
-    let companyRechange=null;
-    let myCreditForRechange=null;
+    const urlBase = "https://prontipagos-api-dev.domainscm.com";
+    const username = "api.desarrollo";
+    const password = "1hFdcv4G*";
+
+    let companyRechange = null;
+    let myCreditForRechange = null;
 
     const menuServicesRecargas = [
-        { name: "Telcel", icon: "https://yt3.googleusercontent.com/je7RNk1GeegHqDmmppc3HVbYIE9_Nh2pS64Mz6fkk-RcK29wbWujnx3HooDa0vqyu5tfXffxCA=s900-c-k-c0x00ffffff-no-rj" },
-        { name: "Movistar", icon: "https://cdn2.downdetector.com/static/uploads/c/300/a2e0d/MovistarGreen_1.png" },
-        { name: "AT&T", icon: "https://assets.weforum.org/organization/image/hRiZoy6qNMv7D-YblWFRXINkKb_3-9aj8xSMjID05kk.jpg" },
-        { name: "Unefon", icon: "https://images.seeklogo.com/logo-png/19/1/unefon-logo-png_seeklogo-196154.png" },
-        { name: "Bait", icon: "https://i.pinimg.com/474x/21/a7/ae/21a7ae2c609acfce2eb37c49a1454fe3.jpg" },
-        { name: "PilloFon", icon: "https://play-lh.googleusercontent.com/R3sVEgTi689k0PL-04dF0S__4aN5d-9lxvv009E9IzU5yn4FD1fOC3LJhYa0mw6f3YM" },
-        { name: "FreedomPop", icon: "https://cdn.mos.cms.futurecdn.net/v2/t:0,l:150,cw:1200,ch:900,q:80,w:1200/rWUsCDev7eDWzCZzPFCw2b.jpg" },
-        { name: "Flash Mobile", icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9QJV3Dy47hVerM4Jz0sW07iPRsfY2Cc-jhw&s" },
-        { name: "Diri", icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR49a8O6tby89KKg3A2fvlN-gbrAncjkUS59g&s" },
-        { name: "Oui", icon: "https://play-lh.googleusercontent.com/40I0MAr1getFF-dLOzxekLi2_C3MC_u0HL2gmqNbXNWy32n9Bo3XIz2YYlAutfCT8aw" },
-        { name: "Walmart Bodega Aurrera (Bait)", icon: "https://cdn.milenio.com/uploads/media/2020/06/17/walmart-lanza-bodega-aurrera-internet_0_2_702_436.jpg" },
-        { name: "Maz Tiempo", icon: "https://mobileecosystemforum.com/wp-content/uploads/2016/02/maz-tiempo-logo.png" },
-        { name: "Her Mobile", icon: "https://roams.mx/images/post/es_MX_telco/companias-telefonicas-hermobile.svg" },
-        { name: "Wibo", icon: "https://startupchile.org/content/uploads/2021/09/wibo.jpg" },
-        { name: "Aldi", icon: "https://cdn.worldvectorlogo.com/logos/aldi-nord-logo.svg" },
-        { name: "Weex", icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQo0GEq4ZMnw5UNhF9_QicOFpWzIkrq7Tyndg&s" },
-        { name: "Netwey", icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSxetOuvMWYzNFlyoIWIAlowmNtG_iD9gX-w&s" },
-        { name: "Simplii", icon: "https://upload.wikimedia.org/wikipedia/commons/5/50/Simplii_Logo.png" }
+        { name: "Telcel", icon: "https://yt3.googleusercontent.com/je7RNk1GeegHqDmmppc3HVbYIE9_Nh2pS64Mz6fkk-RcK29wbWujnx3HooDa0vqyu5tfXffxCA=s900-c-k-c0x00ffffff-no-rj", sku1: '', sku2: '' },
+        { name: "Internet amigo ", icon: "https://holatelcel.com/wp-content/uploads/2016/11/amigo.jpg", sku1: 'INT', sku2: '' },
+        { name: "Amigo sin limite", icon: "https://api3.criptopago.net/content/prod/141/5960/img/5960.jpg", sku1: 'PA', sku2: '' },
+        { name: "Movistar", icon: "https://cdn2.downdetector.com/static/uploads/c/300/a2e0d/MovistarGreen_1.png", sku1: 'S3TAE', sku2: 'MOVIMXN' },
+        { name: "AT&T", icon: "https://assets.weforum.org/organization/image/hRiZoy6qNMv7D-YblWFRXINkKb_3-9aj8xSMjID05kk.jpg", sku: '' },
+        { name: "Unefon", icon: "https://images.seeklogo.com/logo-png/19/1/unefon-logo-png_seeklogo-196154.png", sku1: 'S3TAE', sku2: 'UNEFONMXN' },
+        { name: "Bait", icon: "https://i.pinimg.com/474x/21/a7/ae/21a7ae2c609acfce2eb37c49a1454fe3.jpg", sku1: '', sku2: '' },
+
+        { name: "ALO", icon: "https://tiendasneto.com.mx/media/wysiwyg/alo.png", sku1: 'S3TAER2', sku2: 'ALOTELCMXN' },
+        { name: "Flash Mobile", icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9QJV3Dy47hVerM4Jz0sW07iPRsfY2Cc-jhw&s", sku1: 'S3TAEFLASH', sku2: 'MXN' },
+        { name: "IUSACELL", icon: "https://www.techgames.com.mx/wp-content/uploads/2015/01/Iusacell-ATT.jpg", sku1: 'S3TAE', sku2: 'IUSAMXN' },
+        { name: "VIRGIN", icon: "https://play-lh.googleusercontent.com/oit0z38kXk-DDWY9SQtLZ_8z5CjtHAMCjfkDJNBCdaP5NrxGnmz7rTrwKDwaTabp-Q", sku1: 'S3TAE', sku2: 'VIRGINMXN' },
+        { name: "Maz Tiempo", icon: "https://mobileecosystemforum.com/wp-content/uploads/2016/02/maz-tiempo-logo.png", sku1: 'S3TAE', sku2: 'MAZTIEMMXN' },
     ];
 
+    /*
+        { name: "FreedomPop", icon: "https://cdn.mos.cms.futurecdn.net/v2/t:0,l:150,cw:1200,ch:900,q:80,w:1200/rWUsCDev7eDWzCZzPFCw2b.jpg", sku1: '', sku2: '' },
+        { name: "Diri", icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR49a8O6tby89KKg3A2fvlN-gbrAncjkUS59g&s", sku1: '', sku2: '' },
+        { name: "Oui", icon: "https://play-lh.googleusercontent.com/40I0MAr1getFF-dLOzxekLi2_C3MC_u0HL2gmqNbXNWy32n9Bo3XIz2YYlAutfCT8aw", sku1: '', sku2: '' },
+        { name: "Walmart Bodega Aurrera (Bait)", icon: "https://cdn.milenio.com/uploads/media/2020/06/17/walmart-lanza-bodega-aurrera-internet_0_2_702_436.jpg", sku1: '', sku2: '' },
+        { name: "Her Mobile", icon: "https://roams.mx/images/post/es_MX_telco/companias-telefonicas-hermobile.svg", sku1: '', sku2: '' },
+        { name: "Wibo", icon: "https://startupchile.org/content/uploads/2021/09/wibo.jpg", sku1: '', sku2: '' },
+        { name: "Aldi", icon: "https://cdn.worldvectorlogo.com/logos/aldi-nord-logo.svg", sku1: '', sku2: '' },
+        { name: "Weex", icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQo0GEq4ZMnw5UNhF9_QicOFpWzIkrq7Tyndg&s", sku1: '', sku2: '' },
+        { name: "Netwey", icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSxetOuvMWYzNFlyoIWIAlowmNtG_iD9gX-w&s", sku1: '', sku2: '' },
+        { name: "Simplii", icon: "https://upload.wikimedia.org/wikipedia/commons/5/50/Simplii_Logo.png", sku1: '', sku2: '' }
+    */
 
     const menuServicesPago = [
-        { name: "CFE", icon: "https://play-lh.googleusercontent.com/7UppiZcZTNBInAJzU-XG8EpGeU3BlLVJM9LoJTaWiVamvguplwUFMNUg_92lk-0z4g" },
-        { name: "Telmex", icon: "https://play-lh.googleusercontent.com/lw3V8SWtYDFGLzomt2G_p_E6qUJhvuQHezp3bW-ewsQ0-cHPfimnLij6yP2gD_UCKfYj" },
-        { name: "Sky", icon: "https://upload.wikimedia.org/wikipedia/commons/7/74/SKY_Basic_Logo.svg" },
-        { name: "Dish", icon: "https://farmaciasroma.com/wp-content/uploads/2022/10/Pago-de-servicios-Dish-776x470.png" },
-        { name: "Totalplay", icon: "https://tiendasneto.com.mx/media/wysiwyg/TotalPlay.png" },
-        { name: "Izzi", icon: "https://play-lh.googleusercontent.com/TvS7cnMS_Qda0d0DQ6IsoM3KEZTiNqF_AiWBuG5x8k_027IlkGLy2T0SR-PzUQQZGg=w240-h480-rw" },
-        { name: "Megacable", icon: "https://www.mtcenter.com.mx/wp-content/uploads/MEGACABLE.png" },
+        { name: "CFE", icon: "https://play-lh.googleusercontent.com/7UppiZcZTNBInAJzU-XG8EpGeU3BlLVJM9LoJTaWiVamvguplwUFMNUg_92lk-0z4g" , sku1: '', sku2: '' },
+        { name: "Telmex", icon: "https://play-lh.googleusercontent.com/lw3V8SWtYDFGLzomt2G_p_E6qUJhvuQHezp3bW-ewsQ0-cHPfimnLij6yP2gD_UCKfYj" , sku1: '', sku2: '' },
+        { name: "Sky", icon: "https://upload.wikimedia.org/wikipedia/commons/7/74/SKY_Basic_Logo.svg" , sku1: '', sku2: '' },
+        { name: "Dish", icon: "https://farmaciasroma.com/wp-content/uploads/2022/10/Pago-de-servicios-Dish-776x470.png" , sku1: '', sku2: '' },
+        { name: "Totalplay", icon: "https://tiendasneto.com.mx/media/wysiwyg/TotalPlay.png" , sku1: '', sku2: '' },
+        { name: "Izzi", icon: "https://play-lh.googleusercontent.com/TvS7cnMS_Qda0d0DQ6IsoM3KEZTiNqF_AiWBuG5x8k_027IlkGLy2T0SR-PzUQQZGg=w240-h480-rw" , imgHelp: "https://ws.prontipagos.mx/siveta-mgmt-web-1.0-SNAPSHOT/icons/IZZI_televisiondepaga.jpg", sku1: '', sku2: '' },
+        { name: "Megacable", icon: "https://www.mtcenter.com.mx/wp-content/uploads/MEGACABLE.png" , sku1: '', sku2: '' },
+        { name: "TeleCable", icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSH3lzgOSCvyMMYKFctqeEudmXLRdHD6gBVWA&s" , sku1: 'S3TELECABLEMXN', sku2: '' },
+
         { name: "VeTV", icon: "https://ruedadelafortuna.com.mx/wp-content/uploads/2010/04/vetv.png?w=584" },
         { name: "Agua y Drenaje", icon: "https://interapas.mx/wp-content/uploads/2019/09/LOGO-INTERAPAS-01.jpg" },
-        { name: "Infonavit", icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQY7lqX1V4cVJgpZUKqrCC-SkQP6JNZeX9PTQ&s"},
+        { name: "Infonavit", icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQY7lqX1V4cVJgpZUKqrCC-SkQP6JNZeX9PTQ&s" },
         { name: "SAT / Impuestos", icon: "https://yt3.googleusercontent.com/V39NGHtva-UIWfaCPcQ5biRWyzNWmGv-VA4DFUYjTNa_GUAXKonqxBBLThcwyXFKT6CRDkelTA=s900-c-k-c0x00ffffff-no-rj" },
         { name: "Coppel Servicios", icon: "https://play-lh.googleusercontent.com/1m2FHx_SyuMy2qEGfs_8WL-eptgd18w8VXy0pMnJGNItIFk9voa9AumHmnyRxW0_q2QY" },
         { name: "Telnor", icon: "https://farmaciasroma.com/wp-content/uploads/2022/10/Pago-de-servicios-Telnor-776x470.png" }
@@ -355,11 +369,11 @@
         mostrarCategoria(tipo);
     }
 
-    async function get_data_of_the_services(){
+    async function get_data_of_the_services() {
         //if not have the rechange of the user, we will get from our api
-        if(myCreditForRechange==null){
-            const answerApi=await get_the_credit_of_the_server();
-            myCreditForRechange=answerApi.credit;
+        if (myCreditForRechange == null) {
+            const answerApi = await get_the_credit_of_the_server();
+            myCreditForRechange = answerApi.credit;
         }
 
         document.getElementById('menu-services-popup-1').style.display = 'none';
@@ -414,7 +428,7 @@
             { label: "Número de cuenta", id: "number-service", type: "text", placeholder: "Ej. 123456789" }
         ],
         "Infonavit": [
-            { label: "Número de crédito", id: "number-service", type: "text", placeholder: "Ej. 1234567890", "sku": "S3CREDHIPOTECAMXN"}
+            { label: "Número de crédito", id: "number-service", type: "text", placeholder: "Ej. 1234567890", "sku": "S3CREDHIPOTECAMXN" }
         ],
         "SAT / Impuestos": [
             { label: "Línea de captura", id: "number-service", type: "text", placeholder: "Ej. 123456789012345678" }
@@ -468,8 +482,8 @@
     }
 
     async function showMoneyForRechangeAService(companyRechange) {
-        const numberService=document.getElementById('number-service').value;
-        const amount=document.getElementById('menu-services-recarga').value;
+        const numberService = document.getElementById('number-service').value;
+        const amount = document.getElementById('menu-services-recarga').value;
 
         const contenedor = document.getElementById('menu-services-contenido-dinamico');
         contenedor.innerHTML = `
@@ -495,13 +509,13 @@
         `;
     }
 
-    async function buy_services(numberService, amount, serviceName){
-        amount=parseFloat(amount);
-        const moneyReceived=parseFloat(document.getElementById('moneyReceived').value);
-        const moneyCommission=parseFloat(document.getElementById('moneyCommission').value);
+    async function buy_services(numberService, amount, serviceName) {
+        amount = parseFloat(amount);
+        const moneyReceived = parseFloat(document.getElementById('moneyReceived').value);
+        const moneyCommission = parseFloat(document.getElementById('moneyCommission').value);
 
-        const moneyEarning=moneyCommission+amount; //this is the money that earning for the buy
-        const changeOFTheBuy=moneyReceived-moneyEarning; //this is the change of the buy
+        const moneyEarning = moneyCommission + amount; //this is the money that earning for the buy
+        const changeOFTheBuy = moneyReceived - moneyEarning; //this is the change of the buy
 
         //we will see if exist change. If not exist change, show a message of error
         if (changeOFTheBuy < 0) {
@@ -516,11 +530,9 @@
 
     //---change for cellphone---
     async function mostrarFormularioRecarga(company) {
-        await get_menu_of_prontipagos();
-
         await get_data_of_the_services();
 
-        companyRechange=company;
+        companyRechange = company;
         const contenedor = document.getElementById('menu-services-contenido-dinamico');
         contenedor.innerHTML = `
         <center><h6>Saldo disponible ${myCreditForRechange}$</h6></center>
@@ -592,7 +604,7 @@
         const commission = parseFloat(document.getElementById('moneyCommission').value) || 0;
 
 
-        const cambio = received - commission- amountChange;
+        const cambio = received - commission - amountChange;
 
         document.getElementById('cambioCliente').textContent = cambio.toFixed(2);
     }
@@ -623,16 +635,16 @@
         }
 
         //now show a new message pop for get the money and the change 
-        showMoneyForRechange(tel,amount,company);
+        showMoneyForRechange(tel, amount, company);
     }
 
-    async function buy_rechange(tel,amount,companyRechange){
-        amount=parseFloat(amount);
-        const moneyReceived=parseFloat(document.getElementById('moneyReceived').value);
-        const moneyCommission=parseFloat(document.getElementById('moneyCommission').value);
+    async function buy_rechange(tel, amount, companyRechange) {
+        amount = parseFloat(amount);
+        const moneyReceived = parseFloat(document.getElementById('moneyReceived').value);
+        const moneyCommission = parseFloat(document.getElementById('moneyCommission').value);
 
-        const moneyEarning=moneyCommission+amount; //this is the money that earning for the buy
-        const changeOFTheBuy=moneyReceived-moneyEarning; //this is the change of the buy
+        const moneyEarning = moneyCommission + amount; //this is the money that earning for the buy
+        const changeOFTheBuy = moneyReceived - moneyEarning; //this is the change of the buy
 
         //we will see if exist change. If not exist change, show a message of error
         if (changeOFTheBuy < 0) {
@@ -641,8 +653,8 @@
         }
 
         //now will send a message to our API in the web
-        const answerApi=await send_soliciutd_to_my_api(tel,amount,companyRechange);
-        if(!answerApi.success){
+        const answerApi = await send_soliciutd_to_my_api(tel, amount, companyRechange);
+        if (!answerApi.success) {
             //if when send the message to the api and an error occurred, show the mssage of the API 
             warningMessage('¡Atención! ⚠️', answerApi.message);
             return;
@@ -653,7 +665,7 @@
         confirmationMessage('¡Compra exitosa! 🎉', `El cambio total es de $${changeOFTheBuy.toFixed(2)}. ¡Gracias por tu compra!`);
     }
 
-    async function send_soliciutd_to_my_api(cellphone,amount,company){
+    async function send_soliciutd_to_my_api(cellphone, amount, company) {
         const loadingOverlay = document.getElementById("loadingOverlay");
         loadingOverlay.style.display = "flex";
         try {
@@ -666,7 +678,7 @@
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ email:email, cellphone: cellphone, amount: amount, company: company })
+                body: JSON.stringify({ email: email, cellphone: cellphone, amount: amount, company: company })
             });
 
             //get the anser of the server
@@ -683,12 +695,46 @@
 
 
     //----
-    async function get_the_credit_of_the_server(){
+    async function get_the_credit_of_the_server() {
         const loadingOverlay = document.getElementById("loadingOverlay");
         loadingOverlay.style.display = "flex";
         try {
             //get the infomration of the form
-            const email = 'eduardoa4848@Outlook.es' //document.getElementById('email').value;
+            const token = await get_token_prontipagos();
+            console.log(token)
+            //send a message to our api in the web for activate the token
+            const response = await fetch(`${urlBase}/prontipagos-external-apiws/ws/protected/v1/balance/current`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            //get the anser of the server
+            const data = await response.json();
+            console.log(data)
+            if (data.code !== 0) {
+                return false;
+            }
+
+            const balance = data.payload[0].balance;
+            return balance;
+        } catch (error) {
+            console.error('Error:', error);
+            return false;
+        } finally {
+            // Hide loading overlay regardless of success or failure
+            loadingOverlay.style.display = "none";
+        }
+
+        /*
+        const loadingOverlay = document.getElementById("loadingOverlay");
+        loadingOverlay.style.display = "flex";
+        try {
+            //get the infomration of the form
+            const email = document.getElementById('email').value;
 
             //send a message to our api in the web for activate the token
             const response = await fetch("https://www.pluspuntodeventa.com/api/prontiPagos/get_my_credit.php", {
@@ -709,94 +755,96 @@
             // Hide loading overlay regardless of success or failure
             loadingOverlay.style.display = "none";
         }
+        */
     }
 
-    async function update_credit_for_my_rechange(){
-        const answerApi=await get_the_credit_of_the_server();
-        if(answerApi.success){
+    async function update_credit_for_my_rechange() {
+        const answerApi = await get_the_credit_of_the_server();
+        if (answerApi.success) {
             confirmationMessage('¡Yujuu! 🎉', answerApi.message);
-        }else{
+        } else {
             errorMessage('¡Oops! 😵‍💫', answerApi.message);
         }
 
-        myCreditForRechange=answerApi.credit;
+        myCreditForRechange = answerApi.credit;
     }
 
-    async function get_only_my_credit(){
+    async function get_only_my_credit() {
         try {
             //get the infomration of the form
-            const email = 'eduardoa4848@Outlook.es' //document.getElementById('email').value;
+            const token = await get_token_prontipagos();
 
             //send a message to our api in the web for activate the token
-            const response = await fetch("https://www.pluspuntodeventa.com/api/prontiPagos/get_my_credit.php", {
-                method: "POST",
+            const response = await fetch(`${urlBase}/prontipagos-external-apiws/ws/protected/v1/balance/current`, {
+                method: 'GET',
                 headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ email:email})
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
             });
 
             //get the anser of the server
             const data = await response.json();
-            return data.credit;
+            if (data.code !== 0) {
+                return false;
+            }
+
+            const balance = data.payload[0].balance;
+            return balance;
         } catch (error) {
             console.error('Error:', error);
-            return 0;
+            return false;
         }
     }
 
 
 
     /*----------------------------*/
-    const urlBase = "https://prontipagos-api-dev.domainscm.com";
-    const username = "api.desarrollo";
-    const password = "1hFdcv4G*";
+    async function get_token_prontipagos() {
+        try {
+            const response = await fetch(`${urlBase}/prontipagos-external-api-ws/ws/v1/auth/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, password })
+            });
 
-    async function get_token_prontipagos(){
-      try {
-        const response = await fetch(`${urlBase}/prontipagos-external-api-ws/ws/v1/auth/login`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ username, password })
-        });
+            const data = await response.json();
 
-        const data = await response.json();
-
-        if (data.code === 0 && data.payload?.accessToken) {
-          return data.payload.accessToken;
-        } else {
-          throw new Error("Error al obtener el token: " + JSON.stringify(data));
+            if (data.code === 0 && data.payload?.accessToken) {
+                return data.payload.accessToken;
+            } else {
+                throw new Error("Error al obtener el token: " + JSON.stringify(data));
+            }
+        } catch (error) {
+            throw new Error("Fallo en la solicitud del token: " + error.message);
         }
-      } catch (error) {
-        throw new Error("Fallo en la solicitud del token: " + error.message);
-      }
     }
 
 
     async function get_menu_of_prontipagos(page = 0) {
-      const resultado = document.getElementById('resultado');
+        const resultado = document.getElementById('resultado');
 
-      try {
-        const token = await get_token_prontipagos();
+        try {
+            const token = await get_token_prontipagos();
 
-        const response = await fetch(`${urlBase}/prontipagos-external-api-ws/ws/protected/v1/product/list?page=${page}&pageSize=100`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
-        });
+            const response = await fetch(`${urlBase}/prontipagos-external-api-ws/ws/protected/v1/product/list?page=${page}&pageSize=100`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
 
-        const data = await response.json();
-        const resultado = JSON.stringify(data, null, 2);
-        console.log(resultado);
+            const data = await response.json();
+            const resultado = JSON.stringify(data, null, 2);
+            console.log(resultado);
 
-      } catch (error) {
-        resultado.textContent = `❌ Error: ${error.message}`;
-      }
+        } catch (error) {
+            resultado.textContent = `❌ Error: ${error.message}`;
+        }
     }
-
 </script>
