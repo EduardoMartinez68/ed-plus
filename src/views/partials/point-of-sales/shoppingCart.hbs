@@ -166,6 +166,14 @@ document.addEventListener('keydown', function (event) {
                 event.preventDefault();
                 print_the_last_ticket();
                 break;
+            case 's':
+                event.preventDefault();
+                seleccionarOpcion('servicios')
+                break;
+            case 't':
+                event.preventDefault();
+                seleccionarOpcion('recargas')
+                break;
         }
     }
 
