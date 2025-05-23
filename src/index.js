@@ -76,7 +76,7 @@ const adminPool = new pg.Pool({
     host: APP_PG_HOST,
     password: APP_PG_PASSWORD,
     port: APP_PG_PORT,
-    database: 'postgres' // base por defecto
+    database: APP_PG_DATABASE // base por defecto
  });
 
 //now import the database
@@ -106,6 +106,8 @@ const importSQLFile = async (pool) => {
   }
 };
 
+const { create_update_of_the_database } = require('./characterDatabase');
+
 //this is for create the table EDPLUS in the database of postgres
 const createDatabase = async () => {
     const result = await adminPool.query("SELECT 1 FROM pg_database WHERE datname = 'edplus'");
@@ -117,6 +119,8 @@ const createDatabase = async () => {
     } else {
       console.log('📂 La base de datos EDPLUS ya existe, no se creó nuevamente.');
       
+      //if the user has PLUS installed, now we will update the database
+      await create_update_of_the_database(adminPool); 
     }
 };
 createDatabase(); //if not exist the database we will create the database

@@ -147,6 +147,9 @@
           <br>
           <center>
             <div class="div-reference">
+              {{#each branchFree}}
+                <label for="">{{user_prontipagos}}</label>
+              {{/each}}
               <button onclick="openPopupRechange()" class="btn">Vincular cuenta de prontiPagos</button>
             </div>
 
@@ -172,7 +175,7 @@
     <button class="close-btn" onclick="closePopup()">x</button>
     <center>
       <img
-        src="https://scontent.fntr6-1.fna.fbcdn.net/v/t39.30808-6/449477177_978679894265230_2325893343828623822_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=_jPUJLJq8yMQ7kNvwG8BfAX&_nc_oc=AdmKKPsm7Gyn2InDpYB1xviM6kTnirGJZPneA_w5xaGSoqKOkkUreita5OmuB0HypL-AGlm1ewxfMOMd73g8lMFt&_nc_zt=23&_nc_ht=scontent.fntr6-1.fna&_nc_gid=pmK4C8LIU-nWjgSq5Bhg5A&oh=00_AfHy_goynqO4OQga5FdMeREw0nlWgudfbCuaHwqUoOozgw&oe=681ADA9D"
+        src="https://www.prontipagos.com/img/logo.png"
         alt="" class="img-prontipagos">
     </center>
     <label>Activa tu Cuenta de Prontipagos</label>
@@ -208,15 +211,6 @@
     const password = document.getElementById("password").value.trim();
 
     try {
-
-      //first check if the user and password are correct in prontipagos
-      const isValid = await login_session_in_prontipagos(user, password);
-      if (!isValid) {
-        errorMessage('Oh no! ','Usuario o contraseña incorrectos');
-        return;
-      }
-
-
       const response = await fetch("/links/update_session_prontipagos", {
         method: "POST",
         headers: {
@@ -225,44 +219,22 @@
         body: JSON.stringify({ user, password })
       });
 
-      if (!response.ok) {
-        throw new Error("Error en la respuesta del servidor");
-      }
-
+      //her we will see if the response is ok
       const result = await response.json(); // Asegúrate que el backend responde con JSON
-      console.log("Éxito:", result.message || result);
-      alert(result.message);
+      if(result.status !== 200){
+        closePopup();
+        errorMessage('Oh no! ', result.message || 'Hubo un error al activar la cuenta');
+      }
+      else{
+        closePopup();
+        successMessage('Éxito', result.message || 'Cuenta activada con éxito');
+      }
     } catch (error) {
       console.error("Error:", error);
-      alert("Hubo un error al activar la cuenta");
+      closePopup();
+      errorMessage('Hubo un error al activar la cuenta',error);
     } finally {
       e.target.reset(); // Limpia el formulario
     }
   });
-
-
-  async function login_session_in_prontipagos(username, password) {
-    const base_uri = "https://prontipagos-api-dev.domainscm.com";
-    const link = base_uri + "/prontipagos-external-api-ws/ws/v1/auth/login";
-
-    try {
-      const response = await fetch(link, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ username: username, password: password })
-      });
-
-      if (!response.ok) {
-        return false;
-      }
-
-      const result = await response.json();
-      return (result.code === 0);
-    } catch (error) {
-      console.error("Error:", error);
-      return false;
-    }
-  }
 </script>

@@ -265,6 +265,13 @@
     }
 </style>
 
+<!---->
+{{#each branchFree}}
+<input type="hidden" id="user_prontipagos" value="{{user_prontipagos}}">
+<input type="hidden" id="password_prontipagos" value="{{password_prontipagos}}">
+<input type="hidden" id="iv_for_password" value="{{iv_for_password}}">
+{{/each}}
+
 
 <!-- Primer Popup -->
 <div class="menu-services-overlay" id="menu-services-popup-1" style="display: none;">
@@ -299,8 +306,6 @@
 
 <script>
     const urlBase = "https://prontipagos-api-dev.domainscm.com";
-    const username = "api.desarrollo";
-    const password = "1hFdcv4G*";
 
     let companyRechange = null;
     let myCreditForRechange = null;
@@ -555,7 +560,7 @@
         confirmationMessage('¡Compra exitosa! 🎉', `El cambio total es de $${changeOFTheBuy.toFixed(2)}. ¡Gracias por tu compra!`);
     }
 
-    
+
     //---change for cellphone---
     async function mostrarFormularioRecarga(company, sku1, sku2) {
         dataSku1 = sku1;
@@ -594,8 +599,6 @@
         </div>
       `;
     }
-
-
 
     function validarTelefono(tel) {
         // Expresión regular para validar números de celular en México (10 dígitos)
@@ -639,8 +642,6 @@
 
         document.getElementById('cambioCliente').textContent = cambio.toFixed(2);
     }
-
-
 
     async function comprarRecarga(company) {
         const tel = document.getElementById('menu-services-telefono-1').value;
@@ -700,7 +701,7 @@
         dataSku2 = '';
     }
 
-    async function send_soliciutd_to_my_api(skuServices,cellphone, amount, company) {
+    async function send_soliciutd_to_my_api(skuServices, cellphone, amount, company) {
         const loadingOverlay = document.getElementById("loadingOverlay");
         loadingOverlay.style.display = "flex";
         try {
@@ -709,7 +710,7 @@
             const url = `${urlBase}/prontipagos-external-apiws/ws/protected/v1/sell/product`;
 
             const payload = {
-                sku:skuServices,
+                sku: skuServices,
                 amount: parseFloat(amount),
                 requiresRegionalization: true,
                 reference: cellphone,
@@ -847,6 +848,9 @@
 
     /*----------------------------*/
     async function get_token_prontipagos() {
+        const username = document.getElementById('user_prontipagos').value;
+        const password = await get_password_of_the_user_in_prontipagos();
+
         try {
             const response = await fetch(`${urlBase}/prontipagos-external-api-ws/ws/v1/auth/login`, {
                 method: 'POST',
@@ -867,7 +871,6 @@
             throw new Error("Fallo en la solicitud del token: " + error.message);
         }
     }
-
 
     async function get_menu_of_prontipagos(page = 0) {
         const resultado = document.getElementById('resultado');
@@ -892,4 +895,43 @@
             resultado.textContent = `❌ Error: ${error.message}`;
         }
     }
+
+    /*----------------------------*/
+    async function get_password_of_the_user_in_prontipagos() {
+        const encryptedPassword = document.getElementById('password_prontipagos').value;
+        const iv = document.getElementById('iv_for_password').value;
+
+        if (!encryptedPassword || !iv) {
+            console.error("Faltan datos para procesar la solicitud.");
+            return;
+        }
+
+        try {
+            const response = await fetch('/links/decryptPassword_of_prontipagos', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    encryptedData: encryptedPassword,
+                    iv: iv
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                console.log("Contraseña desencriptada:", result.password);
+                // Aquí puedes continuar usando result.password para hacer login u otra acción
+                return result.password;
+            } else {
+                console.error("Error al desencriptar:", result.message);
+            }
+
+        } catch (error) {
+            console.error("Error de red o servidor:", error);
+        }
+    }
+
 </script>

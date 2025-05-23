@@ -3734,26 +3734,130 @@ function decryptPassword(encryptedData, iv) {
 router.post('/links/update_session_prontipagos', isLoggedIn, async (req, res) => {
     try {
         const { user, password } = req.body;
-
         if (!user || !password) {
             return res.status(400).json({ error: "Usuario y contraseña son obligatorios" });
         }
 
+        //first we will see if this count exist in the database of prontipagos
+        const answerServerPreontipagos=await loginProntipagos(user, password);
+        if(answerServerPreontipagos==null){
+            return res.status(400).json({ error: "Hubo un error con los servidores de prontipagos vuelve a intentarlo mas tarde." });
+        }else if(!answerServerPreontipagos){
+            return res.status(400).json({ error: "Usuario o contraseña incorrectos." });
+        }
+
+
+
+        //we will get the 
+        const id_branch=req.user.id_branch;
+
         const newPassword=encryptPassword(password); // Encriptar la contraseña
 
-        // Aquí puedes guardar, encriptar, o usar los datos como necesites
-        console.log("Usuario:", user);
-        console.log("Contraseña encriptada:", newPassword.encryptedData);
-        console.log("IV:", newPassword.iv);
-        console.log("Contraseña desencriptada:", decryptPassword(newPassword.encryptedData, newPassword.iv)); // Desencriptar para verificar
-
-        // Si todo sale bien, devuelve un mensaje de éxito
-        res.json({ message: "Cuenta activada correctamente -> "+user+" "+newPassword.encryptedData });
+        //we will see if can save this data in the database
+        if(await update_session_prontipagos(id_branch, user, newPassword.encryptedData, newPassword.iv)){
+            res.json({ message: "Cuenta activada correctamente -> "+user});
+        }
+        else{
+            return res.status(400).json({ error: "Error al guardar tus datos en la base de datos. Intentalo de nuevo." });
+        }
     } catch (error) {
         console.error("Error en update_session_prontipagos:", error);
         res.status(500).json({ error: "Ocurrió un error en el servidor" });
     }
 })
+
+router.post('/links/decryptPassword_of_prontipagos', isLoggedIn, async (req, res) => {
+    try {
+        const { encryptedData, iv } = req.body;
+
+        if (!encryptedData || !iv) {
+            return res.status(400).json({ 
+                success: false, 
+                message: "Los campos 'encryptedData' e 'iv' son obligatorios." 
+            });
+        }
+
+        const password = decryptPassword(encryptedData, iv);
+
+        if (!password) {
+            return res.status(500).json({ 
+                success: false, 
+                message: "No se pudo desencriptar la contraseña." 
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Contraseña desencriptada correctamente.",
+            password: password
+        });
+
+    } catch (error) {
+        console.error("Error en decryptPassword_of_prontipagos:", error);
+        res.status(500).json({ 
+            success: false,
+            message: "Ocurrió un error al desencriptar la contraseña.",
+            error: error.message
+        });
+    }
+});
+
+async function loginProntipagos(user, password) {
+    const url = 'https://prontipagos-api-dev.domainscm.com/prontipagos-external-api-ws/ws/v1/auth/login';
+
+    const body = {
+        username: user,
+        password: password
+    };
+
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(body)
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`HTTP error ${response.status}: ${errorText}`);
+        }
+
+        const data = await response.json();
+        console.log("Login response:", data.code==0);
+        return data.code==0;
+
+    } catch (error) {
+        console.error("Error al hacer login:", error);
+        return null;
+    }
+}
+
+async function update_session_prontipagos(id_branch, user, password, iv) {
+    const queryText = `
+        UPDATE "Company".branches
+        SET 
+            user_prontipagos  = $1,
+            password_prontipagos  = $2,
+            iv_for_password  = $3
+        WHERE 
+            id = $4
+    `;
+
+    //create the array of the new data
+    var values = [user, password, iv, id_branch];
+
+    //update the provider data in the database
+    try {
+        await database.query(queryText, values);
+        return true;
+    } catch (error) {
+        console.error('Error updating provider:', error);
+        return false;
+    }
+}
 
 
 //-----------------------------------------------------------------------------------labels
