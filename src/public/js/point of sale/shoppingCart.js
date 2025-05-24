@@ -1,5 +1,14 @@
 const loadingOverlay = document.getElementById("loadingOverlay");
 let cartItems = [];
+window.onload = () => {
+    const savedCartItems = localStorage.getItem('cartItems');
+    if (savedCartItems) {
+        cartItems = JSON.parse(savedCartItems);
+        updateCart();
+    }
+}
+
+
 let cartTotal = 0;
 
 const carsInWait=[]
@@ -486,6 +495,7 @@ async function addToCart(img, name, barcode, price, purchaseUnit, this_product_i
 
     //update the cart
     updateCart(lotsInfo);
+    
 }
 
 function remove_all_the_item_in_the_cart_that_not_exist_in_the_array_of_the_recipe(){
@@ -734,6 +744,10 @@ function updateCart(lotsInfo = null) {
 
     // Actualizar número de productos en el carrito
     document.getElementById('products-total').textContent = cartItems.length;
+
+
+    //save the data of the cart in the local storage
+    localStorage.setItem('cartItems', JSON.stringify(cartItems));
 }
 
 
