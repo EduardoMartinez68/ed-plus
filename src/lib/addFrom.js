@@ -3730,7 +3730,6 @@ function decryptPassword(encryptedData, iv) {
   return decrypted;
 }
 
-
 router.post('/links/update_session_prontipagos', isLoggedIn, async (req, res) => {
     try {
         const { user, password } = req.body;

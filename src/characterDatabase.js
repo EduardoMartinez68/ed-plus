@@ -114,7 +114,53 @@ async function create_update_of_the_database(adminPool){
             ADD COLUMN IF NOT EXISTS iv_for_password TEXT;
         END$$;
 
+        --role of labels
+        DO $$
+        BEGIN
+            ALTER TABLE "Employee".roles_employees
+            ADD COLUMN IF NOT EXISTS view_label BOOLEAN DEFAULT FALSE NOT NULL,
+            ADD COLUMN IF NOT EXISTS add_label BOOLEAN DEFAULT FALSE NOT NULL,
+            ADD COLUMN IF NOT EXISTS edit_label BOOLEAN DEFAULT FALSE NOT NULL,
+            ADD COLUMN IF NOT EXISTS delete_label BOOLEAN DEFAULT FALSE NOT NULL;
+        END$$;
+
+
+        -------------------------ROLE-----------------------
+        DO $$
+        BEGIN
+            ALTER TABLE "Employee".roles_employees
+            ------------reports 
+            ADD COLUMN IF NOT EXISTS report_to_cofepris BOOLEAN DEFAULT FALSE NOT NULL,
+            ------------cut box
+            ADD COLUMN IF NOT EXISTS cut_box BOOLEAN DEFAULT FALSE NOT NULL,
+
+            ------------lot
+            ADD COLUMN IF NOT EXISTS add_lot BOOLEAN DEFAULT FALSE NOT NULL,
+            ADD COLUMN IF NOT EXISTS edit_lot BOOLEAN DEFAULT FALSE NOT NULL,
+            ADD COLUMN IF NOT EXISTS delete_lot BOOLEAN DEFAULT FALSE NOT NULL,
+
+            ------------promotions
+            ADD COLUMN IF NOT EXISTS add_promotions BOOLEAN DEFAULT FALSE NOT NULL,
+            ADD COLUMN IF NOT EXISTS edit_promotions BOOLEAN DEFAULT FALSE NOT NULL,
+            ADD COLUMN IF NOT EXISTS delete_promotions BOOLEAN DEFAULT FALSE NOT NULL,
+
+            ------------sales
+            ADD COLUMN IF NOT EXISTS remove_product_for_sale BOOLEAN DEFAULT FALSE NOT NULL,
+            ADD COLUMN IF NOT EXISTS delete_the_shopping_cart BOOLEAN DEFAULT FALSE NOT NULL,
+            ADD COLUMN IF NOT EXISTS add_discount_to_product_on_sale BOOLEAN DEFAULT FALSE NOT NULL,
+            ADD COLUMN IF NOT EXISTS add_product_on_backorder BOOLEAN DEFAULT FALSE NOT NULL,
+            ADD COLUMN IF NOT EXISTS view_products_on_backorder BOOLEAN DEFAULT FALSE NOT NULL,
+            ADD COLUMN IF NOT EXISTS select_product_on_backorder BOOLEAN DEFAULT FALSE NOT NULL,
+            ADD COLUMN IF NOT EXISTS delete_product_on_backorder BOOLEAN DEFAULT FALSE NOT NULL,
+
+            ------------labels
+            ADD COLUMN IF NOT EXISTS view_label BOOLEAN DEFAULT FALSE NOT NULL,
+            ADD COLUMN IF NOT EXISTS add_label BOOLEAN DEFAULT FALSE NOT NULL,
+            ADD COLUMN IF NOT EXISTS edit_label BOOLEAN DEFAULT FALSE NOT NULL,
+            ADD COLUMN IF NOT EXISTS delete_label BOOLEAN DEFAULT FALSE NOT NULL;
+        END$$;
     `
+
     await adminPool.query(query);
     console.log('📂 La base de datos EDPLUS fue actualizada.');
 }

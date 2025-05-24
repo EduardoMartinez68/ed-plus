@@ -4,11 +4,25 @@
             <label for=""><i class="fi-icon fi-ss-label"></i> Ventas</label>
             <hr>
             <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchChangeCoins" name="view_products_on_backorder" valueCheck="{{view_products_on_backorder}}">
+                <label class="form-check-label" for="flexSwitchChangeCoins">Ver Compras en Espera</label>
+            </div>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchChangeCoins" name="add_product_on_backorder" valueCheck="{{add_product_on_backorder}}">
+                <label class="form-check-label" for="flexSwitchChangeCoins">Agregar Compra en Espera</label>
+            </div>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchChangeCoins" name="select_product_on_backorder" valueCheck="{{select_product_on_backorder}}">
+                <label class="form-check-label" for="flexSwitchChangeCoins">Seleccionar Compra en Espera</label>
+            </div>
+
+
+            <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchSell" name="sell" valueCheck="{{sell}}">
                 <label class="form-check-label" for="flexSwitchSell">App Website</label>
             </div>
             <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchApplyDiscount" name="applyDiscount" valueCheck="{{apply_discount}}" disabled>
+                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchApplyDiscount" name="applyDiscount" valueCheck="{{apply_discount}}">
                 <label class="form-check-label" for="flexSwitchApplyDiscount">Aplicar Descuento</label>
             </div>
             <div class="form-check form-switch">
@@ -16,21 +30,10 @@
                 <label class="form-check-label" for="flexSwitchApplyReturns">Aplicar Devoluciones</label>
             </div>
             <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchAddOffers" name="addOffers" valueCheck="{{add_offers}}" disabled>
-                <label class="form-check-label" for="flexSwitchAddOffers">Agregar Ofertas</label>
-            </div>
-            <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchEditOffers" name="editOffers" valueCheck="{{edit_offers}}" disabled>
-                <label class="form-check-label" for="flexSwitchEditOffers">Editar Ofertas</label>
-            </div>
-            <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchDeleteOffers" name="deleteOffers" valueCheck="{{delete_offers}}" disabled>
-                <label class="form-check-label" for="flexSwitchDeleteOffers">Eliminar Ofertas</label>
-            </div>
-            <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchChangeCoins" name="changeCoins" valueCheck="{{change_coins}}" disabled>
                 <label class="form-check-label" for="flexSwitchChangeCoins">Cambiar Monedas</label>
             </div>
+            
         </div>
     </div>
 </div>

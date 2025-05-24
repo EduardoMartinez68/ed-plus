@@ -150,6 +150,8 @@ async function update_department_employe(idDepartament, name, description) {
 
 async function get_data_employee(req) {
     const id_user = req.user.id;
+    console.log(req.user)
+    console.log(id_user)
     var queryText = 'SELECT * FROM "Company"."employees" WHERE id_users= $1';
     var values = [id_user];
     const result = await database.query(queryText, values);

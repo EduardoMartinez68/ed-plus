@@ -469,7 +469,7 @@ passport.deserializeUser(async (id,done)=>{
     }
 
     //if the user no is save in the cahcer we search his data in the database
-    const queryText = `
+    let queryText = `
         SELECT 
             u.id AS id,          -- ID del usuario
             e.id AS id_employee,      -- ID del empleado
@@ -568,12 +568,32 @@ passport.deserializeUser(async (id,done)=>{
         WHERE 
             u.id = $1;  -- Filtrar por el ID del usuario
     `;
+
+    queryText = `
+        SELECT 
+            e.id AS id_employee,
+            e.id_companies AS id_company,
+            e.id_branches AS id_branch,
+            r.id AS id_role,
+            u.*,
+            r.* 
+        FROM 
+            "Fud".users AS u
+        JOIN 
+            "Company".employees AS e ON u.id = e.id_users
+        JOIN 
+            "Employee".roles_employees AS r ON e.id_roles_employees = r.id
+        WHERE 
+            u.id = $1;
+    `;
+
     var values = [id];
 
     //get the anser of the database
     const obj = await database.query(queryText, values);
     const user=obj.rows[0];
-
+    user.id=id;
+    
     //if get the user of the database, we will save the data of the user in cache
     if (user) {
         userCache.set(id, user);
