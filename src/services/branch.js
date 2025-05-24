@@ -49,6 +49,17 @@ async function get_data_branch_view_manager(id_branch) {
 }
 
 async function get_data_branch(id_branch) {
+    //this is because in other functions we send to object req and not send the id_branch
+    //so when we will send the object req we will get the id_branch of the user
+    try {
+        const newIdBranch = id_branch.user.id_branch;
+        if (newIdBranch) {
+            id_branch = newIdBranch;
+        }
+    } catch (error) {
+
+    }
+
     //get the data of the branch
     var queryText = 'SELECT * FROM "Company".branches WHERE id= $1';
     var values = [id_branch];

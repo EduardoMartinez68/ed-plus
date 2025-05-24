@@ -207,7 +207,32 @@ async function update_customer(customerId, newCustomer) {
     }
 }
 
-async function update_role_employee(idRoleEmployee, newRole){
+async function update_role_employee(idRoleEmployee, newRole) {
+    const keys = Object.keys(newRole);
+    const values = Object.values(newRole);
+
+    // Creamos el fragmento SET dinámico: campo1=$1, campo2=$2, ...
+    const setClause = keys.map((key, index) => `${key}=$${index + 1}`).join(', ');
+
+    // Agregamos id al final para el WHERE
+    values.push(idRoleEmployee);
+
+    const queryText = `
+        UPDATE "Employee".roles_employees
+        SET ${setClause}
+        WHERE id=$${values.length}
+    `;
+
+    try {
+        await database.query(queryText, values);
+        return true;
+    } catch (error) {
+        console.error('Error actualizando roles_employees:', error);
+        return false;
+    }
+}
+
+async function update_role_employee2(idRoleEmployee, newRole){
     var queryText = `
     UPDATE "Employee".roles_employees
     SET 

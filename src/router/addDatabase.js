@@ -410,7 +410,7 @@ async function add_department_employees(department){
     }
 }
 
-async function add_type_employees(typeEmployee) {
+async function add_type_employees2(typeEmployee) {
     var queryText = 'INSERT INTO "Employee".roles_employees(' +
         'id_companies, name_role, salary, currency, type_of_salary, commissions, discount_for_product, add_box, edit_box, delete_box, create_reservation, view_reservation, view_reports, ' +
         'add_customer, edit_customer, delete_customer, cancel_debt, offer_loan, get_fertilizer, view_customer_credits, send_email, add_employee, edit_employee, delete_employee, ' +
@@ -434,6 +434,26 @@ async function add_type_employees(typeEmployee) {
     }
 }
 
+async function add_type_employees(newRole) {
+    const keys = Object.keys(newRole);
+    const values = Object.values(newRole);
+
+    const columns = keys.join(', ');
+    const placeholders = keys.map((_, index) => `$${index + 1}`).join(', ');
+
+    const queryText = `
+        INSERT INTO "Employee".roles_employees (${columns})
+        VALUES (${placeholders})
+    `;
+
+    try {
+        await database.query(queryText, values);
+        return true;
+    } catch (error) {
+        console.error('Error insertando nuevo rol en roles_employees:', error);
+        return false;
+    }
+}
 
 
 //add_provider_company

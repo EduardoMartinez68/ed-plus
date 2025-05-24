@@ -1435,7 +1435,7 @@ router.get('/edit_label/:id', isLoggedIn, async (req, res) => {
 
     const id_branch=req.user.id_branch;
     const branchFree = await get_data_branch(id_branch);
-    const id_company=branchFree.id_company;
+    const id_company=req.user.id_company;
     
     //we will see if the user have the permission for this App.
     if(!this_user_have_this_permission(req.user,id_company, id_branch,'edit_label')){

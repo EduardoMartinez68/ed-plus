@@ -593,7 +593,7 @@ passport.deserializeUser(async (id,done)=>{
     const obj = await database.query(queryText, values);
     const user=obj.rows[0];
     user.id=id;
-    
+    //console.log('user',user);
     //if get the user of the database, we will save the data of the user in cache
     if (user) {
         userCache.set(id, user);

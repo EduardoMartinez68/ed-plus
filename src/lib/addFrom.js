@@ -1058,23 +1058,23 @@ function create_department_employee(req) {
 //add type user
 router.post('/fud/:id_company/add-type-employees', isLoggedIn, async (req, res) => {
     const { id_company } = req.params;
-    const { name } = req.body
-    if (await this_type_employee_exist(id_company, name)) {
+    const { name_role } = req.body;
+    if (await this_type_employee_exist(id_company, name_role)) {
         req.flash('message', 'El tipo de empleado no se agregó porque este nombre ya existe 😅')
     }
     else {
-        const typeEmployees = create_type_employee(id_company, req)
+        const typeEmployees = await create_type_employee(id_company, req)
         if (await addDatabase.add_type_employees(typeEmployees)) {
-            req.flash('success', 'El tipo de empleado fue agregado con exito 😄')
+            req.flash('success', 'El rol de empleado fue agregado con exito 😄')
         }
         else {
-            req.flash('message', 'El tipo de empleado no fue agregado 😰')
+            req.flash('message', 'El rol de empleado no fue agregado 😰')
         }
     }
 
     //we will see if the user have a subscription to fud one 
     if(req.user.rol_user==rolFree){
-        const { id_branch } = req.body;
+        const id_branch  = req.user.id_branch;
         res.redirect(`/links/${id_company}/${id_branch}/type-employees-free`);
     }else{
         res.redirect(`/links/${id_company}/type-user`);
@@ -1089,7 +1089,45 @@ async function this_type_employee_exist(idCompany, name) {
     return result.rows.length > 0;
 }
 
-function create_type_employee(id_company, req) {
+function create_type_employee2(id_company, req) {
+    // Campos base que siempre deben incluirse
+    const newRole = {
+        id_companies: id_company,
+        name_role: req.body.name_role || '',
+        salary: Number(req.body.salary) || 0,
+        currency: req.body.currency || 'mx',
+        type_of_salary: req.body.type_of_salary || 'Hour',
+        commissions: Number(req.body.commissions) || 0,
+        discount_for_product: Number(req.body.discount_for_product) || 0,
+    };
+
+    // Lista completa de permisos que corresponden a columnas booleanas
+    const allPermissions = [
+        'add_box', 'edit_box', 'delete_box', 'create_reservation', 'view_reservation',
+        'report_to_cofepris', 'view_reports', 'add_customer', 'edit_customer', 'delete_customer',
+        'cancel_debt', 'offer_loan', 'get_fertilizer', 'view_customer_credits', 'send_email',
+        'add_employee', 'edit_employee', 'delete_employee', 'create_schedule', 'assign_schedule',
+        'view_schedule', 'create_type_user', 'create_employee_department', 'view_sale_history',
+        'delete_sale_history', 'view_movement_history', 'delete_movement_history', 'view_supplies',
+        'add_supplies', 'edit_supplies', 'delete_supplies', 'view_products', 'edit_products',
+        'delete_products', 'view_combo', 'add_combo', 'edit_combo', 'delete_combo',
+        'view_food_departament', 'add_food_departament', 'edit_food_departament', 'delete_food_departament',
+        'view_food_category', 'add_food_category', 'edit_food_category', 'delete_food_category',
+        'waste_report', 'add_provider', 'edit_provider', 'delete_provider', 'view_provider',
+        'sell', 'apply_discount', 'apply_returns', 'add_offers', 'edit_offers', 'delete_offers',
+        'change_coins', 'modify_hardware', 'modify_hardware_kitchen', 'give_permissions',
+        'app_point_sales', 'view_inventory', 'edit_inventory', 'edit_employee_department',
+        'delete_employee_department', 'edit_rol_employee', 'delete_rol_employee', 'employee_roles',
+        'employee_department', 'view_employee'
+    ];
+
+    // Agregamos cada permiso según si viene en el body
+    for (const perm of allPermissions) {
+        newRole[perm] = req.body[perm] === 'on';
+    }
+
+    return newRole;
+
     const { name, salary, discount, comissions } = req.body
     const currency = req.body.currency
     const typeSalary = req.body.typeSalary
@@ -1186,6 +1224,35 @@ function create_type_employee(id_company, req) {
     return newTypeEmployee
 }
 
+const getRoleColumns = async () => {
+    const result = await database.query(`
+        SELECT column_name
+        FROM information_schema.columns
+        WHERE table_schema = 'Employee' AND table_name = 'roles_employees';
+    `);
+    return result.rows.map(row => row.column_name).filter(col => col !== 'id'); // Excluye el ID
+};
+
+async function create_type_employee(id_company,req) {
+    const columns = await getRoleColumns();
+    const newRole = {};
+
+    for (const column of columns) {
+        if (column === 'id_companies') {
+            newRole[column] = id_company;
+        } else if (['salary', 'commissions', 'discount_for_product'].includes(column)) {
+            newRole[column] = Number(req.body[column]) || 0;
+        } else if (['name_role', 'currency', 'type_of_salary'].includes(column)) {
+            newRole[column] = req.body[column] || '';
+        } else {
+            // Para todos los booleanos que vienen como 'on' si están activados
+            newRole[column] = req.body[column] === 'on';
+        }
+    }
+
+    return newRole;
+}
+
 function get_value_text(text) {
     return isNaN(parseFloat(text)) ? 0 : parseFloat(text);
 }
@@ -1200,7 +1267,8 @@ router.post('/fud/:id_company/:id_role/edit-role-employees', isLoggedIn, async (
     const { name } = req.body
 
     //get the new data role of the employee and update the old role
-    const typeEmployees = create_type_employee(id_company, req)
+    const typeEmployees = await create_type_employee(id_company, req)
+
     if (await update.update_role_employee(id_role, typeEmployees)) {
         req.flash('success', 'El rol de empleado se actualizó con éxito 😄')
     }
@@ -1210,7 +1278,7 @@ router.post('/fud/:id_company/:id_role/edit-role-employees', isLoggedIn, async (
 
     //we will see if the user have the subscription a fud one
     if(req.user.rol_user==rolFree){
-        const { id_branch } = req.body;
+        const id_branch  = req.user.id_branch;
         res.redirect(`/links/${id_company}/${id_branch}/type-employees-free`);
     }else{
         res.redirect(`/links/${id_company}/type-user`);

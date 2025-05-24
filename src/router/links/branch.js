@@ -46,7 +46,8 @@ const {
     get_country,
     get_type_employees,
     delete_profile_picture,
-    delete_user
+    delete_user,
+    get_data_tole_employees
 } = require('../../services/employees');
 
 //functions ad
@@ -88,9 +89,14 @@ const {
     this_user_have_this_permission
 } = require('../../services/permission');
 
+const {
+    get_data_branch
+} = require('../../services/branch');
+
 const rolFree=0
 const companyName='links'
 
+/*
 async function get_data_branch(req) {
     const { id_branch } = req.params;
     var queryText = 'SELECT * FROM "Company".branches WHERE id= $1';
@@ -99,6 +105,7 @@ async function get_data_branch(req) {
     const data = result.rows;
     return data;
 }
+*/
 
 router.get('/:id_company/:id_branch/visit-branch', isLoggedIn, async (req, res) => {
     if(await validate_subscription(req,res)){
@@ -631,10 +638,11 @@ router.get('/:id_company/:id_branch/:id_role_employee/edit-role-user', isLoggedI
     }
 
     const roleEmployee = await get_data_tole_employees(id_role_employee);
-    console.log('----------------------------roleEmployee--------------------')
-    console.log(roleEmployee)
-    const branch = await get_data_branch(req);
-    res.render('links/branch/role_type_employees/editRoleEmployee', { roleEmployee, branch });
+    //console.log('----------------------------roleEmployee--------------------')
+    //console.log(roleEmployee)
+    const branchFree = await get_data_branch(req);
+    const branch=branchFree;
+    res.render('links/branch/role_type_employees/editRoleEmployee', { roleEmployee, branchFree , branch});
     
 })
 
