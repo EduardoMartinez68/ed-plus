@@ -18,6 +18,11 @@ const path = require('path');
 
 const printer = require('../lib/printer');
 
+//functions permission
+const {
+    this_user_have_this_permission
+} = require('../services/permission');
+
 //config the connection with digitalocean
 /*
 const AWS = require('aws-sdk');
@@ -3731,7 +3736,7 @@ router.post('/fud/:id_company/:id_branch/:id_prospect/:id_appointment/edit-appoi
 
     //we will create the appointment
     const appointment=create_appointment(id_company, id_branch,id_prospect,req)
-    console.log(appointment)
+
     //we will see if we could add the appointment
     if(await update_appointment(appointment,id_appointment)){
         req.flash('success', 'La cita se actualizo con éxito ❤️');
@@ -3929,6 +3934,12 @@ async function update_session_prontipagos(id_branch, user, password, iv) {
 
 //-----------------------------------------------------------------------------------labels
 router.post('/links/save_label', isLoggedIn, async (req, res) => {
+    //we will see if the user have the permission for this App.
+    const { id_company, id_branch } = req.user;
+    if(!this_user_have_this_permission(req.user,id_company, id_branch,'add_label')){
+        res.status(500).json({ error: "Lo siento, no tienes permiso para esta acción 😅" });
+    }
+
     try {
         const { id_company, name, width, length, label } = req.body;
         const id_branch = req.user.id_branch;
@@ -3986,6 +3997,12 @@ async function insert_label(label) {
 }
 
 router.post('/links/delete_label', isLoggedIn, async (req, res) => {
+    const { id_company, id_branch } = req.user;
+    if(!this_user_have_this_permission(req.user,id_company, id_branch,'delete_label')){
+        res.status(500).json({ error: "Lo siento, no tienes permiso para esta acción 😅" });
+    }
+
+
     const { id } = req.body;
 
     if (!id) {
@@ -4019,6 +4036,11 @@ async function delete_label_by_id(id) {
 }
 
 router.post('/links/update-labels/:id', async (req, res) => {
+    const { id_company, id_branch } = req.user;
+    if(!this_user_have_this_permission(req.user,id_company, id_branch,'edit_label')){
+        res.status(500).json({ error: "Lo siento, no tienes permiso para esta acción 😅" });
+    }
+
     const { id } = req.params;
     const { name, width, length, label } = req.body;
 

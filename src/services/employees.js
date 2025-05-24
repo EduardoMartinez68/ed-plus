@@ -70,6 +70,30 @@ async function search_employee(idEmployee) {
     return result.rows;
 }
 
+async function search_employee_with_username(username) {
+    // search the employee of the company with information about other table
+    const queryText = `
+        SELECT 
+            e.id AS id_employee,
+            e.id_companies AS id_company,
+            e.id_branches AS id_branch,
+            r.id AS id_role,
+            u.*,
+            r.* 
+        FROM 
+            "Fud".users AS u
+        JOIN 
+            "Company".employees AS e ON u.id = e.id_users
+        JOIN 
+            "Employee".roles_employees AS r ON e.id_roles_employees = r.id
+        WHERE 
+            u.user_name = $1;
+    `;
+    var values = [username];
+    const result = await database.query(queryText, values);
+    return result.rows;
+}
+
 async function delete_employee(idUser) {
     try {
         var queryText = 'DELETE FROM "Company".Employees WHERE id_users = $1';
@@ -207,5 +231,6 @@ module.exports = {
     get_data_employee,
     delete_profile_picture,
     get_profile_picture,
-    delete_user
+    delete_user,
+    search_employee_with_username
 };

@@ -69,16 +69,37 @@
   </style>
 
 
+<!-----permits-------->
+{{#if user.delete_the_shopping_cart}}
+  <input type="hidden" id="delete_the_shopping_cart" value="{{user.delete_the_shopping_cart}}">
+{{/if}}
+{{#if user.remove_product_for_sale}}
+  <input type="hidden" id="remove_product_for_sale" value="{{user.remove_product_for_sale}}">
+{{/if}}
+{{#if user.add_product_on_backorder}}
+  <label for="" id="add_product_on_backorder"></label>
+{{/if}}
+
+{{#if user.view_products_on_backorder}}
+  <label for="" id="view_products_on_backorder"></label>
+{{/if}}
+
   <div class="menu-most-oprtions-container">
     <button class="menu-most-oprtions-toggle" onclick="toggleMenu()">
       <i class="fi fi-rs-menu-dots"></i>
     </button>
     <div class="menu-most-oprtions-options" id="menuMostOptions">
+        {{#if user.add_product_on_backorder}}
+          <a onclick="create_a_sale_in_wait()">Venta en espera (Alt+G)</a>
+        {{/if}}
+
+        {{#if user.view_products_on_backorder}}
+          <a onclick="show_popup_cart_in_wait()">Recuperar Venta (Alt+W)</a>
+        {{/if}}
+        
         {{#each dataEmployee}}
             <input type="text" value="{{id_branches}}" style="display: none;" id="id_branch">
             <input type="text" value="{{id}}" style="display: none;" id="id_employee_menu">
-            <a onclick="create_a_sale_in_wait()">Venta en espera (Alt+G)</a>
-            <a onclick="show_popup_cart_in_wait()">Recuperar Venta (Alt+W)</a>
             <a onclick="seleccionarOpcion('recargas')">Recargas Telefonicas (Alt+T)</a>
             <a  onclick="seleccionarOpcion('servicios')">Pagos de servicios (Alt+S)</a>
             <!---
