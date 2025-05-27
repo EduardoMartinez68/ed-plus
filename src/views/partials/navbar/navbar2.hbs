@@ -306,6 +306,15 @@
 
                     {{#if user.view_movement_history}}
                     {{#each branchFree}}
+                    <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/0/services')">
+                        <img src="/img/apps/services.webp" alt="Ventas">
+                        <span>Pago de Servicios</span>
+                    </div>
+                    {{/each}}
+                    {{/if}}
+
+                    {{#if user.view_movement_history}}
+                    {{#each branchFree}}
                     <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/0/movements')">
                         <img src="/img/apps/movements.webp" alt="Movimientos">
                         <span>Movimientos</span>

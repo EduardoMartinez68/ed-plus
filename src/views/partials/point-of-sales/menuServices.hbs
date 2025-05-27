@@ -709,7 +709,7 @@
         const loadingOverlay = document.getElementById("loadingOverlay");
         loadingOverlay.style.display = "flex";
         try {
-            const token = await get_token_prontipagos(); 
+            //const token = await get_token_prontipagos(); 
 
             const response = await fetch('/links/send_information_to_prontipagos', {
                 method: 'POST',
@@ -721,7 +721,6 @@
                     amount,
                     reference:cellphone,
                     company,
-                    token, 
                     moneyReceived,
                     changeOFTheBuy
                 })

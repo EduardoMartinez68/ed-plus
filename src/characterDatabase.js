@@ -130,6 +130,21 @@ async function create_update_of_the_database(adminPool){
             ALTER COLUMN id_customers DROP NOT NULL;
         END$$;
         
+        DO $$
+        BEGIN
+            IF NOT EXISTS (
+                SELECT 1
+                FROM information_schema.columns
+                WHERE table_schema = 'Box'
+                AND table_name = 'reachange_services'
+                AND column_name = 'time_sales'
+            ) THEN
+                ALTER TABLE "Box".reachange_services
+                ADD COLUMN time_sales timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP;
+            END IF;
+        END
+        $$;
+
         -------------------------ROLE-----------------------
         DO $$
         BEGIN

@@ -1551,6 +1551,58 @@ async function get_all_the_labels(id_branch){
     }
 }
 
+//--------------------services
+router.get('/:id_company/:id_branch/:page/services', isLoggedIn, async (req, res) => {
+    const { id_company, id_branch } = req.params;
+    let { page } = req.params;
+
+    //we will see if the user have the permission for this App.
+    if(!this_user_have_this_permission(req.user,id_company, id_branch,'view_movement_history')){
+        req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
+        return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
+    }
+
+    //now we will see if the page is a number or not, if not we will set it to 0
+    page = Math.max(0, isNaN(page) ? 0 : parseInt(page));
+    const pageNext= page + 1;
+    const pagePrev= page - 1;
+    const dataPage=[{id_company,id_branch,pageNext,pagePrev}];
+
+    //now get the data of the branch and the services
+    const branchFree = await get_data_branch(id_branch, page);
+    const services = await get_services_by_page(id_company, id_branch, page);
+    res.render('links/services/services',{branchFree,services,dataPage});
+})
+
+async function get_services_by_page(id_company,id_branch, page = 0, limit = 50) {
+    const offset = page * limit;
+    const query = `
+        SELECT 
+            rs.id,
+            rs.id_companies,
+            rs.id_branches,
+            rs.id_employees,
+            rs.id_customers,
+            rs.key_services,
+            rs.money_received,
+            rs.service_name,
+            rs.change,
+            rs.service_money,
+            rs.time_sales,
+            b.name_branch,
+            b.city,
+            b.alias
+        FROM "Box".reachange_services rs
+        JOIN "Company".branches b
+            ON rs.id_branches = b.id
+        WHERE rs.id_companies = $1
+        AND rs.id_branches = $2
+        ORDER BY rs.id DESC
+        LIMIT $3 OFFSET $4;
+    `;
+    const result = await database.query(query, [id_company,id_branch, limit, offset]);
+    return result.rows;
+}
 
 //--------------------
 const fetch = require('node-fetch');

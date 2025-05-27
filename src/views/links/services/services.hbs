@@ -1,0 +1,108 @@
+<br><br>
+<div class="container">
+    <div class="card">
+        <div class="card-body">
+            <label for=""><i class="fi-icon fi-sr-receipt"></i> Historial de Servicios</label>
+            <hr>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Servicio</th>
+                        <th>Dinero Recibido</th>
+                        <th>Cambio</th>
+                        <th>Total</th>
+                        <th>Sucursal</th>
+                        <th>Alias</th>
+                        <th>Cliente</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each services}}
+                    <tr>
+                        <td>{{service_name}}</td>
+                        <td>${{money_received}}</td>
+                        <td>${{change}}</td>
+                        <td>${{service_money}}</td>
+                        <td>{{name_branch}}</td>
+                        <td>{{alias}}</td>
+                        <td>{{#if id_customers}}{{id_customers}}{{else}}—{{/if}}</td>
+                        <td data-timesales="{{time_sales}}"></td>
+                        <td><button class="btn btn-edit" onclick="lookStatus('{{id}}')">Ver estado</button></td>
+                    </tr>
+                    {{else}}
+                    <tr>
+                        <td colspan="9">No hay servicios disponibles.</td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+
+            <!-- Paginación -->
+            <div class="d-flex justify-content-between mt-4">
+                {{#each dataPage}}
+                <a class="btn btn-edit" href="/links/{{id_company}}/{{id_branch}}/{{pagePrev}}/services">⬅ Página {{pagePrev}}</a>
+                <a class="btn btn-edit" href="/links/{{id_company}}/{{id_branch}}/{{pageNext}}/services">Página {{pageNext}} ➡</a>
+                {{/each}}
+            </div>
+        </div>
+    </div>
+</div>
+{{>loading}}
+
+<script>
+async function lookStatus(id) {
+    const loadingOverlay = document.getElementById("loadingOverlay");
+    loadingOverlay.style.display = "flex";
+
+    try {
+        const response = await fetch(`/links/get_status_sale_in_prontipagos/${id}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            errorMessage('Error','Error al obtener el estado del servicio.');
+        }
+
+        const data = await response.json();
+
+        if (data.status ) {
+            regularMessage('Respuesta',`Estado del servicio: ${data.dataServer.message}`);
+        } else {
+            errorMessage('Error',data.message || 'No se pudo obtener el estado del servicio.');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        errorMessage('Error','Ocurrió un error al intentar obtener el estado del servicio.');
+    } finally {
+        loadingOverlay.style.display = "none";
+    }
+}
+
+
+  function formatTimeSales() {
+    const cells = document.querySelectorAll("td[data-timesales]");
+
+    cells.forEach(cell => {
+      const rawDate = new Date(cell.getAttribute("data-timesales"));
+      if (!isNaN(rawDate)) {
+        const options = {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true
+        };
+        cell.textContent = rawDate.toLocaleString('es-MX', options);
+      }
+    });
+  }
+
+  // Ejecutar cuando se cargue la página
+  document.addEventListener("DOMContentLoaded", formatTimeSales);
+</script>

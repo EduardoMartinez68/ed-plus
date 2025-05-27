@@ -23,6 +23,12 @@ const {
     this_user_have_this_permission
 } = require('../services/permission');
 
+//functions branch
+const {
+    get_data_branch,
+    get_branch
+} = require('../services/branch');
+
 //config the connection with digitalocean
 /*
 const AWS = require('aws-sdk');
@@ -4072,22 +4078,23 @@ async function update_label(id, name, width, length, labelJson) {
     }
 }
 
+
+
+//-----------------------------------------------------------------------------------Prontipagos------------------------------------------------------
 const fetch = require('node-fetch');
+//const helpers=require('../lib/helpers.js');
+const urlProntipagos='https://prontipagos-api-dev.domainscm.com'
+//-----this is for do a sale in prontipagos
 router.post('/links/send_information_to_prontipagos', async (req, res) => {
 
-    const { amount, reference, token, sku, company, moneyReceived, changeOFTheBuy } = req.body;
-
-    //first we will see if the user have the permission for this App.
-    if (!token) {
-        return res.status(401).json({ status: false, message: 'Token no disponible' });
-    }
-
-    // Validaciones básicas
+    const { amount, reference, sku, company, moneyReceived, changeOFTheBuy } = req.body;
+    
+    //we will see if the user do a valid request
     if (!amount || !reference) {
         return res.status(400).json({ status: false, message: 'Faltan campos obligatorios' });
     }
 
-    // Payload dinámico usando datos del request
+    //now we will create the payload to send to prontipagos
     let payload = {
         sku,
         amount,
@@ -4095,6 +4102,7 @@ router.post('/links/send_information_to_prontipagos', async (req, res) => {
         transacctionId:0
     };
 
+    //this is for save in the database of PLUS
     let service = {
         sku,
         moneyReceived,
@@ -4103,8 +4111,9 @@ router.post('/links/send_information_to_prontipagos', async (req, res) => {
         amount
     }
 
-    // Si sku contiene solo dígitos, lo convertimos en cadena vacía
+    //if the sku have onlye numbers, we will convert in a string empty (this is for service like telcel)
     if (/^\d+$/.test(sku)) {
+        //when the sku is only numbers, we will set the sku to empty string, not is necessary to send the sku to prontipagos (this is for telcel)
         payload = {
             amount,
             reference,
@@ -4114,22 +4123,27 @@ router.post('/links/send_information_to_prontipagos', async (req, res) => {
         service.sku='';
     }
 
+    //we will insert the service in the database of PLUS
     const id_customer = '';
     const transacctionId = await insert_reachange_service(req.user.id_company, req.user.id_branch, req.user.id, id_customer, service);
 
-    payload.transacctionId = transacctionId;    
-
+    //her we will see if we could insert the service in the database
     if (!transacctionId) {
         return res.status(500).json({ status: false, message: 'Error al insertar el servicio. Intentalo otra vez.' });
     }
 
-
+    //if we could insert the service, we will add the transacctionId to the payload fot send to prontipagos
+    payload.transacctionId = transacctionId;    
 
 
     try {
-        // URL corregida de la API según documentación
-        const url = 'https://prontipagos-api-dev.domainscm.com/prontipagos-external-api-ws/ws/protected/v1/sell/product';
+        const url = `${urlProntipagos}/prontipagos-external-api-ws/ws/protected/v1/sell/product`;
 
+        //first we will get the password and user of prontipagos use the id of the branch
+        const id_branch = req.user.id_branch;
+        const token = await get_token_prontipagos(id_branch); //create the token for the prontipagos API
+
+        //send the message to the server of prontipagos
         const response = await fetch(url, {
             method: 'POST',
             headers: {
@@ -4140,11 +4154,12 @@ router.post('/links/send_information_to_prontipagos', async (req, res) => {
             body: JSON.stringify(payload)
         });
 
+        //we will see if the response is ok
         const contentType = response.headers.get('content-type');
         if (contentType && contentType.includes('application/json')) {
             const data = await response.json();
 
-            //this is when the request not is ok, we will delete this sale 
+            //this is when the request not is ok, we will delete this sale of the database of PLUS
             if(data.code !== 0) {
                 await delete_reachange_service(transacctionId);
             }
@@ -4158,6 +4173,8 @@ router.post('/links/send_information_to_prontipagos', async (req, res) => {
                 message: 'La API no devolvió un JSON',
                 raw: rawText
             });
+
+            await delete_reachange_service(transacctionId); //this is for delete the service in the database of PLUS
         }
 
     } catch (error) {
@@ -4217,9 +4234,49 @@ async function delete_reachange_service(id) {
     }
 }
 
-async function get_token_prontipagos() {
-    const username = 'api.desarrollo';
-    const password = '1hFdcv4G*';
+//-----this is get the status of the sale in prontipagos
+router.post('/links/get_status_sale_in_prontipagos/:transaction_id', async (req, res) => {
+    const { transaction_id } = req.params;
+    try {
+        const url = `${urlProntipagos}/prontipagos-external-api-ws/ws/protected/v1/check-status?transactionId=${transaction_id}`;
+
+        //first we will get the password and user of prontipagos use the id of the branch
+        const id_branch = req.user.id_branch;
+        const token = await get_token_prontipagos(id_branch); //create the token for the prontipagos API
+
+        //send the message to the server of prontipagos
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const data = await response.json();
+        res.status(200).json({status:true,dataServer:data});
+        console.log('Respuesta de Prontipagos:', data);
+    } catch (error) {
+        console.log('Error al enviar a Prontipagos:', error);
+        res.status(500).json({
+            status: false,
+            message: `Error al enviar a Prontipagos: ${error.message}`
+        });
+    }
+});
+
+
+
+
+
+
+
+async function get_token_prontipagos(id_branch) {
+    const getBranch=await get_data_branch(id_branch); //get the data of the branch 
+    const dataBranch = getBranch[0]; // Import the database connection
+
+    const username=dataBranch.user_prontipagos; //get the user of prontipagos
+    const password = decryptPassword(dataBranch.password_prontipagos, dataBranch.iv_for_password);  //check if the user is correct
 
     try {
         const response = await fetch(`https://prontipagos-api-dev.domainscm.com/prontipagos-external-api-ws/ws/v1/auth/login`, {
@@ -4241,6 +4298,35 @@ async function get_token_prontipagos() {
         throw new Error("Fallo en la solicitud del token: " + error.message);
     }
 }
+
+async function get_password(encryptedPassword,iv){
+    try {
+        const response = await fetch('http://localhost:3000/links/decryptPassword_of_prontipagos', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                encryptedData: encryptedPassword,
+                iv: iv
+            })
+        });
+
+        const result = await response.json();
+        console.log("Resultado de desencriptación:", result);
+        if (result.success) {
+            return result.password;
+        } else {
+            console.error("Error al desencriptar:", result.message);
+        }
+
+    } catch (error) {
+        console.error("Error de red o servidor:", error);
+    }
+}
+
+
 
 //-----------------------------------------------apps
 const {
