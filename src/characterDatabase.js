@@ -124,7 +124,12 @@ async function create_update_of_the_database(adminPool){
             ADD COLUMN IF NOT EXISTS delete_label BOOLEAN DEFAULT FALSE NOT NULL;
         END$$;
 
-
+        DO $$
+        BEGIN
+            ALTER TABLE "Box".reachange_services
+            ALTER COLUMN id_customers DROP NOT NULL;
+        END$$;
+        
         -------------------------ROLE-----------------------
         DO $$
         BEGIN

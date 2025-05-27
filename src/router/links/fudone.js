@@ -1554,6 +1554,7 @@ async function get_all_the_labels(id_branch){
 
 //--------------------
 const fetch = require('node-fetch');
+
 router.get('/search-product-with-barcode', async (req, res) => {
   const upc = req.query.upc;
 

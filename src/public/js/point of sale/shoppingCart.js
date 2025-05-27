@@ -22,7 +22,16 @@ if (storedCarts) {
 }
 */
 
-function create_a_sale_in_wait(){
+async function create_a_sale_in_wait(){
+    const add_product_on_backorder=document.getElementById('add_product_on_backorder');
+    if(add_product_on_backorder==null){
+        //if the user not have the permission to remove the product, we will send a message of warning
+        if(!await this_user_is_admin('Crear Venta en espera ⌛','add_product_on_backorder')){
+            warningMessage('🐣 ¡Ay, travieso!', 'Este superpoder está bloqueado para ti... por ahora.');
+            return;
+        }
+    }
+
     //first we will see if exist a product in the cart
     if (cartItems.length === 0) {
         errorMessage('ERROR 👁️', 'No hay productos en el carrito para guardar en espera.');
@@ -62,7 +71,16 @@ function create_a_sale_in_wait(){
 }
 
 
-function show_popup_cart_in_wait() {
+async function show_popup_cart_in_wait() {
+    const view_products_on_backorder=document.getElementById('view_products_on_backorder');
+    if(view_products_on_backorder==null){
+        //if the user not have the permission to remove the product, we will send a message of warning
+        if(!await this_user_is_admin('Ver Ventas en espera ⌛','view_products_on_backorder')){
+            warningMessage('🐣 ¡Ay, travieso!', 'Este superpoder está bloqueado para ti... por ahora.');
+            return;
+        }
+    }
+
     const storedCarts = localStorage.getItem('carsInWait');
     if (storedCarts) {
         carsInWait.length = 0; // vaciar el array original
@@ -122,6 +140,15 @@ function show_popup_cart_in_wait() {
 }
 
 async function update_cart_in_wait(index) {  
+    const select_product_on_backorder=document.getElementById('select_product_on_backorder');
+    if(select_product_on_backorder==null){
+        //if the user not have the permission to remove the product, we will send a message of warning
+        if(!await this_user_is_admin('Seleccionar Venta en espera ⌛','select_product_on_backorder')){
+            warningMessage('🐣 ¡Ay, travieso!', 'Este superpoder está bloqueado para ti... por ahora.');
+            return;
+        }
+    }
+
     //first we will see if exist a product in the cart 
     if (cartItems.length > 0) {
         //we will see if the user would like delete the product

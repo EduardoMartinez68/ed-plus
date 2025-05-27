@@ -320,7 +320,7 @@
         { name: "Unefon", icon: "https://images.seeklogo.com/logo-png/19/1/unefon-logo-png_seeklogo-196154.png", sku1: 'S3TAE', sku2: 'UNEFONMXN' },
         { name: "Bait", icon: "https://i.pinimg.com/474x/21/a7/ae/21a7ae2c609acfce2eb37c49a1454fe3.jpg", sku1: '', sku2: '' },
 
-        { name: "ALO", icon: "https://tiendasneto.com.mx/media/wysiwyg/alo.png", sku1: 'S3TAER2', sku2: 'ALOTELCMXN' },
+        { name: "ALO", icon: "https://tiendasneto.com.mx/media/wysiwyg/alo.png", sku1: 'S3TAER4', sku2: 'ALOTELCMXN' },
         { name: "Flash Mobile", icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9QJV3Dy47hVerM4Jz0sW07iPRsfY2Cc-jhw&s", sku1: 'S3TAEFLASH', sku2: 'MXN' },
         { name: "IUSACELL", icon: "https://www.techgames.com.mx/wp-content/uploads/2015/01/Iusacell-ATT.jpg", sku1: 'S3TAE', sku2: 'IUSAMXN' },
         { name: "VIRGIN", icon: "https://play-lh.googleusercontent.com/oit0z38kXk-DDWY9SQtLZ_8z5CjtHAMCjfkDJNBCdaP5NrxGnmz7rTrwKDwaTabp-Q", sku1: 'S3TAE', sku2: 'VIRGINMXN' },
@@ -533,23 +533,24 @@
 
     async function buy_services(numberService, amount, serviceName) {
         amount = parseFloat(amount);
-        const moneyReceived = parseFloat(document.getElementById('moneyReceived').value);
-        const moneyCommission = parseFloat(document.getElementById('moneyCommission').value);
+        let moneyReceived = parseFloat(document.getElementById('moneyReceived').value);
+        let moneyCommission = parseFloat(document.getElementById('moneyCommission').value);
+        moneyReceived = isNaN(moneyReceived) ? 0 : moneyReceived;
+        moneyCommission = isNaN(moneyCommission) ? 0 : moneyCommission;
 
         const moneyEarning = moneyCommission + amount; //this is the money that earning for the buy
-        const changeOFTheBuy = moneyReceived - moneyEarning; //this is the change of the buy
+        const changeOFTheBuy = (moneyReceived - moneyEarning).toFixed(2); //this is the change of the buy
 
         //we will see if exist change. If not exist change, show a message of error
         if (changeOFTheBuy < 0) {
             errorMessage('¡Atención! ⚠️', 'Parece que el pago es insuficiente. Por favor ingresa un monto mayor.');
             return;
         }
-        //now her we will send the message to prontipagos 
+
         //now will send a message to our API in the web
         const skuServices = dataSku1; // si aplica
-        const answerApi = await send_soliciutd_to_my_api(skuServices, numberService, amount, serviceName);
-        console.log(answerApi)
-        if (!answerApi.status) {
+        const answerApi = await send_soliciutd_to_my_api(skuServices, numberService, amount, serviceName, moneyReceived, changeOFTheBuy);
+        if (answerApi.code!==0 || Number(answerApi.code)!== 0) {
             //if when send the message to the api and an error occurred, show the mssage of the API 
             warningMessage('¡Atención! ⚠️', answerApi.message);
             return;
@@ -557,14 +558,16 @@
 
         //if the service was success, show a message success and show the change of the customer
         cerrarPopups();
-        confirmationMessage('¡Compra exitosa! 🎉', `El cambio total es de $${changeOFTheBuy.toFixed(2)}. ¡Gracias por tu compra!`);
+        confirmationMessage('¡Compra exitosa! 🎉', `El cambio total es de $${changeOFTheBuy}. ¡Gracias por tu compra!`);
+        dataSku1 = '';
+        dataSku2 = '';
     }
 
 
     //---change for cellphone---
     async function mostrarFormularioRecarga(company, sku1, sku2) {
         dataSku1 = sku1;
-        dataSku2 = sku1;
+        dataSku2 = sku2;
 
         await get_data_of_the_services();
 
@@ -672,11 +675,13 @@
 
     async function buy_rechange(tel, amount, companyRechange) {
         amount = parseFloat(amount);
-        const moneyReceived = parseFloat(document.getElementById('moneyReceived').value);
-        const moneyCommission = parseFloat(document.getElementById('moneyCommission').value);
+        let moneyReceived = parseFloat(document.getElementById('moneyReceived').value);
+        let moneyCommission = parseFloat(document.getElementById('moneyCommission').value);
+        moneyReceived = isNaN(moneyReceived) ? 0 : moneyReceived;
+        moneyCommission = isNaN(moneyCommission) ? 0 : moneyCommission;
 
         const moneyEarning = moneyCommission + amount; //this is the money that earning for the buy
-        const changeOFTheBuy = moneyReceived - moneyEarning; //this is the change of the buy
+        const changeOFTheBuy = (moneyReceived - moneyEarning).toFixed(2); //this is the change of the buy
 
         //we will see if exist change. If not exist change, show a message of error
         if (changeOFTheBuy < 0) {
@@ -686,9 +691,8 @@
 
         //now will send a message to our API in the web
         const skuServices = dataSku1 + amount + dataSku2; // si aplica
-        const answerApi = await send_soliciutd_to_my_api(skuServices, tel, amount, companyRechange);
-        console.log(answerApi)
-        if (!answerApi.status) {
+        const answerApi = await send_soliciutd_to_my_api(skuServices, tel, amount, companyRechange, moneyReceived, changeOFTheBuy);
+        if (answerApi.code!==0 || Number(answerApi.code)!== 0) {
             //if when send the message to the api and an error occurred, show the mssage of the API 
             warningMessage('¡Atención! ⚠️', answerApi.message);
             return;
@@ -696,42 +700,35 @@
 
         //if the service was success, show a message success and show the change of the customer
         cerrarPopups();
-        confirmationMessage('¡Compra exitosa! 🎉', `El cambio total es de $${changeOFTheBuy.toFixed(2)}. ¡Gracias por tu compra!`);
+        confirmationMessage('¡Compra exitosa! 🎉', `El cambio total es de $${changeOFTheBuy}. ¡Gracias por tu compra!`);
         dataSku1 = '';
         dataSku2 = '';
     }
 
-    async function send_soliciutd_to_my_api(skuServices, cellphone, amount, company) {
+    async function send_soliciutd_to_my_api(skuServices, cellphone, amount, company,moneyReceived, changeOFTheBuy) {
         const loadingOverlay = document.getElementById("loadingOverlay");
         loadingOverlay.style.display = "flex";
         try {
-            const token = await get_token_prontipagos();
+            const token = await get_token_prontipagos(); 
 
-            const url = `${urlBase}/prontipagos-external-apiws/ws/protected/v1/sell/product`;
-
-            const payload = {
-                sku: skuServices,
-                amount: parseFloat(amount),
-                requiresRegionalization: true,
-                reference: cellphone,
-                transacctionId: 1
-            };
-
-            console.log("Sending payload to API:", payload);
-
-            const response = await fetch(url, {
-                method: "POST",
+            const response = await fetch('/links/send_information_to_prontipagos', {
+                method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'Authorization': `Bearer ${token}`
+                    'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(payload)
+                body: JSON.stringify({
+                    sku: skuServices,
+                    amount,
+                    reference:cellphone,
+                    company,
+                    token, 
+                    moneyReceived,
+                    changeOFTheBuy
+                })
             });
 
             const data = await response.json();
             return data;
-
         } catch (error) {
             console.error('Error:', error);
             return { status: false, message: error };
@@ -922,8 +919,6 @@
             const result = await response.json();
 
             if (result.success) {
-                console.log("Contraseña desencriptada:", result.password);
-                // Aquí puedes continuar usando result.password para hacer login u otra acción
                 return result.password;
             } else {
                 console.error("Error al desencriptar:", result.message);
