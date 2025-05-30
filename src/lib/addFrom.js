@@ -4174,7 +4174,84 @@ async function update_label(id, name, width, length, labelJson) {
 }
 
 
+//-----------------------------------------------------------------------------------notifications----------------------------------------------------
+router.post('/links/update_notification', async (req, res) => {
+    const { id_company, id_branch } = req.user;
+    const data=req.body;
 
+    if (await update_data_notification_of_the_branch(id_branch,data)){
+        res.status(200).json({ status:true, message: "Datos actualizados correctamente" });
+    }else{
+        console.error('Error updating notification data:', error);
+        return res.status(500).json({ success: false, error: 'Error al actualizar los datos de la notificación' });
+    }
+});
+
+async function update_data_notification_of_the_branch(id_branch, data) {
+    const fields = Object.keys(data);
+    const values = Object.values(data);
+
+    // Agregamos id_branch al final
+    values.push(id_branch);
+
+    // Generar SET dinámico: campo1 = $1, campo2 = $2, ...
+    const setClause = fields.map((field, index) => `"${field}" = $${index + 1}`).join(', ');
+
+    const queryText = `
+        UPDATE "Company".branches
+        SET ${setClause}
+        WHERE id = $${fields.length + 1}
+    `;
+
+    try {
+        await database.query(queryText, values);
+        return true;
+    } catch (error) {
+        console.error('Error updating branch data:', error);
+        return false;
+    }
+}
+
+
+const nodemailer = require('nodemailer'); //this is for send emails 
+router.post('/links/notification/cash-cut', async (req, res) => {
+    const { id_company, id_branch } = req.user;
+    const data=req.body;
+    const {emailNotification,tokenEmailNotification,toNotification, message}=req.body
+    await send_email(emailNotification,tokenEmailNotification,toNotification, 'Corte de caja', message)
+    return res.status(500).json({ success: false, error: 'Error al actualizar los datos de la notificación' });
+});
+
+async function send_email(APP_EMAIL_EMAIL,APP_PASSWORD_EMAIL,toEmail, subjectEmail, message) {
+
+    //this is for email google
+    const transport = nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+            user: APP_EMAIL_EMAIL,
+            pass: APP_PASSWORD_EMAIL
+        }
+    });
+
+    //we will to create the content of the message 
+    const mailOptions = {
+        from: 'Plus Notificaciones 🚀',
+        to: toEmail,
+        subject: subjectEmail,
+        html: message
+    };
+
+    //send 
+    transport.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.error('Error al enviar el correo electrónico:', error);
+        } else {
+            console.log('Correo electrónico enviado:', info.response);
+        }
+    });
+
+    return true;
+}
 //-----------------------------------------------------------------------------------Prontipagos------------------------------------------------------
 const fetch = require('node-fetch');
 //const helpers=require('../lib/helpers.js');

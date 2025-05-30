@@ -1,0 +1,177 @@
+<div class="tab-pane fade show" id="navbar-notification" role="tabpanel" aria-labelledby="navbar-navbar-notification">
+    <div class="card">
+        <div class="card-body">
+            <label for=""><i class="fi-icon fi-ss-bell"></i> Notificaciones</label>
+            {{#each branchFree}}
+            <label for="">1 {{email_notification}}</label>
+            {{/each}}
+
+            {{#each branchFree}}
+            <form id="form-notification">
+                <div class="form-check form-switch">
+                    {{#if notification_for_email}}
+                    <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchNotification"
+                        name="notification_for_email" valueCheck="{{notification_for_email}}" checked>
+                    {{else}}
+                        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchNotification"
+                            name="notification_for_email" valueCheck="{{notification_for_email}}">
+                    {{/if}}
+                    <label class="form-check-label" for="flexSwitchNotification">Permite que Plus envie notificaciones
+                        por correo electronico</label>
+                </div>
+
+                <div class="form-group">
+                    <lable>Tu dirección de correo electronico *</lable><br>
+                    <input type="tex" class="form-control input-notification" name="email"
+                        placeholder="correo electronico" value="{{email_notification}}" maxlength="100" required disabled>
+                </div>
+                <div class="form-group">
+                    <lable>Clave de acceso a tu correo *</lable><br>
+                    <input type="password" class="form-control input-notification" name="token"
+                        placeholder="Token de acceso" value="{{token_email_notification}}" maxlength="100" required disabled>
+                </div>
+                <div class="form-group">
+                    <lable>Escribe el correo electronico a donde quieres que llegue la notificación *</lable><br>
+                    <input type="email" class="form-control input-notification" name="emailTo"
+                        placeholder="Correo notificado" value="{{to_notification}}" maxlength="100"
+                        required disabled>
+                </div>
+
+
+                <hr>
+                <label for="">Enviar notificaciones cuando: </label>
+                <div class="container-notification">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" id="notification_cut_box"
+                            name="notification_cut_box" valueCheck="{{notification_cut_box}}" disabled>
+                        <label class="form-check-label" for="notification_cut_box">Se crea un corte de caja</label>
+                    </div>
+                </div>
+                <!--
+                <div class="form-group">
+                    <lable>Whatsapp Bussiness *</lable><br>
+                    <input type="tex" class="form-control" name="whatsapp" placeholder="Whatsapp" value="{{name}}" maxlength="50" pattern="^\S{0,50}$" autofocus required>
+                </div>
+                -->
+                <br>
+                <button class="btn btn-success">Actualizar</button>
+            </form>
+            {{/each}}
+        </div>
+    </div>
+</div>
+<script>
+    //this script is for update all the inputs and switches based on the main switch state
+    document.addEventListener('DOMContentLoaded', function () {
+        const mainSwitch = document.getElementById('flexSwitchNotification');
+        const emailInputs = document.querySelectorAll('.input-notification');
+        const subSwitches = document.querySelectorAll('.container-notification .form-check-input');
+
+        function updateFormState() {
+            if (mainSwitch.checked) {
+                // Habilitar inputs y sub-switches
+                emailInputs.forEach(input => input.disabled = false);
+                subSwitches.forEach(sw => sw.disabled = false);
+            } else {
+                // Limpiar y deshabilitar inputs y switches
+                emailInputs.forEach(input => {
+                    input.value = '';
+                    input.disabled = true;
+                });
+                subSwitches.forEach(sw => {
+                    sw.disabled = true;
+                    sw.checked = false;
+                });
+            }
+        }
+
+        // Evento al cambiar el estado del switch principal
+        mainSwitch.addEventListener('change', updateFormState);
+
+        // Ejecutar al cargar la página por si el estado inicial ya está activado
+        updateFormState();
+
+
+        //--------------------------------------------------update check---------------------------------------------------
+        const valueCheck = mainSwitch.getAttribute('valueCheck');
+
+        // Convertir string a booleano (maneja valores como "true", "false", "1", "0")
+        const isChecked = valueCheck === 'true' || valueCheck === '1' || valueCheck === 'on' || valueCheck;
+
+        // Habilitar todos los switches dentro de .container-notification
+        document.querySelectorAll('.container-notification input[type="checkbox"]').forEach(sw => {
+            const valueCheckNotification = sw.getAttribute('valueCheck');
+
+            // Solo estas cadenas deberían activar el check
+            const isCheckedNotification =
+                valueCheckNotification === 'true' ||
+                valueCheckNotification === '1' ||
+                valueCheckNotification === 'on';
+
+            sw.checked = isCheckedNotification;
+        });
+        
+
+        //--------------------------------------------------send form---------------------------------------------------
+        const form = document.getElementById('form-notification');
+
+        // Enviar formulario con Fetch
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault(); // Evitar envío tradicional
+
+            const loadingOverlay = document.getElementById("loadingOverlay");
+            loadingOverlay.style.display = "flex"; //this is for that the web show the load screen
+
+            // Crear un objeto con los datos
+            const data = {
+                notification_for_email: mainSwitch.checked,
+                email_notification: form.email.value,
+                token_email_notification: form.token.value,
+                to_notification: form.emailTo.value,
+            };
+
+            //first we will see if all the input are valid when the notification_for_email is checked
+            if(data.notification_for_email){
+            if(data.email_notification === '' || data.token_email_notification === '' || data.to_notification === '') {
+                    errorMessage('❌ Error', 'Por favor, completa todos los campos requeridos.');
+                    loadingOverlay.style.display = "none"; // Ocultar la pantalla de carga
+                    return;
+                }
+            }
+
+            const switches = document.querySelectorAll('.container-notification input[type="checkbox"]');
+
+            switches.forEach(sw => {
+                const key = sw.name;
+                const value = sw.checked;
+                if (key) {
+                    data[key] = value;
+                }
+            });
+
+            try {
+                const response = await fetch('/links/update_notification', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.status) {
+                    confirmationMessage('✅ Notificación actualizada correctamente.', result.message || 'Notificación actualizada correctamente.');
+                } else {
+                    errorMessage('❌ Error al actualizar', (result.message || 'Respuesta inesperada.'));
+                }
+            } catch (err) {
+                console.error('Error:', err);
+                errorMessage('❌ Error de conexión al servidor.', err);
+            } finally {
+                // Ocultar la pantalla de carga
+                loadingOverlay.style.display = "none";
+            }
+        });
+    });
+</script>

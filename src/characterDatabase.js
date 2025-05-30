@@ -146,6 +146,19 @@ async function create_update_of_the_database(adminPool){
         END
         $$;
 
+
+        --notification od the branch
+        DO $$
+        BEGIN
+            ALTER TABLE "Company".branches
+            ADD COLUMN IF NOT EXISTS notification_for_email BOOLEAN DEFAULT FALSE NOT NULL,
+            ADD COLUMN IF NOT EXISTS email_notification TEXT,
+            ADD COLUMN IF NOT EXISTS token_email_notification TEXT,
+            ADD COLUMN IF NOT EXISTS to_notification TEXT,
+        
+            ADD COLUMN IF NOT EXISTS notification_cut_box BOOLEAN DEFAULT FALSE NOT NULL;
+        END$$;
+
         -------------------------ROLE-----------------------
         DO $$
         BEGIN

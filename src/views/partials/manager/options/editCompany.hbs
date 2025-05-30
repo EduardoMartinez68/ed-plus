@@ -27,32 +27,32 @@
                                 <input type="file" name="image" accept="image/*" class="form-control" id="inputImg" value="{{path_logo}}">
                             </div>
                             <div class="form-group">
-                                <lable>Name company *</lable><br>
-                                <input type="tex" class="form-control" name="name" placeholder="Name Company" value="{{name}}" maxlength="50" pattern="^\S{0,50}$" autofocus required>
+                                <lable>Nombre empresa *</lable><br>
+                                <input type="tex" class="form-control" name="name" placeholder="Nombre empresa" value="{{name}}" maxlength="50" pattern="^\S{0,50}$" autofocus required>
                             </div>
                             <div class="form-group">
                                 <lable>Alias *</lable><br>
                                 <input type="tex" class="form-control" name="alias" placeholder="Alias" value="{{alias}}" maxlength="10" pattern="^\S{0,10}$" required>
                             </div>
                             <div class="form-group">
-                                <lable>Description</lable><br>
-                                <textarea class="form-control" name="description" placeholder="Description" rows="2" maxlength="100" pattern="^\S{0,100}$">{{description}}</textarea>
+                                <lable>Descripcion</lable><br>
+                                <textarea class="form-control" name="description" placeholder="Descripcion" rows="2" maxlength="100" pattern="^\S{0,100}$">{{description}}</textarea>
                             </div>
                             <div class="form-group">
-                                <lable>Representative *</lable><br>
-                                <input type="tex" class="form-control" name="representative" placeholder="Representative" value="{{representative}}" maxlength="50" pattern="^\S{0,50}$" required>
+                                <lable>Representante *</lable><br>
+                                <input type="tex" class="form-control" name="representative" placeholder="Representante" value="{{representative}}" maxlength="50" pattern="^\S{0,50}$" required>
                             </div>
                             <div class="form-group">
-                                <lable>Phone</lable><br>
-                                <input type="tex" class="form-control" name="phone" placeholder="Phone" value="{{phone}}" maxlength="16" pattern="^\S{0,16}$">
+                                <lable>Telefono</lable><br>
+                                <input type="tex" class="form-control" name="phone" placeholder="Telefono" value="{{phone}}" maxlength="16" pattern="^\S{0,16}$">
                             </div>
                             <div class="form-group">
-                                <lable>Cell Phone</lable><br>
-                                <input type="tex" class="form-control" name="cell_phone" placeholder="Cell Phone" value="{{cell_phone}}" maxlength="16" pattern="^\S{0,16}$">
+                                <lable>Celular</lable><br>
+                                <input type="tex" class="form-control" name="cell_phone" placeholder="Celular" value="{{cell_phone}}" maxlength="16" pattern="^\S{0,16}$">
                             </div>
                             <div class="form-group">
-                                <lable>E-mail *</lable><br>
-                                <input type="email" class="form-control" name="email" placeholder="E-mail" value="{{email_company}}" maxlength="100" pattern="^\S{0,100}$" required>
+                                <lable>Email *</lable><br>
+                                <input type="email" class="form-control" name="email" placeholder="Email" value="{{email_company}}" maxlength="100" pattern="^\S{0,100}$" required>
                             </div>   
                             {{/each}}
 
@@ -61,35 +61,35 @@
 
                             {{#each dataCompany}}
                                 <div class="form-group">
-                                    <lable>Municipality *</lable><br>
-                                    <input type="tex" class="form-control" name="municipality" value="{{municipality}}" placeholder="Municipality" required>
+                                    <lable>Municipio *</lable><br>
+                                    <input type="tex" class="form-control" name="municipality" value="{{municipality}}" placeholder="Municipio" required>
                                 </div>
                                 <div class="form-group">
-                                    <lable>City *</lable><br>
-                                    <input type="tex" class="form-control" name="city" placeholder="City" value="{{city}}" required>
+                                    <lable>Ciudad *</lable><br>
+                                    <input type="tex" class="form-control" name="city" placeholder="Ciudad" value="{{city}}" required>
                                 </div>
                                 <div class="form-group">
-                                    <lable>Cologne *</lable><br>
-                                    <input type="tex" class="form-control" name="cologne" placeholder="Cologne" value="{{cologne}}" required>
+                                    <lable>Colonia *</lable><br>
+                                    <input type="tex" class="form-control" name="cologne" placeholder="Colonia" value="{{cologne}}" required>
                                 </div>
                                 <div class="form-group">
-                                    <lable>Street *</lable><br>
-                                    <input type="tex" class="form-control" name="street" placeholder="Street" value="{{states}}" maxlength="20" pattern="^\S{0,20}$" required>
+                                    <lable>Calle *</lable><br>
+                                    <input type="tex" class="form-control" name="street" placeholder="Calle" value="{{states}}" maxlength="20" pattern="^\S{0,20}$" required>
                                 </div>
                                 <div class="form-group">
-                                    <lable>Outer Numbers</lable><br>
-                                    <input type="tex" class="form-control" name="num_o" placeholder="Outer Number" value="{{num_ext}}" maxlength="5" pattern="^\S{0,5}$">
+                                    <lable>Numero Ext.</lable><br>
+                                    <input type="tex" class="form-control" name="num_o" placeholder="Numero Ext." value="{{num_ext}}" maxlength="5" pattern="^\S{0,5}$">
                                 </div>
                                 <div class="form-group">
-                                    <lable>Interior Number</lable><br>
-                                    <input type="tex" class="form-control" name="num_i" placeholder="Interior Number" value="{{num_int}}" maxlength="5" pattern="^\S{0,5}$">
+                                    <lable>Numero Int.</lable><br>
+                                    <input type="tex" class="form-control" name="num_i" placeholder="Numero Int." value="{{num_int}}" maxlength="5" pattern="^\S{0,5}$">
                                 </div>
                                 <div class="form-group">
-                                    <lable>Postal Code *</lable><br>
-                                    <input type="tex" class="form-control" name="postal_code" placeholder="Interior Number" value="{{postal_code}}" pattern="[0-9]{5}" required>
+                                    <lable>Codigo Postal *</lable><br>
+                                    <input type="tex" class="form-control" name="postal_code" placeholder="Codigo Postal" value="{{postal_code}}" pattern="[0-9]{5}" required>
                                 </div>
                                 <div class="form-group">
-                                    <button class="btn btn-success btn-block" type="submit">Update</button>
+                                    <button class="btn btn-success btn-block" type="submit">Actualizar</button>
                                 </div>
                             {{/each}}
                         </form>
