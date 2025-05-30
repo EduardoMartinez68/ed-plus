@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     //this is for get the id of the branch that the user is using
     const searchInput = document.getElementById('search');
-    const cards = document.querySelectorAll('.product-card-point-of-sales');
+    let cards = document.querySelectorAll('.product-card-point-of-sales');
     const ID_BRANCH = document.getElementById('id_branch').value; // Get the branch ID from the hidden input
     const dictionaryIdServices = [
         { key: ".s", icon: `seleccionarOpcion('servicios')` },
@@ -246,6 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
             await update_the_menu(barcodeInput);
 
             //we will to read all the card of the menu
+            cards = document.querySelectorAll('.product-card-point-of-sales');
             cards.forEach(card => {
                 const barcode = card.id.toLowerCase();
                 card.style.display = ''; //show all the card

@@ -369,6 +369,13 @@
 
 
     function closeInformationPop() {
+        selectedProductData = {
+                image_url: "",
+                barcode: "",
+                name: "",
+                price: 0,
+                description: ""
+            };
         document.getElementById('informationPopApi').style.display = 'none';
     }
 
