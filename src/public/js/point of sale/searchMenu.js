@@ -290,6 +290,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 clear_the_menu(); //clear the menu for show all the products again
             } else {
                 notificationMessageError('😬 Ups!', 'Este articulo no se encuentra en el menu.');
+                await search_product_in_my_api(barcodeInput); //show the form for add a new product
             }
         }
     });

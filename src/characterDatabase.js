@@ -121,7 +121,8 @@ async function create_update_of_the_database(adminPool){
             ADD COLUMN IF NOT EXISTS view_label BOOLEAN DEFAULT FALSE NOT NULL,
             ADD COLUMN IF NOT EXISTS add_label BOOLEAN DEFAULT FALSE NOT NULL,
             ADD COLUMN IF NOT EXISTS edit_label BOOLEAN DEFAULT FALSE NOT NULL,
-            ADD COLUMN IF NOT EXISTS delete_label BOOLEAN DEFAULT FALSE NOT NULL;
+            ADD COLUMN IF NOT EXISTS delete_label BOOLEAN DEFAULT FALSE NOT NULL,
+            ADD COLUMN IF NOT EXISTS add_product_flash BOOLEAN DEFAULT TRUE NOT NULL;
         END$$;
 
         DO $$

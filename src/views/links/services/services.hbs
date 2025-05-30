@@ -8,9 +8,10 @@
                 <thead>
                     <tr>
                         <th>Servicio</th>
+                        <th>Pago de Servicio</th>
                         <th>Dinero Recibido</th>
+                        <th>Comision</th>
                         <th>Cambio</th>
-                        <th>Total</th>
                         <th>Sucursal</th>
                         <th>Alias</th>
                         <th>Cliente</th>
@@ -22,9 +23,10 @@
                     {{#each services}}
                     <tr>
                         <td>{{service_name}}</td>
-                        <td>${{money_received}}</td>
-                        <td>${{change}}</td>
                         <td>${{service_money}}</td>
+                        <td>${{money_received}}</td>
+                        <th></th>
+                        <td>${{change}}</td>
                         <td>{{name_branch}}</td>
                         <td>{{alias}}</td>
                         <td>{{#if id_customers}}{{id_customers}}{{else}}—{{/if}}</td>
@@ -42,8 +44,8 @@
             <!-- Paginación -->
             <div class="d-flex justify-content-between mt-4">
                 {{#each dataPage}}
-                <a class="btn btn-edit" href="/links/{{id_company}}/{{id_branch}}/{{pagePrev}}/services">⬅ Página {{pagePrev}}</a>
-                <a class="btn btn-edit" href="/links/{{id_company}}/{{id_branch}}/{{pageNext}}/services">Página {{pageNext}} ➡</a>
+                <a class="btn btn-edit" href="/links/{{id_company}}/{{id_branch}}/{{pagePrev}}/services">⬅ Página anterior {{pagePrev}}</a>
+                <a class="btn btn-edit" href="/links/{{id_company}}/{{id_branch}}/{{pageNext}}/services">Siguiente Página {{pageNext}} ➡</a>
                 {{/each}}
             </div>
         </div>
@@ -105,4 +107,22 @@ async function lookStatus(id) {
 
   // Ejecutar cuando se cargue la página
   document.addEventListener("DOMContentLoaded", formatTimeSales);
+
+
+  function calcularComisiones() {
+    const filas = document.querySelectorAll("table tbody tr");
+
+    filas.forEach(fila => {
+      const servicio = parseFloat(fila.children[1]?.textContent.replace('$', '')) || 0;
+      const recibido = parseFloat(fila.children[2]?.textContent.replace('$', '')) || 0;
+      const cambio = parseFloat(fila.children[4]?.textContent.replace('$', '')) || 0;
+      const comision = recibido - cambio - servicio;
+
+      if (!isNaN(comision)) {
+        fila.children[3].textContent = `$${comision.toFixed(2)}`;
+      }
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", calcularComisiones);
 </script>

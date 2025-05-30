@@ -1,0 +1,454 @@
+<style>
+    :root {
+        --color-gray-light: #f4f4f4;
+        --color-gray-dark: #333;
+        --color-border: #ddd;
+    }
+
+    .information-pop-api-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    }
+
+    .information-pop-api-content {
+        background: #fff;
+        border-radius: 16px;
+        padding: 2rem;
+        width: 100%;
+        max-width: 600px;
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+        position: relative;
+        animation: fadeIn 0.3s ease-in-out;
+        font-family: "Segoe UI", sans-serif;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    .information-pop-api-close {
+        position: absolute;
+        top: 12px;
+        right: 16px;
+        font-size: 22px;
+        color: var(--color-gray-dark);
+        cursor: pointer;
+        transition: color 0.3s;
+    }
+
+    .information-pop-api-close:hover {
+        color: #111;
+    }
+
+    .information-pop-api-content h3 {
+        margin-top: 0;
+        font-size: 22px;
+        text-align: center;
+        margin-bottom: 1rem;
+        color: var(--color-gray-dark);
+    }
+
+    .information-pop-api-data {}
+
+    .information-pop-api-data img {
+        width: 180px;
+        height: 180px;
+        object-fit: contain;
+        margin: 0 auto 10px;
+        border-radius: 12px;
+        border: 1px solid var(--color-border);
+    }
+
+    .information-pop-api-data label {
+        font-size: 14px;
+        color: var(--color-gray-dark);
+        font-weight: bold;
+    }
+
+    .information-pop-api-data input,
+    .information-pop-api-data textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        font-size: 14px;
+        font-family: inherit;
+        transition: border-color 0.3s;
+    }
+
+    .information-pop-api-data input:focus,
+    .information-pop-api-data textarea:focus {
+        border-color: var(--color-company);
+        outline: none;
+    }
+
+    .information-pop-api-button {
+        margin-top: 1rem;
+        background-color: var(--color-company);
+        color: white;
+        border: none;
+        padding: 0.75rem;
+        width: 100%;
+        font-size: 16px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .information-pop-api-button:hover {
+        background-color: #123ccc;
+    }
+</style>
+
+<div class="information-pop-api-container" id="informationPopApi" style="display:none;">
+    <div class="information-pop-api-content">
+        <span class="information-pop-api-close" onclick="closeInformationPop()">×</span>
+        <h3>Crea un producto Rapido</h3>
+        <div class="information-pop-api-data" id="informationPopApiData">
+            <!-- Inputs se insertan dinámicamente -->
+        </div>
+
+
+        <button onclick="create_new_product_flash()" class="information-pop-api-button" style="width: 100%;" type="button">Crear
+            Producto</button>
+    </div>
+</div>
+
+
+<script>
+    let selectedProductData = {
+        image_url: "",
+        barcode: "",
+        name: "",
+        price: 0,
+        description: ""
+    };
+
+    async function search_product_in_my_api(barcodeProduct) {
+        const add_product_flash=document.getElementById('add_product_flash');
+        if(add_product_flash==null){
+            //if the user not have the permission to remove the product, we will send a message of warning
+            if(!await this_user_is_admin('Agregar Producto Rapido 📝','add_product_flash')){
+                warningMessage('🐣 ¡Ay, travieso!', 'No tienes permiso para agregar productos rapidos.');
+                return;
+            }
+        }
+
+        barcodeProduct = barcodeProduct.trim();
+        const loadingOverlay = document.getElementById("loadingOverlay");
+
+        if (!barcodeProduct) {
+            errorMessage("👁️ Mucho Ojo", "Por favor, introduce un código de barras.");
+            return;
+        }
+
+        if (selectedProductData.barcode === barcodeProduct) {
+            showInformationPop();
+            return;
+        }
+
+
+        //now we will see the product in my api.
+        loadingOverlay.style.display = "flex";
+        if (await search_product_in_my_api_web(barcodeProduct)) {
+            loadingOverlay.style.display = "none";
+            return;
+        }
+
+        //if in our api not exist this product, we will search in the API free
+        try {
+            loadingOverlay.style.display = "flex";
+
+            // LLAMADA A TU BACKEND LOCAL
+            const response = await fetch(`/links/search-product-with-barcode?upc=${barcodeProduct}`, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            const result = await response.json();
+
+            if (result.code === "OK") {
+                const product = result.items[0] || {};
+                selectedProductData = {
+                    image_url: Array.isArray(product.images) && product.images.length > 0 ? product.images[0] : "https://cdn-icons-png.flaticon.com/512/679/679922.png",
+                    barcode: barcodeProduct,//product.upc,
+                    name: product.title,
+                    price: 0,
+                    description: product.description
+                };
+
+                showInformationPop();
+            } else {
+                errorMessage("❌ Producto no encontrado:", result.message);
+            }
+
+        } catch (error) {
+            console.error("💥 Error al buscar el producto:", error);
+            errorMessage("💥 Error al buscar el producto:", error);
+        } finally {
+            loadingOverlay.style.display = "none";
+        }
+    }
+
+    async function search_product_in_my_api_web(barcodeProduct) {
+        try {
+            const response = await fetch('https://pluspuntodeventa.com/api/plus/search_product.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ barcode: barcodeProduct })
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                selectedProductData = result.product; // Guardamos la data globalmente
+                showInformationPop();
+                return true;
+            } else {
+                return false;
+            }
+
+        } catch (error) {
+            console.error("💥 Error al buscar el producto:", error);
+            errorMessage("💥 Error al buscar el producto:", error);
+            return false;
+        }
+    }
+
+    function showInformationPop() {
+        const container = document.getElementById('informationPopApiData');
+        const imageUrl = selectedProductData.image_url || 'https://cdn-icons-png.flaticon.com/512/679/679922.png';
+        const data = selectedProductData || {};
+        const idBranch = document.getElementById('id_branch').value || '';
+
+        container.innerHTML = `
+            <div class="row">
+                <!-- Columna para la imagen -->
+                <div class="col-12 col-md-4 d-flex justify-content-center mb-4 mb-md-0">
+                    <img src="${imageUrl}" alt="Imagen del producto" class="img-fluid" style="max-width: 100%; height: auto; border-radius: 12px; border: 1px solid #ddd;">
+                </div>
+
+                <!-- Columna para los campos de datos -->
+                <div class="col-12 col-md-8">
+                    <div class="mb-2">
+                        <label for="productBarcodePop" class="form-label">Código de barras:</label>
+                        <input type="text" id="productBarcodePop" value="${data.barcode || ''}" class="form-control" placeholder="Código de barras" name="barcode">
+                    </div>
+
+                    <div class="mb-2">
+                        <label for="productNamePop" class="form-label">Nombre del producto:</label>
+                        <input type="text" id="productNamePop" value="${data.name || ''}" class="form-control" placeholder="Nombre del producto" name="name">
+                    </div>
+
+                    <div class="mb-2">
+                        <label for="productPricePop" class="form-label">Precio:</label>
+                        <input type="text" id="productPricePop" value="${data.price || ''}" class="form-control" placeholder="Precio" name="sale_price">
+                    </div>
+                </div>
+
+                <!-- Descripción -->
+                <div class="col-12 mt-3">
+                    <label for="productDescriptionPop" class="form-label">Descripción del producto:</label>
+                    <textarea id="productDescriptionPop" class="form-control" rows="3" placeholder="Descripción" name="description">${data.description || ''}</textarea>
+                </div>
+
+                <input type="text" value="${idBranch}" placeholder="Nombre" class="form-control" name="idBranch" hidden>
+
+                <div class="row" hidden>
+                    <div class="col">
+                        <label>Monto de Compra *</label><br>
+                        <input type="text" class="form-control" name="purchase_amount"
+                            placeholder="Monto de Compra" value="{{purchase_amount}}">
+                    </div>
+                    <div class="col">
+                        <label>Unidad de Compra</label>
+                        <select value="{{purchase_unity}}" name="purchase_unity"
+                            class="form-select" id="select-purchase-unity">
+                            {{>unity/unitOfMeasure}}
+                        </select>
+                    </div>
+                    <div class="col">
+                        <label>Precio de Compra *</label><br>
+                        <input type="tex" class="form-control" name="purchase_price"
+                            placeholder="Precio de Compra" required value="0">
+                    </div>
+                    <div class="col">
+                        <label>Moneda de compra</label>
+                        <select value="{{currency_purchase}}" name="currency_purchase"
+                            class="form-select">
+                            {{>unity/unitOfMoney}}
+                        </select>
+                    </div>
+                </div>
+                <br>
+
+                <div class="row" hidden>
+                    <div class="col">
+                        <label>Monto de Venta *</label><br>
+                        <input type="tex" class="form-control" name="sale_amount"
+                            placeholder="Monto de Venta" required value="1">
+                    </div>
+                    <div class="col">
+                        <label>Unidad de Venta</label>
+                        <select value="{{sale_unity}}" name="sale_unity" class="form-select" disabled id="select-unity">
+                            {{>unity/unitOfMeasure}}
+                        </select>
+                    </div>
+                    <div class="col">
+                        <label>Moneda de uso</label>
+                        <select value="{{currency_sale}}" name="currency_sale" class="form-select" disabled>
+                            {{>unity/unitOfMoney}}
+                        </select>
+                    </div>
+                </div>
+                <br>
+
+
+                
+                <div class="row">
+                    <div class="col">
+                        <label>Inventario Máximo</label><br>
+                        <input type="text" class="form-control" name="max_inventory" id="max_inventory"
+                            placeholder="Inventario Máximo" value="{{max_inventory}}">
+                    </div>
+                    <div class="col">
+                        <label>Inventario Mínimo</label><br>
+                        <input type="text" class="form-control" name="minimum_inventory" id="minimum_inventory"
+                            placeholder="Inventario Mínimo" value="{{minimum_inventory}}">
+                    </div>
+                    <div class="col">
+                        <label>Unidad de Medida *</label><br>
+                        <select name="unit_inventory" id="unit_inventory" class="form-select">
+                            {{>unity/unitOfMeasure}}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <label>Existencia</label><br>
+                        <input type="text" class="form-control" name="existence" id="existence"
+                            placeholder="Existencia" value="{{existence}}">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-6">               
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="invalidCheck2" name="inventory">
+                                <label class="form-check-label" for="invalidCheck2">
+                                    Usar inventario
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+  `;
+
+        document.getElementById('informationPopApi').style.display = 'flex';
+    }
+
+
+    function closeInformationPop() {
+        document.getElementById('informationPopApi').style.display = 'none';
+    }
+
+    async function create_new_product_flash(){
+        const loadingOverlay = document.getElementById("loadingOverlay");
+
+        //if in our api not exist this product, we will search in the API free
+        try {
+            loadingOverlay.style.display = "flex";
+            const data = {
+                barcode: document.getElementById("productBarcodePop").value,
+                name: document.getElementById("productNamePop").value,
+                sale_price: document.getElementById("productPricePop").value,
+                description: document.getElementById("productDescriptionPop").value,
+                idBranch: document.querySelector('input[name="idBranch"]').value,
+
+                purchase_amount: document.querySelector('input[name="purchase_amount"]').value,
+                purchase_unity: document.querySelector('select[name="purchase_unity"]').value,
+                purchase_price: document.querySelector('input[name="purchase_price"]').value,
+                currency_purchase: document.querySelector('select[name="currency_purchase"]').value,
+
+                sale_amount: document.querySelector('input[name="sale_amount"]').value,
+                sale_unity: document.querySelector('select[name="sale_unity"]').value,
+                currency_sale: document.querySelector('select[name="currency_sale"]').value,
+
+                max_inventory: document.querySelector('input[name="max_inventory"]').value,
+                minimum_inventory: document.querySelector('input[name="minimum_inventory"]').value,
+                unit_inventory: document.querySelector('select[name="unit_inventory"]').value,
+
+                existence: document.querySelector('input[name="existence"]').value,
+                inventory: document.querySelector('input[name="inventory"]').checked
+            };
+
+            // LLAMADA A TU BACKEND LOCAL
+            const response = await fetch(`/links/add_new_product_with_flask`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            closeInformationPop();
+            
+            if (result.code) {
+                notificationMessage(data.name+" agregado", result.message);
+                selectedProductData={}
+            } else {
+                errorMessage("El producto '"+data.name+"' no se pudo agregar", result.message);
+            }
+
+        } catch (error) {
+            console.error("💥 Error al crear producto Flash:", error);
+            errorMessage("💥 Error al crear producto Flash:", error);
+        } finally {
+            loadingOverlay.style.display = "none";
+        }    
+    }
+</script>
+<script>
+    // Escucha el evento "change" en el select "select-purchase-unity"
+    document.getElementById("select-purchase-unity").addEventListener("change", function () {
+        // Obtén el valor seleccionado
+        var selectedValue = this.value;
+
+        // Actualiza el select "select-unity" con el mismo valor
+        document.getElementById("select-unity").value = selectedValue;
+    });
+</script>
+<script>
+    // Escucha el evento 'change' en el checkbox "Usar inventario"
+    document.getElementById("invalidCheck2").addEventListener("change", function () {
+        // Obtén el estado del checkbox (checked o no)
+        var isChecked = this.checked;
+
+        // Obtén todos los elementos que deseas habilitar o deshabilitar
+        var inventoryFields = ["max_inventory", "minimum_inventory", "unit_inventory", "existence"];
+
+        // Itera sobre los campos de inventario y aplica las propiedades
+        inventoryFields.forEach(function (fieldId) {
+            var field = document.getElementById(fieldId);
+            field.disabled = !isChecked;  // Bloquea o desbloquea
+            if (!isChecked) field.value = "";  // Limpia el valor si está deshabilitado
+        });
+    });
+</script>
