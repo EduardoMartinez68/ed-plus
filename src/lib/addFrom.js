@@ -43,6 +43,23 @@ const s3 = new AWS.S3({
 
 const bucketName = APP_NYCE;
 */
+
+async function downloadImageFromUrl(url, filename) {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`Error al descargar imagen: ${res.statusText}`);
+
+    const destPath = path.join(__dirname, '../public/img/uploads', filename);
+    const fileStream = fs.createWriteStream(destPath);
+
+    await new Promise((resolve, reject) => {
+        res.body.pipe(fileStream);
+        res.body.on("error", reject);
+        fileStream.on("finish", resolve);
+    });
+
+    return `/img/uploads/${filename}`; // ruta para usar en tu app
+}
+
 async function upload_image_to_space(filePath, objectName) {
     //THIS IS FOR WHEN THE APPLICATION IS FOR DESKTOP
     const currentPath = path.basename(filePath);
@@ -220,6 +237,17 @@ async function create_a_new_image(req) {
 
         return imageUrl;
     }
+
+    if (req.body.imageUrl && req.body.imageUrl.startsWith('http')) {
+        const url = req.body.imageUrl.trim();
+        const cleanUrl = url.split('?')[0]; // ✅ eliminamos los parámetros
+        const extension = path.extname(cleanUrl) || '.jpg'; // por si no tiene extensión
+        const filename = Date.now() + extension;
+        const imageUrl = await downloadImageFromUrl(url, filename);
+        return imageUrl;
+    }
+
+
     return '';
 }
 

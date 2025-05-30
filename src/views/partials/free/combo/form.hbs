@@ -12,6 +12,7 @@
         <center>
         <label for="inputImg" class="custom-file-upload">
             <input type="file" name="image" accept="image/*" id="inputImg" style="display: none;">
+            <input type="text" name="imageUrl" id="imageUrl" class="form-control" placeholder="https://ejemplo.com/imagen.jpg" style="display: none;">
             <i class="fas fa-upload"></i> Subir imagen
         </label>
         </center>
@@ -384,6 +385,7 @@ function useProductData() {
     selectedProductData.description = document.getElementById('productDescriptionPop').value;
     selectedProductData.price = document.getElementById('productPricePop').value;
     selectedProductData.barcode = document.getElementById('productBarcodePop').value;
+    
 
     // Asignamos los datos al formulario
     document.querySelector('input[name="name"]').value = selectedProductData.name || "";
@@ -396,6 +398,9 @@ function useProductData() {
         document.getElementById('imgEmployee').src = selectedProductData.image_url;
         const inputFile = document.getElementById('inputImg');
         inputFile.dataset.loadedFromUrl = selectedProductData.image_url;
+
+
+        document.getElementById('imageUrl').value=selectedProductData.image_url || "";
     }
 
     // ⚠️ No se modifican los select de categoría y departamento

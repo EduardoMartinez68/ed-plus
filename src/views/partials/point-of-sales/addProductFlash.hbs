@@ -233,6 +233,7 @@
     function showInformationPop() {
         const container = document.getElementById('informationPopApiData');
         const imageUrl = selectedProductData.image_url || 'https://cdn-icons-png.flaticon.com/512/679/679922.png';
+        const img=selectedProductData.image_url;
         const data = selectedProductData || {};
         const idBranch = document.getElementById('id_branch').value || '';
 
@@ -241,6 +242,7 @@
                 <!-- Columna para la imagen -->
                 <div class="col-12 col-md-4 d-flex justify-content-center mb-4 mb-md-0">
                     <img src="${imageUrl}" alt="Imagen del producto" class="img-fluid" style="max-width: 100%; height: auto; border-radius: 12px; border: 1px solid #ddd;">
+                    <input type="text" name="imageUrl" id="imageUrl" class="form-control" placeholder="https://ejemplo.com/imagen.jpg" value="${img}" style="display: none;">
                 </div>
 
                 <!-- Columna para los campos de datos -->
@@ -377,6 +379,7 @@
         try {
             loadingOverlay.style.display = "flex";
             const data = {
+                imageUrl:document.getElementById("imageUrl").value,
                 barcode: document.getElementById("productBarcodePop").value,
                 name: document.getElementById("productNamePop").value,
                 sale_price: document.getElementById("productPricePop").value,
@@ -418,6 +421,8 @@
             }
 
         } catch (error) {
+            closeInformationPop();
+            selectedProductData={}
             console.error("💥 Error al crear producto Flash:", error);
             errorMessage("💥 Error al crear producto Flash:", error);
         } finally {
