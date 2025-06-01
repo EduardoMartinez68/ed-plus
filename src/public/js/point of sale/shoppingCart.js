@@ -196,7 +196,7 @@ async function buy_my_car() {
             await update_the_lots_of_the_product_in_the_car(id_customer);
 
             //we will print ticket
-            printTicket(total, moneyReceived, change, comment);
+            await printTicketScript(total, moneyReceived, change, comment);
 
             //this is for delete all the shooping cart
             cartItems.splice(0, cartItems.length);

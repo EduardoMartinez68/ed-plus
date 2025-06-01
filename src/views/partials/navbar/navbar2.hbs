@@ -30,32 +30,32 @@
 
 
                 <div class="container-app">
-                    <!--
-                        <div class="app-icon" onclick="nextWeb('/home')">
-                            <img src="https://cdn-icons-png.flaticon.com/512/5544/5544953.png" alt="Insumos">
-                            <span>Menu</span>
-                        </div>
-                        --->
-
                     <div class="app-icon" onclick="nextWeb('/home')">
-                        <img src="/img/apps/home.webp" alt="Insumos">
+                        <img src="/img/apps/home.webp" alt="Insumos" loading="lazy">
                         <span>Home</span>
                     </div>
 
                     {{#if user.app_point_sales}}
                     {{#each branchFree}}
-                    <div class="app-icon" onclick="nextWeb('/point-sales')">
-                        <img src="/img/apps/point_sales.webp" alt="Insumos">
+                    <div class="app-icon" onclick="nextWeb('/{{id_companies}}/{{id}}/point-sales')">
+                        <img src="/img/apps/point_sales.webp" alt="Insumos" loading="lazy">
                         <span>Punto de Venta</span>
                         <label class="shortcuts-label">F1</label>
                     </div>
+                    <!---
+                    <div class="app-icon" onclick="nextWeb('/point-sales')">
+                        <img src="/img/apps/point_sales.webp" alt="Insumos" loading="lazy">
+                        <span>Punto de Venta</span>
+                        <label class="shortcuts-label">F1</label>
+                    </div>
+                    --->
                     {{/each}}
                     {{/if}}
 
                     {{#if user.view_products}}
                     {{#each branchFree}}
                     <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/products-free')">
-                        <img src="/img/apps/products.webp" alt="Productos">
+                        <img src="/img/apps/products.webp" alt="Productos" loading="lazy">
                         <span>Productos</span>
                         <label class="shortcuts-label">F2</label>
                     </div>
@@ -66,7 +66,7 @@
                     {{#if user.view_products}}
                     {{#each branchFree}}
                     <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/boutique')">
-                        <img src="/img/apps/boutique.webp" alt="Productos">
+                        <img src="/img/apps/boutique.webp" alt="Productos" loading="lazy">
                         <span>Boutique</span>
                     </div>
                     {{/each}}
@@ -75,7 +75,7 @@
                     {{#if user.view_supplies}}
                     {{#each branchFree}}
                     <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/supplies-free')">
-                        <img src="/img/apps/supplies.webp" alt="Insumos">
+                        <img src="/img/apps/supplies.webp" alt="Insumos" loading="lazy">
                         <span>Insumos</span>
                         <label class="shortcuts-label">F3</label>
                     </div>
@@ -85,7 +85,7 @@
                     {{#if user.view_combo}}
                     {{#each branchFree}}
                     <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/combos-free')">
-                        <img src="/img/apps/combos.webp" alt="Combos">
+                        <img src="/img/apps/combos.webp" alt="Combos" loading="lazy">
                         <span>Combos</span>
                         <label class="shortcuts-label">F4</label>
                     </div>
@@ -96,7 +96,7 @@
                     {{#if user.view_inventory}}
                     {{#each branchFree}}
                     <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/inventory')">
-                        <img src="/img/apps/inventory.webp" alt="Impresoras">
+                        <img src="/img/apps/inventory.webp" alt="Impresoras" loading="lazy">
                         <span>Inventario</span>
                         <label class="shortcuts-label">F5</label>
                     </div>
@@ -106,7 +106,7 @@
                     {{#if user.edit_inventory}}
                     {{#each branchFree}}
                     <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/mass-product-adjustment')">
-                        <img src="/img/apps/stock.webp" alt="Impresoras">
+                        <img src="/img/apps/stock.webp" alt="Impresoras" loading="lazy">
                         <span>Stock</span>
                         <label class="shortcuts-label">F6</label>
                     </div>
@@ -136,7 +136,7 @@
                     {{#if user.view_food_departament}}
                     {{#each branchFree}}
                     <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/food-department-free')">
-                        <img src="/img/apps/food-department.webp" alt="Departamentos">
+                        <img src="/img/apps/food-department.webp" alt="Departamentos" loading="lazy">
                         <span>Departamento de productos</span>
                     </div>
                     {{/each}}
@@ -145,7 +145,7 @@
                     {{#if user.view_food_category}}
                     {{#each branchFree}}
                     <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/food-area-free')">
-                        <img src="/img/apps/food-area.webp" alt="Departamentos">
+                        <img src="/img/apps/food-area.webp" alt="Departamentos" loading="lazy">
                         <span>Categoría de productos</span>
                     </div>
                     {{/each}}
@@ -154,7 +154,7 @@
                     {{#if user.view_provider}}
                     {{#each branchFree}}
                     <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/providers-free')">
-                        <img src="/img/apps/providers.webp" alt="Proveedores">
+                        <img src="/img/apps/providers.webp" alt="Proveedores" loading="lazy">
                         <span>Proveedores</span>
                         <label class="shortcuts-label">F7</label>
                     </div>
@@ -164,7 +164,7 @@
                     {{#if user.report_to_cofepris}}
                     {{#each branchFree}}
                     <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/report-prescription')">
-                        <img src="/img/apps/prescription.webp" alt="Ventas">
+                        <img src="/img/apps/prescription.webp" alt="Ventas" loading="lazy">
                         <span>Reportes médicos</span>
                     </div>
                     {{/each}}
@@ -173,7 +173,7 @@
                     {{#if user.view_customer_credits}}
                     {{#each branchFree}}
                     <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/customers-company')">
-                        <img src="/img/apps/customers.webp" alt="Clientes">
+                        <img src="/img/apps/customers.webp" alt="Clientes" loading="lazy">
                         <span>Clientes</span>
                         <label class="shortcuts-label">F8</label>
                     </div>
@@ -203,7 +203,7 @@
                     {{#if user.view_employee}}
                     {{#each branchFree}}
                     <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/employees-branch')">
-                        <img src="/img/apps/employees.webp" alt="Empleados">
+                        <img src="/img/apps/employees.webp" alt="Empleados" loading="lazy">
                         <span>Empleados</span>
                         <label class="shortcuts-label">F9</label>
                     </div>
@@ -213,7 +213,7 @@
                     {{#if user.employee_department}}
                     {{#each branchFree}}
                     <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/employee-department')">
-                        <img src="/img/apps/employee-department.webp" alt="Departamento de empleados">
+                        <img src="/img/apps/employee-department.webp" alt="Departamento de empleados" loading="lazy">
                         <span>Departamento de empleados</span>
                     </div>
                     {{/each}}
@@ -221,7 +221,7 @@
                     {{#if user.employee_roles}}
                     {{#each branchFree}}
                     <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/type-employees-free')">
-                        <img src="/img/apps/type-employees.webp" alt="Roles de empleados">
+                        <img src="/img/apps/type-employees.webp" alt="Roles de empleados" loading="lazy">
                         <span>Roles y permisos</span>
                     </div>
                     {{/each}}
@@ -230,7 +230,7 @@
                     {{#if user.cut_box}}
                     {{#each branchFree}}
                     <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/cashCut')">
-                        <img src="https://cdn-icons-png.flaticon.com/512/8276/8276278.png" alt="Roles de empleados">
+                        <img src="https://cdn-icons-png.flaticon.com/512/8276/8276278.png" alt="Roles de empleados" loading="lazy">
                         <span>Cortes de Caja</span>
                         <label class="shortcuts-label">F10</label>
                     </div>
@@ -298,7 +298,7 @@
                     {{#if user.view_movement_history}}
                     {{#each branchFree}}
                     <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/0/sales')">
-                        <img src="/img/apps/sales.webp" alt="Ventas">
+                        <img src="/img/apps/sales.webp" alt="Ventas" loading="lazy">
                         <span>Ventas</span>
                     </div>
                     {{/each}}
@@ -307,7 +307,7 @@
                     {{#if user.view_movement_history}}
                     {{#each branchFree}}
                     <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/0/services')">
-                        <img src="/img/apps/services.webp" alt="Ventas">
+                        <img src="/img/apps/services.webp" alt="Ventas" loading="lazy">
                         <span>Pago de Servicios</span>
                     </div>
                     {{/each}}
@@ -316,7 +316,7 @@
                     {{#if user.view_movement_history}}
                     {{#each branchFree}}
                     <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/0/movements')">
-                        <img src="/img/apps/movements.webp" alt="Movimientos">
+                        <img src="/img/apps/movements.webp" alt="Movimientos" loading="lazy">
                         <span>Movimientos</span>
                     </div>
                     {{/each}}
@@ -345,7 +345,7 @@
                     {{#if user.view_reports}}
                     {{#each branchFree}}
                     <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/reports')">
-                        <img src="/img/apps/reports.webp" alt="Contabilidad">
+                        <img src="/img/apps/reports.webp" alt="Contabilidad" loading="lazy">
                         <span>Reportes</span>
                     </div>
                     {{/each}}
@@ -472,7 +472,7 @@
                     {{#if user.add_box}}
                     {{#each branchFree}}
                     <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/box')">
-                        <img src="/img/apps/box.webp" alt="Impresoras">
+                        <img src="/img/apps/box.webp" alt="Impresoras" loading="lazy">
                         <span>Impresoras</span>
                     </div>
                     {{/each}}
@@ -481,7 +481,7 @@
                     {{#if user.view_label}}
                     {{#each branchFree}}
                     <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/labels')">
-                        <img src="/img/apps/label.webp" alt="Impresoras">
+                        <img src="/img/apps/label.webp" alt="Impresoras" loading="lazy">
                         <span>Etiquetas</span>
                     </div>
                     {{/each}}
@@ -499,7 +499,7 @@
                     {{#if user.modify_hardware}}
                     {{#each branchFree}}
                     <div class="app-icon" onclick="nextWeb('{{id}}/{{id_companies}}/edit-branch-free')">
-                        <img src="/img/apps/editbranch.webp" alt="Editar Sucursal">
+                        <img src="/img/apps/editbranch.webp" alt="Editar Sucursal" loading="lazy">
                         <span>Editar Sucursal</span>
                     </div>
                     {{/each}}
@@ -508,7 +508,7 @@
                     {{#if user.give_permissions}}
                     {{#each branchFree}}
                     <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/options')">
-                        <img src="/img/apps/options.webp" alt="Departamentos">
+                        <img src="/img/apps/options.webp" alt="Departamentos" loading="lazy">
                         <span>Configuración</span>
                     </div>
                     {{/each}}
@@ -543,7 +543,7 @@
                         {{/each}}
                         --->
                     <div class="app-icon" onclick="nextWeb('logout')">
-                        <img src="/img/apps/logout.webp" alt="Áreas">
+                        <img src="/img/apps/logout.webp" alt="Áreas" loading="lazy">
                         <span>Cerrar Sesion</span>
                     </div>
                 </div>

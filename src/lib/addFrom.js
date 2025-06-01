@@ -44,6 +44,7 @@ const s3 = new AWS.S3({
 const bucketName = APP_NYCE;
 */
 
+const sharp = require('sharp'); //this is for resize the image and make like webp
 async function downloadImageFromUrl(url, filename) {
     const res = await fetch(url);
     if (!res.ok) throw new Error(`Error al descargar imagen: ${res.statusText}`);
@@ -58,6 +59,21 @@ async function downloadImageFromUrl(url, filename) {
     });
 
     return `/img/uploads/${filename}`; // ruta para usar en tu app
+
+    /*
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`Error al descargar imagen: ${res.statusText}`);
+
+    const buffer = await res.buffer(); // obtenemos la imagen como un buffer
+
+    const destPath = path.join(__dirname, '../public/img/uploads', `${filename}.webp`);
+
+    await sharp(buffer)
+        .webp({ quality: 80 }) // calidad ajustable, puedes usar 60–90 según lo que necesites
+        .toFile(destPath);
+
+    return `/img/uploads/${filename}.webp`;
+    */
 }
 
 async function upload_image_to_space(filePath, objectName) {
@@ -230,6 +246,49 @@ async function get_new_company(req) {
 }
 
 async function create_a_new_image(req) {
+    
+    if (req.file) {
+        const filePath = req.file.path;
+        const filenameWebp = path.parse(req.file.filename).name + '.webp';
+        const destPath = path.join(path.dirname(filePath), filenameWebp);
+
+        // Convierte la imagen a webp
+        await sharp(filePath)
+            .webp({ quality: 80 })  // Calidad 80, puedes ajustar
+            .toFile(destPath);
+
+        // Opcional: borrar el archivo original para ahorrar espacio
+        fs.unlinkSync(filePath);
+
+        // Subir o devolver la nueva imagen webp
+        const imageUrl = await upload_image_to_space(destPath, filenameWebp);
+        return imageUrl;
+    }
+
+    if (req.body.imageUrl && req.body.imageUrl.startsWith('http')) {
+        const url = req.body.imageUrl.trim();
+        const cleanUrl = url.split('?')[0];
+        // Siempre .webp porque vamos a convertir
+        const filename = Date.now() + '.webp';
+
+        // Descarga la imagen original en formato original primero
+        const originalPath = path.join(__dirname, '../public/img/uploads', 'temp_' + filename);
+        await downloadImageFromUrl(url, 'temp_' + filename);
+
+        // Convierte la imagen descargada a webp
+        const destPath = path.join(__dirname, '../public/img/uploads', filename);
+        await sharp(originalPath)
+            .webp({ quality: 80 })
+            .toFile(destPath);
+
+        // Borrar archivo original descargado
+        fs.unlinkSync(originalPath);
+
+        return `/img/uploads/${filename}`;
+    }
+
+    return '';
+    /*
     if (req.file) {
         const filePath = req.file.path;
         const objectName = req.file.filename;
@@ -241,7 +300,7 @@ async function create_a_new_image(req) {
     if (req.body.imageUrl && req.body.imageUrl.startsWith('http')) {
         const url = req.body.imageUrl.trim();
         const cleanUrl = url.split('?')[0]; // ✅ eliminamos los parámetros
-        const extension = path.extname(cleanUrl) || '.jpg'; // por si no tiene extensión
+        const extension = path.extname(cleanUrl) || '.webp'; // por si no tiene extensión
         const filename = Date.now() + extension;
         const imageUrl = await downloadImageFromUrl(url, filename);
         return imageUrl;
@@ -249,6 +308,7 @@ async function create_a_new_image(req) {
 
 
     return '';
+    */
 }
 
 //edit company 

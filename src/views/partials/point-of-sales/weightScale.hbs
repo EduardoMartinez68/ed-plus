@@ -226,38 +226,6 @@
         priceInput.value = (weight * pricePerKg).toFixed(2);
     }
 
-    // button for success
-    /*
-    acceptBtn.addEventListener('click', () => {
-        //get the value of the UI
-        const weight = parseFloat(weightInput.value) || 0;
-        const price = parseFloat(priceInput.value) || 0;
-        closeBalance(); //hidden the UI
-
-        //we will see if have a product save in the cash 
-        if (infoProductProduct) {
-
-        }
-    });
-
-    function open_ui_weight_scale(idProduct, product, price, price2, price3, weight) {
-        //update the information of the weight scale
-        pricePerKgText.textContent = `${weight} kg de ${product} = ${price} $`;
-        pricePerKg = (price / weight); //3kg==30
-
-        //show the UI of the weight scale
-        overlay.style.display = 'block';
-        balanceContainer.style.display = 'block';
-
-        //update the value of the product 
-        infoProductIdProduct = idProduct
-        infoProductProduct = product
-        infoProductPrice1 = price
-        infoProductPrice2 = price2
-        infoProductPrice3 = price3
-    }
-    */
-
     function open_ui_weight_scale(idProduct, product, price, price2, price3, weight) {
         return new Promise((resolve) => {
             // Actualizar la información en la UI

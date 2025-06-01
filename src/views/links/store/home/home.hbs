@@ -13,6 +13,7 @@
 
 
 {{>point-of-sales/recipe}}
+
 <!--this is the container of the point of sale-->
 <div class="container-point-of-sales">
     <!-- menu (left) -->
@@ -23,16 +24,10 @@
     {{>point-of-sales/shoppingCart}}
 </div>
 
-{{>point-of-sales/cfdi}}
+<!--services-->
 {{>point-of-sales/messagePop}}
 {{>point-of-sales/messagePopSales}}
 {{>point-of-sales/weightScale}}
-
-
-<!---js for print tickets--->
-<script src="/js/point of sale/JQuery.js"></script>
-<script src="/js/point of sale/escops.js"></script>
-<script src="/js/point of sale/tickets.js"></script>
 
 <!--SHOOPING CART--->
 <script src="/js/point of sale/shoppingCart.js"></script>
@@ -42,77 +37,7 @@
 
 
 
-
-<!------------------------->
-
-
-<!---this is the information for orden of send--->
 <script>
-    function get_data_order() {
-        const idBranch = parseInt(document.getElementById('id_branch').value);
-        const customerName = document.getElementById('customer-name').value || "";
-        const customerCellphone = document.getElementById('customer-cellphone').value || "";
-        const customerPhone = document.getElementById('customer-phone').value || "";
-        const customerAddress = document.getElementById('customer-address').value || "";
-        const customerComment = document.getElementById('customer-comment').value || "";
-
-        return {
-            idBranch: idBranch,
-            name: customerName,
-            cellphone: customerCellphone,
-            phone: customerPhone,
-            address: customerAddress,
-            comment: customerComment
-        };
-    }
-
-    function update_input_order(dataOrder) {
-        document.getElementById('customer-name').value = dataOrder[0];
-        document.getElementById('customer-cellphone').value = dataOrder[1];
-        document.getElementById('customer-phone').value = dataOrder[2];
-        document.getElementById('customer-address').value = dataOrder[3];
-        document.getElementById('customer-comment').value = dataOrder[4];
-
-        //show the information of send
-        var table = document.getElementById('table-order');
-        table.style.display = 'block';
-    }
-
-    function reset_input_order() {
-        document.getElementById('customer-name').value = "";
-        document.getElementById('customer-cellphone').value = "";
-        document.getElementById('customer-phone').value = "";
-        document.getElementById('customer-address').value = "";
-        document.getElementById('customer-comment').value = "";
-
-        //delete the information of send
-        var table = document.getElementById('table-order');
-        table.style.display = 'none';
-    }
-
-    async function create_new_order() {
-        //we will get the data of the order
-        const oldDataOrder = get_data_order()
-        const dataOrder = await show_create_new_order(oldDataOrder);
-        //we will if the user not delete the data 
-        if (dataOrder != null) {
-            //we will see if the data is complete 
-            if (dataOrder[0] != '' && dataOrder[3] != '') {
-                update_input_order(dataOrder); //update the value of the inpus of the send 
-            } else {
-                reset_input_order();
-                warningMessage('Error al guardar los datos', 'Asegúrate de que el envío tenga nombre del cliente y su dirección 👀');
-            }
-        } else {
-            if (await questionMessage('Borrar datos del envío', '¿Estás seguro de borrar los datos del envío? 🤔')) {
-                reset_input_order();
-                confirmationMessage('Datos del envío Borrados', 'Los datos del pedido para el repartidor han sido borrados exitosamente 👍');
-            }
-        }
-    }
-</script>
-<script>
-
     //this is for update the input that is selected in the sweet alert of teh car
     function selectInput(input) {
         var inputs = document.querySelectorAll('.input-buy'); //get all the input of the sweet
@@ -124,21 +49,6 @@
 </script>
 
 
-<!---this is for load the image if not exist a image in the card of the menu--->
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const defaultImage = '/img/icons_first/combo.webp';
-
-        // Get all card images
-        const cardImages = document.querySelectorAll('.card-img-top');
-
-        cardImages.forEach(img => {
-            if (!img.src || img.src === '') {
-                img.src = defaultImage;
-            }
-        });
-    });
-</script>
 
 <!---this is the information for orden of send--->
 <script src="/js/menu.js"></script>
@@ -146,6 +56,8 @@
 <script src="/js/search.js"></script>
 <script src="/js/store/cashMovement.js"></script>
 <script src="/js/store/return.js"></script>
+
+
 
 
 
@@ -158,21 +70,43 @@
 <script src="/js/desktop/bootstrap-nav.bundle.min.js"></script>
 
 
-<!---this is for load the image if not exist a image in the card of the menu--->
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const defaultImage = '/img/icons_first/combo.webp';
-
-        // Get all card images
-        const cardImages = document.querySelectorAll('.card-img-top');
-
-        cardImages.forEach(img => {
-            if (!img.src || img.src === '') {
-                img.src = defaultImage;
-            }
-        });
-    });
-</script>
 
 <script src="/js/point of sale/cashMovement.js"></script>
 <script src="/js/point of sale/return.js"></script>
+
+
+<script>
+    //-------------------we will see if the user would like not print ticket-------------------
+    function loadScript(src) {
+    return new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = src;
+        s.onload = resolve;
+        s.onerror = reject;
+        document.body.appendChild(s);
+    });
+    }
+
+    async function printTicketScript(total, moneyReceived, change, comment) {
+    //we will see if the user has selected a printer
+    
+    const selectPrinter=document.getElementById('dataPrinter');
+    const selectedPrinterValue = selectPrinter.value;
+    if (selectedPrinterValue === "") {
+        return; 
+    }
+    
+    const scripts = [
+        '/js/point of sale/JQuery.js',
+        '/js/point of sale/escops.js',
+        '/js/point of sale/tickets.js'
+    ];
+
+    for (const src of scripts) {
+        await loadScript(src);
+    }
+
+    printTicket(total, moneyReceived, change, comment); // ✅ Ya están cargados
+    console.log("Scripts loaded and printTicket called successfully.");
+    }
+</script>

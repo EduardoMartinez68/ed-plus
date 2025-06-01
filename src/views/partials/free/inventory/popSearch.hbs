@@ -245,7 +245,7 @@ function addProductToInventoryTable(product) {
           <input type="checkbox" class="product-check">
           <span class="checkmark"></span>
         </label>
-        <img src="${product.img}" class="product-img">
+        <img src="${product.img}" class="product-img" loading="lazy">
         <div class="product-text">
           <div class="barcode">${product.barcode}</div>
           <div class="name">${product.name}</div>
@@ -317,7 +317,7 @@ function update_table_search(products,supplies) {
     row.innerHTML = `
       <td idProduct="${product.id}" barcode="${product.barcode}" name="${product.name}" max_inventary="${product.max_inventary}" min_inventary="${product.minimum_inventory}" existence="${product.existence}" sale_unity="${product.sale_unity}" sale_price="${product.sale_price}">
         <div class="product-info">
-          <img src="${product.img ? product.img : '/img/icons_first/product.webp'}" class="product-img">
+          <img src="${product.img ? product.img : '/img/icons_first/product.webp'}" class="product-img" loading="lazy">
           <div class="product-text">
             <div class="barcode">${product.barcode}</div>
             <div class="name">${product.name}</div>

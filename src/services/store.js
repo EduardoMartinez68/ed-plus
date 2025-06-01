@@ -41,7 +41,7 @@ async function this_data_employee_is_user(req) {
 }
 
 async function get_all_dish_and_combo(idCompany, idBranch) {
-    const queryText = `
+    const queryText2 = `
         SELECT 
             i.*,
             d.barcode,
@@ -70,6 +70,37 @@ async function get_all_dish_and_combo(idCompany, idBranch) {
         LEFT JOIN "Inventory".lots l ON l.id_dish_and_combo_features = i.id
         WHERE i.id_branches = $1
         GROUP BY i.id, d.id;
+    `;
+    const queryText = `
+        SELECT 
+            i.*,
+            d.barcode,
+            d.name,
+            d.description,
+            d.img,
+            d.id_product_department,
+            d.id_product_category,
+            d.this_product_is_sold_in_bulk,
+            d.this_product_need_recipe,
+            COALESCE(
+                json_agg(
+                    jsonb_build_object(
+                        'id', l.id,
+                        'number_lote', l.number_lote,
+                        'initial_existence', l.initial_existence,
+                        'current_existence', l.current_existence,
+                        'date_of_manufacture', l.date_of_manufacture,
+                        'expiration_date', l.expiration_date
+                    )
+                    ORDER BY l.expiration_date ASC
+                ) FILTER (WHERE l.id IS NOT NULL), '[]'
+            ) AS lots
+        FROM "Inventory".dish_and_combo_features i
+        INNER JOIN "Kitchen".dishes_and_combos d ON i.id_dishes_and_combos = d.id
+        LEFT JOIN "Inventory".lots l ON l.id_dish_and_combo_features = i.id
+        WHERE i.id_branches = $1
+        GROUP BY i.id, d.id
+        LIMIT 20;
     `;
     var values = [idBranch];
     const result = await database.query(queryText, values);

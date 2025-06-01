@@ -148,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
       
           // Estructura principal del HTML
           card.innerHTML = `
-            <img src="${imgSrc}" alt="Producto" id="product-${product.id}">
+            <img src="${imgSrc}" alt="Producto" id="product-${product.id}" loading="lazy">
             <br>
             <label for="" class="card-text">$${product.price_1}</label>
             <div class="product-name-point-of-sales">${product.name}</div>

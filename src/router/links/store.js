@@ -108,6 +108,54 @@ router.get('/:id_user/:id_company/:id_branch/:id_employee/:id_role/store-home', 
     }
 });
 
+router.get('/:id_company/:id_branch/point-sales', isLoggedIn, async (req, res) => {
+    try {
+
+        const { id_company, id_branch } = req.params;
+
+        //we will see if the user not have the permission for this App.
+        if(!this_user_have_this_permission(req.user,id_company, id_branch,'app_point_sales')){
+            req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
+            return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
+        }
+
+        const branchFree = await get_data_branch(id_branch);
+        const dataEmployee = await get_data_employee(req);
+
+        const dishAndCombo = await get_all_dish_and_combo_without_lots(id_branch) //get_the_products_most_sales_additions(id_branch);
+        
+        /*
+        const newCombos = await get_data_recent_combos(id_company);
+        const mostSold = await get_all_data_combo_most_sold(id_branch);
+        const offerAd = await get_all_ad(id_branch, 'offer');
+        const newAd = await get_all_ad(id_branch, 'new');
+        const combosAd = await get_all_ad(id_branch, 'combo');
+        const specialsAd = await get_all_ad(id_branch, 'special');
+        */
+
+        const addition = '{"nombre": "Juan", "edad": 30, "ciudad": "Madrid"}'; // Ejemplo de datos adicionales
+        const boxes=await get_all_box_of_the_branch_with_his_id(id_branch);
+        const promotions=await get_all_the_promotions(id_branch);
+
+        //const productsSales=await get_all_products_in_sales(id_branch);
+        const dataCompany=await get_data_company_with_id(id_company);
+        const templateData = {
+            branchFree,
+            dishAndCombo,
+            dataEmployee,
+            boxes,
+            dataCompany,
+            promotions,
+            addition: JSON.stringify(addition)
+        };
+
+        res.render('links/store/home/home', templateData);
+    } catch (error) {
+        console.error('Error en la ruta store-home:', error);
+        res.render('error'); // Renderizar una página de error adecuada
+    }
+});
+
 
 router.get('/store-home', isLoggedIn, async (req, res) => {
     res.render('links/store/home/home');

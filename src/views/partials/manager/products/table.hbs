@@ -24,9 +24,9 @@
             {{#each products}}
                 <tr id="{{barcode}}">
                     {{#if img}}
-                        <td><img src="{{img}}" class="img-s-p"></td>
+                        <td><img src="{{img}}" class="img-s-p" loading="lazy"></td>
                     {{else}}
-                        <td><img src="/img/icons_first/product.webp" class="img-s-p"></td>
+                        <td><img src="/img/icons_first/product.webp" class="img-s-p" loading="lazy"></td>
                     {{/if}}
                     <td>{{barcode}}</td>
                     <td>{{name}}</td>
@@ -41,9 +41,9 @@
             {{#each supplies}}
                 <tr id="{{barcode}}">
                     {{#if img}}
-                        <td><img src="{{img}}" class="img-s-p"></td>
+                        <td><img src="{{img}}" class="img-s-p" loading="lazy"></td>
                     {{else}}
-                        <td><img src="/img/icons_first/product.webp" class="img-s-p"></td>
+                        <td><img src="/img/icons_first/product.webp" class="img-s-p" loading="lazy"></td>
                     {{/if}}
                     <td>{{barcode}}</td>
                     <td>{{name}}</td>

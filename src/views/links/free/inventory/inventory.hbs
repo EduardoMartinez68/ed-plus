@@ -135,7 +135,7 @@
       row.id = item.barcode;
 
       row.innerHTML = `
-            <td><img src="${item.img ? item.img : '/img/icons_first/product.webp'}" class="img-s-p"></td>
+            <td><img src="${item.img ? item.img : '/img/icons_first/product.webp'}" class="img-s-p" loading="lazy"></td>
             <td>${item.barcode}</td>
             <td>${item.name}</td>
             <td>${item.description}</td>

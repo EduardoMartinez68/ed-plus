@@ -7,9 +7,9 @@
                 <div class="card mb-4" onclick="select_employee('{{id_companies}}','{{id_users}}')" id="{{email}}">
                     <div class="card-body">
                         {{#if photo}}
-                            <img class="img-info" src="{{photo}}">
+                            <img class="img-info" src="{{photo}}" loading="lazy">
                         {{else}}
-                            <img class="img-info" src="https://cdn-icons-png.flaticon.com/512/2919/2919160.png">
+                            <img class="img-info" src="https://cdn-icons-png.flaticon.com/512/2919/2919160.png" loading="lazy">
                         {{/if}}
                         
                         <strong>{{first_name}} {{second_name}} {{last_name}}</strong>

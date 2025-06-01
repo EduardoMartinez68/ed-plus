@@ -35,9 +35,9 @@
     
                     <!--we will see if the product have a image-->
                     {{#if img}}
-                        <img src="{{img}}" alt="Producto 1" id="product-{{id}}">
+                        <img src="{{img}}" alt="Producto 1" id="product-{{id}}" loading="lazy">
                     {{else}}
-                        <img src="/img/icons_first/product.webp" alt="Producto 1" id="product-{{id}}">
+                        <img src="/img/icons_first/product.webp" alt="Producto 1" id="product-{{id}}" loading="lazy">
                     {{/if}}
                     <br>
                     <label for="" class="card-text">${{price_1}}</label>
@@ -82,7 +82,7 @@
             {{#each branchFree}}
                 <center>
                     <label for="">Parece que aún no existe nada en el menú.</label>
-                    <img src="/img/icons_first/notfile.webp" alt="Producto 1" id="product-{{id}}">
+                    <img src="/img/icons_first/notfile.webp" alt="Producto 1" id="product-{{id}}" loading="lazy">
                     <button class="btn btn-edit" onclick="nextWeb('/{{id_companies}}/{{id}}/add-products-free')">Agregar un Producto</button>
                 </center>
             {{/each}}
