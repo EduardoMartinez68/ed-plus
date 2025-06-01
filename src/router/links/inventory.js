@@ -29,7 +29,6 @@ const {
 const XLSX = require('xlsx');
 const path = require('path');
 const fs = require('fs');
-const { console } = require('inspector');
 
 router.get('/:id_company/:id_branch/mass-product-adjustment', isLoggedIn, async (req, res) => {
     const {id_company,id_branch}=req.params;
@@ -39,7 +38,6 @@ router.get('/:id_company/:id_branch/mass-product-adjustment', isLoggedIn, async 
         req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
         return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
     }
-
     const branchFree = await get_data_branch(id_branch);
     res.render('links/free/inventory/updateInventory.hbs',{branchFree});
 })

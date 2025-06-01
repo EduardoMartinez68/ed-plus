@@ -1,4 +1,5 @@
 //const Swal = require('sweetalert');
+/*
 function regularMessage(title, text) {
     Swal.fire({
         title: title,
@@ -98,6 +99,7 @@ function notificationMessageError(title, text) {
         icon: 'error'
     });
 }
+*/
 
 
 /////////////////////////////////departament//////////////////////////////////////////////

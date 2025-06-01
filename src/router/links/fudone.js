@@ -1,9 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const { isLoggedIn, isNotLoggedIn } = require('../../lib/auth');
+const database = require('../../database');
+const helpers=require('../../lib/helpers.js');
 
-/*
-*----------------------functions-----------------*/
+/**----------------------functions-----------------*/
+//functions branch
+const {
+    get_data_branch,
+    get_branch
+} = require('../../services/branch');
+
+
 //functions image
 const {
     get_path_img,
@@ -17,7 +25,6 @@ const {
 //functions supplies
 const {
     get_supplies_or_features,
-    get_inventory_branch,
     get_supplies_with_id,
     update_supplies_company,
     get_new_data_supplies_company,
@@ -34,11 +41,6 @@ const {
     get_inventory_supplies_branch
 } = require('../../services/supplies');
 
-//functions branch
-const {
-    get_data_branch,
-    get_branch
-} = require('../../services/branch');
 
 //functions branch
 const {
@@ -70,7 +72,7 @@ const {
 
 const {
     get_category,
-    delate_product_category,
+    delate_product_category
 } = require('../../services/foodCategory');
 
 const {
@@ -90,14 +92,12 @@ const {
     delete_provider
 } = require('../../services/providers');
 
-
 //functions permission
 const {
     this_user_have_this_permission
 } = require('../../services/permission');
 
-const database = require('../../database');
-const helpers=require('../../lib/helpers.js');
+
 
 const rolFree=0;
 
@@ -143,9 +143,13 @@ router.post('/this_user_is_admin', isLoggedIn, async (req, res) => {
         console.error('Error al verificar permisos del admin:', err);
         return res.status(500).json({ isAuthorized: false, message: 'Error interno del servidor', error: err });
     }
+    
 });
+
+
 /*
 *----------------------router-----------------*/
+
 router.get('/:id_user/:id_company/:id_branch/my-store', isLoggedIn, async (req, res) => {
     const { id_company, id_branch } = req.params;
 
@@ -167,6 +171,7 @@ router.get('/:id_user/:id_company/:id_branch/my-store', isLoggedIn, async (req, 
 
 //------------------------------------employees
 router.get('/:id_company/:id_branch/employees-free', isLoggedIn, async (req, res) => {
+    
     const { id_company, id_branch } = req.params;
 
     //we will see if the user have the permission for this App.
@@ -208,6 +213,7 @@ router.get('/:id_company/:id_branch/supplies-free', isLoggedIn, async (req, res)
 
 //------------------------------------products
 router.get('/:id_company/:id_branch/inventory', isLoggedIn, async (req, res) => {
+    console.log('------------------------hola----------------------------');
     const {id_company,id_branch } = req.params;
 
     //we will see if the user have the permission for this App.
@@ -962,6 +968,7 @@ router.get('/report-sales', isLoggedIn, (req, res) => {
 
     res.render("links/manager/reports/sales");
 })
+
 //------------------------------------food departament and category 
 router.get('/:id_company/:id_branch/food-department-free', isLoggedIn, async (req, res) => {
     const { id_company, id_branch} = req.params;
@@ -1129,10 +1136,7 @@ router.get('/:id_company/:id_branch/projects', isLoggedIn, async (req, res) => {
     res.render("links/projects/projects",{branchFree, apps});
 });
 
-
-
-
-
+/*
 //------------------------------------ED STUDIOS 
 const {
     get_all_apps_of_this_company,
@@ -1391,7 +1395,7 @@ router.get('/:id_company/:id_branch/:id_app/create-database', isLoggedIn, async 
     const myApps=await get_primary_keys_of_schema(id_company,id_branch)
     res.render('links/apps/studios', { branchFree, apps, myApps});
 })
-
+*/
 
 
 //------------------------------------options 

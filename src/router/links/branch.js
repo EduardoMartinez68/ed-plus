@@ -128,7 +128,6 @@ router.get('/:id_company/:id_branch/supplies', isLoggedIn, async (req, res) => {
 })
 
 router.get('/:id_company/:id_branch/:id_supplies/edit-supplies-branch', isLoggedIn, async (req, res) => {
-
     const { id_company, id_branch, id_supplies } = req.params;
 
     //we will see if the user have the permission for this App.

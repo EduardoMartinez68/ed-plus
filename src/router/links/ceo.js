@@ -61,7 +61,7 @@ const {
 //functions food category
 const {
     get_category,
-    delate_product_category,
+    delate_product_category
 } = require('../../services/foodCategory');
 
 //functions combos
@@ -123,11 +123,11 @@ const {
 const {
     check_company,
     check_company_other,
-    this_company_is_of_this_user,
+    this_company_is_of_this_user
 } = require('../../services/company');
 
 const {
-    search_customers,
+    search_customers
 } = require('../../services/customers');
 
 //functions permission

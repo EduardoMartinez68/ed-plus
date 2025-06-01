@@ -28,7 +28,7 @@ const {
 
 //functions branch
 const {
-    get_data_branch,
+    get_data_branch
 } = require('../../services/branch');
 
 

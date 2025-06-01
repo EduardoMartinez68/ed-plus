@@ -44,7 +44,7 @@ const {
 
 //functions customers
 const {
-    search_all_customers,
+    search_all_customers
 } = require('../../services/customers');
 
 //------------------------------------ED STUDIOS 
