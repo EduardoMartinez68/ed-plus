@@ -309,7 +309,7 @@ const createDatabase = async () => {
     const result = await adminPool.query("SELECT 1 FROM pg_database WHERE datname = 'edplus'");
     //we will see if the database exist
     if (result.rowCount === 0) {
-      await adminPool.query('CREATE DATABASE edplus'); //if not exist, we will create the database
+      await adminPool.query('CREATE DATABASE EDPLUS'); //if not exist, we will create the database
       importSQLFile(adminPool); //this is for import the database of EDPLUS.sql
       console.log('📦 Base de datos EDPLUS creada');
     } else {

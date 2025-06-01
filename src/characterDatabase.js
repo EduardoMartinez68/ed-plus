@@ -156,6 +156,13 @@ async function create_update_of_the_database(adminPool){
             ADD COLUMN IF NOT EXISTS token_email_notification TEXT,
             ADD COLUMN IF NOT EXISTS to_notification TEXT,
         
+            ADD COLUMN IF NOT EXISTS notification_cut_box BOOLEAN DEFAULT FALSE NOT NULL,
+            ADD COLUMN IF NOT EXISTS products_with_low_stock BOOLEAN DEFAULT FALSE NOT NULL,
+            ADD COLUMN IF NOT EXISTS there_are_products_out_of_stock BOOLEAN DEFAULT FALSE NOT NULL,
+            ADD COLUMN IF NOT EXISTS there_are_expired_products BOOLEAN DEFAULT FALSE NOT NULL,
+            ADD COLUMN IF NOT EXISTS an_employee_logged_in_outside_of_his_shift BOOLEAN DEFAULT FALSE NOT NULL,
+            ADD COLUMN IF NOT EXISTS notification_cut_box BOOLEAN DEFAULT FALSE NOT NULL,
+            ADD COLUMN IF NOT EXISTS notification_cut_box BOOLEAN DEFAULT FALSE NOT NULL,
             ADD COLUMN IF NOT EXISTS notification_cut_box BOOLEAN DEFAULT FALSE NOT NULL;
         END$$;
 

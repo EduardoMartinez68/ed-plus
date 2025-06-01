@@ -129,7 +129,8 @@ createDatabase(); //if not exist the database we will create the database
 const pgPool = new pg.Pool({
     user: APP_PG_USER,
     host: APP_PG_HOST,
-    database: APP_PG_DATABASE,
+    database: 'postgres', // base por defecto
+    //database: APP_PG_DATABASE,
     password: APP_PG_PASSWORD,
     port: APP_PG_PORT,
     /*

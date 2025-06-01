@@ -2,9 +2,6 @@
     <div class="card">
         <div class="card-body">
             <label for=""><i class="fi-icon fi-ss-bell"></i> Notificaciones</label>
-            {{#each branchFree}}
-            <label for="">1 {{email_notification}}</label>
-            {{/each}}
 
             {{#each branchFree}}
             <form id="form-notification">
@@ -45,6 +42,31 @@
                         <input class="form-check-input" type="checkbox" role="switch" id="notification_cut_box"
                             name="notification_cut_box" valueCheck="{{notification_cut_box}}" disabled>
                         <label class="form-check-label" for="notification_cut_box">Se crea un corte de caja</label>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" id="there_are_products_out_of_stock"
+                            name="there_are_products_out_of_stock" valueCheck="{{there_are_products_out_of_stock}}" disabled>
+                        <label class="form-check-label" for="notification_cut_box">Existan productos con bajo stock o agotados</label>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" id="there_are_expired_products"
+                            name="there_are_expired_products" valueCheck="{{there_are_expired_products}}" disabled>
+                        <label class="form-check-label" for="notification_cut_box">Existan productos vencidos o por vencer</label>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" id="an_employee_logged_in_outside_of_his_shift"
+                            name="an_employee_logged_in_outside_of_his_shift" valueCheck="{{an_employee_logged_in_outside_of_his_shift}}" disabled>
+                        <label class="form-check-label" for="notification_cut_box">Se inicio sesión por un empleado en horario no permitido</label>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" id="notification_cut_box"
+                            name="notification_cut_box" valueCheck="{{daily_summary}}" disabled>
+                        <label class="form-check-label" for="notification_cut_box">Resumen del dia anterior</label>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" id="weekly_summary"
+                            name="weekly_summary" valueCheck="{{weekly_summary}}" disabled>
+                        <label class="form-check-label" for="notification_cut_box">Resumen Semanal</label>
                     </div>
                 </div>
                 <!--
