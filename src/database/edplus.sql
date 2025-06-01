@@ -5,7 +5,7 @@
 -- Dumped from database version 15.2
 -- Dumped by pg_dump version 15.2
 
--- Started on 2025-05-24 18:28:16
+-- Started on 2025-06-01 12:56:37
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -188,7 +188,7 @@ CREATE SEQUENCE "Box".box_history_id_seq
 ALTER TABLE "Box".box_history_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4195 (class 0 OID 0)
+-- TOC entry 4203 (class 0 OID 0)
 -- Dependencies: 333
 -- Name: box_history_id_seq; Type: SEQUENCE OWNED BY; Schema: Box; Owner: postgres
 --
@@ -261,14 +261,15 @@ CREATE TABLE "Box".reachange_services (
     key_services text,
     service_money double precision NOT NULL,
     money_received double precision NOT NULL,
-    change double precision NOT NULL
+    change double precision NOT NULL,
+    time_sales timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 
 ALTER TABLE "Box".reachange_services OWNER TO postgres;
 
 --
--- TOC entry 4196 (class 0 OID 0)
+-- TOC entry 4204 (class 0 OID 0)
 -- Dependencies: 346
 -- Name: COLUMN reachange_services.key_services; Type: COMMENT; Schema: Box; Owner: postgres
 --
@@ -277,7 +278,7 @@ COMMENT ON COLUMN "Box".reachange_services.key_services IS 'this is the key that
 
 
 --
--- TOC entry 4197 (class 0 OID 0)
+-- TOC entry 4205 (class 0 OID 0)
 -- Dependencies: 346
 -- Name: COLUMN reachange_services.service_money; Type: COMMENT; Schema: Box; Owner: postgres
 --
@@ -301,7 +302,7 @@ CREATE SEQUENCE "Box".reachange_services_id_seq
 ALTER TABLE "Box".reachange_services_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4198 (class 0 OID 0)
+-- TOC entry 4206 (class 0 OID 0)
 -- Dependencies: 345
 -- Name: reachange_services_id_seq; Type: SEQUENCE OWNED BY; Schema: Box; Owner: postgres
 --
@@ -347,7 +348,7 @@ CREATE SEQUENCE "Box".sales_history_id_seq
 ALTER TABLE "Box".sales_history_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4199 (class 0 OID 0)
+-- TOC entry 4207 (class 0 OID 0)
 -- Dependencies: 231
 -- Name: sales_history_id_seq; Type: SEQUENCE OWNED BY; Schema: Box; Owner: postgres
 --
@@ -387,7 +388,7 @@ CREATE SEQUENCE "Branch"."Ad_id_seq"
 ALTER TABLE "Branch"."Ad_id_seq" OWNER TO postgres;
 
 --
--- TOC entry 4200 (class 0 OID 0)
+-- TOC entry 4208 (class 0 OID 0)
 -- Dependencies: 233
 -- Name: Ad_id_seq; Type: SEQUENCE OWNED BY; Schema: Branch; Owner: postgres
 --
@@ -432,7 +433,7 @@ CREATE SEQUENCE "Branch".app_id_seq
 ALTER TABLE "Branch".app_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4201 (class 0 OID 0)
+-- TOC entry 4209 (class 0 OID 0)
 -- Dependencies: 235
 -- Name: app_id_seq; Type: SEQUENCE OWNED BY; Schema: Branch; Owner: postgres
 --
@@ -476,7 +477,7 @@ CREATE SEQUENCE "Branch".billing_information_id_seq
 ALTER TABLE "Branch".billing_information_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4202 (class 0 OID 0)
+-- TOC entry 4210 (class 0 OID 0)
 -- Dependencies: 237
 -- Name: billing_information_id_seq; Type: SEQUENCE OWNED BY; Schema: Branch; Owner: postgres
 --
@@ -515,7 +516,7 @@ CREATE SEQUENCE "Branch".boxes_id_seq
 ALTER TABLE "Branch".boxes_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4203 (class 0 OID 0)
+-- TOC entry 4211 (class 0 OID 0)
 -- Dependencies: 239
 -- Name: boxes_id_seq; Type: SEQUENCE OWNED BY; Schema: Branch; Owner: postgres
 --
@@ -561,7 +562,7 @@ CREATE SEQUENCE "Branch".commanders_id_seq
 ALTER TABLE "Branch".commanders_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4204 (class 0 OID 0)
+-- TOC entry 4212 (class 0 OID 0)
 -- Dependencies: 241
 -- Name: commanders_id_seq; Type: SEQUENCE OWNED BY; Schema: Branch; Owner: postgres
 --
@@ -631,7 +632,7 @@ CREATE SEQUENCE "Branch".history_move_lot_id_seq
 ALTER TABLE "Branch".history_move_lot_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4205 (class 0 OID 0)
+-- TOC entry 4213 (class 0 OID 0)
 -- Dependencies: 339
 -- Name: history_move_lot_id_seq; Type: SEQUENCE OWNED BY; Schema: Branch; Owner: postgres
 --
@@ -673,7 +674,7 @@ CREATE SEQUENCE "Branch".labels_id_seq
 ALTER TABLE "Branch".labels_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4206 (class 0 OID 0)
+-- TOC entry 4214 (class 0 OID 0)
 -- Dependencies: 343
 -- Name: labels_id_seq; Type: SEQUENCE OWNED BY; Schema: Branch; Owner: postgres
 --
@@ -711,7 +712,7 @@ CREATE SEQUENCE "Branch".managers_id_seq
 ALTER TABLE "Branch".managers_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4207 (class 0 OID 0)
+-- TOC entry 4215 (class 0 OID 0)
 -- Dependencies: 244
 -- Name: managers_id_seq; Type: SEQUENCE OWNED BY; Schema: Branch; Owner: postgres
 --
@@ -756,7 +757,7 @@ CREATE SEQUENCE "Branch".order_id_seq
 ALTER TABLE "Branch".order_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4208 (class 0 OID 0)
+-- TOC entry 4216 (class 0 OID 0)
 -- Dependencies: 246
 -- Name: order_id_seq; Type: SEQUENCE OWNED BY; Schema: Branch; Owner: postgres
 --
@@ -799,7 +800,7 @@ CREATE SEQUENCE "Branch".pack_reservation_id_seq
 ALTER TABLE "Branch".pack_reservation_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4209 (class 0 OID 0)
+-- TOC entry 4217 (class 0 OID 0)
 -- Dependencies: 248
 -- Name: pack_reservation_id_seq; Type: SEQUENCE OWNED BY; Schema: Branch; Owner: postgres
 --
@@ -848,7 +849,7 @@ CREATE SEQUENCE "Branch".prescription_id_seq
 ALTER TABLE "Branch".prescription_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4210 (class 0 OID 0)
+-- TOC entry 4218 (class 0 OID 0)
 -- Dependencies: 337
 -- Name: prescription_id_seq; Type: SEQUENCE OWNED BY; Schema: Branch; Owner: postgres
 --
@@ -906,7 +907,7 @@ CREATE SEQUENCE "Branch".providers_id_seq
 ALTER TABLE "Branch".providers_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4211 (class 0 OID 0)
+-- TOC entry 4219 (class 0 OID 0)
 -- Dependencies: 250
 -- Name: providers_id_seq; Type: SEQUENCE OWNED BY; Schema: Branch; Owner: postgres
 --
@@ -955,7 +956,7 @@ CREATE SEQUENCE "Branch".reservation_id_seq
 ALTER TABLE "Branch".reservation_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4212 (class 0 OID 0)
+-- TOC entry 4220 (class 0 OID 0)
 -- Dependencies: 252
 -- Name: reservation_id_seq; Type: SEQUENCE OWNED BY; Schema: Branch; Owner: postgres
 --
@@ -995,7 +996,7 @@ CREATE SEQUENCE "Branch".restaurant_area_id_seq
 ALTER TABLE "Branch".restaurant_area_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4213 (class 0 OID 0)
+-- TOC entry 4221 (class 0 OID 0)
 -- Dependencies: 254
 -- Name: restaurant_area_id_seq; Type: SEQUENCE OWNED BY; Schema: Branch; Owner: postgres
 --
@@ -1036,7 +1037,7 @@ CREATE SEQUENCE "Branch".tables_id_seq
 ALTER TABLE "Branch".tables_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4214 (class 0 OID 0)
+-- TOC entry 4222 (class 0 OID 0)
 -- Dependencies: 256
 -- Name: tables_id_seq; Type: SEQUENCE OWNED BY; Schema: Branch; Owner: postgres
 --
@@ -1083,7 +1084,7 @@ CREATE SEQUENCE "CRM".appointment_id_seq
 ALTER TABLE "CRM".appointment_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4215 (class 0 OID 0)
+-- TOC entry 4223 (class 0 OID 0)
 -- Dependencies: 312
 -- Name: appointment_id_seq; Type: SEQUENCE OWNED BY; Schema: CRM; Owner: postgres
 --
@@ -1124,7 +1125,7 @@ CREATE SEQUENCE "CRM".history_prospects_id_seq
 ALTER TABLE "CRM".history_prospects_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4216 (class 0 OID 0)
+-- TOC entry 4224 (class 0 OID 0)
 -- Dependencies: 319
 -- Name: history_prospects_id_seq; Type: SEQUENCE OWNED BY; Schema: CRM; Owner: postgres
 --
@@ -1163,7 +1164,7 @@ CREATE SEQUENCE "CRM".product_to_sell_id_seq
 ALTER TABLE "CRM".product_to_sell_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4217 (class 0 OID 0)
+-- TOC entry 4225 (class 0 OID 0)
 -- Dependencies: 308
 -- Name: product_to_sell_id_seq; Type: SEQUENCE OWNED BY; Schema: CRM; Owner: postgres
 --
@@ -1227,7 +1228,7 @@ CREATE SEQUENCE "CRM".prospects_id_seq
 ALTER TABLE "CRM".prospects_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4218 (class 0 OID 0)
+-- TOC entry 4226 (class 0 OID 0)
 -- Dependencies: 314
 -- Name: prospects_id_seq; Type: SEQUENCE OWNED BY; Schema: CRM; Owner: postgres
 --
@@ -1266,7 +1267,7 @@ CREATE SEQUENCE "CRM".sales_stage_id_seq
 ALTER TABLE "CRM".sales_stage_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4219 (class 0 OID 0)
+-- TOC entry 4227 (class 0 OID 0)
 -- Dependencies: 306
 -- Name: sales_stage_id_seq; Type: SEQUENCE OWNED BY; Schema: CRM; Owner: postgres
 --
@@ -1305,7 +1306,7 @@ CREATE SEQUENCE "CRM".sales_team_id_seq
 ALTER TABLE "CRM".sales_team_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4220 (class 0 OID 0)
+-- TOC entry 4228 (class 0 OID 0)
 -- Dependencies: 310
 -- Name: sales_team_id_seq; Type: SEQUENCE OWNED BY; Schema: CRM; Owner: postgres
 --
@@ -1346,7 +1347,7 @@ CREATE SEQUENCE "Chat".chats_id_chat_seq
 ALTER TABLE "Chat".chats_id_chat_seq OWNER TO postgres;
 
 --
--- TOC entry 4221 (class 0 OID 0)
+-- TOC entry 4229 (class 0 OID 0)
 -- Dependencies: 321
 -- Name: chats_id_chat_seq; Type: SEQUENCE OWNED BY; Schema: Chat; Owner: postgres
 --
@@ -1387,7 +1388,7 @@ CREATE SEQUENCE "Chat".message_status_id_status_seq
 ALTER TABLE "Chat".message_status_id_status_seq OWNER TO postgres;
 
 --
--- TOC entry 4222 (class 0 OID 0)
+-- TOC entry 4230 (class 0 OID 0)
 -- Dependencies: 326
 -- Name: message_status_id_status_seq; Type: SEQUENCE OWNED BY; Schema: Chat; Owner: postgres
 --
@@ -1428,7 +1429,7 @@ CREATE SEQUENCE "Chat".messages_id_message_seq
 ALTER TABLE "Chat".messages_id_message_seq OWNER TO postgres;
 
 --
--- TOC entry 4223 (class 0 OID 0)
+-- TOC entry 4231 (class 0 OID 0)
 -- Dependencies: 324
 -- Name: messages_id_message_seq; Type: SEQUENCE OWNED BY; Schema: Chat; Owner: postgres
 --
@@ -1479,7 +1480,16 @@ CREATE TABLE "Company".branches (
     employee_schedules date DEFAULT (CURRENT_DATE + '15 days'::interval),
     user_prontipagos character varying(60),
     password_prontipagos text,
-    iv_for_password text
+    iv_for_password text,
+    notification_for_email boolean DEFAULT false NOT NULL,
+    email_notification text,
+    token_email_notification text,
+    to_notification text,
+    notification_cut_box boolean DEFAULT false NOT NULL,
+    products_with_low_stock boolean DEFAULT false NOT NULL,
+    there_are_products_out_of_stock boolean DEFAULT false NOT NULL,
+    there_are_expired_products boolean DEFAULT false NOT NULL,
+    an_employee_logged_in_outside_of_his_shift boolean DEFAULT false NOT NULL
 );
 
 
@@ -1501,7 +1511,7 @@ CREATE SEQUENCE "Company".branches_id_seq
 ALTER TABLE "Company".branches_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4224 (class 0 OID 0)
+-- TOC entry 4232 (class 0 OID 0)
 -- Dependencies: 258
 -- Name: branches_id_seq; Type: SEQUENCE OWNED BY; Schema: Company; Owner: postgres
 --
@@ -1560,7 +1570,7 @@ CREATE SEQUENCE "Company".customers_id_seq
 ALTER TABLE "Company".customers_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4225 (class 0 OID 0)
+-- TOC entry 4233 (class 0 OID 0)
 -- Dependencies: 260
 -- Name: customers_id_seq; Type: SEQUENCE OWNED BY; Schema: Company; Owner: postgres
 --
@@ -1609,7 +1619,7 @@ CREATE SEQUENCE "Company".employees_id_seq
 ALTER TABLE "Company".employees_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4226 (class 0 OID 0)
+-- TOC entry 4234 (class 0 OID 0)
 -- Dependencies: 262
 -- Name: employees_id_seq; Type: SEQUENCE OWNED BY; Schema: Company; Owner: postgres
 --
@@ -1648,7 +1658,7 @@ CREATE SEQUENCE "Employee".departments_employees_id_seq
 ALTER TABLE "Employee".departments_employees_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4227 (class 0 OID 0)
+-- TOC entry 4235 (class 0 OID 0)
 -- Dependencies: 264
 -- Name: departments_employees_id_seq; Type: SEQUENCE OWNED BY; Schema: Employee; Owner: postgres
 --
@@ -1689,7 +1699,7 @@ CREATE SEQUENCE "Employee".history_schedules_id_seq
 ALTER TABLE "Employee".history_schedules_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4228 (class 0 OID 0)
+-- TOC entry 4236 (class 0 OID 0)
 -- Dependencies: 266
 -- Name: history_schedules_id_seq; Type: SEQUENCE OWNED BY; Schema: Employee; Owner: postgres
 --
@@ -1801,7 +1811,8 @@ CREATE TABLE "Employee".roles_employees (
     edit_promotions boolean DEFAULT false NOT NULL,
     delete_promotions boolean DEFAULT false NOT NULL,
     cut_box boolean DEFAULT false NOT NULL,
-    report_to_cofepris boolean DEFAULT false NOT NULL
+    report_to_cofepris boolean DEFAULT false NOT NULL,
+    add_product_flash boolean DEFAULT true NOT NULL
 );
 
 
@@ -1823,7 +1834,7 @@ CREATE SEQUENCE "Employee".roles_employees_id_seq
 ALTER TABLE "Employee".roles_employees_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4229 (class 0 OID 0)
+-- TOC entry 4237 (class 0 OID 0)
 -- Dependencies: 268
 -- Name: roles_employees_id_seq; Type: SEQUENCE OWNED BY; Schema: Employee; Owner: postgres
 --
@@ -1885,7 +1896,7 @@ CREATE SEQUENCE "Employee".schedules_id_seq
 ALTER TABLE "Employee".schedules_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4230 (class 0 OID 0)
+-- TOC entry 4238 (class 0 OID 0)
 -- Dependencies: 270
 -- Name: schedules_id_seq; Type: SEQUENCE OWNED BY; Schema: Employee; Owner: postgres
 --
@@ -1922,7 +1933,7 @@ CREATE SEQUENCE "Fud".country_id_seq
 ALTER TABLE "Fud".country_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4231 (class 0 OID 0)
+-- TOC entry 4239 (class 0 OID 0)
 -- Dependencies: 272
 -- Name: country_id_seq; Type: SEQUENCE OWNED BY; Schema: Fud; Owner: postgres
 --
@@ -1944,7 +1955,7 @@ CREATE TABLE "Fud".packs_fud (
 ALTER TABLE "Fud".packs_fud OWNER TO postgres;
 
 --
--- TOC entry 4232 (class 0 OID 0)
+-- TOC entry 4240 (class 0 OID 0)
 -- Dependencies: 273
 -- Name: COLUMN packs_fud.id; Type: COMMENT; Schema: Fud; Owner: postgres
 --
@@ -1998,7 +2009,7 @@ CREATE SEQUENCE "Fud".tokens_id_seq
 ALTER TABLE "Fud".tokens_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4233 (class 0 OID 0)
+-- TOC entry 4241 (class 0 OID 0)
 -- Dependencies: 276
 -- Name: tokens_id_seq; Type: SEQUENCE OWNED BY; Schema: Fud; Owner: postgres
 --
@@ -2035,7 +2046,7 @@ CREATE TABLE "Fud".users (
 ALTER TABLE "Fud".users OWNER TO postgres;
 
 --
--- TOC entry 4234 (class 0 OID 0)
+-- TOC entry 4242 (class 0 OID 0)
 -- Dependencies: 277
 -- Name: COLUMN users.rol_user; Type: COMMENT; Schema: Fud; Owner: postgres
 --
@@ -2044,7 +2055,7 @@ COMMENT ON COLUMN "Fud".users.rol_user IS '0--customer,1--emplooyes,2--manager,3
 
 
 --
--- TOC entry 4235 (class 0 OID 0)
+-- TOC entry 4243 (class 0 OID 0)
 -- Dependencies: 277
 -- Name: COLUMN users.id_packs_fud; Type: COMMENT; Schema: Fud; Owner: postgres
 --
@@ -2068,7 +2079,7 @@ CREATE SEQUENCE "Fud".users_id_seq
 ALTER TABLE "Fud".users_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4236 (class 0 OID 0)
+-- TOC entry 4244 (class 0 OID 0)
 -- Dependencies: 278
 -- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: Fud; Owner: postgres
 --
@@ -2114,7 +2125,7 @@ CREATE SEQUENCE "Inventory".boutique_id_seq
 ALTER TABLE "Inventory".boutique_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4237 (class 0 OID 0)
+-- TOC entry 4245 (class 0 OID 0)
 -- Dependencies: 329
 -- Name: boutique_id_seq; Type: SEQUENCE OWNED BY; Schema: Inventory; Owner: postgres
 --
@@ -2167,7 +2178,7 @@ CREATE SEQUENCE "Inventory".dish_and_combo_features_id_seq
 ALTER TABLE "Inventory".dish_and_combo_features_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4238 (class 0 OID 0)
+-- TOC entry 4246 (class 0 OID 0)
 -- Dependencies: 280
 -- Name: dish_and_combo_features_id_seq; Type: SEQUENCE OWNED BY; Schema: Inventory; Owner: postgres
 --
@@ -2211,7 +2222,7 @@ CREATE SEQUENCE "Inventory".lots_id_seq
 ALTER TABLE "Inventory".lots_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4239 (class 0 OID 0)
+-- TOC entry 4247 (class 0 OID 0)
 -- Dependencies: 335
 -- Name: lots_id_seq; Type: SEQUENCE OWNED BY; Schema: Inventory; Owner: postgres
 --
@@ -2261,7 +2272,7 @@ CREATE SEQUENCE "Inventory".product_and_suppiles_features_id_seq
 ALTER TABLE "Inventory".product_and_suppiles_features_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4240 (class 0 OID 0)
+-- TOC entry 4248 (class 0 OID 0)
 -- Dependencies: 282
 -- Name: product_and_suppiles_features_id_seq; Type: SEQUENCE OWNED BY; Schema: Inventory; Owner: postgres
 --
@@ -2309,7 +2320,7 @@ CREATE SEQUENCE "Inventory".promotions_id_seq
 ALTER TABLE "Inventory".promotions_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4241 (class 0 OID 0)
+-- TOC entry 4249 (class 0 OID 0)
 -- Dependencies: 341
 -- Name: promotions_id_seq; Type: SEQUENCE OWNED BY; Schema: Inventory; Owner: postgres
 --
@@ -2348,7 +2359,7 @@ CREATE SEQUENCE "Inventory".table_boutique_id_seq
 ALTER TABLE "Inventory".table_boutique_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4242 (class 0 OID 0)
+-- TOC entry 4250 (class 0 OID 0)
 -- Dependencies: 331
 -- Name: table_boutique_id_seq; Type: SEQUENCE OWNED BY; Schema: Inventory; Owner: postgres
 --
@@ -2388,7 +2399,7 @@ CREATE SEQUENCE "Inventory".table_supplies_dish_id_seq
 ALTER TABLE "Inventory".table_supplies_dish_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4243 (class 0 OID 0)
+-- TOC entry 4251 (class 0 OID 0)
 -- Dependencies: 284
 -- Name: table_supplies_dish_id_seq; Type: SEQUENCE OWNED BY; Schema: Inventory; Owner: postgres
 --
@@ -2426,7 +2437,7 @@ CREATE SEQUENCE "Inventory".table_taxes_id_seq
 ALTER TABLE "Inventory".table_taxes_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4244 (class 0 OID 0)
+-- TOC entry 4252 (class 0 OID 0)
 -- Dependencies: 286
 -- Name: table_taxes_id_seq; Type: SEQUENCE OWNED BY; Schema: Inventory; Owner: postgres
 --
@@ -2467,7 +2478,7 @@ CREATE SEQUENCE "Inventory".taxes_id_seq
 ALTER TABLE "Inventory".taxes_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4245 (class 0 OID 0)
+-- TOC entry 4253 (class 0 OID 0)
 -- Dependencies: 288
 -- Name: taxes_id_seq; Type: SEQUENCE OWNED BY; Schema: Inventory; Owner: postgres
 --
@@ -2528,7 +2539,7 @@ CREATE SEQUENCE "Kitchen".dishes_and_combos_id_serial_seq1
 ALTER TABLE "Kitchen".dishes_and_combos_id_serial_seq1 OWNER TO postgres;
 
 --
--- TOC entry 4246 (class 0 OID 0)
+-- TOC entry 4254 (class 0 OID 0)
 -- Dependencies: 290
 -- Name: dishes_and_combos_id_serial_seq1; Type: SEQUENCE OWNED BY; Schema: Kitchen; Owner: postgres
 --
@@ -2567,7 +2578,7 @@ CREATE SEQUENCE "Kitchen".product_category_id_seq
 ALTER TABLE "Kitchen".product_category_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4247 (class 0 OID 0)
+-- TOC entry 4255 (class 0 OID 0)
 -- Dependencies: 292
 -- Name: product_category_id_seq; Type: SEQUENCE OWNED BY; Schema: Kitchen; Owner: postgres
 --
@@ -2606,7 +2617,7 @@ CREATE SEQUENCE "Kitchen".product_department_id_seq
 ALTER TABLE "Kitchen".product_department_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4248 (class 0 OID 0)
+-- TOC entry 4256 (class 0 OID 0)
 -- Dependencies: 294
 -- Name: product_department_id_seq; Type: SEQUENCE OWNED BY; Schema: Kitchen; Owner: postgres
 --
@@ -2649,7 +2660,7 @@ CREATE SEQUENCE "Kitchen".products_and_supplies_id_seq
 ALTER TABLE "Kitchen".products_and_supplies_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4249 (class 0 OID 0)
+-- TOC entry 4257 (class 0 OID 0)
 -- Dependencies: 296
 -- Name: products_and_supplies_id_seq; Type: SEQUENCE OWNED BY; Schema: Kitchen; Owner: postgres
 --
@@ -2704,7 +2715,7 @@ CREATE SEQUENCE "Kitchen".table_supplies_combo_id_seq
 ALTER TABLE "Kitchen".table_supplies_combo_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4250 (class 0 OID 0)
+-- TOC entry 4258 (class 0 OID 0)
 -- Dependencies: 299
 -- Name: table_supplies_combo_id_seq; Type: SEQUENCE OWNED BY; Schema: Kitchen; Owner: postgres
 --
@@ -2786,7 +2797,7 @@ CREATE SEQUENCE "User".companies_id_seq
 ALTER TABLE "User".companies_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4251 (class 0 OID 0)
+-- TOC entry 4259 (class 0 OID 0)
 -- Dependencies: 303
 -- Name: companies_id_seq; Type: SEQUENCE OWNED BY; Schema: User; Owner: postgres
 --
@@ -2813,7 +2824,7 @@ CREATE TABLE "User".subscription (
 ALTER TABLE "User".subscription OWNER TO postgres;
 
 --
--- TOC entry 4252 (class 0 OID 0)
+-- TOC entry 4260 (class 0 OID 0)
 -- Dependencies: 304
 -- Name: COLUMN subscription.id_packs_fud; Type: COMMENT; Schema: User; Owner: postgres
 --
@@ -2851,7 +2862,7 @@ CREATE SEQUENCE _company_1_branch_8.alumnos_id_seq
 ALTER TABLE _company_1_branch_8.alumnos_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4253 (class 0 OID 0)
+-- TOC entry 4261 (class 0 OID 0)
 -- Dependencies: 317
 -- Name: alumnos_id_seq; Type: SEQUENCE OWNED BY; Schema: _company_1_branch_8; Owner: postgres
 --
@@ -2893,7 +2904,7 @@ CREATE TABLE public.session (
 ALTER TABLE public.session OWNER TO postgres;
 
 --
--- TOC entry 3676 (class 2604 OID 112640)
+-- TOC entry 3683 (class 2604 OID 112640)
 -- Name: box_history id; Type: DEFAULT; Schema: Box; Owner: postgres
 --
 
@@ -2901,7 +2912,7 @@ ALTER TABLE ONLY "Box".box_history ALTER COLUMN id SET DEFAULT nextval('"Box".bo
 
 
 --
--- TOC entry 3687 (class 2604 OID 130505)
+-- TOC entry 3694 (class 2604 OID 130505)
 -- Name: reachange_services id; Type: DEFAULT; Schema: Box; Owner: postgres
 --
 
@@ -2957,7 +2968,7 @@ ALTER TABLE ONLY "Branch".commanders ALTER COLUMN id SET DEFAULT nextval('"Branc
 
 
 --
--- TOC entry 3681 (class 2604 OID 112931)
+-- TOC entry 3688 (class 2604 OID 112931)
 -- Name: history_move_lot id; Type: DEFAULT; Schema: Branch; Owner: postgres
 --
 
@@ -2965,7 +2976,7 @@ ALTER TABLE ONLY "Branch".history_move_lot ALTER COLUMN id SET DEFAULT nextval('
 
 
 --
--- TOC entry 3686 (class 2604 OID 122294)
+-- TOC entry 3693 (class 2604 OID 122294)
 -- Name: labels id; Type: DEFAULT; Schema: Branch; Owner: postgres
 --
 
@@ -2997,7 +3008,7 @@ ALTER TABLE ONLY "Branch".pack_reservation ALTER COLUMN id SET DEFAULT nextval('
 
 
 --
--- TOC entry 3680 (class 2604 OID 112836)
+-- TOC entry 3687 (class 2604 OID 112836)
 -- Name: prescription id; Type: DEFAULT; Schema: Branch; Owner: postgres
 --
 
@@ -3037,7 +3048,7 @@ ALTER TABLE ONLY "Branch".tables ALTER COLUMN id SET DEFAULT nextval('"Branch".t
 
 
 --
--- TOC entry 3656 (class 2604 OID 103593)
+-- TOC entry 3663 (class 2604 OID 103593)
 -- Name: appointment id; Type: DEFAULT; Schema: CRM; Owner: postgres
 --
 
@@ -3045,7 +3056,7 @@ ALTER TABLE ONLY "CRM".appointment ALTER COLUMN id SET DEFAULT nextval('"CRM".ap
 
 
 --
--- TOC entry 3665 (class 2604 OID 111970)
+-- TOC entry 3672 (class 2604 OID 111970)
 -- Name: history_prospects id; Type: DEFAULT; Schema: CRM; Owner: postgres
 --
 
@@ -3053,7 +3064,7 @@ ALTER TABLE ONLY "CRM".history_prospects ALTER COLUMN id SET DEFAULT nextval('"C
 
 
 --
--- TOC entry 3652 (class 2604 OID 103577)
+-- TOC entry 3659 (class 2604 OID 103577)
 -- Name: product_to_sell id; Type: DEFAULT; Schema: CRM; Owner: postgres
 --
 
@@ -3061,7 +3072,7 @@ ALTER TABLE ONLY "CRM".product_to_sell ALTER COLUMN id SET DEFAULT nextval('"CRM
 
 
 --
--- TOC entry 3657 (class 2604 OID 103602)
+-- TOC entry 3664 (class 2604 OID 103602)
 -- Name: prospects id; Type: DEFAULT; Schema: CRM; Owner: postgres
 --
 
@@ -3069,7 +3080,7 @@ ALTER TABLE ONLY "CRM".prospects ALTER COLUMN id SET DEFAULT nextval('"CRM".pros
 
 
 --
--- TOC entry 3650 (class 2604 OID 103569)
+-- TOC entry 3657 (class 2604 OID 103569)
 -- Name: sales_stage id; Type: DEFAULT; Schema: CRM; Owner: postgres
 --
 
@@ -3077,7 +3088,7 @@ ALTER TABLE ONLY "CRM".sales_stage ALTER COLUMN id SET DEFAULT nextval('"CRM".sa
 
 
 --
--- TOC entry 3654 (class 2604 OID 103585)
+-- TOC entry 3661 (class 2604 OID 103585)
 -- Name: sales_team id; Type: DEFAULT; Schema: CRM; Owner: postgres
 --
 
@@ -3085,7 +3096,7 @@ ALTER TABLE ONLY "CRM".sales_team ALTER COLUMN id SET DEFAULT nextval('"CRM".sal
 
 
 --
--- TOC entry 3667 (class 2604 OID 111991)
+-- TOC entry 3674 (class 2604 OID 111991)
 -- Name: chats id_chat; Type: DEFAULT; Schema: Chat; Owner: postgres
 --
 
@@ -3093,7 +3104,7 @@ ALTER TABLE ONLY "Chat".chats ALTER COLUMN id_chat SET DEFAULT nextval('"Chat".c
 
 
 --
--- TOC entry 3671 (class 2604 OID 112034)
+-- TOC entry 3678 (class 2604 OID 112034)
 -- Name: message_status id_status; Type: DEFAULT; Schema: Chat; Owner: postgres
 --
 
@@ -3101,7 +3112,7 @@ ALTER TABLE ONLY "Chat".message_status ALTER COLUMN id_status SET DEFAULT nextva
 
 
 --
--- TOC entry 3669 (class 2604 OID 112014)
+-- TOC entry 3676 (class 2604 OID 112014)
 -- Name: messages id_message; Type: DEFAULT; Schema: Chat; Owner: postgres
 --
 
@@ -3117,7 +3128,7 @@ ALTER TABLE ONLY "Company".branches ALTER COLUMN id SET DEFAULT nextval('"Compan
 
 
 --
--- TOC entry 3523 (class 2604 OID 102998)
+-- TOC entry 3529 (class 2604 OID 102998)
 -- Name: customers id; Type: DEFAULT; Schema: Company; Owner: postgres
 --
 
@@ -3125,7 +3136,7 @@ ALTER TABLE ONLY "Company".customers ALTER COLUMN id SET DEFAULT nextval('"Compa
 
 
 --
--- TOC entry 3525 (class 2604 OID 102999)
+-- TOC entry 3531 (class 2604 OID 102999)
 -- Name: employees id; Type: DEFAULT; Schema: Company; Owner: postgres
 --
 
@@ -3133,7 +3144,7 @@ ALTER TABLE ONLY "Company".employees ALTER COLUMN id SET DEFAULT nextval('"Compa
 
 
 --
--- TOC entry 3527 (class 2604 OID 103000)
+-- TOC entry 3533 (class 2604 OID 103000)
 -- Name: departments_employees id; Type: DEFAULT; Schema: Employee; Owner: postgres
 --
 
@@ -3141,7 +3152,7 @@ ALTER TABLE ONLY "Employee".departments_employees ALTER COLUMN id SET DEFAULT ne
 
 
 --
--- TOC entry 3528 (class 2604 OID 103001)
+-- TOC entry 3534 (class 2604 OID 103001)
 -- Name: history_schedules id; Type: DEFAULT; Schema: Employee; Owner: postgres
 --
 
@@ -3149,7 +3160,7 @@ ALTER TABLE ONLY "Employee".history_schedules ALTER COLUMN id SET DEFAULT nextva
 
 
 --
--- TOC entry 3529 (class 2604 OID 103002)
+-- TOC entry 3535 (class 2604 OID 103002)
 -- Name: roles_employees id; Type: DEFAULT; Schema: Employee; Owner: postgres
 --
 
@@ -3157,7 +3168,7 @@ ALTER TABLE ONLY "Employee".roles_employees ALTER COLUMN id SET DEFAULT nextval(
 
 
 --
--- TOC entry 3621 (class 2604 OID 103003)
+-- TOC entry 3628 (class 2604 OID 103003)
 -- Name: schedules id; Type: DEFAULT; Schema: Employee; Owner: postgres
 --
 
@@ -3165,7 +3176,7 @@ ALTER TABLE ONLY "Employee".schedules ALTER COLUMN id SET DEFAULT nextval('"Empl
 
 
 --
--- TOC entry 3622 (class 2604 OID 103004)
+-- TOC entry 3629 (class 2604 OID 103004)
 -- Name: country id; Type: DEFAULT; Schema: Fud; Owner: postgres
 --
 
@@ -3173,7 +3184,7 @@ ALTER TABLE ONLY "Fud".country ALTER COLUMN id SET DEFAULT nextval('"Fud".countr
 
 
 --
--- TOC entry 3623 (class 2604 OID 103005)
+-- TOC entry 3630 (class 2604 OID 103005)
 -- Name: tokens id; Type: DEFAULT; Schema: Fud; Owner: postgres
 --
 
@@ -3181,7 +3192,7 @@ ALTER TABLE ONLY "Fud".tokens ALTER COLUMN id SET DEFAULT nextval('"Fud".tokens_
 
 
 --
--- TOC entry 3626 (class 2604 OID 103006)
+-- TOC entry 3633 (class 2604 OID 103006)
 -- Name: users id; Type: DEFAULT; Schema: Fud; Owner: postgres
 --
 
@@ -3189,7 +3200,7 @@ ALTER TABLE ONLY "Fud".users ALTER COLUMN id SET DEFAULT nextval('"Fud".users_id
 
 
 --
--- TOC entry 3673 (class 2604 OID 112293)
+-- TOC entry 3680 (class 2604 OID 112293)
 -- Name: boutique id; Type: DEFAULT; Schema: Inventory; Owner: postgres
 --
 
@@ -3197,7 +3208,7 @@ ALTER TABLE ONLY "Inventory".boutique ALTER COLUMN id SET DEFAULT nextval('"Inve
 
 
 --
--- TOC entry 3632 (class 2604 OID 103007)
+-- TOC entry 3639 (class 2604 OID 103007)
 -- Name: dish_and_combo_features id; Type: DEFAULT; Schema: Inventory; Owner: postgres
 --
 
@@ -3205,7 +3216,7 @@ ALTER TABLE ONLY "Inventory".dish_and_combo_features ALTER COLUMN id SET DEFAULT
 
 
 --
--- TOC entry 3679 (class 2604 OID 112673)
+-- TOC entry 3686 (class 2604 OID 112673)
 -- Name: lots id; Type: DEFAULT; Schema: Inventory; Owner: postgres
 --
 
@@ -3213,7 +3224,7 @@ ALTER TABLE ONLY "Inventory".lots ALTER COLUMN id SET DEFAULT nextval('"Inventor
 
 
 --
--- TOC entry 3634 (class 2604 OID 103008)
+-- TOC entry 3641 (class 2604 OID 103008)
 -- Name: product_and_suppiles_features id; Type: DEFAULT; Schema: Inventory; Owner: postgres
 --
 
@@ -3221,7 +3232,7 @@ ALTER TABLE ONLY "Inventory".product_and_suppiles_features ALTER COLUMN id SET D
 
 
 --
--- TOC entry 3684 (class 2604 OID 121106)
+-- TOC entry 3691 (class 2604 OID 121106)
 -- Name: promotions id; Type: DEFAULT; Schema: Inventory; Owner: postgres
 --
 
@@ -3229,7 +3240,7 @@ ALTER TABLE ONLY "Inventory".promotions ALTER COLUMN id SET DEFAULT nextval('"In
 
 
 --
--- TOC entry 3675 (class 2604 OID 112305)
+-- TOC entry 3682 (class 2604 OID 112305)
 -- Name: table_boutique id; Type: DEFAULT; Schema: Inventory; Owner: postgres
 --
 
@@ -3237,7 +3248,7 @@ ALTER TABLE ONLY "Inventory".table_boutique ALTER COLUMN id SET DEFAULT nextval(
 
 
 --
--- TOC entry 3635 (class 2604 OID 103009)
+-- TOC entry 3642 (class 2604 OID 103009)
 -- Name: table_supplies_dish id; Type: DEFAULT; Schema: Inventory; Owner: postgres
 --
 
@@ -3245,7 +3256,7 @@ ALTER TABLE ONLY "Inventory".table_supplies_dish ALTER COLUMN id SET DEFAULT nex
 
 
 --
--- TOC entry 3636 (class 2604 OID 103010)
+-- TOC entry 3643 (class 2604 OID 103010)
 -- Name: table_taxes id; Type: DEFAULT; Schema: Inventory; Owner: postgres
 --
 
@@ -3253,7 +3264,7 @@ ALTER TABLE ONLY "Inventory".table_taxes ALTER COLUMN id SET DEFAULT nextval('"I
 
 
 --
--- TOC entry 3637 (class 2604 OID 103011)
+-- TOC entry 3644 (class 2604 OID 103011)
 -- Name: taxes id; Type: DEFAULT; Schema: Inventory; Owner: postgres
 --
 
@@ -3261,7 +3272,7 @@ ALTER TABLE ONLY "Inventory".taxes ALTER COLUMN id SET DEFAULT nextval('"Invento
 
 
 --
--- TOC entry 3641 (class 2604 OID 103013)
+-- TOC entry 3648 (class 2604 OID 103013)
 -- Name: product_category id; Type: DEFAULT; Schema: Kitchen; Owner: postgres
 --
 
@@ -3269,7 +3280,7 @@ ALTER TABLE ONLY "Kitchen".product_category ALTER COLUMN id SET DEFAULT nextval(
 
 
 --
--- TOC entry 3642 (class 2604 OID 103014)
+-- TOC entry 3649 (class 2604 OID 103014)
 -- Name: product_department id; Type: DEFAULT; Schema: Kitchen; Owner: postgres
 --
 
@@ -3277,7 +3288,7 @@ ALTER TABLE ONLY "Kitchen".product_department ALTER COLUMN id SET DEFAULT nextva
 
 
 --
--- TOC entry 3643 (class 2604 OID 103015)
+-- TOC entry 3650 (class 2604 OID 103015)
 -- Name: products_and_supplies id; Type: DEFAULT; Schema: Kitchen; Owner: postgres
 --
 
@@ -3285,7 +3296,7 @@ ALTER TABLE ONLY "Kitchen".products_and_supplies ALTER COLUMN id SET DEFAULT nex
 
 
 --
--- TOC entry 3644 (class 2604 OID 103016)
+-- TOC entry 3651 (class 2604 OID 103016)
 -- Name: table_supplies_combo id; Type: DEFAULT; Schema: Kitchen; Owner: postgres
 --
 
@@ -3293,7 +3304,7 @@ ALTER TABLE ONLY "Kitchen".table_supplies_combo ALTER COLUMN id SET DEFAULT next
 
 
 --
--- TOC entry 3647 (class 2604 OID 103017)
+-- TOC entry 3654 (class 2604 OID 103017)
 -- Name: companies id; Type: DEFAULT; Schema: User; Owner: postgres
 --
 
@@ -3301,7 +3312,7 @@ ALTER TABLE ONLY "User".companies ALTER COLUMN id SET DEFAULT nextval('"User".co
 
 
 --
--- TOC entry 3664 (class 2604 OID 103744)
+-- TOC entry 3671 (class 2604 OID 103744)
 -- Name: alumnos id; Type: DEFAULT; Schema: _company_1_branch_8; Owner: postgres
 --
 
@@ -3309,7 +3320,7 @@ ALTER TABLE ONLY _company_1_branch_8.alumnos ALTER COLUMN id SET DEFAULT nextval
 
 
 --
--- TOC entry 4177 (class 0 OID 112637)
+-- TOC entry 4185 (class 0 OID 112637)
 -- Dependencies: 334
 -- Data for Name: box_history; Type: TABLE DATA; Schema: Box; Owner: postgres
 --
@@ -3368,11 +3379,23 @@ COPY "Box".box_history (id, id_employee, id_customers, buy_for_cash, buy_for_cre
 51	56	\N	100.00	0.00	0.00	0.00		2025-05-04 18:07:58.55
 52	56	\N	20.00	0.00	0.00	1.00		2025-05-05 15:28:38.803
 53	56	\N	20.00	0.00	0.00	0.00		2025-05-05 15:47:18.471
+54	56	\N	10.00	0.00	0.00	0.00		2025-05-30 12:12:21.929
+55	56	\N	30.00	0.00	0.00	2.00		2025-05-31 22:33:16.725
+56	56	\N	30.00	0.00	0.00	2.00		2025-05-31 22:33:18.766
+57	56	\N	30.00	0.00	0.00	2.00		2025-05-31 22:33:19.925
+58	56	\N	30.00	0.00	0.00	2.00		2025-05-31 22:35:51.094
+59	56	\N	30.00	0.00	0.00	2.00		2025-05-31 22:35:56.918
+60	56	\N	30.00	0.00	0.00	2.00		2025-05-31 22:38:59.862
+61	56	\N	28.00	0.00	0.00	0.00		2025-05-31 22:48:26.058
+62	56	\N	10.00	0.00	0.00	0.00		2025-05-31 22:48:38.664
+63	56	\N	20.00	0.00	0.00	10.00		2025-05-31 22:49:20.032
+64	56	\N	10.00	0.00	0.00	0.00		2025-05-31 22:49:49.329
+65	56	\N	20.00	0.00	0.00	10.00		2025-05-31 22:50:50.522
 \.
 
 
 --
--- TOC entry 4070 (class 0 OID 102678)
+-- TOC entry 4078 (class 0 OID 102678)
 -- Dependencies: 227
 -- Data for Name: boxes_history; Type: TABLE DATA; Schema: Box; Owner: postgres
 --
@@ -3382,7 +3405,7 @@ COPY "Box".boxes_history (id, initial_date, finish_date, id_branches, id_employe
 
 
 --
--- TOC entry 4072 (class 0 OID 102682)
+-- TOC entry 4080 (class 0 OID 102682)
 -- Dependencies: 229
 -- Data for Name: movement_history; Type: TABLE DATA; Schema: Box; Owner: postgres
 --
@@ -3408,21 +3431,31 @@ COPY "Box".movement_history (id, id_branches, id_boxes, id_employees, move, comm
 20	8	0	56	-100	pago de luz	2025-05-04 18:10:05.719-06
 21	8	0	56	30	pago de servicios	2025-05-11 12:41:15.506-06
 22	8	0	56	-30	se pago la luz	2025-05-11 12:41:35.931-06
+23	8	0	56	50	dinero inicial en caja	2025-05-30 12:13:05.08-06
 \.
 
 
 --
--- TOC entry 4189 (class 0 OID 130502)
+-- TOC entry 4197 (class 0 OID 130502)
 -- Dependencies: 346
 -- Data for Name: reachange_services; Type: TABLE DATA; Schema: Box; Owner: postgres
 --
 
-COPY "Box".reachange_services (id, id_companies, id_branches, id_employees, id_customers, service_name, key_services, service_money, money_received, change) FROM stdin;
+COPY "Box".reachange_services (id, id_companies, id_branches, id_employees, id_customers, service_name, key_services, service_money, money_received, change, time_sales) FROM stdin;
+41	1	8	2	\N	Telcel		20	20	0	2025-05-27 10:29:14.673764
+42	1	8	2	\N	Unefon	S3TAE10UNEFONMXN	10	30	10	2025-05-27 10:29:14.673764
+43	1	8	2	\N	Telefonia Telmex	S3TELEFOTELMEXMXN	10	10	NaN	2025-05-27 10:29:14.673764
+46	1	8	2	\N	Telefonia Telmex	S3TELEFOTELMEXMXN	10	10	0	2025-05-27 10:29:14.673764
+49	1	8	2	\N	Telcel		10	10	0	2025-05-27 10:29:14.673764
+50	1	8	2	\N	Telcel		20	50	30	2025-05-27 10:29:14.673764
+51	1	8	2	\N	Telcel		10	50	30	2025-05-27 10:48:54.572668
+52	1	8	2	\N	Telefonia Telmex	S3TELEFOTELMEXMXN	10	50	30	2025-05-27 10:53:26.068762
+53	1	8	2	\N	Telcel		10	10	0	2025-05-29 19:49:26.898694
 \.
 
 
 --
--- TOC entry 4073 (class 0 OID 102688)
+-- TOC entry 4081 (class 0 OID 102688)
 -- Dependencies: 230
 -- Data for Name: sales_history; Type: TABLE DATA; Schema: Box; Owner: postgres
 --
@@ -3597,11 +3630,23 @@ COPY "Box".sales_history (id, id_companies, id_branches, id_employees, id_custom
 349	1	8	56	\N	28	5	2	10	\N	2025-05-04 18:07:58.55-06
 350	1	8	56	\N	6	19	1	19	\N	2025-05-05 15:28:38.803-06
 351	1	8	56	\N	1	10	2	20	\N	2025-05-05 15:47:18.471-06
+352	1	8	56	\N	1	10	1	10	\N	2025-05-30 12:12:21.929-06
+353	1	8	56	\N	84	28	1	28	\N	2025-05-31 22:33:16.725-06
+354	1	8	56	\N	84	28	1	28	\N	2025-05-31 22:33:18.766-06
+355	1	8	56	\N	84	28	1	28	\N	2025-05-31 22:33:19.925-06
+356	1	8	56	\N	84	28	1	28	\N	2025-05-31 22:35:51.094-06
+357	1	8	56	\N	84	28	1	28	\N	2025-05-31 22:35:56.918-06
+358	1	8	56	\N	84	28	1	28	\N	2025-05-31 22:38:59.862-06
+359	1	8	56	\N	84	28	1	28	\N	2025-05-31 22:48:26.058-06
+360	1	8	56	\N	14	10	1	10	\N	2025-05-31 22:48:38.664-06
+361	1	8	56	\N	1	10	1	10	\N	2025-05-31 22:49:20.032-06
+362	1	8	56	\N	1	10	1	10	\N	2025-05-31 22:49:49.329-06
+363	1	8	56	\N	1	10	1	10	\N	2025-05-31 22:50:50.522-06
 \.
 
 
 --
--- TOC entry 4075 (class 0 OID 102694)
+-- TOC entry 4083 (class 0 OID 102694)
 -- Dependencies: 232
 -- Data for Name: Ad; Type: TABLE DATA; Schema: Branch; Owner: postgres
 --
@@ -3638,7 +3683,7 @@ COPY "Branch"."Ad" (id, id_branches, img, type, description) FROM stdin;
 
 
 --
--- TOC entry 4077 (class 0 OID 102700)
+-- TOC entry 4085 (class 0 OID 102700)
 -- Dependencies: 234
 -- Data for Name: app; Type: TABLE DATA; Schema: Branch; Owner: postgres
 --
@@ -3648,7 +3693,7 @@ COPY "Branch".app (id, id_branches, id_stripe_new_terminal, expiration_date_new_
 
 
 --
--- TOC entry 4079 (class 0 OID 102710)
+-- TOC entry 4087 (class 0 OID 102710)
 -- Dependencies: 236
 -- Data for Name: billing_information; Type: TABLE DATA; Schema: Branch; Owner: postgres
 --
@@ -3658,7 +3703,7 @@ COPY "Branch".billing_information (id, id_providers, addres, postal_code, rfc, c
 
 
 --
--- TOC entry 4081 (class 0 OID 102716)
+-- TOC entry 4089 (class 0 OID 102716)
 -- Dependencies: 238
 -- Data for Name: boxes; Type: TABLE DATA; Schema: Branch; Owner: postgres
 --
@@ -3674,7 +3719,7 @@ COPY "Branch".boxes (id, id_branches, num_box, ip_printer) FROM stdin;
 
 
 --
--- TOC entry 4083 (class 0 OID 102720)
+-- TOC entry 4091 (class 0 OID 102720)
 -- Dependencies: 240
 -- Data for Name: commanders; Type: TABLE DATA; Schema: Branch; Owner: postgres
 --
@@ -3952,11 +3997,23 @@ COPY "Branch".commanders (id, id_branches, id_employees, id_customers, total, mo
 303	8	56	\N	100	100	0	0		2025-05-04 18:07:58.55	[{"nameProduct":"gansito","priceProduct":"gansito","amount":9,"totalPrice":90},{"nameProduct":"jamon","priceProduct":"jamon","amount":2,"totalPrice":10}]
 304	8	56	\N	19	20	1	0		2025-05-05 15:28:38.803	[{"nameProduct":"cheetos verdes","priceProduct":"cheetos verdes","amount":1,"totalPrice":19}]
 305	8	56	\N	20	20	0	0		2025-05-05 15:47:18.471	[{"nameProduct":"gansito","priceProduct":"gansito","amount":2,"totalPrice":20}]
+306	8	56	\N	10	10	0	0		2025-05-30 12:12:21.929	[{"nameProduct":"gansito","priceProduct":"gansito","amount":1,"totalPrice":10}]
+307	8	56	\N	28	30	2	0		2025-05-31 22:33:16.725	[{"nameProduct":"Bimbo Original Bread Crumbs  12.35 Oz","priceProduct":"Bimbo Original Bread Crumbs  12.35 Oz","amount":1,"totalPrice":28}]
+308	8	56	\N	28	30	2	0		2025-05-31 22:33:18.766	[{"nameProduct":"Bimbo Original Bread Crumbs  12.35 Oz","priceProduct":"Bimbo Original Bread Crumbs  12.35 Oz","amount":1,"totalPrice":28}]
+309	8	56	\N	28	30	2	0		2025-05-31 22:33:19.925	[{"nameProduct":"Bimbo Original Bread Crumbs  12.35 Oz","priceProduct":"Bimbo Original Bread Crumbs  12.35 Oz","amount":1,"totalPrice":28}]
+310	8	56	\N	28	30	2	0		2025-05-31 22:35:51.094	[{"nameProduct":"Bimbo Original Bread Crumbs  12.35 Oz","priceProduct":"Bimbo Original Bread Crumbs  12.35 Oz","amount":1,"totalPrice":28}]
+311	8	56	\N	28	30	2	0		2025-05-31 22:35:56.918	[{"nameProduct":"Bimbo Original Bread Crumbs  12.35 Oz","priceProduct":"Bimbo Original Bread Crumbs  12.35 Oz","amount":1,"totalPrice":28}]
+312	8	56	\N	28	30	2	0		2025-05-31 22:38:59.862	[{"nameProduct":"Bimbo Original Bread Crumbs  12.35 Oz","priceProduct":"Bimbo Original Bread Crumbs  12.35 Oz","amount":1,"totalPrice":28}]
+313	8	56	\N	28	28	0	0		2025-05-31 22:48:26.058	[{"nameProduct":"Bimbo Original Bread Crumbs  12.35 Oz","priceProduct":"Bimbo Original Bread Crumbs  12.35 Oz","amount":1,"totalPrice":28}]
+314	8	56	\N	10	10	0	0		2025-05-31 22:48:38.664	[{"nameProduct":"pan bimbo","priceProduct":"pan bimbo","amount":1,"totalPrice":10}]
+315	8	56	\N	10	20	10	0		2025-05-31 22:49:20.032	[{"nameProduct":"gansito","priceProduct":"gansito","amount":1,"totalPrice":10}]
+316	8	56	\N	10	10	0	0		2025-05-31 22:49:49.329	[{"nameProduct":"gansito","priceProduct":"gansito","amount":1,"totalPrice":10}]
+317	8	56	\N	10	20	10	0		2025-05-31 22:50:50.522	[{"nameProduct":"gansito","priceProduct":"gansito","amount":1,"totalPrice":10}]
 \.
 
 
 --
--- TOC entry 4085 (class 0 OID 102726)
+-- TOC entry 4093 (class 0 OID 102726)
 -- Dependencies: 242
 -- Data for Name: facture; Type: TABLE DATA; Schema: Branch; Owner: postgres
 --
@@ -3966,7 +4023,7 @@ COPY "Branch".facture ("Invoice Number", id_companies, id_branches, id_employees
 
 
 --
--- TOC entry 4183 (class 0 OID 112928)
+-- TOC entry 4191 (class 0 OID 112928)
 -- Dependencies: 340
 -- Data for Name: history_move_lot; Type: TABLE DATA; Schema: Branch; Owner: postgres
 --
@@ -3994,7 +4051,7 @@ COPY "Branch".history_move_lot (id, id_companies, id_branches, id_employees, id_
 
 
 --
--- TOC entry 4187 (class 0 OID 122291)
+-- TOC entry 4195 (class 0 OID 122291)
 -- Dependencies: 344
 -- Data for Name: labels; Type: TABLE DATA; Schema: Branch; Owner: postgres
 --
@@ -4007,7 +4064,7 @@ COPY "Branch".labels (id, id_companies, id_branches, name, width, length, label)
 
 
 --
--- TOC entry 4086 (class 0 OID 102733)
+-- TOC entry 4094 (class 0 OID 102733)
 -- Dependencies: 243
 -- Data for Name: managers; Type: TABLE DATA; Schema: Branch; Owner: postgres
 --
@@ -4017,7 +4074,7 @@ COPY "Branch".managers (id, id_branches, id_employees) FROM stdin;
 
 
 --
--- TOC entry 4088 (class 0 OID 102737)
+-- TOC entry 4096 (class 0 OID 102737)
 -- Dependencies: 245
 -- Data for Name: order; Type: TABLE DATA; Schema: Branch; Owner: postgres
 --
@@ -4036,7 +4093,7 @@ COPY "Branch"."order" (id, id_branches, id_commanders, id_employees, name_custom
 
 
 --
--- TOC entry 4090 (class 0 OID 102744)
+-- TOC entry 4098 (class 0 OID 102744)
 -- Dependencies: 247
 -- Data for Name: pack_reservation; Type: TABLE DATA; Schema: Branch; Owner: postgres
 --
@@ -4046,7 +4103,7 @@ COPY "Branch".pack_reservation (id, name, description, number_of_adult, number_o
 
 
 --
--- TOC entry 4181 (class 0 OID 112833)
+-- TOC entry 4189 (class 0 OID 112833)
 -- Dependencies: 338
 -- Data for Name: prescription; Type: TABLE DATA; Schema: Branch; Owner: postgres
 --
@@ -4064,7 +4121,7 @@ COPY "Branch".prescription (id, recipe_folio, doctor_id, doctor_name, date_presc
 
 
 --
--- TOC entry 4092 (class 0 OID 102750)
+-- TOC entry 4100 (class 0 OID 102750)
 -- Dependencies: 249
 -- Data for Name: providers; Type: TABLE DATA; Schema: Branch; Owner: postgres
 --
@@ -4080,7 +4137,7 @@ COPY "Branch".providers (id, id_branches, name, representative, cell_phone, phon
 
 
 --
--- TOC entry 4094 (class 0 OID 102756)
+-- TOC entry 4102 (class 0 OID 102756)
 -- Dependencies: 251
 -- Data for Name: reservation; Type: TABLE DATA; Schema: Branch; Owner: postgres
 --
@@ -4090,7 +4147,7 @@ COPY "Branch".reservation (id, id_branches, id_tables, id_pack_reservation, cust
 
 
 --
--- TOC entry 4096 (class 0 OID 102762)
+-- TOC entry 4104 (class 0 OID 102762)
 -- Dependencies: 253
 -- Data for Name: restaurant_area; Type: TABLE DATA; Schema: Branch; Owner: postgres
 --
@@ -4100,7 +4157,7 @@ COPY "Branch".restaurant_area (id, id_branches, name, description, floor) FROM s
 
 
 --
--- TOC entry 4098 (class 0 OID 102768)
+-- TOC entry 4106 (class 0 OID 102768)
 -- Dependencies: 255
 -- Data for Name: tables; Type: TABLE DATA; Schema: Branch; Owner: postgres
 --
@@ -4110,7 +4167,7 @@ COPY "Branch".tables (id, id_branches, id_restaurant_area, name, table_number, n
 
 
 --
--- TOC entry 4156 (class 0 OID 103590)
+-- TOC entry 4164 (class 0 OID 103590)
 -- Dependencies: 313
 -- Data for Name: appointment; Type: TABLE DATA; Schema: CRM; Owner: postgres
 --
@@ -4138,7 +4195,7 @@ COPY "CRM".appointment (id, id_prospects, location, notes, affair, meeting_date,
 
 
 --
--- TOC entry 4163 (class 0 OID 111967)
+-- TOC entry 4171 (class 0 OID 111967)
 -- Dependencies: 320
 -- Data for Name: history_prospects; Type: TABLE DATA; Schema: CRM; Owner: postgres
 --
@@ -4194,7 +4251,7 @@ COPY "CRM".history_prospects (id, id_prospects, id_users, comment, link, creatio
 
 
 --
--- TOC entry 4152 (class 0 OID 103574)
+-- TOC entry 4160 (class 0 OID 103574)
 -- Dependencies: 309
 -- Data for Name: product_to_sell; Type: TABLE DATA; Schema: CRM; Owner: postgres
 --
@@ -4205,7 +4262,7 @@ COPY "CRM".product_to_sell (id, name, color, id_companies) FROM stdin;
 
 
 --
--- TOC entry 4158 (class 0 OID 103599)
+-- TOC entry 4166 (class 0 OID 103599)
 -- Dependencies: 315
 -- Data for Name: prospects; Type: TABLE DATA; Schema: CRM; Owner: postgres
 --
@@ -4221,7 +4278,7 @@ COPY "CRM".prospects (id, name, email, estimated_income, probability, cellphone,
 
 
 --
--- TOC entry 4150 (class 0 OID 103566)
+-- TOC entry 4158 (class 0 OID 103566)
 -- Dependencies: 307
 -- Data for Name: sales_stage; Type: TABLE DATA; Schema: CRM; Owner: postgres
 --
@@ -4235,7 +4292,7 @@ COPY "CRM".sales_stage (id, name, "position", id_companies) FROM stdin;
 
 
 --
--- TOC entry 4154 (class 0 OID 103582)
+-- TOC entry 4162 (class 0 OID 103582)
 -- Dependencies: 311
 -- Data for Name: sales_team; Type: TABLE DATA; Schema: CRM; Owner: postgres
 --
@@ -4246,7 +4303,7 @@ COPY "CRM".sales_team (id, name, commission, id_companies) FROM stdin;
 
 
 --
--- TOC entry 4165 (class 0 OID 111988)
+-- TOC entry 4173 (class 0 OID 111988)
 -- Dependencies: 322
 -- Data for Name: chats; Type: TABLE DATA; Schema: Chat; Owner: postgres
 --
@@ -4258,7 +4315,7 @@ COPY "Chat".chats (id_chat, chat_name, created_at, user_one_id, user_two_id) FRO
 
 
 --
--- TOC entry 4170 (class 0 OID 112031)
+-- TOC entry 4178 (class 0 OID 112031)
 -- Dependencies: 327
 -- Data for Name: message_status; Type: TABLE DATA; Schema: Chat; Owner: postgres
 --
@@ -4321,7 +4378,7 @@ COPY "Chat".message_status (id_status, message_id, user_id, is_read, read_at) FR
 
 
 --
--- TOC entry 4168 (class 0 OID 112011)
+-- TOC entry 4176 (class 0 OID 112011)
 -- Dependencies: 325
 -- Data for Name: messages; Type: TABLE DATA; Schema: Chat; Owner: postgres
 --
@@ -4389,7 +4446,7 @@ COPY "Chat".messages (id_message, chat_id, user_id, content, sent_at) FROM stdin
 
 
 --
--- TOC entry 4166 (class 0 OID 111995)
+-- TOC entry 4174 (class 0 OID 111995)
 -- Dependencies: 323
 -- Data for Name: user_chats; Type: TABLE DATA; Schema: Chat; Owner: postgres
 --
@@ -4399,48 +4456,48 @@ COPY "Chat".user_chats (user_id, chat_id) FROM stdin;
 
 
 --
--- TOC entry 4100 (class 0 OID 102773)
+-- TOC entry 4108 (class 0 OID 102773)
 -- Dependencies: 257
 -- Data for Name: branches; Type: TABLE DATA; Schema: Company; Owner: postgres
 --
 
-COPY "Company".branches (id, id_companies, name_branch, alias, representative, id_country, municipality, city, cologne, address, num_ext, num_int, postal_code, email_branch, cell_phone, phone, pack_branch, token_uber, token_rappi, website_creation, digital_menu, employee_schedules, user_prontipagos, password_prontipagos, iv_for_password) FROM stdin;
-25	22	Hamburguesas Galaxias	Hamburguesas Galaxias	admin_Hamburguesas Galaxias	120	Benito Juarez	Cancún	galaxias del sol	sm.253c mz3 lt 12 calle pagalo	253	18	77518	admin@hamburguesasgalaxias.com	+52 998 122 7735	+52 998 122 7735	3	\N	\N	2024-07-19	2024-07-19	2024-07-19	\N	\N	\N
-6	\N	branch 1	branch 1	yo	120	slp	slp	reyitos	slp			12345	hooters123@Outlook.es			0	\N	\N	2024-07-19	2024-07-19	2024-07-19	\N	\N	\N
-35	32	El Terrifier Cerveza	El Terrifier Cerveza	admin_El Terrifier Cerveza	1									5512577265	5512577265	0	\N	\N	2024-08-01	2024-08-01	2024-08-01	\N	\N	\N
-7	\N	Hooters Centro	Hooters Centro	yo	120	slp	slp	slp	slp			12345	hooter123@Outlook.es			0	\N	\N	2024-07-19	2024-07-19	2024-07-19	\N	\N	\N
-19	16	pizza hermanos	pizza hermanos	admin_pizza hermanos	1									444 357 9030	444 357 9030	0	\N	\N	2024-07-19	2024-07-19	2024-07-19	\N	\N	\N
-20	17	Pizzas hermanos	Pizzas hermanos	admin_Pizzas hermanos	1									444 357 9030	444 357 9030	0	\N	\N	2024-07-19	2024-07-19	2024-07-19	\N	\N	\N
-21	18	pizza hermanos	pizza hermanos	admin_pizza hermanos	1									444 357 9030	444 357 9030	0	\N	\N	2024-07-19	2024-07-19	2024-07-19	\N	\N	\N
-36	33	CactusWingsMX	CactusWingsMX	admin_CactusWingsMX	1									4451540656	4451540656	0	\N	\N	2024-08-08	2024-08-08	2024-08-08	\N	\N	\N
-23	20	Prueba	Prueba	admin_Prueba	1									4443579030	4443579030	0	\N	\N	2024-07-19	2024-07-19	2024-07-19	\N	\N	\N
-24	21	La REINA	La REINA	admin_La REINA	1									+529331246775	+529331246775	0	\N	\N	2024-07-19	2024-07-19	2024-07-19	\N	\N	\N
-37	34	LIZBETH VASQUEZ	LIZBETH VASQUEZ	admin_LIZBETH VASQUEZ	1									0969445123	0969445123	0	\N	\N	2024-08-09	2024-08-09	2024-08-09	\N	\N	\N
-26	23	Salanghae Pizza 	Salanghae Pizza 	admin_Salanghae Pizza 	1									961 461 9590	961 461 9590	0	\N	\N	2024-07-19	2024-07-19	2024-07-19	\N	\N	\N
-27	24	La Paloma	La Paloma	admin_La Paloma	1									961 215 5426	961 215 5426	0	\N	\N	2024-07-19	2024-07-19	2024-07-19	\N	\N	\N
-38	35	Napole 	Napole 	admin_Napole 	1									987654321	987654321	0	\N	\N	2024-08-10	2024-08-10	2024-08-10	\N	\N	\N
-39	36	Tienda 	Tienda 	admin_Tienda 	1									6142445300	6142445300	0	\N	\N	2024-08-10	2024-08-10	2024-08-10	\N	\N	\N
-40	37	testing	testing	admin_testing	1									76499880	76499880	0	\N	\N	2024-08-10	2024-08-10	2024-08-10	\N	\N	\N
-41	38	Sisnodo	Sisnodo	admin_Sisnodo	1									4626296420	4626296420	0	\N	\N	2024-08-10	2024-08-10	2024-08-10	\N	\N	\N
-42	39	kalifa	kalifa	admin_kalifa	1									989313651	989313651	0	\N	\N	2024-08-10	2024-08-10	2024-08-10	\N	\N	\N
-28	25	masabor	masabor	admin_masabor	1									9811470015	9811470015	0	\N	\N	2024-07-19	2024-07-19	2024-07-19	\N	\N	\N
-43	40	LUXXSOFT	LUXXSOFT	admin_LUXXSOFT	1									3108090853	3108090853	0	\N	\N	2024-08-10	2024-08-10	2024-08-10	\N	\N	\N
-29	26	Santa isabel	Santa isabel	admin_Santa isabel	1									6161079845	6161079845	0	\N	\N	2024-07-19	2024-07-19	2024-07-19	\N	\N	\N
-44	41	DARK FOOD KITCHEN 	DARK FOOD KITCHEN 	admin_DARK FOOD KITCHEN 	120	Merida	Yucatán 	Centro 	90 499d 			97000	darkfoodkitchen@gmail.com	+529901585129	+529901585129	0		\N	2024-08-11	2024-08-11	2024-08-11	\N	\N	\N
-17	1	sub activa	sub activa	sub activa	1	slp	slp	slp	slp			12345	eje14848@Outlook.es			2	\N	\N	2024-07-19	2024-07-19	2024-07-19	\N	\N	\N
-30	27	Food service	Food service	admin_Food service	1									6622331355	6622331355	0	\N	\N	2024-07-20	2024-07-20	2024-07-20	\N	\N	\N
-31	28	Tetsuqu2u228	Tetsuqu2u228	admin_Tetsuqu2u228	1									12345678912	12345678912	0	\N	\N	2024-07-24	2024-07-24	2024-07-24	\N	\N	\N
-32	29	Restaurante el corralito 	Restaurante el corralito 	admin_Restaurante el corralito 	1									5537016077	5537016077	0	\N	\N	2024-07-26	2024-07-26	2024-07-26	\N	\N	\N
-33	30	Pizzas hermanos	Pizzas hermanos	admin_Pizzas hermanos	1									444 357 9030	444 357 9030	0	\N	\N	2024-07-26	2024-07-26	2024-07-26	\N	\N	\N
-34	31	Pizzas hermanos	Pizzas hermanos	admin_Pizzas hermanos	1									444 357 9030	444 357 9030	0	\N	\N	2024-07-28	2024-07-28	2024-07-28	\N	\N	\N
-8	1	ED sucursal	branch 2	yo	120	slp	slp	slp	address			12345	kfc123@Outlook.es	+52 444 444 444		2	no tengo	\N	2024-08-03	2024-07-19	\N	api.desarrollo	1b6c40a69e32894ce76d348de184bac9	86edcdb67112a128ba92a4c4f4aebb23
-45	42	Campos Herramientas	Campos Herramientas	admin_Campos_Herramientas	1									camposss1@hotmail.co	camposss1@hotmail.co	0	\N	\N	2025-02-03	2025-02-03	2025-02-03	\N	\N	\N
-22	19	tu negocio	tu negocio	tu nombre	120	municipio	ciudad	colonia	direccion			12345	tucorreo@hotmail.com			0		\N	2024-08-03	2024-07-19	\N	\N	\N	\N
+COPY "Company".branches (id, id_companies, name_branch, alias, representative, id_country, municipality, city, cologne, address, num_ext, num_int, postal_code, email_branch, cell_phone, phone, pack_branch, token_uber, token_rappi, website_creation, digital_menu, employee_schedules, user_prontipagos, password_prontipagos, iv_for_password, notification_for_email, email_notification, token_email_notification, to_notification, notification_cut_box, products_with_low_stock, there_are_products_out_of_stock, there_are_expired_products, an_employee_logged_in_outside_of_his_shift) FROM stdin;
+25	22	Hamburguesas Galaxias	Hamburguesas Galaxias	admin_Hamburguesas Galaxias	120	Benito Juarez	Cancún	galaxias del sol	sm.253c mz3 lt 12 calle pagalo	253	18	77518	admin@hamburguesasgalaxias.com	+52 998 122 7735	+52 998 122 7735	3	\N	\N	2024-07-19	2024-07-19	2024-07-19	\N	\N	\N	f	\N	\N	\N	f	f	f	f	f
+6	\N	branch 1	branch 1	yo	120	slp	slp	reyitos	slp			12345	hooters123@Outlook.es			0	\N	\N	2024-07-19	2024-07-19	2024-07-19	\N	\N	\N	f	\N	\N	\N	f	f	f	f	f
+35	32	El Terrifier Cerveza	El Terrifier Cerveza	admin_El Terrifier Cerveza	1									5512577265	5512577265	0	\N	\N	2024-08-01	2024-08-01	2024-08-01	\N	\N	\N	f	\N	\N	\N	f	f	f	f	f
+7	\N	Hooters Centro	Hooters Centro	yo	120	slp	slp	slp	slp			12345	hooter123@Outlook.es			0	\N	\N	2024-07-19	2024-07-19	2024-07-19	\N	\N	\N	f	\N	\N	\N	f	f	f	f	f
+19	16	pizza hermanos	pizza hermanos	admin_pizza hermanos	1									444 357 9030	444 357 9030	0	\N	\N	2024-07-19	2024-07-19	2024-07-19	\N	\N	\N	f	\N	\N	\N	f	f	f	f	f
+20	17	Pizzas hermanos	Pizzas hermanos	admin_Pizzas hermanos	1									444 357 9030	444 357 9030	0	\N	\N	2024-07-19	2024-07-19	2024-07-19	\N	\N	\N	f	\N	\N	\N	f	f	f	f	f
+21	18	pizza hermanos	pizza hermanos	admin_pizza hermanos	1									444 357 9030	444 357 9030	0	\N	\N	2024-07-19	2024-07-19	2024-07-19	\N	\N	\N	f	\N	\N	\N	f	f	f	f	f
+36	33	CactusWingsMX	CactusWingsMX	admin_CactusWingsMX	1									4451540656	4451540656	0	\N	\N	2024-08-08	2024-08-08	2024-08-08	\N	\N	\N	f	\N	\N	\N	f	f	f	f	f
+23	20	Prueba	Prueba	admin_Prueba	1									4443579030	4443579030	0	\N	\N	2024-07-19	2024-07-19	2024-07-19	\N	\N	\N	f	\N	\N	\N	f	f	f	f	f
+24	21	La REINA	La REINA	admin_La REINA	1									+529331246775	+529331246775	0	\N	\N	2024-07-19	2024-07-19	2024-07-19	\N	\N	\N	f	\N	\N	\N	f	f	f	f	f
+37	34	LIZBETH VASQUEZ	LIZBETH VASQUEZ	admin_LIZBETH VASQUEZ	1									0969445123	0969445123	0	\N	\N	2024-08-09	2024-08-09	2024-08-09	\N	\N	\N	f	\N	\N	\N	f	f	f	f	f
+26	23	Salanghae Pizza 	Salanghae Pizza 	admin_Salanghae Pizza 	1									961 461 9590	961 461 9590	0	\N	\N	2024-07-19	2024-07-19	2024-07-19	\N	\N	\N	f	\N	\N	\N	f	f	f	f	f
+27	24	La Paloma	La Paloma	admin_La Paloma	1									961 215 5426	961 215 5426	0	\N	\N	2024-07-19	2024-07-19	2024-07-19	\N	\N	\N	f	\N	\N	\N	f	f	f	f	f
+38	35	Napole 	Napole 	admin_Napole 	1									987654321	987654321	0	\N	\N	2024-08-10	2024-08-10	2024-08-10	\N	\N	\N	f	\N	\N	\N	f	f	f	f	f
+39	36	Tienda 	Tienda 	admin_Tienda 	1									6142445300	6142445300	0	\N	\N	2024-08-10	2024-08-10	2024-08-10	\N	\N	\N	f	\N	\N	\N	f	f	f	f	f
+40	37	testing	testing	admin_testing	1									76499880	76499880	0	\N	\N	2024-08-10	2024-08-10	2024-08-10	\N	\N	\N	f	\N	\N	\N	f	f	f	f	f
+41	38	Sisnodo	Sisnodo	admin_Sisnodo	1									4626296420	4626296420	0	\N	\N	2024-08-10	2024-08-10	2024-08-10	\N	\N	\N	f	\N	\N	\N	f	f	f	f	f
+42	39	kalifa	kalifa	admin_kalifa	1									989313651	989313651	0	\N	\N	2024-08-10	2024-08-10	2024-08-10	\N	\N	\N	f	\N	\N	\N	f	f	f	f	f
+28	25	masabor	masabor	admin_masabor	1									9811470015	9811470015	0	\N	\N	2024-07-19	2024-07-19	2024-07-19	\N	\N	\N	f	\N	\N	\N	f	f	f	f	f
+43	40	LUXXSOFT	LUXXSOFT	admin_LUXXSOFT	1									3108090853	3108090853	0	\N	\N	2024-08-10	2024-08-10	2024-08-10	\N	\N	\N	f	\N	\N	\N	f	f	f	f	f
+29	26	Santa isabel	Santa isabel	admin_Santa isabel	1									6161079845	6161079845	0	\N	\N	2024-07-19	2024-07-19	2024-07-19	\N	\N	\N	f	\N	\N	\N	f	f	f	f	f
+44	41	DARK FOOD KITCHEN 	DARK FOOD KITCHEN 	admin_DARK FOOD KITCHEN 	120	Merida	Yucatán 	Centro 	90 499d 			97000	darkfoodkitchen@gmail.com	+529901585129	+529901585129	0		\N	2024-08-11	2024-08-11	2024-08-11	\N	\N	\N	f	\N	\N	\N	f	f	f	f	f
+17	1	sub activa	sub activa	sub activa	1	slp	slp	slp	slp			12345	eje14848@Outlook.es			2	\N	\N	2024-07-19	2024-07-19	2024-07-19	\N	\N	\N	f	\N	\N	\N	f	f	f	f	f
+30	27	Food service	Food service	admin_Food service	1									6622331355	6622331355	0	\N	\N	2024-07-20	2024-07-20	2024-07-20	\N	\N	\N	f	\N	\N	\N	f	f	f	f	f
+31	28	Tetsuqu2u228	Tetsuqu2u228	admin_Tetsuqu2u228	1									12345678912	12345678912	0	\N	\N	2024-07-24	2024-07-24	2024-07-24	\N	\N	\N	f	\N	\N	\N	f	f	f	f	f
+32	29	Restaurante el corralito 	Restaurante el corralito 	admin_Restaurante el corralito 	1									5537016077	5537016077	0	\N	\N	2024-07-26	2024-07-26	2024-07-26	\N	\N	\N	f	\N	\N	\N	f	f	f	f	f
+33	30	Pizzas hermanos	Pizzas hermanos	admin_Pizzas hermanos	1									444 357 9030	444 357 9030	0	\N	\N	2024-07-26	2024-07-26	2024-07-26	\N	\N	\N	f	\N	\N	\N	f	f	f	f	f
+34	31	Pizzas hermanos	Pizzas hermanos	admin_Pizzas hermanos	1									444 357 9030	444 357 9030	0	\N	\N	2024-07-28	2024-07-28	2024-07-28	\N	\N	\N	f	\N	\N	\N	f	f	f	f	f
+8	1	ED sucursal	branch 2	yo	120	slp	slp	slp	address			12345	kfc123@Outlook.es	+52 444 444 444		2	no tengo	\N	2024-08-03	2024-07-19	\N	api.desarrollo	1b6c40a69e32894ce76d348de184bac9	86edcdb67112a128ba92a4c4f4aebb23	t	technologyfud@gmail.com	mxrc mysz nbsw ivck	eduardoa4848@Outlook.es	t	f	f	f	f
+45	42	Campos Herramientas	Campos Herramientas	admin_Campos_Herramientas	1									camposss1@hotmail.co	camposss1@hotmail.co	0	\N	\N	2025-02-03	2025-02-03	2025-02-03	\N	\N	\N	f	\N	\N	\N	f	f	f	f	f
+22	19	tu negocio	tu negocio	tu nombre	120	municipio	ciudad	colonia	direccion			12345	tucorreo@hotmail.com			0		\N	2024-08-03	2024-07-19	\N	\N	\N	\N	f	\N	\N	\N	f	f	f	f	f
 \.
 
 
 --
--- TOC entry 4102 (class 0 OID 102783)
+-- TOC entry 4110 (class 0 OID 102783)
 -- Dependencies: 259
 -- Data for Name: customers; Type: TABLE DATA; Schema: Company; Owner: postgres
 --
@@ -4451,7 +4508,7 @@ COPY "Company".customers (id, id_companies, first_name, second_name, last_name, 
 
 
 --
--- TOC entry 4104 (class 0 OID 102789)
+-- TOC entry 4112 (class 0 OID 102789)
 -- Dependencies: 261
 -- Data for Name: employees; Type: TABLE DATA; Schema: Company; Owner: postgres
 --
@@ -4490,7 +4547,7 @@ COPY "Company".employees (id, id_companies, id_users, id_roles_employees, id_dep
 
 
 --
--- TOC entry 4106 (class 0 OID 102794)
+-- TOC entry 4114 (class 0 OID 102794)
 -- Dependencies: 263
 -- Data for Name: departments_employees; Type: TABLE DATA; Schema: Employee; Owner: postgres
 --
@@ -4527,7 +4584,7 @@ COPY "Employee".departments_employees (id, id_companies, description, name_depar
 
 
 --
--- TOC entry 4108 (class 0 OID 102800)
+-- TOC entry 4116 (class 0 OID 102800)
 -- Dependencies: 265
 -- Data for Name: history_schedules; Type: TABLE DATA; Schema: Employee; Owner: postgres
 --
@@ -4565,43 +4622,43 @@ COPY "Employee".history_schedules (id, id_branches, id_employees, id_schedules, 
 
 
 --
--- TOC entry 4110 (class 0 OID 102804)
+-- TOC entry 4118 (class 0 OID 102804)
 -- Dependencies: 267
 -- Data for Name: roles_employees; Type: TABLE DATA; Schema: Employee; Owner: postgres
 --
 
-COPY "Employee".roles_employees (id, id_companies, name_role, commissions, salary, discount_for_product, add_box, edit_box, delete_box, create_reservation, view_reservation, view_reports, add_customer, edit_customer, delete_customer, cancel_debt, offer_loan, get_fertilizer, view_customer_credits, send_email, add_employee, edit_employee, delete_employee, create_schedule, assign_schedule, view_schedule, create_type_user, create_employee_department, view_sale_history, delete_sale_history, view_movement_history, delete_movement_history, view_supplies, add_supplies, edit_supplies, delete_supplies, view_products, edit_products, delete_products, view_combo, add_combo, edit_combo, delete_combo, view_food_departament, add_food_departament, edit_food_departament, delete_food_departament, view_food_category, add_food_category, edit_food_category, delete_food_category, waste_report, add_provider, edit_provider, delete_provider, view_provider, sell, apply_discount, apply_returns, add_offers, edit_offers, delete_offers, change_coins, modify_hardware, modify_hardware_kitchen, give_permissions, currency, type_of_salary, app_point_sales, view_inventory, edit_inventory, employee_roles, edit_rol_employee, delete_rol_employee, employee_department, edit_employee_department, delete_employee_department, add_employee_roles, add_employee_department, view_employee, add_label, edit_label, delete_label, view_label, remove_product_for_sale, delete_the_shopping_cart, add_discount_to_product_on_sale, add_product_on_backorder, view_products_on_backorder, select_product_on_backorder, delete_product_on_backorder, add_lot, edit_lot, delete_lot, add_promotions, edit_promotions, delete_promotions, cut_box, report_to_cofepris) FROM stdin;
-14	20	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f
-15	21	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f
-16	22	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f
-17	23	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f
-18	24	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f
-19	25	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f
-20	26	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f
-21	27	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f
-22	28	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f
-23	29	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f
-24	30	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f
-25	31	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f
-26	32	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f
-12	1	Cocinero 	0	20	0	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	mx	Hour	f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f
-28	33	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f
-29	34	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f
-30	35	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f
-31	36	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f
-32	37	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f
-33	38	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f
-34	39	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f
-35	40	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f
-36	41	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f
-9	1	Vendedor	0	1	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	f	t	f	f	f	f	f	f	f	f	t	t	t	f	f	f	f	t	t	t	t	t	t	t	t	f	f	f	f	f	t	f	f	f	f	f	f	f	f	f	mx	Minute	t	t	t	f	f	f	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f
-8	1	Admin	0	10	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	f	t	t	t	f	t	t	t	mx	Hour	t	t	t	t	t	t	t	t	t	f	f	t	t	t	t	t	t	t	f	t	t	t	f	t	t	t	f	f	f	f	t
-13	19	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	f	t	t	t	f	t	t	t	mx	Minute	t	t	t	t	t	t	t	t	t	f	f	t	t	t	t	t	t	t	f	t	t	t	f	t	t	t	f	f	f	f	t
+COPY "Employee".roles_employees (id, id_companies, name_role, commissions, salary, discount_for_product, add_box, edit_box, delete_box, create_reservation, view_reservation, view_reports, add_customer, edit_customer, delete_customer, cancel_debt, offer_loan, get_fertilizer, view_customer_credits, send_email, add_employee, edit_employee, delete_employee, create_schedule, assign_schedule, view_schedule, create_type_user, create_employee_department, view_sale_history, delete_sale_history, view_movement_history, delete_movement_history, view_supplies, add_supplies, edit_supplies, delete_supplies, view_products, edit_products, delete_products, view_combo, add_combo, edit_combo, delete_combo, view_food_departament, add_food_departament, edit_food_departament, delete_food_departament, view_food_category, add_food_category, edit_food_category, delete_food_category, waste_report, add_provider, edit_provider, delete_provider, view_provider, sell, apply_discount, apply_returns, add_offers, edit_offers, delete_offers, change_coins, modify_hardware, modify_hardware_kitchen, give_permissions, currency, type_of_salary, app_point_sales, view_inventory, edit_inventory, employee_roles, edit_rol_employee, delete_rol_employee, employee_department, edit_employee_department, delete_employee_department, add_employee_roles, add_employee_department, view_employee, add_label, edit_label, delete_label, view_label, remove_product_for_sale, delete_the_shopping_cart, add_discount_to_product_on_sale, add_product_on_backorder, view_products_on_backorder, select_product_on_backorder, delete_product_on_backorder, add_lot, edit_lot, delete_lot, add_promotions, edit_promotions, delete_promotions, cut_box, report_to_cofepris, add_product_flash) FROM stdin;
+14	20	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	t
+15	21	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	t
+16	22	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	t
+17	23	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	t
+18	24	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	t
+19	25	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	t
+20	26	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	t
+21	27	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	t
+22	28	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	t
+23	29	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	t
+24	30	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	t
+25	31	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	t
+26	32	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	t
+12	1	Cocinero 	0	20	0	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	mx	Hour	f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	t
+28	33	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	t
+29	34	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	t
+30	35	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	t
+31	36	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	t
+32	37	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	t
+33	38	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	t
+34	39	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	t
+35	40	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	t
+36	41	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t			f	f	f	t	t	t	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	t
+8	1	Admin	0	10	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	f	t	t	t	f	t	t	t	mx	Hour	t	t	t	t	t	t	t	t	t	f	f	t	t	t	t	t	t	t	f	t	t	t	f	t	t	t	f	f	f	t	t	t
+9	1	Vendedor	0	1	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	f	t	f	f	f	f	f	f	f	f	t	t	t	f	f	f	f	t	t	t	t	t	t	t	t	f	f	f	f	f	t	f	f	f	f	f	f	f	f	f	mx	Minute	t	t	t	f	f	f	t	t	t	t	t	t	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	f	t
+13	19	Admin	0	0	0	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	f	t	t	t	f	t	t	t	mx	Minute	t	t	t	t	t	t	t	t	t	f	f	t	t	t	t	t	t	t	f	t	t	t	f	t	t	t	f	f	f	f	t	t
 \.
 
 
 --
--- TOC entry 4112 (class 0 OID 102868)
+-- TOC entry 4120 (class 0 OID 102868)
 -- Dependencies: 269
 -- Data for Name: schedules; Type: TABLE DATA; Schema: Employee; Owner: postgres
 --
@@ -4615,7 +4672,7 @@ COPY "Employee".schedules (id, id_branches, color, name, monday, tuesday, wednes
 
 
 --
--- TOC entry 4114 (class 0 OID 102872)
+-- TOC entry 4122 (class 0 OID 102872)
 -- Dependencies: 271
 -- Data for Name: country; Type: TABLE DATA; Schema: Fud; Owner: postgres
 --
@@ -4822,7 +4879,7 @@ COPY "Fud".country (id, name) FROM stdin;
 
 
 --
--- TOC entry 4116 (class 0 OID 102876)
+-- TOC entry 4124 (class 0 OID 102876)
 -- Dependencies: 273
 -- Data for Name: packs_fud; Type: TABLE DATA; Schema: Fud; Owner: postgres
 --
@@ -4841,7 +4898,7 @@ COPY "Fud".packs_fud (id, description) FROM stdin;
 
 
 --
--- TOC entry 4117 (class 0 OID 102881)
+-- TOC entry 4125 (class 0 OID 102881)
 -- Dependencies: 274
 -- Data for Name: session ; Type: TABLE DATA; Schema: Fud; Owner: postgres
 --
@@ -4851,7 +4908,7 @@ COPY "Fud"."session " (sid, sess, expire) FROM stdin;
 
 
 --
--- TOC entry 4118 (class 0 OID 102886)
+-- TOC entry 4126 (class 0 OID 102886)
 -- Dependencies: 275
 -- Data for Name: tokens; Type: TABLE DATA; Schema: Fud; Owner: postgres
 --
@@ -4868,7 +4925,7 @@ COPY "Fud".tokens (id, user_id, token, created_at, expiry_time) FROM stdin;
 
 
 --
--- TOC entry 4120 (class 0 OID 102894)
+-- TOC entry 4128 (class 0 OID 102894)
 -- Dependencies: 277
 -- Data for Name: users; Type: TABLE DATA; Schema: Fud; Owner: postgres
 --
@@ -4906,7 +4963,7 @@ COPY "Fud".users (id, photo, user_name, email, password, first_name, second_name
 
 
 --
--- TOC entry 4173 (class 0 OID 112290)
+-- TOC entry 4181 (class 0 OID 112290)
 -- Dependencies: 330
 -- Data for Name: boutique; Type: TABLE DATA; Schema: Inventory; Owner: postgres
 --
@@ -4917,7 +4974,7 @@ COPY "Inventory".boutique (id, name, barcode, description, use_inventory, max_in
 
 
 --
--- TOC entry 4122 (class 0 OID 102902)
+-- TOC entry 4130 (class 0 OID 102902)
 -- Dependencies: 279
 -- Data for Name: dish_and_combo_features; Type: TABLE DATA; Schema: Inventory; Owner: postgres
 --
@@ -4927,6 +4984,8 @@ COPY "Inventory".dish_and_combo_features (id, id_companies, id_branches, id_dish
 169	1	8	62	13	0	0	0	0	0	f		Pza	\N	0	0	\N	f
 170	1	8	63	1	0	\N	\N	\N	\N	\N	\N	Pza	\N	0	0	\N	f
 124	1	8	16	0	0	\N	\N	\N	\N	\N	\N	Pza	\N	0	0	\N	f
+171	1	8	64	0	0	\N	\N	\N	\N	\N	\N	Pza	\N	0	0	\N	f
+172	1	8	65	29.4	0	\N	\N	\N	\N	\N	\N	Pza	\N	0	0	\N	f
 133	1	8	26	150	0	\N	\N	\N	\N	\N	\N	Pza	\N	0	0	\N	f
 109	1	8	1	10	900	0	0	0	0	t		Pza	\N	0	0	\N	f
 111	1	8	3	0	0	0	0	0	0	f		Pza	\N	0	0	\N	f
@@ -4958,11 +5017,18 @@ COPY "Inventory".dish_and_combo_features (id, id_companies, id_branches, id_dish
 160	1	8	53	50	0	0	0	0	0	f		Pza	\N	0	0	\N	f
 159	1	8	52	12	0	0	0	0	0	f		Pza	\N	0	0	\N	f
 112	1	8	4	20	100	0	0	0	0	f		Pza	\N	0	0	\N	f
+175	1	8	68	28	0	0	0	0	0	f		Pza	\N	0	0	\N	f
+176	1	8	69	0	0	\N	\N	\N	\N	\N	\N	Pza	\N	0	0	\N	f
+177	1	8	70	10	0	\N	\N	\N	\N	\N	\N	Pza	\N	0	0	\N	f
+191	1	8	84	28	0	\N	\N	\N	\N	\N	\N	Pza	\N	0	0	\N	f
+183	1	8	76	0	0	\N	\N	\N	\N	\N	\N	Pza	\N	0	0	\N	f
+184	1	8	77	20	0	\N	\N	\N	\N	\N	\N	Pza	\N	0	0	\N	f
+187	1	8	80	1	0	0	0	0	0	f		Pza	\N	0	0	\N	f
 \.
 
 
 --
--- TOC entry 4179 (class 0 OID 112670)
+-- TOC entry 4187 (class 0 OID 112670)
 -- Dependencies: 336
 -- Data for Name: lots; Type: TABLE DATA; Schema: Inventory; Owner: postgres
 --
@@ -4979,7 +5045,7 @@ COPY "Inventory".lots (id, number_lote, initial_existence, current_existence, da
 
 
 --
--- TOC entry 4124 (class 0 OID 102908)
+-- TOC entry 4132 (class 0 OID 102908)
 -- Dependencies: 281
 -- Data for Name: product_and_suppiles_features; Type: TABLE DATA; Schema: Inventory; Owner: postgres
 --
@@ -4995,6 +5061,7 @@ COPY "Inventory".product_and_suppiles_features (id, id_branches, sale_price, max
 189	8	10	0	0	5	0	0	0	183	MXN	MXN	kg	kg	kg
 157	8	1	1	1	0	1	1	1	148	MXN	MXN	Unity	Unity	Unity
 159	8	1	100	1	90	1	1	1	150	MXN	MXN	Unity	Unity	Unity
+155	8	1	1	1	170	1	1	2	146	MXN	MXN	Unity	Unity	Unity
 184	8	5	100	1	98	2	10	0.5	178	MXN	MXN	Kg	Kg	Kg
 210	8	50	100	0	17	1	40	1	204	MXN	MXN	Unity	Unity	Unity
 190	8	10	0	0	5	0	0	0	184	MXN	MXN	L	L	L
@@ -5003,7 +5070,9 @@ COPY "Inventory".product_and_suppiles_features (id, id_branches, sale_price, max
 160	8	1	100	1	99	50	100	1	151	MXN	MXN	Unity	Unity	Unity
 158	8	10	100	1	96	1	5	1	149	MXN	MXN	Kg	Kg	Kg
 219	8	13	1	1	1	1	1	1	213	MXN	MXN	Unity	Unity	Unity
-155	8	1	1	1	174	1	1	2	146	MXN	MXN	Unity	Unity	Unity
+237	8	1	1	1	1	1	1	1	231	MXN	MXN	Unity	Unity	Unity
+221	8	0	0	0	0	0	0	1	215	MXN	MXN	Unity	Unity	Unity
+222	8	29.4	0	0	0	0	0	1	216	MXN	MXN	Unity	Unity	Unity
 182	8	150	1	0	150	1	150	1	176	MXN	MXN	Pza	Pza	Pza
 183	8	100	1	0	100	1	100	1	177	MXN	MXN	Pza	Pza	Pza
 185	8	15	100	1	50	100	10	1	179	MXN	MXN	Unity	Unity	Unity
@@ -5016,14 +5085,20 @@ COPY "Inventory".product_and_suppiles_features (id, id_branches, sale_price, max
 206	8	2	100	0	94	15	15	15	200	MXN	MXN	Unity	Unity	Unity
 188	8	10	0	0	5	0	0	0	182	MXN	MXN	Unity	Unity	Unity
 208	8	1	1	1	1	1	1	1	202	MXN	MXN	Unity	Unity	Unity
+233	8	0	0	0	0	0	0	1	227	MXN	MXN	Unity	Unity	Unity
 186	8	12	100	1	90	100	10	1	180	MXN	MXN	Unity	Unity	Unity
+225	8	28	1	1	1	1	1	1	219	MXN	MXN	Unity	Unity	Unity
 209	8	12	100	0	10	100	10	1	203	MXN	MXN	Unity	Unity	Unity
 220	8	1	1	1	1	1	1	1	214	\N	\N	\N	\N	\N
+226	8	0	0	0	0	0	0	1	220	MXN	MXN	Unity	Unity	Unity
+227	8	10	0	0	0	0	0	1	221	MXN	MXN	Unity	Unity	Unity
+234	8	20	0	0	100	0	0	1	228	MXN	MXN	Unity	Unity	Unity
+241	8	28	0	0	0	0	0	1	235	MXN	MXN	Unity	Unity	Unity
 \.
 
 
 --
--- TOC entry 4185 (class 0 OID 121103)
+-- TOC entry 4193 (class 0 OID 121103)
 -- Dependencies: 342
 -- Data for Name: promotions; Type: TABLE DATA; Schema: Inventory; Owner: postgres
 --
@@ -5040,7 +5115,7 @@ COPY "Inventory".promotions (id, id_companies, id_branches, id_dish_and_combo_fe
 
 
 --
--- TOC entry 4175 (class 0 OID 112302)
+-- TOC entry 4183 (class 0 OID 112302)
 -- Dependencies: 332
 -- Data for Name: table_boutique; Type: TABLE DATA; Schema: Inventory; Owner: postgres
 --
@@ -5061,7 +5136,7 @@ COPY "Inventory".table_boutique (id, id_boutique, id_dish_and_combo_features, id
 
 
 --
--- TOC entry 4126 (class 0 OID 102912)
+-- TOC entry 4134 (class 0 OID 102912)
 -- Dependencies: 283
 -- Data for Name: table_supplies_dish; Type: TABLE DATA; Schema: Inventory; Owner: postgres
 --
@@ -5071,7 +5146,7 @@ COPY "Inventory".table_supplies_dish (id, id_dish_and_combo_features, id_product
 
 
 --
--- TOC entry 4128 (class 0 OID 102916)
+-- TOC entry 4136 (class 0 OID 102916)
 -- Dependencies: 285
 -- Data for Name: table_taxes; Type: TABLE DATA; Schema: Inventory; Owner: postgres
 --
@@ -5081,7 +5156,7 @@ COPY "Inventory".table_taxes (id, id_taxes, id_dishes_and_combos) FROM stdin;
 
 
 --
--- TOC entry 4130 (class 0 OID 102920)
+-- TOC entry 4138 (class 0 OID 102920)
 -- Dependencies: 287
 -- Data for Name: taxes; Type: TABLE DATA; Schema: Inventory; Owner: postgres
 --
@@ -5091,7 +5166,7 @@ COPY "Inventory".taxes (id, name, price_taxe, local_taxe, type_taxe, accounting_
 
 
 --
--- TOC entry 4132 (class 0 OID 102926)
+-- TOC entry 4140 (class 0 OID 102926)
 -- Dependencies: 289
 -- Data for Name: dishes_and_combos; Type: TABLE DATA; Schema: Kitchen; Owner: postgres
 --
@@ -5102,6 +5177,7 @@ COPY "Kitchen".dishes_and_combos (id_companies, img, name, description, barcode,
 1	\\img\\uploads\\01ce75ee-ef00-491b-98ca-9bda55ac06b9.webp	doritos		doritos	\N	\N	5	t	\N	f
 1	\\img\\uploads\\955c09cd-0fad-406c-9e10-6e184f8cb194.png	paracetamol		paracetamol	\N	\N	53	t	\N	t
 1	\\img\\uploads\\67a083e2-b0fa-479f-9683-9ee359e39f1f.jpg	pan bimbo		pan bimbo	\N	\N	14	t	\N	f
+\N	/img/uploads/1748750737600.webp	Bimbo Original Bread Crumbs  12.35 Oz	Pan molido. Serving size: 1/3 cup (50 g). Allergens: En:gluten,en:sesame-seeds. Country of origin: United States.	074323002348	\N	\N	84	t	f	f
 1		vestido-color rojo talla 2		vestido-rojo-2	\N	\N	17	t	f	f
 1	\\img\\uploads\\94628749-8225-490b-a203-317e778951c8.jpg	coca cola		coca cola	\N	\N	52	t	\N	f
 1	\\img\\uploads\\e4c3ddb9-f021-4641-9b7f-4284a9400ca1.jpg	jitomate		jitomate	2	2	4	t	t	f
@@ -5124,12 +5200,20 @@ COPY "Kitchen".dishes_and_combos (id_companies, img, name, description, barcode,
 1	\\img\\uploads\\16a8fc88-4e6a-4ef2-ac3a-9b7771bf031d.webp	Pepsi		Pepsi	\N	\N	32	t	\N	f
 1		Gansito Marinela	Pastelito cubierto de chocolate con relleno de crema y mermelada	7501008151407	8	8	62	t	\N	f
 1		p1		p1	2	2	63	t	f	f
+\N		4'x Gillette Antiperspirant		7500435140591	\N	\N	64	t	f	f
 1	\\img\\uploads\\98508494-212a-4b33-babc-8f6a83af3961.webp	queso		queso	\N	\N	13	t	\N	f
+\N		Emperador Sabor a Chocolate	Cont. Net. 218 g Galletas tipo SANDWICH con relleno sabor a chocolate.6 galletas de 4 paquetes.	7500478019632	\N	\N	65	t	f	f
+1	/img/uploads/1748572842375.jpg	Tia Rosa Tortillinas 15 PZA	Tortillas de Harina de Trigo CONT. NETO. 382,5g	7500810036624	2	2	68	t	\N	f
+\N	/img/uploads/1748572950122.jpeg	EMPERADOR, ENLARGED COOKIE, STRAWBERRY	INGREDIENTS: STRAWBERRY FLAVORED FILLING (HIGH FRUCTOSE CORN SYRUP, SUGAR, DEXTROSE, SORBITOL, FOOD STARCH-MODIFIED, STRAWBERRY PUREE, PECTIN, SODIUM ALGINATE, CITRIC ACID, IODIZED SALT, ARTIFICIAL FLAVOR, SODIUM CITRATE, POTASSIUM SORBATE, CARAMEL COLOR, CALCIUM PHOSPHATE, FD&C RED 40), ENRICHED FLOUR (UNBLEACHED AND BLEACHED WHEAT FLOUR, NIACINAMIDE, FERROUS FUMARATE, THIAMIN MONONITRATE, RIBOFLAVIN, FOLIC ACID), HYDROGENATED VEGETABLE OIL BLEND (PALM OIL AND/OR SOYBEAN OIL AND/OR HIGH OLEIC SAFFLOWER AND/OR SUNFLOWER OIL [CONTAINS ASCORBYL PALMITATE, TOCOPHEROLS AND TBHQ AS PRESERVATIVES]), CORN SYRUP SOLIDS, SUGAR, NONFAT MILK, EGGS, GLYCERIN, IODIZED SALT, SOY LECITHIN, LEAVENING AGENTS (SODIUM BICARBONATE, SODIUM ALUMINUM PHOSPHATE), CARAMEL COLOR, ARTIFICIAL FLAVORS, CORNSTARCH, SODIUM STEAROYL LACTYLATE, ZINC OXIDE.	686700047189	\N	\N	69	t	f	f
+\N	/img/uploads/1748573011113.jpeg	GAMESA, EMPERADOR, COOKIES WITH PINEAPPLE FILLING	INGREDIENTS: PINEAPPLE FLAVORED FILLING (HIGH FRUCTOSE CORN SYRUP, SUGAR, DEXTROSE, SORBITOL, FOOD STARCH-MODIFIED, PINEAPPLE PUREE, PECTIN, SODIUM ALGINATE, CITRIC ACID, IODIZED SALT, ARTIFICIAL FLAVOR, SODIUM CITRATE, POTASSIUM SORBATE, CALCIUM PHOSPHATE, FD&C YELLOW 5), ENRICHED FLOUR (UNBLEACHED AND BLEACHED WHEAT FLOUR, NIACINAMIDE, FERROUS FUMARATE, THIAMIN MONONITRATE, RIBOFLAVIN, FOLIC ACID), HYDROGENATED VEGETABLE OIL BLEND (PALM OIL AND/OR SOYBEAN OIL AND/OR HIGH OLEIC SAFFLOWER AND/OR SUNFLOWER OIL [CONTAINS ASCORBYL PALMITATE, TOCOPHEROLS AND TBHQ AS PRESERVATIVES]), CORN SYRUP SOLIDS, SUGAR, NONFAT MILK, EGGS, GLYCERIN, IODIZED SALT, SOY LECITHIN, LEAVENING AGENTS (SODIUM BICARBONATE, SODIUM ALUMINUM PHOSPHATE), CARAMEL COLOR, ARTIFICIAL FLAVORS, CORNSTARCH, SODIUM STEAROYL LACTYLATE, ZINC OXIDE.	686700047202	\N	\N	70	t	f	f
+\N	/img/uploads/1748631718018.jpg	Donas	Donas. Serving size: 26.25g. Allergens: En:gluten,en:milk. Labels: Made in Mexico. Country of origin: Mexico.	7501030474227	\N	\N	77	t	f	f
+1	\\img\\uploads\\907c95f5-c766-4fa7-aa22-7d68a6e4612c.webp	prueba		prueba	2	2	80	t	\N	f
+\N	/img/uploads/1748574136366.jpg	Gamesa Marias Vanilla Cookies 19.7 Ounce 12 Pack Paper Box	INGREDIENTS: Ingredients: Enriched Flour (Wheat Flour, Niacinamide, Ferrous Fumarate, Thiamin Mononitrate, Riboflavin, Folic Acid), Sugar, High Fructose Corn Syrup, Vegetable Oil Blend (Palm Oil and/or Sunflower Oil and/or Canola Oil and/or Soybean Oil, [Contains Ascorbyl Palmitate, Tocopherols and TBHQ as Preservatives]), Contains 2% or Less of: Iodized Salt, Leavening Agents (Sodium Bicarbonate, Monocalcium Phosphate, Ammonium Bicarbonate), Nonfat Dry Milk, Tricalcium Phosphate, Natural and Artificial Flavor, Corn Starch, Dry Whole Milk, Soy Lecithin, Maltodextrin, Propylene Glycol Monostearate, Sodium Metabisulfite, Dried Eggs, Food Starch-Modified, Glyceryl Monostearate, Sodium Stearoyl Lactylate, Calcium Sulfate, Zinc Oxide, Ferrous Fumarate, Disodium Phosphate, Niacinamide, Carageenan, Sodium Benzoate (Preservative), Guar Gum, Xanthan Gum, Sodium Propionate (Preservative), Vitamin A Palmitate, BHT (Preservative), Sorbic Acid (Preservative). CONTAINS MILK, EGG, WHEAT AND SOY INGREDIENTS. MAY CONTAIN TRACES OF PEANUT AND TREENUT INGREDIENTS	686700101232	\N	\N	76	t	f	f
 \.
 
 
 --
--- TOC entry 4134 (class 0 OID 102932)
+-- TOC entry 4142 (class 0 OID 102932)
 -- Dependencies: 291
 -- Data for Name: product_category; Type: TABLE DATA; Schema: Kitchen; Owner: postgres
 --
@@ -5145,7 +5229,7 @@ COPY "Kitchen".product_category (id, id_companies, name, description) FROM stdin
 
 
 --
--- TOC entry 4136 (class 0 OID 102938)
+-- TOC entry 4144 (class 0 OID 102938)
 -- Dependencies: 293
 -- Data for Name: product_department; Type: TABLE DATA; Schema: Kitchen; Owner: postgres
 --
@@ -5160,7 +5244,7 @@ COPY "Kitchen".product_department (id, id_companies, name, description) FROM std
 
 
 --
--- TOC entry 4138 (class 0 OID 102944)
+-- TOC entry 4146 (class 0 OID 102944)
 -- Dependencies: 295
 -- Data for Name: products_and_supplies; Type: TABLE DATA; Schema: Kitchen; Owner: postgres
 --
@@ -5188,6 +5272,7 @@ COPY "Kitchen".products_and_supplies (id, id_companies, img, barcode, name, desc
 214	1		p1	p1		f	f
 204	1	\\img\\uploads\\955c09cd-0fad-406c-9e10-6e184f8cb194.png	paracetamol	paracetamol		t	f
 164	1	\\img\\uploads\\67a083e2-b0fa-479f-9683-9ee359e39f1f.jpg	pan bimbo	pan bimbo		f	f
+215	1		7500435140591	4'x Gillette Antiperspirant		f	f
 157	1		Producto 1e	Producto 1		f	f
 158	1		Producto 2e	Producto 2		f	f
 166	1		vestido-rojo-1	vestido-color rojo talla 1		t	f
@@ -5195,15 +5280,23 @@ COPY "Kitchen".products_and_supplies (id, id_companies, img, barcode, name, desc
 176	1		zapato-1-rojo-1	zapato-1-color rojo talla 1		t	f
 177	1		zapato-1-rojo-2	zapato-1-color rojo talla 2		t	f
 203	1	\\img\\uploads\\94628749-8225-490b-a203-317e778951c8.jpg	coca cola	coca cola		t	f
+216	1		7500478019632	Emperador Sabor a Chocolate	Cont. Net. 218 g Galletas tipo SANDWICH con relleno sabor a chocolate.6 galletas de 4 paquetes.	f	f
 165	1	\\img\\uploads\\8d8db98c-81ee-4ad1-a155-c5d77208d912.webp	fanta	fanta		f	f
 152	1	\\img\\uploads\\64f40a70-87a2-4ef2-a827-4c108fc08d6c.webp	cheetos hot	cheetos hot		t	f
 153	1	\\img\\uploads\\54e570c8-91b0-47ed-8704-ed7c19866468.webp	leche lala	leche lala		t	f
 151	1	\\img\\uploads\\4cc5907f-91a3-4b95-99ec-39625f89de7c.webp	cheetos verdes	cheetos verdes		t	f
+219	1	/img/uploads/1748572842012.jpg	7500810036624	Tia Rosa Tortillinas 15 PZA	Tortillas de Harina de Trigo CONT. NETO. 382,5g	f	f
+227	1	/img/uploads/1748574136210.jpg	686700101232	Gamesa Marias Vanilla Cookies 19.7 Ounce 12 Pack Paper Box	INGREDIENTS: Ingredients: Enriched Flour (Wheat Flour, Niacinamide, Ferrous Fumarate, Thiamin Mononitrate, Riboflavin, Folic Acid), Sugar, High Fructose Corn Syrup, Vegetable Oil Blend (Palm Oil and/or Sunflower Oil and/or Canola Oil and/or Soybean Oil, [Contains Ascorbyl Palmitate, Tocopherols and TBHQ as Preservatives]), Contains 2% or Less of: Iodized Salt, Leavening Agents (Sodium Bicarbonate, Monocalcium Phosphate, Ammonium Bicarbonate), Nonfat Dry Milk, Tricalcium Phosphate, Natural and Artificial Flavor, Corn Starch, Dry Whole Milk, Soy Lecithin, Maltodextrin, Propylene Glycol Monostearate, Sodium Metabisulfite, Dried Eggs, Food Starch-Modified, Glyceryl Monostearate, Sodium Stearoyl Lactylate, Calcium Sulfate, Zinc Oxide, Ferrous Fumarate, Disodium Phosphate, Niacinamide, Carageenan, Sodium Benzoate (Preservative), Guar Gum, Xanthan Gum, Sodium Propionate (Preservative), Vitamin A Palmitate, BHT (Preservative), Sorbic Acid (Preservative). CONTAINS MILK, EGG, WHEAT AND SOY INGREDIENTS. MAY CONTAIN TRACES OF PEANUT AND TREENUT INGREDIENTS	f	f
+220	1	/img/uploads/1748572949755.jpeg	686700047189	EMPERADOR, ENLARGED COOKIE, STRAWBERRY	INGREDIENTS: STRAWBERRY FLAVORED FILLING (HIGH FRUCTOSE CORN SYRUP, SUGAR, DEXTROSE, SORBITOL, FOOD STARCH-MODIFIED, STRAWBERRY PUREE, PECTIN, SODIUM ALGINATE, CITRIC ACID, IODIZED SALT, ARTIFICIAL FLAVOR, SODIUM CITRATE, POTASSIUM SORBATE, CARAMEL COLOR, CALCIUM PHOSPHATE, FD&C RED 40), ENRICHED FLOUR (UNBLEACHED AND BLEACHED WHEAT FLOUR, NIACINAMIDE, FERROUS FUMARATE, THIAMIN MONONITRATE, RIBOFLAVIN, FOLIC ACID), HYDROGENATED VEGETABLE OIL BLEND (PALM OIL AND/OR SOYBEAN OIL AND/OR HIGH OLEIC SAFFLOWER AND/OR SUNFLOWER OIL [CONTAINS ASCORBYL PALMITATE, TOCOPHEROLS AND TBHQ AS PRESERVATIVES]), CORN SYRUP SOLIDS, SUGAR, NONFAT MILK, EGGS, GLYCERIN, IODIZED SALT, SOY LECITHIN, LEAVENING AGENTS (SODIUM BICARBONATE, SODIUM ALUMINUM PHOSPHATE), CARAMEL COLOR, ARTIFICIAL FLAVORS, CORNSTARCH, SODIUM STEAROYL LACTYLATE, ZINC OXIDE.	f	f
+221	1	/img/uploads/1748573010668.jpeg	686700047202	GAMESA, EMPERADOR, COOKIES WITH PINEAPPLE FILLING	INGREDIENTS: PINEAPPLE FLAVORED FILLING (HIGH FRUCTOSE CORN SYRUP, SUGAR, DEXTROSE, SORBITOL, FOOD STARCH-MODIFIED, PINEAPPLE PUREE, PECTIN, SODIUM ALGINATE, CITRIC ACID, IODIZED SALT, ARTIFICIAL FLAVOR, SODIUM CITRATE, POTASSIUM SORBATE, CALCIUM PHOSPHATE, FD&C YELLOW 5), ENRICHED FLOUR (UNBLEACHED AND BLEACHED WHEAT FLOUR, NIACINAMIDE, FERROUS FUMARATE, THIAMIN MONONITRATE, RIBOFLAVIN, FOLIC ACID), HYDROGENATED VEGETABLE OIL BLEND (PALM OIL AND/OR SOYBEAN OIL AND/OR HIGH OLEIC SAFFLOWER AND/OR SUNFLOWER OIL [CONTAINS ASCORBYL PALMITATE, TOCOPHEROLS AND TBHQ AS PRESERVATIVES]), CORN SYRUP SOLIDS, SUGAR, NONFAT MILK, EGGS, GLYCERIN, IODIZED SALT, SOY LECITHIN, LEAVENING AGENTS (SODIUM BICARBONATE, SODIUM ALUMINUM PHOSPHATE), CARAMEL COLOR, ARTIFICIAL FLAVORS, CORNSTARCH, SODIUM STEAROYL LACTYLATE, ZINC OXIDE.	f	f
+228	1	/img/uploads/1748631717377.jpg	7501030474227	Donas	Donas. Serving size: 26.25g. Allergens: En:gluten,en:milk. Labels: Made in Mexico. Country of origin: Mexico.	f	f
+231	1	\\img\\uploads\\907c95f5-c766-4fa7-aa22-7d68a6e4612c.webp	prueba	prueba		f	f
+235	1	/img/uploads/1748750737155.webp	074323002348	Bimbo Original Bread Crumbs  12.35 Oz	Pan molido. Serving size: 1/3 cup (50 g). Allergens: En:gluten,en:sesame-seeds. Country of origin: United States.	f	f
 \.
 
 
 --
--- TOC entry 4140 (class 0 OID 102950)
+-- TOC entry 4148 (class 0 OID 102950)
 -- Dependencies: 297
 -- Data for Name: screen; Type: TABLE DATA; Schema: Kitchen; Owner: postgres
 --
@@ -5213,7 +5306,7 @@ COPY "Kitchen".screen (ip, id_branches) FROM stdin;
 
 
 --
--- TOC entry 4141 (class 0 OID 102955)
+-- TOC entry 4149 (class 0 OID 102955)
 -- Dependencies: 298
 -- Data for Name: table_supplies_combo; Type: TABLE DATA; Schema: Kitchen; Owner: postgres
 --
@@ -5248,11 +5341,20 @@ COPY "Kitchen".table_supplies_combo (id, id_dishes_and_combos, id_products_and_s
 559	62	213	\N	1	1	f
 562	2	146	Unity	1	0	f
 563	63	214	\N	1	1	f
+564	64	215	Unity	1	1	f
+565	65	216	Unity	1	1	f
+568	68	219	\N	1	1	f
+569	69	220	Unity	1	1	f
+570	70	221	Unity	1	1	f
+576	76	227	Unity	1	1	f
+577	77	228	Unity	1	1	f
+580	80	231	\N	1	1	f
+584	84	235	Unity	1	1	f
 \.
 
 
 --
--- TOC entry 4143 (class 0 OID 102961)
+-- TOC entry 4151 (class 0 OID 102961)
 -- Dependencies: 300
 -- Data for Name: branch; Type: TABLE DATA; Schema: Settings; Owner: postgres
 --
@@ -5262,7 +5364,7 @@ COPY "Settings".branch (id) FROM stdin;
 
 
 --
--- TOC entry 4144 (class 0 OID 102964)
+-- TOC entry 4152 (class 0 OID 102964)
 -- Dependencies: 301
 -- Data for Name: company; Type: TABLE DATA; Schema: Settings; Owner: postgres
 --
@@ -5272,7 +5374,7 @@ COPY "Settings".company (color_company) FROM stdin;
 
 
 --
--- TOC entry 4145 (class 0 OID 102967)
+-- TOC entry 4153 (class 0 OID 102967)
 -- Dependencies: 302
 -- Data for Name: companies; Type: TABLE DATA; Schema: User; Owner: postgres
 --
@@ -5317,7 +5419,7 @@ COPY "User".companies (id, id_users, path_logo, email_company, alias, descriptio
 
 
 --
--- TOC entry 4147 (class 0 OID 102974)
+-- TOC entry 4155 (class 0 OID 102974)
 -- Dependencies: 304
 -- Data for Name: subscription; Type: TABLE DATA; Schema: User; Owner: postgres
 --
@@ -5329,7 +5431,7 @@ sub_1P3rtoRofynVwfKYGItnWCo2	2	\N	17	11	\N	\N
 
 
 --
--- TOC entry 4161 (class 0 OID 103741)
+-- TOC entry 4169 (class 0 OID 103741)
 -- Dependencies: 318
 -- Data for Name: alumnos; Type: TABLE DATA; Schema: _company_1_branch_8; Owner: postgres
 --
@@ -5339,7 +5441,7 @@ COPY _company_1_branch_8.alumnos (id, nombre) FROM stdin;
 
 
 --
--- TOC entry 4159 (class 0 OID 103730)
+-- TOC entry 4167 (class 0 OID 103730)
 -- Dependencies: 316
 -- Data for Name: apps; Type: TABLE DATA; Schema: _company_1_branch_8; Owner: postgres
 --
@@ -5351,56 +5453,61 @@ programacion	1	8	https://cdn-icons-png.flaticon.com/512/1448/1448776.png	program
 
 
 --
--- TOC entry 4148 (class 0 OID 102979)
+-- TOC entry 4156 (class 0 OID 102979)
 -- Dependencies: 305
 -- Data for Name: session; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.session (sid, sess, expire) FROM stdin;
-yLqblK8DxPgIQjejrNr6POWOjyPoZsml	{"cookie":{"originalMaxAge":null,"expires":null,"httpOnly":true,"path":"/"},"flash":{}}	2025-05-25 13:49:48
-sppOl78ENA1iCobC_M76mhRCjs2biqL5	{"cookie":{"originalMaxAge":null,"expires":null,"httpOnly":true,"path":"/"},"flash":{}}	2025-05-25 13:30:35
-RhznqSa8vY4VL6vLlM608mOhCsd_CAT0	{"cookie":{"originalMaxAge":null,"expires":null,"httpOnly":true,"path":"/"},"passport":{"user":"71"},"flash":{}}	2025-05-25 17:25:42
+4u0i4Lms3JnFDrKtkmsz0ePWA7sEuQ_q	{"cookie":{"originalMaxAge":null,"expires":null,"httpOnly":true,"path":"/"}}	2025-05-30 19:57:25
+SfCZ9dXANvKoL7-YBlUBAllD0GFgIksQ	{"cookie":{"originalMaxAge":null,"expires":null,"httpOnly":true,"path":"/"},"flash":{}}	2025-05-31 12:33:31
+WKspX_Ytu8kTw8NeX_K12vepEQRMOzeS	{"cookie":{"originalMaxAge":null,"expires":null,"httpOnly":true,"path":"/"},"flash":{}}	2025-05-31 13:21:33
+RtvxCll3UNVMsJFl-KWDO3QRLOcJd9Ja	{"cookie":{"originalMaxAge":null,"expires":null,"httpOnly":true,"path":"/"},"flash":{}}	2025-05-31 12:37:03
+66QA-fKUCYsGzEEXA6ZGiYCD-Yw_bafc	{"cookie":{"originalMaxAge":null,"expires":null,"httpOnly":true,"path":"/"},"flash":{}}	2025-06-02 11:06:48
+k5LxbmL7Jx1EI4j9yKPK5L7fGrK1LOZw	{"cookie":{"originalMaxAge":null,"expires":null,"httpOnly":true,"path":"/"},"flash":{}}	2025-05-30 19:57:25
+iWk3NFCTbtf38twUKh4PdhO7dHmuUN3k	{"cookie":{"originalMaxAge":null,"expires":null,"httpOnly":true,"path":"/"},"passport":{"user":"2"},"flash":{}}	2025-05-31 12:29:09
+A0b7uOaws8paiZqmrOC_MPTptsKYX8Td	{"cookie":{"originalMaxAge":null,"expires":null,"httpOnly":true,"path":"/"},"flash":{}}	2025-05-31 12:44:19
 \.
 
 
 --
--- TOC entry 4254 (class 0 OID 0)
+-- TOC entry 4262 (class 0 OID 0)
 -- Dependencies: 333
 -- Name: box_history_id_seq; Type: SEQUENCE SET; Schema: Box; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"Box".box_history_id_seq', 53, true);
+SELECT pg_catalog.setval('"Box".box_history_id_seq', 65, true);
 
 
 --
--- TOC entry 4255 (class 0 OID 0)
+-- TOC entry 4263 (class 0 OID 0)
 -- Dependencies: 228
 -- Name: movement_history_id_seq; Type: SEQUENCE SET; Schema: Box; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"Box".movement_history_id_seq', 22, true);
+SELECT pg_catalog.setval('"Box".movement_history_id_seq', 23, true);
 
 
 --
--- TOC entry 4256 (class 0 OID 0)
+-- TOC entry 4264 (class 0 OID 0)
 -- Dependencies: 345
 -- Name: reachange_services_id_seq; Type: SEQUENCE SET; Schema: Box; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"Box".reachange_services_id_seq', 1, false);
+SELECT pg_catalog.setval('"Box".reachange_services_id_seq', 55, true);
 
 
 --
--- TOC entry 4257 (class 0 OID 0)
+-- TOC entry 4265 (class 0 OID 0)
 -- Dependencies: 231
 -- Name: sales_history_id_seq; Type: SEQUENCE SET; Schema: Box; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"Box".sales_history_id_seq', 351, true);
+SELECT pg_catalog.setval('"Box".sales_history_id_seq', 363, true);
 
 
 --
--- TOC entry 4258 (class 0 OID 0)
+-- TOC entry 4266 (class 0 OID 0)
 -- Dependencies: 233
 -- Name: Ad_id_seq; Type: SEQUENCE SET; Schema: Branch; Owner: postgres
 --
@@ -5409,7 +5516,7 @@ SELECT pg_catalog.setval('"Branch"."Ad_id_seq"', 86, true);
 
 
 --
--- TOC entry 4259 (class 0 OID 0)
+-- TOC entry 4267 (class 0 OID 0)
 -- Dependencies: 235
 -- Name: app_id_seq; Type: SEQUENCE SET; Schema: Branch; Owner: postgres
 --
@@ -5418,7 +5525,7 @@ SELECT pg_catalog.setval('"Branch".app_id_seq', 1, false);
 
 
 --
--- TOC entry 4260 (class 0 OID 0)
+-- TOC entry 4268 (class 0 OID 0)
 -- Dependencies: 237
 -- Name: billing_information_id_seq; Type: SEQUENCE SET; Schema: Branch; Owner: postgres
 --
@@ -5427,7 +5534,7 @@ SELECT pg_catalog.setval('"Branch".billing_information_id_seq', 1, false);
 
 
 --
--- TOC entry 4261 (class 0 OID 0)
+-- TOC entry 4269 (class 0 OID 0)
 -- Dependencies: 239
 -- Name: boxes_id_seq; Type: SEQUENCE SET; Schema: Branch; Owner: postgres
 --
@@ -5436,16 +5543,16 @@ SELECT pg_catalog.setval('"Branch".boxes_id_seq', 13, true);
 
 
 --
--- TOC entry 4262 (class 0 OID 0)
+-- TOC entry 4270 (class 0 OID 0)
 -- Dependencies: 241
 -- Name: commanders_id_seq; Type: SEQUENCE SET; Schema: Branch; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"Branch".commanders_id_seq', 305, true);
+SELECT pg_catalog.setval('"Branch".commanders_id_seq', 317, true);
 
 
 --
--- TOC entry 4263 (class 0 OID 0)
+-- TOC entry 4271 (class 0 OID 0)
 -- Dependencies: 339
 -- Name: history_move_lot_id_seq; Type: SEQUENCE SET; Schema: Branch; Owner: postgres
 --
@@ -5454,7 +5561,7 @@ SELECT pg_catalog.setval('"Branch".history_move_lot_id_seq', 18, true);
 
 
 --
--- TOC entry 4264 (class 0 OID 0)
+-- TOC entry 4272 (class 0 OID 0)
 -- Dependencies: 343
 -- Name: labels_id_seq; Type: SEQUENCE SET; Schema: Branch; Owner: postgres
 --
@@ -5463,7 +5570,7 @@ SELECT pg_catalog.setval('"Branch".labels_id_seq', 8, true);
 
 
 --
--- TOC entry 4265 (class 0 OID 0)
+-- TOC entry 4273 (class 0 OID 0)
 -- Dependencies: 244
 -- Name: managers_id_seq; Type: SEQUENCE SET; Schema: Branch; Owner: postgres
 --
@@ -5472,7 +5579,7 @@ SELECT pg_catalog.setval('"Branch".managers_id_seq', 1, false);
 
 
 --
--- TOC entry 4266 (class 0 OID 0)
+-- TOC entry 4274 (class 0 OID 0)
 -- Dependencies: 246
 -- Name: order_id_seq; Type: SEQUENCE SET; Schema: Branch; Owner: postgres
 --
@@ -5481,7 +5588,7 @@ SELECT pg_catalog.setval('"Branch".order_id_seq', 17, true);
 
 
 --
--- TOC entry 4267 (class 0 OID 0)
+-- TOC entry 4275 (class 0 OID 0)
 -- Dependencies: 248
 -- Name: pack_reservation_id_seq; Type: SEQUENCE SET; Schema: Branch; Owner: postgres
 --
@@ -5490,7 +5597,7 @@ SELECT pg_catalog.setval('"Branch".pack_reservation_id_seq', 1, false);
 
 
 --
--- TOC entry 4268 (class 0 OID 0)
+-- TOC entry 4276 (class 0 OID 0)
 -- Dependencies: 337
 -- Name: prescription_id_seq; Type: SEQUENCE SET; Schema: Branch; Owner: postgres
 --
@@ -5499,7 +5606,7 @@ SELECT pg_catalog.setval('"Branch".prescription_id_seq', 8, true);
 
 
 --
--- TOC entry 4269 (class 0 OID 0)
+-- TOC entry 4277 (class 0 OID 0)
 -- Dependencies: 250
 -- Name: providers_id_seq; Type: SEQUENCE SET; Schema: Branch; Owner: postgres
 --
@@ -5508,7 +5615,7 @@ SELECT pg_catalog.setval('"Branch".providers_id_seq', 7, true);
 
 
 --
--- TOC entry 4270 (class 0 OID 0)
+-- TOC entry 4278 (class 0 OID 0)
 -- Dependencies: 252
 -- Name: reservation_id_seq; Type: SEQUENCE SET; Schema: Branch; Owner: postgres
 --
@@ -5517,7 +5624,7 @@ SELECT pg_catalog.setval('"Branch".reservation_id_seq', 1, false);
 
 
 --
--- TOC entry 4271 (class 0 OID 0)
+-- TOC entry 4279 (class 0 OID 0)
 -- Dependencies: 254
 -- Name: restaurant_area_id_seq; Type: SEQUENCE SET; Schema: Branch; Owner: postgres
 --
@@ -5526,7 +5633,7 @@ SELECT pg_catalog.setval('"Branch".restaurant_area_id_seq', 1, false);
 
 
 --
--- TOC entry 4272 (class 0 OID 0)
+-- TOC entry 4280 (class 0 OID 0)
 -- Dependencies: 256
 -- Name: tables_id_seq; Type: SEQUENCE SET; Schema: Branch; Owner: postgres
 --
@@ -5535,7 +5642,7 @@ SELECT pg_catalog.setval('"Branch".tables_id_seq', 1, false);
 
 
 --
--- TOC entry 4273 (class 0 OID 0)
+-- TOC entry 4281 (class 0 OID 0)
 -- Dependencies: 312
 -- Name: appointment_id_seq; Type: SEQUENCE SET; Schema: CRM; Owner: postgres
 --
@@ -5544,7 +5651,7 @@ SELECT pg_catalog.setval('"CRM".appointment_id_seq', 25, true);
 
 
 --
--- TOC entry 4274 (class 0 OID 0)
+-- TOC entry 4282 (class 0 OID 0)
 -- Dependencies: 319
 -- Name: history_prospects_id_seq; Type: SEQUENCE SET; Schema: CRM; Owner: postgres
 --
@@ -5553,7 +5660,7 @@ SELECT pg_catalog.setval('"CRM".history_prospects_id_seq', 46, true);
 
 
 --
--- TOC entry 4275 (class 0 OID 0)
+-- TOC entry 4283 (class 0 OID 0)
 -- Dependencies: 308
 -- Name: product_to_sell_id_seq; Type: SEQUENCE SET; Schema: CRM; Owner: postgres
 --
@@ -5562,7 +5669,7 @@ SELECT pg_catalog.setval('"CRM".product_to_sell_id_seq', 1, true);
 
 
 --
--- TOC entry 4276 (class 0 OID 0)
+-- TOC entry 4284 (class 0 OID 0)
 -- Dependencies: 314
 -- Name: prospects_id_seq; Type: SEQUENCE SET; Schema: CRM; Owner: postgres
 --
@@ -5571,7 +5678,7 @@ SELECT pg_catalog.setval('"CRM".prospects_id_seq', 11, true);
 
 
 --
--- TOC entry 4277 (class 0 OID 0)
+-- TOC entry 4285 (class 0 OID 0)
 -- Dependencies: 306
 -- Name: sales_stage_id_seq; Type: SEQUENCE SET; Schema: CRM; Owner: postgres
 --
@@ -5580,7 +5687,7 @@ SELECT pg_catalog.setval('"CRM".sales_stage_id_seq', 10, true);
 
 
 --
--- TOC entry 4278 (class 0 OID 0)
+-- TOC entry 4286 (class 0 OID 0)
 -- Dependencies: 310
 -- Name: sales_team_id_seq; Type: SEQUENCE SET; Schema: CRM; Owner: postgres
 --
@@ -5589,7 +5696,7 @@ SELECT pg_catalog.setval('"CRM".sales_team_id_seq', 1, true);
 
 
 --
--- TOC entry 4279 (class 0 OID 0)
+-- TOC entry 4287 (class 0 OID 0)
 -- Dependencies: 321
 -- Name: chats_id_chat_seq; Type: SEQUENCE SET; Schema: Chat; Owner: postgres
 --
@@ -5598,7 +5705,7 @@ SELECT pg_catalog.setval('"Chat".chats_id_chat_seq', 19, true);
 
 
 --
--- TOC entry 4280 (class 0 OID 0)
+-- TOC entry 4288 (class 0 OID 0)
 -- Dependencies: 326
 -- Name: message_status_id_status_seq; Type: SEQUENCE SET; Schema: Chat; Owner: postgres
 --
@@ -5607,7 +5714,7 @@ SELECT pg_catalog.setval('"Chat".message_status_id_status_seq', 69, true);
 
 
 --
--- TOC entry 4281 (class 0 OID 0)
+-- TOC entry 4289 (class 0 OID 0)
 -- Dependencies: 324
 -- Name: messages_id_message_seq; Type: SEQUENCE SET; Schema: Chat; Owner: postgres
 --
@@ -5616,7 +5723,7 @@ SELECT pg_catalog.setval('"Chat".messages_id_message_seq', 75, true);
 
 
 --
--- TOC entry 4282 (class 0 OID 0)
+-- TOC entry 4290 (class 0 OID 0)
 -- Dependencies: 258
 -- Name: branches_id_seq; Type: SEQUENCE SET; Schema: Company; Owner: postgres
 --
@@ -5625,7 +5732,7 @@ SELECT pg_catalog.setval('"Company".branches_id_seq', 45, true);
 
 
 --
--- TOC entry 4283 (class 0 OID 0)
+-- TOC entry 4291 (class 0 OID 0)
 -- Dependencies: 260
 -- Name: customers_id_seq; Type: SEQUENCE SET; Schema: Company; Owner: postgres
 --
@@ -5634,7 +5741,7 @@ SELECT pg_catalog.setval('"Company".customers_id_seq', 7, true);
 
 
 --
--- TOC entry 4284 (class 0 OID 0)
+-- TOC entry 4292 (class 0 OID 0)
 -- Dependencies: 262
 -- Name: employees_id_seq; Type: SEQUENCE SET; Schema: Company; Owner: postgres
 --
@@ -5643,7 +5750,7 @@ SELECT pg_catalog.setval('"Company".employees_id_seq', 80, true);
 
 
 --
--- TOC entry 4285 (class 0 OID 0)
+-- TOC entry 4293 (class 0 OID 0)
 -- Dependencies: 264
 -- Name: departments_employees_id_seq; Type: SEQUENCE SET; Schema: Employee; Owner: postgres
 --
@@ -5652,7 +5759,7 @@ SELECT pg_catalog.setval('"Employee".departments_employees_id_seq', 33, true);
 
 
 --
--- TOC entry 4286 (class 0 OID 0)
+-- TOC entry 4294 (class 0 OID 0)
 -- Dependencies: 266
 -- Name: history_schedules_id_seq; Type: SEQUENCE SET; Schema: Employee; Owner: postgres
 --
@@ -5661,7 +5768,7 @@ SELECT pg_catalog.setval('"Employee".history_schedules_id_seq', 86, true);
 
 
 --
--- TOC entry 4287 (class 0 OID 0)
+-- TOC entry 4295 (class 0 OID 0)
 -- Dependencies: 268
 -- Name: roles_employees_id_seq; Type: SEQUENCE SET; Schema: Employee; Owner: postgres
 --
@@ -5670,7 +5777,7 @@ SELECT pg_catalog.setval('"Employee".roles_employees_id_seq', 40, true);
 
 
 --
--- TOC entry 4288 (class 0 OID 0)
+-- TOC entry 4296 (class 0 OID 0)
 -- Dependencies: 270
 -- Name: schedules_id_seq; Type: SEQUENCE SET; Schema: Employee; Owner: postgres
 --
@@ -5679,7 +5786,7 @@ SELECT pg_catalog.setval('"Employee".schedules_id_seq', 7, true);
 
 
 --
--- TOC entry 4289 (class 0 OID 0)
+-- TOC entry 4297 (class 0 OID 0)
 -- Dependencies: 272
 -- Name: country_id_seq; Type: SEQUENCE SET; Schema: Fud; Owner: postgres
 --
@@ -5688,7 +5795,7 @@ SELECT pg_catalog.setval('"Fud".country_id_seq', 197, true);
 
 
 --
--- TOC entry 4290 (class 0 OID 0)
+-- TOC entry 4298 (class 0 OID 0)
 -- Dependencies: 276
 -- Name: tokens_id_seq; Type: SEQUENCE SET; Schema: Fud; Owner: postgres
 --
@@ -5697,7 +5804,7 @@ SELECT pg_catalog.setval('"Fud".tokens_id_seq', 61, true);
 
 
 --
--- TOC entry 4291 (class 0 OID 0)
+-- TOC entry 4299 (class 0 OID 0)
 -- Dependencies: 278
 -- Name: users_id_seq; Type: SEQUENCE SET; Schema: Fud; Owner: postgres
 --
@@ -5706,7 +5813,7 @@ SELECT pg_catalog.setval('"Fud".users_id_seq', 129, true);
 
 
 --
--- TOC entry 4292 (class 0 OID 0)
+-- TOC entry 4300 (class 0 OID 0)
 -- Dependencies: 329
 -- Name: boutique_id_seq; Type: SEQUENCE SET; Schema: Inventory; Owner: postgres
 --
@@ -5715,16 +5822,16 @@ SELECT pg_catalog.setval('"Inventory".boutique_id_seq', 6, true);
 
 
 --
--- TOC entry 4293 (class 0 OID 0)
+-- TOC entry 4301 (class 0 OID 0)
 -- Dependencies: 280
 -- Name: dish_and_combo_features_id_seq; Type: SEQUENCE SET; Schema: Inventory; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"Inventory".dish_and_combo_features_id_seq', 170, true);
+SELECT pg_catalog.setval('"Inventory".dish_and_combo_features_id_seq', 191, true);
 
 
 --
--- TOC entry 4294 (class 0 OID 0)
+-- TOC entry 4302 (class 0 OID 0)
 -- Dependencies: 335
 -- Name: lots_id_seq; Type: SEQUENCE SET; Schema: Inventory; Owner: postgres
 --
@@ -5733,16 +5840,16 @@ SELECT pg_catalog.setval('"Inventory".lots_id_seq', 16, true);
 
 
 --
--- TOC entry 4295 (class 0 OID 0)
+-- TOC entry 4303 (class 0 OID 0)
 -- Dependencies: 282
 -- Name: product_and_suppiles_features_id_seq; Type: SEQUENCE SET; Schema: Inventory; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"Inventory".product_and_suppiles_features_id_seq', 220, true);
+SELECT pg_catalog.setval('"Inventory".product_and_suppiles_features_id_seq', 241, true);
 
 
 --
--- TOC entry 4296 (class 0 OID 0)
+-- TOC entry 4304 (class 0 OID 0)
 -- Dependencies: 341
 -- Name: promotions_id_seq; Type: SEQUENCE SET; Schema: Inventory; Owner: postgres
 --
@@ -5751,7 +5858,7 @@ SELECT pg_catalog.setval('"Inventory".promotions_id_seq', 12, true);
 
 
 --
--- TOC entry 4297 (class 0 OID 0)
+-- TOC entry 4305 (class 0 OID 0)
 -- Dependencies: 331
 -- Name: table_boutique_id_seq; Type: SEQUENCE SET; Schema: Inventory; Owner: postgres
 --
@@ -5760,7 +5867,7 @@ SELECT pg_catalog.setval('"Inventory".table_boutique_id_seq', 17, true);
 
 
 --
--- TOC entry 4298 (class 0 OID 0)
+-- TOC entry 4306 (class 0 OID 0)
 -- Dependencies: 284
 -- Name: table_supplies_dish_id_seq; Type: SEQUENCE SET; Schema: Inventory; Owner: postgres
 --
@@ -5769,7 +5876,7 @@ SELECT pg_catalog.setval('"Inventory".table_supplies_dish_id_seq', 1, false);
 
 
 --
--- TOC entry 4299 (class 0 OID 0)
+-- TOC entry 4307 (class 0 OID 0)
 -- Dependencies: 286
 -- Name: table_taxes_id_seq; Type: SEQUENCE SET; Schema: Inventory; Owner: postgres
 --
@@ -5778,7 +5885,7 @@ SELECT pg_catalog.setval('"Inventory".table_taxes_id_seq', 1, false);
 
 
 --
--- TOC entry 4300 (class 0 OID 0)
+-- TOC entry 4308 (class 0 OID 0)
 -- Dependencies: 288
 -- Name: taxes_id_seq; Type: SEQUENCE SET; Schema: Inventory; Owner: postgres
 --
@@ -5787,16 +5894,16 @@ SELECT pg_catalog.setval('"Inventory".taxes_id_seq', 1, false);
 
 
 --
--- TOC entry 4301 (class 0 OID 0)
+-- TOC entry 4309 (class 0 OID 0)
 -- Dependencies: 328
 -- Name: dishes_and_combos_id_seq; Type: SEQUENCE SET; Schema: Kitchen; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"Kitchen".dishes_and_combos_id_seq', 63, true);
+SELECT pg_catalog.setval('"Kitchen".dishes_and_combos_id_seq', 84, true);
 
 
 --
--- TOC entry 4302 (class 0 OID 0)
+-- TOC entry 4310 (class 0 OID 0)
 -- Dependencies: 290
 -- Name: dishes_and_combos_id_serial_seq1; Type: SEQUENCE SET; Schema: Kitchen; Owner: postgres
 --
@@ -5805,7 +5912,7 @@ SELECT pg_catalog.setval('"Kitchen".dishes_and_combos_id_serial_seq1', 77, true)
 
 
 --
--- TOC entry 4303 (class 0 OID 0)
+-- TOC entry 4311 (class 0 OID 0)
 -- Dependencies: 292
 -- Name: product_category_id_seq; Type: SEQUENCE SET; Schema: Kitchen; Owner: postgres
 --
@@ -5814,7 +5921,7 @@ SELECT pg_catalog.setval('"Kitchen".product_category_id_seq', 10, true);
 
 
 --
--- TOC entry 4304 (class 0 OID 0)
+-- TOC entry 4312 (class 0 OID 0)
 -- Dependencies: 294
 -- Name: product_department_id_seq; Type: SEQUENCE SET; Schema: Kitchen; Owner: postgres
 --
@@ -5823,25 +5930,25 @@ SELECT pg_catalog.setval('"Kitchen".product_department_id_seq', 12, true);
 
 
 --
--- TOC entry 4305 (class 0 OID 0)
+-- TOC entry 4313 (class 0 OID 0)
 -- Dependencies: 296
 -- Name: products_and_supplies_id_seq; Type: SEQUENCE SET; Schema: Kitchen; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"Kitchen".products_and_supplies_id_seq', 214, true);
+SELECT pg_catalog.setval('"Kitchen".products_and_supplies_id_seq', 235, true);
 
 
 --
--- TOC entry 4306 (class 0 OID 0)
+-- TOC entry 4314 (class 0 OID 0)
 -- Dependencies: 299
 -- Name: table_supplies_combo_id_seq; Type: SEQUENCE SET; Schema: Kitchen; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"Kitchen".table_supplies_combo_id_seq', 563, true);
+SELECT pg_catalog.setval('"Kitchen".table_supplies_combo_id_seq', 584, true);
 
 
 --
--- TOC entry 4307 (class 0 OID 0)
+-- TOC entry 4315 (class 0 OID 0)
 -- Dependencies: 303
 -- Name: companies_id_seq; Type: SEQUENCE SET; Schema: User; Owner: postgres
 --
@@ -5850,7 +5957,7 @@ SELECT pg_catalog.setval('"User".companies_id_seq', 42, true);
 
 
 --
--- TOC entry 4308 (class 0 OID 0)
+-- TOC entry 4316 (class 0 OID 0)
 -- Dependencies: 317
 -- Name: alumnos_id_seq; Type: SEQUENCE SET; Schema: _company_1_branch_8; Owner: postgres
 --
@@ -5859,7 +5966,7 @@ SELECT pg_catalog.setval('_company_1_branch_8.alumnos_id_seq', 1, false);
 
 
 --
--- TOC entry 3811 (class 2606 OID 112646)
+-- TOC entry 3819 (class 2606 OID 112646)
 -- Name: box_history box_history_pkey; Type: CONSTRAINT; Schema: Box; Owner: postgres
 --
 
@@ -5868,7 +5975,7 @@ ALTER TABLE ONLY "Box".box_history
 
 
 --
--- TOC entry 3823 (class 2606 OID 130509)
+-- TOC entry 3831 (class 2606 OID 130509)
 -- Name: reachange_services id_key_reachange_services; Type: CONSTRAINT; Schema: Box; Owner: postgres
 --
 
@@ -5877,7 +5984,7 @@ ALTER TABLE ONLY "Box".reachange_services
 
 
 --
--- TOC entry 3689 (class 2606 OID 103019)
+-- TOC entry 3697 (class 2606 OID 103019)
 -- Name: boxes_history key_boxes_history; Type: CONSTRAINT; Schema: Box; Owner: postgres
 --
 
@@ -5886,7 +5993,7 @@ ALTER TABLE ONLY "Box".boxes_history
 
 
 --
--- TOC entry 3691 (class 2606 OID 103021)
+-- TOC entry 3699 (class 2606 OID 103021)
 -- Name: movement_history key_movement_history; Type: CONSTRAINT; Schema: Box; Owner: postgres
 --
 
@@ -5895,7 +6002,7 @@ ALTER TABLE ONLY "Box".movement_history
 
 
 --
--- TOC entry 3693 (class 2606 OID 103023)
+-- TOC entry 3701 (class 2606 OID 103023)
 -- Name: sales_history key_sales_history; Type: CONSTRAINT; Schema: Box; Owner: postgres
 --
 
@@ -5904,7 +6011,7 @@ ALTER TABLE ONLY "Box".sales_history
 
 
 --
--- TOC entry 3699 (class 2606 OID 103025)
+-- TOC entry 3707 (class 2606 OID 103025)
 -- Name: billing_information billing_information_uq; Type: CONSTRAINT; Schema: Branch; Owner: postgres
 --
 
@@ -5913,7 +6020,7 @@ ALTER TABLE ONLY "Branch".billing_information
 
 
 --
--- TOC entry 3697 (class 2606 OID 103027)
+-- TOC entry 3705 (class 2606 OID 103027)
 -- Name: app id_key_app; Type: CONSTRAINT; Schema: Branch; Owner: postgres
 --
 
@@ -5922,7 +6029,7 @@ ALTER TABLE ONLY "Branch".app
 
 
 --
--- TOC entry 3707 (class 2606 OID 103029)
+-- TOC entry 3715 (class 2606 OID 103029)
 -- Name: facture id_key_facture; Type: CONSTRAINT; Schema: Branch; Owner: postgres
 --
 
@@ -5931,7 +6038,7 @@ ALTER TABLE ONLY "Branch".facture
 
 
 --
--- TOC entry 3817 (class 2606 OID 112937)
+-- TOC entry 3825 (class 2606 OID 112937)
 -- Name: history_move_lot id_key_history_move_product; Type: CONSTRAINT; Schema: Branch; Owner: postgres
 --
 
@@ -5940,7 +6047,7 @@ ALTER TABLE ONLY "Branch".history_move_lot
 
 
 --
--- TOC entry 3821 (class 2606 OID 122298)
+-- TOC entry 3829 (class 2606 OID 122298)
 -- Name: labels id_key_labels; Type: CONSTRAINT; Schema: Branch; Owner: postgres
 --
 
@@ -5949,7 +6056,7 @@ ALTER TABLE ONLY "Branch".labels
 
 
 --
--- TOC entry 3815 (class 2606 OID 112840)
+-- TOC entry 3823 (class 2606 OID 112840)
 -- Name: prescription id_key_recipe; Type: CONSTRAINT; Schema: Branch; Owner: postgres
 --
 
@@ -5958,7 +6065,7 @@ ALTER TABLE ONLY "Branch".prescription
 
 
 --
--- TOC entry 3695 (class 2606 OID 103031)
+-- TOC entry 3703 (class 2606 OID 103031)
 -- Name: Ad key_ad; Type: CONSTRAINT; Schema: Branch; Owner: postgres
 --
 
@@ -5967,7 +6074,7 @@ ALTER TABLE ONLY "Branch"."Ad"
 
 
 --
--- TOC entry 3701 (class 2606 OID 103033)
+-- TOC entry 3709 (class 2606 OID 103033)
 -- Name: billing_information key_billing_information; Type: CONSTRAINT; Schema: Branch; Owner: postgres
 --
 
@@ -5976,7 +6083,7 @@ ALTER TABLE ONLY "Branch".billing_information
 
 
 --
--- TOC entry 3703 (class 2606 OID 103035)
+-- TOC entry 3711 (class 2606 OID 103035)
 -- Name: boxes key_boxes; Type: CONSTRAINT; Schema: Branch; Owner: postgres
 --
 
@@ -5985,7 +6092,7 @@ ALTER TABLE ONLY "Branch".boxes
 
 
 --
--- TOC entry 3705 (class 2606 OID 103037)
+-- TOC entry 3713 (class 2606 OID 103037)
 -- Name: commanders key_commander; Type: CONSTRAINT; Schema: Branch; Owner: postgres
 --
 
@@ -5994,7 +6101,7 @@ ALTER TABLE ONLY "Branch".commanders
 
 
 --
--- TOC entry 3709 (class 2606 OID 103039)
+-- TOC entry 3717 (class 2606 OID 103039)
 -- Name: managers key_managers; Type: CONSTRAINT; Schema: Branch; Owner: postgres
 --
 
@@ -6003,7 +6110,7 @@ ALTER TABLE ONLY "Branch".managers
 
 
 --
--- TOC entry 3711 (class 2606 OID 103041)
+-- TOC entry 3719 (class 2606 OID 103041)
 -- Name: order key_order_id; Type: CONSTRAINT; Schema: Branch; Owner: postgres
 --
 
@@ -6012,7 +6119,7 @@ ALTER TABLE ONLY "Branch"."order"
 
 
 --
--- TOC entry 3713 (class 2606 OID 103043)
+-- TOC entry 3721 (class 2606 OID 103043)
 -- Name: pack_reservation key_pack_reservation; Type: CONSTRAINT; Schema: Branch; Owner: postgres
 --
 
@@ -6021,7 +6128,7 @@ ALTER TABLE ONLY "Branch".pack_reservation
 
 
 --
--- TOC entry 3717 (class 2606 OID 103045)
+-- TOC entry 3725 (class 2606 OID 103045)
 -- Name: reservation key_reservation; Type: CONSTRAINT; Schema: Branch; Owner: postgres
 --
 
@@ -6030,7 +6137,7 @@ ALTER TABLE ONLY "Branch".reservation
 
 
 --
--- TOC entry 3719 (class 2606 OID 103047)
+-- TOC entry 3727 (class 2606 OID 103047)
 -- Name: restaurant_area key_restaurant_area; Type: CONSTRAINT; Schema: Branch; Owner: postgres
 --
 
@@ -6039,7 +6146,7 @@ ALTER TABLE ONLY "Branch".restaurant_area
 
 
 --
--- TOC entry 3715 (class 2606 OID 103049)
+-- TOC entry 3723 (class 2606 OID 103049)
 -- Name: providers key_suppliers_branch; Type: CONSTRAINT; Schema: Branch; Owner: postgres
 --
 
@@ -6048,7 +6155,7 @@ ALTER TABLE ONLY "Branch".providers
 
 
 --
--- TOC entry 3721 (class 2606 OID 103051)
+-- TOC entry 3729 (class 2606 OID 103051)
 -- Name: tables key_table; Type: CONSTRAINT; Schema: Branch; Owner: postgres
 --
 
@@ -6057,7 +6164,7 @@ ALTER TABLE ONLY "Branch".tables
 
 
 --
--- TOC entry 3785 (class 2606 OID 103597)
+-- TOC entry 3793 (class 2606 OID 103597)
 -- Name: appointment id_key_appointment; Type: CONSTRAINT; Schema: CRM; Owner: postgres
 --
 
@@ -6066,7 +6173,7 @@ ALTER TABLE ONLY "CRM".appointment
 
 
 --
--- TOC entry 3793 (class 2606 OID 111975)
+-- TOC entry 3801 (class 2606 OID 111975)
 -- Name: history_prospects id_key_history_prospects; Type: CONSTRAINT; Schema: CRM; Owner: postgres
 --
 
@@ -6075,7 +6182,7 @@ ALTER TABLE ONLY "CRM".history_prospects
 
 
 --
--- TOC entry 3781 (class 2606 OID 103580)
+-- TOC entry 3789 (class 2606 OID 103580)
 -- Name: product_to_sell id_key_product_to_sell; Type: CONSTRAINT; Schema: CRM; Owner: postgres
 --
 
@@ -6084,7 +6191,7 @@ ALTER TABLE ONLY "CRM".product_to_sell
 
 
 --
--- TOC entry 3787 (class 2606 OID 103608)
+-- TOC entry 3795 (class 2606 OID 103608)
 -- Name: prospects id_key_prospects; Type: CONSTRAINT; Schema: CRM; Owner: postgres
 --
 
@@ -6093,7 +6200,7 @@ ALTER TABLE ONLY "CRM".prospects
 
 
 --
--- TOC entry 3779 (class 2606 OID 103572)
+-- TOC entry 3787 (class 2606 OID 103572)
 -- Name: sales_stage id_key_sales_stage; Type: CONSTRAINT; Schema: CRM; Owner: postgres
 --
 
@@ -6102,7 +6209,7 @@ ALTER TABLE ONLY "CRM".sales_stage
 
 
 --
--- TOC entry 3783 (class 2606 OID 103588)
+-- TOC entry 3791 (class 2606 OID 103588)
 -- Name: sales_team id_key_sales_team; Type: CONSTRAINT; Schema: CRM; Owner: postgres
 --
 
@@ -6111,7 +6218,7 @@ ALTER TABLE ONLY "CRM".sales_team
 
 
 --
--- TOC entry 3795 (class 2606 OID 111994)
+-- TOC entry 3803 (class 2606 OID 111994)
 -- Name: chats chats_pkey; Type: CONSTRAINT; Schema: Chat; Owner: postgres
 --
 
@@ -6120,7 +6227,7 @@ ALTER TABLE ONLY "Chat".chats
 
 
 --
--- TOC entry 3801 (class 2606 OID 112074)
+-- TOC entry 3809 (class 2606 OID 112074)
 -- Name: message_status message_status_message_id_user_id_key; Type: CONSTRAINT; Schema: Chat; Owner: postgres
 --
 
@@ -6129,7 +6236,7 @@ ALTER TABLE ONLY "Chat".message_status
 
 
 --
--- TOC entry 3803 (class 2606 OID 112037)
+-- TOC entry 3811 (class 2606 OID 112037)
 -- Name: message_status message_status_pkey; Type: CONSTRAINT; Schema: Chat; Owner: postgres
 --
 
@@ -6138,7 +6245,7 @@ ALTER TABLE ONLY "Chat".message_status
 
 
 --
--- TOC entry 3799 (class 2606 OID 112019)
+-- TOC entry 3807 (class 2606 OID 112019)
 -- Name: messages messages_pkey; Type: CONSTRAINT; Schema: Chat; Owner: postgres
 --
 
@@ -6147,7 +6254,7 @@ ALTER TABLE ONLY "Chat".messages
 
 
 --
--- TOC entry 3797 (class 2606 OID 111999)
+-- TOC entry 3805 (class 2606 OID 111999)
 -- Name: user_chats user_chats_pkey; Type: CONSTRAINT; Schema: Chat; Owner: postgres
 --
 
@@ -6156,7 +6263,7 @@ ALTER TABLE ONLY "Chat".user_chats
 
 
 --
--- TOC entry 3727 (class 2606 OID 103053)
+-- TOC entry 3735 (class 2606 OID 103053)
 -- Name: employees employees_uq; Type: CONSTRAINT; Schema: Company; Owner: postgres
 --
 
@@ -6165,7 +6272,7 @@ ALTER TABLE ONLY "Company".employees
 
 
 --
--- TOC entry 3723 (class 2606 OID 103055)
+-- TOC entry 3731 (class 2606 OID 103055)
 -- Name: branches key_branches; Type: CONSTRAINT; Schema: Company; Owner: postgres
 --
 
@@ -6174,7 +6281,7 @@ ALTER TABLE ONLY "Company".branches
 
 
 --
--- TOC entry 3725 (class 2606 OID 103057)
+-- TOC entry 3733 (class 2606 OID 103057)
 -- Name: customers key_customer; Type: CONSTRAINT; Schema: Company; Owner: postgres
 --
 
@@ -6183,7 +6290,7 @@ ALTER TABLE ONLY "Company".customers
 
 
 --
--- TOC entry 3729 (class 2606 OID 103059)
+-- TOC entry 3737 (class 2606 OID 103059)
 -- Name: employees key_employees; Type: CONSTRAINT; Schema: Company; Owner: postgres
 --
 
@@ -6192,7 +6299,7 @@ ALTER TABLE ONLY "Company".employees
 
 
 --
--- TOC entry 3737 (class 2606 OID 103061)
+-- TOC entry 3745 (class 2606 OID 103061)
 -- Name: schedules key; Type: CONSTRAINT; Schema: Employee; Owner: postgres
 --
 
@@ -6201,7 +6308,7 @@ ALTER TABLE ONLY "Employee".schedules
 
 
 --
--- TOC entry 3731 (class 2606 OID 103063)
+-- TOC entry 3739 (class 2606 OID 103063)
 -- Name: departments_employees key_areas; Type: CONSTRAINT; Schema: Employee; Owner: postgres
 --
 
@@ -6210,7 +6317,7 @@ ALTER TABLE ONLY "Employee".departments_employees
 
 
 --
--- TOC entry 3733 (class 2606 OID 103065)
+-- TOC entry 3741 (class 2606 OID 103065)
 -- Name: history_schedules key_history_schedules_id; Type: CONSTRAINT; Schema: Employee; Owner: postgres
 --
 
@@ -6219,7 +6326,7 @@ ALTER TABLE ONLY "Employee".history_schedules
 
 
 --
--- TOC entry 3735 (class 2606 OID 103067)
+-- TOC entry 3743 (class 2606 OID 103067)
 -- Name: roles_employees key_roles; Type: CONSTRAINT; Schema: Employee; Owner: postgres
 --
 
@@ -6228,7 +6335,7 @@ ALTER TABLE ONLY "Employee".roles_employees
 
 
 --
--- TOC entry 3741 (class 2606 OID 103069)
+-- TOC entry 3749 (class 2606 OID 103069)
 -- Name: packs_fud key; Type: CONSTRAINT; Schema: Fud; Owner: postgres
 --
 
@@ -6237,7 +6344,7 @@ ALTER TABLE ONLY "Fud".packs_fud
 
 
 --
--- TOC entry 3739 (class 2606 OID 103071)
+-- TOC entry 3747 (class 2606 OID 103071)
 -- Name: country key_country; Type: CONSTRAINT; Schema: Fud; Owner: postgres
 --
 
@@ -6246,7 +6353,7 @@ ALTER TABLE ONLY "Fud".country
 
 
 --
--- TOC entry 3747 (class 2606 OID 103073)
+-- TOC entry 3755 (class 2606 OID 103073)
 -- Name: users key_email_user; Type: CONSTRAINT; Schema: Fud; Owner: postgres
 --
 
@@ -6255,7 +6362,7 @@ ALTER TABLE ONLY "Fud".users
 
 
 --
--- TOC entry 3749 (class 2606 OID 103075)
+-- TOC entry 3757 (class 2606 OID 103075)
 -- Name: users key_user; Type: CONSTRAINT; Schema: Fud; Owner: postgres
 --
 
@@ -6264,7 +6371,7 @@ ALTER TABLE ONLY "Fud".users
 
 
 --
--- TOC entry 3743 (class 2606 OID 103077)
+-- TOC entry 3751 (class 2606 OID 103077)
 -- Name: session  session_pkey; Type: CONSTRAINT; Schema: Fud; Owner: postgres
 --
 
@@ -6273,7 +6380,7 @@ ALTER TABLE ONLY "Fud"."session "
 
 
 --
--- TOC entry 3745 (class 2606 OID 103079)
+-- TOC entry 3753 (class 2606 OID 103079)
 -- Name: tokens tokens_pkey; Type: CONSTRAINT; Schema: Fud; Owner: postgres
 --
 
@@ -6282,7 +6389,7 @@ ALTER TABLE ONLY "Fud".tokens
 
 
 --
--- TOC entry 3805 (class 2606 OID 112300)
+-- TOC entry 3813 (class 2606 OID 112300)
 -- Name: boutique barcode_boutique; Type: CONSTRAINT; Schema: Inventory; Owner: postgres
 --
 
@@ -6291,7 +6398,7 @@ ALTER TABLE ONLY "Inventory".boutique
 
 
 --
--- TOC entry 3819 (class 2606 OID 121109)
+-- TOC entry 3827 (class 2606 OID 121109)
 -- Name: promotions id_key_promotions; Type: CONSTRAINT; Schema: Inventory; Owner: postgres
 --
 
@@ -6300,7 +6407,7 @@ ALTER TABLE ONLY "Inventory".promotions
 
 
 --
--- TOC entry 3807 (class 2606 OID 112298)
+-- TOC entry 3815 (class 2606 OID 112298)
 -- Name: boutique id_key_table_boutique; Type: CONSTRAINT; Schema: Inventory; Owner: postgres
 --
 
@@ -6309,7 +6416,7 @@ ALTER TABLE ONLY "Inventory".boutique
 
 
 --
--- TOC entry 3809 (class 2606 OID 112307)
+-- TOC entry 3817 (class 2606 OID 112307)
 -- Name: table_boutique id_key_table_boutique_1; Type: CONSTRAINT; Schema: Inventory; Owner: postgres
 --
 
@@ -6318,7 +6425,7 @@ ALTER TABLE ONLY "Inventory".table_boutique
 
 
 --
--- TOC entry 3751 (class 2606 OID 103081)
+-- TOC entry 3759 (class 2606 OID 103081)
 -- Name: dish_and_combo_features key_dish_features; Type: CONSTRAINT; Schema: Inventory; Owner: postgres
 --
 
@@ -6327,7 +6434,7 @@ ALTER TABLE ONLY "Inventory".dish_and_combo_features
 
 
 --
--- TOC entry 3813 (class 2606 OID 112677)
+-- TOC entry 3821 (class 2606 OID 112677)
 -- Name: lots key_number_lote; Type: CONSTRAINT; Schema: Inventory; Owner: postgres
 --
 
@@ -6336,7 +6443,7 @@ ALTER TABLE ONLY "Inventory".lots
 
 
 --
--- TOC entry 3753 (class 2606 OID 103083)
+-- TOC entry 3761 (class 2606 OID 103083)
 -- Name: product_and_suppiles_features key_product_features2; Type: CONSTRAINT; Schema: Inventory; Owner: postgres
 --
 
@@ -6345,7 +6452,7 @@ ALTER TABLE ONLY "Inventory".product_and_suppiles_features
 
 
 --
--- TOC entry 3755 (class 2606 OID 103085)
+-- TOC entry 3763 (class 2606 OID 103085)
 -- Name: table_supplies_dish key_table_supplies_dish; Type: CONSTRAINT; Schema: Inventory; Owner: postgres
 --
 
@@ -6354,7 +6461,7 @@ ALTER TABLE ONLY "Inventory".table_supplies_dish
 
 
 --
--- TOC entry 3757 (class 2606 OID 103087)
+-- TOC entry 3765 (class 2606 OID 103087)
 -- Name: table_taxes key_table_taxes; Type: CONSTRAINT; Schema: Inventory; Owner: postgres
 --
 
@@ -6363,7 +6470,7 @@ ALTER TABLE ONLY "Inventory".table_taxes
 
 
 --
--- TOC entry 3759 (class 2606 OID 103089)
+-- TOC entry 3767 (class 2606 OID 103089)
 -- Name: taxes key_taxes; Type: CONSTRAINT; Schema: Inventory; Owner: postgres
 --
 
@@ -6372,7 +6479,7 @@ ALTER TABLE ONLY "Inventory".taxes
 
 
 --
--- TOC entry 3761 (class 2606 OID 112099)
+-- TOC entry 3769 (class 2606 OID 112099)
 -- Name: dishes_and_combos dishes_and_combos_pkey; Type: CONSTRAINT; Schema: Kitchen; Owner: postgres
 --
 
@@ -6381,7 +6488,7 @@ ALTER TABLE ONLY "Kitchen".dishes_and_combos
 
 
 --
--- TOC entry 3769 (class 2606 OID 103093)
+-- TOC entry 3777 (class 2606 OID 103093)
 -- Name: screen id_screen; Type: CONSTRAINT; Schema: Kitchen; Owner: postgres
 --
 
@@ -6390,7 +6497,7 @@ ALTER TABLE ONLY "Kitchen".screen
 
 
 --
--- TOC entry 3767 (class 2606 OID 103095)
+-- TOC entry 3775 (class 2606 OID 103095)
 -- Name: products_and_supplies key_product; Type: CONSTRAINT; Schema: Kitchen; Owner: postgres
 --
 
@@ -6399,7 +6506,7 @@ ALTER TABLE ONLY "Kitchen".products_and_supplies
 
 
 --
--- TOC entry 3763 (class 2606 OID 103097)
+-- TOC entry 3771 (class 2606 OID 103097)
 -- Name: product_category key_product_category; Type: CONSTRAINT; Schema: Kitchen; Owner: postgres
 --
 
@@ -6408,7 +6515,7 @@ ALTER TABLE ONLY "Kitchen".product_category
 
 
 --
--- TOC entry 3765 (class 2606 OID 103099)
+-- TOC entry 3773 (class 2606 OID 103099)
 -- Name: product_department key_product_department; Type: CONSTRAINT; Schema: Kitchen; Owner: postgres
 --
 
@@ -6417,7 +6524,7 @@ ALTER TABLE ONLY "Kitchen".product_department
 
 
 --
--- TOC entry 3771 (class 2606 OID 103101)
+-- TOC entry 3779 (class 2606 OID 103101)
 -- Name: branch key_setting_branch; Type: CONSTRAINT; Schema: Settings; Owner: postgres
 --
 
@@ -6426,7 +6533,7 @@ ALTER TABLE ONLY "Settings".branch
 
 
 --
--- TOC entry 3775 (class 2606 OID 103103)
+-- TOC entry 3783 (class 2606 OID 103103)
 -- Name: subscription id_key_subscription; Type: CONSTRAINT; Schema: User; Owner: postgres
 --
 
@@ -6435,7 +6542,7 @@ ALTER TABLE ONLY "User".subscription
 
 
 --
--- TOC entry 3773 (class 2606 OID 103105)
+-- TOC entry 3781 (class 2606 OID 103105)
 -- Name: companies key_company; Type: CONSTRAINT; Schema: User; Owner: postgres
 --
 
@@ -6444,7 +6551,7 @@ ALTER TABLE ONLY "User".companies
 
 
 --
--- TOC entry 3791 (class 2606 OID 103748)
+-- TOC entry 3799 (class 2606 OID 103748)
 -- Name: alumnos alumnos_pkey; Type: CONSTRAINT; Schema: _company_1_branch_8; Owner: postgres
 --
 
@@ -6453,7 +6560,7 @@ ALTER TABLE ONLY _company_1_branch_8.alumnos
 
 
 --
--- TOC entry 3789 (class 2606 OID 103738)
+-- TOC entry 3797 (class 2606 OID 103738)
 -- Name: apps apps_pkey; Type: CONSTRAINT; Schema: _company_1_branch_8; Owner: postgres
 --
 
@@ -6462,7 +6569,7 @@ ALTER TABLE ONLY _company_1_branch_8.apps
 
 
 --
--- TOC entry 3777 (class 2606 OID 103107)
+-- TOC entry 3785 (class 2606 OID 103107)
 -- Name: session session_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6471,7 +6578,7 @@ ALTER TABLE ONLY public.session
 
 
 --
--- TOC entry 3824 (class 2606 OID 103108)
+-- TOC entry 3832 (class 2606 OID 103108)
 -- Name: boxes_history boxes_fk; Type: FK CONSTRAINT; Schema: Box; Owner: postgres
 --
 
@@ -6480,7 +6587,7 @@ ALTER TABLE ONLY "Box".boxes_history
 
 
 --
--- TOC entry 3827 (class 2606 OID 103113)
+-- TOC entry 3835 (class 2606 OID 103113)
 -- Name: movement_history boxes_fk; Type: FK CONSTRAINT; Schema: Box; Owner: postgres
 --
 
@@ -6489,7 +6596,7 @@ ALTER TABLE ONLY "Box".movement_history
 
 
 --
--- TOC entry 3830 (class 2606 OID 103118)
+-- TOC entry 3838 (class 2606 OID 103118)
 -- Name: sales_history branches_fk; Type: FK CONSTRAINT; Schema: Box; Owner: postgres
 --
 
@@ -6498,7 +6605,7 @@ ALTER TABLE ONLY "Box".sales_history
 
 
 --
--- TOC entry 3825 (class 2606 OID 103123)
+-- TOC entry 3833 (class 2606 OID 103123)
 -- Name: boxes_history branches_fk; Type: FK CONSTRAINT; Schema: Box; Owner: postgres
 --
 
@@ -6507,7 +6614,7 @@ ALTER TABLE ONLY "Box".boxes_history
 
 
 --
--- TOC entry 3828 (class 2606 OID 103128)
+-- TOC entry 3836 (class 2606 OID 103128)
 -- Name: movement_history branches_fk; Type: FK CONSTRAINT; Schema: Box; Owner: postgres
 --
 
@@ -6516,7 +6623,7 @@ ALTER TABLE ONLY "Box".movement_history
 
 
 --
--- TOC entry 3831 (class 2606 OID 103133)
+-- TOC entry 3839 (class 2606 OID 103133)
 -- Name: sales_history companies_fk; Type: FK CONSTRAINT; Schema: Box; Owner: postgres
 --
 
@@ -6525,7 +6632,7 @@ ALTER TABLE ONLY "Box".sales_history
 
 
 --
--- TOC entry 3832 (class 2606 OID 103138)
+-- TOC entry 3840 (class 2606 OID 103138)
 -- Name: sales_history customers_fk; Type: FK CONSTRAINT; Schema: Box; Owner: postgres
 --
 
@@ -6534,7 +6641,7 @@ ALTER TABLE ONLY "Box".sales_history
 
 
 --
--- TOC entry 3833 (class 2606 OID 103148)
+-- TOC entry 3841 (class 2606 OID 103148)
 -- Name: sales_history employees_fk; Type: FK CONSTRAINT; Schema: Box; Owner: postgres
 --
 
@@ -6543,7 +6650,7 @@ ALTER TABLE ONLY "Box".sales_history
 
 
 --
--- TOC entry 3826 (class 2606 OID 103153)
+-- TOC entry 3834 (class 2606 OID 103153)
 -- Name: boxes_history employees_fk; Type: FK CONSTRAINT; Schema: Box; Owner: postgres
 --
 
@@ -6552,7 +6659,7 @@ ALTER TABLE ONLY "Box".boxes_history
 
 
 --
--- TOC entry 3829 (class 2606 OID 103158)
+-- TOC entry 3837 (class 2606 OID 103158)
 -- Name: movement_history employees_fk; Type: FK CONSTRAINT; Schema: Box; Owner: postgres
 --
 
@@ -6561,7 +6668,7 @@ ALTER TABLE ONLY "Box".movement_history
 
 
 --
--- TOC entry 3841 (class 2606 OID 103163)
+-- TOC entry 3849 (class 2606 OID 103163)
 -- Name: reservation branches_fk; Type: FK CONSTRAINT; Schema: Branch; Owner: postgres
 --
 
@@ -6570,7 +6677,7 @@ ALTER TABLE ONLY "Branch".reservation
 
 
 --
--- TOC entry 3845 (class 2606 OID 103168)
+-- TOC entry 3853 (class 2606 OID 103168)
 -- Name: tables branches_fk; Type: FK CONSTRAINT; Schema: Branch; Owner: postgres
 --
 
@@ -6579,7 +6686,7 @@ ALTER TABLE ONLY "Branch".tables
 
 
 --
--- TOC entry 3839 (class 2606 OID 103173)
+-- TOC entry 3847 (class 2606 OID 103173)
 -- Name: pack_reservation branches_fk; Type: FK CONSTRAINT; Schema: Branch; Owner: postgres
 --
 
@@ -6588,7 +6695,7 @@ ALTER TABLE ONLY "Branch".pack_reservation
 
 
 --
--- TOC entry 3837 (class 2606 OID 103178)
+-- TOC entry 3845 (class 2606 OID 103178)
 -- Name: managers branches_fk; Type: FK CONSTRAINT; Schema: Branch; Owner: postgres
 --
 
@@ -6597,7 +6704,7 @@ ALTER TABLE ONLY "Branch".managers
 
 
 --
--- TOC entry 3836 (class 2606 OID 103183)
+-- TOC entry 3844 (class 2606 OID 103183)
 -- Name: boxes branches_fk; Type: FK CONSTRAINT; Schema: Branch; Owner: postgres
 --
 
@@ -6606,7 +6713,7 @@ ALTER TABLE ONLY "Branch".boxes
 
 
 --
--- TOC entry 3844 (class 2606 OID 103188)
+-- TOC entry 3852 (class 2606 OID 103188)
 -- Name: restaurant_area branches_fk; Type: FK CONSTRAINT; Schema: Branch; Owner: postgres
 --
 
@@ -6615,7 +6722,7 @@ ALTER TABLE ONLY "Branch".restaurant_area
 
 
 --
--- TOC entry 3840 (class 2606 OID 103193)
+-- TOC entry 3848 (class 2606 OID 103193)
 -- Name: providers branches_fk; Type: FK CONSTRAINT; Schema: Branch; Owner: postgres
 --
 
@@ -6624,7 +6731,7 @@ ALTER TABLE ONLY "Branch".providers
 
 
 --
--- TOC entry 3834 (class 2606 OID 103198)
+-- TOC entry 3842 (class 2606 OID 103198)
 -- Name: Ad branches_fk; Type: FK CONSTRAINT; Schema: Branch; Owner: postgres
 --
 
@@ -6633,7 +6740,7 @@ ALTER TABLE ONLY "Branch"."Ad"
 
 
 --
--- TOC entry 3914 (class 2606 OID 112846)
+-- TOC entry 3922 (class 2606 OID 112846)
 -- Name: prescription branches_fk; Type: FK CONSTRAINT; Schema: Branch; Owner: postgres
 --
 
@@ -6642,7 +6749,7 @@ ALTER TABLE ONLY "Branch".prescription
 
 
 --
--- TOC entry 3919 (class 2606 OID 112943)
+-- TOC entry 3927 (class 2606 OID 112943)
 -- Name: history_move_lot branches_fk; Type: FK CONSTRAINT; Schema: Branch; Owner: postgres
 --
 
@@ -6651,7 +6758,7 @@ ALTER TABLE ONLY "Branch".history_move_lot
 
 
 --
--- TOC entry 3926 (class 2606 OID 122299)
+-- TOC entry 3934 (class 2606 OID 122299)
 -- Name: labels branches_fk; Type: FK CONSTRAINT; Schema: Branch; Owner: postgres
 --
 
@@ -6660,7 +6767,7 @@ ALTER TABLE ONLY "Branch".labels
 
 
 --
--- TOC entry 3915 (class 2606 OID 112841)
+-- TOC entry 3923 (class 2606 OID 112841)
 -- Name: prescription companies_fk; Type: FK CONSTRAINT; Schema: Branch; Owner: postgres
 --
 
@@ -6669,7 +6776,7 @@ ALTER TABLE ONLY "Branch".prescription
 
 
 --
--- TOC entry 3920 (class 2606 OID 112948)
+-- TOC entry 3928 (class 2606 OID 112948)
 -- Name: history_move_lot companies_fk; Type: FK CONSTRAINT; Schema: Branch; Owner: postgres
 --
 
@@ -6678,7 +6785,7 @@ ALTER TABLE ONLY "Branch".history_move_lot
 
 
 --
--- TOC entry 3927 (class 2606 OID 122304)
+-- TOC entry 3935 (class 2606 OID 122304)
 -- Name: labels companies_fk; Type: FK CONSTRAINT; Schema: Branch; Owner: postgres
 --
 
@@ -6687,7 +6794,7 @@ ALTER TABLE ONLY "Branch".labels
 
 
 --
--- TOC entry 3916 (class 2606 OID 112856)
+-- TOC entry 3924 (class 2606 OID 112856)
 -- Name: prescription dishes_and_combos_fk; Type: FK CONSTRAINT; Schema: Branch; Owner: postgres
 --
 
@@ -6696,7 +6803,7 @@ ALTER TABLE ONLY "Branch".prescription
 
 
 --
--- TOC entry 3838 (class 2606 OID 103203)
+-- TOC entry 3846 (class 2606 OID 103203)
 -- Name: managers employees_fk; Type: FK CONSTRAINT; Schema: Branch; Owner: postgres
 --
 
@@ -6705,7 +6812,7 @@ ALTER TABLE ONLY "Branch".managers
 
 
 --
--- TOC entry 3917 (class 2606 OID 112851)
+-- TOC entry 3925 (class 2606 OID 112851)
 -- Name: prescription employees_fk; Type: FK CONSTRAINT; Schema: Branch; Owner: postgres
 --
 
@@ -6714,7 +6821,7 @@ ALTER TABLE ONLY "Branch".prescription
 
 
 --
--- TOC entry 3921 (class 2606 OID 112938)
+-- TOC entry 3929 (class 2606 OID 112938)
 -- Name: history_move_lot employees_fk; Type: FK CONSTRAINT; Schema: Branch; Owner: postgres
 --
 
@@ -6723,7 +6830,7 @@ ALTER TABLE ONLY "Branch".history_move_lot
 
 
 --
--- TOC entry 3918 (class 2606 OID 112861)
+-- TOC entry 3926 (class 2606 OID 112861)
 -- Name: prescription lots_fk; Type: FK CONSTRAINT; Schema: Branch; Owner: postgres
 --
 
@@ -6732,7 +6839,7 @@ ALTER TABLE ONLY "Branch".prescription
 
 
 --
--- TOC entry 3922 (class 2606 OID 112953)
+-- TOC entry 3930 (class 2606 OID 112953)
 -- Name: history_move_lot lots_fk; Type: FK CONSTRAINT; Schema: Branch; Owner: postgres
 --
 
@@ -6741,7 +6848,7 @@ ALTER TABLE ONLY "Branch".history_move_lot
 
 
 --
--- TOC entry 3842 (class 2606 OID 103208)
+-- TOC entry 3850 (class 2606 OID 103208)
 -- Name: reservation pack_reservation_fk; Type: FK CONSTRAINT; Schema: Branch; Owner: postgres
 --
 
@@ -6750,7 +6857,7 @@ ALTER TABLE ONLY "Branch".reservation
 
 
 --
--- TOC entry 3835 (class 2606 OID 103213)
+-- TOC entry 3843 (class 2606 OID 103213)
 -- Name: billing_information providers_fk; Type: FK CONSTRAINT; Schema: Branch; Owner: postgres
 --
 
@@ -6759,7 +6866,7 @@ ALTER TABLE ONLY "Branch".billing_information
 
 
 --
--- TOC entry 3846 (class 2606 OID 103218)
+-- TOC entry 3854 (class 2606 OID 103218)
 -- Name: tables restaurant_area_fk; Type: FK CONSTRAINT; Schema: Branch; Owner: postgres
 --
 
@@ -6768,7 +6875,7 @@ ALTER TABLE ONLY "Branch".tables
 
 
 --
--- TOC entry 3843 (class 2606 OID 103223)
+-- TOC entry 3851 (class 2606 OID 103223)
 -- Name: reservation tables_fk; Type: FK CONSTRAINT; Schema: Branch; Owner: postgres
 --
 
@@ -6777,7 +6884,7 @@ ALTER TABLE ONLY "Branch".reservation
 
 
 --
--- TOC entry 3893 (class 2606 OID 103619)
+-- TOC entry 3901 (class 2606 OID 103619)
 -- Name: prospects branches_fk; Type: FK CONSTRAINT; Schema: CRM; Owner: postgres
 --
 
@@ -6786,7 +6893,7 @@ ALTER TABLE ONLY "CRM".prospects
 
 
 --
--- TOC entry 3890 (class 2606 OID 103644)
+-- TOC entry 3898 (class 2606 OID 103644)
 -- Name: appointment branches_fk; Type: FK CONSTRAINT; Schema: CRM; Owner: postgres
 --
 
@@ -6795,7 +6902,7 @@ ALTER TABLE ONLY "CRM".appointment
 
 
 --
--- TOC entry 3894 (class 2606 OID 103614)
+-- TOC entry 3902 (class 2606 OID 103614)
 -- Name: prospects companies_fk; Type: FK CONSTRAINT; Schema: CRM; Owner: postgres
 --
 
@@ -6804,7 +6911,7 @@ ALTER TABLE ONLY "CRM".prospects
 
 
 --
--- TOC entry 3887 (class 2606 OID 103624)
+-- TOC entry 3895 (class 2606 OID 103624)
 -- Name: sales_stage companies_fk; Type: FK CONSTRAINT; Schema: CRM; Owner: postgres
 --
 
@@ -6813,7 +6920,7 @@ ALTER TABLE ONLY "CRM".sales_stage
 
 
 --
--- TOC entry 3888 (class 2606 OID 103629)
+-- TOC entry 3896 (class 2606 OID 103629)
 -- Name: product_to_sell companies_fk; Type: FK CONSTRAINT; Schema: CRM; Owner: postgres
 --
 
@@ -6822,7 +6929,7 @@ ALTER TABLE ONLY "CRM".product_to_sell
 
 
 --
--- TOC entry 3889 (class 2606 OID 103634)
+-- TOC entry 3897 (class 2606 OID 103634)
 -- Name: sales_team companies_fk; Type: FK CONSTRAINT; Schema: CRM; Owner: postgres
 --
 
@@ -6831,7 +6938,7 @@ ALTER TABLE ONLY "CRM".sales_team
 
 
 --
--- TOC entry 3891 (class 2606 OID 103639)
+-- TOC entry 3899 (class 2606 OID 103639)
 -- Name: appointment companies_fk; Type: FK CONSTRAINT; Schema: CRM; Owner: postgres
 --
 
@@ -6840,7 +6947,7 @@ ALTER TABLE ONLY "CRM".appointment
 
 
 --
--- TOC entry 3892 (class 2606 OID 111941)
+-- TOC entry 3900 (class 2606 OID 111941)
 -- Name: appointment fk_appointment_employees; Type: FK CONSTRAINT; Schema: CRM; Owner: postgres
 --
 
@@ -6849,7 +6956,7 @@ ALTER TABLE ONLY "CRM".appointment
 
 
 --
--- TOC entry 3896 (class 2606 OID 111976)
+-- TOC entry 3904 (class 2606 OID 111976)
 -- Name: history_prospects prospects_fk; Type: FK CONSTRAINT; Schema: CRM; Owner: postgres
 --
 
@@ -6858,7 +6965,7 @@ ALTER TABLE ONLY "CRM".history_prospects
 
 
 --
--- TOC entry 3895 (class 2606 OID 103609)
+-- TOC entry 3903 (class 2606 OID 103609)
 -- Name: prospects sales_stage_fk; Type: FK CONSTRAINT; Schema: CRM; Owner: postgres
 --
 
@@ -6867,7 +6974,7 @@ ALTER TABLE ONLY "CRM".prospects
 
 
 --
--- TOC entry 3897 (class 2606 OID 111981)
+-- TOC entry 3905 (class 2606 OID 111981)
 -- Name: history_prospects users_fk; Type: FK CONSTRAINT; Schema: CRM; Owner: postgres
 --
 
@@ -6876,7 +6983,7 @@ ALTER TABLE ONLY "CRM".history_prospects
 
 
 --
--- TOC entry 3898 (class 2606 OID 112050)
+-- TOC entry 3906 (class 2606 OID 112050)
 -- Name: chats fk_user_one; Type: FK CONSTRAINT; Schema: Chat; Owner: postgres
 --
 
@@ -6885,7 +6992,7 @@ ALTER TABLE ONLY "Chat".chats
 
 
 --
--- TOC entry 3899 (class 2606 OID 112055)
+-- TOC entry 3907 (class 2606 OID 112055)
 -- Name: chats fk_user_two; Type: FK CONSTRAINT; Schema: Chat; Owner: postgres
 --
 
@@ -6894,7 +7001,7 @@ ALTER TABLE ONLY "Chat".chats
 
 
 --
--- TOC entry 3904 (class 2606 OID 112040)
+-- TOC entry 3912 (class 2606 OID 112040)
 -- Name: message_status message_status_message_id_fkey; Type: FK CONSTRAINT; Schema: Chat; Owner: postgres
 --
 
@@ -6903,7 +7010,7 @@ ALTER TABLE ONLY "Chat".message_status
 
 
 --
--- TOC entry 3905 (class 2606 OID 112084)
+-- TOC entry 3913 (class 2606 OID 112084)
 -- Name: message_status message_status_user_id_fkey; Type: FK CONSTRAINT; Schema: Chat; Owner: postgres
 --
 
@@ -6912,7 +7019,7 @@ ALTER TABLE ONLY "Chat".message_status
 
 
 --
--- TOC entry 3902 (class 2606 OID 112020)
+-- TOC entry 3910 (class 2606 OID 112020)
 -- Name: messages messages_chat_id_fkey; Type: FK CONSTRAINT; Schema: Chat; Owner: postgres
 --
 
@@ -6921,7 +7028,7 @@ ALTER TABLE ONLY "Chat".messages
 
 
 --
--- TOC entry 3903 (class 2606 OID 112068)
+-- TOC entry 3911 (class 2606 OID 112068)
 -- Name: messages messages_user_id_fkey; Type: FK CONSTRAINT; Schema: Chat; Owner: postgres
 --
 
@@ -6930,7 +7037,7 @@ ALTER TABLE ONLY "Chat".messages
 
 
 --
--- TOC entry 3900 (class 2606 OID 112005)
+-- TOC entry 3908 (class 2606 OID 112005)
 -- Name: user_chats user_chats_chat_id_fkey; Type: FK CONSTRAINT; Schema: Chat; Owner: postgres
 --
 
@@ -6939,7 +7046,7 @@ ALTER TABLE ONLY "Chat".user_chats
 
 
 --
--- TOC entry 3901 (class 2606 OID 112000)
+-- TOC entry 3909 (class 2606 OID 112000)
 -- Name: user_chats user_chats_user_id_fkey; Type: FK CONSTRAINT; Schema: Chat; Owner: postgres
 --
 
@@ -6948,7 +7055,7 @@ ALTER TABLE ONLY "Chat".user_chats
 
 
 --
--- TOC entry 3851 (class 2606 OID 103228)
+-- TOC entry 3859 (class 2606 OID 103228)
 -- Name: employees branches_fk; Type: FK CONSTRAINT; Schema: Company; Owner: postgres
 --
 
@@ -6957,7 +7064,7 @@ ALTER TABLE ONLY "Company".employees
 
 
 --
--- TOC entry 3852 (class 2606 OID 103233)
+-- TOC entry 3860 (class 2606 OID 103233)
 -- Name: employees companies_fk; Type: FK CONSTRAINT; Schema: Company; Owner: postgres
 --
 
@@ -6966,7 +7073,7 @@ ALTER TABLE ONLY "Company".employees
 
 
 --
--- TOC entry 3849 (class 2606 OID 103238)
+-- TOC entry 3857 (class 2606 OID 103238)
 -- Name: customers companies_fk; Type: FK CONSTRAINT; Schema: Company; Owner: postgres
 --
 
@@ -6975,7 +7082,7 @@ ALTER TABLE ONLY "Company".customers
 
 
 --
--- TOC entry 3847 (class 2606 OID 103243)
+-- TOC entry 3855 (class 2606 OID 103243)
 -- Name: branches companies_fk; Type: FK CONSTRAINT; Schema: Company; Owner: postgres
 --
 
@@ -6984,7 +7091,7 @@ ALTER TABLE ONLY "Company".branches
 
 
 --
--- TOC entry 3848 (class 2606 OID 103248)
+-- TOC entry 3856 (class 2606 OID 103248)
 -- Name: branches country_fk; Type: FK CONSTRAINT; Schema: Company; Owner: postgres
 --
 
@@ -6993,7 +7100,7 @@ ALTER TABLE ONLY "Company".branches
 
 
 --
--- TOC entry 3850 (class 2606 OID 103253)
+-- TOC entry 3858 (class 2606 OID 103253)
 -- Name: customers country_fk; Type: FK CONSTRAINT; Schema: Company; Owner: postgres
 --
 
@@ -7002,7 +7109,7 @@ ALTER TABLE ONLY "Company".customers
 
 
 --
--- TOC entry 3853 (class 2606 OID 103258)
+-- TOC entry 3861 (class 2606 OID 103258)
 -- Name: employees country_fk; Type: FK CONSTRAINT; Schema: Company; Owner: postgres
 --
 
@@ -7011,7 +7118,7 @@ ALTER TABLE ONLY "Company".employees
 
 
 --
--- TOC entry 3854 (class 2606 OID 103263)
+-- TOC entry 3862 (class 2606 OID 103263)
 -- Name: employees departments_employees_fk; Type: FK CONSTRAINT; Schema: Company; Owner: postgres
 --
 
@@ -7020,7 +7127,7 @@ ALTER TABLE ONLY "Company".employees
 
 
 --
--- TOC entry 3855 (class 2606 OID 103268)
+-- TOC entry 3863 (class 2606 OID 103268)
 -- Name: employees roles_employees_fk; Type: FK CONSTRAINT; Schema: Company; Owner: postgres
 --
 
@@ -7029,7 +7136,7 @@ ALTER TABLE ONLY "Company".employees
 
 
 --
--- TOC entry 3856 (class 2606 OID 103273)
+-- TOC entry 3864 (class 2606 OID 103273)
 -- Name: employees users_fk; Type: FK CONSTRAINT; Schema: Company; Owner: postgres
 --
 
@@ -7038,7 +7145,7 @@ ALTER TABLE ONLY "Company".employees
 
 
 --
--- TOC entry 3858 (class 2606 OID 103278)
+-- TOC entry 3866 (class 2606 OID 103278)
 -- Name: history_schedules branches_fk; Type: FK CONSTRAINT; Schema: Employee; Owner: postgres
 --
 
@@ -7047,7 +7154,7 @@ ALTER TABLE ONLY "Employee".history_schedules
 
 
 --
--- TOC entry 3861 (class 2606 OID 103283)
+-- TOC entry 3869 (class 2606 OID 103283)
 -- Name: roles_employees companies_fk; Type: FK CONSTRAINT; Schema: Employee; Owner: postgres
 --
 
@@ -7056,7 +7163,7 @@ ALTER TABLE ONLY "Employee".roles_employees
 
 
 --
--- TOC entry 3857 (class 2606 OID 103288)
+-- TOC entry 3865 (class 2606 OID 103288)
 -- Name: departments_employees companies_fk; Type: FK CONSTRAINT; Schema: Employee; Owner: postgres
 --
 
@@ -7065,7 +7172,7 @@ ALTER TABLE ONLY "Employee".departments_employees
 
 
 --
--- TOC entry 3859 (class 2606 OID 103293)
+-- TOC entry 3867 (class 2606 OID 103293)
 -- Name: history_schedules employees_fk; Type: FK CONSTRAINT; Schema: Employee; Owner: postgres
 --
 
@@ -7074,7 +7181,7 @@ ALTER TABLE ONLY "Employee".history_schedules
 
 
 --
--- TOC entry 3862 (class 2606 OID 103298)
+-- TOC entry 3870 (class 2606 OID 103298)
 -- Name: roles_employees fk_company; Type: FK CONSTRAINT; Schema: Employee; Owner: postgres
 --
 
@@ -7083,7 +7190,7 @@ ALTER TABLE ONLY "Employee".roles_employees
 
 
 --
--- TOC entry 3860 (class 2606 OID 103303)
+-- TOC entry 3868 (class 2606 OID 103303)
 -- Name: history_schedules schedules_fk; Type: FK CONSTRAINT; Schema: Employee; Owner: postgres
 --
 
@@ -7092,7 +7199,7 @@ ALTER TABLE ONLY "Employee".history_schedules
 
 
 --
--- TOC entry 3864 (class 2606 OID 103308)
+-- TOC entry 3872 (class 2606 OID 103308)
 -- Name: users packs_fud_fk; Type: FK CONSTRAINT; Schema: Fud; Owner: postgres
 --
 
@@ -7101,7 +7208,7 @@ ALTER TABLE ONLY "Fud".users
 
 
 --
--- TOC entry 3863 (class 2606 OID 103313)
+-- TOC entry 3871 (class 2606 OID 103313)
 -- Name: tokens tokens_user_id_fkey; Type: FK CONSTRAINT; Schema: Fud; Owner: postgres
 --
 
@@ -7110,7 +7217,7 @@ ALTER TABLE ONLY "Fud".tokens
 
 
 --
--- TOC entry 3908 (class 2606 OID 112308)
+-- TOC entry 3916 (class 2606 OID 112308)
 -- Name: table_boutique boutique_fk; Type: FK CONSTRAINT; Schema: Inventory; Owner: postgres
 --
 
@@ -7119,7 +7226,7 @@ ALTER TABLE ONLY "Inventory".table_boutique
 
 
 --
--- TOC entry 3865 (class 2606 OID 103318)
+-- TOC entry 3873 (class 2606 OID 103318)
 -- Name: dish_and_combo_features branches_fk; Type: FK CONSTRAINT; Schema: Inventory; Owner: postgres
 --
 
@@ -7128,7 +7235,7 @@ ALTER TABLE ONLY "Inventory".dish_and_combo_features
 
 
 --
--- TOC entry 3868 (class 2606 OID 103323)
+-- TOC entry 3876 (class 2606 OID 103323)
 -- Name: product_and_suppiles_features branches_fk; Type: FK CONSTRAINT; Schema: Inventory; Owner: postgres
 --
 
@@ -7137,7 +7244,7 @@ ALTER TABLE ONLY "Inventory".product_and_suppiles_features
 
 
 --
--- TOC entry 3906 (class 2606 OID 112323)
+-- TOC entry 3914 (class 2606 OID 112323)
 -- Name: boutique branches_fk; Type: FK CONSTRAINT; Schema: Inventory; Owner: postgres
 --
 
@@ -7146,7 +7253,7 @@ ALTER TABLE ONLY "Inventory".boutique
 
 
 --
--- TOC entry 3911 (class 2606 OID 112683)
+-- TOC entry 3919 (class 2606 OID 112683)
 -- Name: lots branches_fk; Type: FK CONSTRAINT; Schema: Inventory; Owner: postgres
 --
 
@@ -7155,7 +7262,7 @@ ALTER TABLE ONLY "Inventory".lots
 
 
 --
--- TOC entry 3923 (class 2606 OID 121115)
+-- TOC entry 3931 (class 2606 OID 121115)
 -- Name: promotions branches_fk; Type: FK CONSTRAINT; Schema: Inventory; Owner: postgres
 --
 
@@ -7164,7 +7271,7 @@ ALTER TABLE ONLY "Inventory".promotions
 
 
 --
--- TOC entry 3866 (class 2606 OID 103328)
+-- TOC entry 3874 (class 2606 OID 103328)
 -- Name: dish_and_combo_features companies_fk; Type: FK CONSTRAINT; Schema: Inventory; Owner: postgres
 --
 
@@ -7173,7 +7280,7 @@ ALTER TABLE ONLY "Inventory".dish_and_combo_features
 
 
 --
--- TOC entry 3907 (class 2606 OID 112318)
+-- TOC entry 3915 (class 2606 OID 112318)
 -- Name: boutique companies_fk; Type: FK CONSTRAINT; Schema: Inventory; Owner: postgres
 --
 
@@ -7182,7 +7289,7 @@ ALTER TABLE ONLY "Inventory".boutique
 
 
 --
--- TOC entry 3912 (class 2606 OID 112688)
+-- TOC entry 3920 (class 2606 OID 112688)
 -- Name: lots companies_fk; Type: FK CONSTRAINT; Schema: Inventory; Owner: postgres
 --
 
@@ -7191,7 +7298,7 @@ ALTER TABLE ONLY "Inventory".lots
 
 
 --
--- TOC entry 3924 (class 2606 OID 121120)
+-- TOC entry 3932 (class 2606 OID 121120)
 -- Name: promotions companies_fk; Type: FK CONSTRAINT; Schema: Inventory; Owner: postgres
 --
 
@@ -7200,7 +7307,7 @@ ALTER TABLE ONLY "Inventory".promotions
 
 
 --
--- TOC entry 3870 (class 2606 OID 103333)
+-- TOC entry 3878 (class 2606 OID 103333)
 -- Name: table_supplies_dish dish_and_combo_features_fk; Type: FK CONSTRAINT; Schema: Inventory; Owner: postgres
 --
 
@@ -7209,7 +7316,7 @@ ALTER TABLE ONLY "Inventory".table_supplies_dish
 
 
 --
--- TOC entry 3909 (class 2606 OID 112313)
+-- TOC entry 3917 (class 2606 OID 112313)
 -- Name: table_boutique dish_and_combo_features_fk; Type: FK CONSTRAINT; Schema: Inventory; Owner: postgres
 --
 
@@ -7218,7 +7325,7 @@ ALTER TABLE ONLY "Inventory".table_boutique
 
 
 --
--- TOC entry 3913 (class 2606 OID 112678)
+-- TOC entry 3921 (class 2606 OID 112678)
 -- Name: lots dish_and_combo_features_fk; Type: FK CONSTRAINT; Schema: Inventory; Owner: postgres
 --
 
@@ -7227,7 +7334,7 @@ ALTER TABLE ONLY "Inventory".lots
 
 
 --
--- TOC entry 3925 (class 2606 OID 121110)
+-- TOC entry 3933 (class 2606 OID 121110)
 -- Name: promotions dish_and_combo_features_fk; Type: FK CONSTRAINT; Schema: Inventory; Owner: postgres
 --
 
@@ -7236,7 +7343,7 @@ ALTER TABLE ONLY "Inventory".promotions
 
 
 --
--- TOC entry 3871 (class 2606 OID 103338)
+-- TOC entry 3879 (class 2606 OID 103338)
 -- Name: table_supplies_dish product_and_suppiles_features_fk; Type: FK CONSTRAINT; Schema: Inventory; Owner: postgres
 --
 
@@ -7245,7 +7352,7 @@ ALTER TABLE ONLY "Inventory".table_supplies_dish
 
 
 --
--- TOC entry 3910 (class 2606 OID 112610)
+-- TOC entry 3918 (class 2606 OID 112610)
 -- Name: table_boutique product_and_suppiles_features_fk; Type: FK CONSTRAINT; Schema: Inventory; Owner: postgres
 --
 
@@ -7254,7 +7361,7 @@ ALTER TABLE ONLY "Inventory".table_boutique
 
 
 --
--- TOC entry 3869 (class 2606 OID 103343)
+-- TOC entry 3877 (class 2606 OID 103343)
 -- Name: product_and_suppiles_features products_and_supplies_fk; Type: FK CONSTRAINT; Schema: Inventory; Owner: postgres
 --
 
@@ -7263,7 +7370,7 @@ ALTER TABLE ONLY "Inventory".product_and_suppiles_features
 
 
 --
--- TOC entry 3867 (class 2606 OID 103348)
+-- TOC entry 3875 (class 2606 OID 103348)
 -- Name: dish_and_combo_features providers_fk; Type: FK CONSTRAINT; Schema: Inventory; Owner: postgres
 --
 
@@ -7272,7 +7379,7 @@ ALTER TABLE ONLY "Inventory".dish_and_combo_features
 
 
 --
--- TOC entry 3872 (class 2606 OID 103353)
+-- TOC entry 3880 (class 2606 OID 103353)
 -- Name: table_taxes taxes_fk; Type: FK CONSTRAINT; Schema: Inventory; Owner: postgres
 --
 
@@ -7281,7 +7388,7 @@ ALTER TABLE ONLY "Inventory".table_taxes
 
 
 --
--- TOC entry 3879 (class 2606 OID 103358)
+-- TOC entry 3887 (class 2606 OID 103358)
 -- Name: screen branches_fk; Type: FK CONSTRAINT; Schema: Kitchen; Owner: postgres
 --
 
@@ -7290,7 +7397,7 @@ ALTER TABLE ONLY "Kitchen".screen
 
 
 --
--- TOC entry 3878 (class 2606 OID 103363)
+-- TOC entry 3886 (class 2606 OID 103363)
 -- Name: products_and_supplies companies_fk; Type: FK CONSTRAINT; Schema: Kitchen; Owner: postgres
 --
 
@@ -7299,7 +7406,7 @@ ALTER TABLE ONLY "Kitchen".products_and_supplies
 
 
 --
--- TOC entry 3876 (class 2606 OID 103368)
+-- TOC entry 3884 (class 2606 OID 103368)
 -- Name: product_category companies_fk; Type: FK CONSTRAINT; Schema: Kitchen; Owner: postgres
 --
 
@@ -7308,7 +7415,7 @@ ALTER TABLE ONLY "Kitchen".product_category
 
 
 --
--- TOC entry 3877 (class 2606 OID 103373)
+-- TOC entry 3885 (class 2606 OID 103373)
 -- Name: product_department companies_fk; Type: FK CONSTRAINT; Schema: Kitchen; Owner: postgres
 --
 
@@ -7317,7 +7424,7 @@ ALTER TABLE ONLY "Kitchen".product_department
 
 
 --
--- TOC entry 3873 (class 2606 OID 103378)
+-- TOC entry 3881 (class 2606 OID 103378)
 -- Name: dishes_and_combos companies_fk; Type: FK CONSTRAINT; Schema: Kitchen; Owner: postgres
 --
 
@@ -7326,7 +7433,7 @@ ALTER TABLE ONLY "Kitchen".dishes_and_combos
 
 
 --
--- TOC entry 3874 (class 2606 OID 103383)
+-- TOC entry 3882 (class 2606 OID 103383)
 -- Name: dishes_and_combos product_category_fk; Type: FK CONSTRAINT; Schema: Kitchen; Owner: postgres
 --
 
@@ -7335,7 +7442,7 @@ ALTER TABLE ONLY "Kitchen".dishes_and_combos
 
 
 --
--- TOC entry 3875 (class 2606 OID 103388)
+-- TOC entry 3883 (class 2606 OID 103388)
 -- Name: dishes_and_combos product_department_fk; Type: FK CONSTRAINT; Schema: Kitchen; Owner: postgres
 --
 
@@ -7344,7 +7451,7 @@ ALTER TABLE ONLY "Kitchen".dishes_and_combos
 
 
 --
--- TOC entry 3880 (class 2606 OID 103393)
+-- TOC entry 3888 (class 2606 OID 103393)
 -- Name: table_supplies_combo products_and_supplies_fk; Type: FK CONSTRAINT; Schema: Kitchen; Owner: postgres
 --
 
@@ -7353,7 +7460,7 @@ ALTER TABLE ONLY "Kitchen".table_supplies_combo
 
 
 --
--- TOC entry 3883 (class 2606 OID 103398)
+-- TOC entry 3891 (class 2606 OID 103398)
 -- Name: subscription branches_fk; Type: FK CONSTRAINT; Schema: User; Owner: postgres
 --
 
@@ -7362,7 +7469,7 @@ ALTER TABLE ONLY "User".subscription
 
 
 --
--- TOC entry 3884 (class 2606 OID 103403)
+-- TOC entry 3892 (class 2606 OID 103403)
 -- Name: subscription companies_fk; Type: FK CONSTRAINT; Schema: User; Owner: postgres
 --
 
@@ -7371,7 +7478,7 @@ ALTER TABLE ONLY "User".subscription
 
 
 --
--- TOC entry 3881 (class 2606 OID 103408)
+-- TOC entry 3889 (class 2606 OID 103408)
 -- Name: companies country_fk; Type: FK CONSTRAINT; Schema: User; Owner: postgres
 --
 
@@ -7380,7 +7487,7 @@ ALTER TABLE ONLY "User".companies
 
 
 --
--- TOC entry 3885 (class 2606 OID 103413)
+-- TOC entry 3893 (class 2606 OID 103413)
 -- Name: subscription packs_fud_fk; Type: FK CONSTRAINT; Schema: User; Owner: postgres
 --
 
@@ -7389,7 +7496,7 @@ ALTER TABLE ONLY "User".subscription
 
 
 --
--- TOC entry 3882 (class 2606 OID 103418)
+-- TOC entry 3890 (class 2606 OID 103418)
 -- Name: companies users_fk; Type: FK CONSTRAINT; Schema: User; Owner: postgres
 --
 
@@ -7398,7 +7505,7 @@ ALTER TABLE ONLY "User".companies
 
 
 --
--- TOC entry 3886 (class 2606 OID 103423)
+-- TOC entry 3894 (class 2606 OID 103423)
 -- Name: subscription users_fk; Type: FK CONSTRAINT; Schema: User; Owner: postgres
 --
 
@@ -7406,7 +7513,7 @@ ALTER TABLE ONLY "User".subscription
     ADD CONSTRAINT users_fk FOREIGN KEY (id_users) REFERENCES "Fud".users(id) MATCH FULL ON UPDATE CASCADE ON DELETE SET NULL;
 
 
--- Completed on 2025-05-24 18:28:16
+-- Completed on 2025-06-01 12:56:38
 
 --
 -- PostgreSQL database dump complete

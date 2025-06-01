@@ -493,6 +493,7 @@ async function home_free(req, res) {
 
     const branchFree=await get_data_branch(id_branch)
     const dataCompany=await get_data_company_with_id(id_company)
+    req.flash('message', 'Bienvenido a PLUS ❤️');
     res.render('links/home', {branchFree, dataCompany})
 
     //const link = `/fud/${id_user}/${id_company}/${id_branch}/${id_employee}/${id_role}/store-home`;

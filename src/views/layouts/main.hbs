@@ -13,70 +13,41 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <link rel="icon" href="/img/logo.png" type="image/png">
     <title>ED PLUS</title>
 
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "Organization",
-        "url": "https://fud-tech.cloud/",
-        "logo": "https://fud-tech.cloud/src/public/img/logo.png"
-    }
-    </script>
-
     <!--font-->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <!-- BOX ICONS -->
-    <link rel="stylesheet" href="/css/desktop/bootstrap.min.css">
-    <link href="/css/desktop/bootstrap1.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
-    <link href='/css/desktop/boxicons.min.css' rel='stylesheet'> 
-    <link rel='stylesheet' href='/css/desktop/uicons-solid-straight'>
-    <link rel='stylesheet' href='/css/desktop/uicons-solid-rounded.css'>
-    <link rel='stylesheet' href='/css/desktop/uicons-regular-straight.css'>
 
-    <!-- my CSS -->
-    <link rel="stylesheet" href="/css/menu.css">
+    <link href='/css/ultimate/main.min.css' rel='stylesheet'> 
     <link rel="stylesheet" href="/css/Styles.css">
-    <link rel="stylesheet" href="/css/load.css">
-    <style>
-        .alert-transparent {
-            background-color: var(--color-company);
-        }
-    </style> 
 
     <!--select-->
     <link href="https://cdn.jsdelivr.net/npm/chosen-js@1.8.7/dist/css/chosen.min.css" rel="stylesheet" />
-
-    <!--tutorial -->
-    <link src="/css/desktop/introjs.css"></link>
-    <link rel="stylesheet" href="/css/desktop/introjs.min.css">
-    <link rel="stylesheet" href="/css/tutorial.css">
 </head>
 <body>
     {{>load}}
 
     <!--this is for draw the navbar-->
     {{#if user}}
-        {{#if dataBranch}}
-        
-        {{else}}
-            <!--this is for knnow if the user would like have the navbar 3-->
-            {{#if user.navbar_3}}
-                <link rel="stylesheet" href="/css/web/navbar-3.css">
-                <div class="navbar-3">
-                    <div class="navbar-3-sidebar">
-                        {{>navbar/navbar3}}
-                    </div>
-                    <div class="navbar-3-content">
-                        {{{body}}}
-                    </div>
+        <!--this is for knnow if the user would like have the navbar 3-->
+        {{#if user.navbar_3}}
+            <link rel="stylesheet" href="/css/web/navbar-3.css">
+            <div class="navbar-3">
+                <div class="navbar-3-sidebar">
+                    {{>navbar/navbar3}}
                 </div>
-            {{else}}
-                {{>titleBar}}
-                {{{body}}}
-            {{/if}}
+                <div class="navbar-3-content" id="app-content">
+                    {{{body}}}
+                </div>
+            </div>
+        {{else}}
+            {{>titleBar}}
+            {{{body}}}
         {{/if}}
     {{else}}
         {{{body}}}
@@ -84,58 +55,9 @@
 
     {{>message}}
 
-    <!--footer-->
-    <script src="/js/store/other.js"></script>
-    <script src="/js/design.js"></script>
-    <script src="/js/select-div.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="/js/sweetAlert.js"></script>
-
     <!--select search Enlaces CDN para jQuery y Select2 -->
-    <script src="https://cdn.jsdelivr.net/npm/chosen-js@1.8.7/dist/chosen.jquery.min.js"></script>
-    
-    <!--boobstrap -->
-    <script src="/js/desktop/jquery-3.6.0.min.js"></script>
-    <script src="/js/desktop/bootstrap.bundle.min.js"></script>
-    <script>
-        $(document).ready(function() {
-        $('.menu-toggle').click(function() {
-            $('.navbar-collapse').toggleClass('show');
-        });
-        });
-    </script>
-
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const loadingScreen = document.getElementById('loading-screen-load');
-            loadingScreen.style.opacity = '0'; // Desvanece la pantalla de carga
-
-            // Espera un tiempo para asegurarse de que el fade-out se complete
-            setTimeout(() => {
-                loadingScreen.style.display = 'none'; // Luego oculta la pantalla de carga
-            }, 500); // Coincide con la duración de la transición de opacidad
-        });
-    </script>
-    <script>
-        //------------this script is for that the user not can edit the code of the web------------//
-        /*
-        // Prevent right click on page
-        document.addEventListener('contextmenu', function(event) {
-            event.preventDefault();
-        });
-
-        // Avoid certain key combinations (F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U)
-        document.addEventListener('keydown', function(event) {
-            if (event.keyCode === 123 || // F12
-                (event.ctrlKey && event.shiftKey && event.keyCode === 73) || // Ctrl+Shift+I
-                (event.ctrlKey && event.shiftKey && event.keyCode === 74) || // Ctrl+Shift+J
-                (event.ctrlKey && event.keyCode === 85) // Ctrl+U
-            ) {
-                event.preventDefault();
-            }
-        });
-        */
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chosen-js@1.8.7/dist/chosen.jquery.min.js" defer></script>
+    <script src="/js/store/other.js" defer></script>
+    <script src="/js/ultimate/main.min.js" defer></script>
 </body>
 </html>

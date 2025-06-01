@@ -134,7 +134,7 @@ router.get('/:id_company/:id_branch/point-sales', isLoggedIn, async (req, res) =
         */
 
         const addition = '{"nombre": "Juan", "edad": 30, "ciudad": "Madrid"}'; // Ejemplo de datos adicionales
-        const boxes=await get_all_box_of_the_branch_with_his_id(id_branch);
+        const boxes=[] //await get_all_box_of_the_branch_with_his_id(id_branch);
         const promotions=await get_all_the_promotions(id_branch);
 
         //const productsSales=await get_all_products_in_sales(id_branch);

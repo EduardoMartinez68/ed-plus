@@ -57,6 +57,50 @@ async function informationMessage() {
     }).bindClickHandler("data-swal-toast-template");
 }
 
+function warningMessage(title, text) {
+    Swal.fire({
+        title: title,
+        text: text,
+        icon: 'warning'
+    });
+}
+
+function infoMessage(title, text) {
+    Swal.fire({
+        title: title,
+        text: text,
+        icon: 'info'
+    });
+}
+
+function notificationMessage(title, text) {
+    Swal.fire({
+        title: title,
+        text: text,
+        position: 'top-end',
+        timer: 1500,
+        showConfirmButton: false,
+        toast: true,
+        timerProgressBar: true,
+        icon: 'success'
+    });
+}
+
+function notificationMessageError(title, text) {
+    Swal.fire({
+        title: title,
+        text: text,
+        position: 'top-end',
+        timer: 1500,
+        showConfirmButton: false,
+        toast: true,
+        timerProgressBar: true,
+        icon: 'error'
+    });
+}
+
+
+/////////////////////////////////departament//////////////////////////////////////////////
 async function new_data_departments(title) {
     return new Promise((resolve, reject) => {
         Swal.fire({
@@ -101,60 +145,6 @@ async function edit_data_departments(title, name, description) {
             allowOutsideClick: () => !Swal.isLoading()
         });
     });
-}
-
-function warningMessage(title, text) {
-    Swal.fire({
-        title: title,
-        text: text,
-        icon: 'warning'
-    });
-}
-
-function infoMessage(title, text) {
-    Swal.fire({
-        title: title,
-        text: text,
-        icon: 'info'
-    });
-}
-
-function notificationMessage(title, text) {
-    Swal.fire({
-        title: title,
-        text: text,
-        position: 'top-end',
-        timer: 1500,
-        showConfirmButton: false,
-        toast: true,
-        timerProgressBar: true,
-        icon: 'success'
-    });
-}
-
-function notificationMessageError(title, text) {
-    Swal.fire({
-        title: title,
-        text: text,
-        position: 'top-end',
-        timer: 1500,
-        showConfirmButton: false,
-        toast: true,
-        timerProgressBar: true,
-        icon: 'error'
-    });
-}
-
-function discount_message(title, text) {
-    Swal.fire({
-        title: title,
-        text: text,
-
-        input: 'text',
-        inputPlaceholder: 'Discount',
-        inputValue: '',
-        confirmButtonColor: 'rgb(204,3,40)',
-    })
 }
 
 /////////////////////////////////combo//////////////////////////////////////////////
@@ -343,6 +333,17 @@ async function edit_box_message(number, ipPrinter) {
     });
 }
 /////////////////////////////////cart//////////////////////////////////////////////
+function discount_message(title, text) {
+    Swal.fire({
+        title: title,
+        text: text,
+
+        input: 'text',
+        inputPlaceholder: 'Discount',
+        inputValue: '',
+        confirmButtonColor: 'rgb(204,3,40)',
+    })
+}
 
 async function edit_cant_car(title, cant) {
     return new Promise((resolve, reject) => {
