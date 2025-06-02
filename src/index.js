@@ -282,7 +282,27 @@ serverExpress.listen(serverExpress.get('port'), '0.0.0.0', () => {
     console.log(`Server running on http://${getLocalIP()}:${serverExpress.get('port')}`);
 });
 
+let previousCpuUsage = process.cpuUsage();
 
+setInterval(() => {
+  const currentCpuUsage = process.cpuUsage();
+  const memory = process.memoryUsage();
+
+  // Diferencia desde la última medición
+  const userDiff = currentCpuUsage.user - previousCpuUsage.user;
+  const systemDiff = currentCpuUsage.system - previousCpuUsage.system;
+
+  previousCpuUsage = currentCpuUsage; // actualiza para la próxima vez
+
+  console.clear();
+  console.log('--- Uso del sistema ---');
+  console.log(`Memoria RSS: ${(memory.rss / 1024 / 1024).toFixed(2)} MB`);
+  console.log(`Heap Total: ${(memory.heapTotal / 1024 / 1024).toFixed(2)} MB`);
+  console.log(`Heap Usado: ${(memory.heapUsed / 1024 / 1024).toFixed(2)} MB`);
+  console.log(`CPU User Desde el inicio: ${(currentCpuUsage.user / 1000).toFixed(2)} ms`);   // incremento real
+  console.log(`CPU User real: ${(userDiff / 1000).toFixed(2)} ms`);   // incremento real
+  console.log(`CPU System: ${(systemDiff / 1000).toFixed(2)} ms`); // incremento real
+}, 3000);
 /*
 setInterval(() => {
   const memory = process.memoryUsage();

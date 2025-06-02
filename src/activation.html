@@ -1,340 +1,708 @@
+<!--
+    {ED} Software Developer
+
+    This software is the exclusive property of {ED} Software Developer.
+    Any form of unauthorized reproduction, distribution or use of this technology without the express consent of the copyright holder is strictly prohibited.
+    All rights reserved 2025.
+    Improper use of this software will be punished under applicable laws.
+-->
 <!DOCTYPE html>
-<html lang="es">
-
+<html lang="en">
 <head>
+    
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar Sesión en PLUS</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background: #f0f0f0;
-        }
 
-        .login-container {
-            width: 20%;
-            margin: 50px auto;
-            padding: 20px;
-            background: white;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-        }
+    <link rel="icon" href="/img/logo.png" type="image/png">
+    <title>ED PLUS</title>
 
-        input {
-            width: 90%;
-            padding: 10px;
-            margin: 5px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
+    <!--font-->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-        button {
-            width: 100%;
-            padding: 10px;
-            background: #1648FF;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
 
-        button:hover {
-            background: rgb(1, 63, 129);
-        }
+    <link href='/css/ultimate/main.min.css' rel='stylesheet'> 
+    <link rel="stylesheet" href="/css/Styles.css">
 
-        .error {
-            color: red;
-        }
-
-        .img-cion {
-            width: 50%;
-            height: auto;
-            border-radius: 50%;
-        }
-
-        /* 🎡 Estilos para la pantalla de carga */
-        .loading {
-            display: none;
-            font-size: 14px;
-            color: #1648FF;
-        }
-    </style>
+    <!--select-->
+    <link href="https://cdn.jsdelivr.net/npm/chosen-js@1.8.7/dist/css/chosen.min.css" rel="stylesheet" />
 </head>
-
 <body>
-    <div class="login-container">
-        <img src="public/img/ed-icon.webp" alt="" class="img-cion">
-        <h2>Iniciar Sesión</h2>
-        <hr>
-
-        <input type="text" id="token" placeholder="TOKEN" />
-        <p class="error" id="error-message"></p>
-        <p class="loading" id="loading-message">Verificando TOKEN... ⏳</p>
-
-        <button id="sendMessage" onclick="checkToken()">Activar</button>
-
-        <br><br>
-        <label for="">¿No tienes un TOKEN? Manda un mensaje a +52 444 304 2129</label>
+    <!---
+    <link rel="stylesheet" href="/css/loading.css">
+    --->
+    <div class="loading-screen" id="loading-screen-load">
+        <div class="loading-spinner"></div>
+        <div class="powered-by">Powered by {ED} Software developer</div>
     </div>
-
-    <script>
-        let deviceId = null;
-        const { ipcRenderer } = require('electron');
-        ipcRenderer.send('get_my_deviceId');
-        console.log("📤 Petición enviada al backend");
-
-        //get the message of the screen
-        const errorMessage = document.getElementById('error-message');
-        const loadingMessage = document.getElementById('loading-message');
-
-
-
-        document.getElementById('sendMessage').addEventListener('click', async () => {
-            //get the data of the token
-            const token = document.getElementById('token').value;
+    <!--this is for draw the navbar-->
+        <!--this is for knnow if the user would like have the navbar 3-->
+            <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css'>
+            <!--this is for when the customer is in the store--->
+                        <link rel="stylesheet" href="/css/web/new-navbar.css">
+                        <style>
+                            .container-app {
+                                height: 80%;
+                                width: 70%;
+                                overflow-y: auto;
+                            }
+                        
+                            .descriptionWindow {
+                                background: linear-gradient(90deg, #075DA8, #0576F8);
+                            }
+                        
+                        </style>
+                        <section class="descriptionWindow">
+                        
+                            <head class="headDescription">
+                                <div class="navbar">
+                                    <ul class="ul-menu-bar">
+                                        <label for="check" class="btn-menu-bar">
+                                            <i class="fi-des fi-br-menu-burger menu-toggle" id="btn-navbar-open" step="btnNavBar"></i>
+                                            <i class="fi-des fi-br-cross" id="btn-navbar-cancel"></i>
+                                        </label>
+                                    </ul>
+                        
+                                    <div class="menu">
+                                        <input type="text" placeholder="Busca una App" class="form-control" style="width: 25%;" id="search-app">
+                                        <button class="close-menu">×</button>
+                        
+                        
+                        
+                        
+                                        <div class="container-app">
+                                            <div class="app-icon" onclick="nextWeb('/home')">
+                                                <img src="/img/apps/home.webp" alt="Insumos" loading="lazy">
+                                                <span>Home</span>
+                                            </div>
+                        
+                                            <div class="app-icon" onclick="nextWeb('/1/8/point-sales')">
+                                                <img src="/img/apps/point_sales.webp" alt="Insumos" loading="lazy">
+                                                <span>Punto de Venta</span>
+                                                <label class="shortcuts-label">F1</label>
+                                            </div>
+                                            <!---
+                                            <div class="app-icon" onclick="nextWeb('/point-sales')">
+                                                <img src="/img/apps/point_sales.webp" alt="Insumos" loading="lazy">
+                                                <span>Punto de Venta</span>
+                                                <label class="shortcuts-label">F1</label>
+                                            </div>
+                                            --->
+                        
+                                            <div class="app-icon" onclick="nextWeb('1/8/products-free')">
+                                                <img src="/img/apps/products.webp" alt="Productos" loading="lazy">
+                                                <span>Productos</span>
+                                                <label class="shortcuts-label">F2</label>
+                                            </div>
+                        
+                        
+                                            <div class="app-icon" onclick="nextWeb('1/8/boutique')">
+                                                <img src="/img/apps/boutique.webp" alt="Productos" loading="lazy">
+                                                <span>Boutique</span>
+                                            </div>
+                        
+                                            <div class="app-icon" onclick="nextWeb('1/8/supplies-free')">
+                                                <img src="/img/apps/supplies.webp" alt="Insumos" loading="lazy">
+                                                <span>Insumos</span>
+                                                <label class="shortcuts-label">F3</label>
+                                            </div>
+                        
+                                            <div class="app-icon" onclick="nextWeb('1/8/combos-free')">
+                                                <img src="/img/apps/combos.webp" alt="Combos" loading="lazy">
+                                                <span>Combos</span>
+                                                <label class="shortcuts-label">F4</label>
+                                            </div>
+                        
+                        
+                                            <div class="app-icon" onclick="nextWeb('1/8/inventory')">
+                                                <img src="/img/apps/inventory.webp" alt="Impresoras" loading="lazy">
+                                                <span>Inventario</span>
+                                                <label class="shortcuts-label">F5</label>
+                                            </div>
+                        
+                                            <div class="app-icon" onclick="nextWeb('1/8/mass-product-adjustment')">
+                                                <img src="/img/apps/stock.webp" alt="Impresoras" loading="lazy">
+                                                <span>Stock</span>
+                                                <label class="shortcuts-label">F6</label>
+                                            </div>
+                        
+                                            <!--
+                                                        <div class="app-icon" onclick="nextWeb('1/8/warehouses')">
+                                                            <img src="/img/apps/warehouses.webp" alt="Impresoras">
+                                                            <span>Almacenes</span>
+                                                        </div>
+                        
+                                                        <div class="app-icon" onclick="nextWeb('1/8/lot')">
+                                                            <img src="/img/apps/lots.webp" alt="Impresoras">
+                                                            <span>Lotes y Series</span>
+                                                        </div>
+                                                --->
+                        
+                                            <div class="app-icon" onclick="nextWeb('1/8/food-department-free')">
+                                                <img src="/img/apps/food-department.webp" alt="Departamentos" loading="lazy">
+                                                <span>Departamento de productos</span>
+                                            </div>
+                        
+                                            <div class="app-icon" onclick="nextWeb('1/8/food-area-free')">
+                                                <img src="/img/apps/food-area.webp" alt="Departamentos" loading="lazy">
+                                                <span>Categoría de productos</span>
+                                            </div>
+                        
+                                            <div class="app-icon" onclick="nextWeb('1/8/providers-free')">
+                                                <img src="/img/apps/providers.webp" alt="Proveedores" loading="lazy">
+                                                <span>Proveedores</span>
+                                                <label class="shortcuts-label">F7</label>
+                                            </div>
+                        
+                                            <div class="app-icon" onclick="nextWeb('1/8/report-prescription')">
+                                                <img src="/img/apps/prescription.webp" alt="Ventas" loading="lazy">
+                                                <span>Reportes médicos</span>
+                                            </div>
+                        
+                                            <div class="app-icon" onclick="nextWeb('1/8/customers-company')">
+                                                <img src="/img/apps/customers.webp" alt="Clientes" loading="lazy">
+                                                <span>Clientes</span>
+                                                <label class="shortcuts-label">F8</label>
+                                            </div>
+                        
+                                            <!---
+                                                        <div class="app-icon" onclick="nextWeb('1/8/schedules')">
+                                                            <img src="https://cdn-icons-png.flaticon.com/512/566/566632.png" alt="Horarios">
+                                                            <span>Horarios</span>
+                                                        </div>
+                                                
+                        
+                                                --->
+                                            <div class="app-icon" onclick="nextWeb('1/8/employees-branch')">
+                                                <img src="/img/apps/employees.webp" alt="Empleados" loading="lazy">
+                                                <span>Empleados</span>
+                                                <label class="shortcuts-label">F9</label>
+                                            </div>
+                        
+                                            <div class="app-icon" onclick="nextWeb('1/8/employee-department')">
+                                                <img src="/img/apps/employee-department.webp" alt="Departamento de empleados" loading="lazy">
+                                                <span>Departamento de empleados</span>
+                                            </div>
+                                            <div class="app-icon" onclick="nextWeb('1/8/type-employees-free')">
+                                                <img src="/img/apps/type-employees.webp" alt="Roles de empleados" loading="lazy">
+                                                <span>Roles y permisos</span>
+                                            </div>
+                        
+                                            <div class="app-icon" onclick="nextWeb('1/8/cashCut')">
+                                                <img src="https://cdn-icons-png.flaticon.com/512/8276/8276278.png" alt="Roles de empleados" loading="lazy">
+                                                <span>Cortes de Caja</span>
+                                                <label class="shortcuts-label">F10</label>
+                                            </div>
+                        
+                                            <!--
+                                                --->
+                                            <!---
+                        
+                        
+                                                        <div class="app-icon" onclick="nextWeb('myrestaurant/1/8')">
+                                                            <img src="https://cdn-icons-png.flaticon.com/512/3176/3176363.png" alt="Ecommerce">
+                                                            <span>Ecommerce</span>
+                                                        </div>
+                            
+                                                        <div class="app-icon" onclick="nextWeb('1/8/ad')">
+                                                            <img src="/img/apps/ads.webp" alt="Anuncios">
+                                                            <span>Anuncios</span>
+                                                        </div>
+                        
+                                                
+                                               --->
+                        
+                                            <div class="app-icon" onclick="nextWeb('1/8/0/sales')">
+                                                <img src="/img/apps/sales.webp" alt="Ventas" loading="lazy">
+                                                <span>Ventas</span>
+                                            </div>
+                        
+                                            <div class="app-icon" onclick="nextWeb('1/8/0/services')">
+                                                <img src="/img/apps/services.webp" alt="Ventas" loading="lazy">
+                                                <span>Pago de Servicios</span>
+                                            </div>
+                        
+                                            <div class="app-icon" onclick="nextWeb('1/8/0/movements')">
+                                                <img src="/img/apps/movements.webp" alt="Movimientos" loading="lazy">
+                                                <span>Movimientos</span>
+                                            </div>
+                        
+                                            <!---
+                        
+                                                --->
+                        
+                                            <div class="app-icon" onclick="nextWeb('1/8/reports')">
+                                                <img src="/img/apps/reports.webp" alt="Contabilidad" loading="lazy">
+                                                <span>Reportes</span>
+                                            </div>
+                        
+                                            <!---
+                                                --->
+                        
+                                            <!---
+                                                
+                        
+                                                
+                        
+                                                        <div class="app-icon" onclick="nextWeb('8/1/edit-branch-free')">
+                                                            <img src="https://cdn-icons-png.flaticon.com/512/1198/1198348.png" alt="Editar Sucursal">
+                                                            <span>Franquicias</span>
+                                                        </div>
+                                                
+                        
+                                                
+                        
+                        
+                                                    <div class="app-icon" onclick="nextWeb('1/8/ed-studios')">
+                                                        <img src="https://cdn-icons-png.flaticon.com/512/3904/3904299.png" alt="Áreas">
+                                                        <span>ED Estudios</span>
+                                                    </div>
+                                                -->
+                        
+                                            <!--we will print all the apps of this branch
+                                                        <div class="app-icon" onclick="nextWeb('1/8/app/alumnos')">
+                                                                <img src="https://cdn-icons-png.flaticon.com/512/3902/3902021.png" alt="Insumos">
+                                                            <span>alumnos</span>
+                                                        </div>
+                                                        <div class="app-icon" onclick="nextWeb('1/8/app/programacion')">
+                                                                <img src="https://cdn-icons-png.flaticon.com/512/1448/1448776.png" alt="Insumos">
+                                                            <span>programacion</span>
+                                                        </div>
+                                                --->
+                        
+                        
+                        
+                                            <div class="app-icon" onclick="nextWeb('1/8/box')">
+                                                <img src="/img/apps/box.webp" alt="Impresoras" loading="lazy">
+                                                <span>Impresoras</span>
+                                            </div>
+                        
+                                            <div class="app-icon" onclick="nextWeb('1/8/labels')">
+                                                <img src="/img/apps/label.webp" alt="Impresoras" loading="lazy">
+                                                <span>Etiquetas</span>
+                                            </div>
+                                            
+                                            <!--
+                                                    <div class="app-icon" onclick="nextWeb('1/8/orders')">
+                                                        <img src="/img/apps/comanders.webp" alt="Combos">
+                                                        <span>Comandas</span>
+                                                    </div>
+                                                -->
+                        
+                                            <div class="app-icon" onclick="nextWeb('8/1/edit-branch-free')">
+                                                <img src="/img/apps/editbranch.webp" alt="Editar Sucursal" loading="lazy">
+                                                <span>Editar Sucursal</span>
+                                            </div>
+                        
+                                            <div class="app-icon" onclick="nextWeb('1/8/options')">
+                                                <img src="/img/apps/options.webp" alt="Departamentos" loading="lazy">
+                                                <span>Configuración</span>
+                                            </div>
+                                            <!--
+                                                        <div class="app-icon" onclick="nextWeb('1/8/prices')">
+                                                            <img src="https://cdn-icons-png.flaticon.com/512/5560/5560586.png" alt="Editar Sucursal">
+                                                            <span>Membresias</span>
+                                                        </div>
+                                                
+                        
+                        
+                                                        <div class="app-icon" onclick="nextWeb('1/8/options')">
+                                                            <img src="/img/apps/options.webp" alt="Departamentos">
+                                                            <span>Configuración</span>
+                                                        </div>
+                                                --->
+                                            <!---
+                                                    <div class="app-icon" onclick="nextWeb('1/8/marketplace')">
+                                                        <img src="https://cdn-icons-png.flaticon.com/512/4372/4372862.png" alt="Áreas">
+                                                        <span>Marketplace</span>
+                                                    </div>
+                                                --->
+                                            <div class="app-icon" onclick="nextWeb('logout')">
+                                                <img src="/img/apps/logout.webp" alt="Áreas" loading="lazy">
+                                                <span>Cerrar Sesion</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                        
+                                    <!--this is for add the name of the company or the branch-->
+                        
+                                    <ul class="titleDesciption">
+                                        <!--
+                                        <span class="color-name-navbar">eje14848@Outlook.es</span>
+                                            <img src="https://cdn-icons-png.flaticon.com/512/3177/3177440.png" class="img-profile-navbar">
+                                        
+                                        --->
+                                        <!-- Navbar -->
+                                        <input type="hidden" value="eje14848@Outlook.es" id="userIdChat">
+                                        <div class="navbar-message">
+                                          <div class="icons" id="icons-message-history">
+                                            <i class="fi fi-ss-comments" id="chatIcon"></i>
+                                          </div>
+                                        </div>
+                                        
+                                        <!-- this is for get the data of the company-->
+                                          <input type="hidden" value="1" id="id-company-ed-clouded">
+                                        
+                                        
+                                        <!-- Chat History -->
+                                        <div class="chat-history" id="chatHistory">
+                                          <h3></h3>
+                                          <div class="container-button-chat">
+                                            <button class="btn" onclick="show_send_message_to_user()"><i class="fi fi-rs-paper-plane"></i> Nuevo mensaje</button>
+                                          </div>
+                                          <div class="view-all-messages">
+                                            <center><a href="#">Ver todos los mensajes</a></center>
+                                          </div>
+                                        </div>
+                                        
+                                        
+                                        <!--
+                                        this is for when the user can get messages
+                                        <script src="/js/desktop/socket.io.min.js"></script>
+                                        <script src="/js/navbarMessageHistory.js"></script>
+                                        --->            </ul>
+                                </div>
+                            </head>
+                        </section>
+                        
+                        <input type="hidden" id="id_branch_menu" value="8">
+                        <input type="hidden" id="id_company_menu" value="1">
+                        
+                        <script src="/js/web/new-navbar.js"></script>
+                        <script>
+                            // select the search input of the apps
+                            const searchInput = document.getElementById('search-app');
+                        
+                            // this function if for filter the apps
+                            searchInput.addEventListener('input', function () {
+                                const filter = searchInput.value.toLowerCase(); // get the value of search input in lowercase
+                                const apps = document.querySelectorAll('.app-icon'); // get all the apps
+                        
+                                // Itera sobre cada app para mostrar u ocultar
+                                apps.forEach(app => {
+                                    const appName = app.querySelector('span').textContent.toLowerCase(); // Obtiene el nombre de la app
+                                    if (appName.includes(filter)) {
+                                        app.style.display = ''; // sho the apps
+                                    } else {
+                                        app.style.display = 'none'; // hidden the apps
+                                    }
+                                });
+                            });
+                        </script>
+                        
+                        
+                        <script>
+                            document.addEventListener('keydown', function (event) {
+                        
+                                //first check if the menu is open
+                                if (event.key === "Escape") {
+                                    //if the menu is open, close it
+                                    const menu = document.querySelector('.menu');
+                                    if (menu.classList.contains('active')) {
+                                        menu.classList.remove('active');
+                                    } else {
+                                        open_menu(); //if the menu is not open, open it
+                        
+                                    }
+                                    return;
+                                }
+                        
+                                //her we will get the id_company and id_branch from the url
+                                const id_company = document.getElementById('id_company_menu').value;
+                                const id_branch = document.getElementById('id_branch_menu').value;
+                        
+                                //this is the shortcut of eleventa for open module
+                                const simpleShortcuts = {
+                                    'F1': '/point-sales', //point sales
+                                    'F2': `${id_company}/${id_branch}/products-free`,
+                                    'F3': `${id_company}/${id_branch}/supplies-free`,
+                                    'F4': `${id_company}/${id_branch}/combos-free`,
+                                    'F5': `${id_company}/${id_branch}/inventory`,
+                                    'F6': `${id_company}/${id_branch}/mass-product-adjustment`,
+                                    'F7': `${id_company}/${id_branch}/providers-free`,
+                                    'F8': `${id_company}/${id_branch}/customers-company`,
+                                    'F9': `${id_company}/${id_branch}/employees-branch`,
+                                    'F10': `${id_company}/${id_branch}/cashCut`
+                                };
+                        
+                                if (simpleShortcuts[event.key]) {
+                                    event.preventDefault();
+                                    const link = simpleShortcuts[event.key];
+                                    nextWeb(link);
+                                }
+                        
+                        
+                                // Diccionario de atajos simples (F1, F2, etc.)
+                                const apps = {
+                                    '1': '/point-sales', //point sales
+                                    '2': `${id_company}/${id_branch}/customers-company`,
+                                    '3': `${id_company}/${id_branch}/products-free`,
+                                    '4': `${id_company}/${id_branch}/inventory`,
+                                    '5': `${id_company}/${id_branch}/supplies-free`,
+                                    '6': `${id_company}/${id_branch}/combos-free`,
+                                    '7': `${id_company}/${id_branch}/mass-product-adjustment`,
+                                    '8': `${id_company}/${id_branch}/report-prescription`,
+                                    '9': `${id_company}/${id_branch}/cashCut`,
+                                    '0': `${id_company}/${id_branch}/employees-branch`
+                                };
+                        
+                                //apps
+                                if (event.altKey && apps[event.key]) {
+                                    event.preventDefault();
+                                    const link = simpleShortcuts[event.key];
+                                    nextWeb(link);
+                                }
+                            });
+                        
+                        </script><br><br>
             
-
-            //get the data of the token use our api of the server
-            const dataToken = await get_the_data_of_the_token(token);
-
-            //we will see if can get the data of the token from the server
-            if (dataToken.success) {
-                //if exist the token, and we get his data, activate the token in this drive
-                await activate_token(dataToken);
-            } else {
-                show_message_in_the_screen(dataToken.message); //show the message of error in the screen
-            }
-
-            //send a message to the main process with the token
-            //ipcRenderer.send('get_the_data_of_the_token', { token });
-        });
-
-        async function activate_token(dataToken){
-            //we will see if the token have a drive save in the database
-            //this is for know if this token is used or is new
-            if (dataToken.device_id) {
-
-                //now we will see if device_id is equal to the deviceId of the pc
-                if (dataToken.device_id == deviceId) {
-                    //if the device id is equal to the deviceId of the pc, we will send a message to the main process with the token
-                    ipcRenderer.send('update_data_of_the_token_in_this_drive', { dataToken });
-                } else {
-                    //if the device id is not equal to the deviceId of the pc, we will show a message in the screen
-                    show_message_in_the_screen("Este Token ya esta en uso.");
+            
+            
+            
+            <!-- Google tag (gtag.js) this is for follow to the user with help of GOOGLE ADS-->
+            <script async src="https://www.googletagmanager.com/gtag/js?id=AW-16577376827"></script>
+            <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag() { dataLayer.push(arguments); }
+                gtag('js', new Date());
+            
+                gtag('config', 'AW-16577376827');
+            </script>
+            
+            <!--this script is for delete the tag de prices when the user be a employee-->
+            <script>
+                function delete_role() {
+                    const labelRol = document.getElementById('roleUser')
+                    console.log('labelRol')
+                    console.log(labelRol)
+                    const roleUser = labelRol.getAttribute('rolUser')
+                    console.log(roleUser)
+                    if (roleUser >= 1) {
+                        labelRol.remove();
+                    }
                 }
-
-            } else {
-
-
-                //if this token is not active, we will send a message to the API for activate the token and save this drive in the database
-                await update_the_uui(dataToken.token, deviceId)
-
-                //if can update the token, show a message in the screen
-                show_message_in_the_screen("Token activado correctamente, por favor espera un momento...");
-
-                //now we will send the data of the token for update in the desktop. Save all the data of the token in the database
-                ipcRenderer.send('update_data_of_the_token_in_this_drive', { dataToken });
-            }
-        }
-
-        async function get_the_data_of_the_token(token) {
-            //now we will send a message to our api in the web for get all the data of the token
-            try {
-                //send to our api the token that need
-                const response = await fetch("https://pluspuntodeventa.com/api/see_if_exist_this_token_in_the_database_of_the_web.php", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ token:token })
-                });
-
-                //get the data of the token
-                const data = await response.json();
-                return data;
-            } catch (error) {
-                document.getElementById('respuesta').textContent = "Error al conectar con la API: " + error;
-                return false;
-            }
-        }
-
-
-        async function update_the_uui(token, deviceId) {
-
-            //send a message to our api in the web for activate the token
-            const response = await fetch("https://pluspuntodeventa.com/api/save_the_uui_of_the_user_in_the_database.php", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ token:token, deviceId:deviceId })
-            });
-
-            //get the anser of the server
-            const data = await response.json();
-            return data.success;
-        }
-
-
-        function show_message_in_the_screen(message) {
-            const errorMessage = document.getElementById('error-message');
-            const loadingMessage = document.getElementById('loading-message');
-
-            // 🔹 Ocultar la pantalla de carga
-            loadingMessage.style.display = "none";
-            errorMessage.style.display = "block";
-
-            // 🔹 Mostrar respuesta del backend
-            errorMessage.innerText = message;
-        }
-
-        function clean_screen() {
-            errorMessage.innerText = "";
-            loadingMessage.style.display = "block";
-        }
-        
-        
-        /*
-        ipcRenderer.on('answer-from-login-render-token', (event, response) => {
-            const errorMessage = document.getElementById('error-message');
-            const loadingMessage = document.getElementById('loading-message');
-
-            // 🔹 Ocultar la pantalla de carga
-            loadingMessage.style.display = "none";
-
-            // 🔹 Mostrar respuesta del backend
-            errorMessage.innerText = response;
-        });
-        */
-
-        ipcRenderer.on('update_data_of_the_token_in_this_drive', (event, response) => {
-            const errorMessage = document.getElementById('error-message');
-            const loadingMessage = document.getElementById('loading-message');
-
-            // 🔹 Ocultar la pantalla de carga
-            loadingMessage.style.display = "block";
-
-            // 🔹 Mostrar respuesta del backend
-            errorMessage.innerText = response;
-        });
-
-        // Escuchar la respuesta en un canal diferente
-        ipcRenderer.on('answer_get_my_deviceId', (event, response) => {
-            console.log("📥 Respuesta del backend:", response);
-            deviceId = response;
-        });
-
-        
-    </script>
-</body>
-
-</html>
-
-
-<!-------
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar Sesión en PLUS</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background: #f0f0f0;
-        }
-        .login-container {
-            width: 20%;
-            margin: 50px auto;
-            padding: 20px;
-            background: white;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-        }
-        input {
-            width: 90%;
-            padding: 10px;
-            margin: 5px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        button {
-            width: 100%;
-            padding: 10px;
-            background: #1648FF;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover {
-            background: rgb(1, 63, 129);
-        }
-        .error {
-            color: red;
-        }
-
-        .img-cion {
-            width: 50%;
-            height: auto;
-            border-radius: 50%;
-        }
-
-        /* 🎡 Estilos para la pantalla de carga */
-        .loading {
-            display: none;
-            font-size: 14px;
-            color: #1648FF;
-        }
-    </style>
-</head>
-<body>
-    <div class="login-container">
-        <img src="public/img/ed-icon.webp" alt="" class="img-cion">
-        <h2>Iniciar Sesión</h2>
-        <hr>
-        
-        <input type="email" id="email" placeholder="Email de tu cuenta" />
-        <input type="password" id="password" placeholder="Contraseña" />
-        <p class="error" id="error-message"></p>
-        
-        <p class="loading" id="loading-message">Verificando usuario... ⏳</p>
-
-        <button id="sendMessage">Ingresar</button>
-        
-        <br><br>
-        <a href="https://capacitatkocina.com/web/index.php" target="_blank">¿No tienes una cuenta? Crear una cuenta AHORA</a>
+                delete_role()
+            </script>
+            
+            <!--this script will be that the description of the web choose depending in where is the user-->
+            <script>
+                var url = window.location.href;
+                var works = url.split("/");
+                var description = works.pop();
+                document.getElementById("des").textContent = text_convert(description);
+            
+                function text_convert(title) {
+                    var textConvert = title.replace(/-/g, ' ');
+                    if (textConvert == '') {
+                        return 'Füd'
+                    }
+                    return textConvert;
+                }
+            </script>            <link rel="stylesheet" href="/css/manager/supplies_products.css">
+<br>
+<br>
+<div class="container">
+  <label><i class="fi-icon fi-sr-burger-fries"></i> Combos</label>
+    <hr>
+    <div class="row mt-5">
+        <div class="col-md-12">
+        </div>
     </div>
+</div>
 
-    <script>
-        const { ipcRenderer } = require('electron');
+<div class="container">
+    <label>Buscar un Combo</label>
+    <div class="row">
+        <div class="col-5">
+            <input type="text" class="form-control" placeholder="Buscar código de barras..." id="search">
+        </div>
+            <div class="col">
+                <input type="hidden" id="id_branch" value="8">
+                <button class="btn btn-confirm-message" onclick="nextWeb('1/8/add-combos-free')">Agregar combo +</button>
+            </div>
+    </div>
+</div>
+<br>
+<div class="container">
+    <div style="height: 700px; overflow-y: scroll;">
+        <table class="table table-hover" id="table-container"> <!--table-bordered-->
+            <colgroup>
+                <col style="width: 10%;">
+                <col style="width: 10%;">
+                <col style="width: 15%;">
+                <col style="width: 30%;">
+                <col style="width: 10%;">
+                <col style="width: 10%;">
+                <col style="width: 15%;">
+            </colgroup>
+            <thead>
+            <tr>
+                <th></th>
+                <th>Barcode</th>
+                <th>Nombre</th>
+                <th>Descripcion</th>
+                <th>Departamento/Categoría</th>
+                <th>Precio</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr id="combo">
+                        <td><img src="\img\uploads\d6f93256-fc5d-4e7d-920e-a195996b4ed3.jpg" class="img-s-p"></td>
 
-        document.getElementById('sendMessage').addEventListener('click', () => {
-            const username = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const errorMessage = document.getElementById('error-message');
-            const loadingMessage = document.getElementById('loading-message');
+                    <td>combo</td>
+                    <td>combo</td>
+                    <td></td>
+                    <td>Combos Monster/especial del dia</td>
+                    <td>100</td>
+                    <td>
+                        <button class="btn btn-edit" id="110" onclick="nextWeb('1/8/110/edit-combo-branch')"><i class="fi-department fi-sr-pencil"></i></button>
+                    </td>           
+                </tr>
+                <tr id="hamburgesa big">
+                        <td><img src="\img\uploads\97f3a733-05ca-46e3-9ca1-78a2bceb8f1e.jpg" class="img-s-p"></td>
 
-            // 🔹 Limpiar mensajes previos y mostrar carga
-            errorMessage.innerText = "";
-            loadingMessage.style.display = "block";
+                    <td>hamburgesa big</td>
+                    <td>hamburgesa big</td>
+                    <td></td>
+                    <td>Combos De Pareja 2/Todo el dia</td>
+                    <td>20</td>
+                    <td>
+                        <button class="btn btn-edit" id="157" onclick="nextWeb('1/8/157/edit-combo-branch')"><i class="fi-department fi-sr-pencil"></i></button>
+                    </td>           
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<br><br>
+<script>
+    async function delate_combo(id,id_company){
+        if(await questionMessage('Eliminar Combo','¿Quieres eliminar este combo?')){
+            window.location.href = "/fud/"+id_company+"/"+id+"/delate-combo-company";
+        }
+    }
 
-            ipcRenderer.send('login-from-render', { username, password });
+    function edit_supplies(id,id_company){
+        window.location.href = "/fud/"+id_company+"/"+id+"/edit-combo-company";
+    }
+</script>
+
+<!--
+<script src="/js/search.js"></script>
+
+<script>
+    document.getElementById('search').addEventListener('input', search_combo);
+
+    function search_combo(){
+        //get the value of the input
+        const barcodeValue = document.getElementById('search').value;
+        // search the value in the table
+        toggleRows(barcodeValue);
+    }
+
+    function toggleRows(barcode) {
+        // Convert the barcode value to lowercase
+        const lowerCaseBarcode = barcode.toLowerCase();
+        
+        // Get all the rows of the table
+        const rows = document.querySelectorAll('#table-container tbody tr');
+
+        // Iterate over the rows and hide or show based on the barcode value
+        rows.forEach(row => {
+            const rowText = row.textContent.toLowerCase();
+            // Check if the row text includes the barcode value
+            row.style.display = rowText.includes(lowerCaseBarcode) ? '' : 'none';
+        });
+    }
+</script>
+-->
+
+<script>
+    let is_a_product = false; // Cambia a false si quieres buscar combos
+
+    document.getElementById('search').addEventListener('input', search_combo);
+
+    let searchTimeout = null;
+
+    function search_combo() {
+        const barcodeValue = document.getElementById('search').value;
+
+        // Para no hacer llamadas por cada letra que escriba (esperamos 300ms)
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            fetchCombos(barcodeValue);
+        }, 200);
+    }
+
+    async function fetchCombos(barcode) {
+    const id_branch = document.getElementById('id_branch').value;
+    try {
+        const response = await fetch(`/links/update_table/${id_branch}/combos`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include', // Importante para sesión
+            body: JSON.stringify({ barcode , is_a_product})
         });
 
-        ipcRenderer.on('answer-from-login-render', (event, response) => {
-            const errorMessage = document.getElementById('error-message');
-            const loadingMessage = document.getElementById('loading-message');
+        if (!response.ok) {
+            const text = await response.text();
+            console.error('Server responded with error page:', text);
+            throw new Error(`Server error ${response.status}`);
+        }
 
-            // 🔹 Ocultar la pantalla de carga
-            loadingMessage.style.display = "none";
+        const data = await response.json();
+        renderTable(data);
+    } catch (error) {
+        console.error('Error fetching combos:', error);
+    }
+    }
 
-            // 🔹 Mostrar respuesta del backend
-            errorMessage.innerText = response;
+    function renderTable(combos) {
+        const tbody = document.querySelector('#table-container tbody');
+        tbody.innerHTML = '';
+
+        combos.forEach(combo => {
+            const row = document.createElement('tr');
+            row.id = combo.barcode;
+
+            const imgSrc = combo.img ? combo.img : '/img/icons_first/product.webp';
+
+            row.innerHTML = `
+                <td><img src="${imgSrc}" class="img-s-p"></td>
+                <td>${combo.barcode}</td>
+                <td>${combo.name}</td>
+                <td>${combo.description}</td>
+                <td>${combo.department_name}/${combo.category_name}</td>
+                <td>${combo.price_1}</td>
+                <td>
+                    <button class="btn btn-edit" id="${combo.id}" onclick="nextWeb('${combo.id_companies}/${combo.id_branches}/${combo.id}/edit-products-free')">
+                        <i class="fi-department fi-sr-pencil"></i>
+                    </button>
+                </td>
+            `;
+
+            tbody.appendChild(row);
         });
-    </script>
+    }
+</script>
+    <div id="app-content">
+
+    </div>
+    
+    
+    <script src="/js/desktop/jquery.min.js"></script>
+    <script src="/js/desktop/bootstrap.bundle.min.js"></script>
+    <!--select search Enlaces CDN para jQuery y Select2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chosen-js@1.8.7/dist/chosen.jquery.min.js" defer></script>
+    <script src="/js/store/other.js" defer></script>
+    <script src="/js/ultimate/main.min.js" defer></script>
+    
+    
 </body>
 </html>
----------->
