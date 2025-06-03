@@ -277,11 +277,17 @@ function getLocalIP() {
     return '127.0.0.1';
 }
 
-//starting the server in the computer
+// starting the server in the computer
+//const open = (...args) => import('open').then(mod => mod.default(...args));
+
 serverExpress.listen(serverExpress.get('port'), '0.0.0.0', () => {
-    console.log(`Server running on http://${getLocalIP()}:${serverExpress.get('port')}`);
+    const url = `http://${getLocalIP()}:${serverExpress.get('port')}`;
+    console.log(`Server running on ${url}`);
+    //open(url);
 });
 
+
+/*
 let previousCpuUsage = process.cpuUsage();
 
 setInterval(() => {
@@ -302,19 +308,6 @@ setInterval(() => {
   console.log(`CPU User Desde el inicio: ${(currentCpuUsage.user / 1000).toFixed(2)} ms`);   // incremento real
   console.log(`CPU User real: ${(userDiff / 1000).toFixed(2)} ms`);   // incremento real
   console.log(`CPU System: ${(systemDiff / 1000).toFixed(2)} ms`); // incremento real
-}, 3000);
-/*
-setInterval(() => {
-  const memory = process.memoryUsage();
-  const cpu = process.cpuUsage();
-
-  console.clear();
-  console.log('--- Uso del sistema ---');
-  console.log(`Memoria RSS: ${(memory.rss / 1024 / 1024).toFixed(2)} MB`);
-  console.log(`Heap Total: ${(memory.heapTotal / 1024 / 1024).toFixed(2)} MB`);
-  console.log(`Heap Usado: ${(memory.heapUsed / 1024 / 1024).toFixed(2)} MB`);
-  console.log(`CPU User: ${(cpu.user / 1000).toFixed(2)} ms`);
-  console.log(`CPU System: ${(cpu.system / 1000).toFixed(2)} ms`);
 }, 3000);
 */
 

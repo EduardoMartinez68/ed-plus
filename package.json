@@ -3,9 +3,15 @@
   "version": "1.0.0",
   "description": "",
   "main": "src/index.js",
+  "bin": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js"
+  },
+  "pkg": {
+    "assets": [
+      ".env"
+    ]
   },
   "build": {
     "appId": "com.ed_software_developer.id",
@@ -29,9 +35,6 @@
     }
   },
   "devDependencies": {
-    "electron": "^25.9.8",
-    "electron-builder": "^25.1.8",
-    "electron-packager": "^17.1.2",
     "javascript-obfuscator": "^4.1.1",
     "nodemon": "^2.0.22"
   },
@@ -46,7 +49,6 @@
     "@fullcalendar/timegrid": "^6.1.8",
     "@zxing/text-encoding": "^0.9.0",
     "aws-sdk": "^2.1624.0",
-    "axios": "^1.8.4",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "connect-flash": "^0.1.1",
@@ -59,7 +61,6 @@
     "express-session": "^1.17.3",
     "express-validator": "^7.0.1",
     "fullcalendar": "^6.1.15",
-    "generacfdi": "^1.2.5",
     "gridstack": "^10.3.1",
     "ioredis": "^5.4.2",
     "mongodb": "^6.0.0",
@@ -71,6 +72,7 @@
     "node-persist": "^4.0.3",
     "node-thermal-printer": "^4.4.2",
     "nodemailer": "^6.9.13",
+    "open": "^10.1.2",
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
     "pg": "^8.11.0",

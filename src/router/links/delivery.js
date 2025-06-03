@@ -172,6 +172,7 @@ router.get('/callback/ubereat', async (req, res) => {
 });
 
 /*REPORTE DE PEDIDOS DE USUARIO*/
+/*
 const axios = require('axios');
 
 // Ruta para redirigir a la página de autorización de Rappi
@@ -220,7 +221,7 @@ router.get('/callback/rappi', async (req, res) => {
     res.redirect('/fud/'+id_company+'/'+id_branch+'/delivery');
 });
 
-
+*/
 
 
 

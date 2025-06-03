@@ -213,7 +213,6 @@ router.get('/:id_company/:id_branch/supplies-free', isLoggedIn, async (req, res)
 
 //------------------------------------products
 router.get('/:id_company/:id_branch/inventory', isLoggedIn, async (req, res) => {
-    console.log('------------------------hola----------------------------');
     const {id_company,id_branch } = req.params;
 
     //we will see if the user have the permission for this App.

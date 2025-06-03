@@ -234,7 +234,6 @@ async function get_the_products_with_barcode(id_branch,barcode) {
 }
 
 //-----------------------------this is cfor create facture CDFI
-const axios = require('axios');
 const fs = require('fs');
 
 
