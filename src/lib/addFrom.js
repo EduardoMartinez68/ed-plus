@@ -4316,7 +4316,7 @@ async function send_email(APP_EMAIL_EMAIL,APP_PASSWORD_EMAIL,toEmail, subjectEma
 const fetch = require('node-fetch');
 //const helpers=require('../lib/helpers.js');
 const urlProntipagos='https://prontipagos-api-dev.domainscm.com'
-//-----this is for do a sale in prontipagos
+//-----this is for do a sale in prontipagos cada 2 segundos. 
 router.post('/links/send_information_to_prontipagos', async (req, res) => {
 
     const { amount, reference, sku, company, moneyReceived, changeOFTheBuy } = req.body;
@@ -4395,7 +4395,8 @@ router.post('/links/send_information_to_prontipagos', async (req, res) => {
             if(data.code !== 0) {
                 await delete_reachange_service(transacctionId);
             }
-
+            
+            await update_status_prontipagos(transacctionId, id_branch, token);
             res.json(data);
         } else {
             const rawText = await response.text();
@@ -4465,6 +4466,117 @@ async function delete_reachange_service(id) {
         return false;
     }
 }
+
+
+async function update_status_prontipagos2(transaction_id, id_branch, token){
+    try {
+        const url = `${urlProntipagos}/prontipagos-external-api-ws/ws/protected/v1/check-status?transactionId=${transaction_id}`;
+
+        //first we will get the password and user of prontipagos use the id of the branch
+        //const token = await get_token_prontipagos(id_branch); //create the token for the prontipagos API
+
+        //send the message to the server of prontipagos
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const data = await response.json();
+        console.log('Respuesta de Prontipagos:', data);
+    } catch (error) {
+        console.log('Error al enviar a Prontipagos:', error);
+    }
+}
+
+//cada 2 segundos hasta completar 61 segundos 5555444666
+async function update_status_prontipagos(transaction_id, id_branch, token) {
+    const url = `${urlProntipagos}/prontipagos-external-api-ws/ws/protected/v1/check-status?transactionId=${transaction_id}`;
+
+    let success = false;
+    let attempt = 0;
+    const maxInitialTime = 61000; // 61 segundos
+    const intervalShort = 2000;   // 2 segundos
+    const intervalLong = 61000;   // 61 segundos
+    const startTime = Date.now();
+
+    console.log('🚀 Iniciando verificación rápida durante 61 segundos...');
+
+    // 🔁 Fase 1: Verificar cada 2 segundos por 61 segundos
+    while (!success && (Date.now() - startTime < maxInitialTime)) {
+        attempt++;
+        console.log(`🕐 Intento rápido #${attempt}...`);
+
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            const data = await response.json();
+            console.log('📦 Respuesta de Prontipagos:', data);
+
+            const description = data?.payload?.codeDescription;
+
+            if (description === 'Transaccion exitosa') {
+                console.log('✅ Transacción exitosa:', data);
+                success = true;
+                return data;
+            } else {
+                console.log(`⌛ Estado actual: ${description}`);
+            }
+
+        } catch (error) {
+            console.log('❌ Error en intento rápido:', error.message);
+        }
+
+        await new Promise(resolve => setTimeout(resolve, intervalShort));
+    }
+
+    console.log('⏳ Entrando a modo de espera prolongada...');
+
+    // 🔁 Fase 2: Verificar cada 61 segundos hasta éxito
+    while (!success) {
+        attempt++;
+        console.log(`🕐 Intento prolongado #${attempt}...`);
+
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            const data = await response.json();
+            console.log('📦 Respuesta de Prontipagos:', data);
+
+            const description = data?.payload?.codeDescription;
+
+            if (description === 'Transaccion exitosa') {
+                console.log('✅ Transacción exitosa:', data.payload);
+                success = true;
+                return data;
+            } else {
+                console.log(`⌛ Estado actual: ${description}`);
+            }
+
+        } catch (error) {
+            console.log('❌ Error en intento prolongado:', error.message);
+        }
+
+        await new Promise(resolve => setTimeout(resolve, intervalLong));
+    }
+}
+
 
 //-----this is get the status of the sale in prontipagos
 router.post('/links/get_status_sale_in_prontipagos/:transaction_id', async (req, res) => {

@@ -2,7 +2,17 @@
 const fs = require('fs');
 const path=require('path');
 
+//----------------------first we will create the folder of PLUS in the systme 
+/*
+This is for when the user would like have a version lite of PLUS for do a app all in one.
+her we will not use posgreSQL, we use SQLite and create the folder in the system 
+*/
+const { create_all_the_file, get_path_of_folder_upload } = require('./initialAppForDesktop');
+create_all_the_file();
+
+
 //----------------------server application
+//her we will start the server and his character 
 const express=require('express');
 const morgan=require('morgan');
 const {engine}=require('express-handlebars');
@@ -181,12 +191,6 @@ serverExpress.use(session({
     //store: new MySQLStore(pool)
 }));
 
-/*
---------------CAPTCHA--------------
-const {MY_SITE_KEYS,MY_SECRET_KEY}=process.env; //this code is for get the data of the database
-const recaptcha = new RecaptchaV2(MY_SITE_KEYS, MY_SECRET_KEY); //this is for load the Recaptcha in the web for delete to the bots
-serverExpress.use(recaptcha.middleware.verify);
-*/
 
 //*-----------------------------------------------------------activate the our library-----------------------------------------// 
 require('./lib/editFrom');
@@ -198,7 +202,7 @@ serverExpress.use(passport.initialize());
 serverExpress.use(passport.session());
 
 const storageImages = multer.diskStorage({
-    destination: path.join(__dirname, 'public/img/uploads'),
+    destination: get_path_of_folder_upload(),
     filename: (req, file, cb) => {
         cb(null, uuid() + path.extname(file.originalname));
     }
