@@ -10,7 +10,8 @@
   },
   "pkg": {
     "assets": [
-      ".env"
+      ".env",
+      "src/**/*"
     ]
   },
   "build": {
@@ -53,6 +54,7 @@
     "bcryptjs": "^2.4.3",
     "connect-flash": "^0.1.1",
     "connect-pg-simple": "^9.0.0",
+    "connect-sqlite3": "^0.9.15",
     "dotenv": "^16.3.1",
     "escpos": "^3.0.0-alpha.6",
     "express": "^4.19.2",

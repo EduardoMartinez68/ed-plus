@@ -1,81 +1,82 @@
 //const system=require('./lib/system');
 const fs = require('fs');
-const path=require('path');
+const path = require('path');
 
 //----------------------first we will create the folder of PLUS in the systme 
 /*
 This is for when the user would like have a version lite of PLUS for do a app all in one.
 her we will not use posgreSQL, we use SQLite and create the folder in the system 
 */
-const { create_all_the_file, get_path_of_folder_upload, get_path_folder_upload} = require('./initialAppForDesktop');
+const { create_all_the_file, get_path_of_folder_upload, get_path_folder_upload, get_path_folder_plus, get_path_database, name_database_lite } = require('./initialAppForDesktop');
 create_all_the_file();
 
 
 //----------------------server application
 //her we will start the server and his character 
-const express=require('express');
-const morgan=require('morgan');
-const {engine}=require('express-handlebars');
-const multer=require('multer');
-const flash=require('connect-flash');
-const session=require('express-session');
-const passport=require('passport');
+const express = require('express');
+const morgan = require('morgan');
+const { engine } = require('express-handlebars');
+const multer = require('multer');
+const flash = require('connect-flash');
+const session = require('express-session');
+const passport = require('passport');
 
 
 
 //------------------------------------------------------create database---------------------------------------------------//
 require('dotenv').config();
 const nameDatabase = 'EDPLUS'; //name of the database
-const {APP_PG_USER,APP_PG_HOST,APP_PG_DATABASE,APP_PG_PASSWORD,APP_PG_PORT}=process.env; //this code is for get the data of the database
+const { APP_PG_USER, APP_PG_HOST, APP_PG_DATABASE, APP_PG_PASSWORD, APP_PG_PORT, TYPE_DATABASE, TYPE_SYSTME } = process.env; //this code is for get the data of the database
+
+//this is for connect when posgresql when the user have the server version 
+if (TYPE_DATABASE == 'posgresql') {
+  const pg = require('pg');
+  const { create_update_of_the_database } = require('./characterDatabase');
 
 
-const pg = require('pg');
-const { create_update_of_the_database } = require('./characterDatabase');
-
-
-//this is for know if the APP is in the desktop or in the server
-const adminPool = new pg.Pool({
+  //this is for know if the APP is in the desktop or in the server
+  const adminPool = new pg.Pool({
     user: APP_PG_USER,
     host: APP_PG_HOST,
     password: APP_PG_PASSWORD,
     port: APP_PG_PORT,
     database: 'postgres' // base por defecto
- });
+  });
 
-//now import the database
-const importSQLFile = async (pool) => {
+  //now import the database
+  const importSQLFile = async (pool) => {
     const filePath = path.join(__dirname, 'database', 'edplus.sql');
-  // Leemos el archivo SQL
-  const sql = fs.readFileSync(filePath, 'utf8');
-  
-  // Dividimos el archivo en sentencias SQL
-  const statements = sql
-    .split(/;\s*$/m)  // Divide por el punto y coma seguido de espacio (cada sentencia SQL)
-    .map(stmt => stmt.trim())  // Quitamos los espacios extra
-    .filter(stmt => stmt.length > 0);  // Eliminamos las sentencias vacías
-  
-  // Conectamos al pool de PostgreSQL
-  const client = await pool.connect();
-  try {
-    // Ejecutamos cada sentencia SQL
-    for (const stmt of statements) {
-      await client.query(stmt);
+    // Leemos el archivo SQL
+    const sql = fs.readFileSync(filePath, 'utf8');
+
+    // Dividimos el archivo en sentencias SQL
+    const statements = sql
+      .split(/;\s*$/m)  // Divide por el punto y coma seguido de espacio (cada sentencia SQL)
+      .map(stmt => stmt.trim())  // Quitamos los espacios extra
+      .filter(stmt => stmt.length > 0);  // Eliminamos las sentencias vacías
+
+    // Conectamos al pool de PostgreSQL
+    const client = await pool.connect();
+    try {
+      // Ejecutamos cada sentencia SQL
+      for (const stmt of statements) {
+        await client.query(stmt);
+      }
+      console.log('✅ SQL ejecutado correctamente');
+    } catch (err) {
+      console.error('❌ Error ejecutando SQL:', err.message);
+    } finally {
+      client.release();  // Liberamos la conexión
     }
-    console.log('✅ SQL ejecutado correctamente');
-  } catch (err) {
-    console.error('❌ Error ejecutando SQL:', err.message);
-  } finally {
-    client.release();  // Liberamos la conexión
-  }
-};
+  };
 
 
 
-//this is for create the table EDPLUS in the database of postgres
-const createDatabase = async () => {
+  //this is for create the table EDPLUS in the database of postgres
+  const createDatabase = async () => {
     const result = await adminPool.query(
-    `SELECT 1 FROM pg_database WHERE LOWER(datname) = LOWER($1)`,
-    [nameDatabase]
+      `SELECT 1 FROM pg_database WHERE LOWER(datname) = LOWER($1)`,
+      [nameDatabase]
     );
 
     //we will see if the database exist
@@ -90,43 +91,34 @@ const createDatabase = async () => {
       console.log(`📦 Base de datos ${nameDatabase} actualizada`);
     } else {
       console.log(`📂 La base de datos ${nameDatabase} ya existe, no se creó nuevamente.`);
-      
+
       //if the user has PLUS installed, now we will update the database
       const edplusPool = getEDPLUSPool(); //we will create the pool of the database EDPLUS
-      await create_update_of_the_database(edplusPool); 
+      await create_update_of_the_database(edplusPool);
       console.log(`📦 Base de datos ${nameDatabase} actualizada`);
     }
-};
+  };
 
-const getEDPLUSPool = () => {
-  return new pg.Pool({
-    user: APP_PG_USER,
-    host: APP_PG_HOST,
-    database: nameDatabase, // Conexión directa a la nueva base de datos
-    password: APP_PG_PASSWORD,
-    port: APP_PG_PORT
-  });
-};
+  const getEDPLUSPool = () => {
+    return new pg.Pool({
+      user: APP_PG_USER,
+      host: APP_PG_HOST,
+      database: nameDatabase, // Conexión directa a la nueva base de datos
+      password: APP_PG_PASSWORD,
+      port: APP_PG_PORT
+    });
+  };
 
 
-createDatabase();
+  createDatabase();
+}
+
+
 
 
 
 //--------------------------------server application---------------------------------------------------//
-//her now we will connect with the database of EDPLUS when be created
-const pgPool = new pg.Pool({
-    user: APP_PG_USER,
-    host: APP_PG_HOST,
-    database: APP_PG_DATABASE,
-    password: APP_PG_PASSWORD,
-    port: APP_PG_PORT,
-    /*
-    ssl: {
-        rejectUnauthorized: false,
-    }*/
-    
-});
+
 
 
 
@@ -141,20 +133,20 @@ nodePersist.init({
 
 
 //*------------------initializations-----------------------------------------//
-const serverExpress=express();
+const serverExpress = express();
 require('./lib/passport');
 
 //*-----------------------------------------------------------settings-----------------------------------------//
-serverExpress.set('port',process.env.PORT || 4000);
-serverExpress.set('views',path.join(__dirname,'views'))
-serverExpress.engine('.hbs',engine({ //we will create the engine for the web
-    defaultLayout:'main',
-    layoutsDir: path.join(serverExpress.get('views'),'layouts'),
-    partialsDir: path.join(serverExpress.get('views'),'partials'),
-    extname: '.hbs',
-    helpers:require('./lib/handlebars')
+serverExpress.set('port', process.env.PORT || 4000);
+serverExpress.set('views', path.join(__dirname, 'views'))
+serverExpress.engine('.hbs', engine({ //we will create the engine for the web
+  defaultLayout: 'main',
+  layoutsDir: path.join(serverExpress.get('views'), 'layouts'),
+  partialsDir: path.join(serverExpress.get('views'), 'partials'),
+  extname: '.hbs',
+  helpers: require('./lib/handlebars')
 }))
-serverExpress.set('view engine','.hbs');
+serverExpress.set('view engine', '.hbs');
 
 
 //*-----------------------------------------------------------middlewares-----------------------------------------//
@@ -179,44 +171,77 @@ if (!envContent.includes('ENCRYPTION_KEY=')) {
 }
 
 
+if (TYPE_DATABASE == 'mysqlite') {
+  //this is for mysqlite
+  const SQLiteStore = require('connect-sqlite3')(session);
 
-serverExpress.use(session({
+  serverExpress.use(session({
+    store: new SQLiteStore({
+      db: 'session.sqlite',//name_database_lite(),        // Archivo SQLite
+      dir: get_path_folder_plus(),         // Carpeta donde se guarda
+      table: 'session'              // Nombre de la tabla de sesiones
+    }),
     secret: 'FudSession',
-    resave: false ,
-    saveUninitialized:false,
+    resave: false,
+    saveUninitialized: false
+  }));
+
+
+} else {
+  //her now we will connect with the database of EDPLUS when be created
+  const pgPool = new pg.Pool({
+    user: APP_PG_USER,
+    host: APP_PG_HOST,
+    database: APP_PG_DATABASE,
+    password: APP_PG_PASSWORD,
+    port: APP_PG_PORT,
+    /*
+    ssl: {
+        rejectUnauthorized: false,
+    }*/
+
+  });
+
+  //this is for posgresql
+  serverExpress.use(session({
+    secret: 'FudSession',
+    resave: false,
+    saveUninitialized: false,
     store: new (require('connect-pg-simple')(session))({
-        pool : pgPool,
-        tableName : 'session'  
-      }),
+      pool: pgPool,
+      tableName: 'session'
+    }),
     //store: new MySQLStore(pool)
-}));
+  }));
+}
+
 
 
 //*-----------------------------------------------------------activate the our library-----------------------------------------// 
 require('./lib/editFrom');
 serverExpress.use(flash());
 serverExpress.use(morgan('dev'));
-serverExpress.use(express.urlencoded({extended:false}));
+serverExpress.use(express.urlencoded({ extended: false }));
 serverExpress.use(express.json());
 serverExpress.use(passport.initialize());
 serverExpress.use(passport.session());
 
 const storageImages = multer.diskStorage({
-    destination: get_path_of_folder_upload(),
-    filename: (req, file, cb) => {
-        cb(null, uuid() + path.extname(file.originalname));
-    }
+  destination: get_path_of_folder_upload(),
+  filename: (req, file, cb) => {
+    cb(null, uuid() + path.extname(file.originalname));
+  }
 });
 
-serverExpress.use(multer({storage: storageImages}).single('image'));
+serverExpress.use(multer({ storage: storageImages }).single('image'));
 
 //*-----------------------------------------------------------global variables-----------------------------------------//
-serverExpress.use((req,res,next)=>{
-    serverExpress.locals.success=req.flash('success');
-    serverExpress.locals.message=req.flash('message');
-    serverExpress.locals.user=req.user;
-    serverExpress.locals.company=req.company;
-    next();
+serverExpress.use((req, res, next) => {
+  serverExpress.locals.success = req.flash('success');
+  serverExpress.locals.message = req.flash('message');
+  serverExpress.locals.user = req.user;
+  serverExpress.locals.company = req.company;
+  next();
 });
 
 
@@ -232,14 +257,14 @@ const orderKitchen = {};
 const chat = require('./services/chat.js');
 
 serverSocket.listen(serverExpress.get('port'), () => {
-    console.log(`Server running on port ${serverExpress.get('port')}`);
+  console.log(`Server running on port ${serverExpress.get('port')}`);
 });
 
 //*-----------------------------------------------------------routes-----------------------------------------//
-const companyName='/links' //links
+const companyName = '/links' //links
 serverExpress.use(require('./router'))
 serverExpress.use(require('./router/authentication'))
-serverExpress.use(companyName,require('./router/links'))
+serverExpress.use(companyName, require('./router/links'))
 
 const routesPath = path.join(__dirname, 'router/links');
 
@@ -259,9 +284,9 @@ serverExpress.use(require('./lib/addFrom'));
 //app.use(companyName,require('./router/addDatabase'))
 
 //public
-serverExpress.use(express.static(path.join(__dirname,'public')));
+serverExpress.use(express.static(path.join(__dirname, 'public')));
 
-const pathFolder=get_path_folder_upload()
+const pathFolder = get_path_folder_upload()
 serverExpress.use('/uploads', express.static(pathFolder)); //this is for that the web can read all the file in the folder of the desktop
 
 //*-----------------------------------------------------------Server application-----------------------------------------//
@@ -272,25 +297,31 @@ serverExpress.use('/uploads', express.static(pathFolder)); //this is for that th
 const os = require('os');
 
 function getLocalIP() {
-    const interfaces = os.networkInterfaces();
-    for (let iface in interfaces) {
-        for (let i = 0; i < interfaces[iface].length; i++) {
-            const address = interfaces[iface][i];
-            if (address.family === 'IPv4' && !address.internal) {
-                return address.address;
-            }
-        }
+  const interfaces = os.networkInterfaces();
+  for (let iface in interfaces) {
+    for (let i = 0; i < interfaces[iface].length; i++) {
+      const address = interfaces[iface][i];
+      if (address.family === 'IPv4' && !address.internal) {
+        return address.address;
+      }
     }
-    return '127.0.0.1';
+  }
+  return '127.0.0.1';
 }
 
 // starting the server in the computer
 //const open = (...args) => import('open').then(mod => mod.default(...args));
 
 serverExpress.listen(serverExpress.get('port'), '0.0.0.0', () => {
-    const url = `http://${getLocalIP()}:${serverExpress.get('port')}`;
-    console.log(`Server running on ${url}`);
-    //open(url);
+  const url = `http://${getLocalIP()}:${serverExpress.get('port')}`;
+  console.log(`Server running on ${url}`);
+
+  //her we will see if the user have the version desktop 
+  if (TYPE_SYSTME == 'desktop') {
+    open(url);
+  }
+
+  //open(url);
 });
 
 
