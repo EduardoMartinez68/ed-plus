@@ -1,5 +1,6 @@
 //----------------------first we will create the folder of PLUS in the systme 
-const system=require('./lib/system');
+require('dotenv').config();
+const {TYPE_DATABASE}=process.env;
 const fs = require('fs');
 const path=require('path');
 const sqlite3 = require('sqlite3').verbose();
@@ -73,21 +74,29 @@ async function create_the_database_lite(){
 }
 
 function get_path_folder_upload(){
-
+    const newFolderUpload = path.join(plusFolder, 'uploads');
+    return newFolderUpload;
 }
 
 function get_path_of_folder_upload(){
+
     //her we will see if the software is desktop, or it is in the cloud
-    if(system!='desktop'){
-        return path.join(plusFolder, 'upload');
+    if(TYPE_DATABASE=='mysqlite'){
+        return path.join(plusFolder, 'uploads');
     }
 
     //if the software is in the cloud
     return path.join(__dirname, 'public/img/uploads')
 }
 
+function get_path_folder_plus(){
+    return plusFolder;
+}
+
 
 module.exports = {
     create_all_the_file,
-    get_path_of_folder_upload
+    get_path_of_folder_upload,
+    get_path_folder_upload,
+    get_path_folder_plus
 };

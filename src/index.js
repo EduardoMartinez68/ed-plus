@@ -7,7 +7,7 @@ const path=require('path');
 This is for when the user would like have a version lite of PLUS for do a app all in one.
 her we will not use posgreSQL, we use SQLite and create the folder in the system 
 */
-const { create_all_the_file, get_path_of_folder_upload } = require('./initialAppForDesktop');
+const { create_all_the_file, get_path_of_folder_upload, get_path_folder_upload} = require('./initialAppForDesktop');
 create_all_the_file();
 
 
@@ -260,6 +260,9 @@ serverExpress.use(require('./lib/addFrom'));
 
 //public
 serverExpress.use(express.static(path.join(__dirname,'public')));
+
+const pathFolder=get_path_folder_upload()
+serverExpress.use('/uploads', express.static(pathFolder)); //this is for that the web can read all the file in the folder of the desktop
 
 //*-----------------------------------------------------------Server application-----------------------------------------//
 /*

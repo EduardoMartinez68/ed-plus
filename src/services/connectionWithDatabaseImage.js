@@ -18,7 +18,7 @@ const bucketName = APP_NYCE;
 //delate image
 const fs = require('fs');
 const path = require('path');
-
+const {get_path_folder_upload, get_path_folder_plus}=require('../initialAppForDesktop.js');
 
 //this is a function for get the path of the image of a table
 async function get_path_img(schema, table, id) {
@@ -36,26 +36,7 @@ async function get_path_img(schema, table, id) {
 
 //this function is for delate the image of the tabla of the file img/uploads
 async function delate_image_upload(pathImg) {
-  console.log('------------delete image---------')
-    //THIS IS FOR WHEN THE WEB IS IN A SERVER
-    /*
-    const params = {
-        Bucket: bucketName,
-        Key: pathImg
-      };
-    
-      try {
-        await s3.deleteObject(params).promise();
-        console.log(`Image ${pathImg} delete with success`);
-        return true;
-      } catch (err) {
-        console.error('Error to delete the image:', err);
-        return false;
-    }
-    */
-
-    //THIS IS FOR WHEN THE WEB IS IN A SERVER
-    var pathImage = path.join(__dirname, '../public',pathImg); //path.join(__dirname, '../public/img/uploads', pathImg);
+    const pathImage=path.join(get_path_folder_plus(), pathImg);
     fs.unlink(pathImage, (error) => {
         if (error) {
             console.error('Error to delate image:', error);
@@ -75,8 +56,15 @@ async function get_image(id) {
 }
 
 async function upload_image_to_space(filePath, objectName){
-   const currentPath = path.basename(filePath);
-   return path.join('/img/uploads', currentPath);
+    //THIS IS FOR WHEN THE APPLICATION IS FOR DESKTOP
+    const currentPath = path.basename(filePath);
+    const pathFolderUpload=get_path_folder_upload()
+    //return path.join(pathFolderUpload, currentPath);
+    const newUploadSpace=path.join('/uploads', currentPath)
+    return newUploadSpace;
+
+   //const currentPath = path.basename(filePath);
+   //return path.join('/img/uploads', currentPath);
 
   /*
   const fileContent = fs.readFileSync(filePath);
