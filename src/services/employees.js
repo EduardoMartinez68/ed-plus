@@ -467,6 +467,33 @@ async function get_data_employee(req) {
     }
 }
 
+async function get_data_tole_employees(req) {
+    const id_user = req.user.id;
+
+    try {
+        if (TYPE_DATABASE === 'mysqlite') {
+            return new Promise((resolve, reject) => {
+                const query = 'SELECT * FROM employees WHERE id_users = ?';
+                database.all(query, [id_user], (err, rows) => {
+                    if (err) {
+                        console.error('SQLite error getting employee data:', err.message);
+                        reject(err);
+                    } else {
+                        resolve(rows);
+                    }
+                });
+            });
+        } else {
+            const queryText = 'SELECT * FROM "Company".employees WHERE id_users = $1';
+            const values = [id_user];
+            const result = await database.query(queryText, values);
+            return result.rows;
+        }
+    } catch (error) {
+        console.error('Error getting employee data:', error);
+        throw error;
+    }
+}
 
 async function delete_profile_picture(idUser) {
     //we will see if the user have a profile picture

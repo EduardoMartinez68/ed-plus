@@ -12,10 +12,10 @@ function this_user_have_this_permission(user, id_company, id_branch, permission)
      */
 
     //we will see if the user is in the branch and the company where he would like in
-    const belongsToCompanyAndBranch = user.id_company === id_company && user.id_branch === id_branch;
+    const belongsToCompanyAndBranch =     Number(user.id_company) === Number(id_company) && Number(user.id_branch) === Number(id_branch);
 
     //we will see if the user have the permission. If not have the permission we will redirect to the page of permission denied
-    return belongsToCompanyAndBranch && user[permission];
+    return belongsToCompanyAndBranch && (user[permission] || user[permission]==1);
 }
 
 

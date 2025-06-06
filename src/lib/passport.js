@@ -8,6 +8,9 @@ const sendEmail = require('../lib/sendEmail.js'); //this is for send emails
 const addDatabase=require('../router/addDatabase');
 
 const system=require('../lib/system'); //get the variable system for we know where is running the app
+require('dotenv').config();
+const {TYPE_DATABASE}=process.env;
+
 //-----------------------------login
 passport.use('local.login', new LocalStrategy({
     usernameField: 'userName',
@@ -28,10 +31,10 @@ passport.use('local.login', new LocalStrategy({
         user=await search_user_for_email(userName);
     }
 
-    if(user.rows.length>0){ //if exist a user with the username of the form
+    if(user.length>0){ //if exist a user with the username of the form
         //we will watch if the password is correct
-        if (await helpers.matchPassword(password,user.rows[0].password)){
-            done(null,user.rows[0],req.flash('success','Bienvenido '+user.rows[0].user_name+' ❤️'));
+        if (await helpers.matchPassword(password,user[0].password)){
+            done(null,user[0],req.flash('success','Bienvenido '+user[0].user_name+' ❤️'));
         }
         else{
             done(null,false,req.flash('message','tu contraseña es incorrecta 😳'));
@@ -42,17 +45,76 @@ passport.use('local.login', new LocalStrategy({
     }
 }));
 
-async function search_user_for_email(email){
-    const queryText = 'SELECT * FROM "Fud".users WHERE email = $1';
-    var values = [email] 
-    return await database.query(queryText, values);
+async function search_user_for_email(email) {
+    try {
+        if (TYPE_DATABASE === 'mysqlite') {
+            // SQLite: sin esquema, sin comillas en tablas y columnas, parámetro con ?
+            const queryText = `
+                SELECT *
+                FROM users
+                WHERE email = ?
+            `;
+            return new Promise((resolve, reject) => {
+                database.all(queryText, [email], (err, rows) => {
+                    if (err) {
+                        console.error('SQLite error searching user by email:', err.message);
+                        reject(err);
+                    } else {
+                        resolve(rows);
+                    }
+                });
+            });
+        } else {
+            // PostgreSQL: con esquema, con comillas dobles y parámetro $1
+            const queryText = `
+                SELECT *
+                FROM "Fud".users
+                WHERE email = $1
+            `;
+            const values = [email];
+            const result = await database.query(queryText, values);
+            return result.rows;
+        }
+    } catch (error) {
+        console.error('Error in search_user_for_email:', error);
+        throw error;
+    }
 }
 
-async function search_user_for_user_name(username){
-    const queryText = 'SELECT * FROM "Fud".users WHERE user_name = $1';
-    var values = [username] 
-    return await database.query(queryText, values);
+async function search_user_for_user_name(username) {
+    try {
+        if (TYPE_DATABASE === 'mysqlite') {
+            const queryText = `
+                SELECT *
+                FROM users
+                WHERE user_name = ?
+            `;
+            return new Promise((resolve, reject) => {
+                database.all(queryText, [username], (err, rows) => {
+                    if (err) {
+                        console.error('SQLite error searching user by user_name:', err.message);
+                        reject(err);
+                    } else {
+                        resolve(rows);
+                    }
+                });
+            });
+        } else {
+            const queryText = `
+                SELECT *
+                FROM "Fud".users
+                WHERE user_name = $1
+            `;
+            const values = [username];
+            const result = await database.query(queryText, values);
+            return result.rows;
+        }
+    } catch (error) {
+        console.error('Error in search_user_for_user_name:', error);
+        throw error;
+    }
 }
+
 
 //-----------------------------signup with captcha 
 passport.use('local.signup-ad', new LocalStrategy({
@@ -131,12 +193,40 @@ async function this_user_exists(user_name){
     return user.rows.length>0
 }
 
-async function this_email_exists(email){
-    var queryText = 'SELECT * FROM "Fud".users Where email = $1';
-    var values = [email];
-    var user=await database.query(queryText, values);
-    return user.rows.length>0
+async function this_email_exists(email) {
+    try {
+        if (TYPE_DATABASE === 'mysqlite') {
+            const queryText = `
+                SELECT *
+                FROM users
+                WHERE email = ?
+            `;
+            return new Promise((resolve, reject) => {
+                database.all(queryText, [email], (err, rows) => {
+                    if (err) {
+                        console.error('SQLite error checking email existence:', err.message);
+                        reject(err);
+                    } else {
+                        resolve(rows.length > 0);
+                    }
+                });
+            });
+        } else {
+            const queryText = `
+                SELECT *
+                FROM "Fud".users
+                WHERE email = $1
+            `;
+            const values = [email];
+            const result = await database.query(queryText, values);
+            return result.rows.length > 0;
+        }
+    } catch (error) {
+        console.error('Error in this_email_exists:', error);
+        throw error;
+    }
 }
+
 
 function all_data_exists(req){
     const {Name,email,birthday} = req.body;
@@ -151,21 +241,89 @@ function compare_password(P1,P2){
     return P1==P2;
 }
 
-async function search_id(email){
-    var queryText = 'SELECT id FROM "Fud".users WHERE email = $1';
-    var values = [email];
-    const result = await database.query(queryText, values);
-    return result.rows[0].id;
+async function search_id(email) {
+    try {
+        if (TYPE_DATABASE === 'mysqlite') {
+            const queryText = `
+                SELECT id
+                FROM users
+                WHERE email = ?
+            `;
+            return new Promise((resolve, reject) => {
+                database.get(queryText, [email], (err, row) => {
+                    if (err) {
+                        console.error('SQLite error searching id:', err.message);
+                        reject(err);
+                    } else {
+                        resolve(row ? row.id : null);
+                    }
+                });
+            });
+        } else {
+            const queryText = `
+                SELECT id
+                FROM "Fud".users
+                WHERE email = $1
+            `;
+            const values = [email];
+            const result = await database.query(queryText, values);
+            return result.rows.length > 0 ? result.rows[0].id : null;
+        }
+    } catch (error) {
+        console.error('Error in search_id:', error);
+        throw error;
+    }
 }
 
-async function add_user(user){
+async function add_user(user) {
     try {
-        var queryText = 'INSERT INTO "Fud".users (user_name, first_name,second_name,last_name, email, password, rol_user, id_packs_fud) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)';
-        var values = [user.user_name,user.first_name,user.second_name,user.last_name,user.email,user.password,0,0] 
-        await database.query(queryText, values);
-        return true;
+        if (TYPE_DATABASE === 'mysqlite') {
+            const queryText = `
+                INSERT INTO users 
+                (user_name, first_name, second_name, last_name, email, password, rol_user, id_packs_fud) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            `;
+            const values = [
+                user.user_name,
+                user.first_name,
+                user.second_name,
+                user.last_name,
+                user.email,
+                user.password,
+                0,
+                0
+            ];
+            return new Promise((resolve, reject) => {
+                database.run(queryText, values, function (err) {
+                    if (err) {
+                        console.error('SQLite error adding user:', err.message);
+                        resolve(false);
+                    } else {
+                        resolve(true);
+                    }
+                });
+            });
+        } else {
+            const queryText = `
+                INSERT INTO "Fud".users 
+                (user_name, first_name, second_name, last_name, email, password, rol_user, id_packs_fud) 
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+            `;
+            const values = [
+                user.user_name,
+                user.first_name,
+                user.second_name,
+                user.last_name,
+                user.email,
+                user.password,
+                0,
+                0
+            ];
+            await database.query(queryText, values);
+            return true;
+        }
     } catch (error) {
-        console.error('Error to add the a new user of the database:', error);
+        console.error('Error adding new user to the database:', error);
         return false;
     }
 }
@@ -448,45 +606,67 @@ passport.serializeUser((user,done)=>{
 
 const userCache=require('../lib/databaseCache.js');
 
-passport.deserializeUser(async (id,done)=>{
+passport.deserializeUser(async (id, done) => {
+    try {
 
-    //if the user exist in the cache, we return the id of the user
-    if (userCache.has(id)) {
-        return done(null, userCache.get(id));
+        if (userCache.has(id)) {
+            return done(null, userCache.get(id));
+        }
+
+        let user;
+
+        if (TYPE_DATABASE === 'mysqlite') {
+            const queryText = `
+                SELECT 
+                    e.id AS id_employee,
+                    e.id_companies AS id_company,
+                    e.id_branches AS id_branch,
+                    r.id AS id_role,
+                    u.*,
+                    r.*
+                FROM users u
+                JOIN employees e ON u.id = e.id_users
+                JOIN roles_employees r ON e.id_roles_employees = r.id
+                WHERE u.id = ?
+            `;
+            user = await new Promise((resolve, reject) => {
+                database.get(queryText, [id], (err, row) => {
+                    if (err) {
+                        console.error('SQLite error in deserializeUser:', err.message);
+                        reject(err);
+                    } else {
+                        resolve(row);
+                    }
+                });
+            });
+        } else {
+            const queryText = `
+                SELECT 
+                    e.id AS id_employee,
+                    e.id_companies AS id_company,
+                    e.id_branches AS id_branch,
+                    r.id AS id_role,
+                    u.*,
+                    r.* 
+                FROM "Fud".users AS u
+                JOIN "Company".employees AS e ON u.id = e.id_users
+                JOIN "Employee".roles_employees AS r ON e.id_roles_employees = r.id
+                WHERE u.id = $1;
+            `;
+            const result = await database.query(queryText, [id]);
+            user = result.rows[0];
+        }
+
+        if (user) {
+            user.id = id;
+            userCache.set(id, user);
+        }
+
+        done(null, user);
+    } catch (error) {
+        console.error('Error in passport.deserializeUser:', error);
+        done(error);
     }
-
-    //if the user no is save in the cahcer we search his data in the database
-    const queryText = `
-        SELECT 
-            e.id AS id_employee,
-            e.id_companies AS id_company,
-            e.id_branches AS id_branch,
-            r.id AS id_role,
-            u.*,
-            r.* 
-        FROM 
-            "Fud".users AS u
-        JOIN 
-            "Company".employees AS e ON u.id = e.id_users
-        JOIN 
-            "Employee".roles_employees AS r ON e.id_roles_employees = r.id
-        WHERE 
-            u.id = $1;
-    `;
-
-    var values = [id];
-
-    //get the anser of the database
-    const obj = await database.query(queryText, values);
-    const user=obj.rows[0];
-    user.id=id;
-    //console.log('user',user);
-    //if get the user of the database, we will save the data of the user in cache
-    if (user) {
-        userCache.set(id, user);
-    }
-
-    done(null,user);
 });
 
 
