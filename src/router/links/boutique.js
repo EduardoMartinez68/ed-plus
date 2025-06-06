@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const { isLoggedIn, isNotLoggedIn } = require('../../lib/auth');
+require('dotenv').config();
+const {TYPE_DATABASE}=process.env;
 
 const database = require('../../database');
 const addDatabase = require('../addDatabase');
@@ -25,26 +27,55 @@ router.get('/:id_company/:id_branch/boutique', isLoggedIn, async (req, res) => {
     res.render('links/boutique/boutique.hbs',{branchFree,boutique});
 })
 
-async function get_all_the_product_of_the_boutique(id_company,id_branch){
-    const queryText = `
-        SELECT 
-            b.*, 
-            COUNT(tb.id) AS total_products
-            FROM "Inventory".boutique b
-            LEFT JOIN "Inventory".table_boutique tb ON tb.id_boutique = b.id
-            WHERE b.id_companies = $1 AND b.id_branches = $2
-        GROUP BY b.id;
-    `;
-    const values = [id_company, id_branch];
-
+async function get_all_the_product_of_the_boutique(id_company, id_branch) {
     try {
-        const answer=await database.query(queryText, values);
-        return answer.rows;
+        if (TYPE_DATABASE === 'mysqlite') {
+            // En SQLite no se usa schema ni comillas dobles, y los placeholders son '?'
+            const queryText = `
+                SELECT 
+                    b.*, 
+                    COUNT(tb.id) AS total_products
+                FROM boutique b
+                LEFT JOIN table_boutique tb ON tb.id_boutique = b.id
+                WHERE b.id_companies = ? AND b.id_branches = ?
+                GROUP BY b.id
+            `;
+            const values = [id_company, id_branch];
+
+            const rows = await new Promise((resolve, reject) => {
+                database.all(queryText, values, (err, rows) => {
+                    if (err) {
+                        console.error('Error SQLite en get_all_the_product_of_the_boutique:', err);
+                        reject(err);
+                    } else {
+                        resolve(rows);
+                    }
+                });
+            });
+
+            return rows;
+        } else {
+            // PostgreSQL
+            const queryText = `
+                SELECT 
+                    b.*, 
+                    COUNT(tb.id) AS total_products
+                FROM "Inventory".boutique b
+                LEFT JOIN "Inventory".table_boutique tb ON tb.id_boutique = b.id
+                WHERE b.id_companies = $1 AND b.id_branches = $2
+                GROUP BY b.id
+            `;
+            const values = [id_company, id_branch];
+
+            const result = await database.query(queryText, values);
+            return result.rows;
+        }
     } catch (error) {
         console.error('Error to get_all_the_product_of_the_boutique:', error);
         return [];
     }
 }
+
 
 
 

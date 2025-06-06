@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const { isLoggedIn, isNotLoggedIn } = require('../../lib/auth');
+require('dotenv').config();
+const {TYPE_DATABASE}=process.env;
 /*
 *----------------------functions-----------------*/
 //functions image

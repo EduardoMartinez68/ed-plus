@@ -785,19 +785,45 @@ async function get_data_distribute_company(id_company) {
 
 async function get_data_report_distribute(id_company) {
     try {
-        const query = `
-            SELECT sh.*, dc.*, u.first_name AS employee_first_name, u.second_name AS employee_second_name, 
-                    u.last_name AS employee_last_name, c.email AS customer_email, b.name_branch
-            FROM "Box".sales_history sh
-            LEFT JOIN "Kitchen".dishes_and_combos dc ON sh.id_dishes_and_combos = dc.id
-            LEFT JOIN "Company".employees e ON sh.id_employees = e.id
-            LEFT JOIN "Fud".users u ON e.id_users = u.id
-            LEFT JOIN "Company".branches b ON sh.id_branches = b.id
-            LEFT JOIN "Company".customers c ON sh.id_customers = c.id
-            WHERE sh.id_companies = $1
-        `;
-        const res = await database.query(query, [id_company]);
-        const rows = res.rows;
+        let rows;
+
+        if (TYPE_DATABASE === 'mysqlite') {
+            const query = `
+                SELECT sh.*, dc.*, u.first_name AS employee_first_name, u.second_name AS employee_second_name, 
+                       u.last_name AS employee_last_name, c.email AS customer_email, b.name_branch
+                FROM sales_history sh
+                LEFT JOIN dishes_and_combos dc ON sh.id_dishes_and_combos = dc.id
+                LEFT JOIN employees e ON sh.id_employees = e.id
+                LEFT JOIN users u ON e.id_users = u.id
+                LEFT JOIN branches b ON sh.id_branches = b.id
+                LEFT JOIN customers c ON sh.id_customers = c.id
+                WHERE sh.id_companies = ?
+            `;
+            rows = await new Promise((resolve, reject) => {
+                database.all(query, [id_company], (err, result) => {
+                    if (err) {
+                        console.error('SQLite error:', err.message);
+                        reject(err);
+                    } else {
+                        resolve(result);
+                    }
+                });
+            });
+        } else {
+            const query = `
+                SELECT sh.*, dc.*, u.first_name AS employee_first_name, u.second_name AS employee_second_name, 
+                       u.last_name AS employee_last_name, c.email AS customer_email, b.name_branch
+                FROM "Box".sales_history sh
+                LEFT JOIN "Kitchen".dishes_and_combos dc ON sh.id_dishes_and_combos = dc.id
+                LEFT JOIN "Company".employees e ON sh.id_employees = e.id
+                LEFT JOIN "Fud".users u ON e.id_users = u.id
+                LEFT JOIN "Company".branches b ON sh.id_branches = b.id
+                LEFT JOIN "Company".customers c ON sh.id_customers = c.id
+                WHERE sh.id_companies = $1
+            `;
+            const res = await database.query(query, [id_company]);
+            rows = res.rows;
+        }
 
         let names = [];
         for (let i = 0; i < rows.length; i++) {
@@ -846,22 +872,48 @@ async function get_data_distribute_company_day(id_company) {
 
 async function get_data_report_distribute_day(id_company) {
     try {
-        const query = `
-        SELECT sh.*, dc.*, u.first_name AS employee_first_name, u.second_name AS employee_second_name, 
-               u.last_name AS employee_last_name, c.email AS customer_email, b.name_branch
-        FROM "Box".sales_history sh
-        LEFT JOIN "Kitchen".dishes_and_combos dc ON sh.id_dishes_and_combos = dc.id
-        LEFT JOIN "Company".employees e ON sh.id_employees = e.id
-        LEFT JOIN "Fud".users u ON e.id_users = u.id
-        LEFT JOIN "Company".branches b ON sh.id_branches = b.id
-        LEFT JOIN "Company".customers c ON sh.id_customers = c.id
-        WHERE sh.id_companies = $1
-        AND DATE(sh.sale_day) = $2
-        `;
+        const sale_day = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+        let rows;
 
-        const sale_day = new Date().toISOString().split('T')[0];
-        const res = await database.query(query, [id_company,sale_day]);
-        const rows = res.rows;
+        if (TYPE_DATABASE === 'mysqlite') {
+            const query = `
+                SELECT sh.*, dc.*, u.first_name AS employee_first_name, u.second_name AS employee_second_name, 
+                       u.last_name AS employee_last_name, c.email AS customer_email, b.name_branch
+                FROM sales_history sh
+                LEFT JOIN dishes_and_combos dc ON sh.id_dishes_and_combos = dc.id
+                LEFT JOIN employees e ON sh.id_employees = e.id
+                LEFT JOIN users u ON e.id_users = u.id
+                LEFT JOIN branches b ON sh.id_branches = b.id
+                LEFT JOIN customers c ON sh.id_customers = c.id
+                WHERE sh.id_companies = ?
+                AND DATE(sh.sale_day) = ?
+            `;
+            rows = await new Promise((resolve, reject) => {
+                database.all(query, [id_company, sale_day], (err, result) => {
+                    if (err) {
+                        console.error('SQLite error:', err.message);
+                        reject(err);
+                    } else {
+                        resolve(result);
+                    }
+                });
+            });
+        } else {
+            const query = `
+                SELECT sh.*, dc.*, u.first_name AS employee_first_name, u.second_name AS employee_second_name, 
+                       u.last_name AS employee_last_name, c.email AS customer_email, b.name_branch
+                FROM "Box".sales_history sh
+                LEFT JOIN "Kitchen".dishes_and_combos dc ON sh.id_dishes_and_combos = dc.id
+                LEFT JOIN "Company".employees e ON sh.id_employees = e.id
+                LEFT JOIN "Fud".users u ON e.id_users = u.id
+                LEFT JOIN "Company".branches b ON sh.id_branches = b.id
+                LEFT JOIN "Company".customers c ON sh.id_customers = c.id
+                WHERE sh.id_companies = $1
+                AND DATE(sh.sale_day) = $2
+            `;
+            const res = await database.query(query, [id_company, sale_day]);
+            rows = res.rows;
+        }
 
         let names = [];
         for (let i = 0; i < rows.length; i++) {
@@ -910,27 +962,59 @@ async function get_data_distribute_company_month(id_company) {
 
 async function get_data_report_distribute_month(id_company) {
     try {
-        const query = `
-            SELECT sh.*, dc.*, u.first_name AS employee_first_name, u.second_name AS employee_second_name, 
-                   u.last_name AS employee_last_name, c.email AS customer_email, b.name_branch
-            FROM "Box".sales_history sh
-            LEFT JOIN "Kitchen".dishes_and_combos dc ON sh.id_dishes_and_combos = dc.id
-            LEFT JOIN "Company".employees e ON sh.id_employees = e.id
-            LEFT JOIN "Fud".users u ON e.id_users = u.id
-            LEFT JOIN "Company".branches b ON sh.id_branches = b.id
-            LEFT JOIN "Company".customers c ON sh.id_customers = c.id
-            WHERE sh.id_companies = $1
-            AND EXTRACT(MONTH FROM sh.sale_day) = EXTRACT(MONTH FROM CURRENT_DATE)
-            AND EXTRACT(YEAR FROM sh.sale_day) = EXTRACT(YEAR FROM CURRENT_DATE)
-        `;
-        const res = await database.query(query, [id_company]);
-        const rows = res.rows;
+        let rows;
+        const now = new Date();
+        const currentMonth = (now.getMonth() + 1).toString().padStart(2, '0'); // "01" - "12"
+        const currentYear = now.getFullYear().toString(); // "2025"
 
-        let names = [];
-        for (let i = 0; i < rows.length; i++) {
-            const amount = rows[i].cant;
+        if (TYPE_DATABASE === 'mysqlite') {
+            const query = `
+                SELECT sh.*, dc.*, u.first_name AS employee_first_name, u.second_name AS employee_second_name, 
+                       u.last_name AS employee_last_name, c.email AS customer_email, b.name_branch
+                FROM sales_history sh
+                LEFT JOIN dishes_and_combos dc ON sh.id_dishes_and_combos = dc.id
+                LEFT JOIN employees e ON sh.id_employees = e.id
+                LEFT JOIN users u ON e.id_users = u.id
+                LEFT JOIN branches b ON sh.id_branches = b.id
+                LEFT JOIN customers c ON sh.id_customers = c.id
+                WHERE sh.id_companies = ?
+                AND strftime('%m', sh.sale_day) = ?
+                AND strftime('%Y', sh.sale_day) = ?
+            `;
+            rows = await new Promise((resolve, reject) => {
+                database.all(query, [id_company, currentMonth, currentYear], (err, result) => {
+                    if (err) {
+                        console.error('SQLite error:', err.message);
+                        reject(err);
+                    } else {
+                        resolve(result);
+                    }
+                });
+            });
+        } else {
+            const query = `
+                SELECT sh.*, dc.*, u.first_name AS employee_first_name, u.second_name AS employee_second_name, 
+                       u.last_name AS employee_last_name, c.email AS customer_email, b.name_branch
+                FROM "Box".sales_history sh
+                LEFT JOIN "Kitchen".dishes_and_combos dc ON sh.id_dishes_and_combos = dc.id
+                LEFT JOIN "Company".employees e ON sh.id_employees = e.id
+                LEFT JOIN "Fud".users u ON e.id_users = u.id
+                LEFT JOIN "Company".branches b ON sh.id_branches = b.id
+                LEFT JOIN "Company".customers c ON sh.id_customers = c.id
+                WHERE sh.id_companies = $1
+                AND EXTRACT(MONTH FROM sh.sale_day) = EXTRACT(MONTH FROM CURRENT_DATE)
+                AND EXTRACT(YEAR FROM sh.sale_day) = EXTRACT(YEAR FROM CURRENT_DATE)
+            `;
+            const res = await database.query(query, [id_company]);
+            rows = res.rows;
+        }
+
+        // Agrupar nombres según la cantidad
+        const names = [];
+        for (const row of rows) {
+            const amount = row.cant;
             for (let j = 0; j < amount; j++) {
-                names.push(rows[i].name);
+                names.push(row.name);
             }
         }
 
@@ -943,6 +1027,7 @@ async function get_data_report_distribute_month(id_company) {
         return [];
     } 
 }
+
 
 async function get_data_distribute_company_year(id_company) {
     // This function is for converting the string returned by the Python script into an array for web reading 
@@ -1008,69 +1093,157 @@ async function get_data_report_distribute_year(id_company) {
 //-----------------------------------------------------------this function is for get all the sale of today (all)
 async function get_total_sales_company(idCompany) {
     try {
-        const query = `
-            SELECT COALESCE(SUM(total), 0) AS total_sales
-            FROM "Box".sales_history
-            WHERE id_companies = $1
-            AND DATE_TRUNC('day', sale_day) = CURRENT_DATE;
-        `;
-        const values = [idCompany];
-        const result = await database.query(query, values);
+        let total_sales = 0;
 
-        return result.rows[0].total_sales;
+        if (TYPE_DATABASE === 'mysqlite') {
+            const query = `
+                SELECT COALESCE(SUM(total), 0) AS total_sales
+                FROM sales_history
+                WHERE id_companies = ?
+                AND DATE(sale_day) = DATE('now')
+            `;
+            total_sales = await new Promise((resolve, reject) => {
+                database.get(query, [idCompany], (err, row) => {
+                    if (err) {
+                        console.error("SQLite error in get_total_sales_company:", err.message);
+                        reject(err);
+                    } else {
+                        resolve(row.total_sales);
+                    }
+                });
+            });
+        } else {
+            const query = `
+                SELECT COALESCE(SUM(total), 0) AS total_sales
+                FROM "Box".sales_history
+                WHERE id_companies = $1
+                AND DATE_TRUNC('day', sale_day) = CURRENT_DATE
+            `;
+            const result = await database.query(query, [idCompany]);
+            total_sales = result.rows[0].total_sales;
+        }
+
+        return total_sales;
     } catch (error) {
         console.error("Error al obtener datos de ventas get_total_sales_company:", error);
         return 0;
     }
 }
 
+
 async function get_total_day_old(idCompany) {
     try {
-        const query = `
-            SELECT COALESCE(SUM(total), 0) AS total_sales
-            FROM "Box".sales_history
-            WHERE id_companies = $1
-            AND DATE_TRUNC('day', sale_day) = CURRENT_DATE-1;
-        `;
-        const values = [idCompany];
-        const result = await database.query(query, values);
+        let total_sales = 0;
 
-        return result.rows[0].total_sales;
+        if (TYPE_DATABASE === 'mysqlite') {
+            const query = `
+                SELECT COALESCE(SUM(total), 0) AS total_sales
+                FROM sales_history
+                WHERE id_companies = ?
+                AND DATE(sale_day) = DATE('now', '-1 day');
+            `;
+            total_sales = await new Promise((resolve, reject) => {
+                database.get(query, [idCompany], (err, row) => {
+                    if (err) {
+                        console.error("SQLite error in get_total_day_old:", err.message);
+                        reject(err);
+                    } else {
+                        resolve(row.total_sales);
+                    }
+                });
+            });
+        } else {
+            const query = `
+                SELECT COALESCE(SUM(total), 0) AS total_sales
+                FROM "Box".sales_history
+                WHERE id_companies = $1
+                AND DATE_TRUNC('day', sale_day) = CURRENT_DATE - INTERVAL '1 day';
+            `;
+            const result = await database.query(query, [idCompany]);
+            total_sales = result.rows[0].total_sales;
+        }
+
+        return total_sales;
     } catch (error) {
-        console.error("Error al obtener datos de ventas del dia pasado:", error);
+        console.error("Error al obtener datos de ventas del día anterior:", error);
         return 0;
     }
 }
 
 async function get_total_unity_company(idCompany) {
     try {
-        const query = `
-            SELECT COALESCE(SUM(amount), 0) AS total_items_sold
-            FROM "Box".sales_history
-            WHERE id_companies = $1
-            AND DATE_TRUNC('day', sale_day) = CURRENT_DATE;
-        `;
-        const values = [idCompany];
-        const result = await database.query(query, values);
+        let total_items_sold = 0;
 
-        return result.rows[0].total_items_sold;
+        if (TYPE_DATABASE === 'mysqlite') {
+            const query = `
+                SELECT COALESCE(SUM(amount), 0) AS total_items_sold
+                FROM sales_history
+                WHERE id_companies = ?
+                AND DATE(sale_day) = DATE('now');
+            `;
+            total_items_sold = await new Promise((resolve, reject) => {
+                database.get(query, [idCompany], (err, row) => {
+                    if (err) {
+                        console.error("SQLite error in get_total_unity_company:", err.message);
+                        reject(err);
+                    } else {
+                        resolve(row.total_items_sold);
+                    }
+                });
+            });
+        } else {
+            const query = `
+                SELECT COALESCE(SUM(amount), 0) AS total_items_sold
+                FROM "Box".sales_history
+                WHERE id_companies = $1
+                AND DATE_TRUNC('day', sale_day) = CURRENT_DATE;
+            `;
+            const values = [idCompany];
+            const result = await database.query(query, values);
+            total_items_sold = result.rows[0].total_items_sold;
+        }
+
+        return total_items_sold;
     } catch (error) {
         console.error("Error al obtener datos de ventas get_total_unity_company:", error);
         return 0;
     }
 }
 
+
 async function get_total_year(idCompany) {
     try {
-        const query = `
-            SELECT COALESCE(SUM(total), 0) AS total_sales
-            FROM "Box".sales_history
-            WHERE id_companies = $1
-            AND EXTRACT(YEAR FROM sale_day) = EXTRACT(YEAR FROM CURRENT_DATE)
-        `;
-        const values = [idCompany];
-        const result = await database.query(query, values);
-        return result.rows[0].total_sales;
+        let total_sales = 0;
+
+        if (TYPE_DATABASE === 'mysqlite') {
+            const query = `
+                SELECT COALESCE(SUM(total), 0) AS total_sales
+                FROM sales_history
+                WHERE id_companies = ?
+                AND strftime('%Y', sale_day) = strftime('%Y', 'now')
+            `;
+            total_sales = await new Promise((resolve, reject) => {
+                database.get(query, [idCompany], (err, row) => {
+                    if (err) {
+                        console.error("SQLite error in get_total_year:", err.message);
+                        reject(err);
+                    } else {
+                        resolve(row.total_sales);
+                    }
+                });
+            });
+        } else {
+            const query = `
+                SELECT COALESCE(SUM(total), 0) AS total_sales
+                FROM "Box".sales_history
+                WHERE id_companies = $1
+                AND EXTRACT(YEAR FROM sale_day) = EXTRACT(YEAR FROM CURRENT_DATE)
+            `;
+            const result = await database.query(query, [idCompany]);
+            total_sales = result.rows[0].total_sales;
+        }
+
+        return total_sales;
     } catch (error) {
         console.error("Error al obtener la suma de ventas get_total_year:", error);
         return 0;
@@ -1079,15 +1252,37 @@ async function get_total_year(idCompany) {
 
 async function get_total_year_old(idCompany) {
     try {
-        const query = `
-            SELECT COALESCE(SUM(total), 0) AS total_sales
-            FROM "Box".sales_history
-            WHERE id_companies = $1
-            AND EXTRACT(YEAR FROM sale_day) = EXTRACT(YEAR FROM CURRENT_DATE)-1;
-        `;
-        const values = [idCompany];
-        const result = await database.query(query, values);
-        return result.rows[0].total_sales;
+        let total_sales = 0;
+
+        if (TYPE_DATABASE === 'mysqlite') {
+            const query = `
+                SELECT COALESCE(SUM(total), 0) AS total_sales
+                FROM sales_history
+                WHERE id_companies = ?
+                AND strftime('%Y', sale_day) = strftime('%Y', 'now', '-1 year')
+            `;
+            total_sales = await new Promise((resolve, reject) => {
+                database.get(query, [idCompany], (err, row) => {
+                    if (err) {
+                        console.error("SQLite error in get_total_year_old:", err.message);
+                        reject(err);
+                    } else {
+                        resolve(row.total_sales);
+                    }
+                });
+            });
+        } else {
+            const query = `
+                SELECT COALESCE(SUM(total), 0) AS total_sales
+                FROM "Box".sales_history
+                WHERE id_companies = $1
+                AND EXTRACT(YEAR FROM sale_day) = EXTRACT(YEAR FROM CURRENT_DATE) - 1
+            `;
+            const result = await database.query(query, [idCompany]);
+            total_sales = result.rows[0].total_sales;
+        }
+
+        return total_sales;
     } catch (error) {
         console.error("Error al obtener la suma de ventas get_total_year_old:", error);
         return 0;
@@ -1096,32 +1291,81 @@ async function get_total_year_old(idCompany) {
 
 async function get_total_month(idCompany) {
     try {
-        const query = `
-            SELECT COALESCE(SUM(total), 0) AS total_sales
-            FROM "Box".sales_history
-            WHERE id_companies = $1
-            AND EXTRACT(MONTH FROM sale_day) = EXTRACT(MONTH FROM CURRENT_DATE)
-        `;
-        const values = [idCompany];
-        const result = await database.query(query, values);
-        return result.rows[0].total_sales;
+        let total_sales = 0;
+
+        if (TYPE_DATABASE === 'mysqlite') {
+            const query = `
+                SELECT COALESCE(SUM(total), 0) AS total_sales
+                FROM sales_history
+                WHERE id_companies = ?
+                AND strftime('%m', sale_day) = strftime('%m', 'now')
+                AND strftime('%Y', sale_day) = strftime('%Y', 'now')
+            `;
+            total_sales = await new Promise((resolve, reject) => {
+                database.get(query, [idCompany], (err, row) => {
+                    if (err) {
+                        console.error("SQLite error in get_total_month:", err.message);
+                        reject(err);
+                    } else {
+                        resolve(row.total_sales);
+                    }
+                });
+            });
+        } else {
+            const query = `
+                SELECT COALESCE(SUM(total), 0) AS total_sales
+                FROM "Box".sales_history
+                WHERE id_companies = $1
+                AND EXTRACT(MONTH FROM sale_day) = EXTRACT(MONTH FROM CURRENT_DATE)
+                AND EXTRACT(YEAR FROM sale_day) = EXTRACT(YEAR FROM CURRENT_DATE)
+            `;
+            const result = await database.query(query, [idCompany]);
+            total_sales = result.rows[0].total_sales;
+        }
+
+        return total_sales;
     } catch (error) {
         console.error("Error al obtener la suma de ventas get_total_month:", error);
         return 0;
     }
 }
 
+
 async function get_total_month_old(idCompany) {
     try {
-        const query = `
-            SELECT COALESCE(SUM(total), 0) AS total_sales
-            FROM "Box".sales_history
-            WHERE id_companies = $1
-            AND EXTRACT(MONTH FROM sale_day) = EXTRACT(MONTH FROM CURRENT_DATE)-1;
-        `;
-        const values = [idCompany];
-        const result = await database.query(query, values);
-        return result.rows[0].total_sales;
+        let total_sales = 0;
+
+        if (TYPE_DATABASE === 'mysqlite') {
+            const query = `
+                SELECT COALESCE(SUM(total), 0) AS total_sales
+                FROM sales_history
+                WHERE id_companies = ?
+                AND strftime('%m', sale_day) = strftime('%m', 'now', '-1 month')
+                AND strftime('%Y', sale_day) = strftime('%Y', 'now', '-1 month')
+            `;
+            total_sales = await new Promise((resolve, reject) => {
+                database.get(query, [idCompany], (err, row) => {
+                    if (err) {
+                        console.error("SQLite error in get_total_month_old:", err.message);
+                        reject(err);
+                    } else {
+                        resolve(row.total_sales);
+                    }
+                });
+            });
+        } else {
+            const query = `
+                SELECT COALESCE(SUM(total), 0) AS total_sales
+                FROM "Box".sales_history
+                WHERE id_companies = $1
+                AND EXTRACT(MONTH FROM sale_day) = EXTRACT(MONTH FROM CURRENT_DATE - INTERVAL '1 month')
+                AND EXTRACT(YEAR FROM sale_day) = EXTRACT(YEAR FROM CURRENT_DATE - INTERVAL '1 month')
+            `;
+            const result = await database.query(query, [idCompany]);
+            total_sales = result.rows[0].total_sales;
+        }
+
+        return total_sales;
     } catch (error) {
         console.error("Error al obtener la suma de ventas get_total_month_old:", error);
         return 0;
@@ -1130,19 +1374,41 @@ async function get_total_month_old(idCompany) {
 
 async function get_total_company(idCompany) {
     try {
-        const query = `
-            SELECT COALESCE(SUM(total), 0) AS total_sales
-            FROM "Box".sales_history
-            WHERE id_companies = $1
-        `;
-        const values = [idCompany];
-        const result = await database.query(query, values);
-        return result.rows[0].total_sales;
+        let total_sales = 0;
+
+        if (TYPE_DATABASE === 'mysqlite') {
+            const query = `
+                SELECT COALESCE(SUM(total), 0) AS total_sales
+                FROM sales_history
+                WHERE id_companies = ?
+            `;
+            total_sales = await new Promise((resolve, reject) => {
+                database.get(query, [idCompany], (err, row) => {
+                    if (err) {
+                        console.error("SQLite error in get_total_company:", err.message);
+                        reject(err);
+                    } else {
+                        resolve(row.total_sales);
+                    }
+                });
+            });
+        } else {
+            const query = `
+                SELECT COALESCE(SUM(total), 0) AS total_sales
+                FROM "Box".sales_history
+                WHERE id_companies = $1
+            `;
+            const result = await database.query(query, [idCompany]);
+            total_sales = result.rows[0].total_sales;
+        }
+
+        return total_sales;
     } catch (error) {
         console.error("Error al obtener la suma de ventas get_total_company:", error);
         return 0;
     }
 }
+
 
 function calculate_sale_increase(previousSales, currentSales) {
     if (previousSales == 0) {
@@ -1168,25 +1434,45 @@ async function get_movements_company_positive(branches) {
 
 async function get_positive_moves_by_branch(idBranch) {
     try {
-        const query = `
-            SELECT COALESCE(SUM(move), 0) AS total_negative_moves
-            FROM "Box".movement_history
-            WHERE id_branches IN (
-                SELECT id
-                FROM "Company".branches
-                WHERE id = $1
-            )
-            AND date_move::date = CURRENT_DATE
-            AND move > 0;
-        `;
-        const values = [idBranch];
-        const result = await database.query(query, values);
-        return result.rows[0].total_negative_moves;
+        let total_positive_moves = 0;
+
+        if (TYPE_DATABASE === 'mysqlite') {
+            const query = `
+                SELECT COALESCE(SUM(move), 0) AS total_positive_moves
+                FROM movement_history
+                WHERE id_branches = ?
+                AND date(date_move) = date('now')
+                AND move > 0
+            `;
+            total_positive_moves = await new Promise((resolve, reject) => {
+                database.get(query, [idBranch], (err, row) => {
+                    if (err) {
+                        console.error("SQLite error in get_positive_moves_by_branch:", err.message);
+                        reject(err);
+                    } else {
+                        resolve(row.total_positive_moves);
+                    }
+                });
+            });
+        } else {
+            const query = `
+                SELECT COALESCE(SUM(move), 0) AS total_positive_moves
+                FROM "Box".movement_history
+                WHERE id_branches = $1
+                AND date_move::date = CURRENT_DATE
+                AND move > 0
+            `;
+            const result = await database.query(query, [idBranch]);
+            total_positive_moves = result.rows[0].total_positive_moves;
+        }
+
+        return total_positive_moves;
     } catch (error) {
-        console.error("Error al obtener los movimientos en negativo get_positive_moves_by_branch:", error);
+        console.error("Error al obtener los movimientos positivos get_positive_moves_by_branch:", error);
         return 0;
     }
 }
+
 
 
 module.exports = {

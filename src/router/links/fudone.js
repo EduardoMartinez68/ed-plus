@@ -3,7 +3,8 @@ const router = express.Router();
 const { isLoggedIn, isNotLoggedIn } = require('../../lib/auth');
 const database = require('../../database');
 const helpers=require('../../lib/helpers.js');
-
+require('dotenv').config();
+const {TYPE_DATABASE}=process.env;
 /**----------------------functions-----------------*/
 //functions branch
 const {
@@ -387,33 +388,63 @@ router.get('/:id_company/:id_branch/:id_combo_features/edit-products-free', isLo
 router.post('/:id_lot/edit-lot-quantity', isLoggedIn, async (req, res) => {
     const { id_lot } = req.params;
     const { newQuantity } = req.body;
-    const id_company=req.user.id_company;
-    const id_branch=req.user.id_branch;
-    const id_employees=req.user.id_employee;
+    const id_company = req.user.id_company;
+    const id_branch = req.user.id_branch;
+    const id_employees = req.user.id_employee;
 
-
-    const queryText = `
-        UPDATE "Inventory".lots 
-        SET current_existence = $1
-        WHERE id = $2
-    `;
+    if (isNaN(newQuantity) || newQuantity < 0) {
+        return res.status(400).json({ error: "Cantidad inválida" });
+    }
 
     try {
-        const result = await database.query(queryText, [
-            newQuantity,
-            id_lot
-        ]);
+        let updatedLot;
 
-        await add_move_to_the_history(id_company,id_branch,id_employees,id_lot,newQuantity,'Venta'); //this is for save the move in the history when the lot are for a prescription 
-        
-        const id_combo_features = result.rows[0].id_dish_and_combo_features;
-        await update_existence_use_lot(id_combo_features); //this is for update the existence of the product in the table product_and_suppiles_features
-        res.status(201).json({ message: "Lote actualizado con éxito", lot: result.rows[0] });
+        if (TYPE_DATABASE === 'sqlite') {
+            const updateQuery = `
+                UPDATE lots 
+                SET current_existence = ?
+                WHERE id = ?;
+            `;
+            await database.run(updateQuery, [newQuantity, id_lot]);
+
+            const selectQuery = `
+                SELECT * FROM lots WHERE id = ?;
+            `;
+            updatedLot = await database.get(selectQuery, [id_lot]);
+
+            if (!updatedLot) {
+                return res.status(404).json({ error: "Lote no encontrado" });
+            }
+        } else {
+            const queryText = `
+                UPDATE "Inventory".lots 
+                SET current_existence = $1
+                WHERE id = $2
+                RETURNING *;
+            `;
+            const result = await database.query(queryText, [newQuantity, id_lot]);
+
+            if (result.rows.length === 0) {
+                return res.status(404).json({ error: "Lote no encontrado" });
+            }
+
+            updatedLot = result.rows[0];
+        }
+
+        await add_move_to_the_history(id_company, id_branch, id_employees, id_lot, newQuantity, 'Venta');
+
+        const id_combo_features = updatedLot.id_dish_and_combo_features;
+        if (id_combo_features) {
+            await update_existence_use_lot(id_combo_features);
+        }
+
+        res.status(201).json({ message: "Lote actualizado con éxito", lot: updatedLot });
     } catch (error) {
         console.error("Error al actualizar el lote:", error);
         res.status(500).json({ error: "Error al actualizar el lote" });
     }
-})
+});
+
 
 router.post('/:id_lot/update-lot-quantity-for-sale', isLoggedIn, async (req, res) => {
     const { id_lot } = req.params;
@@ -422,101 +453,197 @@ router.post('/:id_lot/update-lot-quantity-for-sale', isLoggedIn, async (req, res
     const id_branch = req.user.id_branch;
     const id_employees = req.user.id_employee;
 
-    const queryText = `
-        UPDATE "Inventory".lots 
-        SET current_existence = current_existence - $1
-        WHERE id = $2
-        RETURNING *
-    `;
+    if (isNaN(newQuantity) || newQuantity <= 0) {
+        return res.status(400).json({ error: "Cantidad inválida" });
+    }
 
     try {
-        const result = await database.query(queryText, [
-            newQuantity,
-            id_lot
-        ]);
+        let updatedLot;
 
+        if (TYPE_DATABASE === 'sqlite') {
+            // Actualizamos la existencia
+            const updateQuery = `
+                UPDATE lots 
+                SET current_existence = current_existence - ?
+                WHERE id = ?;
+            `;
+            await database.run(updateQuery, [newQuantity, id_lot]);
+
+            // Luego hacemos un SELECT para obtener los datos del lote actualizado
+            const selectQuery = `
+                SELECT * FROM lots WHERE id = ?;
+            `;
+            updatedLot = await database.get(selectQuery, [id_lot]);
+
+            if (!updatedLot) {
+                return res.status(404).json({ error: "Lote no encontrado" });
+            }
+        } else {
+            const queryText = `
+                UPDATE "Inventory".lots 
+                SET current_existence = current_existence - $1
+                WHERE id = $2
+                RETURNING *;
+            `;
+            const result = await database.query(queryText, [newQuantity, id_lot]);
+
+            if (result.rows.length === 0) {
+                return res.status(404).json({ error: "Lote no encontrado" });
+            }
+
+            updatedLot = result.rows[0];
+        }
+
+        // Guardamos el movimiento en el historial
         await add_move_to_the_history(id_company, id_branch, id_employees, id_lot, newQuantity, 'Venta');
 
-        res.status(201).json({ message: "Lote actualizado con éxito", lot: result.rows[0] });
+        res.status(201).json({ message: "Lote actualizado con éxito", lot: updatedLot });
     } catch (error) {
         console.error("Error al actualizar el lote:", error);
         res.status(500).json({ error: "Error al actualizar el lote" });
     }
-})
+});
+
 
 async function add_move_to_the_history(id_companies, id_branches, id_employees, id_lots, newCant, type_move) {
-    const queryText = `
-        INSERT INTO "Branch".history_move_lot 
-        (id_companies, id_branches, id_employees, id_lots, "newCant", type_move) 
-        VALUES ($1, $2, $3, $4, $5, $6)
-        RETURNING *;
-    `;
-
     try {
-        const result = await database.query(queryText, [
-            id_companies,
-            id_branches,
-            id_employees,
-            id_lots,
-            newCant,
-            type_move
-        ]);
+        let insertQuery;
+        let result;
 
-        return { success: true, message: "Movimiento agregado con éxito", data: result.rows[0] };
+        if (TYPE_DATABASE === 'sqlite') {
+            insertQuery = `
+                INSERT INTO history_move_lot 
+                (id_companies, id_branches, id_employees, id_lots, newCant, type_move) 
+                VALUES (?, ?, ?, ?, ?, ?);
+            `;
+
+            await database.run(insertQuery, [
+                id_companies,
+                id_branches,
+                id_employees,
+                id_lots,
+                newCant,
+                type_move
+            ]);
+
+            // SQLite doesn't support RETURNING *, so we return null for data
+            return { success: true, message: "Movimiento agregado con éxito", data: null };
+
+        } else {
+            insertQuery = `
+                INSERT INTO "Branch".history_move_lot 
+                (id_companies, id_branches, id_employees, id_lots, "newCant", type_move) 
+                VALUES ($1, $2, $3, $4, $5, $6)
+                RETURNING *;
+            `;
+
+            result = await database.query(insertQuery, [
+                id_companies,
+                id_branches,
+                id_employees,
+                id_lots,
+                newCant,
+                type_move
+            ]);
+
+            return { success: true, message: "Movimiento agregado con éxito", data: result.rows[0] };
+        }
+
     } catch (error) {
         console.error("Error al agregar movimiento al historial:", error);
         return { success: false, error: "Error al agregar movimiento al historial" };
     }
 }
 
-async function create_table_lot(){
-    const queryText = `
-        CREATE TABLE IF NOT EXISTS "Inventory".lots (
-            id bigserial PRIMARY KEY,
-            number_lote Text,
-            initial_existence double precision,
-            current_existence double precision NOT NULL,
-            date_of_manufacture date NOT NULL,
-            expiration_date date NOT NULL,
-            id_dish_and_combo_features bigint,
-            id_branches bigint,
-            id_companies bigint,
-            CONSTRAINT key_number_lote UNIQUE (id),
-            CONSTRAINT dish_and_combo_features_fk FOREIGN KEY (id_dish_and_combo_features)
-                REFERENCES "Inventory".dish_and_combo_features (id) MATCH FULL
-                ON DELETE SET NULL ON UPDATE CASCADE,
-            CONSTRAINT branches_fk FOREIGN KEY (id_branches)
-                REFERENCES "Company".branches (id) MATCH FULL
-                ON DELETE SET NULL ON UPDATE CASCADE,
-            CONSTRAINT companies_fk FOREIGN KEY (id_companies)
-                REFERENCES "User".companies (id) MATCH FULL
-                ON DELETE SET NULL ON UPDATE CASCADE
-        );
-    `;
-    
+
+async function create_table_lot() {
     try {
-        await database.query(queryText);
+        if (TYPE_DATABASE === 'sqlite') {
+            const queryText = `
+                CREATE TABLE IF NOT EXISTS lots (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    number_lote TEXT,
+                    initial_existence REAL,
+                    current_existence REAL NOT NULL,
+                    date_of_manufacture TEXT NOT NULL,
+                    expiration_date TEXT NOT NULL,
+                    id_dish_and_combo_features INTEGER,
+                    id_branches INTEGER,
+                    id_companies INTEGER,
+                    UNIQUE(id),
+                    FOREIGN KEY (id_dish_and_combo_features) REFERENCES dish_and_combo_features(id) ON DELETE SET NULL ON UPDATE CASCADE,
+                    FOREIGN KEY (id_branches) REFERENCES branches(id) ON DELETE SET NULL ON UPDATE CASCADE,
+                    FOREIGN KEY (id_companies) REFERENCES companies(id) ON DELETE SET NULL ON UPDATE CASCADE
+                );
+            `;
+            await database.run(queryText);
+        } else {
+            // PostgreSQL
+            const queryText = `
+                CREATE TABLE IF NOT EXISTS "Inventory".lots (
+                    id bigserial PRIMARY KEY,
+                    number_lote TEXT,
+                    initial_existence double precision,
+                    current_existence double precision NOT NULL,
+                    date_of_manufacture DATE NOT NULL,
+                    expiration_date DATE NOT NULL,
+                    id_dish_and_combo_features bigint,
+                    id_branches bigint,
+                    id_companies bigint,
+                    CONSTRAINT key_number_lote UNIQUE (id),
+                    CONSTRAINT dish_and_combo_features_fk FOREIGN KEY (id_dish_and_combo_features)
+                        REFERENCES "Inventory".dish_and_combo_features (id) MATCH FULL
+                        ON DELETE SET NULL ON UPDATE CASCADE,
+                    CONSTRAINT branches_fk FOREIGN KEY (id_branches)
+                        REFERENCES "Company".branches (id) MATCH FULL
+                        ON DELETE SET NULL ON UPDATE CASCADE,
+                    CONSTRAINT companies_fk FOREIGN KEY (id_companies)
+                        REFERENCES "User".companies (id) MATCH FULL
+                        ON DELETE SET NULL ON UPDATE CASCADE
+                );
+            `;
+            await database.query(queryText);
+        }
         return true;
     } catch (error) {
+        console.error('Error creating lots table:', error);
         return false;
     }
 }
 
+
 async function get_lots_by_dish_and_combo_features(idDishAndComboFeatures) {
-    const queryText = `
-        SELECT * FROM "Inventory".lots 
-        WHERE id_dish_and_combo_features = $1
-        ORDER BY expiration_date ASC;
-    `;
-    
     try {
-        const result = await database.query(queryText, [idDishAndComboFeatures]);
-        return result.rows;
+        if (TYPE_DATABASE === 'sqlite') {
+            const queryText = `
+                SELECT * FROM lots
+                WHERE id_dish_and_combo_features = ?
+                ORDER BY expiration_date ASC;
+            `;
+            // En SQLite usamos database.all para obtener todas las filas
+            const rows = await new Promise((resolve, reject) => {
+                database.all(queryText, [idDishAndComboFeatures], (err, rows) => {
+                    if (err) reject(err);
+                    else resolve(rows);
+                });
+            });
+            return rows;
+        } else {
+            // PostgreSQL
+            const queryText = `
+                SELECT * FROM "Inventory".lots
+                WHERE id_dish_and_combo_features = $1
+                ORDER BY expiration_date ASC;
+            `;
+            const result = await database.query(queryText, [idDishAndComboFeatures]);
+            return result.rows;
+        }
     } catch (error) {
         console.error("Error al obtener los datos de la tabla 'lots':", error);
         return [];
     }
 }
+
 
 router.get('/:id_company/:id_branch/lot', isLoggedIn, async (req, res) => {
     
@@ -526,66 +653,144 @@ router.get('/:id_company/:id_branch/lot', isLoggedIn, async (req, res) => {
 })
 
 router.post('/:id_combo_features/add-lot', isLoggedIn, async (req, res) => {
-    const { id_combo_features} = req.params;
-    const { number_lote, initial_existence, current_existence, date_of_manufacture, expiration_date} = req.body;
-    const id_company=req.user.id_company;
-    const id_branch=req.user.id_branch;
+    const { id_combo_features } = req.params;
+    const { number_lote, initial_existence, current_existence, date_of_manufacture, expiration_date } = req.body;
+    const id_company = req.user.id_company;
+    const id_branch = req.user.id_branch;
 
     if (!number_lote || !initial_existence || !current_existence || !date_of_manufacture || !expiration_date) {
         return res.status(400).json({ error: "Todos los campos son obligatorios" });
     }
 
-    const queryText = `
-        INSERT INTO "Inventory".lots 
-        (number_lote, initial_existence, current_existence, date_of_manufacture, expiration_date, id_dish_and_combo_features, id_branches, id_companies) 
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
-        RETURNING id, number_lote, initial_existence, current_existence, date_of_manufacture, expiration_date;
-    `;
-
     try {
-        const result = await database.query(queryText, [
-            number_lote,
-            initial_existence,
-            current_existence,
-            date_of_manufacture,
-            expiration_date,
-            id_combo_features,
-            id_branch,
-            id_company
-        ]);
+        if (TYPE_DATABASE === 'sqlite') {
+            const insertQuery = `
+                INSERT INTO lots
+                (number_lote, initial_existence, current_existence, date_of_manufacture, expiration_date, id_dish_and_combo_features, id_branches, id_companies)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            `;
 
-        const newLot = result.rows[0]; // Aquí obtienes el lote insertado con su ID
-        await update_existence_use_lot(id_combo_features); //this is for update the existence of the product in the table product_and_suppiles_features
-        res.status(201).json({ 
-            message: "Lote agregado con éxito", 
-            lot: newLot, 
-            date_of_manufacture:newLot.date_of_manufacture,
-            expiration_date:newLot.expiration_date,
-            id: newLot.id 
-        });
+            // Ejecutar inserción
+            const runResult = await new Promise((resolve, reject) => {
+                database.run(insertQuery, [
+                    number_lote,
+                    initial_existence,
+                    current_existence,
+                    date_of_manufacture,
+                    expiration_date,
+                    id_combo_features,
+                    id_branch,
+                    id_company
+                ], function (err) {
+                    if (err) reject(err);
+                    else resolve(this); // this.lastID contiene el ID insertado
+                });
+            });
+
+            // Obtener el lote insertado con SELECT
+            const selectQuery = `SELECT * FROM lots WHERE id = ?`;
+            const newLot = await new Promise((resolve, reject) => {
+                database.get(selectQuery, [runResult.lastID], (err, row) => {
+                    if (err) reject(err);
+                    else resolve(row);
+                });
+            });
+
+            await update_existence_use_lot(id_combo_features);
+
+            res.status(201).json({
+                message: "Lote agregado con éxito",
+                lot: newLot,
+                date_of_manufacture: newLot.date_of_manufacture,
+                expiration_date: newLot.expiration_date,
+                id: newLot.id
+            });
+
+        } else {
+            // PostgreSQL
+            const queryText = `
+                INSERT INTO "Inventory".lots 
+                (number_lote, initial_existence, current_existence, date_of_manufacture, expiration_date, id_dish_and_combo_features, id_branches, id_companies) 
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
+                RETURNING id, number_lote, initial_existence, current_existence, date_of_manufacture, expiration_date;
+            `;
+
+            const result = await database.query(queryText, [
+                number_lote,
+                initial_existence,
+                current_existence,
+                date_of_manufacture,
+                expiration_date,
+                id_combo_features,
+                id_branch,
+                id_company
+            ]);
+
+            const newLot = result.rows[0];
+            await update_existence_use_lot(id_combo_features);
+
+            res.status(201).json({
+                message: "Lote agregado con éxito",
+                lot: newLot,
+                date_of_manufacture: newLot.date_of_manufacture,
+                expiration_date: newLot.expiration_date,
+                id: newLot.id
+            });
+        }
     } catch (error) {
         console.error("Error al agregar el lote:", error);
         res.status(500).json({ error: "Error al agregar el lote" });
     }
-})
+});
+
 
 async function update_existence_use_lot(id_combo_features) {
     try {
-        // Paso 1: Sumar todas las existencias actuales de los lotes
-        const sumResult = await database.query(`
-            SELECT SUM(current_existence) AS total
-            FROM "Inventory".lots
-            WHERE id_dish_and_combo_features = $1;
-        `, [id_combo_features]);
+        let totalExistence = 0;
 
-        const totalExistence = sumResult.rows[0].total || 0;
+        if (TYPE_DATABASE === 'sqlite') {
+            // Paso 1: Sumar existencias actuales en SQLite
+            totalExistence = await new Promise((resolve, reject) => {
+                const query = `
+                    SELECT SUM(current_existence) AS total
+                    FROM lots
+                    WHERE id_dish_and_combo_features = ?
+                `;
+                database.get(query, [id_combo_features], (err, row) => {
+                    if (err) reject(err);
+                    else resolve(row.total || 0);
+                });
+            });
 
-        // Paso 2: Actualizar el campo 'existence' en product_and_suppiles_features
-        await database.query(`
-            UPDATE "Inventory".product_and_suppiles_features
-            SET existence = $1
-            WHERE id = $2;
-        `, [totalExistence, id_combo_features]);
+            // Paso 2: Actualizar existencia en SQLite
+            await new Promise((resolve, reject) => {
+                const updateQuery = `
+                    UPDATE product_and_suppiles_features
+                    SET existence = ?
+                    WHERE id = ?
+                `;
+                database.run(updateQuery, [totalExistence, id_combo_features], function(err) {
+                    if (err) reject(err);
+                    else resolve();
+                });
+            });
+
+        } else {
+            // PostgreSQL
+            const sumResult = await database.query(`
+                SELECT SUM(current_existence) AS total
+                FROM "Inventory".lots
+                WHERE id_dish_and_combo_features = $1;
+            `, [id_combo_features]);
+
+            totalExistence = sumResult.rows[0].total || 0;
+
+            await database.query(`
+                UPDATE "Inventory".product_and_suppiles_features
+                SET existence = $1
+                WHERE id = $2;
+            `, [totalExistence, id_combo_features]);
+        }
 
         console.log(`Existencia actualizada a ${totalExistence} para id ${id_combo_features}`);
     } catch (err) {
@@ -593,6 +798,7 @@ async function update_existence_use_lot(id_combo_features) {
         throw err;
     }
 }
+
 
 router.post('/:id_combo_features/:id_lot/edit-lot', isLoggedIn, async (req, res) => {
     const { id_combo_features, id_lot} = req.params;
