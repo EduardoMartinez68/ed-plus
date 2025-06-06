@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const router = express.Router();
 const database = require('../database');
@@ -13,7 +14,7 @@ const crypto = require('crypto');
 const sendEmail = require('../lib/sendEmail.js'); //this is for send emails 
 
 //stripe 
-const {APP_PASSWORD_STRIPE} = process.env;
+const {APP_PASSWORD_STRIPE, TYPE_DATABASE} = process.env;
 const stripe = require('stripe')(APP_PASSWORD_STRIPE);
 
 //PDF
@@ -234,17 +235,33 @@ router.post('/confirm-restart-password', isNotLoggedIn, async (req, res) => {
     }
 });
 
-async function get_id_user_for_email(email){
-    try{
-        var queryText = 'SELECT * FROM "Fud".users WHERE email = $1';
-        var values = [email];
-        const result = await database.query(queryText, values);
-        const data = result.rows;
-        return data[0].id;
-    }catch(error){
-        return null;
+async function get_id_user_for_email(email) {
+  if (TYPE_DATABASE === 'mysqlite') {
+    const queryText = 'SELECT * FROM users WHERE email = ?';
+    return new Promise((resolve) => {
+      database.get(queryText, [email], (err, row) => {
+        if (err) {
+          console.error('Error al consultar en SQLite:', err);
+          resolve(null);
+        } else {
+          resolve(row ? row.id : null);
+        }
+      });
+    });
+  } else {
+    // PostgreSQL
+    try {
+      const queryText = 'SELECT * FROM "Fud".users WHERE email = $1';
+      const values = [email];
+      const result = await database.query(queryText, values);
+      return result.rows.length ? result.rows[0].id : null;
+    } catch (error) {
+      console.error('Error al consultar en PostgreSQL:', error);
+      return null;
     }
+  }
 }
+
 
 async function save_token_database(idUser,token){
     try{
@@ -430,12 +447,32 @@ async function home_render(req, res) {
 }
 
 async function get_data_branch_view_manager(id_branch) {
-    var queryText = 'SELECT * FROM "Company".branches WHERE id= $1';
-    var values = [id_branch];
-    const result = await database.query(queryText, values);
-    const data = result.rows;
-    return data;
+  if (TYPE_DATABASE === 'mysqlite') {
+    const queryText = 'SELECT * FROM branches WHERE id = ?';
+    return new Promise((resolve) => {
+      database.all(queryText, [id_branch], (err, rows) => {
+        if (err) {
+          console.error('Error al consultar en SQLite:', err);
+          resolve([]);
+        } else {
+          resolve(rows);
+        }
+      });
+    });
+  } else {
+    // PostgreSQL
+    try {
+      const queryText = 'SELECT * FROM "Company".branches WHERE id = $1';
+      const values = [id_branch];
+      const result = await database.query(queryText, values);
+      return result.rows;
+    } catch (error) {
+      console.error('Error al consultar en PostgreSQL:', error);
+      return [];
+    }
+  }
 }
+
 
 async function home_manager(req,res){
     const employee=await get_data_employee(req)

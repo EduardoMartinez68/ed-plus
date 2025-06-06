@@ -16,23 +16,39 @@ const bucketName = APP_NYCE;
 
 */
 //delate image
+require('dotenv').config();
+const {TYPE_DATABASE}=process.env;
 const fs = require('fs');
 const path = require('path');
 const {get_path_folder_upload, get_path_folder_plus}=require('../initialAppForDesktop.js');
 
 //this is a function for get the path of the image of a table
 async function get_path_img(schema, table, id) {
-    var queryText = `SELECT * FROM "${schema}".${table} WHERE id=$1`;
-    var values = [id];
-
     try {
-        const result = await database.query(queryText, values);
-        return result.rows[0].img;
+        if (TYPE_DATABASE === 'mysqlite') {
+            return new Promise((resolve, reject) => {
+                const queryText = `SELECT * FROM ${table} WHERE id = ? LIMIT 1`;
+                database.get(queryText, [id], (err, row) => {
+                    if (err) {
+                        console.error('Error to search the path img (SQLite):', err.message);
+                        return reject(err);
+                    }
+                    resolve(row ? row.img : null);
+                });
+            });
+        } else {
+            // PostgreSQL
+            const queryText = `SELECT * FROM "${schema}".${table} WHERE id = $1`;
+            const values = [id];
+            const result = await database.query(queryText, values);
+            return result.rows.length > 0 ? result.rows[0].img : null;
+        }
     } catch (error) {
         console.error('Error to search the path img:', error.message);
         throw error;
     }
 }
+
 
 //this function is for delate the image of the tabla of the file img/uploads
 async function delate_image_upload(pathImg) {
@@ -49,10 +65,28 @@ async function delate_image_upload(pathImg) {
 }
 
 async function get_image(id) {
-    var queryText = 'SELECT * FROM "User".companies Where  id= $1';
-    var values = [id];
-    const result = await database.query(queryText, values);
-    return result.rows[0].path_logo;
+    try {
+        if (TYPE_DATABASE === 'mysqlite') {
+            return new Promise((resolve, reject) => {
+                const queryText = 'SELECT * FROM companies WHERE id = ? LIMIT 1';
+                database.get(queryText, [id], (err, row) => {
+                    if (err) {
+                        console.error('Error fetching image (SQLite):', err.message);
+                        return reject(err);
+                    }
+                    resolve(row ? row.path_logo : null);
+                });
+            });
+        } else {
+            const queryText = 'SELECT * FROM "User".companies WHERE id = $1';
+            const values = [id];
+            const result = await database.query(queryText, values);
+            return result.rows.length > 0 ? result.rows[0].path_logo : null;
+        }
+    } catch (error) {
+        console.error('Error fetching image:', error.message);
+        throw error;
+    }
 }
 
 async function upload_image_to_space(filePath, objectName){
@@ -128,7 +162,6 @@ async function create_a_new_image(req){
 }
 
 async function delate_image(id) {
-  console.log('------------delete image 3---------')
     var pathImg = await get_image(id);
     const params = {
         Bucket: bucketName,

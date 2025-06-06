@@ -1,27 +1,61 @@
+require('dotenv').config();
+const {TYPE_DATABASE}=process.env;
 const database = require('../database');
 const addDatabase = require('../router/addDatabase');
 const rolFree=0
 
 async function get_category(id_company) {
-    var queryText = 'SELECT * FROM "Kitchen".product_category WHERE id_companies= $1';
-    var values = [id_company];
-    const result = await database.query(queryText, values);
-    const data = result.rows;
-    return data;
+    try {
+        if (TYPE_DATABASE === 'mysqlite') {
+            return new Promise((resolve, reject) => {
+                const query = 'SELECT * FROM product_category WHERE id_companies = ?';
+                database.all(query, [id_company], (err, rows) => {
+                    if (err) {
+                        console.error('SQLite error getting categories:', err.message);
+                        reject(err);
+                    } else {
+                        resolve(rows);
+                    }
+                });
+            });
+        } else {
+            const queryText = 'SELECT * FROM "Kitchen".product_category WHERE id_companies = $1';
+            const values = [id_company];
+            const result = await database.query(queryText, values);
+            return result.rows;
+        }
+    } catch (error) {
+        console.error('Error getting categories:', error);
+        throw error;
+    }
 }
 
 async function delate_product_category(id) {
-    var queryText = 'DELETE FROM "Kitchen".product_category WHERE id = $1';
-    var values = [id];
-
     try {
-        await database.query(queryText, values);
-        return true;
+        if (TYPE_DATABASE === 'mysqlite') {
+            return new Promise((resolve, reject) => {
+                const query = 'DELETE FROM product_category WHERE id = ?';
+                database.run(query, [id], function(err) {
+                    if (err) {
+                        console.error('SQLite error deleting product category:', err.message);
+                        reject(false);
+                    } else {
+                        resolve(true);
+                    }
+                });
+            });
+        } else {
+            const queryText = 'DELETE FROM "Kitchen".product_category WHERE id = $1';
+            const values = [id];
+            await database.query(queryText, values);
+            return true;
+        }
     } catch (error) {
-        console.error('Error al eliminar el registro en la base de datos:', error);
+        console.error('Error deleting product category:', error);
         return false;
     }
-};
+}
+
 module.exports = {
     get_category,
     delate_product_category,

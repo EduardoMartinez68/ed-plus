@@ -1,4 +1,7 @@
 //require
+require('dotenv').config();
+const {TYPE_DATABASE}=process.env;
+
 const express=require('express');
 //const router=express.Router();
 const database=require('../database');
@@ -11,36 +14,133 @@ function compare_password(P1,P2){
     return P1==P2;
 }
 
-async function add_user(user,role) {
-    //script for add the new user to the database
-    var queryText = 'INSERT INTO "Fud"."users" (photo, user_name, first_name, second_name, last_name, email, password, rol_user,id_packs_fud) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id';
-    var values = [user.image,user.user_name, user.first_name, user.second_name,user.last_name, user.email, user.password, role,0];
-    try{
-        //add the new user to the database
-        const result = await database.query(queryText, values);
+async function add_user(user, role, dbType = 'postgres') {
+    if (TYPE_DATABASE === 'postgres') {
+        const queryText = `
+            INSERT INTO "Fud"."users" 
+                (photo, user_name, first_name, second_name, last_name, email, password, rol_user, id_packs_fud) 
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
+            RETURNING id;
+        `;
+        const values = [
+            user.image,
+            user.user_name,
+            user.first_name,
+            user.second_name,
+            user.last_name,
+            user.email,
+            user.password,
+            role,
+            0
+        ];
 
-        //get the id of the result 
-        const insertedUserId = result.rows[0].id;
+        try {
+            const result = await database.query(queryText, values);
+            return result.rows[0].id;
+        } catch (error) {
+            console.error("Error en add_user PostgreSQL:", error);
+            return null;
+        }
+    } else{
+        // Para SQLite
+        const queryText = `
+            INSERT INTO "Fud_users" 
+                (photo, user_name, first_name, second_name, last_name, email, password, rol_user, id_packs_fud) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+        `;
+        const values = [
+            user.image,
+            user.user_name,
+            user.first_name,
+            user.second_name,
+            user.last_name,
+            user.email,
+            user.password,
+            role,
+            0
+        ];
 
-        return insertedUserId;
-    }catch(error){
-        console.log("add user: "+error)
-        return null
+        try {
+            // Suponiendo que database es un objeto sqlite3.Database promisificado o con promisify
+            const result = await new Promise((resolve, reject) => {
+                database.run(queryText, values, function(err) {
+                    if (err) reject(err);
+                    else resolve(this.lastID); // this.lastID es el id insertado
+                });
+            });
+            return result;
+        } catch (error) {
+            console.error("Error en add_user SQLite:", error);
+            return null;
+        }
     }
 }
 
-async function add_new_employees(employee){
-    try{
-        //script for add the new employee to the databas
-        var queryText = 'INSERT INTO "Company"."employees" (id_companies, id_users, id_roles_employees, id_departments_employees, id_branches, id_country, city, street, num_int, num_ext,phone,cell_phone) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)';
-        var values = Object.values(employee);
-        const result = await database.query(queryText, values);
-        return true;
-    }catch(error){
-        console.log("add employee: "+error)
+
+async function add_new_employees(employee, dbType = 'postgres') {
+    try {
+        if (TYPE_DATABASE === 'postgres') {
+            const queryText = `
+                INSERT INTO "Company"."employees"
+                    (id_companies, id_users, id_roles_employees, id_departments_employees, id_branches, id_country, city, street, num_int, num_ext, phone, cell_phone)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);
+            `;
+            const values = [
+                employee.id_companies,
+                employee.id_users,
+                employee.id_roles_employees,
+                employee.id_departments_employees,
+                employee.id_branches,
+                employee.id_country,
+                employee.city,
+                employee.street,
+                employee.num_int,
+                employee.num_ext,
+                employee.phone,
+                employee.cell_phone,
+            ];
+
+            await database.query(queryText, values);
+            return true;
+
+        } else {
+            // Ajustar tabla para SQLite: sin esquema, solo nombre simple (ajusta según tu DB)
+            const queryText = `
+                INSERT INTO employees
+                    (id_companies, id_users, id_roles_employees, id_departments_employees, id_branches, id_country, city, street, num_int, num_ext, phone, cell_phone)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+            `;
+
+            const values = [
+                employee.id_companies,
+                employee.id_users,
+                employee.id_roles_employees,
+                employee.id_departments_employees,
+                employee.id_branches,
+                employee.id_country,
+                employee.city,
+                employee.street,
+                employee.num_int,
+                employee.num_ext,
+                employee.phone,
+                employee.cell_phone,
+            ];
+
+            await new Promise((resolve, reject) => {
+                database.run(queryText, values, function(err) {
+                    if (err) reject(err);
+                    else resolve(this.lastID);
+                });
+            });
+
+            return true;
+        }
+    } catch (error) {
+        console.log("add employee error:", error);
         return false;
     }
 }
+
 /*
 async function add_company(company){
     var queryText = 'INSERT INTO "User".companies (id_users, path_logo, name, alias,description,representative,ceo,id_country,'
@@ -60,55 +160,181 @@ async function add_company(company){
 }*/
 
 async function add_company(company) {
-    var queryText = 'INSERT INTO "User".companies (id_users, path_logo, name, alias, description, representative, ceo, id_country, ' +
-        'phone, cell_phone, email_company, address, num_ext, num_int, postal_code, cologne, city, states, municipality) ' +
-        'VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19) RETURNING id';
+    if (TYPE_DATABASE === 'mysqlite') {
+        // SQLite: usa '?' en vez de $1, sin esquema "User"
+        const queryText = `
+            INSERT INTO companies
+                (id_users, path_logo, name, alias, description, representative, ceo, id_country,
+                 phone, cell_phone, email_company, address, num_ext, num_int, postal_code,
+                 cologne, city, states, municipality)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        `;
 
-    var values = [company.id_user, company.path_logo, company.name, company.alias, company.description, company.representative, company.ceo,
-                company.id_country, company.phone, company.cell_phone, company.email, company.street, company.num_o, company.num_i, company.postal_code,
-                company.cologne, company.city, company.street, company.municipality];
+        const values = [
+            company.id_user,
+            company.path_logo,
+            company.name,
+            company.alias,
+            company.description,
+            company.representative,
+            company.ceo,
+            company.id_country,
+            company.phone,
+            company.cell_phone,
+            company.email,
+            company.street,
+            company.num_o,
+            company.num_i,
+            company.postal_code,
+            company.cologne,
+            company.city,
+            company.street,   // este campo "states" parece que usas street dos veces, revisa si está bien
+            company.municipality
+        ];
 
-    try {
-        const result = await database.query(queryText, values);
-        // Si la inserción fue exitosa y se devolvió el ID de la compañía, lo retornamos
-        if (result.rows.length > 0) {
-            return result.rows[0].id;
-        } else {
-            throw new Error('No se pudo obtener el ID de la compañía después de la inserción');
+        try {
+            return await new Promise((resolve, reject) => {
+                database.run(queryText, values, function(err) {
+                    if (err) {
+                        console.error('Error al insertar en SQLite:', err);
+                        reject(null);
+                    } else {
+                        resolve(this.lastID); // ID insertado en SQLite
+                    }
+                });
+            });
+        } catch {
+            return null;
         }
-    } catch (error) {
-        console.error('Error al insertar en la base de datos:', error);
-        return null;
+
+    } else {
+        // PostgreSQL (u otra base que use $1...): con esquema "User"
+        const queryText = `
+            INSERT INTO "User".companies
+                (id_users, path_logo, name, alias, description, representative, ceo, id_country,
+                 phone, cell_phone, email_company, address, num_ext, num_int, postal_code,
+                 cologne, city, states, municipality)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
+            RETURNING id;
+        `;
+
+        const values = [
+            company.id_user,
+            company.path_logo,
+            company.name,
+            company.alias,
+            company.description,
+            company.representative,
+            company.ceo,
+            company.id_country,
+            company.phone,
+            company.cell_phone,
+            company.email,
+            company.street,
+            company.num_o,
+            company.num_i,
+            company.postal_code,
+            company.cologne,
+            company.city,
+            company.street, // igual aquí revisa si "states" debe ser street o un campo diferente
+            company.municipality
+        ];
+
+        try {
+            const result = await database.query(queryText, values);
+            if (result.rows.length > 0) {
+                return result.rows[0].id;
+            } else {
+                throw new Error('No se pudo obtener el ID de la compañía después de la inserción');
+            }
+        } catch (error) {
+            console.error('Error al insertar en PostgreSQL:', error);
+            return null;
+        }
     }
 }
 
-async function add_product_department(department){
-    var queryText = 'INSERT INTO "Kitchen".product_department (id_companies, name, description)'
-        +'VALUES ($1, $2, $3)';
 
-    var values = [department.id_company,department.name,department.description] 
-    try{
-        await database.query(queryText, values);
-        return true;
-    } catch (error) {
-        console.error('Error al insertar en la base de datos:', error);
-        return false;
+async function add_product_department(department) {
+    if (TYPE_DATABASE === 'mysqlite') {
+        // SQLite usa '?' y no esquema "Kitchen"
+        const queryText = `
+            INSERT INTO product_department (id_companies, name, description)
+            VALUES (?, ?, ?);
+        `;
+        const values = [department.id_company, department.name, department.description];
+
+        try {
+            return await new Promise((resolve, reject) => {
+                database.run(queryText, values, function(err) {
+                    if (err) {
+                        console.error('Error al insertar en SQLite:', err);
+                        reject(false);
+                    } else {
+                        resolve(true);
+                    }
+                });
+            });
+        } catch {
+            return false;
+        }
+
+    } else {
+        // PostgreSQL con esquema "Kitchen" y placeholders $1, $2, $3
+        const queryText = `
+            INSERT INTO "Kitchen".product_department (id_companies, name, description)
+            VALUES ($1, $2, $3);
+        `;
+        const values = [department.id_company, department.name, department.description];
+
+        try {
+            await database.query(queryText, values);
+            return true;
+        } catch (error) {
+            console.error('Error al insertar en PostgreSQL:', error);
+            return false;
+        }
     }
-};
+}
 
-async function add_product_category(department){
-    var queryText = 'INSERT INTO "Kitchen".product_category (id_companies, name, description)'
-        +'VALUES ($1, $2, $3)';
+async function add_product_category(department) {
+    if (TYPE_DATABASE === 'mysqlite') {
+        const queryText = `
+            INSERT INTO product_category (id_companies, name, description)
+            VALUES (?, ?, ?);
+        `;
+        const values = [department.id_company, department.name, department.description];
 
-    var values = [department.id_company,department.name,department.description] 
-    try{
-        await database.query(queryText, values);
-        return true;
-    } catch (error) {
-        console.error('Error al insertar en la base de datos:', error);
-        return false;
+        try {
+            return await new Promise((resolve, reject) => {
+                database.run(queryText, values, function(err) {
+                    if (err) {
+                        console.error('Error al insertar en SQLite:', err);
+                        reject(false);
+                    } else {
+                        resolve(true);
+                    }
+                });
+            });
+        } catch {
+            return false;
+        }
+    } else {
+        const queryText = `
+            INSERT INTO "Kitchen".product_category (id_companies, name, description)
+            VALUES ($1, $2, $3);
+        `;
+        const values = [department.id_company, department.name, department.description];
+
+        try {
+            await database.query(queryText, values);
+            return true;
+        } catch (error) {
+            console.error('Error al insertar en PostgreSQL:', error);
+            return false;
+        }
     }
-};
+}
 
 //////////////////////////////supplies 
 async function add_supplies_company(supplies){
@@ -121,27 +347,98 @@ async function add_supplies_company(supplies){
 }
 
 async function save_supplies_company(supplies) {
-    var queryText = 'INSERT INTO "Kitchen".products_and_supplies (id_companies, img, barcode, name, description, supplies, use_inventory)' +
-                    ' VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id';
+    if (TYPE_DATABASE === 'mysqlite') {
+        const queryText = `
+            INSERT INTO products_and_supplies 
+            (id_companies, img, barcode, name, description, supplies, use_inventory)
+            VALUES (?, ?, ?, ?, ?, ?, ?);
+        `;
+        const values = [
+            supplies.id_company,
+            supplies.img,
+            supplies.barcode,
+            supplies.name,
+            supplies.description,
+            supplies.this_is_a_supplies,
+            supplies.use_inventory
+        ];
 
-    var values = [supplies.id_company, supplies.img, supplies.barcode, supplies.name, supplies.description, supplies.this_is_a_supplies, supplies.use_inventory];
+        try {
+            return await new Promise((resolve, reject) => {
+                database.run(queryText, values, function(err) {
+                    if (err) {
+                        console.error('Error al insertar en SQLite:', err);
+                        reject(null);
+                    } else {
+                        resolve(this.lastID); // SQLite devuelve el id del último insert con this.lastID
+                    }
+                });
+            });
+        } catch {
+            return null;
+        }
+    } else {
+        const queryText = `
+            INSERT INTO "Kitchen".products_and_supplies 
+            (id_companies, img, barcode, name, description, supplies, use_inventory)
+            VALUES ($1, $2, $3, $4, $5, $6, $7)
+            RETURNING id;
+        `;
+        const values = [
+            supplies.id_company,
+            supplies.img,
+            supplies.barcode,
+            supplies.name,
+            supplies.description,
+            supplies.this_is_a_supplies,
+            supplies.use_inventory
+        ];
 
-    try {
-        const result = await database.query(queryText, values);
-        return result.rows[0].id;
-    } catch (error) {
-        console.error('Error al insertar en la base de datos:', error);
-        return null;
+        try {
+            const result = await database.query(queryText, values);
+            return result.rows[0].id;
+        } catch (error) {
+            console.error('Error al insertar en PostgreSQL:', error);
+            return null;
+        }
     }
 }
 
-async function search_supplies_company(id_company,barcode){
-    //we will search the company of the user 
-    var queryText = 'SELECT * FROM "Kitchen".products_and_supplies WHERE id_companies= $1 and barcode= $2';
-    var values = [id_company,barcode];
-    const result = await database.query(queryText, values);
-    return result.rows;
+
+async function search_supplies_company(id_company, barcode) {
+    if (TYPE_DATABASE === 'mysqlite') {
+        const queryText = `
+            SELECT * FROM products_and_supplies WHERE id_companies = ? AND barcode = ?;
+        `;
+        const values = [id_company, barcode];
+
+        return await new Promise((resolve, reject) => {
+            database.all(queryText, values, (err, rows) => {
+                if (err) {
+                    console.error('Error buscando supplies en SQLite:', err);
+                    reject([]);
+                } else {
+                    resolve(rows);
+                }
+            });
+        });
+    } else {
+        // PostgreSQL
+        const queryText = `
+            SELECT * FROM "Kitchen".products_and_supplies WHERE id_companies = $1 AND barcode = $2;
+        `;
+        const values = [id_company, barcode];
+
+        try {
+            const result = await database.query(queryText, values);
+            return result.rows;
+        } catch (error) {
+            console.error('Error buscando supplies en PostgreSQL:', error);
+            return [];
+        }
+    }
 }
+
 
 async function this_supplies_exists(id_company,barcode){
     //we will search the company of the user 
@@ -168,25 +465,47 @@ async function add_combo_company(combo){
 }
 
 async function save_combo_company(combo) {
-    var queryText = 'INSERT INTO "Kitchen".dishes_and_combos (id_companies, img, barcode, name, description) VALUES ($1, $2, $3, $4, $5) RETURNING id';
+    if (TYPE_DATABASE === 'mysqlite') {
+        const queryText = `
+            INSERT INTO dishes_and_combos (id_companies, img, barcode, name, description) 
+            VALUES (?, ?, ?, ?, ?)
+        `;
+        const values = [combo.id_company, combo.path_image, combo.barcode, combo.name, combo.description];
 
-    var values = [combo.id_company, combo.path_image, combo.barcode, combo.name, combo.description];
+        return await new Promise((resolve, reject) => {
+            database.run(queryText, values, function(err) {
+                if (err) {
+                    console.error('Error al insertar combo en SQLite:', err);
+                    resolve(null);
+                } else {
+                    // this.lastID es el ID insertado en SQLite
+                    resolve(this.lastID);
+                }
+            });
+        });
+    } else {
+        // PostgreSQL
+        const queryText = `
+            INSERT INTO "Kitchen".dishes_and_combos (id_companies, img, barcode, name, description)
+            VALUES ($1, $2, $3, $4, $5) RETURNING id
+        `;
+        const values = [combo.id_company, combo.path_image, combo.barcode, combo.name, combo.description];
 
-    try {
-        const result = await database.query(queryText, values);
-
-        if (result.rowCount > 0) {
-            const insertedId = result.rows[0].id;
-            return insertedId;
-        } else {
-            console.error('No se insertaron filas en la base de datos.');
+        try {
+            const result = await database.query(queryText, values);
+            if (result.rowCount > 0) {
+                return result.rows[0].id;
+            } else {
+                console.error('No se insertaron filas en la base de datos.');
+                return null;
+            }
+        } catch (error) {
+            console.error('Error al insertar combo en PostgreSQL:', error);
             return null;
         }
-    } catch (error) {
-        console.error('Error al insertar en la base de datos:', error);
-        return null;
     }
 }
+
 
 async function add_product_combo_company(combo){
     if(await this_combo_exists(combo.id_company,combo.barcode)){
@@ -206,25 +525,67 @@ async function add_product_combo_company(combo){
 }
 
 async function save_product_combo_company(combo) {
-    var queryText = 'INSERT INTO "Kitchen".dishes_and_combos (id_companies, img, barcode, name, description, is_a_product, id_product_department, id_product_category) VALUES ($1, $2, $3, $4, $5,$6,$7,$8) RETURNING id';
+    if (TYPE_DATABASE === 'mysqlite') {
+        const queryText = `
+            INSERT INTO dishes_and_combos 
+            (id_companies, img, barcode, name, description, is_a_product, id_product_department, id_product_category) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        `;
+        const values = [
+            combo.id_company,
+            combo.path_image,
+            combo.barcode,
+            combo.name,
+            combo.description,
+            1, // true en SQLite se usa como 1
+            combo.id_product_department,
+            combo.id_product_category
+        ];
 
-    var values = [combo.id_company, combo.path_image, combo.barcode, combo.name, combo.description,true, combo.id_product_department, combo.id_product_category];
+        return await new Promise((resolve, reject) => {
+            database.run(queryText, values, function(err) {
+                if (err) {
+                    console.error('Error al insertar producto combo en SQLite:', err);
+                    resolve(null);
+                } else {
+                    resolve(this.lastID);
+                }
+            });
+        });
+    } else {
+        // PostgreSQL
+        const queryText = `
+            INSERT INTO "Kitchen".dishes_and_combos 
+            (id_companies, img, barcode, name, description, is_a_product, id_product_department, id_product_category) 
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id
+        `;
 
-    try {
-        const result = await database.query(queryText, values);
+        const values = [
+            combo.id_company,
+            combo.path_image,
+            combo.barcode,
+            combo.name,
+            combo.description,
+            true,
+            combo.id_product_department,
+            combo.id_product_category
+        ];
 
-        if (result.rowCount > 0) {
-            const insertedId = result.rows[0].id;
-            return insertedId;
-        } else {
-            console.error('No se insertaron filas en la base de datos.');
+        try {
+            const result = await database.query(queryText, values);
+            if (result.rowCount > 0) {
+                return result.rows[0].id;
+            } else {
+                console.error('No se insertaron filas en la base de datos.');
+                return null;
+            }
+        } catch (error) {
+            console.error('Error al insertar producto combo en PostgreSQL:', error);
             return null;
         }
-    } catch (error) {
-        console.error('Error al insertar en la base de datos:', error);
-        return null;
     }
 }
+
 
 async function save_all_supplies_combo_company(id_combo,supplies){
     try{
@@ -241,20 +602,59 @@ async function save_all_supplies_combo_company(id_combo,supplies){
     }
 }
 
-async function save_supplies_combo_company(id_dishes_and_combos,supplies){
-    var queryText = 'INSERT INTO "Kitchen".table_supplies_combo (id_dishes_and_combos, id_products_and_supplies, amount, food_waste, unity,additional)'
-        +'VALUES ($1, $2, $3, $4, $5,$6)';
+async function save_supplies_combo_company(id_dishes_and_combos, supplies) {
+    if (TYPE_DATABASE === 'mysqlite') {
+        const queryText = `
+            INSERT INTO table_supplies_combo 
+            (id_dishes_and_combos, id_products_and_supplies, amount, food_waste, unity, additional)
+            VALUES (?, ?, ?, ?, ?, ?)
+        `;
+        const values = [
+            id_dishes_and_combos,
+            supplies.idProduct,
+            supplies.amount,
+            supplies.foodWaste,
+            supplies.unity,
+            supplies.additional
+        ];
 
-    var values = [id_dishes_and_combos,supplies.idProduct,supplies.amount,supplies.foodWaste,supplies.unity,supplies.additional] 
+        return new Promise((resolve) => {
+            database.run(queryText, values, function(err) {
+                if (err) {
+                    console.error('Error al insertar supplies combo en SQLite:', err);
+                    resolve(false);
+                } else {
+                    resolve(true);
+                }
+            });
+        });
+    } else {
+        // PostgreSQL
+        const queryText = `
+            INSERT INTO "Kitchen".table_supplies_combo 
+            (id_dishes_and_combos, id_products_and_supplies, amount, food_waste, unity, additional)
+            VALUES ($1, $2, $3, $4, $5, $6)
+        `;
 
-    try{
-        await database.query(queryText, values);
-        return true;
-    } catch (error) {
-        console.error('Error al insertar en la base de datos:', error);
-        return false;
+        const values = [
+            id_dishes_and_combos,
+            supplies.idProduct,
+            supplies.amount,
+            supplies.foodWaste,
+            supplies.unity,
+            supplies.additional
+        ];
+
+        try {
+            await database.query(queryText, values);
+            return true;
+        } catch (error) {
+            console.error('Error al insertar supplies combo en PostgreSQL:', error);
+            return false;
+        }
     }
 }
+
 
 function get_unity(unity){
 
@@ -276,13 +676,38 @@ function get_unity(unity){
     return 3
 }
 
-async function search_component_company(id_company,barcode,schema,nameTable){
-    //we will search the company of the user 
-    var queryText = `SELECT * FROM "${schema}".${nameTable} WHERE id_companies = $1 AND barcode = $2`;
-    var values = [id_company,barcode];
-    const result = await database.query(queryText, values);
-    return result.rows;
+async function search_component_company(id_company, barcode, schema, nameTable) {
+    if (TYPE_DATABASE === 'mysqlite') {
+        // En SQLite no existe esquema, y placeholders son '?'
+        // Ignoramos schema, concatenamos directamente nameTable con cuidado de evitar inyección (mejor sanitizar antes)
+        const queryText = `SELECT * FROM ${nameTable} WHERE id_companies = ? AND barcode = ?`;
+        const values = [id_company, barcode];
+
+        return new Promise((resolve) => {
+            database.all(queryText, values, (err, rows) => {
+                if (err) {
+                    console.error('Error en búsqueda SQLite:', err);
+                    resolve([]);
+                } else {
+                    resolve(rows);
+                }
+            });
+        });
+    } else {
+        // PostgreSQL usa esquema y placeholders $1, $2
+        const queryText = `SELECT * FROM "${schema}".${nameTable} WHERE id_companies = $1 AND barcode = $2`;
+        const values = [id_company, barcode];
+
+        try {
+            const result = await database.query(queryText, values);
+            return result.rows;
+        } catch (error) {
+            console.error('Error en búsqueda PostgreSQL:', error);
+            return [];
+        }
+    }
 }
+
 
 async function this_combo_exists(id_company,barcode){
     //we will search the company of the user 
@@ -295,23 +720,40 @@ function calculate_components(data){
 }
 
 //add buy to the history 
-async function add_buy_history(id_companies, id_branches, id_employees, id_customers,id_dishes_and_combos,price,amount,total,day){
+async function add_buy_history(id_companies, id_branches, id_employees, id_customers, id_dishes_and_combos, price, amount, total, day) {
     let idCustomer = parseInt(id_customers);
     if (isNaN(idCustomer)) {
         idCustomer = null;
     }
-    
-    var queryText = 'INSERT INTO "Box".sales_history (id_companies, id_branches, id_employees, id_customers, id_dishes_and_combos, price, amount, total, sale_day)'
-        +'VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)';
-    var values = [id_companies, id_branches, id_employees, idCustomer,id_dishes_and_combos,price,amount,total,day] 
-    try{
-        await database.query(queryText, values);
-        return true;
-    } catch (error) {
-        console.error('Error add database history:', error);
-        return false;
+
+    if (TYPE_DATABASE === 'mysqlite') {
+        // SQLite no usa esquema, y placeholders son '?'
+        const queryText = 'INSERT INTO sales_history (id_companies, id_branches, id_employees, id_customers, id_dishes_and_combos, price, amount, total, sale_day) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+        const values = [id_companies, id_branches, id_employees, idCustomer, id_dishes_and_combos, price, amount, total, day];
+        return new Promise((resolve) => {
+            database.run(queryText, values, function(err) {
+                if (err) {
+                    console.error('Error add database history SQLite:', err);
+                    resolve(false);
+                } else {
+                    resolve(true);
+                }
+            });
+        });
+    } else {
+        // PostgreSQL usa esquema y placeholders $1, $2...
+        const queryText = 'INSERT INTO "Box".sales_history (id_companies, id_branches, id_employees, id_customers, id_dishes_and_combos, price, amount, total, sale_day) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)';
+        const values = [id_companies, id_branches, id_employees, idCustomer, id_dishes_and_combos, price, amount, total, day];
+        try {
+            await database.query(queryText, values);
+            return true;
+        } catch (error) {
+            console.error('Error add database history PostgreSQL:', error);
+            return false;
+        }
     }
 }
+
 
 
 //////////////////////branch
@@ -324,82 +766,224 @@ async function add_branch(branch){
     }
 }
 
-async function save_branch(branch){
-    try{
-        var queryText = 'INSERT INTO "Company".branches (id_companies,name_branch,alias,representative,phone,cell_phone,email_branch,id_country,municipality,city,cologne,address,num_ext,num_int,postal_code)'
-        + 'VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING id';
-        var values = Object.values(branch);
+async function save_branch(branch) {
+    if (TYPE_DATABASE === 'mysqlite') {
+        // SQLite no usa esquema ni placeholders con números
+        const queryText = `INSERT INTO branches 
+            (id_companies, name_branch, alias, representative, phone, cell_phone, email_branch, id_country, municipality, city, cologne, address, num_ext, num_int, postal_code) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        const values = Object.values(branch);
 
-        const result = await database.query(queryText, values);
-        console.log(result)
-        return result.rows[0].id;
-    } catch (error) {
-        console.error('Error to insert branch', error);
-        return false;
+        return new Promise((resolve) => {
+            database.run(queryText, values, function(err) {
+                if (err) {
+                    console.error('Error to insert branch SQLite:', err);
+                    resolve(false);
+                } else {
+                    // En SQLite, el id insertado queda en this.lastID
+                    resolve(this.lastID);
+                }
+            });
+        });
+    } else {
+        // PostgreSQL con esquema y placeholders numerados
+        const queryText = `INSERT INTO "Company".branches 
+            (id_companies, name_branch, alias, representative, phone, cell_phone, email_branch, id_country, municipality, city, cologne, address, num_ext, num_int, postal_code) 
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING id`;
+        const values = Object.values(branch);
+
+        try {
+            const result = await database.query(queryText, values);
+            return result.rows[0].id;
+        } catch (error) {
+            console.error('Error to insert branch PostgreSQL:', error);
+            return false;
+        }
     }
 }
 
-async function this_branch_exists(id_company,name){
-    //we will search the company of the user 
-    var queryText = `SELECT * FROM "Company".branches WHERE id_companies = $1 AND name_branch = $2`;
-    var values = [id_company,name];
-    const result = await database.query(queryText, values);
-    return result.rows.length>0;
+
+async function this_branch_exists(id_company, name) {
+    if (TYPE_DATABASE === 'mysqlite') {
+        const queryText = `SELECT * FROM branches WHERE id_companies = ? AND name_branch = ?`;
+        const values = [id_company, name];
+
+        return new Promise((resolve) => {
+            database.all(queryText, values, (err, rows) => {
+                if (err) {
+                    console.error('Error checking branch SQLite:', err);
+                    resolve(false);
+                } else {
+                    resolve(rows.length > 0);
+                }
+            });
+        });
+    } else {
+        // PostgreSQL
+        const queryText = `SELECT * FROM "Company".branches WHERE id_companies = $1 AND name_branch = $2`;
+        const values = [id_company, name];
+
+        try {
+            const result = await database.query(queryText, values);
+            return result.rows.length > 0;
+        } catch (error) {
+            console.error('Error checking branch PostgreSQL:', error);
+            return false;
+        }
+    }
 }
 
 //////////////////////customer commanders
-async function this_customer_exists(id_company,email){
-    //we will search the company of the user 
-    var queryText = `SELECT * FROM "Company".customers WHERE id_companies = $1 AND email = $2`;
-    var values = [id_company,email];
-    const result = await database.query(queryText, values);
-    return result.rows.length>0;
-}
+async function this_customer_exists(id_company, email) {
+    if (TYPE_DATABASE === 'mysqlite') {
+        const queryText = `SELECT * FROM customers WHERE id_companies = ? AND email = ?`;
+        const values = [id_company, email];
 
-async function add_customer(customer){
-    const queryText = `
-        INSERT INTO "Company".customers(
-            id_companies, first_name, second_name, last_name, id_country, states, city, street, num_ext, num_int, postal_code, email, phone, cell_phone, points, birthday,
-            type_customer, company_name, company_address, website, contact_name, company_cellphone, company_phone
-        )
-        VALUES (
-            $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, 
-            $17, $18, $19, $20, $21, $22, $23
-        );
-    `;
-    const values = Object.values(customer); //this is for create the format of save
-    try{
-        await database.query(queryText, values);
-        return true;
-    } catch (error) {
-        console.error('Error inserting into customer database:', error);
-        return false;
+        return new Promise((resolve) => {
+            database.all(queryText, values, (err, rows) => {
+                if (err) {
+                    console.error('Error checking customer SQLite:', err);
+                    resolve(false);
+                } else {
+                    resolve(rows.length > 0);
+                }
+            });
+        });
+    } else {
+        // PostgreSQL
+        const queryText = `SELECT * FROM "Company".customers WHERE id_companies = $1 AND email = $2`;
+        const values = [id_company, email];
+
+        try {
+            const result = await database.query(queryText, values);
+            return result.rows.length > 0;
+        } catch (error) {
+            console.error('Error checking customer PostgreSQL:', error);
+            return false;
+        }
     }
 }
+
+async function add_customer(customer) {
+    if (TYPE_DATABASE === 'mysqlite') {
+        // SQLite usa ? para los placeholders y no soporta schema ni RETURNING
+        const queryText = `
+            INSERT INTO customers (
+                id_companies, first_name, second_name, last_name, id_country, states, city, street, num_ext, num_int, postal_code, email, phone, cell_phone, points, birthday,
+                type_customer, company_name, company_address, website, contact_name, company_cellphone, company_phone
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        `;
+
+        const values = Object.values(customer);
+
+        return new Promise((resolve) => {
+            database.run(queryText, values, function (err) {
+                if (err) {
+                    console.error('Error inserting into customer SQLite:', err);
+                    resolve(false);
+                } else {
+                    resolve(true);
+                }
+            });
+        });
+
+    } else {
+        // PostgreSQL con placeholders $1, $2...
+        const queryText = `
+            INSERT INTO "Company".customers (
+                id_companies, first_name, second_name, last_name, id_country, states, city, street, num_ext, num_int, postal_code, email, phone, cell_phone, points, birthday,
+                type_customer, company_name, company_address, website, contact_name, company_cellphone, company_phone
+            )
+            VALUES (
+                $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16,
+                $17, $18, $19, $20, $21, $22, $23
+            );
+        `;
+
+        const values = Object.values(customer);
+
+        try {
+            await database.query(queryText, values);
+            return true;
+        } catch (error) {
+            console.error('Error inserting into customer PostgreSQL:', error);
+            return false;
+        }
+    }
+}
+
 
 //department employees
-async function this_department_employees_exists(department){
-    //we will search the department employees of the user 
-    var queryText = `SELECT * FROM "Employee".departments_employees WHERE id_companies = $1 AND name_departaments = $2`;
-    var values = [department.id_company,department.name];
-    const result = await database.query(queryText, values);
-    return result.rows.length>0;
-}
+async function this_department_employees_exists(department) {
+    let queryText, values;
 
-async function save_department_employees(department) {
-    var queryText = 'INSERT INTO "Employee".departments_employees(id_companies, name_departaments, description)' +
-                    ' VALUES ($1, $2, $3) RETURNING id';
+    if (TYPE_DATABASE === 'mysqlite') {
+        // SQLite no usa schema y usa ? para parámetros
+        queryText = `SELECT * FROM departments_employees WHERE id_companies = ? AND name_departaments = ?`;
+        values = [department.id_company, department.name];
+        
+        return new Promise((resolve) => {
+            database.all(queryText, values, (err, rows) => {
+                if (err) {
+                    console.error('Error searching department employees SQLite:', err);
+                    resolve(false);
+                } else {
+                    resolve(rows.length > 0);
+                }
+            });
+        });
 
-    var values = Object.values(department);
-    
-    try {
-        const result = await database.query(queryText, values);
-        return result.rows[0].id;
-    } catch (error) {
-        console.error('Error al insertar en la base de datos customer:', error);
-        return null;
+    } else {
+        // PostgreSQL con schema y $ placeholders
+        queryText = `SELECT * FROM "Employee".departments_employees WHERE id_companies = $1 AND name_departaments = $2`;
+        values = [department.id_company, department.name];
+
+        try {
+            const result = await database.query(queryText, values);
+            return result.rows.length > 0;
+        } catch (error) {
+            console.error('Error searching department employees PostgreSQL:', error);
+            return false;
+        }
     }
 }
+
+
+async function save_department_employees(department) {
+    let queryText, values;
+
+    if (TYPE_DATABASE === 'mysqlite') {
+        // SQLite no tiene schema ni RETURNING, y usa ? para placeholders
+        queryText = 'INSERT INTO departments_employees (id_companies, name_departaments, description) VALUES (?, ?, ?)';
+        values = Object.values(department);
+
+        return new Promise((resolve) => {
+            database.run(queryText, values, function(err) {
+                if (err) {
+                    console.error('Error al insertar en SQLite:', err);
+                    resolve(null);
+                } else {
+                    // this.lastID contiene el id insertado
+                    resolve(this.lastID);
+                }
+            });
+        });
+
+    } else {
+        // PostgreSQL
+        queryText = 'INSERT INTO "Employee".departments_employees(id_companies, name_departaments, description) VALUES ($1, $2, $3) RETURNING id';
+        values = Object.values(department);
+
+        try {
+            const result = await database.query(queryText, values);
+            return result.rows[0].id;
+        } catch (error) {
+            console.error('Error al insertar en PostgreSQL:', error);
+            return null;
+        }
+    }
+}
+
 
 async function add_department_employees(department){
     if(await this_department_employees_exists(department)){
@@ -438,139 +1022,307 @@ async function add_type_employees(newRole) {
     const keys = Object.keys(newRole);
     const values = Object.values(newRole);
 
-    const columns = keys.join(', ');
-    const placeholders = keys.map((_, index) => `$${index + 1}`).join(', ');
+    let queryText;
 
-    const queryText = `
-        INSERT INTO "Employee".roles_employees (${columns})
-        VALUES (${placeholders})
-    `;
+    if (TYPE_DATABASE === 'mysqlite') {
+        // SQLite usa ? para placeholders
+        const columns = keys.join(', ');
+        const placeholders = keys.map(() => '?').join(', ');
+        queryText = `INSERT INTO roles_employees (${columns}) VALUES (${placeholders})`;
 
-    try {
-        await database.query(queryText, values);
-        return true;
-    } catch (error) {
-        console.error('Error insertando nuevo rol en roles_employees:', error);
-        return false;
+        return new Promise((resolve) => {
+            database.run(queryText, values, function(err) {
+                if (err) {
+                    console.error('Error insertando nuevo rol en SQLite:', err);
+                    resolve(false);
+                } else {
+                    resolve(true);
+                }
+            });
+        });
+
+    } else {
+        // PostgreSQL usa $1, $2, ...
+        const columns = keys.join(', ');
+        const placeholders = keys.map((_, i) => `$${i + 1}`).join(', ');
+        queryText = `INSERT INTO "Employee".roles_employees (${columns}) VALUES (${placeholders})`;
+
+        try {
+            await database.query(queryText, values);
+            return true;
+        } catch (error) {
+            console.error('Error insertando nuevo rol en PostgreSQL:', error);
+            return false;
+        }
     }
 }
 
 
-//add_provider_company
-async function add_provider_company(provider){
-    var queryText = 'INSERT INTO "Branch".providers(id_branches, name, representative , email, website, rfc, curp, phone, cell_phone, credit_limit, credit_days, category, comment, type, business_name, business_representative, business_curp, business_rfc, business_phone, business_cell_phone, business_address, business_postal_code)'
-    + ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22)';
 
-    var values = Object.values(provider);
-    try{
-        await database.query(queryText, values);
-        return true;
-    } catch (error) {
-        console.error('Error al insertar en la base de datos provider:', error);
-        return false;
+//add_provider_company
+async function add_provider_company(provider) {
+    const keys = Object.keys(provider);
+    const values = Object.values(provider);
+
+    if (TYPE_DATABASE === 'mysqlite') {
+        // SQLite usa ?
+        const columns = keys.join(', ');
+        const placeholders = keys.map(() => '?').join(', ');
+        const queryText = `INSERT INTO providers (${columns}) VALUES (${placeholders})`;
+
+        return new Promise((resolve) => {
+            database.run(queryText, values, function(err) {
+                if (err) {
+                    console.error('Error insertando proveedor en SQLite:', err);
+                    resolve(false);
+                } else {
+                    resolve(true);
+                }
+            });
+        });
+
+    } else {
+        // PostgreSQL usa $1, $2, ...
+        const columns = keys.join(', ');
+        const placeholders = keys.map((_, i) => `$${i + 1}`).join(', ');
+        const queryText = `INSERT INTO "Branch".providers (${columns}) VALUES (${placeholders})`;
+
+        try {
+            await database.query(queryText, values);
+            return true;
+        } catch (error) {
+            console.error('Error al insertar en la base de datos provider:', error);
+            return false;
+        }
     }
 }
 
 //add product_and_suppiles_features
 async function add_product_and_suppiles_features(id_branch, id_supplies) {
-    var queryText = 'INSERT INTO "Inventory".product_and_suppiles_features(id_branches, id_products_and_supplies)' +
-                    ' VALUES ($1, $2) RETURNING id';
+    const values = [id_branch, id_supplies];
 
-    var values = [id_branch, id_supplies];
-
-    try {
-        const result = await database.query(queryText, values);
-        return result.rows[0].id;
-    } catch (error) {
-        console.error('Error al insertar en la base de datos product_and_suppiles_features:', error);
-        return null;
+    if (TYPE_DATABASE === 'mysqlite') {
+        const queryText = 'INSERT INTO product_and_suppiles_features (id_branches, id_products_and_supplies) VALUES (?, ?)';
+        return new Promise((resolve) => {
+            database.run(queryText, values, function(err) {
+                if (err) {
+                    console.error('Error insertando product_and_suppiles_features en SQLite:', err);
+                    resolve(null);
+                } else {
+                    resolve(this.lastID); // ID generado en SQLite
+                }
+            });
+        });
+    } else {
+        const queryText = 'INSERT INTO "Inventory".product_and_suppiles_features (id_branches, id_products_and_supplies) VALUES ($1, $2) RETURNING id';
+        try {
+            const result = await database.query(queryText, values);
+            return result.rows[0].id;
+        } catch (error) {
+            console.error('Error al insertar en la base de datos product_and_suppiles_features:', error);
+            return null;
+        }
     }
 }
 
 
 //add combo branch 
 async function add_combo_branch(combo) {
-    var queryText = 'INSERT INTO "Inventory".dish_and_combo_features(id_companies, id_branches, id_dishes_and_combos, price_1, amount, product_cost, revenue_1, purchase_unit)' +
-                    ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id';
+    const values = Object.values(combo);
 
-    var values = Object.values(combo);
-    
-    try {
-        const result = await database.query(queryText, values);
-        return result.rows[0].id;
-    } catch (error) {
-        console.error('Error al insertar en la base de datos dish_and_combo_features:', error);
-        return null;
+    if (TYPE_DATABASE === 'mysqlite') {
+        const columns = Object.keys(combo).join(', ');
+        const placeholders = Object.keys(combo).map(() => '?').join(', ');
+        const queryText = `INSERT INTO dish_and_combo_features (${columns}) VALUES (${placeholders})`;
+
+        return new Promise((resolve) => {
+            database.run(queryText, values, function(err) {
+                if (err) {
+                    console.error('Error insertando dish_and_combo_features en SQLite:', err);
+                    resolve(null);
+                } else {
+                    resolve(this.lastID); // ID generado en SQLite
+                }
+            });
+        });
+    } else {
+        const queryText = 'INSERT INTO "Inventory".dish_and_combo_features(id_companies, id_branches, id_dishes_and_combos, price_1, amount, product_cost, revenue_1, purchase_unit) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id';
+
+        try {
+            const result = await database.query(queryText, values);
+            return result.rows[0].id;
+        } catch (error) {
+            console.error('Error al insertar en la base de datos dish_and_combo_features:', error);
+            return null;
+        }
     }
 }
 
 
+
 //add  box move branch 
-async function add_movement_history(data){
-    var queryText = 'INSERT INTO "Box".movement_history(id_branches, id_boxes, id_employees, move, comment, date_move)'
-    + ' VALUES ($1, $2, $3, $4,$5,$6)';
-    var values = Object.values(data);
-    try{
-        await database.query(queryText, values);
-        return true;
-    } catch (error) {
-        console.error('Error to add in the database movement_history:', error);
-        return false;
+async function add_movement_history(data) {
+    const values = Object.values(data);
+
+    if (TYPE_DATABASE === 'mysqlite') {
+        const columns = Object.keys(data).join(', ');
+        const placeholders = Object.keys(data).map(() => '?').join(', ');
+        const queryText = `INSERT INTO movement_history (${columns}) VALUES (${placeholders})`;
+
+        return new Promise((resolve) => {
+            database.run(queryText, values, function(err) {
+                if (err) {
+                    console.error('Error insertando movement_history en SQLite:', err);
+                    resolve(false);
+                } else {
+                    resolve(true);
+                }
+            });
+        });
+
+    } else {
+        const queryText = 'INSERT INTO "Box".movement_history(id_branches, id_boxes, id_employees, move, comment, date_move) VALUES ($1, $2, $3, $4, $5, $6)';
+        try {
+            await database.query(queryText, values);
+            return true;
+        } catch (error) {
+            console.error('Error to add in the database movement_history:', error);
+            return false;
+        }
     }
 }
 
 async function add_commanders(data) {
-    var queryText = 'INSERT INTO "Branch".commanders(id_branches, id_employees, id_customers, order_details, total, money_received, change, status, comentary, commander_date)' +
-                    ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id';
-    var values = Object.values(data);
-    try {
-        const result = await database.query(queryText, values);
-        return result.rows[0].id; // return the ID that save in the database
-    } catch (error) {
-        console.error('Error to add in the database commanders:', error);
-        return null;
+    const keys = Object.keys(data);
+    const values = Object.values(data);
+
+    if (TYPE_DATABASE === 'mysqlite') {
+        const columns = keys.join(', ');
+        const placeholders = keys.map(() => '?').join(', ');
+        const queryText = `INSERT INTO commanders (${columns}) VALUES (${placeholders})`;
+
+        return new Promise((resolve) => {
+            database.run(queryText, values, function(err) {
+                if (err) {
+                    console.error('Error insertando commanders en SQLite:', err);
+                    resolve(null);
+                } else {
+                    resolve(this.lastID);  // SQLite returns last inserted ID as this.lastID
+                }
+            });
+        });
+
+    } else {
+        const queryText = 'INSERT INTO "Branch".commanders(id_branches, id_employees, id_customers, order_details, total, money_received, change, status, comentary, commander_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id';
+
+        try {
+            const result = await database.query(queryText, values);
+            return result.rows[0].id;  // PostgreSQL returns inserted id in rows[0].id
+        } catch (error) {
+            console.error('Error to add in the database commanders:', error);
+            return null;
+        }
     }
 }
 
-async function add_box(idBranch,number,idPrinter,idBox){
-    var queryText = 'INSERT INTO "Branch".boxes(id_branches, num_box, ip_printer)'
-    + ' VALUES ($1, $2,$3)';
-    var values = [idBranch,number,idPrinter];
 
-    try{
-        await database.query(queryText, values);
-        return true;
-    } catch (error) {
-        console.error('Error to add in the database boxes:', error);
-        return false;
+async function add_box(idBranch, number, idPrinter, idBox) {
+    const values = [idBranch, number, idPrinter];
+
+    if (TYPE_DATABASE === 'mysqlite') {
+        const queryText = `INSERT INTO boxes (id_branches, num_box, ip_printer) VALUES (?, ?, ?)`;
+
+        return new Promise((resolve) => {
+            database.run(queryText, values, function(err) {
+                if (err) {
+                    console.error('Error insertando en SQLite boxes:', err);
+                    resolve(false);
+                } else {
+                    resolve(true);
+                }
+            });
+        });
+
+    } else {
+        const queryText = `INSERT INTO "Branch".boxes(id_branches, num_box, ip_printer) VALUES ($1, $2, $3)`;
+
+        try {
+            await database.query(queryText, values);
+            return true;
+        } catch (error) {
+            console.error('Error to add in the database boxes:', error);
+            return false;
+        }
     }
 }
 
-async function add_ad(data){
-    var queryText = 'INSERT INTO "Branch"."Ad" (id_branches, img, description, type)'
-    + ' VALUES ($1, $2,$3, $4)';
-    var values = Object.values(data);
 
-    try{
-        await database.query(queryText, values);
-        return true;
-    } catch (error) {
-        console.error('Error to add in the database combo:', error);
-        return false;
+async function add_ad(data) {
+    const keys = Object.keys(data);
+    const values = Object.values(data);
+
+    if (TYPE_DATABASE === 'mysqlite') {
+        const columns = keys.join(', ');
+        const placeholders = keys.map(() => '?').join(', ');
+        const queryText = `INSERT INTO Ad (${columns}) VALUES (${placeholders})`;
+
+        return new Promise((resolve) => {
+            database.run(queryText, values, function(err) {
+                if (err) {
+                    console.error('Error insertando anuncio en SQLite:', err);
+                    resolve(false);
+                } else {
+                    resolve(true);
+                }
+            });
+        });
+
+    } else {
+        const columns = keys.join(', ');
+        const placeholders = keys.map((_, i) => `$${i + 1}`).join(', ');
+        const queryText = `INSERT INTO "Branch"."Ad" (${columns}) VALUES (${placeholders})`;
+
+        try {
+            await database.query(queryText, values);
+            return true;
+        } catch (error) {
+            console.error('Error al insertar anuncio en PostgreSQL:', error);
+            return false;
+        }
     }
 }
 
-async function add_schedule(schedule){
-    var queryText = 'INSERT INTO "Employee".schedules(id_branches, name, tolerance_time, color, monday, tuesday, wednesday, thursday, friday, saturday, sunday, ms, mf, ts, tf, ws, wf, ths, thf, fs, ff, sas, saf, sus, suf)'
-    + ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25)';
-    var values = Object.values(schedule);
+async function add_schedule(schedule) {
+    const keys = Object.keys(schedule);
+    const values = Object.values(schedule);
 
-    try{
-        await database.query(queryText, values);
-        return true;
-    } catch (error) {
-        console.error('Error to schedule in the database:', error);
-        return false;
+    if (TYPE_DATABASE === 'mysqlite') {
+        const columns = keys.join(', ');
+        const placeholders = keys.map(() => '?').join(', ');
+        const queryText = `INSERT INTO schedules (${columns}) VALUES (${placeholders})`;
+
+        return new Promise((resolve) => {
+            database.run(queryText, values, function(err) {
+                if (err) {
+                    console.error('Error insertando horario en SQLite:', err);
+                    resolve(false);
+                } else {
+                    resolve(true);
+                }
+            });
+        });
+    } else {
+        const columns = keys.join(', ');
+        const placeholders = keys.map((_, i) => `$${i + 1}`).join(', ');
+        const queryText = `INSERT INTO "Employee".schedules (${columns}) VALUES (${placeholders})`;
+
+        try {
+            await database.query(queryText, values);
+            return true;
+        } catch (error) {
+            console.error('Error insertando horario en PostgreSQL:', error);
+            return false;
+        }
     }
 }
 
@@ -589,20 +1341,40 @@ async function add_department(name,description){
     }
 }
 
+async function add_order(dataOrder) {
+    const keys = Object.keys(dataOrder);
+    const values = Object.values(dataOrder);
 
-async function add_order(dataOrder){
-    var queryText = 'INSERT INTO "Branch".order(id_branches, name_customer, cellphone, phone, address, comment, id_commanders)'
-    + ' VALUES ($1, $2, $3, $4, $5, $6, $7)';
-    var values = Object.values(dataOrder);
+    if (TYPE_DATABASE === 'mysqlite') {
+        const columns = keys.join(', ');
+        const placeholders = keys.map(() => '?').join(', ');
+        const queryText = `INSERT INTO "order" (${columns}) VALUES (${placeholders})`;
 
-    try{
-        await database.query(queryText, values);
-        return true;
-    } catch (error) {
-        console.error('Error to schedule in the database:', error);
-        return false;
+        return new Promise((resolve) => {
+            database.run(queryText, values, function(err) {
+                if (err) {
+                    console.error('Error insertando orden en SQLite:', err);
+                    resolve(false);
+                } else {
+                    resolve(true);
+                }
+            });
+        });
+    } else {
+        const columns = keys.join(', ');
+        const placeholders = keys.map((_, i) => `$${i + 1}`).join(', ');
+        const queryText = `INSERT INTO "Branch".order (${columns}) VALUES (${placeholders})`;
+
+        try {
+            await database.query(queryText, values);
+            return true;
+        } catch (error) {
+            console.error('Error insertando orden en PostgreSQL:', error);
+            return false;
+        }
     }
 }
+
 
 
 
@@ -716,7 +1488,7 @@ async function add_message_to_the_customer_history(id_users,id_prospects,comment
 }
 
 
-async function add_recipe( id_companies, id_branches, id_employees,recipe) {
+async function add_recipe_original( id_companies, id_branches, id_employees,recipe) {
 
     // Verificar si recipe.id_customer es un valor numérico y asignar null si no lo es
     recipe.id_customer = isNaN(recipe.id_customer) ? null : recipe.id_customer;
@@ -790,6 +1562,82 @@ async function add_recipe( id_companies, id_branches, id_employees,recipe) {
     }
 
 }
+
+async function add_recipe(id_companies, id_branches, id_employees, recipe) {
+  // Verificar si recipe.id_customer es numérico y asignar null si no
+  recipe.id_customer = isNaN(recipe.id_customer) ? null : recipe.id_customer;
+
+  // Construimos las columnas y valores según si id_customer existe o no
+  const hasCustomer = !!recipe.id_customer;
+
+  const keysBase = [
+    'recipe_folio',
+    'doctor_id',
+    'doctor_name',
+    'date_prescription',
+    'retained',
+    'comment',
+    'id_dishes_and_combos',
+    'id_companies',
+    'id_branches',
+    'id_employees',
+    'id_lots',
+    'amount'
+  ];
+
+  const keys = hasCustomer ? [...keysBase.slice(0, 11), 'id_customers', keysBase[11]] : keysBase;
+
+  // Valores ordenados según keys
+  const valuesBase = [
+    recipe.recipeId,
+    recipe.doctorLicense,
+    recipe.doctorName,
+    recipe.prescriptionDate,
+    recipe.retained,
+    recipe.comments,
+    recipe.id_dishes_and_combos,
+    id_companies,
+    id_branches,
+    id_employees,
+    recipe.id_lot
+  ];
+
+  const values = hasCustomer
+    ? [...valuesBase, recipe.id_customer, recipe.amount]
+    : [...valuesBase, recipe.amount];
+
+  if (TYPE_DATABASE === 'mysqlite') {
+    // SQLite usa ?, y tabla sin schema
+    const columns = keys.join(', ');
+    const placeholders = keys.map(() => '?').join(', ');
+    const queryText = `INSERT INTO prescription (${columns}) VALUES (${placeholders})`;
+
+    return new Promise((resolve) => {
+      database.run(queryText, values, function (err) {
+        if (err) {
+          console.error('Error insertando receta en SQLite:', err);
+          resolve(false);
+        } else {
+          resolve(true);
+        }
+      });
+    });
+  } else {
+    // PostgreSQL usa $1, $2, ... y schema "Branch"
+    const columns = keys.join(', ');
+    const placeholders = keys.map((_, i) => `$${i + 1}`).join(', ');
+    const queryText = `INSERT INTO "Branch".prescription (${columns}) VALUES (${placeholders})`;
+
+    try {
+      await database.query(queryText, values);
+      return true;
+    } catch (error) {
+      console.error('Error insertando receta en PostgreSQL:', error);
+      return false;
+    }
+  }
+}
+
 
 
 async function add_app(app){

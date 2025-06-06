@@ -1,3 +1,6 @@
+require('dotenv').config();
+const {TYPE_DATABASE}=process.env;
+
 const database = require('../database');
 const addDatabase = require('../router/addDatabase');
 const rolFree=0
