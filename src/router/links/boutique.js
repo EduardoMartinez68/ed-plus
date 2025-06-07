@@ -177,26 +177,7 @@ function create_boutique(barcode,name,purchase_sale,description,max_inventary,id
     return boutique;
 }
 
-async function add_the_boutique(boutiqueData){
-  // Definir la consulta SQL para insertar en boutique
-  const queryText = `
-    INSERT INTO "Inventory".boutique (
-      name, 
-      barcode, 
-      description, 
-      use_inventory, 
-      max_inventary, 
-      min_inventory, 
-      purchase_price, 
-      purchase_sale, 
-      id_companies, 
-      id_branches
-    )
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-    RETURNING id;
-  `;
-  
-  // Preparar los valores a insertar
+async function add_the_boutique(boutiqueData) {
   const values = [
     boutiqueData.name,
     boutiqueData.barcode,
@@ -209,40 +190,105 @@ async function add_the_boutique(boutiqueData){
     boutiqueData.id_companies,
     boutiqueData.id_branches
   ];
-  
-  try {
-    const result = await database.query(queryText, values);
-    return result.rows[0];
-  } catch (error) {
-    console.error('Error al insertar en boutique:', error);
-    return false;
+
+  if (TYPE_DATABASE === 'mysqlite') {
+    const queryText = `
+      INSERT INTO boutique (
+        name, 
+        barcode, 
+        description, 
+        use_inventory, 
+        max_inventary, 
+        min_inventory, 
+        purchase_price, 
+        purchase_sale, 
+        id_companies, 
+        id_branches
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    return new Promise((resolve) => {
+      database.run(queryText, values, function(err) {
+        if (err) {
+          console.error('Error al insertar en boutique (SQLite):', err);
+          resolve(false);
+        } else {
+          resolve({ id: this.lastID }); // Retorna el id insertado como objeto
+        }
+      });
+    });
+  } else {
+    const queryText = `
+      INSERT INTO "Inventory".boutique (
+        name, 
+        barcode, 
+        description, 
+        use_inventory, 
+        max_inventary, 
+        min_inventory, 
+        purchase_price, 
+        purchase_sale, 
+        id_companies, 
+        id_branches
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      RETURNING id;
+    `;
+
+    try {
+      const result = await database.query(queryText, values);
+      return result.rows[0];
+    } catch (error) {
+      console.error('Error al insertar en boutique (PostgreSQL):', error);
+      return false;
+    }
   }
 }
 
-async function add_product_to_the_table_of_boutique(id_boutique,id_dish_and_combo_features,id_product_and_suppiles_features){
-  // Definir la consulta SQL para insertar en boutique
-  const queryText = `
-    INSERT INTO "Inventory".table_boutique(
-      id_boutique, 
-      id_dish_and_combo_features,
-      id_product_and_suppiles_features
-    )
-    VALUES ($1, $2, $3)
-  `;
-  
-  // Preparar los valores a insertar
+
+async function add_product_to_the_table_of_boutique(id_boutique, id_dish_and_combo_features, id_product_and_suppiles_features) {
   const values = [
     id_boutique,
     id_dish_and_combo_features,
     id_product_and_suppiles_features
   ];
 
-  try {
-    await database.query(queryText, values);
-    return true;
-  } catch (error) {
-    console.error('Error al insertar en boutique:', error);
-    return false;
+  if (TYPE_DATABASE === 'mysqlite') {
+    const queryText = `
+      INSERT INTO table_boutique (
+        id_boutique, 
+        id_dish_and_combo_features,
+        id_product_and_suppiles_features
+      ) VALUES (?, ?, ?)
+    `;
+
+    return new Promise((resolve) => {
+      database.run(queryText, values, function(err) {
+        if (err) {
+          console.error('Error al insertar en table_boutique (SQLite):', err);
+          resolve(false);
+        } else {
+          resolve(true);
+        }
+      });
+    });
+
+  } else {
+    const queryText = `
+      INSERT INTO "Inventory".table_boutique (
+        id_boutique, 
+        id_dish_and_combo_features,
+        id_product_and_suppiles_features
+      ) VALUES ($1, $2, $3)
+    `;
+
+    try {
+      await database.query(queryText, values);
+      return true;
+    } catch (error) {
+      console.error('Error al insertar en table_boutique (PostgreSQL):', error);
+      return false;
+    }
   }
 }
 
@@ -363,73 +409,160 @@ function create_a_new_combo_with_excel(id_company,barcode,name,description) {
     return combo;
 }
 
-async function update_price_combo_for_excel(newPrice, id){
-    const queryText = `
-        UPDATE "Inventory".dish_and_combo_features 
-        SET price_1 = $1 
-        WHERE id = $2 
-    `;
-    const values = [newPrice, id];
+async function update_price_combo_for_excel(newPrice, id) {
+    if (TYPE_DATABASE === 'mysqlite') {
+        const queryText = `
+            UPDATE dish_and_combo_features 
+            SET price_1 = ? 
+            WHERE id = ?
+        `;
+        const values = [newPrice, id];
 
-    try {
-        await database.query(queryText, values);
-        return true;
-    } catch (error) {
-        console.error('Error to update the price of the combo in update_price_combo_for_excel:', error);
-        return false;
+        return new Promise((resolve) => {
+            database.run(queryText, values, function(err) {
+                if (err) {
+                    console.error('Error actualizando el precio del combo en SQLite:', err);
+                    resolve(false);
+                } else {
+                    resolve(true);
+                }
+            });
+        });
+
+    } else {
+        const queryText = `
+            UPDATE "Inventory".dish_and_combo_features 
+            SET price_1 = $1 
+            WHERE id = $2
+        `;
+        const values = [newPrice, id];
+
+        try {
+            await database.query(queryText, values);
+            return true;
+        } catch (error) {
+            console.error('Error actualizando el precio del combo en PostgreSQL:', error);
+            return false;
+        }
     }
 }
 
 async function delete_product_and_suppiles_features(id) {
-    const queryText = 'DELETE FROM "Inventory".product_and_suppiles_features WHERE id = $1';
-    const values = [id];
+    if (TYPE_DATABASE === 'mysqlite') {
+        const queryText = 'DELETE FROM product_and_suppiles_features WHERE id = ?';
+        const values = [id];
 
-    try {
-        await database.query(queryText, values);
-        return true;
-    } catch (error) {
-        console.error('Error al eliminar en la base de datos product_and_suppiles_features:', error);
-        return null;
+        return new Promise((resolve) => {
+            database.run(queryText, values, function(err) {
+                if (err) {
+                    console.error('Error al eliminar en SQLite product_and_suppiles_features:', err);
+                    resolve(null);
+                } else {
+                    resolve(true);
+                }
+            });
+        });
+    } else {
+        const queryText = 'DELETE FROM "Inventory".product_and_suppiles_features WHERE id = $1';
+        const values = [id];
+
+        try {
+            await database.query(queryText, values);
+            return true;
+        } catch (error) {
+            console.error('Error al eliminar en PostgreSQL product_and_suppiles_features:', error);
+            return null;
+        }
     }
 }
 
 async function delete_supplies_company(id) {
-    const queryText = 'DELETE FROM "Kitchen".products_and_supplies WHERE id = $1';
-    const values = [id];
+    if (TYPE_DATABASE === 'mysqlite') {
+        const queryText = 'DELETE FROM products_and_supplies WHERE id = ?';
+        const values = [id];
 
-    try {
-        await database.query(queryText, values);
-        return true;
-    } catch (error) {
-        console.error('Error al eliminar el supply:', error);
-        return null;
+        return new Promise((resolve) => {
+            database.run(queryText, values, function(err) {
+                if (err) {
+                    console.error('Error al eliminar el supply en SQLite:', err);
+                    resolve(null);
+                } else {
+                    resolve(true);
+                }
+            });
+        });
+    } else {
+        const queryText = 'DELETE FROM "Kitchen".products_and_supplies WHERE id = $1';
+        const values = [id];
+
+        try {
+            await database.query(queryText, values);
+            return true;
+        } catch (error) {
+            console.error('Error al eliminar el supply en PostgreSQL:', error);
+            return null;
+        }
     }
 }
 
 async function delete_product_combo_company(id) {
-    const queryText = 'DELETE FROM "Kitchen".dishes_and_combos WHERE id = $1';
-    const values = [id];
+    if (TYPE_DATABASE === 'mysqlite') {
+        const queryText = 'DELETE FROM dishes_and_combos WHERE id = ?';
+        const values = [id];
 
-    try {
-        await database.query(queryText, values);
-        return true;
-    } catch (error) {
-        console.error('Error al eliminar en la base de datos:', error);
-        return false;
+        return new Promise((resolve) => {
+            database.run(queryText, values, function(err) {
+                if (err) {
+                    console.error('Error al eliminar en SQLite dishes_and_combos:', err);
+                    resolve(false);
+                } else {
+                    resolve(true);
+                }
+            });
+        });
+    } else {
+        const queryText = 'DELETE FROM "Kitchen".dishes_and_combos WHERE id = $1';
+        const values = [id];
+
+        try {
+            await database.query(queryText, values);
+            return true;
+        } catch (error) {
+            console.error('Error al eliminar en PostgreSQL dishes_and_combos:', error);
+            return false;
+        }
     }
 }
 
 async function delete_all_supplies_combo(id) {
-    try {
-        var queryText = 'DELETE FROM "Kitchen".table_supplies_combo WHERE id_dishes_and_combos = $1';
-        var values = [id];
-        await database.query(queryText, values); // Delete combo
-        return true;
-    } catch (error) {
-        console.error('Error al eliminar en la base de datos:', error);
-        return false;
+    if (TYPE_DATABASE === 'mysqlite') {
+        const queryText = 'DELETE FROM table_supplies_combo WHERE id_dishes_and_combos = ?';
+        const values = [id];
+
+        return new Promise((resolve) => {
+            database.run(queryText, values, function(err) {
+                if (err) {
+                    console.error('Error al eliminar en SQLite table_supplies_combo:', err);
+                    resolve(false);
+                } else {
+                    resolve(true);
+                }
+            });
+        });
+    } else {
+        const queryText = 'DELETE FROM "Kitchen".table_supplies_combo WHERE id_dishes_and_combos = $1';
+        const values = [id];
+
+        try {
+            await database.query(queryText, values);
+            return true;
+        } catch (error) {
+            console.error('Error al eliminar en PostgreSQL table_supplies_combo:', error);
+            return false;
+        }
     }
 }
+
 
 function create_combo_data_branch(idCombo, idCompany, id_branch) {
     const comboData = {
@@ -463,56 +596,100 @@ router.get('/:id_company/:id_branch/:id_boutique/edit-boutique', isLoggedIn, asy
 
 
 async function get_data_boutique_with_id(id) {
-    const queryText = `
-    SELECT *
-    FROM "Inventory".boutique
-    WHERE id = $1
-  `;
-  
-  try {
-    const result = await database.query(queryText, [id]);
-    // Si se encuentra la boutique, se retorna el primer registro (único resultado esperado)
-    return result.rows;
-  } catch (error) {
-    console.error('Error al obtener datos de la boutique con id:', error);
-    throw error;
-  }
+    if (TYPE_DATABASE === 'mysqlite') {
+        const queryText = `
+            SELECT *
+            FROM boutique
+            WHERE id = ?
+        `;
+        return new Promise((resolve, reject) => {
+            database.get(queryText, [id], (err, row) => {
+                if (err) {
+                    console.error('Error al obtener datos de boutique en SQLite:', err);
+                    return reject(err);
+                }
+                // Retornamos un array con el registro si existe, o vacío si no
+                resolve(row ? [row] : []);
+            });
+        });
+    } else {
+        const queryText = `
+            SELECT *
+            FROM "Inventory".boutique
+            WHERE id = $1
+        `;
+        try {
+            const result = await database.query(queryText, [id]);
+            return result.rows;
+        } catch (error) {
+            console.error('Error al obtener datos de boutique en PostgreSQL:', error);
+            throw error;
+        }
+    }
 }
 
 async function get_data_table_boutique_with_id(id_boutique) {
-    const queryText = `
-        SELECT 
-            dnc.id, 
-            dnc.img, 
-            dnc.barcode, 
-            dnc.name, 
-            dacf.price_1,
-            psf.existence,
-            tb.id_dish_and_combo_features,
-            tb.id_product_and_suppiles_features 
+    if (TYPE_DATABASE === 'mysqlite') {
+        const queryText = `
+            SELECT 
+                dnc.id, 
+                dnc.img, 
+                dnc.barcode, 
+                dnc.name, 
+                dacf.price_1,
+                psf.existence,
+                tb.id_dish_and_combo_features,
+                tb.id_product_and_suppiles_features
+            FROM table_boutique tb
+            JOIN dish_and_combo_features dacf 
+                ON tb.id_dish_and_combo_features = dacf.id
+            JOIN dishes_and_combos dnc 
+                ON dacf.id_dishes_and_combos = dnc.id
+            JOIN product_and_suppiles_features psf 
+                ON tb.id_product_and_suppiles_features = psf.id
+            WHERE tb.id_boutique = ?
+        `;
+        
+        return new Promise((resolve, reject) => {
+            database.all(queryText, [id_boutique], (err, rows) => {
+                if (err) {
+                    console.error('Error al obtener datos de la boutique en SQLite:', err);
+                    return resolve([]); // retornamos array vacío si error
+                }
+                resolve(rows);
+            });
+        });
+    } else {
+        const queryText = `
+            SELECT 
+                dnc.id, 
+                dnc.img, 
+                dnc.barcode, 
+                dnc.name, 
+                dacf.price_1,
+                psf.existence,
+                tb.id_dish_and_combo_features,
+                tb.id_product_and_suppiles_features
+            FROM "Inventory".table_boutique tb
+            JOIN "Inventory".dish_and_combo_features dacf 
+                ON tb.id_dish_and_combo_features = dacf.id
+            JOIN "Kitchen".dishes_and_combos dnc 
+                ON dacf.id_dishes_and_combos = dnc.id
+            JOIN "Inventory".product_and_suppiles_features psf 
+                ON tb.id_product_and_suppiles_features = psf.id
+            WHERE tb.id_boutique = $1;
+        `;
 
-        FROM "Inventory".table_boutique tb
-        JOIN "Inventory".dish_and_combo_features dacf 
-            ON tb.id_dish_and_combo_features = dacf.id
-        JOIN "Kitchen".dishes_and_combos dnc 
-            ON dacf.id_dishes_and_combos = dnc.id
-
-        JOIN "Inventory".product_and_suppiles_features psf 
-            ON tb.id_product_and_suppiles_features = psf.id
-
-            
-        WHERE tb.id_boutique = $1;
-  `;
-  //"Inventory".product_and_suppiles_features --existence
-  try {
-    const result = await database.query(queryText, [id_boutique]);
-    // Si se encuentra la boutique, se retorna el primer registro (único resultado esperado)
-    return result.rows;
-  } catch (error) {
-    console.error('Error al obtener datos de la boutique con id:', error);
-    return []
-  }
+        try {
+            const result = await database.query(queryText, [id_boutique]);
+            return result.rows;
+        } catch (error) {
+            console.error('Error al obtener datos de la boutique en PostgreSQL:', error);
+            return [];
+        }
+    }
 }
+
 
 /*---------------------------form edit boutique--------------------------*/
 router.post('/:id_company/:id_branch/:id_boutique/edit-boutique', isLoggedIn, async (req, res) => {
@@ -537,22 +714,43 @@ router.post('/:id_company/:id_branch/:id_boutique/edit-boutique', isLoggedIn, as
     res.redirect(`/links/${id_company}/${id_branch}/boutique`);
 })
 
-async function update_the_boutique(id_boutique,barcode,name,price,description,max_inventary){
-    const queryText = `
-        UPDATE "Inventory".boutique 
-        SET barcode = $1, name = $2, purchase_sale = $3, description = $4, max_inventary = $5
-        WHERE id = $6
-    `;
-    const values = [barcode, name, price, description, max_inventary, id_boutique];
+async function update_the_boutique(id_boutique, barcode, name, price, description, max_inventary) {
+    if (TYPE_DATABASE === 'mysqlite') {
+        const queryText = `
+            UPDATE boutique 
+            SET barcode = ?, name = ?, purchase_sale = ?, description = ?, max_inventary = ?
+            WHERE id = ?
+        `;
+        const values = [barcode, name, price, description, max_inventary, id_boutique];
 
-    try {
-        await database.query(queryText, values);
-        return true;
-    } catch (error) {
-        console.error('Error to update the boutique in update_the_boutique:', error);
-        return false;
+        return new Promise((resolve) => {
+            database.run(queryText, values, function(err) {
+                if (err) {
+                    console.error('Error updating boutique in SQLite:', err);
+                    resolve(false);
+                } else {
+                    resolve(true);
+                }
+            });
+        });
+    } else {
+        const queryText = `
+            UPDATE "Inventory".boutique 
+            SET barcode = $1, name = $2, purchase_sale = $3, description = $4, max_inventary = $5
+            WHERE id = $6
+        `;
+        const values = [barcode, name, price, description, max_inventary, id_boutique];
+
+        try {
+            await database.query(queryText, values);
+            return true;
+        } catch (error) {
+            console.error('Error updating boutique in PostgreSQL:', error);
+            return false;
+        }
     }
 }
+
 
 async function add_new_product_to_boutique(req){
     const {id_company,id_branch,id_boutique}=req.params;
@@ -648,112 +846,222 @@ async function update_old_product_to_boutique(req){
     }
 }
 
-async function update_the_name_and_barcode_of_the_product(newNameProduct, newBarcodeProduct, id_dishes_and_combos){
+async function update_the_name_and_barcode_of_the_product(newNameProduct, newBarcodeProduct, id_dishes_and_combos) {
+  if (TYPE_DATABASE === 'mysqlite') {
     const queryText = `
-        UPDATE "Kitchen".dishes_and_combos
-        SET name = $1, barcode = $2 
-        WHERE id = $3 
+      UPDATE dishes_and_combos
+      SET name = ?, barcode = ?
+      WHERE id = ?
+    `;
+    const values = [newNameProduct, newBarcodeProduct, id_dishes_and_combos];
+
+    return new Promise((resolve) => {
+      database.run(queryText, values, function(err) {
+        if (err) {
+          console.error('Error updating name and barcode in SQLite:', err);
+          resolve(false);
+        } else {
+          resolve(true);
+        }
+      });
+    });
+  } else {
+    const queryText = `
+      UPDATE "Kitchen".dishes_and_combos
+      SET name = $1, barcode = $2
+      WHERE id = $3
     `;
     const values = [newNameProduct, newBarcodeProduct, id_dishes_and_combos];
 
     try {
-        await database.query(queryText, values);
-        return true;
+      await database.query(queryText, values);
+      return true;
     } catch (error) {
-        console.error('Error to update the name and barcode of the product in update_the_name_and_barcode_of_the_product:', error);
-        return false;
+      console.error('Error updating name and barcode in PostgreSQL:', error);
+      return false;
     }
+  }
 }
 
-async function update_the_name_and_barcode_of_the_product_in_the_inventory(newNameProduct, newBarcodeProduct, id_product_and_suppiles){
+async function update_the_name_and_barcode_of_the_product_in_the_inventory(newNameProduct, newBarcodeProduct, id_product_and_supplies) {
+  if (TYPE_DATABASE === 'mysqlite') {
     const queryText = `
-        UPDATE "Kitchen".products_and_supplies
-        SET name = $1, barcode = $2 
-        WHERE id = $3 
+      UPDATE products_and_supplies
+      SET name = ?, barcode = ?
+      WHERE id = ?
     `;
-    const values = [newNameProduct, newBarcodeProduct, id_product_and_suppiles];
+    const values = [newNameProduct, newBarcodeProduct, id_product_and_supplies];
+
+    return new Promise((resolve) => {
+      database.run(queryText, values, function(err) {
+        if (err) {
+          console.error('Error updating name and barcode in SQLite:', err);
+          resolve(false);
+        } else {
+          resolve(true);
+        }
+      });
+    });
+  } else {
+    const queryText = `
+      UPDATE "Kitchen".products_and_supplies
+      SET name = $1, barcode = $2
+      WHERE id = $3
+    `;
+    const values = [newNameProduct, newBarcodeProduct, id_product_and_supplies];
 
     try {
-        await database.query(queryText, values);
-        return true;
+      await database.query(queryText, values);
+      return true;
     } catch (error) {
-        console.error('Error to update the name and barcode of the product in update_the_name_and_barcode_of_the_product:', error);
-        return false;
+      console.error('Error updating name and barcode in PostgreSQL:', error);
+      return false;
     }
+  }
 }
 
+
 async function get_id_combo(id_dish_and_combo_features) {
+  if (TYPE_DATABASE === 'mysqlite') {
+    const query = 'SELECT id_dishes_and_combos FROM dish_and_combo_features WHERE id = ?';
+    const values = [id_dish_and_combo_features];
+
+    return new Promise((resolve) => {
+      database.get(query, values, (err, row) => {
+        if (err) {
+          console.error('Error al obtener id_dishes_and_combos en SQLite:', err);
+          resolve(null);
+        } else {
+          resolve(row ? row.id_dishes_and_combos : null);
+        }
+      });
+    });
+  } else {
     const query = 'SELECT id_dishes_and_combos FROM "Inventory".dish_and_combo_features WHERE id=$1';
     const values = [id_dish_and_combo_features];
 
     try {
-        const result = await database.query(query, values);
-        
-        // Verifica si hay resultados
-        if (result.rows.length > 0) {
-            return result.rows[0].id_dishes_and_combos; // Devuelve el ID correcto
-        } else {
-            return null; // No se encontró el registro
-        }
-    } catch (error) {
-        console.error('Error al obtener id_dishes_and_combos:', error);
+      const result = await database.query(query, values);
+      if (result.rows.length > 0) {
+        return result.rows[0].id_dishes_and_combos;
+      } else {
         return null;
+      }
+    } catch (error) {
+      console.error('Error al obtener id_dishes_and_combos en PostgreSQL:', error);
+      return null;
     }
+  }
 }
 
 async function get_id_supplies(id_product_and_suppiles_features) {
+  if (TYPE_DATABASE === 'mysqlite') {
+    const query = 'SELECT id_products_and_supplies FROM product_and_suppiles_features WHERE id = ?';
+    const values = [id_product_and_suppiles_features];
+
+    return new Promise((resolve) => {
+      database.get(query, values, (err, row) => {
+        if (err) {
+          console.error('Error al obtener id_products_and_supplies en SQLite:', err);
+          resolve(null);
+        } else {
+          resolve(row ? row.id_products_and_supplies : null);
+        }
+      });
+    });
+  } else {
     const query = 'SELECT id_products_and_supplies FROM "Inventory".product_and_suppiles_features WHERE id=$1';
     const values = [id_product_and_suppiles_features];
 
     try {
-        const result = await database.query(query, values);
-        
-        // Verifica si hay resultados
-        if (result.rows.length > 0) {
-            return result.rows[0].id_products_and_supplies; // Devuelve el ID correcto
-        } else {
-            return null; // No se encontró el registro
-        }
-    } catch (error) {
-        console.error('Error al obtener id_dishes_and_combos:', error);
+      const result = await database.query(query, values);
+      if (result.rows.length > 0) {
+        return result.rows[0].id_products_and_supplies;
+      } else {
         return null;
+      }
+    } catch (error) {
+      console.error('Error al obtener id_products_and_supplies en PostgreSQL:', error);
+      return null;
     }
+  }
 }
 
-
-async function update_the_inventory_of_the_product(existence, id_product_and_suppiles_features){
+async function update_the_inventory_of_the_product(existence, id_product_and_suppiles_features) {
+  if (TYPE_DATABASE === 'mysqlite') {
     const queryText = `
-        UPDATE "Inventory".product_and_suppiles_features 
-        SET existence = $1 
-        WHERE id = $2 
+      UPDATE product_and_suppiles_features 
+      SET existence = ? 
+      WHERE id = ?
+    `;
+    const values = [existence, id_product_and_suppiles_features];
+
+    return new Promise((resolve) => {
+      database.run(queryText, values, function (err) {
+        if (err) {
+          console.error('Error al actualizar existence en SQLite:', err);
+          resolve(false);
+        } else {
+          resolve(true);
+        }
+      });
+    });
+  } else {
+    const queryText = `
+      UPDATE "Inventory".product_and_suppiles_features 
+      SET existence = $1 
+      WHERE id = $2
     `;
     const values = [existence, id_product_and_suppiles_features];
 
     try {
-        await database.query(queryText, values);
-        return true;
+      await database.query(queryText, values);
+      return true;
     } catch (error) {
-        console.error('Error to update the price of the combo in update_price_combo_for_excel:', error);
-        return false;
+      console.error('Error al actualizar existence en PostgreSQL:', error);
+      return false;
     }
+  }
 }
 
-async function update_the_price_of_the_product(price_1, id_dish_and_combo_features){
+
+async function update_the_price_of_the_product(price_1, id_dish_and_combo_features) {
+  if (TYPE_DATABASE === 'mysqlite') {
     const queryText = `
-        UPDATE "Inventory".dish_and_combo_features 
-        SET price_1 = $1 
-        WHERE id = $2 
+      UPDATE dish_and_combo_features
+      SET price_1 = ?
+      WHERE id = ?
+    `;
+    const values = [price_1, id_dish_and_combo_features];
+
+    return new Promise((resolve) => {
+      database.run(queryText, values, function (err) {
+        if (err) {
+          console.error('Error al actualizar price_1 en SQLite:', err);
+          resolve(false);
+        } else {
+          resolve(true);
+        }
+      });
+    });
+  } else {
+    const queryText = `
+      UPDATE "Inventory".dish_and_combo_features 
+      SET price_1 = $1 
+      WHERE id = $2
     `;
     const values = [price_1, id_dish_and_combo_features];
 
     try {
-        await database.query(queryText, values);
-        return true;
+      await database.query(queryText, values);
+      return true;
     } catch (error) {
-        console.error('Error to update the price of the combo in update_price_combo_for_excel:', error);
-        return false;
+      console.error('Error al actualizar price_1 en PostgreSQL:', error);
+      return false;
     }
+  }
 }
+
 
 
 router.get('/:id_company/:id_branch/:id_boutique/:id_table_boutique/:id_dish_and_combo_features/:id_product_and_suppiles_features/delete-products-boutique', isLoggedIn, async (req, res) => {
@@ -785,37 +1093,61 @@ router.get('/:id_company/:id_branch/:id_boutique/:id_table_boutique/:id_dish_and
     res.redirect(`/links/${id_company}/${id_branch}/${id_boutique}/edit-boutique`);
 })
 
-async function delete_table_boutique(id){
-    const queryText = 'DELETE FROM "Inventory".table_boutique WHERE id = $1';
+async function delete_table_boutique(id) {
+  if (TYPE_DATABASE === 'mysqlite') {
+    const queryText = `DELETE FROM table_boutique WHERE id = ?`;
+    return new Promise((resolve) => {
+      database.run(queryText, [id], function(err) {
+        if (err) {
+          console.error('Error al eliminar en SQLite:', err);
+          resolve(false);
+        } else {
+          resolve(true);
+        }
+      });
+    });
+  } else {
+    const queryText = `DELETE FROM "Inventory".table_boutique WHERE id = $1`;
     const values = [id];
 
     try {
-        await database.query(queryText, values);
-        return true;        
+      await database.query(queryText, values);
+      return true;
+    } catch (error) {
+      console.error('Error al eliminar en PostgreSQL:', error);
+      return false;
     }
-    catch (error) {
-        console.error('Error al eliminar en la base de datos:', error);
-        return false;
-    }
+  }
 }
 
-async function get_path_image_combo(idCombos){
-    const query = 'SELECT img FROM "Kitchen".dishes_and_combos WHERE id=$1';
-    const values = [idCombos];
-
-    try {
-        const result = await database.query(query, values);
-        
-        // Verifica si hay resultados
-        if (result.rows.length > 0) {
-            return result.rows[0].img; // Devuelve el ID correcto
+async function get_path_image_combo(idCombos) {
+  if (TYPE_DATABASE === 'mysqlite') {
+    const query = `SELECT img FROM dishes_and_combos WHERE id = ?`;
+    return new Promise((resolve) => {
+      database.get(query, [idCombos], (err, row) => {
+        if (err) {
+          console.error('Error al obtener img en SQLite:', err);
+          resolve('');
         } else {
-            return ''; // No se encontró el registro
+          resolve(row ? row.img : '');
         }
-    } catch (error) {
-        console.error('Error al obtener id_dishes_and_combos:', error);
+      });
+    });
+  } else {
+    const query = `SELECT img FROM "Kitchen".dishes_and_combos WHERE id = $1`;
+    const values = [idCombos];
+    try {
+      const result = await database.query(query, values);
+      if (result.rows.length > 0) {
+        return result.rows[0].img;
+      } else {
         return '';
+      }
+    } catch (error) {
+      console.error('Error al obtener img en PostgreSQL:', error);
+      return '';
     }
+  }
 }
 
 
@@ -853,32 +1185,64 @@ router.get('/:id_company/:id_branch/:id_boutique/delete-all-the-boutique', isLog
     res.redirect(`/links/${id_company}/${id_branch}/boutique`);
 })
 
-async function get_all_the_table_boutique(id_boutique){
+async function get_all_the_table_boutique(id_boutique) {
+  if (TYPE_DATABASE === 'mysqlite') {
     const queryText = `
-        SELECT * FROM "Inventory".table_boutique
-        WHERE id_boutique = $1;
+      SELECT * FROM table_boutique
+      WHERE id_boutique = ?
     `;
-
+    return new Promise((resolve) => {
+      database.all(queryText, [id_boutique], (err, rows) => {
+        if (err) {
+          console.error('Error al obtener datos en SQLite:', err);
+          resolve([]);
+        } else {
+          resolve(rows);
+        }
+      });
+    });
+  } else {
+    const queryText = `
+      SELECT * FROM "Inventory".table_boutique
+      WHERE id_boutique = $1
+    `;
     try {
-        const result = await database.query(queryText, [id_boutique]);
-        return result.rows;
+      const result = await database.query(queryText, [id_boutique]);
+      return result.rows;
     } catch (error) {
-        console.error('Error to get_all_the_table_boutique:', error);
-        return [];
+      console.error('Error al obtener datos en PostgreSQL:', error);
+      return [];
     }
+  }
 }
 
-async function delete_the_boutique(id){
+
+async function delete_the_boutique(id) {
+  if (TYPE_DATABASE === 'mysqlite') {
+    const queryText = 'DELETE FROM boutique WHERE id = ?';
+
+    return new Promise((resolve) => {
+      database.run(queryText, [id], function(err) {
+        if (err) {
+          console.error('Error al eliminar boutique en SQLite:', err);
+          resolve(false);
+        } else {
+          resolve(true);
+        }
+      });
+    });
+  } else {
     const queryText = 'DELETE FROM "Inventory".boutique WHERE id = $1';
     const values = [id];
 
     try {
-        await database.query(queryText, values);
-        return true;
+      await database.query(queryText, values);
+      return true;
+    } catch (error) {
+      console.error('Error al eliminar boutique en PostgreSQL:', error);
+      return false;
     }
-    catch (error) {
-        console.error('Error al eliminar en la base de datos:', error);
-        return false;
-    }
+  }
 }
+
 module.exports = router;
