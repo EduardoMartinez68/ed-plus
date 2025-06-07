@@ -1,3 +1,6 @@
+require('dotenv').config();
+const {TYPE_DATABASE}=process.env;
+
 const express = require('express');
 const router = express.Router();
 const { isLoggedIn, isNotLoggedIn } = require('../../lib/auth');
@@ -82,23 +85,55 @@ router.post('/:id_company/:id_branch/update_all_the_inventory', isLoggedIn, asyn
 
 
 async function update_product_existence(id_product, newExistence) {
-    const queryText = `
-        UPDATE "Inventory".product_and_suppiles_features
-        SET existence = $1
-        WHERE id = $2
-        RETURNING *;
-    `;
+    if (TYPE_DATABASE === 'mysqlite') {
+        return new Promise((resolve, reject) => {
+            const query = `
+                UPDATE product_and_suppiles_features
+                SET existence = ?
+                WHERE id = ?;
+            `;
 
-    try {
-        const result = await database.query(queryText, [newExistence, id_product]);
-        if (result.rowCount > 0) {
-            return { success: true, data: result.rows[0] }; // 👍 Se actualizó correctamente
-        } else {
-            return { success: false, error: 'Producto no encontrado' }; // 👎 No encontró el producto
+            database.run(query, [newExistence, id_product], function (err) {
+                if (err) {
+                    console.error("Error al actualizar la existencia del producto (SQLite):", err);
+                    return resolve({ success: false, error: "Error al actualizar la existencia" });
+                }
+
+                if (this.changes > 0) {
+                    // SQLite no retorna los datos actualizados directamente, se consulta aparte si se quiere
+                    const selectQuery = `SELECT * FROM product_and_suppiles_features WHERE id = ?`;
+                    database.get(selectQuery, [id_product], (err, row) => {
+                        if (err) {
+                            console.error("Error al obtener producto actualizado (SQLite):", err);
+                            return resolve({ success: false, error: "Error al obtener el producto actualizado" });
+                        }
+                        return resolve({ success: true, data: row });
+                    });
+                } else {
+                    return resolve({ success: false, error: 'Producto no encontrado' });
+                }
+            });
+        });
+    } else {
+        // PostgreSQL
+        const queryText = `
+            UPDATE "Inventory".product_and_suppiles_features
+            SET existence = $1
+            WHERE id = $2
+            RETURNING *;
+        `;
+
+        try {
+            const result = await database.query(queryText, [newExistence, id_product]);
+            if (result.rowCount > 0) {
+                return { success: true, data: result.rows[0] };
+            } else {
+                return { success: false, error: 'Producto no encontrado' };
+            }
+        } catch (error) {
+            console.error("Error al actualizar la existencia del producto (PostgreSQL):", error);
+            return { success: false, error: "Error al actualizar la existencia" };
         }
-    } catch (error) {
-        console.error("Error al actualizar la existencia del producto:", error);
-        return { success: false, error: "Error al actualizar la existencia" }; // 👎 Error en la DB
     }
 }
 

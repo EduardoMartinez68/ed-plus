@@ -69,22 +69,24 @@ async function get_data_company_with_id(id_company) {
             database.get(queryText, [id_company], (err, row) => {
                 if (err) {
                     console.error('Error en get_data_company_with_id (SQLite):', err);
-                    return resolve(null);
+                    return resolve([]);
                 }
-                resolve(row);
+                resolve(row ? [row] : []); // <-- aquí envuelvo en array o devuelvo array vacío si no hay fila
             });
         });
     }
-
-    try {
-        const queryText = `SELECT * FROM "User".companies WHERE id = $1`;
-        const result = await database.query(queryText, [id_company]);
-        return result.rows[0] || null;
-    } catch (error) {
-        console.error('Error en get_data_company_with_id (PostgreSQL):', error);
-        return null;
+    else {
+        try {
+            const queryText = `SELECT * FROM "User".companies WHERE id = $1`;
+            const result = await database.query(queryText, [id_company]);
+            return result.rows.length > 0 ? [result.rows[0]] : []; // <-- igual, envuelvo en array o devuelvo vacío
+        } catch (error) {
+            console.error('Error en get_data_company_with_id (PostgreSQL):', error);
+            return [];
+        }
     }
 }
+
 
 async function delete_my_company(id_company, req) {
     try {

@@ -1,6 +1,9 @@
 const database = require('../database');
 const addDatabase = require('../router/addDatabase');
 const rolFree=0
+
+require('dotenv').config();
+const {TYPE_DATABASE}=process.env;
 //functions image
 const {
     get_path_img,
@@ -70,23 +73,36 @@ async function get_data_of_my_app(id_company, id_branch, id_app) {
     }
 }
 
-async function get_all_apps_of_this_company(id_company,id_branch) {
-    const schema=`_company_${id_company}_branch_${id_branch}`;
-    
-    //Query to get the names of the tables in the schema
-    const getTablesQuery = `
-        SELECT * 
-        FROM ${schema}.apps
-    `;
-    
+async function get_all_apps_of_this_company(id_company, id_branch) {
+  const schema = `_company_${id_company}_branch_${id_branch}`;
+
+  if (TYPE_DATABASE === 'mysqlite') {
+    // En SQLite no hay schemas, asumimos que la tabla está con nombre 'apps' + id_company + id_branch o solo 'apps'
+    // Aquí un ejemplo donde la tabla es solo 'apps'
+    const query = `SELECT * FROM apps;`;
     try {
-        //Then get the tables in the specified schema
-        const res = await database.query(getTablesQuery);
-        return res.rows;
+      const res = await new Promise((resolve, reject) => {
+        database.all(query, [], (err, rows) => {
+          if (err) reject(err);
+          else resolve(rows);
+        });
+      });
+      return res;
     } catch (error) {
-        console.error('Error fetching tables:', error);
-        return [];
+      console.error('Error fetching apps in SQLite:', error);
+      return [];
     }
+  } else {
+    // PostgreSQL: se usa schema dinámico
+    const query = `SELECT * FROM "${schema}".apps;`;
+    try {
+      const res = await database.query(query);
+      return res.rows;
+    } catch (error) {
+      console.error('Error fetching apps in PostgreSQL:', error);
+      return [];
+    }
+  }
 }
 
 async function create_my_list_app(id_company,id_branch){

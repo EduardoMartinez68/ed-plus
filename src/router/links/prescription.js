@@ -1,3 +1,6 @@
+require('dotenv').config();
+const {TYPE_DATABASE}=process.env;
+
 const express = require('express');
 const router = express.Router();
 const { isLoggedIn, isNotLoggedIn } = require('../../lib/auth');
@@ -194,36 +197,66 @@ async function get_lot_details(dateStart, dateFinish) {
         dateStart = `${dateStart} 00:00:00`;
     }
 
-    // Si solo se pasa la fecha sin hora, asignamos la hora 23:59:59 para dateFinish
     if (dateFinish && !dateFinish.includes(' ')) {
         dateFinish = `${dateFinish} 23:59:59`;
     }
-    const queryText = `
-        SELECT
-            h.date_move, -- Fecha de movimiento
-            l.number_lote, -- Número de lote
-            l.expiration_date, -- Fecha de caducidad
-            h.type_move, -- Tipo de movimiento
-            h."newCant", -- Nueva cantidad
-            dcf.id_dishes_and_combos, -- id_dishes_and_combos
-            dc.barcode, -- Código de barras
-            dc.description, -- Descripción
-            dc.name -- Nombre
-        FROM "Branch".history_move_lot h
-        LEFT JOIN "Inventory".lots l ON h.id_lots = l.id
-        LEFT JOIN "Inventory".dish_and_combo_features dcf ON l.id_dish_and_combo_features = dcf.id
-        LEFT JOIN "Kitchen".dishes_and_combos dc ON dcf.id_dishes_and_combos = dc.id
-        WHERE dc.this_product_need_recipe = true
-        AND h.date_move BETWEEN $1 AND $2;  -- Filtro por rango de fechas
-    `;
 
-    try {
-        // Realizar la consulta pasando las fechas como parámetros
-        const result = await database.query(queryText, [dateStart, dateFinish]);
-        return result.rows;
-    } catch (error) {
-        console.error('Error getting lot details:', error);
-        return [];
+    if (TYPE_DATABASE === 'mysqlite') {
+        return new Promise((resolve, reject) => {
+            const query = `
+                SELECT
+                    h.date_move,
+                    l.number_lote,
+                    l.expiration_date,
+                    h.type_move,
+                    h.newCant,
+                    dcf.id_dishes_and_combos,
+                    dc.barcode,
+                    dc.description,
+                    dc.name
+                FROM history_move_lot h
+                LEFT JOIN lots l ON h.id_lots = l.id
+                LEFT JOIN dish_and_combo_features dcf ON l.id_dish_and_combo_features = dcf.id
+                LEFT JOIN dishes_and_combos dc ON dcf.id_dishes_and_combos = dc.id
+                WHERE dc.this_product_need_recipe = 1
+                AND h.date_move BETWEEN ? AND ?;
+            `;
+
+            database.all(query, [dateStart, dateFinish], (err, rows) => {
+                if (err) {
+                    console.error("Error al obtener los detalles del lote (SQLite):", err);
+                    return resolve([]);
+                }
+                return resolve(rows);
+            });
+        });
+    } else {
+        const queryText = `
+            SELECT
+                h.date_move,
+                l.number_lote,
+                l.expiration_date,
+                h.type_move,
+                h."newCant",
+                dcf.id_dishes_and_combos,
+                dc.barcode,
+                dc.description,
+                dc.name
+            FROM "Branch".history_move_lot h
+            LEFT JOIN "Inventory".lots l ON h.id_lots = l.id
+            LEFT JOIN "Inventory".dish_and_combo_features dcf ON l.id_dish_and_combo_features = dcf.id
+            LEFT JOIN "Kitchen".dishes_and_combos dc ON dcf.id_dishes_and_combos = dc.id
+            WHERE dc.this_product_need_recipe = true
+            AND h.date_move BETWEEN $1 AND $2;
+        `;
+
+        try {
+            const result = await database.query(queryText, [dateStart, dateFinish]);
+            return result.rows;
+        } catch (error) {
+            console.error('Error getting lot details (PostgreSQL):', error);
+            return [];
+        }
     }
 }
 
@@ -232,42 +265,77 @@ async function get_prescription_details(dateStart, dateFinish) {
         dateStart = `${dateStart} 00:00:00`;
     }
 
-    // Si solo se pasa la fecha sin hora, asignamos la hora 23:59:59 para dateFinish
     if (dateFinish && !dateFinish.includes(' ')) {
         dateFinish = `${dateFinish} 23:59:59`;
     }
-    const queryText = `
-        SELECT 
-            p.id AS prescription_id,
-            p.recipe_folio,
-            p.doctor_id,
-            p.doctor_name,
-            p.date_prescription,
-            p.retained,
-            p.amount,
-            p.comment,
-            l.number_lote,
-            l.expiration_date,
-            dc.barcode,
-            dc.name AS product_name,
-            dc.description AS product_description
-        FROM "Branch".prescription p
-        LEFT JOIN "Inventory".lots l ON p.id_lots = l.id
-        LEFT JOIN "Inventory".dish_and_combo_features dcf ON l.id_dish_and_combo_features = dcf.id
-        LEFT JOIN "Kitchen".dishes_and_combos dc ON dcf.id_dishes_and_combos = dc.id
-        WHERE dc.this_product_need_recipe = true
-        AND p.date_prescription BETWEEN $1 AND $2;  -- Filtro por rango de fechas
-    `;
 
-    try {
-        // Realizar la consulta pasando las fechas como parámetros
-        const result = await database.query(queryText, [dateStart, dateFinish]);
-        return result.rows;
-    } catch (error) {
-        console.error('Error getting prescription details:', error);
-        return [];
+    if (TYPE_DATABASE === 'mysqlite') {
+        return new Promise((resolve, reject) => {
+            const query = `
+                SELECT 
+                    p.id AS prescription_id,
+                    p.recipe_folio,
+                    p.doctor_id,
+                    p.doctor_name,
+                    p.date_prescription,
+                    p.retained,
+                    p.amount,
+                    p.comment,
+                    l.number_lote,
+                    l.expiration_date,
+                    dc.barcode,
+                    dc.name AS product_name,
+                    dc.description AS product_description
+                FROM prescription p
+                LEFT JOIN lots l ON p.id_lots = l.id
+                LEFT JOIN dish_and_combo_features dcf ON l.id_dish_and_combo_features = dcf.id
+                LEFT JOIN dishes_and_combos dc ON dcf.id_dishes_and_combos = dc.id
+                WHERE dc.this_product_need_recipe = 1
+                AND p.date_prescription BETWEEN ? AND ?;
+            `;
+
+            database.all(query, [dateStart, dateFinish], (err, rows) => {
+                if (err) {
+                    console.error("Error al obtener los detalles de recetas (SQLite):", err);
+                    return resolve([]);
+                }
+                return resolve(rows);
+            });
+        });
+    } else {
+        const queryText = `
+            SELECT 
+                p.id AS prescription_id,
+                p.recipe_folio,
+                p.doctor_id,
+                p.doctor_name,
+                p.date_prescription,
+                p.retained,
+                p.amount,
+                p.comment,
+                l.number_lote,
+                l.expiration_date,
+                dc.barcode,
+                dc.name AS product_name,
+                dc.description AS product_description
+            FROM "Branch".prescription p
+            LEFT JOIN "Inventory".lots l ON p.id_lots = l.id
+            LEFT JOIN "Inventory".dish_and_combo_features dcf ON l.id_dish_and_combo_features = dcf.id
+            LEFT JOIN "Kitchen".dishes_and_combos dc ON dcf.id_dishes_and_combos = dc.id
+            WHERE dc.this_product_need_recipe = true
+            AND p.date_prescription BETWEEN $1 AND $2;
+        `;
+
+        try {
+            const result = await database.query(queryText, [dateStart, dateFinish]);
+            return result.rows;
+        } catch (error) {
+            console.error('Error getting prescription details (PostgreSQL):', error);
+            return [];
+        }
     }
 }
+
 /**
  periodo:
  sucursales:

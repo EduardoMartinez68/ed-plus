@@ -1,8 +1,8 @@
 const database = require('../database');
 const addDatabase = require('../router/addDatabase');
-const rolFree=0
+const rolFree = 0
 require('dotenv').config();
-const {TYPE_DATABASE}=process.env;
+const { TYPE_DATABASE } = process.env;
 
 //functions image
 const {
@@ -10,44 +10,44 @@ const {
 } = require('./connectionWithDatabaseImage');
 
 async function get_all_combos(req) {
-  const { id } = req.params;
+    const { id } = req.params;
 
-  try {
-    if (TYPE_DATABASE === "mysqlite") {
-      // SQLite query - no schema names, and ? placeholders
-      const queryText = `
+    try {
+        if (TYPE_DATABASE === "mysqlite") {
+            // SQLite query - no schema names, and ? placeholders
+            const queryText = `
         SELECT dc.*, pd.name AS department_name, pc.name AS category_name
         FROM dishes_and_combos dc
         LEFT JOIN product_department pd ON dc.id_product_department = pd.id
         LEFT JOIN product_category pc ON dc.id_product_category = pc.id
         WHERE dc.id_companies = ?
       `;
-      return await new Promise((resolve, reject) => {
-        database.all(queryText, [id], (err, rows) => {
-          if (err) {
-            console.error('Error fetching combos from SQLite:', err);
-            resolve([]);
-          } else {
-            resolve(rows);
-          }
-        });
-      });
-    } else {
-      // PostgreSQL query
-      const queryText = `
+            return await new Promise((resolve, reject) => {
+                database.all(queryText, [id], (err, rows) => {
+                    if (err) {
+                        console.error('Error fetching combos from SQLite:', err);
+                        resolve([]);
+                    } else {
+                        resolve(rows);
+                    }
+                });
+            });
+        } else {
+            // PostgreSQL query
+            const queryText = `
         SELECT dc.*, pd.name AS department_name, pc.name AS category_name
         FROM "Kitchen".dishes_and_combos dc
         LEFT JOIN "Kitchen".product_department pd ON dc.id_product_department = pd.id
         LEFT JOIN "Kitchen".product_category pc ON dc.id_product_category = pc.id
         WHERE dc.id_companies = $1
       `;
-      const result = await database.query(queryText, [id]);
-      return result.rows;
+            const result = await database.query(queryText, [id]);
+            return result.rows;
+        }
+    } catch (error) {
+        console.error('Error fetching combos:', error);
+        return [];
     }
-  } catch (error) {
-    console.error('Error fetching combos:', error);
-    return [];
-  }
 }
 
 
@@ -161,7 +161,7 @@ async function delate_combo_company(id, pathImg) {
             // Finalmente elimina el combo
             return new Promise((resolve, reject) => {
                 const queryText = `DELETE FROM Kitchen_dishes_and_combos WHERE id = ?`;
-                database.run(queryText, [id], function(err) {
+                database.run(queryText, [id], function (err) {
                     if (err) {
                         console.error('Error al eliminar el combo (SQLite):', err);
                         return resolve(false);
@@ -190,7 +190,7 @@ async function delete_all_supplies_combo(id) {
         if (TYPE_DATABASE === 'mysqlite') {
             return new Promise((resolve, reject) => {
                 const queryText = `DELETE FROM Kitchen_table_supplies_combo WHERE id_dishes_and_combos = ?`;
-                database.run(queryText, [id], function(err) {
+                database.run(queryText, [id], function (err) {
                     if (err) {
                         console.error('Error al eliminar en SQLite:', err);
                         return resolve(false);
@@ -214,28 +214,28 @@ async function delete_all_supplies_combo(id) {
 async function get_combo_features(idBranche, is_a_product, barcode = '') {
     if (TYPE_DATABASE === 'mysqlite') {
         return new Promise((resolve, reject) => {
-            let queryText = `
-                SELECT 
-                    f.*,
-                    d.img,
-                    d.barcode,
-                    d.name,
-                    d.description,
-                    d.this_product_is_sold_in_bulk,
-                    pc_cat.name as category_name,
-                    pd_dept.name as department_name
-                FROM 
-                    Inventory_dish_and_combo_features f
-                INNER JOIN 
-                    Kitchen_dishes_and_combos d ON f.id_dishes_and_combos = d.id
-                LEFT JOIN
-                    Kitchen_product_category pc_cat ON d.id_product_category = pc_cat.id
-                LEFT JOIN
-                    Kitchen_product_department pd_dept ON d.id_product_department = pd_dept.id
-                WHERE 
-                    f.id_branches = ? 
-                    AND d.is_a_product = ?
-            `;
+        let queryText = `
+            SELECT 
+                f.*,
+                d.img,
+                d.barcode,
+                d.name,
+                d.description,
+                d.this_product_is_sold_in_bulk,
+                pc_cat.name as category_name,
+                pd_dept.name as department_name
+            FROM 
+                dish_and_combo_features f
+            INNER JOIN 
+                dishes_and_combos d ON f.id_dishes_and_combos = d.id
+            LEFT JOIN
+                product_category pc_cat ON d.id_product_category = pc_cat.id
+            LEFT JOIN
+                product_department pd_dept ON d.id_product_department = pd_dept.id
+            WHERE 
+                f.id_branches = ? 
+                AND d.is_a_product = ?
+        `;
 
             let params = [idBranche, is_a_product];
 
@@ -265,10 +265,10 @@ async function get_combo_features(idBranche, is_a_product, barcode = '') {
             });
         });
     }
-
-    // PostgreSQL
-    try {
-        let queryText = `
+    else {
+        // PostgreSQL
+        try {
+            let queryText = `
             SELECT 
                 f.*,
                 d.img,
@@ -291,29 +291,30 @@ async function get_combo_features(idBranche, is_a_product, barcode = '') {
                 AND d.is_a_product = $2
         `;
 
-        let values = [idBranche, is_a_product];
+            let values = [idBranche, is_a_product];
 
-        if (barcode.trim() !== '') {
-            queryText += `
+            if (barcode.trim() !== '') {
+                queryText += `
                 AND (
                     LOWER(d.barcode) LIKE $3
                     OR LOWER(d.name) LIKE $3
                 )
                 LIMIT 20
             `;
-            values.push(`%${barcode.toLowerCase()}%`);
-        } else {
-            queryText += `
+                values.push(`%${barcode.toLowerCase()}%`);
+            } else {
+                queryText += `
                 ORDER BY d.name ASC
                 LIMIT 50
             `;
-        }
+            }
 
-        const result = await database.query(queryText, values);
-        return result.rows;
-    } catch (error) {
-        console.error('Error en get_combo_features (PostgreSQL):', error);
-        return [];
+            const result = await database.query(queryText, values);
+            return result.rows;
+        } catch (error) {
+            console.error('Error en get_combo_features (PostgreSQL):', error);
+            return [];
+        }
     }
 }
 
@@ -476,7 +477,7 @@ async function get_all_price_supplies_branch(idCombo, idBranch) {
                         console.error('Error en comboQuery (SQLite):', err);
                         return resolve([]);
                     }
-                    
+
                     // Consulta para obtener el precio de suministros en sucursal
                     const priceQuery = `
                         SELECT psf.id_products_and_supplies, psf.sale_price, psf.sale_unity
@@ -489,7 +490,7 @@ async function get_all_price_supplies_branch(idCombo, idBranch) {
                             console.error('Error en priceQuery (SQLite):', err2);
                             return resolve([]);
                         }
-                        
+
                         const suppliesWithPrice = {};
                         priceRows.forEach(row => {
                             suppliesWithPrice[row.id_products_and_supplies] = row.sale_price;
@@ -600,7 +601,7 @@ async function get_all_price_supplies_branch(idCombo, idBranch) {
 async function get_all_price_supplies_branch_vieja(idCombo, idBranch) {
     try {
         // Consulta para obtener los suministros de un combo específico
-        const comboQuery=`SELECT tsc.id_products_and_supplies, tsc.amount, tsc.unity, tsc.additional, psf.currency_sale
+        const comboQuery = `SELECT tsc.id_products_and_supplies, tsc.amount, tsc.unity, tsc.additional, psf.currency_sale
         FROM "Kitchen".table_supplies_combo tsc
         INNER JOIN (
             SELECT DISTINCT ON (id_products_and_supplies) id_products_and_supplies, currency_sale

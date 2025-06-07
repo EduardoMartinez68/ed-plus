@@ -666,127 +666,138 @@ async function get_all_price_supplies_branch_vieja(idCombo, idBranch) {
     }
 }
 
-async function get_all_price_supplies_branch(idCombo, idBranch, dbType = 'postgres') {
-    try {
-        // Ajustar placeholders según DB
-        const paramPlaceholder = TYPE_DATABASE === 'postgres' ? (i => `$${i}`) : () => `?`;
+async function get_all_price_supplies_branch(idCombo, idBranch) {
+  try {
+    const isPostgres = TYPE_DATABASE === 'postgres';
+    const paramPlaceholder = isPostgres ? (i) => `$${i}` : () => `?`;
 
-        // Consulta para obtener los suministros del combo con moneda
-        // PostgreSQL usa DISTINCT ON, SQLite no soporta, por eso la query cambia
-        let comboQuery;
-        let comboValues;
+    // Define la consulta para combo
+    const comboQuery = isPostgres ? `
+      SELECT 
+        tsc.id_products_and_supplies, 
+        tsc.amount, 
+        tsc.unity, 
+        tsc.additional, 
+        psf.currency_sale
+      FROM "Kitchen".table_supplies_combo tsc
+      INNER JOIN (
+        SELECT DISTINCT ON (id_products_and_supplies) 
+            id_products_and_supplies, 
+            currency_sale
+        FROM "Inventory".product_and_suppiles_features
+        ORDER BY id_products_and_supplies
+      ) psf ON tsc.id_products_and_supplies = psf.id_products_and_supplies
+      WHERE tsc.id_dishes_and_combos = ${paramPlaceholder(1)}
+      ORDER BY tsc.id_products_and_supplies DESC
+    ` : `
+      SELECT 
+        tsc.id_products_and_supplies, 
+        tsc.amount, 
+        tsc.unity, 
+        tsc.additional, 
+        psf.currency_sale
+      FROM table_supplies_combo tsc
+      INNER JOIN (
+        SELECT 
+            id_products_and_supplies,
+            currency_sale
+        FROM product_and_suppiles_features psf1
+        WHERE psf1.rowid = (
+            SELECT MIN(rowid) 
+            FROM product_and_suppiles_features psf2 
+            WHERE psf2.id_products_and_supplies = psf1.id_products_and_supplies
+        )
+      ) psf ON tsc.id_products_and_supplies = psf.id_products_and_supplies
+      WHERE tsc.id_dishes_and_combos = ${paramPlaceholder(1)}
+      ORDER BY tsc.id_products_and_supplies DESC
+    `;
 
-        if (TYPE_DATABASE === 'postgres') {
-            comboQuery = `
-                SELECT 
-                    tsc.id_products_and_supplies, 
-                    tsc.amount, 
-                    tsc.unity, 
-                    tsc.additional, 
-                    psf.currency_sale
-                FROM "Kitchen".table_supplies_combo tsc
-                INNER JOIN (
-                    SELECT DISTINCT ON (id_products_and_supplies) 
-                        id_products_and_supplies, 
-                        currency_sale
-                    FROM "Inventory".product_and_suppiles_features
-                    ORDER BY id_products_and_supplies
-                ) psf ON tsc.id_products_and_supplies = psf.id_products_and_supplies
-                WHERE tsc.id_dishes_and_combos = ${paramPlaceholder(1)}
-                ORDER BY tsc.id_products_and_supplies DESC
-            `;
-            comboValues = [idCombo];
-        } else {
-            // SQLite version: obtener el registro con min(id) para cada id_products_and_supplies para simular DISTINCT ON
-            comboQuery = `
-                SELECT 
-                    tsc.id_products_and_supplies, 
-                    tsc.amount, 
-                    tsc.unity, 
-                    tsc.additional, 
-                    psf.currency_sale
-                FROM Kitchen_table_supplies_combo tsc
-                INNER JOIN (
-                    SELECT 
-                        id_products_and_supplies,
-                        currency_sale
-                    FROM Inventory_product_and_suppiles_features psf1
-                    WHERE psf1.rowid = (
-                        SELECT MIN(rowid) 
-                        FROM Inventory_product_and_suppiles_features psf2 
-                        WHERE psf2.id_products_and_supplies = psf1.id_products_and_supplies
-                    )
-                ) psf ON tsc.id_products_and_supplies = psf.id_products_and_supplies
-                WHERE tsc.id_dishes_and_combos = ${paramPlaceholder(1)}
-                ORDER BY tsc.id_products_and_supplies DESC
-            `;
-            // Cambia nombres tablas a sin esquema y con guiones bajos para SQLite (ajusta según cómo tengas las tablas)
-            comboValues = [idCombo];
-        }
+    // Define la consulta para precios por sucursal
+    const priceQuery = isPostgres ? `
+      SELECT id_products_and_supplies, sale_price, sale_unity
+      FROM "Inventory".product_and_suppiles_features
+      WHERE id_branches = ${paramPlaceholder(1)}
+      ORDER BY id_products_and_supplies DESC
+    ` : `
+      SELECT id_products_and_supplies, sale_price, sale_unity
+      FROM product_and_suppiles_features
+      WHERE id_branches = ${paramPlaceholder(1)}
+      ORDER BY id_products_and_supplies DESC
+    `;
 
-        const comboResult = await database.query(comboQuery, comboValues);
+    let comboRows = [];
+    let priceRows = [];
 
-        // Consulta para obtener precios en sucursal
-        let priceQuery;
-        let priceValues;
-
-        if (TYPE_DATABASE === 'postgres') {
-            priceQuery = `
-                SELECT id_products_and_supplies, sale_price, sale_unity
-                FROM "Inventory".product_and_suppiles_features
-                WHERE id_branches = ${paramPlaceholder(1)}
-                ORDER BY id_products_and_supplies DESC
-            `;
-            priceValues = [idBranch];
-        } else {
-            priceQuery = `
-                SELECT id_products_and_supplies, sale_price, sale_unity
-                FROM Inventory_product_and_suppiles_features
-                WHERE id_branches = ${paramPlaceholder(1)}
-                ORDER BY id_products_and_supplies DESC
-            `;
-            priceValues = [idBranch];
-        }
-
-        const priceResult = await database.query(priceQuery, priceValues);
-
-        // Mapeo de precios
-        const suppliesWithPrice = {};
-        priceResult.rows.forEach(row => {
-            suppliesWithPrice[row.id_products_and_supplies] = row.sale_price;
+    if (isPostgres) {
+      // PostgreSQL usa .query()
+      const comboResult = await database.query(comboQuery, [idCombo]);
+      const priceResult = await database.query(priceQuery, [idBranch]);
+      comboRows = comboResult.rows;
+      priceRows = priceResult.rows;
+    } else {
+      // SQLite usa .all() con promesas
+      comboRows = await new Promise((resolve, reject) => {
+        database.all(comboQuery, [idCombo], (err, rows) => {
+          if (err) {
+            console.error('Error SQLite comboQuery:', err);
+            reject(err);
+          } else {
+            resolve(rows);
+          }
         });
+      });
 
-        // Construir el resultado
-        const suppliesInfo = comboResult.rows.map(row => ({
-            img: '',
-            product_name: '',
-            product_barcode: '',
-            description: '',
-            id_products_and_supplies: row.id_products_and_supplies,
-            amount: row.amount,
-            unity: row.unity,
-            sale_price: suppliesWithPrice[row.id_products_and_supplies] || 0,
-            currency: row.currency_sale,
-            additional: row.additional
-        }));
-
-        // Datos extra del combo
-        const suppliesCombo = await search_supplies_combo(idCombo);
-        suppliesInfo.forEach((supply, i) => {
-            if (suppliesCombo[i]) {
-                supply.img = suppliesCombo[i].img || '';
-                supply.product_name = suppliesCombo[i].product_name || '';
-                supply.product_barcode = suppliesCombo[i].product_barcode || '';
-                supply.description = suppliesCombo[i].description || '';
-            }
+      priceRows = await new Promise((resolve, reject) => {
+        database.all(priceQuery, [idBranch], (err, rows) => {
+          if (err) {
+            console.error('Error SQLite priceQuery:', err);
+            reject(err);
+          } else {
+            resolve(rows);
+          }
         });
-
-        return suppliesInfo;
-    } catch (error) {
-        console.error("Error en get_all_price_supplies_branch:", error);
-        throw error;
+      });
     }
+
+    // Indexar precios por ID
+    const suppliesWithPrice = {};
+    priceRows.forEach(row => {
+      suppliesWithPrice[row.id_products_and_supplies] = row.sale_price;
+    });
+
+    // Armar el resultado final
+    const suppliesInfo = comboRows.map(row => ({
+      img: '',
+      product_name: '',
+      product_barcode: '',
+      description: '',
+      id_products_and_supplies: row.id_products_and_supplies,
+      amount: row.amount,
+      unity: row.unity,
+      sale_price: suppliesWithPrice[row.id_products_and_supplies] || 0,
+      currency: row.currency_sale,
+      additional: row.additional
+    }));
+
+    // Obtener info extra desde `search_supplies_combo`
+    const suppliesCombo = await search_supplies_combo(idCombo);
+    suppliesInfo.forEach((supply, i) => {
+      if (suppliesCombo[i]) {
+        supply.img = suppliesCombo[i].img || '';
+        supply.product_name = suppliesCombo[i].product_name || '';
+        supply.product_barcode = suppliesCombo[i].product_barcode || '';
+        supply.description = suppliesCombo[i].description || '';
+      }
+    });
+
+    return suppliesInfo;
+
+  } catch (error) {
+    console.error("Error en get_all_price_supplies_branch:", error);
+    throw error;
+  }
 }
+
 
 async function get_data_combo_factures(idComboFacture) {
     try {

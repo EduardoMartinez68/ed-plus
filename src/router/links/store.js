@@ -192,48 +192,91 @@ router.post('/search-products', isLoggedIn, async (req, res) => {
   }
 })
 
-async function get_the_products_with_barcode(id_branch,barcode) {
-  const queryText = `
-    SELECT 
-        i.*,
-        d.barcode,
-        d.name,
-        d.description,
-        d.img,
-        d.id_product_department,
-        d.id_product_category,
-        d.this_product_is_sold_in_bulk,
-        d.this_product_need_recipe,
-        COALESCE(
-            json_agg(
-                jsonb_build_object(
-                    'id', l.id,
-                    'number_lote', l.number_lote,
-                    'initial_existence', l.initial_existence,
-                    'current_existence', l.current_existence,
-                    'date_of_manufacture', l.date_of_manufacture,
-                    'expiration_date', l.expiration_date
-                )
-                ORDER BY l.expiration_date ASC
-            ) FILTER (WHERE l.id IS NOT NULL), '[]'
-        ) AS lots
-    FROM "Inventory".dish_and_combo_features i
-    INNER JOIN "Kitchen".dishes_and_combos d ON i.id_dishes_and_combos = d.id
-    LEFT JOIN "Inventory".lots l ON l.id_dish_and_combo_features = i.id
-    WHERE i.id_branches = $1 AND d.barcode ILIKE $2
-    GROUP BY i.id, d.id
-    LIMIT 20;
-  `;
+async function get_the_products_with_barcode(id_branch, barcode) {
+  const likeValue = `%${barcode}%`;
 
-  try {
-    const values = [id_branch, `%${barcode}%`]; // Agregamos % para el LIKE dinámico
-    const result = await database.query(queryText, values);
-    return result.rows;
-  } catch (error) {
-    console.error('Error filtering products by barcode:', error);
-    return [];
+  if (TYPE_DATABASE === 'mysqlite') {
+    return new Promise((resolve, reject) => {
+      const query = `
+        SELECT 
+            i.*,
+            d.barcode,
+            d.name,
+            d.description,
+            d.img,
+            d.id_product_department,
+            d.id_product_category,
+            d.this_product_is_sold_in_bulk,
+            d.this_product_need_recipe,
+            COALESCE(json_group_array(
+              json_object(
+                'id', l.id,
+                'number_lote', l.number_lote,
+                'initial_existence', l.initial_existence,
+                'current_existence', l.current_existence,
+                'date_of_manufacture', l.date_of_manufacture,
+                'expiration_date', l.expiration_date
+              )
+            ), '[]') AS lots
+        FROM dish_and_combo_features i
+        INNER JOIN dishes_and_combos d ON i.id_dishes_and_combos = d.id
+        LEFT JOIN lots l ON l.id_dish_and_combo_features = i.id
+        WHERE i.id_branches = ? AND d.barcode LIKE ?
+        GROUP BY i.id, d.id
+        LIMIT 20;
+      `;
+
+      database.all(query, [id_branch, likeValue], (err, rows) => {
+        if (err) {
+          console.error('Error filtering products by barcode (SQLite):', err);
+          return resolve([]);
+        }
+        return resolve(rows);
+      });
+    });
+  } else {
+    const queryText = `
+      SELECT 
+          i.*,
+          d.barcode,
+          d.name,
+          d.description,
+          d.img,
+          d.id_product_department,
+          d.id_product_category,
+          d.this_product_is_sold_in_bulk,
+          d.this_product_need_recipe,
+          COALESCE(
+              json_agg(
+                  jsonb_build_object(
+                      'id', l.id,
+                      'number_lote', l.number_lote,
+                      'initial_existence', l.initial_existence,
+                      'current_existence', l.current_existence,
+                      'date_of_manufacture', l.date_of_manufacture,
+                      'expiration_date', l.expiration_date
+                  )
+                  ORDER BY l.expiration_date ASC
+              ) FILTER (WHERE l.id IS NOT NULL), '[]'
+          ) AS lots
+      FROM "Inventory".dish_and_combo_features i
+      INNER JOIN "Kitchen".dishes_and_combos d ON i.id_dishes_and_combos = d.id
+      LEFT JOIN "Inventory".lots l ON l.id_dish_and_combo_features = i.id
+      WHERE i.id_branches = $1 AND d.barcode ILIKE $2
+      GROUP BY i.id, d.id
+      LIMIT 20;
+    `;
+
+    try {
+      const result = await database.query(queryText, [id_branch, likeValue]);
+      return result.rows;
+    } catch (error) {
+      console.error('Error filtering products by barcode (PostgreSQL):', error);
+      return [];
+    }
   }
 }
+
 
 //-----------------------------this is cfor create facture CDFI
 const fs = require('fs');

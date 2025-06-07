@@ -801,43 +801,85 @@ async function update_existence_use_lot(id_combo_features) {
 
 
 router.post('/:id_combo_features/:id_lot/edit-lot', isLoggedIn, async (req, res) => {
-    const { id_combo_features, id_lot} = req.params;
-    const { number_lote, current_existence, date_of_manufacture, expiration_date} = req.body;
-    const id_company=req.user.id_company;
-    const id_branch=req.user.id_branch;
-    const id_employees=req.user.id_employee;
+    const { id_combo_features, id_lot } = req.params;
+    const { number_lote, current_existence, date_of_manufacture, expiration_date } = req.body;
+    const id_company = req.user.id_company;
+    const id_branch = req.user.id_branch;
+    const id_employees = req.user.id_employee;
 
     if (!number_lote || !current_existence || !date_of_manufacture || !expiration_date) {
         return res.status(400).json({ error: "Todos los campos son obligatorios" });
     }
 
-    const queryText = `
-        UPDATE "Inventory".lots 
-        SET number_lote = $1, 
-            current_existence = $2,
-            date_of_manufacture = $3, 
-            expiration_date = $4
-        WHERE id = $5
-        RETURNING *;
-    `;
-
     try {
-        const result = await database.query(queryText, [
-            number_lote,
-            current_existence,
-            date_of_manufacture,
-            expiration_date,
-            id_lot
-        ]);
+        if (TYPE_DATABASE === 'sqlite') {
+            // Para SQLite usamos ? como placeholders
+            const updateQuery = `
+                UPDATE lots
+                SET number_lote = ?, 
+                    current_existence = ?, 
+                    date_of_manufacture = ?, 
+                    expiration_date = ?
+                WHERE id = ?;
+            `;
 
-        await update_existence_use_lot(id_combo_features); //this is for update the existence of the product in the table product_and_suppiles_features
-        await add_move_to_the_history(id_company,id_branch,id_employees,id_lot,current_existence,'Ajuste de inventario'); //this is for save the move in the history when the lot are for a prescription
-        res.status(201).json({ message: "Lote actualizado con éxito", lot: result.rows[0] });
+            await new Promise((resolve, reject) => {
+                database.run(updateQuery, [
+                    number_lote,
+                    current_existence,
+                    date_of_manufacture,
+                    expiration_date,
+                    id_lot
+                ], function (err) {
+                    if (err) reject(err);
+                    else resolve();
+                });
+            });
+
+            // Para obtener el lote actualizado, hacemos una consulta aparte
+            const lot = await new Promise((resolve, reject) => {
+                database.get(`SELECT * FROM lots WHERE id = ?`, [id_lot], (err, row) => {
+                    if (err) reject(err);
+                    else resolve(row);
+                });
+            });
+
+            await update_existence_use_lot(id_combo_features);
+            await add_move_to_the_history(id_company, id_branch, id_employees, id_lot, current_existence, 'Ajuste de inventario');
+
+            res.status(201).json({ message: "Lote actualizado con éxito", lot });
+
+        } else {
+            // PostgreSQL
+            const queryText = `
+                UPDATE "Inventory".lots 
+                SET number_lote = $1, 
+                    current_existence = $2,
+                    date_of_manufacture = $3, 
+                    expiration_date = $4
+                WHERE id = $5
+                RETURNING *;
+            `;
+
+            const result = await database.query(queryText, [
+                number_lote,
+                current_existence,
+                date_of_manufacture,
+                expiration_date,
+                id_lot
+            ]);
+
+            await update_existence_use_lot(id_combo_features);
+            await add_move_to_the_history(id_company, id_branch, id_employees, id_lot, current_existence, 'Ajuste de inventario');
+
+            res.status(201).json({ message: "Lote actualizado con éxito", lot: result.rows[0] });
+        }
     } catch (error) {
         console.error("Error al actualizar el lote:", error);
         res.status(500).json({ error: "Error al actualizar el lote" });
     }
-})
+});
+
 
 router.post('/:id_lot/delete-lot', isLoggedIn, async (req, res) => {
     const { id_lot } = req.params;
@@ -846,144 +888,291 @@ router.post('/:id_lot/delete-lot', isLoggedIn, async (req, res) => {
         return res.status(400).json({ error: "El ID del lote es obligatorio" });
     }
 
-    const queryText = `DELETE FROM "Inventory".lots WHERE id = $1;`;
-
     try {
-        const result = await database.query(queryText, [id_lot]);
+        if (TYPE_DATABASE === 'sqlite') {
+            // SQLite no tiene rowCount, usamos changes en run callback
+            await new Promise((resolve, reject) => {
+                database.run(`DELETE FROM lots WHERE id = ?`, [id_lot], function (err) {
+                    if (err) reject(err);
+                    else if (this.changes === 0) reject({ code: 'NOT_FOUND' });
+                    else resolve();
+                });
+            });
 
-        if (result.rowCount === 0) {
+            res.status(200).json({ message: "Lote eliminado con éxito" });
+
+        } else {
+            // PostgreSQL
+            const queryText = `DELETE FROM "Inventory".lots WHERE id = $1;`;
+            const result = await database.query(queryText, [id_lot]);
+
+            if (result.rowCount === 0) {
+                return res.status(404).json({ error: "Lote no encontrado" });
+            }
+
+            res.status(200).json({ message: "Lote eliminado con éxito" });
+        }
+    } catch (error) {
+        if (error.code === 'NOT_FOUND') {
             return res.status(404).json({ error: "Lote no encontrado" });
         }
-
-        res.status(200).json({ message: "Lote eliminado con éxito"});
-    } catch (error) {
         console.error("Error al eliminar el lote:", error);
         res.status(500).json({ error: "Error al eliminar el lote" });
     }
 });
 
 async function get_all_the_promotions(id_dish_and_combo_features) {
-    const queryText = `
-        SELECT * FROM "Inventory".promotions
-        WHERE id_dish_and_combo_features = $1;
-    `;
-
     try {
-        const result = await database.query(queryText, [id_dish_and_combo_features]);
-        return result.rows;
+        if (TYPE_DATABASE === 'sqlite') {
+            // En SQLite no hay esquema ni uso $1, uso ? para parámetros
+            const queryText = `
+                SELECT * FROM promotions
+                WHERE id_dish_and_combo_features = ?;
+            `;
+            const result = await new Promise((resolve, reject) => {
+                database.all(queryText, [id_dish_and_combo_features], (err, rows) => {
+                    if (err) reject(err);
+                    else resolve(rows);
+                });
+            });
+            return result;
+        } else {
+            // PostgreSQL con esquema "Inventory" y parámetros $1
+            const queryText = `
+                SELECT * FROM "Inventory".promotions
+                WHERE id_dish_and_combo_features = $1;
+            `;
+            const result = await database.query(queryText, [id_dish_and_combo_features]);
+            return result.rows;
+        }
     } catch (error) {
         console.error("Error al obtener los datos de la tabla 'promotions':", error);
         return [];
     }
 }
 
+
 router.post('/:id_dish_and_combo_features/add-promotion-free', isLoggedIn, async (req, res) => {
     const { newPromotion } = req.body;
     const { id_dish_and_combo_features } = req.params;
-    const id_company=req.user.id_company;
-    const id_branch=req.user.id_branch;
-    //we will see if the promotion have name
-    if(newPromotion.promotionName==undefined || newPromotion.promotionName==null || newPromotion.promotionName==''){
-        return res.status(500).json({ error: 'Necesitas agregar un nombre a tu promoción 😅', message: 'Necesitas agregar un nombre a tu promoción 😅' });
+    const id_company = req.user.id_company;
+    const id_branch = req.user.id_branch;
+
+    // Validaciones básicas
+    if (!newPromotion.promotionName || newPromotion.promotionName.trim() === '') {
+        return res.status(400).json({ error: 'Necesitas agregar un nombre a tu promoción 😅' });
     }
 
-    //first we will see if can add the promotion
-    const fromQuantity=parseFloat(newPromotion.fromQuantity)
-    const toQuantity=parseFloat(newPromotion.toQuantity)
-    if(fromQuantity>toQuantity){
-        return res.status(500).json({ error: 'La cantidad de la promoción no es correcta 😅', message: 'La cantidad de la promoción no es correcta 😅' });
+    const fromQuantity = parseFloat(newPromotion.fromQuantity);
+    const toQuantity = parseFloat(newPromotion.toQuantity);
+    if (isNaN(fromQuantity) || isNaN(toQuantity) || fromQuantity > toQuantity) {
+        return res.status(400).json({ error: 'La cantidad de la promoción no es correcta 😅' });
     }
-
-    const queryText = `
-        INSERT INTO "Inventory".promotions
-        (id_companies,id_branches ,id_dish_and_combo_features, name_promotion, promotions_from, promotions_to, discount_percentage, date_from, date_to, "fromTime", "toTime", active_promotion) 
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) 
-        RETURNING id;
-    `;
 
     try {
-        const result = await database.query(queryText, [
-            id_company, // bigint
-            id_branch, // bigint
-            id_dish_and_combo_features, // bigint
-            newPromotion.promotionName, // varchar
-            parseFloat(newPromotion.fromQuantity), // double precision
-            parseFloat(newPromotion.toQuantity), // double precision
-            parseFloat(newPromotion.discountPercentage), // double precision
-            newPromotion.fromDate || null, // date (YYYY-MM-DD)
-            newPromotion.toDate || null, // date (YYYY-MM-DD)
-            newPromotion.fromTime || null, // time (HH:MM:SS)
-            newPromotion.toTime || null, // time (HH:MM:SS)
-            newPromotion.promotionStatus// boolean
-        ]);
-
-        res.status(201).json({ message: "Agregado con éxito", idPromotion: result.rows[0] });
+        const inserted = await insert_promotion(id_company, id_branch, id_dish_and_combo_features, newPromotion);
+        res.status(201).json({ message: "Agregado con éxito", idPromotion: inserted.id });
     } catch (err) {
-        console.log("❌ Error al agregar la promoción:", err);
-        res.status(500).json({ error: 'Error en el servidor al agregar la promoción. Inténtalo más tarde. 💀', message: err });
+        console.error("❌ Error al agregar la promoción:", err);
+        res.status(500).json({ error: 'Error en el servidor al agregar la promoción. Inténtalo más tarde. 💀' });
     }
 });
+
+async function insert_promotion(id_company, id_branch, id_dish_and_combo_features, newPromotion) {
+    if (TYPE_DATABASE === 'sqlite') {
+        // En SQLite: sin esquema, con '?' como placeholders, y RETURNING no funciona, se obtiene lastID
+        const queryText = `
+            INSERT INTO promotions
+            (id_companies, id_branches, id_dish_and_combo_features, name_promotion, promotions_from, promotions_to, discount_percentage, date_from, date_to, fromTime, toTime, active_promotion)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        `;
+
+        return new Promise((resolve, reject) => {
+            database.run(queryText, [
+                id_company,
+                id_branch,
+                id_dish_and_combo_features,
+                newPromotion.promotionName,
+                parseFloat(newPromotion.fromQuantity),
+                parseFloat(newPromotion.toQuantity),
+                parseFloat(newPromotion.discountPercentage),
+                newPromotion.fromDate || null,
+                newPromotion.toDate || null,
+                newPromotion.fromTime || null,
+                newPromotion.toTime || null,
+                newPromotion.promotionStatus ? 1 : 0
+            ], function(err) {
+                if (err) reject(err);
+                else resolve({ id: this.lastID });
+            });
+        });
+
+    } else {
+        // PostgreSQL con esquema "Inventory" y placeholders $1...$12
+        const queryText = `
+            INSERT INTO "Inventory".promotions
+            (id_companies, id_branches, id_dish_and_combo_features, name_promotion, promotions_from, promotions_to, discount_percentage, date_from, date_to, "fromTime", "toTime", active_promotion)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+            RETURNING id;
+        `;
+
+        const result = await database.query(queryText, [
+            id_company,
+            id_branch,
+            id_dish_and_combo_features,
+            newPromotion.promotionName,
+            parseFloat(newPromotion.fromQuantity),
+            parseFloat(newPromotion.toQuantity),
+            parseFloat(newPromotion.discountPercentage),
+            newPromotion.fromDate || null,
+            newPromotion.toDate || null,
+            newPromotion.fromTime || null,
+            newPromotion.toTime || null,
+            newPromotion.promotionStatus
+        ]);
+        return result.rows[0];
+    }
+}
+
 
 router.post('/update-promotion', isLoggedIn, async (req, res) => {
     const { newPromotion } = req.body;
 
-    const queryText = `
-        UPDATE "Inventory".promotions
-        SET 
-            name_promotion = $1, 
-            promotions_from = $2, 
-            promotions_to = $3, 
-            discount_percentage = $4, 
-            date_from = $5, 
-            date_to = $6, 
-            "fromTime" = $7, 
-            "toTime" = $8, 
-            active_promotion = $9
-        WHERE id = $10
-        RETURNING id;
-    `;
+    if (!newPromotion.idPromotions) {
+        return res.status(400).json({ error: 'El ID de la promoción es obligatorio' });
+    }
+    if (!newPromotion.promotionName || newPromotion.promotionName.trim() === '') {
+        return res.status(400).json({ error: 'Necesitas agregar un nombre a tu promoción 😅' });
+    }
+    const fromQuantity = parseFloat(newPromotion.fromQuantity);
+    const toQuantity = parseFloat(newPromotion.toQuantity);
+    if (isNaN(fromQuantity) || isNaN(toQuantity) || fromQuantity > toQuantity) {
+        return res.status(400).json({ error: 'La cantidad de la promoción no es correcta 😅' });
+    }
 
     try {
-        const result = await database.query(queryText, [
-            newPromotion.promotionName, // varchar
-            parseFloat(newPromotion.fromQuantity), // double precision
-            parseFloat(newPromotion.toQuantity), // double precision
-            parseFloat(newPromotion.discountPercentage), // double precision
-            newPromotion.fromDate || null, // date (YYYY-MM-DD)
-            newPromotion.toDate || null, // date (YYYY-MM-DD)
-            newPromotion.fromTime || null, // time (HH:MM:SS)
-            newPromotion.toTime || null, // time (HH:MM:SS)
-            newPromotion.promotionStatus, // boolean
-            newPromotion.idPromotions
-        ]);
-
-        res.status(201).json({ message: "Agregado con éxito", idPromotion: result.rows[0] });
+        const updated = await update_promotion(newPromotion);
+        res.status(200).json({ message: "Actualizado con éxito", idPromotion: updated.id });
     } catch (err) {
-        console.log("❌ Error al actualizar la promoción:", err);
-        res.status(500).json({ error: 'Error en el servidor al actualizar la promoción. Inténtalo más tarde. 💀', message: err });
+        console.error("❌ Error al actualizar la promoción:", err);
+        res.status(500).json({ error: 'Error en el servidor al actualizar la promoción. Inténtalo más tarde. 💀', message: err.message });
     }
 });
+
+async function update_promotion(newPromotion) {
+    if (TYPE_DATABASE === 'sqlite') {
+        // SQLite: sin esquema, placeholders '?', no RETURNING, usamos run + lastID no aplica para UPDATE, así que verificamos cambios con changes
+        const queryText = `
+            UPDATE promotions
+            SET 
+                name_promotion = ?, 
+                promotions_from = ?, 
+                promotions_to = ?, 
+                discount_percentage = ?, 
+                date_from = ?, 
+                date_to = ?, 
+                fromTime = ?, 
+                toTime = ?, 
+                active_promotion = ?
+            WHERE id = ?;
+        `;
+
+        return new Promise((resolve, reject) => {
+            database.run(queryText, [
+                newPromotion.promotionName,
+                parseFloat(newPromotion.fromQuantity),
+                parseFloat(newPromotion.toQuantity),
+                parseFloat(newPromotion.discountPercentage),
+                newPromotion.fromDate || null,
+                newPromotion.toDate || null,
+                newPromotion.fromTime || null,
+                newPromotion.toTime || null,
+                newPromotion.promotionStatus ? 1 : 0,
+                newPromotion.idPromotions
+            ], function(err) {
+                if (err) reject(err);
+                else if (this.changes === 0) reject(new Error('No se encontró la promoción para actualizar'));
+                else resolve({ id: newPromotion.idPromotions });
+            });
+        });
+
+    } else {
+        // PostgreSQL con esquema y RETURNING
+        const queryText = `
+            UPDATE "Inventory".promotions
+            SET 
+                name_promotion = $1, 
+                promotions_from = $2, 
+                promotions_to = $3, 
+                discount_percentage = $4, 
+                date_from = $5, 
+                date_to = $6, 
+                "fromTime" = $7, 
+                "toTime" = $8, 
+                active_promotion = $9
+            WHERE id = $10
+            RETURNING id;
+        `;
+
+        const result = await database.query(queryText, [
+            newPromotion.promotionName,
+            parseFloat(newPromotion.fromQuantity),
+            parseFloat(newPromotion.toQuantity),
+            parseFloat(newPromotion.discountPercentage),
+            newPromotion.fromDate || null,
+            newPromotion.toDate || null,
+            newPromotion.fromTime || null,
+            newPromotion.toTime || null,
+            newPromotion.promotionStatus,
+            newPromotion.idPromotions
+        ]);
+        if (result.rowCount === 0) throw new Error('No se encontró la promoción para actualizar');
+        return result.rows[0];
+    }
+}
 
 router.post('/:id_promotion/delete-promotion', isLoggedIn, async (req, res) => {
     const { id_promotion } = req.params;
 
-    const queryText = `
-        DELETE FROM "Inventory".promotions
-        WHERE id = $1
-        RETURNING id;
-    `;
+    if (!id_promotion) {
+        return res.status(400).json({ error: 'El ID de la promoción es obligatorio' });
+    }
 
     try {
-        const result = await database.query(queryText, [
-            id_promotion
-        ]);
-
-        res.status(201).json({ message: "Eliminado con éxito"});
+        await delete_promotion(id_promotion);
+        res.status(200).json({ message: "Eliminado con éxito" });
     } catch (err) {
-        console.log("Error al eliminar la promoción:", err);
-        res.status(500).json({ error: 'Error en el servidor al eliminar la promoción. Inténtalo más tarde. 💀', message: err });
+        console.error("Error al eliminar la promoción:", err);
+        res.status(500).json({ error: 'Error en el servidor al eliminar la promoción. Inténtalo más tarde. 💀', message: err.message });
     }
 });
+
+
+async function delete_promotion(id_promotion) {
+    if (TYPE_DATABASE === 'sqlite') {
+        // SQLite no soporta RETURNING, usamos run + this.changes para verificar si borró algo
+        const queryText = `DELETE FROM promotions WHERE id = ?;`;
+        return new Promise((resolve, reject) => {
+            database.run(queryText, [id_promotion], function(err) {
+                if (err) return reject(err);
+                if (this.changes === 0) return reject(new Error('No se encontró la promoción para eliminar'));
+                resolve({ id: id_promotion });
+            });
+        });
+    } else {
+        // PostgreSQL con RETURNING
+        const queryText = `
+            DELETE FROM "Inventory".promotions
+            WHERE id = $1
+            RETURNING id;
+        `;
+        const result = await database.query(queryText, [id_promotion]);
+        if (result.rowCount === 0) throw new Error('No se encontró la promoción para eliminar');
+        return result.rows[0];
+    }
+}
+
+
 
 
 
@@ -1072,7 +1261,6 @@ router.get('/:id_company/:id_branch/:id_dishes_and_combos/edit-data-combo-free',
     const suppliesCombo = await search_supplies_combo(id_dishes_and_combos);
     const combo = await search_combo(id_company, id_dishes_and_combos);
 
-    console.log(combo)
     res.render('links/manager/combo/editCombo', { branchFree, dataForm, departments, category, supplies, products, combo, suppliesCombo });
 })
 
@@ -1648,19 +1836,34 @@ router.get('/:id_company/:id_branch/labels', isLoggedIn, async (req, res) => {
     res.render('links/labels/labels',{branchFree,labels});
 })
 
-async function get_all_the_lables(id_company,id_branch){
-    const queryText = `
-        SELECT * FROM "Branch".labels WHERE id_companies = $1 AND id_branches = $2
-    `;
-
-    try {
-        const result = await database.query(queryText, [id_company,id_branch]);
-        return result.rows;
-    } catch (error) {
-        console.error('Error getting get_all_the_lables:', error);
-        return [];
+async function get_all_the_labels(id_company, id_branch) {
+    if (TYPE_DATABASE === 'mysqlite') {
+        return new Promise((resolve, reject) => {
+            const queryText = `
+                SELECT * FROM labels WHERE id_companies = ? AND id_branches = ?
+            `;
+            database.all(queryText, [id_company, id_branch], (err, rows) => {
+                if (err) {
+                    console.error('Error getting get_all_the_labels (SQLite):', err);
+                    return resolve([]);
+                }
+                resolve(rows);
+            });
+        });
+    } else {
+        try {
+            const queryText = `
+                SELECT * FROM "Branch".labels WHERE id_companies = $1 AND id_branches = $2
+            `;
+            const result = await database.query(queryText, [id_company, id_branch]);
+            return result.rows;
+        } catch (error) {
+            console.error('Error getting get_all_the_labels (PostgreSQL):', error);
+            return [];
+        }
     }
 }
+
 
 router.get('/:id_company/:id_branch/add-labels', isLoggedIn, async (req, res) => {
     const { id_company, id_branch } = req.params;
@@ -1677,29 +1880,25 @@ router.get('/:id_company/:id_branch/add-labels', isLoggedIn, async (req, res) =>
 
 router.get('/edit_label/:id', isLoggedIn, async (req, res) => {
     const { id } = req.params;
+    const id_branch = req.user.id_branch;
+    const id_company = req.user.id_company;
 
-    const id_branch=req.user.id_branch;
     const branchFree = await get_data_branch(id_branch);
-    const id_company=req.user.id_company;
-    
-    //we will see if the user have the permission for this App.
-    if(!this_user_have_this_permission(req.user,id_company, id_branch,'edit_label')){
+
+    if (!this_user_have_this_permission(req.user, id_company, id_branch, 'edit_label')) {
         req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
         return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
     }
 
     try {
-        const queryText = `SELECT * FROM "Branch".labels WHERE id = $1;`;
-        const result = await database.query(queryText, [id]);
+        const label = await get_label_by_id(id);
 
-        if (result.rows.length === 0) {
+        if (!label) {
             return res.status(404).send("Etiqueta no encontrada.");
         }
 
-        const label = result.rows[0];
         label.label = JSON.stringify(label.label);
 
-        // Puedes renderizar un template con los datos para editar
         res.render('links/labels/editLabel', { branchFree, label });
     } catch (error) {
         console.error("Error al obtener la etiqueta:", error);
@@ -1708,31 +1907,54 @@ router.get('/edit_label/:id', isLoggedIn, async (req, res) => {
 });
 
 
+// Función para obtener etiqueta por id, soporta PostgreSQL y SQLite
+async function get_label_by_id(id) {
+    if (TYPE_DATABASE === 'mysqlite') {
+        return new Promise((resolve, reject) => {
+            const queryText = `SELECT * FROM labels WHERE id = ?`;
+            database.get(queryText, [id], (err, row) => {
+                if (err) {
+                    console.error('Error en get_label_by_id (SQLite):', err);
+                    return resolve(null);
+                }
+                resolve(row);
+            });
+        });
+    } else {
+        try {
+            const queryText = `SELECT * FROM "Branch".labels WHERE id = $1`;
+            const result = await database.query(queryText, [id]);
+            return result.rows[0] || null;
+        } catch (error) {
+            console.error('Error en get_label_by_id (PostgreSQL):', error);
+            return null;
+        }
+    }
+}
+
+
+
 router.get('/view_label/:id/name=:name/barcode=:barcode/price=:price', isLoggedIn, async (req, res) => {
     const { id, name, barcode, price } = req.params;
 
-    const id_branch=req.user.id_branch;
+    const id_branch = req.user.id_branch;
     const branchFree = await get_data_branch(id_branch);
-    const id_company=branchFree.id_company;
-    
-    //we will see if the user have the permission for this App.
-    if(!this_user_have_this_permission(req.user,id_company, id_branch,'view_label')){
+    const id_company = branchFree.id_company;
+
+    // Verificar permisos
+    if (!this_user_have_this_permission(req.user, id_company, id_branch, 'view_label')) {
         req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
         return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
     }
 
     try {
-        const queryText = `SELECT * FROM "Branch".labels WHERE id = $1;`;
-        const result = await database.query(queryText, [id]);
+        const label = await get_label_by_id(id);
 
-        if (result.rows.length === 0) {
+        if (!label) {
             return res.status(404).send("Etiqueta no encontrada.");
         }
 
-        const label = result.rows[0];
         label.label = JSON.stringify(label.label);
-
-        // Puedes renderizar un template con los datos para editar
 
         const product = [{
             name,
@@ -1740,25 +1962,61 @@ router.get('/view_label/:id/name=:name/barcode=:barcode/price=:price', isLoggedI
             price
         }];
 
-        res.render('links/labels/viewLabel', { branchFree, label, product});
+        res.render('links/labels/viewLabel', { branchFree, label, product });
     } catch (error) {
         console.error("Error al obtener la etiqueta:", error);
         res.status(500).send("Error interno del servidor.");
     }
 });
 
-
-async function get_all_the_labels(id_branch){
-    try {
-        const queryText = `SELECT * FROM "Branch".labels WHERE id_branches=$1`;
-        const result = await database.query(queryText, [id_branch]);
-
-        return result.rows;;
-    } catch (error) {
-        console.error("Error al obtener la etiqueta:", error);
-        return []
+async function get_label_by_id(id) {
+    if (TYPE_DATABASE === 'mysqlite') {
+        return new Promise((resolve, reject) => {
+            const queryText = `SELECT * FROM labels WHERE id = ?`;
+            database.get(queryText, [id], (err, row) => {
+                if (err) {
+                    console.error('Error en get_label_by_id (SQLite):', err);
+                    return resolve(null);
+                }
+                resolve(row);
+            });
+        });
+    } else {
+        try {
+            const queryText = `SELECT * FROM "Branch".labels WHERE id = $1`;
+            const result = await database.query(queryText, [id]);
+            return result.rows[0] || null;
+        } catch (error) {
+            console.error('Error en get_label_by_id (PostgreSQL):', error);
+            return null;
+        }
     }
 }
+
+async function get_all_the_labels(id_branch) {
+    if (TYPE_DATABASE === 'mysqlite') {
+        return new Promise((resolve, reject) => {
+            const queryText = `SELECT * FROM labels WHERE id_branches = ?`;
+            database.all(queryText, [id_branch], (err, rows) => {
+                if (err) {
+                    console.error("Error al obtener las etiquetas (SQLite):", err);
+                    return resolve([]);
+                }
+                resolve(rows);
+            });
+        });
+    } else {
+        try {
+            const queryText = `SELECT * FROM "Branch".labels WHERE id_branches = $1`;
+            const result = await database.query(queryText, [id_branch]);
+            return result.rows;
+        } catch (error) {
+            console.error("Error al obtener las etiquetas (PostgreSQL):", error);
+            return [];
+        }
+    }
+}
+
 
 //--------------------services
 router.get('/:id_company/:id_branch/:page/services', isLoggedIn, async (req, res) => {
@@ -1783,35 +2041,78 @@ router.get('/:id_company/:id_branch/:page/services', isLoggedIn, async (req, res
     res.render('links/services/services',{branchFree,services,dataPage});
 })
 
-async function get_services_by_page(id_company,id_branch, page = 0, limit = 50) {
+async function get_services_by_page(id_company, id_branch, page = 0, limit = 50) {
     const offset = page * limit;
-    const query = `
-        SELECT 
-            rs.id,
-            rs.id_companies,
-            rs.id_branches,
-            rs.id_employees,
-            rs.id_customers,
-            rs.key_services,
-            rs.money_received,
-            rs.service_name,
-            rs.change,
-            rs.service_money,
-            rs.time_sales,
-            b.name_branch,
-            b.city,
-            b.alias
-        FROM "Box".reachange_services rs
-        JOIN "Company".branches b
-            ON rs.id_branches = b.id
-        WHERE rs.id_companies = $1
-        AND rs.id_branches = $2
-        ORDER BY rs.id DESC
-        LIMIT $3 OFFSET $4;
-    `;
-    const result = await database.query(query, [id_company,id_branch, limit, offset]);
-    return result.rows;
+
+    if (TYPE_DATABASE === 'mysqlite') {
+        return new Promise((resolve, reject) => {
+            const query = `
+                SELECT 
+                    rs.id,
+                    rs.id_companies,
+                    rs.id_branches,
+                    rs.id_employees,
+                    rs.id_customers,
+                    rs.key_services,
+                    rs.money_received,
+                    rs.service_name,
+                    rs.change,
+                    rs.service_money,
+                    rs.time_sales,
+                    b.name_branch,
+                    b.city,
+                    b.alias
+                FROM reachange_services rs
+                JOIN branches b
+                    ON rs.id_branches = b.id
+                WHERE rs.id_companies = ?
+                AND rs.id_branches = ?
+                ORDER BY rs.id DESC
+                LIMIT ? OFFSET ?;
+            `;
+            database.all(query, [id_company, id_branch, limit, offset], (err, rows) => {
+                if (err) {
+                    console.error('Error en get_services_by_page (SQLite):', err);
+                    return resolve([]);
+                }
+                resolve(rows);
+            });
+        });
+    } else {
+        try {
+            const query = `
+                SELECT 
+                    rs.id,
+                    rs.id_companies,
+                    rs.id_branches,
+                    rs.id_employees,
+                    rs.id_customers,
+                    rs.key_services,
+                    rs.money_received,
+                    rs.service_name,
+                    rs.change,
+                    rs.service_money,
+                    rs.time_sales,
+                    b.name_branch,
+                    b.city,
+                    b.alias
+                FROM "Box".reachange_services rs
+                JOIN "Company".branches b
+                    ON rs.id_branches = b.id
+                WHERE rs.id_companies = $1
+                AND rs.id_branches = $2
+                ORDER BY rs.id DESC
+                LIMIT $3 OFFSET $4;
+            `;
+            const result = await database.query(query, [id_company, id_branch, limit, offset]);
+            return result.rows;
+        } catch (error) {
+            console.error('Error en get_services_by_page (PostgreSQL):', error);
+            return [];
+        }
+    }
 }
+
 
 //--------------------
 const fetch = require('node-fetch');
