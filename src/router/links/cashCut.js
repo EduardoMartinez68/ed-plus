@@ -215,7 +215,7 @@ async function get_all_the_buy(id_employee, dateStart, dateFinish) {
                         console.error('SQLite error getting total sales:', err.message);
                         reject(err);
                     } else {
-                        resolve(row);
+                        resolve(row ? [row] : []);
                     }
                 });
             });
@@ -233,7 +233,7 @@ async function get_all_the_buy(id_employee, dateStart, dateFinish) {
             `;
             const values = [id_employee, dateStart, dateFinish];
             const result = await database.query(queryText, values);
-            return result.rows[0];
+            return result.rows;
         }
     } catch (error) {
         console.error('Error getting total sales:', error);

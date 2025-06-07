@@ -1,3 +1,6 @@
+require('dotenv').config();
+const {TYPE_DATABASE}=process.env;
+
 const express = require('express');
 const router = express.Router();
 const { isLoggedIn, isNotLoggedIn } = require('../../lib/auth');
@@ -1298,27 +1301,59 @@ router.get('/:id_company/:id_branch/reports', isLoggedIn, async (req, res) => {
 
 
 async function get_sales_company_total(idCompany) {
-    try {
-        const query = `
-            SELECT sh.*, dc.*, u.first_name AS employee_first_name, u.second_name AS employee_second_name, 
-                   u.last_name AS employee_last_name, c.email AS customer_email, b.name_branch
-            FROM "Box".sales_history sh
-            LEFT JOIN "Kitchen".dishes_and_combos dc ON sh.id_dishes_and_combos = dc.id
-            LEFT JOIN "Company".employees e ON sh.id_employees = e.id
-            LEFT JOIN "Fud".users u ON e.id_users = u.id
-            LEFT JOIN "Company".branches b ON sh.id_branches = b.id
-            LEFT JOIN "Company".customers c ON sh.id_customers = c.id
-            WHERE sh.id_companies = $1
-        `;
-        const values = [idCompany];
-        const result = await database.query(query, values);
+  if (TYPE_DATABASE === 'mysqlite') {
+    return new Promise((resolve, reject) => {
+      const query = `
+        SELECT sh.*, dc.*, 
+               u.first_name AS employee_first_name, 
+               u.second_name AS employee_second_name, 
+               u.last_name AS employee_last_name, 
+               c.email AS customer_email, 
+               b.name_branch
+        FROM sales_history sh
+        LEFT JOIN dishes_and_combos dc ON sh.id_dishes_and_combos = dc.id
+        LEFT JOIN employees e ON sh.id_employees = e.id
+        LEFT JOIN users u ON e.id_users = u.id
+        LEFT JOIN branches b ON sh.id_branches = b.id
+        LEFT JOIN customers c ON sh.id_customers = c.id
+        WHERE sh.id_companies = ?;
+      `;
 
-        return result.rows;
+      database.all(query, [idCompany], (err, rows) => {
+        if (err) {
+          console.error("Error al obtener datos de ventas (SQLite):", err);
+          return resolve([]);
+        }
+        return resolve(rows);
+      });
+    });
+  } else {
+    try {
+      const query = `
+        SELECT sh.*, dc.*, 
+               u.first_name AS employee_first_name, 
+               u.second_name AS employee_second_name, 
+               u.last_name AS employee_last_name, 
+               c.email AS customer_email, 
+               b.name_branch
+        FROM "Box".sales_history sh
+        LEFT JOIN "Kitchen".dishes_and_combos dc ON sh.id_dishes_and_combos = dc.id
+        LEFT JOIN "Company".employees e ON sh.id_employees = e.id
+        LEFT JOIN "Fud".users u ON e.id_users = u.id
+        LEFT JOIN "Company".branches b ON sh.id_branches = b.id
+        LEFT JOIN "Company".customers c ON sh.id_customers = c.id
+        WHERE sh.id_companies = $1;
+      `;
+
+      const result = await database.query(query, [idCompany]);
+      return result.rows;
     } catch (error) {
-        console.error("Error al obtener datos de ventas get_sales_company_total:", error);
-        return [];
+      console.error("Error al obtener datos de ventas (PostgreSQL):", error);
+      return [];
     }
+  }
 }
+
 
 async function get_products_with_most_money_making(idCompany,idBranch){
     try {
@@ -1383,38 +1418,71 @@ async function get_products_most_sales(id_companies, id_branches){
 
 
 async function get_products_most_sales_for_date(id_companies, id_branches, date_start) {
-    // Calcula la fecha final como el día actual
-    const date_end = new Date().toISOString().split('T')[0];
+  const date_end = new Date().toISOString().split('T')[0];
 
+  if (TYPE_DATABASE === 'mysqlite') {
+    return new Promise((resolve, reject) => {
+      const query = `
+        SELECT 
+          k.name AS combo_name, 
+          SUM(s.amount) AS total_quantity
+        FROM 
+          sales_history s
+        JOIN 
+          dishes_and_combos k 
+        ON 
+          s.id_dishes_and_combos = k.id
+        WHERE 
+          s.id_companies = ? 
+          AND s.id_branches = ?
+          AND s.sale_day BETWEEN ? AND ?
+        GROUP BY 
+          k.name
+        ORDER BY 
+          total_quantity DESC;
+      `;
+
+      const values = [id_companies, id_branches, date_start, date_end];
+
+      database.all(query, values, (err, rows) => {
+        if (err) {
+          console.error("Error al obtener ventas más altas (SQLite):", err);
+          return resolve([]);
+        }
+        return resolve(rows);
+      });
+    });
+  } else {
     const queryText = `
-    SELECT 
+      SELECT 
         k.name AS combo_name, 
         SUM(s.amount) AS total_quantity
-    FROM 
+      FROM 
         "Box".sales_history s
-    JOIN 
+      JOIN 
         "Kitchen".dishes_and_combos k 
-    ON 
+      ON 
         s.id_dishes_and_combos = k.id
-    WHERE 
+      WHERE 
         s.id_companies = $1 
         AND s.id_branches = $2
         AND s.sale_day BETWEEN $3 AND $4
-    GROUP BY 
+      GROUP BY 
         k.name
-    ORDER BY 
+      ORDER BY 
         total_quantity DESC;
     `;
 
     const values = [id_companies, id_branches, date_start, date_end];
 
     try {
-        const result = await database.query(queryText, values);
-        return result.rows; // Devuelve un arreglo con los combos y la cantidad vendida
+      const result = await database.query(queryText, values);
+      return result.rows;
     } catch (error) {
-        console.error("Error al obtener las cantidades vendidas:", error);
-        throw new Error("Error al consultar la base de datos");
+      console.error("Error al obtener ventas más altas (PostgreSQL):", error);
+      return [];
     }
+  }
 }
 
 

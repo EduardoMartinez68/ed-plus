@@ -1832,7 +1832,7 @@ router.get('/:id_company/:id_branch/labels', isLoggedIn, async (req, res) => {
     }
 
     const branchFree = await get_data_branch(id_branch);
-    const labels = await get_all_the_lables(id_company, id_branch);
+    const labels = await get_all_the_labels(id_company, id_branch);
     res.render('links/labels/labels',{branchFree,labels});
 })
 
@@ -1992,7 +1992,7 @@ async function get_label_by_id(id) {
         }
     }
 }
-
+/*
 async function get_all_the_labels(id_branch) {
     if (TYPE_DATABASE === 'mysqlite') {
         return new Promise((resolve, reject) => {
@@ -2016,6 +2016,7 @@ async function get_all_the_labels(id_branch) {
         }
     }
 }
+*/
 
 
 //--------------------services
