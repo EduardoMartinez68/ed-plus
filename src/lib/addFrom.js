@@ -5519,7 +5519,7 @@ router.post('/links/update_notification', async (req, res) => {
     if (await update_data_notification_of_the_branch(id_branch,data)){
         res.status(200).json({ status:true, message: "Datos actualizados correctamente" });
     }else{
-        console.error('Error updating notification data:', error);
+        console.error('Error updating notification data:');
         return res.status(500).json({ success: false, error: 'Error al actualizar los datos de la notificación' });
     }
 });
@@ -5530,21 +5530,48 @@ async function update_data_notification_of_the_branch(id_branch, data) {
     values.push(id_branch);
 
     if (TYPE_DATABASE === 'mysqlite') {
-        // SQLite: placeholders '?', tabla sin schema
-        const setClause = fields.map(field => `"${field}" = ?`).join(', ');
-        const queryText = `
-            UPDATE branches
-            SET ${setClause}
-            WHERE id = ?
-        `;
-
+        const valuesOriginal = Object.values(data);
+        const fieldsOriginal = Object.keys(data);
         return new Promise((resolve) => {
-            database.run(queryText, values, function(err) {
+            // Obtener columnas reales de la tabla en SQLite
+            database.all(`PRAGMA table_info(branches)`, [], function (err, columns) {
                 if (err) {
-                    console.error('Error updating branch data (SQLite):', err);
+                    console.error('Error al obtener columnas de branches (SQLite):', err);
                     return resolve(false);
                 }
-                resolve(this.changes > 0);
+
+                const existingColumns = columns.map(col => col.name);
+                const validFields = [];
+                const validValues = [];
+
+                for (let i = 0; i < fieldsOriginal.length; i++) {
+                    if (existingColumns.includes(fieldsOriginal[i])) {
+                        validFields.push(`"${fieldsOriginal[i]}" = ?`);
+                        validValues.push(valuesOriginal[i]);
+                    }
+                }
+
+                if (validFields.length === 0) {
+                    console.warn('No hay campos válidos para actualizar en SQLite.');
+                    return resolve(false);
+                }
+
+                validValues.push(id_branch); // WHERE id = ?
+
+                const setClause = validFields.join(', ');
+                const queryText = `
+                    UPDATE branches
+                    SET ${setClause}
+                    WHERE id = ?
+                `;
+
+                database.run(queryText, validValues, function (err) {
+                    if (err) {
+                        console.error('Error actualizando datos en SQLite:', err);
+                        return resolve(false);
+                    }
+                    resolve(this.changes > 0);
+                });
             });
         });
     } else {

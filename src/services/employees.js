@@ -468,10 +468,9 @@ async function get_data_employee(req) {
 }
 
 async function get_data_tole_employees(req) {
-    const id_user = req.user.id;
-
     try {
         if (TYPE_DATABASE === 'mysqlite') {
+            const id_user = req;
             return new Promise((resolve, reject) => {
                 const query = 'SELECT * FROM employees WHERE id_users = ?';
                 database.all(query, [id_user], (err, rows) => {
@@ -484,6 +483,7 @@ async function get_data_tole_employees(req) {
                 });
             });
         } else {
+            const id_user = req.user.id;
             const queryText = 'SELECT * FROM "Company".employees WHERE id_users = $1';
             const values = [id_user];
             const result = await database.query(queryText, values);
