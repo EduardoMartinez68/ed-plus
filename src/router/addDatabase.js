@@ -506,7 +506,6 @@ async function save_combo_company(combo) {
     }
 }
 
-
 async function add_product_combo_company(combo){
     if(await this_combo_exists(combo.id_company,combo.barcode)){
         return false;
@@ -1131,9 +1130,7 @@ async function add_combo_branch(combo) {
     const values = Object.values(combo);
 
     if (TYPE_DATABASE === 'mysqlite') {
-        const columns = Object.keys(combo).join(', ');
-        const placeholders = Object.keys(combo).map(() => '?').join(', ');
-        const queryText = `INSERT INTO dish_and_combo_features (${columns}) VALUES (${placeholders})`;
+        const queryText = `INSERT INTO dish_and_combo_features (id_companies, id_branches, id_dishes_and_combos, price_1, amount, product_cost, revenue_1, purchase_unit) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
 
         return new Promise((resolve) => {
             database.run(queryText, values, function(err) {
@@ -1167,7 +1164,7 @@ async function add_movement_history(data) {
     if (TYPE_DATABASE === 'mysqlite') {
         const columns = Object.keys(data).join(', ');
         const placeholders = Object.keys(data).map(() => '?').join(', ');
-        const queryText = `INSERT INTO movement_history (${columns}) VALUES (${placeholders})`;
+        const queryText = `INSERT INTO movement_history (id_branches, id_boxes, id_employees, move, comment, date_move) VALUES (?,?,?,?,?,?)`;
 
         return new Promise((resolve) => {
             database.run(queryText, values, function(err) {

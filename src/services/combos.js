@@ -117,8 +117,8 @@ async function search_supplies_combo(id_dishes_and_combos) {
         return new Promise((resolve, reject) => {
             const queryText = `
                 SELECT tsc.*, pas.img AS img, pas.name AS product_name, pas.barcode AS product_barcode
-                FROM Kitchen_table_supplies_combo tsc
-                JOIN Kitchen_products_and_supplies pas ON tsc.id_products_and_supplies = pas.id
+                FROM table_supplies_combo tsc
+                JOIN products_and_supplies pas ON tsc.id_products_and_supplies = pas.id
                 WHERE tsc.id_dishes_and_combos = ?
                 ORDER BY id_products_and_supplies DESC
             `;
@@ -160,7 +160,7 @@ async function delate_combo_company(id, pathImg) {
 
             // Finalmente elimina el combo
             return new Promise((resolve, reject) => {
-                const queryText = `DELETE FROM Kitchen_dishes_and_combos WHERE id = ?`;
+                const queryText = `DELETE FROM dishes_and_combos WHERE id = ?`;
                 database.run(queryText, [id], function (err) {
                     if (err) {
                         console.error('Error al eliminar el combo (SQLite):', err);
@@ -189,7 +189,7 @@ async function delete_all_supplies_combo(id) {
     try {
         if (TYPE_DATABASE === 'mysqlite') {
             return new Promise((resolve, reject) => {
-                const queryText = `DELETE FROM Kitchen_table_supplies_combo WHERE id_dishes_and_combos = ?`;
+                const queryText = `DELETE FROM table_supplies_combo WHERE id_dishes_and_combos = ?`;
                 database.run(queryText, [id], function (err) {
                     if (err) {
                         console.error('Error al eliminar en SQLite:', err);
@@ -401,63 +401,65 @@ async function get_data_combo_factures(idComboFacture) {
                     d.id_product_department AS dish_product_department,
                     d.id_product_category AS dish_product_category,
                     d.this_product_need_recipe AS this_product_need_recipe
-                FROM 
-                    Inventory_dish_and_combo_features f
-                INNER JOIN 
-                    Kitchen_dishes_and_combos d ON f.id_dishes_and_combos = d.id
-                WHERE 
-                    f.id = ?
+                    FROM 
+                        dish_and_combo_features f
+                    INNER JOIN 
+                        dishes_and_combos d ON f.id_dishes_and_combos = d.id
+                    WHERE 
+                        f.id = ?
             `;
             database.get(queryText, [idComboFacture], (err, row) => {
                 if (err) {
                     console.error('Error en get_data_combo_factures (SQLite):', err);
                     return resolve(null);
                 }
+                
                 resolve(row ? [row] : []);
             });
         });
     }
-
-    try {
-        const queryText = `
-            SELECT 
-                f.id,
-                f.id_companies,
-                f.id_branches,
-                f.id_dishes_and_combos,
-                f.price_1,
-                f.revenue_1,
-                f.price_2,
-                f.revenue_2,
-                f.price_3,
-                f.revenue_3,
-                f.favorites,
-                f.sat_key,
-                f.purchase_unit,
-                f.existence,
-                f.amount,
-                f.product_cost,
-                f.id_providers,
-                d.name AS dish_name,
-                d.this_product_is_sold_in_bulk,
-                d.description AS dish_description,
-                d.img AS dish_img,
-                d.barcode AS dish_barcode,
-                d.id_product_department AS dish_product_department,
-                d.id_product_category AS dish_product_category,
-                d.this_product_need_recipe AS this_product_need_recipe
-            FROM 
-                "Inventory".dish_and_combo_features f
-            INNER JOIN 
-                "Kitchen".dishes_and_combos d ON f.id_dishes_and_combos = d.id
-            WHERE 
-                f.id = $1
-        `;
-        const result = await database.query(queryText, [idComboFacture]);
-        return result.rows;
-    } catch (error) {
-        console.error('Error en get_data_combo_factures (PostgreSQL):', error);
-        return [];
+    else{
+        try {
+            const queryText = `
+                SELECT 
+                    f.id,
+                    f.id_companies,
+                    f.id_branches,
+                    f.id_dishes_and_combos,
+                    f.price_1,
+                    f.revenue_1,
+                    f.price_2,
+                    f.revenue_2,
+                    f.price_3,
+                    f.revenue_3,
+                    f.favorites,
+                    f.sat_key,
+                    f.purchase_unit,
+                    f.existence,
+                    f.amount,
+                    f.product_cost,
+                    f.id_providers,
+                    d.name AS dish_name,
+                    d.this_product_is_sold_in_bulk,
+                    d.description AS dish_description,
+                    d.img AS dish_img,
+                    d.barcode AS dish_barcode,
+                    d.id_product_department AS dish_product_department,
+                    d.id_product_category AS dish_product_category,
+                    d.this_product_need_recipe AS this_product_need_recipe
+                FROM 
+                    "Inventory".dish_and_combo_features f
+                INNER JOIN 
+                    "Kitchen".dishes_and_combos d ON f.id_dishes_and_combos = d.id
+                WHERE 
+                    f.id = $1
+            `;
+            const result = await database.query(queryText, [idComboFacture]);
+            return result.rows;
+        } catch (error) {
+            console.error('Error en get_data_combo_factures (PostgreSQL):', error);
+            return [];
+        }
     }
 }
 
@@ -468,7 +470,7 @@ async function get_all_price_supplies_branch(idCombo, idBranch) {
                 // Consulta para obtener los suministros del combo
                 const comboQuery = `
                     SELECT tsc.id_products_and_supplies, tsc.amount, tsc.unity, tsc.additional
-                    FROM Kitchen_table_supplies_combo tsc
+                    FROM table_supplies_combo tsc
                     WHERE tsc.id_dishes_and_combos = ?
                     ORDER BY tsc.id_products_and_supplies DESC
                 `;
@@ -481,7 +483,7 @@ async function get_all_price_supplies_branch(idCombo, idBranch) {
                     // Consulta para obtener el precio de suministros en sucursal
                     const priceQuery = `
                         SELECT psf.id_products_and_supplies, psf.sale_price, psf.sale_unity
-                        FROM Inventory_product_and_suppiles_features psf
+                        FROM product_and_suppiles_features psf
                         WHERE psf.id_branches = ?
                         ORDER BY psf.id_products_and_supplies DESC
                     `;
@@ -531,69 +533,70 @@ async function get_all_price_supplies_branch(idCombo, idBranch) {
             }
         });
     }
+    else{
+        try {
+            // PostgreSQL
+            const comboQuery = `
+                SELECT tsc.id_products_and_supplies, tsc.amount, tsc.unity, tsc.additional, psf.currency_sale
+                FROM "Kitchen".table_supplies_combo tsc
+                INNER JOIN (
+                    SELECT DISTINCT ON (id_products_and_supplies) id_products_and_supplies, currency_sale
+                    FROM "Inventory".product_and_suppiles_features
+                    ORDER BY id_products_and_supplies
+                ) psf
+                ON tsc.id_products_and_supplies = psf.id_products_and_supplies
+                WHERE tsc.id_dishes_and_combos = $1
+                ORDER BY tsc.id_products_and_supplies DESC
+            `;
+            const comboResult = await database.query(comboQuery, [idCombo]);
 
-    try {
-        // PostgreSQL
-        const comboQuery = `
-            SELECT tsc.id_products_and_supplies, tsc.amount, tsc.unity, tsc.additional, psf.currency_sale
-            FROM "Kitchen".table_supplies_combo tsc
-            INNER JOIN (
-                SELECT DISTINCT ON (id_products_and_supplies) id_products_and_supplies, currency_sale
-                FROM "Inventory".product_and_suppiles_features
-                ORDER BY id_products_and_supplies
-            ) psf
-            ON tsc.id_products_and_supplies = psf.id_products_and_supplies
-            WHERE tsc.id_dishes_and_combos = $1
-            ORDER BY tsc.id_products_and_supplies DESC
-        `;
-        const comboResult = await database.query(comboQuery, [idCombo]);
+            const priceQuery = `
+                SELECT psf.id_products_and_supplies, psf.sale_price, psf.sale_unity
+                FROM "Inventory".product_and_suppiles_features psf
+                WHERE psf.id_branches = $1
+                ORDER BY psf.id_products_and_supplies DESC
+            `;
+            const priceResult = await database.query(priceQuery, [idBranch]);
 
-        const priceQuery = `
-            SELECT psf.id_products_and_supplies, psf.sale_price, psf.sale_unity
-            FROM "Inventory".product_and_suppiles_features psf
-            WHERE psf.id_branches = $1
-            ORDER BY psf.id_products_and_supplies DESC
-        `;
-        const priceResult = await database.query(priceQuery, [idBranch]);
-
-        const suppliesWithPrice = {};
-        priceResult.rows.forEach(row => {
-            suppliesWithPrice[row.id_products_and_supplies] = row.sale_price;
-        });
-
-        const suppliesInfo = [];
-        comboResult.rows.forEach(row => {
-            const supplyId = row.id_products_and_supplies;
-            const supplyPrice = suppliesWithPrice[supplyId] || 0;
-            suppliesInfo.push({
-                img: '',
-                product_name: '',
-                product_barcode: '',
-                description: '',
-                id_products_and_supplies: supplyId,
-                amount: row.amount,
-                unity: row.unity,
-                sale_price: supplyPrice,
-                currency: row.currency_sale,
-                additional: row.additional
+            const suppliesWithPrice = {};
+            priceResult.rows.forEach(row => {
+                suppliesWithPrice[row.id_products_and_supplies] = row.sale_price;
             });
-        });
 
-        // Agregar datos extra de suministros
-        const suppliesCombo = await search_supplies_combo(idCombo);
-        for (let i = 0; i < suppliesCombo.length; i++) {
-            if (suppliesInfo[i]) {
-                suppliesInfo[i].img = suppliesCombo[i].img;
-                suppliesInfo[i].product_name = suppliesCombo[i].product_name;
-                suppliesInfo[i].product_barcode = suppliesCombo[i].product_barcode;
-                suppliesInfo[i].description = suppliesCombo[i].description;
+            const suppliesInfo = [];
+            comboResult.rows.forEach(row => {
+                const supplyId = row.id_products_and_supplies;
+                const supplyPrice = suppliesWithPrice[supplyId] || 0;
+                suppliesInfo.push({
+                    img: '',
+                    product_name: '',
+                    product_barcode: '',
+                    description: '',
+                    id_products_and_supplies: supplyId,
+                    amount: row.amount,
+                    unity: row.unity,
+                    sale_price: supplyPrice,
+                    currency: row.currency_sale,
+                    additional: row.additional
+                });
+            });
+
+            // Agregar datos extra de suministros
+            const suppliesCombo = await search_supplies_combo(idCombo);
+            for (let i = 0; i < suppliesCombo.length; i++) {
+                if (suppliesInfo[i]) {
+                    suppliesInfo[i].img = suppliesCombo[i].img;
+                    suppliesInfo[i].product_name = suppliesCombo[i].product_name;
+                    suppliesInfo[i].product_barcode = suppliesCombo[i].product_barcode;
+                    suppliesInfo[i].description = suppliesCombo[i].description;
+                }
             }
-        }
 
-        return suppliesInfo;
-    } catch (error) {
-        console.error("Error en la consulta:", error);
-        throw error;
+            return suppliesInfo;
+        } catch (error) {
+            console.error("Error en la consulta:", error);
+            throw error;
+        }
     }
 }
 

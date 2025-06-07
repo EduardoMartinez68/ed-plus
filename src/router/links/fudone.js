@@ -558,7 +558,7 @@ async function add_move_to_the_history(id_companies, id_branches, id_employees, 
 
 async function create_table_lot() {
     try {
-        if (TYPE_DATABASE === 'sqlite') {
+        if (TYPE_DATABASE === 'mysqlite') {
             const queryText = `
                 CREATE TABLE IF NOT EXISTS lots (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -614,7 +614,7 @@ async function create_table_lot() {
 
 async function get_lots_by_dish_and_combo_features(idDishAndComboFeatures) {
     try {
-        if (TYPE_DATABASE === 'sqlite') {
+        if (TYPE_DATABASE === 'mysqlite') {
             const queryText = `
                 SELECT * FROM lots
                 WHERE id_dish_and_combo_features = ?
@@ -923,7 +923,7 @@ router.post('/:id_lot/delete-lot', isLoggedIn, async (req, res) => {
 
 async function get_all_the_promotions(id_dish_and_combo_features) {
     try {
-        if (TYPE_DATABASE === 'sqlite') {
+        if (TYPE_DATABASE === 'mysqlite') {
             // En SQLite no hay esquema ni uso $1, uso ? para parámetros
             const queryText = `
                 SELECT * FROM promotions
