@@ -502,46 +502,42 @@ async function update_token_uber_eat_branch(id_branch, token_uber) {
 }
 
 async function update_customer(customerId, newCustomer) {
-  // List of fields in the order expected in the query
-  const fields = [
-    'id_companies', 'first_name', 'second_name', 'last_name', 'id_country',
-    'states', 'city', 'street', 'num_ext', 'num_int', 'postal_code', 'email',
-    'phone', 'cell_phone', 'points', 'birthday', 'type_customer', 'company_name',
-    'company_address', 'website', 'contact_name', 'company_cellphone', 'company_phone'
-  ];
+  // Mapeo entre las columnas de la tabla y los valores en newCustomer
+  const columnMapping = {
+    id_companies: newCustomer.id_company,
+    first_name: newCustomer.firstName,
+    second_name: newCustomer.secondName,
+    last_name: newCustomer.lastName,
+    id_country: newCustomer.country,
+    states: newCustomer.states,
+    city: newCustomer.city,
+    street: newCustomer.street,
+    num_ext: newCustomer.num_o,
+    num_int: newCustomer.num_i,
+    postal_code: newCustomer.postal_code,
+    email: newCustomer.email,
+    phone: newCustomer.phone,
+    cell_phone: newCustomer.cellPhone,
+    points: newCustomer.points,
+    birthday: newCustomer.birthday,
+    company_name: newCustomer.company_name,
+    company_address: newCustomer.company_address,
+    website: newCustomer.website,
+    contact_name: newCustomer.contact_name,
+    company_cellphone: newCustomer.company_cellphone,
+    company_phone: newCustomer.company_phone,
+    type_customer: newCustomer.userType
+  };
 
-  // Create array of values in the correct order for the query
-  const values = fields.map(field => newCustomer[field]);
+  const fields = Object.keys(columnMapping);       // ['id_companies', 'first_name', ...]
+  const values = Object.values(columnMapping);     // ['1', 'customer 1', ...]
 
   if (TYPE_DATABASE === 'mysqlite') {
-    // SQLite uses ? placeholders for each parameter
-    // Assuming the table name is 'customers' without schema in SQLite
+    // SQLite usa ? como placeholders
+    const setClause = fields.map(field => `${field} = ?`).join(', ');
     const queryText = `
       UPDATE customers
-      SET 
-        id_companies = ?,
-        first_name = ?,
-        second_name = ?,
-        last_name = ?,
-        id_country = ?,
-        states = ?,
-        city = ?,
-        street = ?,
-        num_ext = ?,
-        num_int = ?,
-        postal_code = ?,
-        email = ?,
-        phone = ?,
-        cell_phone = ?,
-        points = ?,
-        birthday = ?,
-        type_customer = ?,
-        company_name = ?,
-        company_address = ?,
-        website = ?,
-        contact_name = ?,
-        company_cellphone = ?,
-        company_phone = ?
+      SET ${setClause}
       WHERE id = ?
     `;
 
@@ -557,9 +553,8 @@ async function update_customer(customerId, newCustomer) {
     });
 
   } else {
-    // PostgreSQL uses $1, $2, ... placeholders for parameters
-    // Build SET clause with parameters $1, $2, ... for each field
-    const setClause = fields.map((f, i) => `${f} = $${i + 1}`).join(', ');
+    // PostgreSQL usa $1, $2, etc.
+    const setClause = fields.map((field, i) => `${field} = $${i + 1}`).join(', ');
     const queryText = `
       UPDATE "Company".customers
       SET ${setClause}
@@ -575,6 +570,7 @@ async function update_customer(customerId, newCustomer) {
     }
   }
 }
+
 
 
 async function update_role_employee(idRoleEmployee, newRole) {

@@ -2117,9 +2117,9 @@ router.get('/:id_company/:id_branch/:id_provider/delete-provider', isLoggedIn, a
 
     //we will see if the user have a subscription in ed one 
     if(req.user.rol_user==rolFree){
-        res.redirect(`/fud/${id_company}/${id_branch}/providers-free`);
+        res.redirect(`/links/${id_company}/${id_branch}/providers-free`);
     }else{
-        res.redirect(`/fud/${id_company}/${id_branch}/providers`);
+        res.redirect(`/links/${id_company}/${id_branch}/providers`);
     }
 })
 

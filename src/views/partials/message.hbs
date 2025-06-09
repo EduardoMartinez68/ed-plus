@@ -1,32 +1,96 @@
+<style>
+.notification-wrapper {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    width: 90%;
+    max-width: 480px;
+    animation: slideDown 0.4s ease;
+}
+
+.notification {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    padding: 14px 20px;
+    border-radius: 10px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+    border-left: 6px solid;
+    font-size: 15px;
+    position: relative;
+    gap: 12px;
+}
+
+.notification.success {
+    border-color: #28a745;
+    background-color: #e9fbee;
+    color: #207a48;
+}
+
+.notification.error {
+    border-color: #dc3545;
+    background-color: #fdecea;
+    color: #a52a2a;
+}
+
+.notification-icon {
+    font-size: 18px;
+}
+
+.notification-message {
+    flex: 1;
+}
+
+.notification-close {
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: inherit;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -20px);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}
+
+</style>
 {{#if success}}
-    <div class="container container-message">
-        <div class="row">
-            <div class="col-md-4 mx-auto">
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <center>
-                        {{success}}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </center>
-                </div>
-            </div>
+    <div class="notification-wrapper">
+        <div class="notification success">
+            <span class="notification-icon">✔</span>
+            <span class="notification-message">{{success}}</span>
+            <button class="notification-close" onclick="this.parentElement.remove()">&times;</button>
         </div>
     </div>
 {{/if}}
 
 {{#if message}}
-    <div class="container container-message">
-        <div class="row">
-            <div class="col-md-4 mx-auto">
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <center>
-                        {{message}}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </center>
-                </div>
-            </div>
+    <div class="notification-wrapper">
+        <div class="notification error">
+            <span class="notification-icon">⚠</span>
+            <span class="notification-message">{{message}}</span>
+            <button class="notification-close" onclick="this.parentElement.remove()">&times;</button>
         </div>
     </div>
 {{/if}}
+<script>
+  setTimeout(() => {
+    document.querySelectorAll('.notification-wrapper').forEach(el => {
+      el.style.opacity = '0';
+      setTimeout(() => el.remove(), 300);
+    });
+  }, 5000);
+</script>
+
 
 <script src="/js/desktop/jquery.min.js"></script>
 <script src="/js/desktop/bootstrap.bundle.min.js"></script>

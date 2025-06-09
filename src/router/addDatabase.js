@@ -1060,14 +1060,20 @@ async function add_type_employees(newRole) {
 
 //add_provider_company
 async function add_provider_company(provider) {
-    const keys = Object.keys(provider);
     const values = Object.values(provider);
 
     if (TYPE_DATABASE === 'mysqlite') {
         // SQLite usa ?
-        const columns = keys.join(', ');
-        const placeholders = keys.map(() => '?').join(', ');
-        const queryText = `INSERT INTO providers (${columns}) VALUES (${placeholders})`;
+        const queryText = `
+            INSERT INTO providers (
+                id_branches, name, representative, cell_phone, phone, email, credit_limit, credit_days, comment,
+                business_name, business_address, business_rfc, business_curp, business_postal_code,
+                business_phone, business_cell_phone, website, rfc, curp, category, type, business_representative
+            ) VALUES (
+                ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+            )
+        `;
+
 
         return new Promise((resolve) => {
             database.run(queryText, values, function(err) {
@@ -1082,9 +1088,15 @@ async function add_provider_company(provider) {
 
     } else {
         // PostgreSQL usa $1, $2, ...
-        const columns = keys.join(', ');
-        const placeholders = keys.map((_, i) => `$${i + 1}`).join(', ');
-        const queryText = `INSERT INTO "Branch".providers (${columns}) VALUES (${placeholders})`;
+        const queryText = `
+            INSERT INTO "Branch".providers (
+                name, representative, cell_phone, phone, email, credit_limit, credit_days, comment,
+                business_name, business_address, business_rfc, business_curp, business_postal_code,
+                business_phone, business_cell_phone, website, rfc, curp, category, type, business_representative
+            ) VALUES (
+                $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21
+            )
+        `;
 
         try {
             await database.query(queryText, values);

@@ -1080,7 +1080,7 @@ async function this_provider_exists(provider) {
                     console.error('Error checking provider (SQLite):', err);
                     return resolve(false);
                 }
-                resolve(rows.length > 0);
+                resolve(rows.length > 1);
             });
         });
     }
@@ -1094,7 +1094,7 @@ async function this_provider_exists(provider) {
         `;
         const values = [provider.branch, provider.name];
         const result = await database.query(queryText, values);
-        return result.rows.length > 0;
+        return result.rows.length > 1;
     } catch (error) {
         console.error('Error checking provider (PostgreSQL):', error);
         return false;

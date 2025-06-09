@@ -1,11 +1,6 @@
 --------app de combos 
 totalmente rota para mysqlite tenemos que modificarla
 
-
-----app provedores
-no se puede agregar, editar ni eliminar
-
-
 ---app clientes 
 cuando editas al cliente al parecer se borra
 
