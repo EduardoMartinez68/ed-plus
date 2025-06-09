@@ -37,7 +37,8 @@ router.get('/links/logout',(req,res)=>{
 
         //we will see if the app is in the website or in the desktop 
         if(system=='desktop'){
-            res.redirect('/links/install-desktop');
+            //res.redirect('/links/install-desktop');
+            res.redirect('/links/login-desktop');
         }else{
             res.redirect('/links/login');
         }

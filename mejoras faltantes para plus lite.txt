@@ -1,18 +1,4 @@
 --------app de combos 
 totalmente rota para mysqlite tenemos que modificarla
 
---app editar branch 
-al editar la branch sale este error
-Error updating branch in SQLite: [Error: SQLITE_ERROR: no such table: Company.branches] {
-  errno: 1,
-  code: 'SQLITE_ERROR'
-}
-
---app opciones
-al editar la company sale esto 
-Error updating company in SQLite: [Error: SQLITE_ERROR: no such table: User.companies] {
-  errno: 1,
-  code: 'SQLITE_ERROR'
-}
-
 

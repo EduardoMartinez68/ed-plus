@@ -168,7 +168,7 @@ function update_company_sqlite(company, id_company) {
           states = ?,
           municipality = ?
         WHERE id = ?`
-      : `UPDATE "User".companies SET
+      : `UPDATE companies SET
           name = ?,
           alias = ?,
           description = ?,
@@ -355,7 +355,7 @@ async function update_branch(id_branch, branch) {
   if (TYPE_DATABASE === 'mysqlite') {
     // SQLite usa signos de interrogación (?) para parámetros
     const queryText = `
-      UPDATE "Company".branches 
+      UPDATE branches 
       SET 
           name_branch = ?,
           alias = ?,
