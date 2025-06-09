@@ -1,17 +1,6 @@
 --------app de combos 
 totalmente rota para mysqlite tenemos que modificarla
 
---app empleados
-al momento de agregar empleados sale este error
-Error en add_user SQLite: [Error: SQLITE_ERROR: no such table: Fud_users] {
-  errno: 1,
-  code: 'SQLITE_ERROR'
-}
-
---app roles y permisos 
-creo que no existe la funcion para obtener todos los datos del rol de user para editarlo
-
-
 --app editar branch 
 al editar la branch sale este error
 Error updating branch in SQLite: [Error: SQLITE_ERROR: no such table: Company.branches] {

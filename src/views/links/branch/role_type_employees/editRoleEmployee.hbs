@@ -15,7 +15,7 @@
 
         checkboxes.forEach(function (checkbox) {
             var valueCheck = checkbox.getAttribute('valueCheck');
-            if (valueCheck === 'true') {
+            if (valueCheck === 'true' || valueCheck === '1') {
                 checkbox.checked = true;
             }
         });

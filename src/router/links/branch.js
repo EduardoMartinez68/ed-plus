@@ -940,8 +940,6 @@ router.get('/:id_company/:id_branch/:id_role_employee/edit-role-user', isLoggedI
     }
 
     const roleEmployee = await get_data_tole_employees(id_role_employee);
-    //console.log('----------------------------roleEmployee--------------------')
-    //console.log(roleEmployee)
     const branchFree = await get_data_branch(req);
     const branch=branchFree;
     res.render('links/branch/role_type_employees/editRoleEmployee', { roleEmployee, branchFree , branch});

@@ -467,15 +467,14 @@ async function get_data_employee(req) {
     }
 }
 
-async function get_data_tole_employees(req) {
+async function get_data_tole_employees(id_role_employee) {
     try {
         if (TYPE_DATABASE === 'mysqlite') {
-            const id_user = req;
             return new Promise((resolve, reject) => {
-                const query = 'SELECT * FROM employees WHERE id_users = ?';
-                database.all(query, [id_user], (err, rows) => {
+                const query = 'SELECT * FROM roles_employees WHERE id = ?';
+                database.all(query, [id_role_employee], (err, rows) => {
                     if (err) {
-                        console.error('SQLite error getting employee data:', err.message);
+                        console.error('SQLite error getting role employee data:', err.message);
                         reject(err);
                     } else {
                         resolve(rows);
@@ -483,17 +482,17 @@ async function get_data_tole_employees(req) {
                 });
             });
         } else {
-            const id_user = req.user.id;
-            const queryText = 'SELECT * FROM "Company".employees WHERE id_users = $1';
-            const values = [id_user];
+            const queryText = 'SELECT * FROM "Employee".roles_employees WHERE id = $1';
+            const values = [id_role_employee];
             const result = await database.query(queryText, values);
             return result.rows;
         }
     } catch (error) {
-        console.error('Error getting employee data:', error);
+        console.error('Error getting role employee data:', error);
         throw error;
     }
 }
+
 
 async function delete_profile_picture(idUser) {
     //we will see if the user have a profile picture
