@@ -41,35 +41,24 @@ function create_the_folder_upload(){
 }
 
 async function create_the_database_lite() {
+  //this is the path of the database of the user 
   const dbPath = path.join(plusFolder, nameDatabase);
 
-  const db = new sqlite3.Database(dbPath, (err) => {
-    if (err) {
-      return console.error('Error al crear la base de datos:', err.message);
-    }
-    console.log('Base de datos SQLite creada en:', dbPath);
-    /*
-    // Aquí ejecutamos el comando para renombrar la columna
-    const renameColumnSQL = `ALTER TABLE session RENAME COLUMN expired TO expires ;`;
+  //this is the path of the database that is save in the app 
+  const sourceDbPath = path.join(__dirname, 'database', 'edpluslite.sqlite');
 
-    db.run(renameColumnSQL, (err) => {
-      if (err) {
-        // Si da error aquí, es probable que tu versión de SQLite no soporte esta función
-        console.error('Error renombrando la columna:', err.message);
-      } else {
-        console.log('Columna renombrada correctamente.');
+  //we will see if the database exist 
+  if (!fs.existsSync(dbPath)) {
+    //if the database not exist, we will create in the path of the user
+      try {
+          fs.copyFileSync(sourceDbPath, dbPath);
+          console.log('Base de datos creada.');
+      } catch (err) {
+          console.error('Error al copiar la base de datos:', err);
       }
-
-      // Cierra la conexión después de ejecutar
-      db.close((err) => {
-        if (err) {
-          return console.error(err.message);
-        }
-        console.log('Conexión cerrada.');
-      });
-    });
-    */
-  });
+  } else {
+      console.log('La base de datos ya existe.');
+  }
 }
 
 function get_path_folder_upload(){

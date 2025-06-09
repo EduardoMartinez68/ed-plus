@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>¡Tu Demo ha Expirado! 😱</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --main-color: #1649FF;
+      --accent-color: #0f3bd4;
+      --background-color: #f1f5ff;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: var(--background-color);
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .card {
+      background: #fff;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 0 30px rgba(22, 73, 255, 0.2);
+      max-width: 800px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2.8em;
+      color: var(--main-color);
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      font-size: 1.4em;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .highlight {
+      color: var(--main-color);
+      font-weight: bold;
+    }
+
+    .hero-img {
+      width: 100%;
+      max-width: 400px;
+      border-radius: 15px;
+      margin: 25px auto;
+    }
+
+    .benefits {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      margin: 30px 0;
+    }
+
+    .benefit {
+      background-color: #eef2ff;
+      border-left: 6px solid var(--main-color);
+      border-radius: 12px;
+      padding: 20px;
+      margin: 10px;
+      flex: 1 1 250px;
+      font-size: 1.2em;
+      text-align: left;
+      box-shadow: 0 2px 8px rgba(22, 73, 255, 0.1);
+    }
+
+    .benefit span {
+      font-size: 1.6em;
+      margin-right: 10px;
+    }
+
+    .cta-button {
+      display: inline-block;
+      background: linear-gradient(45deg, #1649FF, #0f3bd4);
+      color: #fff;
+      padding: 16px 36px;
+      font-size: 1.3em;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 20px #1649FFAA;
+      animation: pulse 2s infinite;
+      margin-top: 25px;
+    }
+
+    .cta-button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 30px #1649FFBB;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 20px #1649FFAA; }
+      50% { box-shadow: 0 0 30px #1649FF; }
+      100% { box-shadow: 0 0 20px #1649FFAA; }
+    }
+
+    .footer {
+      margin-top: 40px;
+      font-size: 0.9em;
+      color: #888;
+    }
+
+    .footer a {
+      color: var(--main-color);
+      text-decoration: none;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>¡Tu Demo ha Expirado! 😱</h1>
+    <h2>Pero no te preocupes... 🎉 ¡Aún puedes obtener la versión <span class="highlight">PLUS</span> y transformar tu negocio!</h2>
+
+    <img class="hero-img" src="https://pluspuntodeventa.com/img/img-1.webp" alt="PLUS Software">
+
+    <div class="benefits">
+      <div class="benefit"><span>📦</span> Manejo <strong>milimétrico</strong> de tu inventario</div>
+      <div class="benefit"><span>💸</span> Pago de <strong>recargas y servicios</strong> desde tu sistema</div>
+      <div class="benefit"><span>🛡️</span> Evita el <strong>robo hormiga</strong> con control total</div>
+    </div>
+
+    <a class="cta-button" href="https://wa.me/524443042129?text=Hola!%20Quiero%20obtener%20la%20versión%20premium%20de%20PLUS">✨ ¡Quiero mi Versión PREMIUM!</a>
+
+    <div class="footer">
+      <p>Visítanos en <a href="https://pluspuntodeventa.com" target="_blank">pluspuntodeventa.com</a></p>
+      <p>Power by <strong>{ED} Software Developer</strong> 💻🚀</p>
+    </div>
+  </div>
+</body>
+</html>

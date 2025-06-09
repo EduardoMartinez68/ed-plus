@@ -10,6 +10,23 @@ her we will not use posgreSQL, we use SQLite and create the folder in the system
 const { create_all_the_file, get_path_of_folder_upload, get_path_folder_upload, get_path_folder_plus, get_path_database, name_database_lite } = require('./initialAppForDesktop');
 create_all_the_file();
 
+//this is for create the demo of PLUS
+const notifier = require('node-notifier');
+const { checkTrialStatus} = require('./plusD');
+checkTrialStatus();
+if (!checkTrialStatus()) {
+    notifier.notify({
+        title: 'Licencia Expirada',
+        message: 'Tu prueba gratuita ha expirado. Contacta a soporte para comprar la versión premium de PLUS.',
+        sound: true,
+        wait: false
+    });
+    //activation.html
+    // Bloqueas toda la app
+    process.exit(1);
+}
+
+
 
 //----------------------server application
 //her we will start the server and his character 
