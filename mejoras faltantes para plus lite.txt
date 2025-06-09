@@ -1,10 +1,6 @@
 --------app de combos 
 totalmente rota para mysqlite tenemos que modificarla
 
----app clientes 
-cuando editas al cliente al parecer se borra
-
-
 --app empleados
 al momento de agregar empleados sale este error
 Error en add_user SQLite: [Error: SQLITE_ERROR: no such table: Fud_users] {

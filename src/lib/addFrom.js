@@ -3305,7 +3305,7 @@ router.post('/fud/:id_company/:id_branch/add-employees', isLoggedIn, async (req,
                         for that the manager can edit the employee data in the screen of employees
                         */
                         await delete_user(idUser)
-                        req.flash('message', 'Los datos del empleado no fueron añadidos. Por favor, edita los datos y actualízalos 😅')
+                        req.flash('message', 'El empleado no fue añadido por favor vuelve a intentarlo 😅')
                     }
                 }
                 else {

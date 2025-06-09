@@ -14,7 +14,7 @@ function compare_password(P1,P2){
     return P1==P2;
 }
 
-async function add_user(user, role, dbType = 'postgres') {
+async function add_user(user, role) {
     if (TYPE_DATABASE === 'postgres') {
         const queryText = `
             INSERT INTO "Fud"."users" 
@@ -44,7 +44,7 @@ async function add_user(user, role, dbType = 'postgres') {
     } else{
         // Para SQLite
         const queryText = `
-            INSERT INTO "Fud_users" 
+            INSERT INTO users
                 (photo, user_name, first_name, second_name, last_name, email, password, rol_user, id_packs_fud) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
         `;
@@ -76,8 +76,76 @@ async function add_user(user, role, dbType = 'postgres') {
     }
 }
 
+async function add_new_employees(employee) {
+    if (TYPE_DATABASE === 'postgres') {
+        try {
+            const queryText = `
+                INSERT INTO "Company"."employees"
+                    (id_companies, id_users, id_roles_employees, id_departments_employees, id_branches, id_country, city, street, num_int, num_ext, phone, cell_phone)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);
+            `;
+            const values = [
+                employee.id_company,
+                employee.id_user,
+                employee.id_role_employee,
+                employee.id_departament_employee,
+                employee.id_branch,
+                employee.id_country,
+                employee.city,
+                employee.street,
+                employee.num_int,
+                employee.num_ext,
+                employee.phone,
+                employee.cell_phone,
+            ];
+   
+            await database.query(queryText, values);
+            return true;
+        } catch (err) {
+            console.error('Error al insertar empleado en PostgreSQL:', err);
+            return false;
+        }
 
-async function add_new_employees(employee, dbType = 'postgres') {
+    } else {
+        try {
+            const queryText = `
+                INSERT INTO employees
+                    (id_companies, id_users, id_roles_employees, id_departments_employees, id_branches, id_country, city, street, num_int, num_ext, phone, cell_phone)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+            `;
+
+            const values = [
+                employee.id_company,
+                employee.id_user,
+                employee.id_role_employee,
+                employee.id_departament_employee,
+                employee.id_branch,
+                employee.id_country,
+                employee.city,
+                employee.street,
+                employee.num_int,
+                employee.num_ext,
+                employee.phone,
+                employee.cell_phone,
+            ];
+    
+            await new Promise((resolve, reject) => {
+                database.run(queryText, values, function (err) {
+                    if (err) reject(err);
+                    else resolve(this.lastID);
+                });
+            });
+
+            return true;
+        } catch (err) {
+            console.error('Error al insertar empleado en SQLite:', err);
+            return false;
+        }
+    }
+}
+
+
+async function add_new_employees2(employee) {
     try {
         if (TYPE_DATABASE === 'postgres') {
             const queryText = `
