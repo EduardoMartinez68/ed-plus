@@ -206,6 +206,7 @@ if (TYPE_DATABASE == 'mysqlite') {
 
 } else {
   //her now we will connect with the database of EDPLUS when be created
+  const pg = require('pg');
   const pgPool = new pg.Pool({
     user: APP_PG_USER,
     host: APP_PG_HOST,
@@ -328,17 +329,24 @@ function getLocalIP() {
 
 // starting the server in the computer
 //const open = (...args) => import('open').then(mod => mod.default(...args));
+const { exec } = require('child_process');
 
 serverExpress.listen(serverExpress.get('port'), '0.0.0.0', () => {
   const url = `http://${getLocalIP()}:${serverExpress.get('port')}`;
   console.log(`Server running on ${url}`);
 
-  //her we will see if the user have the version desktop 
-  if (TYPE_SYSTME == 'desktop') {
-    open(url);
+  let command;
+  if (os.platform() === 'win32') {
+    command = `start "" "${url}"`;
+  } else if (os.platform() === 'darwin') {
+    command = `open "${url}"`;
+  } else {
+    command = `xdg-open "${url}"`;
   }
 
-  //open(url);
+  exec(command, (err) => {
+    if (err) console.error('❌ Error al abrir el navegador:', err);
+  });
 });
 
 

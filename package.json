@@ -11,7 +11,8 @@
   "pkg": {
     "assets": [
       ".env",
-      "src/**/*"
+      "src/**/*",
+      "node_modules/sqlite3/lib/binding/**/node_sqlite3.node"
     ]
   },
   "build": {
@@ -52,6 +53,7 @@
     "aws-sdk": "^2.1624.0",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
+    "child_process": "^1.0.2",
     "connect-flash": "^0.1.1",
     "connect-pg-simple": "^9.0.0",
     "connect-sqlite3": "^0.9.15",

@@ -9,7 +9,8 @@ router.get('/',(req,res)=>{
 
     //we will see if the user have the app desktop 
     if(system=='desktop'){
-        res.redirect('/links/install-desktop');
+        //res.redirect('/links/install-desktop');
+        res.redirect('/links/login-desktop');
     }
     else{
         res.render('links/web/prices');

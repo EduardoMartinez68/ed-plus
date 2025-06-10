@@ -17,7 +17,6 @@ if (TYPE_DATABASE === 'mysqlite') {
       console.log('✅ Conexión exitosa a SQLite');
     }
   });
-
 } else {
   const  { Client }=require('pg');
   const {promisify}=require('util');
