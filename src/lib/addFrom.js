@@ -5853,29 +5853,6 @@ async function delete_reachange_service(id) {
 }
 
 
-async function update_status_prontipagos2(transaction_id, id_branch, token){
-    try {
-        const url = `${urlProntipagos}/prontipagos-external-api-ws/ws/protected/v1/check-status?transactionId=${transaction_id}`;
-
-        //first we will get the password and user of prontipagos use the id of the branch
-        //const token = await get_token_prontipagos(id_branch); //create the token for the prontipagos API
-
-        //send the message to the server of prontipagos
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
-        });
-        const data = await response.json();
-        console.log('Respuesta de Prontipagos:', data);
-    } catch (error) {
-        console.log('Error al enviar a Prontipagos:', error);
-    }
-}
-
 //cada 2 segundos hasta completar 61 segundos 5555444666
 async function update_status_prontipagos(transaction_id, id_branch, token) {
     const url = `${urlProntipagos}/prontipagos-external-api-ws/ws/protected/v1/check-status?transactionId=${transaction_id}`;
@@ -5917,9 +5894,11 @@ async function update_status_prontipagos(transaction_id, id_branch, token) {
                 else if(payload.codeDescription=='Procesando Transaccion'){
                     
                 }
+                /*
                 else if(payload.codeDescription=='Transaccion rechazada por time-out'){
                     maxInitialTime=maxInitialTime+61000;
                 }
+                    */
                 else{ //her is a error
                     return {status: false,message:payload.codeDescription}
                 }
@@ -5930,6 +5909,106 @@ async function update_status_prontipagos(transaction_id, id_branch, token) {
 
         await new Promise(resolve => setTimeout(resolve, intervalShort));
     }
+}
+
+async function update_status_prontipagos2(transaction_id, id_branch, token) {
+    const url = `${urlProntipagos}/prontipagos-external-api-ws/ws/protected/v1/check-status?transactionId=${transaction_id}`;
+
+    let attempt = 0;
+    let maxInitialTime = 61000; // 61 segundos
+    const intervalShort = 2000; // cada 2 segundos
+    const startTime = Date.now();
+
+    console.log('🚀 Iniciando verificación rápida durante 61 segundos...');
+
+    while ((Date.now() - startTime) < maxInitialTime) {
+        attempt++;
+        const elapsed = Date.now() - startTime;
+        console.log(`🕐 Intento rápido #${attempt} || Tiempo transcurrido: ${elapsed}ms`);
+
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            // ⚠️ Validación de errores HTTP
+            if (!response.ok) {
+                console.warn(`⚠️ Error HTTP ${response.status}. Reintentando...`);
+                if (response.status === 401) {
+                    token = await get_token_prontipagos(id_branch); // actualiza token si es 401
+                }
+                continue;
+            }
+
+            const data = await response.json();
+            console.log('📦 Respuesta de Prontipagos:', data);
+
+            if (data.code === 0) {
+                const payload = data.payload;
+                const description = payload.codeDescription;
+
+                if (description === 'Transaccion exitosa') {
+                    return { status: true, message: description };
+                } else if (description === 'Procesando Transaccion') {
+                    // seguimos esperando
+                } /*else if (description === 'Transaccion rechazada por time-out') {
+                    maxInitialTime += 61000; // extendemos el tiempo de espera
+                } */else {
+                    // otros errores conocidos
+                    return { status: false, message: description };
+                }
+            }
+
+        } catch (error) {
+            console.error('❌ Error al consultar Prontipagos:', error);
+            token = await get_token_prontipagos(id_branch); // intentar con nuevo token
+        }
+
+        await new Promise(resolve => setTimeout(resolve, intervalShort));
+    }
+
+    // ⏱ Intento final en el milisegundo 60.999 si aún no se obtuvo respuesta exitosa
+    const remaining = maxInitialTime - (Date.now() - startTime);
+    if (remaining > 0) {
+        console.log(`⏳ Esperando ${remaining}ms para el intento final en 60.999s`);
+        await new Promise(resolve => setTimeout(resolve, remaining));
+        try {
+            const finalResponse = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (finalResponse.ok) {
+                const finalData = await finalResponse.json();
+                console.log('🔁 Intento final:', finalData);
+
+                if (finalData.code === 0) {
+                    const payload = finalData.payload;
+                    const description = payload.codeDescription;
+
+                    if (description === 'Transaccion exitosa') {
+                        return { status: true, message: description };
+                    } else {
+                        return { status: false, message: description };
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('❌ Error en el intento final:', error);
+        }
+    }
+
+    // 🚫 Si se agota el tiempo y no hay una respuesta definitiva
+    return { status: false, message: 'No se obtuvo una respuesta definitiva en el tiempo establecido.' };
 }
 
 
