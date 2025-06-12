@@ -716,7 +716,6 @@
 
             const data = await response.json();
             console.log(data)
-            transaction_id=data.payload.transactionId
             return data;
         } catch (error) {
             console.error('Error:', error);

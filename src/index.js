@@ -334,7 +334,7 @@ const { exec } = require('child_process');
 serverExpress.listen(serverExpress.get('port'), '0.0.0.0', () => {
   const url = `http://${getLocalIP()}:${serverExpress.get('port')}`;
   console.log(`Server running on ${url}`);
-
+  /*
   let command;
   if (os.platform() === 'win32') {
     command = `start "" "${url}"`;
@@ -347,6 +347,7 @@ serverExpress.listen(serverExpress.get('port'), '0.0.0.0', () => {
   exec(command, (err) => {
     if (err) console.error('❌ Error al abrir el navegador:', err);
   });
+  */
 });
 
 

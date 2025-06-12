@@ -5681,7 +5681,7 @@ router.post('/links/send_information_to_prontipagos', async (req, res) => {
 
     //we will insert the service in the database of PLUS
     const id_customer = '';
-    const transacctionId = await insert_reachange_service(req.user.id_company, req.user.id_branch, req.user.id, id_customer, service);
+    const transacctionId = await insert_reachange_service(req.user.id_company, req.user.id_branch, req.user.id, id_customer, service)+200;
 
     //her we will see if we could insert the service in the database
     if (!transacctionId) {
@@ -5690,7 +5690,6 @@ router.post('/links/send_information_to_prontipagos', async (req, res) => {
 
     //if we could insert the service, we will add the transacctionId to the payload fot send to prontipagos
     payload.transacctionId = transacctionId;    
-
 
     try {
         const url = `${urlProntipagos}/prontipagos-external-api-ws/ws/protected/v1/sell/product`;
@@ -5718,10 +5717,22 @@ router.post('/links/send_information_to_prontipagos', async (req, res) => {
             //this is when the request not is ok, we will delete this sale of the database of PLUS
             if(data.code !== 0) {
                 await delete_reachange_service(transacctionId);
+                res.json(data);
+            }else{
+                //her we will see if the service have a status success
+                const answerServerPorntiPagos=await update_status_prontipagos(transacctionId, id_branch, token);
+                if(answerServerPorntiPagos.status==false){
+                    //await delete_reachange_service(transacctionId); //delete the services when exist a error
+                    res.status(500).json({
+                        code:1,
+                        status: false,
+                        message: answerServerPorntiPagos.message
+                    });
+                }
+                else{
+                    res.json(data);
+                }
             }
-            
-            await update_status_prontipagos(transacctionId, id_branch, token);
-            res.json(data);
         } else {
             const rawText = await response.text();
             console.log('Respuesta no JSON de Prontipagos:', rawText);
@@ -5871,17 +5882,16 @@ async function update_status_prontipagos(transaction_id, id_branch, token) {
 
     let success = false;
     let attempt = 0;
-    const maxInitialTime = 61000; // 61 segundos
+    let maxInitialTime = 61000; // 61 segundos
     const intervalShort = 2000;   // 2 segundos
-    const intervalLong = 61000;   // 61 segundos
     const startTime = Date.now();
 
     console.log('🚀 Iniciando verificación rápida durante 61 segundos...');
 
     // 🔁 Fase 1: Verificar cada 2 segundos por 61 segundos
-    while (!success && (Date.now() - startTime < maxInitialTime)) {
+    while ((Date.now() - startTime < maxInitialTime)) {
         attempt++;
-        console.log(`🕐 Intento rápido #${attempt}...`);
+        console.log(`🕐 Intento rápido #${attempt}||tiempo: ${Date.now() - startTime }...`);
 
         try {
             const response = await fetch(url, {
@@ -5895,59 +5905,30 @@ async function update_status_prontipagos(transaction_id, id_branch, token) {
 
             const data = await response.json();
             console.log('📦 Respuesta de Prontipagos:', data);
+            if(data.code==0){
+                //we will see if the transition was success
+                const payload=data.payload;
 
-            const description = data?.payload?.codeDescription;
-
-            if (description === 'Transaccion exitosa') {
-                console.log('✅ Transacción exitosa:', data);
-                success = true;
-                return data;
-            } else {
-                console.log(`⌛ Estado actual: ${description}`);
+                //her we will see if was success
+                if(payload.codeDescription=='Transaccion exitosa'){
+                    return {status: true, message:payload.codeDescription}
+                }
+                //her we will see if not have status
+                else if(payload.codeDescription=='Procesando Transaccion'){
+                    
+                }
+                else if(payload.codeDescription=='Transaccion rechazada por time-out'){
+                    maxInitialTime=maxInitialTime+61000;
+                }
+                else{ //her is a error
+                    return {status: false,message:payload.codeDescription}
+                }
             }
-
         } catch (error) {
-            console.log('❌ Error en intento rápido:', error.message);
+            token = await get_token_prontipagos(id_branch);
         }
 
         await new Promise(resolve => setTimeout(resolve, intervalShort));
-    }
-
-    console.log('⏳ Entrando a modo de espera prolongada...');
-
-    // 🔁 Fase 2: Verificar cada 61 segundos hasta éxito
-    while (!success) {
-        attempt++;
-        console.log(`🕐 Intento prolongado #${attempt}...`);
-
-        try {
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            const data = await response.json();
-            console.log('📦 Respuesta de Prontipagos:', data);
-
-            const description = data?.payload?.codeDescription;
-
-            if (description === 'Transaccion exitosa') {
-                console.log('✅ Transacción exitosa:', data.payload);
-                success = true;
-                return data;
-            } else {
-                console.log(`⌛ Estado actual: ${description}`);
-            }
-
-        } catch (error) {
-            console.log('❌ Error en intento prolongado:', error.message);
-        }
-
-        await new Promise(resolve => setTimeout(resolve, intervalLong));
     }
 }
 
