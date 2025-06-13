@@ -5689,14 +5689,14 @@ router.post('/links/send_information_to_prontipagos', async (req, res) => {
     }
 
     //if we could insert the service, we will add the transacctionId to the payload fot send to prontipagos
-    payload.transacctionId = transacctionId;    
+    payload.transacctionId = transacctionId;  
+
+    //first we will get the password and user of prontipagos use the id of the branch
+    const id_branch = req.user.id_branch;
+    const token = await get_token_prontipagos(id_branch); //create the token for the prontipagos API
 
     try {
         const url = `${urlProntipagos}/prontipagos-external-api-ws/ws/protected/v1/sell/product`;
-
-        //first we will get the password and user of prontipagos use the id of the branch
-        const id_branch = req.user.id_branch;
-        const token = await get_token_prontipagos(id_branch); //create the token for the prontipagos API
 
         //send the message to the server of prontipagos
         const response = await fetch(url, {
@@ -5736,13 +5736,26 @@ router.post('/links/send_information_to_prontipagos', async (req, res) => {
         } else {
             const rawText = await response.text();
             console.log('Respuesta no JSON de Prontipagos:', rawText);
-            res.status(500).json({
-                status: false,
-                message: 'La API no devolvió un JSON',
-                raw: rawText
-            });
 
-            await delete_reachange_service(transacctionId); //this is for delete the service in the database of PLUS
+            //her we will see if the service have a status success
+            const answerServerPorntiPagos=await update_status_prontipagos(transacctionId, id_branch, token);
+            if(answerServerPorntiPagos.status==false){
+                //await delete_reachange_service(transacctionId); //delete the services when exist a error
+                res.status(500).json({
+                    code:1,
+                    status: false,
+                    message: 'La API no devolvió un JSON' 
+                });
+            }
+            else{
+                res.status(500).json({
+                    status: false,
+                    message: answerServerPorntiPagos.message,
+                    raw: rawText
+                });
+            }
+
+            //await delete_reachange_service(transacctionId); //this is for delete the service in the database of PLUS
         }
 
     } catch (error) {
@@ -5855,6 +5868,8 @@ async function delete_reachange_service(id) {
 
 //cada 2 segundos hasta completar 61 segundos 5555444666
 async function update_status_prontipagos(transaction_id, id_branch, token) {
+    console.log('token')
+    console.log(token)
     const url = `${urlProntipagos}/prontipagos-external-api-ws/ws/protected/v1/check-status?transactionId=${transaction_id}`;
 
     let success = false;
@@ -5894,21 +5909,22 @@ async function update_status_prontipagos(transaction_id, id_branch, token) {
                 else if(payload.codeDescription=='Procesando Transaccion'){
                     
                 }
-                /*
                 else if(payload.codeDescription=='Transaccion rechazada por time-out'){
-                    maxInitialTime=maxInitialTime+61000;
+                    return {status: false,message:payload.codeDescription}
                 }
-                    */
                 else{ //her is a error
                     return {status: false,message:payload.codeDescription}
                 }
             }
         } catch (error) {
-            token = await get_token_prontipagos(id_branch);
+            console.log(error)
+            //token = await get_token_prontipagos(id_branch);
         }
 
         await new Promise(resolve => setTimeout(resolve, intervalShort));
     }
+
+    return {status: false,message:''}
 }
 
 async function update_status_prontipagos2(transaction_id, id_branch, token) {
@@ -6021,7 +6037,7 @@ router.post('/links/get_status_sale_in_prontipagos/:transaction_id', async (req,
         //first we will get the password and user of prontipagos use the id of the branch
         const id_branch = req.user.id_branch;
         const token = await get_token_prontipagos(id_branch); //create the token for the prontipagos API
-
+        console.log(token)
         //send the message to the server of prontipagos
         const response = await fetch(url, {
             method: 'GET',
@@ -6070,10 +6086,12 @@ async function get_token_prontipagos(id_branch) {
         if (data.code === 0 && data.payload?.accessToken) {
             return data.payload.accessToken;
         } else {
-            throw new Error("Error al obtener el token: " + JSON.stringify(data));
+            console.log("Error al obtener el token: " + JSON.stringify(data))
+            return '';
         }
     } catch (error) {
-        throw new Error("Fallo en la solicitud del token: " + error.message);
+        console.log("Fallo en la solicitud del token: " + error.message)
+        return '';
     }
 }
 
