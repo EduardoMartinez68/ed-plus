@@ -3665,7 +3665,6 @@ router.post('/fud/client', isLoggedIn, async (req, res) => {
 
 router.post('/fud/car-post', isLoggedIn, async (req, res) => {
     await add_table_box_history(); //this is for create the table that the new user neeed
-
     var commander = ''
     var text = ''
 
@@ -3679,7 +3678,6 @@ router.post('/fud/car-post', isLoggedIn, async (req, res) => {
 
         //we will seeing if can create all the combo of the car
         text = await watch_if_can_create_all_the_combo(products);
-
         //if can buy this combos, we going to add this buy to the database 
         if (text == 'success') {
             const id_customer = req.body.id_customer;
@@ -3963,7 +3961,7 @@ router.post('/fud/car-customer-post', async (req, res) => {
 
         //we will seeing if can create all the combo of the car
         text = await watch_if_can_create_all_the_combo(combos);
-
+    
         //if can buy this combos, we going to add this buy to the database 
         if (text == 'success') {
             const id_customer = null;
@@ -3977,6 +3975,7 @@ router.post('/fud/car-customer-post', async (req, res) => {
             //we will read all the combos and save in the database 
             for (const combo of combos) {
                 const dataComboFeatures = await get_data_combo_features(combo.id); //get the data of the combo
+           
                 idBranch = dataComboFeatures.id_branches; //change the id branch for save the commander
                 const dataComandera = create_data_commander(combo)
                 commanderDish.push(dataComandera);
@@ -3988,6 +3987,7 @@ router.post('/fud/car-customer-post', async (req, res) => {
             //save the comander
             commander = create_commander(idBranch, id_employee, id_customer, commanderDish, combos[0].totalCar, combos[0].moneyReceived, combos[0].exchange, combos[0].comment, day)
             text = await addDatabase.add_commanders(commander); //save the id commander
+
         }
         //send an answer to the customer
         //res.status(200).json({ message: text});
@@ -4054,7 +4054,6 @@ async function watch_if_can_create_all_the_combo(combos) {
     // Iterate through all the combos
     var arrayCombo = await get_all_supplies_of_the_combos(combos)
     var listSupplies = calculate_the_supplies_that_need(arrayCombo);
-
     //we will to calculate if have the supplies need for create all the combos that the customer would like eat
     const answer = await exist_the_supplies_need_for_creat_all_the_combos(listSupplies);
     if (answer == true) {
@@ -4067,7 +4066,6 @@ async function watch_if_can_create_all_the_combo(combos) {
             if (supplies.name != '') {
                 //get the data feature of the supplies and his existence 
                 const dataSuppliesFeactures = await get_data_supplies_features(supplies.idBranch, supplies.idSupplies)
-
                 const existence = dataSuppliesFeactures.existence;
                 const newAmount = parseFloat(existence) - parseFloat(supplies.amount); //calculate the new amount for update in the inventory
                 await update_inventory(supplies.idBranch, supplies.idSupplies, newAmount);
@@ -4275,13 +4273,14 @@ async function get_all_price_supplies_branch22(idCombo, idBranch) {
 async function get_all_price_supplies_branch(idCombo, idBranch) {
   if (TYPE_DATABASE === 'mysqlite') {
     return new Promise((resolve) => {
-      const comboQuery = `
+        const comboQuery = `
         SELECT tsc.id_products_and_supplies, tsc.amount, tsc.unity, psf.currency_sale
         FROM table_supplies_combo tsc
         INNER JOIN product_and_suppiles_features psf
         ON tsc.id_products_and_supplies = psf.id_products_and_supplies
-        WHERE tsc.id_dishes_and_combos = ? ORDER BY id_products_and_supplies DESC
-      `;
+        WHERE tsc.id_dishes_and_combos = ?
+        ORDER BY tsc.id_products_and_supplies DESC
+        `;
       const priceQuery = `
         SELECT id_products_and_supplies, sale_price, sale_unity
         FROM product_and_suppiles_features

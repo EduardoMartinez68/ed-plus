@@ -1274,12 +1274,33 @@ async function add_commanders(data) {
     const values = Object.values(data);
 
     if (TYPE_DATABASE === 'mysqlite') {
-        const columns = keys.join(', ');
-        const placeholders = keys.map(() => '?').join(', ');
+
+        // PRIMERO: columnas válidas en la tabla SQLite commanders
+        const validColumns = [
+            'id_branches',   // asegúrate que este sea el nombre correcto en la tabla
+            'id_employees',
+            'id_customers',
+            'order_details',
+            'total',
+            'money_received',
+            'change',
+            'status',
+            'comentary',
+            'commander_date'
+        ];
+
+        // FILTRAMOS los datos que existan en la tabla
+        const filteredKeys = keys.filter(key => validColumns.includes(key));
+        const filteredValues = filteredKeys.map(key => data[key]);
+
+        // Creamos el query dinámico solo con columnas válidas
+        const columns = filteredKeys.join(', ');
+        const placeholders = filteredKeys.map(() => '?').join(', ');
+
         const queryText = `INSERT INTO commanders (${columns}) VALUES (${placeholders})`;
 
         return new Promise((resolve) => {
-            database.run(queryText, values, function(err) {
+            database.run(queryText, filteredValues, function(err) {
                 if (err) {
                     console.error('Error insertando commanders en SQLite:', err);
                     resolve(null);
