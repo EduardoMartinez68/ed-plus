@@ -5694,7 +5694,7 @@ router.post('/links/send_information_to_prontipagos', async (req, res) => {
     //first we will get the password and user of prontipagos use the id of the branch
     const id_branch = req.user.id_branch;
     const token = await get_token_prontipagos(id_branch); //create the token for the prontipagos API
-
+    const startTime = Date.now();
     try {
         const url = `${urlProntipagos}/prontipagos-external-api-ws/ws/protected/v1/sell/product`;
 
@@ -5720,7 +5720,7 @@ router.post('/links/send_information_to_prontipagos', async (req, res) => {
                 res.json(data);
             }else{
                 //her we will see if the service have a status success
-                const answerServerPorntiPagos=await update_status_prontipagos(transacctionId, id_branch, token);
+                const answerServerPorntiPagos=await update_status_prontipagos(transacctionId, id_branch, token,startTime);
                 if(answerServerPorntiPagos.status==false){
                     //await delete_reachange_service(transacctionId); //delete the services when exist a error
                     res.status(500).json({
@@ -5738,7 +5738,7 @@ router.post('/links/send_information_to_prontipagos', async (req, res) => {
             console.log('Respuesta no JSON de Prontipagos:', rawText);
 
             //her we will see if the service have a status success
-            const answerServerPorntiPagos=await update_status_prontipagos(transacctionId, id_branch, token);
+            const answerServerPorntiPagos=await update_status_prontipagos(transacctionId, id_branch, token,startTime);
             if(answerServerPorntiPagos.status==false){
                 //await delete_reachange_service(transacctionId); //delete the services when exist a error
                 res.status(500).json({
@@ -5867,7 +5867,8 @@ async function delete_reachange_service(id) {
 
 
 //cada 2 segundos hasta completar 61 segundos 5555444666
-async function update_status_prontipagos(transaction_id, id_branch, token) {
+async function update_status_prontipagos(transaction_id, id_branch, token,startTime2) {
+    console.log('--------------------------------token--------------------------------')
     console.log('token')
     console.log(token)
     const url = `${urlProntipagos}/prontipagos-external-api-ws/ws/protected/v1/check-status?transactionId=${transaction_id}`;

@@ -312,42 +312,42 @@
     let dataSku1 = '';
     let dataSku2 = ''
     const menuServicesRecargas = [
-        { name: "Telcel", icon: "https://yt3.googleusercontent.com/je7RNk1GeegHqDmmppc3HVbYIE9_Nh2pS64Mz6fkk-RcK29wbWujnx3HooDa0vqyu5tfXffxCA=s900-c-k-c0x00ffffff-no-rj", sku1: '', sku2: '' },
-        { name: "Internet amigo ", icon: "https://holatelcel.com/wp-content/uploads/2016/11/amigo.jpg", sku1: 'INT', sku2: '' },
-        { name: "Amigo sin limite", icon: "https://api3.criptopago.net/content/prod/141/5960/img/5960.jpg", sku1: 'PA', sku2: '' },
-        { name: "Movistar", icon: "https://cdn2.downdetector.com/static/uploads/c/300/a2e0d/MovistarGreen_1.png", sku1: 'S3TAE', sku2: 'MOVIMXN' },
-        { name: "AT&T", icon: "https://assets.weforum.org/organization/image/hRiZoy6qNMv7D-YblWFRXINkKb_3-9aj8xSMjID05kk.jpg", sku: '' },
-        { name: "Unefon", icon: "https://images.seeklogo.com/logo-png/19/1/unefon-logo-png_seeklogo-196154.png", sku1: 'S3TAE', sku2: 'UNEFONMXN' },
-        { name: "Bait", icon: "https://i.pinimg.com/474x/21/a7/ae/21a7ae2c609acfce2eb37c49a1454fe3.jpg", sku1: '', sku2: '' },
+        { name: "Telcel", icon: "/img/prontipagos/telcel.jpg", sku1: '', sku2: '' },
+        { name: "Internet amigo ", icon: "/img/prontipagos/internetamigo.jpg", sku1: 'INT', sku2: '' },
+        { name: "Amigo sin limite", icon: "/img/prontipagos/amigosinlimite.jpg", sku1: 'PA', sku2: '' },
+        { name: "Movistar", icon: "/img/prontipagos/movistar.png", sku1: 'S3TAE', sku2: 'MOVIMXN' },
+        { name: "AT&T", icon: "/img/prontipagos/at&t.avif", sku: '' },
+        { name: "Unefon", icon: "/img/prontipagos/unefon.png", sku1: 'S3TAE', sku2: 'UNEFONMXN' },
+        { name: "Bait", icon: "/img/prontipagos/bait.jpg", sku1: '', sku2: '' },
 
-        { name: "ALO", icon: "https://tiendasneto.com.mx/media/wysiwyg/alo.png", sku1: 'S3TAER4', sku2: 'ALOTELCMXN' },
-        { name: "Flash Mobile", icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9QJV3Dy47hVerM4Jz0sW07iPRsfY2Cc-jhw&s", sku1: 'S3TAEFLASH', sku2: 'MXN' },
-        { name: "IUSACELL", icon: "https://www.techgames.com.mx/wp-content/uploads/2015/01/Iusacell-ATT.jpg", sku1: 'S3TAE', sku2: 'IUSAMXN' },
-        { name: "VIRGIN", icon: "https://play-lh.googleusercontent.com/oit0z38kXk-DDWY9SQtLZ_8z5CjtHAMCjfkDJNBCdaP5NrxGnmz7rTrwKDwaTabp-Q", sku1: 'S3TAE', sku2: 'VIRGINMXN' },
-        { name: "Maz Tiempo", icon: "https://mobileecosystemforum.com/wp-content/uploads/2016/02/maz-tiempo-logo.png", sku1: 'S3TAE', sku2: 'MAZTIEMMXN' },
+        { name: "ALO", icon: "/img/prontipagos/alo.png", sku1: 'S3TAER4', sku2: 'ALOTELCMXN' },
+        { name: "Flash Mobile", icon: "/img/prontipagos/flashmobil.png", sku1: 'S3TAEFLASH', sku2: 'MXN' },
+        { name: "IUSACELL", icon: "/img/prontipagos/iusacell.jpg", sku1: 'S3TAE', sku2: 'IUSAMXN' },
+        { name: "VIRGIN", icon: "/img/prontipagos/virgin.png", sku1: 'S3TAE', sku2: 'VIRGINMXN' },
+        { name: "Maz Tiempo", icon: "/img/prontipagos/maztiempo.png", sku1: 'S3TAE', sku2: 'MAZTIEMMXN' },
     ];
 
     const menuServicesPago = [
-        { name: "CFE", icon: "https://play-lh.googleusercontent.com/7UppiZcZTNBInAJzU-XG8EpGeU3BlLVJM9LoJTaWiVamvguplwUFMNUg_92lk-0z4g", sku1: '', sku2: '', imgHelp: 'https://ws.prontipagos.mx/siveta-mgmt-web-1.0-SNAPSHOT/icons/guiacfevigente.png' },
+        { name: "CFE", icon: "/img/prontipagos/cfe.png", sku1: '', sku2: '', imgHelp: '/img/prontipagos/help/guiacfevigente.png' },
 
-        { name: "Telefonia Telmex", icon: "https://www.pandaancha.mx/plds/articulos/bf939f7800c0615f8a42e390482c969a439275547.png", sku1: 'S3TELEFOTELMEXMXN', sku2: '', imgHelp: 'https://ws.prontipagos.mx/siveta-mgmt-web-1.0-SNAPSHOT/icons/telmex_telefoniafija.jpg' },
-        { name: "TeleCable", icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSH3lzgOSCvyMMYKFctqeEudmXLRdHD6gBVWA&s", sku1: 'S3TELECABLEMXN', sku2: '', imgHelp: '' },
-        { name: "TELEFONIA AXTEL", icon: "https://comparaiso.mx/sites/comparaiso.mx/files/images/logos/axtel-200x300.png", sku1: 'S3AXTELMXN', sku2: '', imgHelp: 'https://ws.prontipagos.mx/siveta-mgmt-web-1.0-SNAPSHOT/icons/axtel_telefoniafija1.jpg' },
-        { name: "TELEFONIA MAXCOM", icon: "https://i.blogs.es/1791f4/maxcom/650_1200.jpg", sku1: 'S3TELEMAXCOMMXN', sku2: '', imgHelp: 'https://ws.prontipagos.mx/siveta-mgmt-web-1.0-SNAPSHOT/icons/MAXCOM_telefoniafija.jpg' },
-        { name: "TELEFONIA TELNOR (BC)", icon: "https://media.licdn.com/dms/image/v2/C560BAQHQWwaljuOq6w/company-logo_200_200/company-logo_200_200/0/1630607585360/telnor_logo?e=2147483647&v=beta&t=r5teaROdy0o78ZaojnuVx95k-BMIIx10B5Wic2wjgiQ", sku1: 'S3TELEFTELNORMXN', sku2: '', imgHelp: 'https://ws.prontipagos.mx/siveta-mgmt-web-1.0-SNAPSHOT/icons/telnor_telefoniafija.jpg' },
+        { name: "Telefonia Telmex", icon: "/img/prontipagos/telmex.png", sku1: 'S3TELEFOTELMEXMXN', sku2: '', imgHelp: '/img/prontipagos/help/telmex_telefoniafija.jpg' },
+        { name: "TeleCable", icon: "/img/prontipagos/telecable.jpg", sku1: 'S3TELECABLEMXN', sku2: '', imgHelp: '' },
+        { name: "TELEFONIA AXTEL", icon: "/img/prontipagos/axtel.webp", sku1: 'S3AXTELMXN', sku2: '', imgHelp: '/img/prontipagos/help/axtel_telefoniafija1.jpg' },
+        { name: "TELEFONIA MAXCOM", icon: "/img/prontipagos/maxcom.jpg", sku1: 'S3TELEMAXCOMMXN', sku2: '', imgHelp: '/img/prontipagos/help/MAXCOM_telefoniafija.jpg' },
+        { name: "TELEFONIA TELNOR (BC)", icon: "/img/prontipagos/bc.jpg", sku1: 'S3TELEFTELNORMXN', sku2: '', imgHelp: '/img/prontipagos/help/telnor_telefoniafija.jpg' },
 
-        { name: "IZZI", icon: "https://play-lh.googleusercontent.com/TvS7cnMS_Qda0d0DQ6IsoM3KEZTiNqF_AiWBuG5x8k_027IlkGLy2T0SR-PzUQQZGg=w240-h480-rw", sku1: 'S3IZIMXN', sku2: '', imgHelp: "https://ws.prontipagos.mx/siveta-mgmt-web-1.0-SNAPSHOT/icons/IZZI_televisiondepaga.jpg" },
-        { name: "TOTAL PLAY", icon: "https://tiendasneto.com.mx/media/wysiwyg/TotalPlay.png", sku1: 'S3TOTALPLAYMXN', sku2: '', imgHelp: 'https://ws.prontipagos.mx/siveta-mgmt-web-1.0-SNAPSHOT/icons/TOTALPLAY_televisiondepaga.jpg' },
-        { name: "Ve TV", icon: "https://queplan.mx/sites/default/files/inline-images/canales-vetv-hd1%20%281%29.png", sku1: 'S3TELEVETVMXN', sku2: '', imgHelp: 'https://ws.prontipagos.mx/siveta-mgmt-web-1.0-SNAPSHOT/icons/VETV_televisiondepagaB.jpg' },
-        { name: "DISH", icon: "https://farmaciasroma.com/wp-content/uploads/2022/10/Pago-de-servicios-Dish-776x470.png", sku1: 'S3TELEVDISHMXN', sku2: '', imgHelp: 'https://ws.prontipagos.mx/siveta-mgmt-web-1.0-SNAPSHOT/icons/DISH_televisiondepaga.jpg' },
-        { name: "SKY/Vtv", icon: "https://upload.wikimedia.org/wikipedia/commons/7/74/SKY_Basic_Logo.svg", sku1: 'S3TELESKYMXN', sku2: '', imgHelp: 'https://ws.prontipagos.mx/siveta-mgmt-web-1.0-SNAPSHOT/icons/SKY_televisiondepaga.jpg' },
-        { name: "MEGACABLE", icon: "https://www.mtcenter.com.mx/wp-content/uploads/MEGACABLE.png", sku1: 'S3TELEMEGACABMXN', sku2: '', imgHelp: 'https://ws.prontipagos.mx/siveta-mgmt-web-1.0-SNAPSHOT/icons/MEGACABLE_televisiondepaga.jpg' },
-        { name: "CABLEMAS", icon: "https://www.pandaancha.mx/plds/articulos/e853fc308798874fb175094ece8fd24a292941926.jpg", sku1: 'S3CABLEMASMXN', sku2: '', imgHelp: 'https://ws.prontipagos.mx/siveta-mgmt-web-1.0-SNAPSHOT/icons/CABLEMAS_televisindepaga.jpg' },
-        { name: "cablevision", icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSDxHFEnf3mMrllF4QTlgDPvWP1XrE6PL5BnA&s", sku1: 'S3CABLEVISIONMXN', sku2: '', imgHelp: 'https://ws.prontipagos.mx/siveta-mgmt-web-1.0-SNAPSHOT/icons/CABLEVISION_televisiondepaga.jpg' },
+        { name: "IZZI", icon: "/img/prontipagos/izii.webp", sku1: 'S3IZIMXN', sku2: '', imgHelp: "/img/prontipagos/help/IZZI_televisiondepaga.jpg" },
+        { name: "TOTAL PLAY", icon: '/img/prontipagos/totalplay.png', sku2: '', imgHelp: '/img/prontipagos/help/TOTALPLAY_televisiondepaga.jpg' },
+        { name: "Ve TV", icon: "/img/prontipagos/vetv.png", sku1: 'S3TELEVETVMXN', sku2: '', imgHelp: '/img/prontipagos/help/VETV_televisiondepagaB.jpg' },
+        { name: "DISH", icon: "/img/prontipagos/dish.png", sku1: 'S3TELEVDISHMXN', sku2: '', imgHelp: '/img/prontipagos/help/DISH_televisiondepaga.jpg' },
+        { name: "SKY/Vtv", icon: "/img/prontipagos/sky.svg", sku1: 'S3TELESKYMXN', sku2: '', imgHelp: '/img/prontipagos/help/SKY_televisiondepaga.jpg' },
+        { name: "MEGACABLE", icon: "/img/prontipagos/megacable.png", sku1: 'S3TELEMEGACABMXN', sku2: '', imgHelp: '/img/prontipagos/help/MEGACABLE_televisiondepaga.jpg' },
+        { name: "CABLEMAS", icon: "/img/prontipagos/cablemas.jpg", sku1: 'S3CABLEMASMXN', sku2: '', imgHelp: '/img/prontipagos/help/CABLEMAS_televisindepaga.jpg' },
+        { name: "cablevision", icon: "/img/prontipagos/cablevision.png", sku1: 'S3CABLEVISIONMXN', sku2: '', imgHelp: '/img/prontipagos/help/CABLEVISION_televisiondepaga.jpg' },
 
-        { name: "Telefonia NEXTEL", icon: "https://i.blogs.es/19aa83/nextel-mx/650_1200.jpg", sku1: 'S3NEXTELMXN', sku2: '', imgHelp: 'https://ws.prontipagos.mx/siveta-mgmt-web-1.0-SNAPSHOT/icons/ATTNEXTEL_pagodefactura.jpg' },
-        { name: "Telefonia MOVISTAR", icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-hEYmNGskAc-bkvHAF2vuIGwbl7Xyh4eSuA&s", sku1: 'S3MOVISTARTELMXN', sku2: '', imgHelp: 'https://ws.prontipagos.mx/siveta-mgmt-web-1.0-SNAPSHOT/icons/MOVISTAR_pagodefactura.jpg' },
-        { name: "Telefonia IUSACELL", icon: "https://i.blogs.es/8e12c8/logo-iusacell-600x330/450_1000.jpeg", sku1: 'S3IUSACELLMXN', sku2: '', imgHelp: 'https://ws.prontipagos.mx/siveta-mgmt-web-1.0-SNAPSHOT/icons/iusacell_pagodefactura.jpg' },
+        { name: "Telefonia NEXTEL", icon: "/img/prontipagos/nextel.jpg", sku1: 'S3NEXTELMXN', sku2: '', imgHelp: '/img/prontipagos/help/ATTNEXTEL_pagodefactura.jpg' },
+        { name: "Telefonia MOVISTAR", icon: "/img/prontipagos/movistar.png", sku1: 'S3MOVISTARTELMXN', sku2: '', imgHelp: '/img/prontipagos/help/MOVISTAR_pagodefactura.jpg' },
+        { name: "Telefonia IUSACELL", icon: "/img/prontipagos/iusacell.jpg", sku1: 'S3IUSACELLMXN', sku2: '', imgHelp: '/img/prontipagos/help/iusacell_pagodefactura.jpg' },
     ];
 
 
@@ -386,7 +386,7 @@
 
         const cardsHTML = servicios.map(serv => `
         <div class="menu-services-card" onclick="${tipo === 'recargas' ? `mostrarFormularioRecarga('${serv.name}','${serv.sku1}','${serv.sku2}')` : `show_buy_services('${serv.name}','${serv.sku1}','${serv.imgHelp}')`}">
-          <img src="${serv.icon}" alt="${serv.name}">
+          <img src="${serv.icon}" alt="${serv.name}"  loading="lazy">
           <p>${serv.name}</p>
         </div>
       `).join('');
@@ -483,7 +483,7 @@
                     </div>
                 </div>
                 <div class="col">
-                    <center><img src="${imgHelp}" alt="${serviceName}" style="width: 100%; height: auto;"></center>
+                    <center><img src="${imgHelp}" alt="${serviceName}" style="width: 100%; height: auto;" loading="lazy"></center>
                 </div>
             </div>
 

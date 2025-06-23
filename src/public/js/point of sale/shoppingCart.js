@@ -460,7 +460,7 @@ async function addToCart(img, name, barcode, price, purchaseUnit, this_product_i
         }
 
         //her we will see if the product need a recipe 
-        if (this_product_need_a_recipe=='true'){
+        if (this_product_need_a_recipe=='true' || this_product_need_a_recipe=='1') {
             show_recipe(img, name, barcode, price, purchaseUnit, this_product_is_sold_in_bulk, id_dishes_and_combos,thisIsProductWithLot,this_product_need_a_recipe); //this is for show the message pop for get the data of the recipe
             return;
         }
@@ -472,7 +472,7 @@ async function addToCart(img, name, barcode, price, purchaseUnit, this_product_i
     //we will see if exist this item in the cart for add a new quantity 
     if (existingItem) {
         //we will see if the product is sold in bulk
-        if (this_product_is_sold_in_bulk == 'true') {
+        if (this_product_is_sold_in_bulk == 'true' || this_product_is_sold_in_bulk == '1') {
             //update the cant of the product in the scale 
             document.getElementById('scales-store-weight-input').value = existingItem.quantity;
             update_weight_of_the_scale();
@@ -497,7 +497,7 @@ async function addToCart(img, name, barcode, price, purchaseUnit, this_product_i
         let quantityForSales = 1; //this is for the product that are sale for unit
 
         //we will see if the product is sold in bulk
-        if (this_product_is_sold_in_bulk == 'true') {
+        if (this_product_is_sold_in_bulk == 'true' || this_product_is_sold_in_bulk == '1') {
             //if the product is sould in bulk, we will ask the user the quantity of the product
             quantityForSales = await open_ui_weight_scale(barcode, name, price, 0, 0, 1);
         }
