@@ -11,7 +11,7 @@ async function editCant(button, barcode) {
     const existingItem = cartItems.find(item => item.barcode === barcode);
 
     //we will see if the product is sold in bulk 
-    if (existingItem.this_product_is_sold_in_bulk == 'true') {
+    if (existingItem.this_product_is_sold_in_bulk == 'true' || existingItem.this_product_is_sold_in_bulk=='on' || existingItem.this_product_is_sold_in_bulk=='1') {
         //update the information of the scale
         document.getElementById('scales-store-weight-input').value = existingItem.quantity;
         update_weight_of_the_scale();

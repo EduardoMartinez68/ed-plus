@@ -4054,6 +4054,7 @@ async function watch_if_can_create_all_the_combo(combos) {
     // Iterate through all the combos
     var arrayCombo = await get_all_supplies_of_the_combos(combos)
     var listSupplies = calculate_the_supplies_that_need(arrayCombo);
+
     //we will to calculate if have the supplies need for create all the combos that the customer would like eat
     const answer = await exist_the_supplies_need_for_creat_all_the_combos(listSupplies);
     if (answer == true) {
@@ -4431,6 +4432,11 @@ function calculate_the_supplies_that_need(arrayCombo) {
 async function update_inventory(idBranch, idCombo, newAmount) {
   if (TYPE_DATABASE === 'mysqlite') {
     return new Promise((resolve) => {
+      const queryText1 = `
+        UPDATE product_and_suppiles_features
+        SET existence = ?
+        WHERE id_branches = ? AND id_products_and_supplies = ?
+      `;
       const queryText = `
         UPDATE product_and_suppiles_features
         SET existence = ?
@@ -4510,7 +4516,6 @@ async function exist_supplies_for_create_this_combo(idBranch, idSupplies, amount
         const dataSuppliesFeactures = await get_data_supplies_features(idBranch, idSupplies)
         const existence = dataSuppliesFeactures.existence;
         const minimumInventory = dataSuppliesFeactures.minimum_inventory;
-
         //we will calculate if can create the combo
         return (existence - amount >= 0);
     } catch (error) {
