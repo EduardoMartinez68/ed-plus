@@ -330,11 +330,11 @@ function getLocalIP() {
 // starting the server in the computer
 //const open = (...args) => import('open').then(mod => mod.default(...args));
 const { exec } = require('child_process');
-
+/*
 serverExpress.listen(serverExpress.get('port'), '0.0.0.0', () => {
   const url = `http://${getLocalIP()}:${serverExpress.get('port')}`;
   console.log(`Server running on ${url}`);
-  /*
+
   let command;
   if (os.platform() === 'win32') {
     command = `start "" "${url}"`;
@@ -347,7 +347,24 @@ serverExpress.listen(serverExpress.get('port'), '0.0.0.0', () => {
   exec(command, (err) => {
     if (err) console.error('❌ Error al abrir el navegador:', err);
   });
-  */
+});
+*/
+serverExpress.listen(serverExpress.get('port'), '0.0.0.0', () => {
+  const url = `http://localhost:${serverExpress.get('port')}`;  // Aquí cambias IP por localhost
+  console.log(`Server running on ${url}`);
+
+  let command;
+  if (os.platform() === 'win32') {
+    command = `start "" "${url}"`;
+  } else if (os.platform() === 'darwin') {
+    command = `open "${url}"`;
+  } else {
+    command = `xdg-open "${url}"`;
+  }
+
+  exec(command, (err) => {
+    if (err) console.error('❌ Error al abrir el navegador:', err);
+  });
 });
 
 
