@@ -409,7 +409,7 @@
     });
 
     async function print_ticket(total, moneyReceived, change, comment) {
-        console.log(get_texto_ticket(total, moneyReceived, change, comment));
+        //console.log(get_texto_ticket(total, moneyReceived, change, comment));
         const textoTicket = get_texto_ticket(total, moneyReceived, change, comment); // Aquí obtienes el texto del ticket, puedes personalizarlo
         await sned_information_to_the_server_for_print_the_ticket(textoTicket)
     }
