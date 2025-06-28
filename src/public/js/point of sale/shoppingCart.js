@@ -139,6 +139,64 @@ async function show_popup_cart_in_wait() {
     });
 }
 
+async function show_popup_ticket_history() {
+    // Validar permisos (opcional)
+    /*
+    if (!await this_user_is_admin('Ver historial de tickets 📄', 'view_ticket_history')) {
+        warningMessage('🕵️‍♂️ ¡Acceso denegado!', 'No tienes permiso para ver el historial de tickets.');
+        return;
+    }
+        */
+
+    if (!listTicket || listTicket.length === 0) {
+        errorMessage('Sin Tickets 😅', 'No hay tickets guardados para mostrar.');
+        return;
+    }
+
+    // Elimina cualquier popup anterior
+    const existingOverlay = document.querySelector('.pop-ticket-history-overlay');
+    if (existingOverlay) existingOverlay.remove();
+
+    const overlay = document.createElement('div');
+    overlay.className = 'pop-ticket-history-overlay';
+
+    overlay.innerHTML = `
+        <div class="pop-ticket-history-container">
+            <div class="pop-ticket-history-header">
+                <span class="pop-ticket-history-title">Historial de Tickets</span>
+                <button class="pop-ticket-history-close">&times;</button>
+            </div>
+            <div class="pop-ticket-history-list">
+                ${listTicket.map((ticket, index) => `
+                    <div class="pop-ticket-history-item" data-index="${index}">
+                        <p><i class="fa-regular fa-clock"></i> <strong>Guardado:</strong> ${ticket.fecha || 'Sin fecha'}</p>
+                        <p><i class="fa-solid fa-receipt"></i> <strong>Vista previa:</strong> <span class="pop-ticket-history-preview">${(ticket.texto || ticket).substring(0, 50)}...</span></p>
+                        <button class="btn-reprint-ticket" data-index="${index}"><i class="fa-solid fa-print"></i> Reimprimir</button>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    document.querySelector('.pop-ticket-history-close').addEventListener('click', () => {
+        overlay.remove();
+    });
+
+    // Botones de reimpresión
+    document.querySelectorAll('.btn-reprint-ticket').forEach(btn => {
+        btn.addEventListener('click',async (e) => {
+            const index = parseInt(btn.getAttribute('data-index'));
+            overlay.remove();
+
+            const ticket = listTicket[index];
+            await sned_information_to_the_server_for_print_the_ticket(ticket.texto || ticket,true); // Usa tu función de impresión aquí
+        });
+    });
+}
+
+
 async function update_cart_in_wait(index) {  
     const select_product_on_backorder=document.getElementById('select_product_on_backorder');
     if(select_product_on_backorder==null){
@@ -196,7 +254,7 @@ async function buy_my_car() {
             await update_the_lots_of_the_product_in_the_car(id_customer);
 
             //we will print ticket
-            await printTicketScript(total, moneyReceived, change, comment);
+            await print_ticket(total, moneyReceived, change, comment);
 
             //this is for delete all the shooping cart
             cartItems.splice(0, cartItems.length);

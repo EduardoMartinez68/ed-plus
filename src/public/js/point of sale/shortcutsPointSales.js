@@ -2,7 +2,7 @@ document.addEventListener('keydown', function (event) {
     const id_branch = document.getElementById('id_branch_menu').value;
     const id_company = document.getElementById('id_company_menu').value;
     const id_user = document.getElementById('id_employee_menu').value;
-    console.log(event.key);
+
     if (event.ctrlKey) {
         if (event.key === 'Enter') {
             openPopSales();
@@ -23,8 +23,8 @@ document.addEventListener('keydown', function (event) {
                 case 'd':
                     eliminarProducto();
                     break;
-                case 'p':
-                    print_the_last_ticket();
+                case 'i':
+                    show_popup_ticket_history();
                     break;
                 case 's':
                     create_a_sale_in_wait();

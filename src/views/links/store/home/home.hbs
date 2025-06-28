@@ -118,36 +118,4 @@
     */
 
     let ticketScriptsLoaded = false;
-
-    async function printTicketScript(total, moneyReceived, change, comment) {
-        const selectPrinter = document.getElementById('dataPrinter');
-        const selectedPrinterValue = selectPrinter.value;
-        if (selectedPrinterValue === "") {
-            return;
-        }
-
-        if (!ticketScriptsLoaded) {
-            const scripts = [
-                //'/js/point of sale/JQuery.js',
-                //'/js/point of sale/escops.js',
-                //'/js/point of sale/tickets.js'
-            ];
-            let loadedCount = 0;
-
-            scripts.forEach(src => {
-                const s = document.createElement('script');
-                s.src = src;
-                s.onload = () => {
-                    loadedCount++;
-                    if (loadedCount === scripts.length) {
-                        ticketScriptsLoaded = true;
-                        printTicket(total, moneyReceived, change, comment); // Solo después de que todos cargan
-                    }
-                };
-                document.body.appendChild(s);
-            });
-        } else {
-            printTicket(total, moneyReceived, change, comment);
-        }
-    }
 </script>

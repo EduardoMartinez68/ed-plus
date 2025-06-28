@@ -284,90 +284,279 @@
 <!-- Modal popup -->
 <div id="pop-config-scales" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; 
      background: rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:1000;">
-  <div style="background:#fff; padding:20px; border-radius:8px; max-width:350px; width:90%; box-shadow:0 0 10px rgba(0,0,0,0.3); position:relative;">
-    <h2>Configurar Báscula</h2>
+    <div
+        style="background:#fff; padding:20px; border-radius:8px; max-width:350px; width:90%; box-shadow:0 0 10px rgba(0,0,0,0.3); position:relative;">
+        <h2>Configurar Báscula</h2>
 
-    <label for="baudRateInput">Baud Rate:</label><br>
-    <input type="number" id="baudRateInput" min="300" max="115200" step="100" class="form-control" />
-    <br>
-    <center><button id="saveBaudBtn" class="btn btn-edit">Guardar BaudRate</button></center>
+        <label for="comPortInput">Puerto COM:</label><br>
+        <input type="text" id="comPortInput" placeholder="Ej: COM3" class="form-control" />
+        <br>
 
-    <hr style="margin:20px 0;">
+        <label for="baudRateInput">Baud Rate:</label><br>
+        <input type="number" id="baudRateInput" min="300" max="115200" step="100" class="form-control" />
+        <br>
 
-    <p><strong>Peso actual:</strong></p>
-    <input id="example-weight" readonly class="form-control"/>
-    <br>
-    <center><button id="connectScaleBtn" class="btn btn-edit">Conectar Báscula</button></center>
+        <hr style="margin:20px 0;">
 
-    <button onclick="closePopConfigScales()" 
+        <p><strong>Peso actual:</strong></p>
+        <input id="example-weight" readonly class="form-control" />
+        <input type="hidden" id="scales-store-weight-input" />
+        <br>
+
+        <center><button id="connectScaleBtn" class="btn btn-edit">Conectar Báscula</button></center>
+
+        <button onclick="closePopConfigScales()"
             style="position:absolute; top:10px; right:10px; background:#e7e7e7; border:none; font-weight:bold; font-size:18px; cursor:pointer; border-radius:4px; width:30px; height:30px; line-height:30px; text-align:center;">×</button>
-  </div>
+    </div>
 </div>
 
 
 
+
 <script>
-  // Mostrar modal
-  function openPopConfigScales() {
-    document.getElementById('pop-config-scales').style.display = 'flex';
+    // Mostrar modal
+    function openPopConfigScales() {
+        document.getElementById('pop-config-scales').style.display = 'flex';
 
-    // Carga baudRate guardado o 9600
-    const baudInput = document.getElementById('baudRateInput');
-    baudInput.value = localStorage.getItem('baudRate') || 9600;
-  }
-
-  // Cerrar modal
-  function closePopConfigScales() {
-    document.getElementById('pop-config-scales').style.display = 'none';
-  }
-
-  // Guardar baudRate en localStorage
-  document.getElementById('saveBaudBtn').addEventListener('click', () => {
-    const baudInput = document.getElementById('baudRateInput');
-    const baud = parseInt(baudInput.value);
-    if (isNaN(baud) || baud < 300 || baud > 115200) {
-      errorMessage('BaudRate inválido', 'El BaudRate debe estar entre 300 y 115200.');
-      return;
-    }
-    localStorage.setItem('baudRate', baud);
-    confirmationMessage('BaudRate guardado','El BaudRate fue guardado como: ' + baud);
-  });
-
-  // Variables para puerto y lector
-  let port;
-  let reader;
-
-  // Conectar báscula
-  document.getElementById('connectScaleBtn').addEventListener('click', async () => {
-    if (!("serial" in navigator)) {
-        errorMessage('No compatible', 'Tu navegador no soporta la Web Serial API.');
-        return;
+        // Carga baudRate guardado o 9600
+        const baudInput = document.getElementById('baudRateInput');
+        baudInput.value = localStorage.getItem('baudRate') || 9600;
     }
 
-    try {
-      const baudRate = parseInt(localStorage.getItem('baudRate')) || 9600;
-      port = await navigator.serial.requestPort();
-      await port.open({ baudRate });
+    // Cerrar modal
+    function closePopConfigScales() {
+        document.getElementById('pop-config-scales').style.display = 'none';
+    }
 
-      const textDecoder = new TextDecoderStream();
-      const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
-      reader = textDecoder.readable.getReader();
+    // Guardar baudRate en localStorage
+    function save_information_of_the_form_scale() {
+        const baudRate = parseInt(document.getElementById('baudRateInput').value);
+        const comPort = document.getElementById('comPortInput').value.trim();
 
-      // Leer datos continuamente
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done) break;
-        if (value) {
-          const peso = parseFloat(value.replace(/[^\d.]/g, ''));
-          if (!isNaN(peso)) {
-            document.getElementById('example-weight').value = peso.toFixed(2);
-            document.getElementById('scales-store-weight-input').value = peso.toFixed(2);
-          }
+        localStorage.setItem('baudRate', baudRate);
+        localStorage.setItem('comPort', comPort);
+    };
+
+    // Variables para puerto y lector
+    let port;
+    let reader;
+
+    // Conectar báscula
+    document.getElementById('connectScaleBtn').addEventListener('click', async () => {
+        save_information_of_the_form_scale();
+        const baudRate = parseInt(localStorage.getItem('baudRate')) || 9600;
+        const com = localStorage.getItem('comPort') || 'COM3';
+        const loadingOverlay = document.getElementById("loadingOverlay");
+        loadingOverlay.style.display = 'flex'; // Mostrar overlay de carga
+        try {
+            const response = await fetch(`http://localhost:5656/read-scale/${com}?baudRate=${baudRate}`);
+            const result = await response.json();
+            if (result.status === 'OK') {
+                const peso = parseFloat(result.weight.replace(/[^\d.]/g, ''));
+                if (!isNaN(peso)) {
+                    document.getElementById('example-weight').value = peso.toFixed(2);
+                    document.getElementById('scales-store-weight-input').value = peso.toFixed(2);
+                }
+            } else {
+                errorMessage('Error al leer la báscula', result.error);
+            }
+        } catch (err) {
+            errorMessage('Error de conexión', 'No se pudo conectar al servidor de báscula.');
+            console.error(err);
         }
-      }
-    } catch (err) {
-        errorMessage('Error al conectar la báscula', 'Asegúrate de que la báscula esté conectada y configurada correctamente.');
-        console.error(err);
+
+
+        loadingOverlay.style.display = 'none'; // Ocultar overlay de carga
+    });
+</script>
+
+
+<!--------ticket-------->
+<script>
+    const selectPrinter = document.getElementById('dataPrinter');
+    let listTicket = [];
+
+    async function load_printer() {
+        try {
+            const response = await fetch('http://localhost:5656/printers');
+            const result = await response.json();
+
+            if (result.status === 'OK' && result.listPrinter.length > 0) {
+                // Limpiar opciones previas (excepto el placeholder)
+                selectPrinter.innerHTML = '<option value="">Selecciona una impresora</option>';
+
+                result.listPrinter.forEach((printer, index) => {
+                    const option = document.createElement('option');
+
+                    // Mostrar el ID del dispositivo como nombre, puedes cambiarlo si tienes otro dato
+                    option.value = index; // o puedes usar printer.vendorId + ':' + printer.productId
+                    option.textContent = `Impresora ${index + 1} (${printer.deviceDescriptor.idVendor}:${printer.deviceDescriptor.idProduct})`;
+
+                    selectPrinter.appendChild(option);
+                });
+            } else {
+                selectPrinter.innerHTML = '<option value="">No se detectaron impresoras</option>';
+            }
+        } catch (err) {
+            console.error('Error al cargar impresoras:', err);
+            selectPrinter.innerHTML = '<option value="">Error de conexión</option>';
+        }
     }
-  });
+
+    selectPrinter.addEventListener('change', () => {
+        const printerSelected = selectPrinter.value;
+        localStorage.setItem('selectedPrinter', printerSelected);
+    });
+
+    async function print_ticket(total, moneyReceived, change, comment) {
+        console.log(get_texto_ticket(total, moneyReceived, change, comment));
+        const textoTicket = get_texto_ticket(total, moneyReceived, change, comment); // Aquí obtienes el texto del ticket, puedes personalizarlo
+        await sned_information_to_the_server_for_print_the_ticket(textoTicket)
+    }
+
+
+    async function sned_information_to_the_server_for_print_the_ticket(textoTicket,flash=false){
+        const printerIndex = localStorage.getItem('selectedPrinter') || 0; // o puedes usar otro identificador si guardaste algo más
+        if (!printerIndex || printerIndex.trim() === '' || printerIndex === '0' || printerIndex == 0) {
+            if(flash){
+                warningMessage('¡Ups, impresora fugitiva! 🖨️💨', 'Estás intentando imprimir un ticket, pero... ¿y la impresora? 🤔 Selecciona una antes de seguir con la magia.');
+            }
+            return;
+        }
+
+        const payload = [
+            { type: 'configure', align: 'CT', typeFont: 'A', bold: false },
+            { type: 'text', data: textoTicket },
+            { type: 'cut' }
+        ];
+
+        try {
+            const response = await fetch(`http://localhost:5656/command/${printerIndex}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+
+            if (result.status === 'OK') {
+                console.log('✅ Ticket enviado a imprimir correctamente.');
+            } else {
+                console.error('❌ Error al imprimir ticket:', result.error);
+                errorMessage('❌ Error al imprimir el ticket:',result.error)
+            }
+        } catch (err) {
+            errorMessage('❌ Error de conexión','No se pudo conectar al servidor de impresión.')
+            console.error('❌ Error de conexión al servidor de impresión:', err);
+        }
+    }
+
+    function get_texto_ticket(total, moneyReceived, change, comment = '') {
+        moneyReceived = parseFloat(moneyReceived);
+        change = parseFloat(change);
+        total = parseFloat(total);
+        moneyReceived = parseFloat(moneyReceived);
+        const nameBranch = document.getElementById('name-company').value;
+        const nameEmployee = document.getElementById('employee-name').textContent;
+        const customer = document.getElementById('emailClient').textContent;
+        const dateTicket = get_date_ticket()
+        let texto = '';
+        texto += `      *** ${nameBranch} ***\n`;
+        texto += `      ${dateTicket}      \n`;
+        texto += `Cliente: ${customer}\n`;
+        texto += `Atentido por: ${nameEmployee}\n`;
+        texto += '-------------------------------\n';
+        texto += 'Producto      Cant    Total\n';
+        texto += '-------------------------------\n';
+        /*
+        `Producto: ${item.name}, Precio: ${item.price}, barcode: ${item.barcode}   ${item.quantity}  ${item.purchaseUnit} ${item.discount} ${itemTotal.toFixed(2)}\n`
+        */
+        cartItems.forEach(item => {
+            const itemTotal = (item.price) * item.quantity;
+
+            const nombre = (item.name.length > 14 ? item.name.slice(0, 14) : item.name).padEnd(14);
+            const cantidad = item.quantity.toString().padEnd(5);
+            const totalStr = itemTotal.toFixed(2).padStart(7);
+
+            texto += `${nombre}${cantidad}${totalStr}\n`;
+        });
+
+
+        texto += '-------------------------------\n';
+        texto += `TOTAL:             ${total.toFixed(2).padStart(9)}\n`;
+        texto += `Recibido:          ${moneyReceived.toFixed(2).padStart(9)}\n`;
+        texto += `Cambio:            ${change.toFixed(2).padStart(9)}\n`;
+
+        if (comment && comment.trim() !== '') {
+            texto += '-------------------------------\n';
+            texto += `Comentario:\n${comment}\n`;
+        }
+
+        texto += '-------------------------------\n';
+        texto += '     ¡Gracias por su compra!\n';
+
+        save_ticket_to_cookies(texto, dateTicket);
+        return texto;
+    }
+
+    function get_date_ticket() {
+        const ahora = new Date();
+
+        const dia = String(ahora.getDate()).padStart(2, '0');
+        const mes = String(ahora.getMonth() + 1).padStart(2, '0'); // Mes inicia en 0
+        const año = ahora.getFullYear();
+
+        const horas = String(ahora.getHours()).padStart(2, '0');
+        const minutos = String(ahora.getMinutes()).padStart(2, '0');
+
+        return `${dia}/${mes}/${año} ${horas}:${minutos}`;
+    }
+
+    function save_ticket_to_cookies(texto, fecha) {
+        const cookieName = 'ticketHistory';
+
+        // Leer cookies existentes
+        const cookies = document.cookie.split('; ').find(row => row.startsWith(cookieName + '='));
+
+        if (cookies) {
+            try {
+                listTicket = JSON.parse(decodeURIComponent(cookies.split('=')[1]));
+            } catch (e) {
+                listTicket=[]
+            }
+        }
+
+        // Agregar nuevo ticket al inicio
+        listTicket.unshift({ texto, fecha });
+
+        // Limitar a 10 tickets
+        if (listTicket.length > 10) {
+            listTicket = listTicket.slice(0, 10);
+        }
+
+        // Guardar en cookies (expiran en 30 días)
+        const cookieValue = encodeURIComponent(JSON.stringify(listTicket));
+        document.cookie = `${cookieName}=${cookieValue}; path=/; max-age=${60 * 60 * 24 * 30}`;
+    }
+
+    function load_tickets_from_cookies() {
+        const cookieName = 'ticketHistory';
+        const cookies = document.cookie.split('; ').find(row => row.startsWith(cookieName + '='));
+
+        if (cookies) {
+            try {
+                listTicket = JSON.parse(decodeURIComponent(cookies.split('=')[1]));
+            } catch (e) {
+                listTicket = [];
+            }
+        } else {
+            listTicket = [];
+        }
+    }
+
+
+    //load the cookies
+    load_tickets_from_cookies();
+    load_printer();
+
 </script>

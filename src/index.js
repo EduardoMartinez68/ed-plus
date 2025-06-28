@@ -314,7 +314,7 @@ serverExpress.use('/uploads', express.static(pathFolder)); //this is for that th
 //this is for get the IP of the computer that is the server
 const os = require('os');
 
-function getLocalIP() {
+function getLocalIP2() {
   const interfaces = os.networkInterfaces();
   for (let iface in interfaces) {
     for (let i = 0; i < interfaces[iface].length; i++) {
@@ -327,30 +327,32 @@ function getLocalIP() {
   return '127.0.0.1';
 }
 
+function getLocalIP() {
+  const interfaces = os.networkInterfaces();
+  for (let iface in interfaces) {
+    for (let i = 0; i < interfaces[iface].length; i++) {
+      const address = interfaces[iface][i];
+      if (
+        address.family === 'IPv4' &&
+        !address.internal &&
+        address.address.startsWith('192.168.')
+      ) {
+        // Retorna solo la IP de la red local WiFi (ejemplo 192.168.1.75)
+        return address.address;
+      }
+    }
+  }
+  return '127.0.0.1';
+}
+
+
 // starting the server in the computer
 //const open = (...args) => import('open').then(mod => mod.default(...args));
 const { exec } = require('child_process');
-/*
-serverExpress.listen(serverExpress.get('port'), '0.0.0.0', () => {
-  const url = `http://${getLocalIP()}:${serverExpress.get('port')}`;
-  console.log(`Server running on ${url}`);
 
-  let command;
-  if (os.platform() === 'win32') {
-    command = `start "" "${url}"`;
-  } else if (os.platform() === 'darwin') {
-    command = `open "${url}"`;
-  } else {
-    command = `xdg-open "${url}"`;
-  }
-
-  exec(command, (err) => {
-    if (err) console.error('❌ Error al abrir el navegador:', err);
-  });
-});
-*/
 serverExpress.listen(serverExpress.get('port'), '0.0.0.0', () => {
-  const url = `http://localhost:${serverExpress.get('port')}`;  // Aquí cambias IP por localhost
+  //const url = `http://${getLocalIP()}:${serverExpress.get('port')}`;
+  const url = `http://localhost:${serverExpress.get('port')}`; 
   console.log(`Server running on ${url}`);
 
   let command;
