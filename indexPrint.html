@@ -2,92 +2,70 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Ticket</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mensajes Pop</title>
   <style>
-    @media print {
-      body * {
-        visibility: hidden;
-      }
-      #ticket, #ticket * {
-        visibility: visible;
-      }
-      #ticket {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 58mm; /* o 80mm según tu impresora */
-        font-family: monospace;
-      }
+    /* Fondo oscuro */
+    .plus-popup-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
     }
 
-    #ticket {
-      font-family: monospace;
-      font-size: 12px;
-      width: 58mm;
-      padding: 10px;
-      border: 1px dashed #000;
+    /* Contenedor del popup */
+    .plus-popup-message {
+      background-color: #fff;
+      width: 300px;
+      max-width: 90%;
+      padding: 16px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
     }
 
-    .center {
-      text-align: center;
-    }
-
-    .total {
+    /* Botón de cerrar */
+    .plus-popup-close {
+      position: absolute;
+      top: 4px;
+      right: 8px;
+      font-size: 18px;
       font-weight: bold;
+      color: #000;
+      cursor: pointer;
+      user-select: none;
     }
   </style>
 </head>
 <body>
 
-  <div id="ticket">
-    <div class="center">
-      <h3>La Tiendita</h3>
-      <p>R.F.C. XXX123456</p>
-      <p>Fecha: <span id="fecha"></span></p>
-    </div>
-
-    <hr>
-
-    <div id="productos">
-      <!-- Aquí van los productos -->
-      <p>2 x Coca-Cola 600ml  $36.00</p>
-      <p>1 x Papas            $12.00</p>
-    </div>
-
-    <hr>
-    <p class="total">TOTAL: $48.00</p>
-    <hr>
-    <div class="center">
-      <p>¡Gracias por su compra!</p>
+  <!-- Ejemplo de un popup -->
+  <div id="popup1" class="plus-popup-overlay">
+    <div class="plus-popup-message">
+      <span class="plus-popup-close" onclick="ocultarPopup('popup1')">x</span>
+      <h2>Título del Popup</h2>
+      <p>Aquí el programador puede colocar su contenido personalizado.</p>
     </div>
   </div>
 
-  <button onclick="window.print()">🖨️ Imprimir ticket</button>
+  <button onclick="mostrarPopup('popup1')">Mostrar Popup</button>
 
   <script>
-    // Inserta la fecha actual
-    document.getElementById("fecha").textContent = new Date().toLocaleString();
+    function show_message_pop(id) {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'flex';
+    }
 
-    // Si quieres generar los productos dinámicamente:
-    /*
-    const productos = [
-      { nombre: "Coca-Cola 600ml", cantidad: 2, precio: 18 },
-      { nombre: "Papas", cantidad: 1, precio: 12 }
-    ];
-
-    let html = "";
-    let total = 0;
-
-    productos.forEach(p => {
-      const subtotal = p.cantidad * p.precio;
-      total += subtotal;
-      html += `<p>${p.cantidad} x ${p.nombre.padEnd(20)} $${subtotal.toFixed(2)}</p>`;
-    });
-
-    document.getElementById("productos").innerHTML = html;
-    document.querySelector(".total").textContent = "TOTAL: $" + total.toFixed(2);
-    */
+    function hidden_message_pop(id) {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    }
   </script>
-
 </body>
 </html>
