@@ -69,7 +69,11 @@ function get_path_folder_upload(){
 function get_path_of_folder_upload(){
 
     //her we will see if the software is desktop, or it is in the cloud
-    if(TYPE_DATABASE=='mysqlite'){
+    if(TYPE_DATABASE=='cloud'){
+        return path.join(__dirname, 'public/img/uploads')
+    }
+    else{
+        //this is when the software is desktop
         return path.join(plusFolder, 'uploads');
     }
 

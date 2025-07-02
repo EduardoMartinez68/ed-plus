@@ -221,7 +221,7 @@ async function get_the_products_with_barcode(id_branch, barcode) {
         FROM dish_and_combo_features i
         INNER JOIN dishes_and_combos d ON i.id_dishes_and_combos = d.id
         LEFT JOIN lots l ON l.id_dish_and_combo_features = i.id
-        WHERE i.id_branches = ? AND d.barcode LIKE ?
+        WHERE i.id_branches = ? AND (d.barcode LIKE ? OR d.name LIKE ?)
         GROUP BY i.id, d.id
         LIMIT 20;
       `;
@@ -262,7 +262,7 @@ async function get_the_products_with_barcode(id_branch, barcode) {
       FROM "Inventory".dish_and_combo_features i
       INNER JOIN "Kitchen".dishes_and_combos d ON i.id_dishes_and_combos = d.id
       LEFT JOIN "Inventory".lots l ON l.id_dish_and_combo_features = i.id
-      WHERE i.id_branches = $1 AND d.barcode ILIKE $2
+      WHERE i.id_branches = $1 AND (d.barcode ILIKE $2 OR d.name ILIKE $2)
       GROUP BY i.id, d.id
       LIMIT 20;
     `;

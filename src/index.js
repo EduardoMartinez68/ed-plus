@@ -46,7 +46,7 @@ const nameDatabase = 'EDPLUS'; //name of the database
 const { APP_PG_USER, APP_PG_HOST, APP_PG_DATABASE, APP_PG_PASSWORD, APP_PG_PORT, TYPE_DATABASE, TYPE_SYSTME } = process.env; //this code is for get the data of the database
 
 //this is for connect when posgresql when the user have the server version 
-if (TYPE_DATABASE == 'posgresql') {
+if (TYPE_DATABASE == 'posgres') {
   const pg = require('pg');
   const { create_update_of_the_database } = require('./characterDatabase');
 
@@ -313,19 +313,6 @@ serverExpress.use('/uploads', express.static(pathFolder)); //this is for that th
 
 //this is for get the IP of the computer that is the server
 const os = require('os');
-
-function getLocalIP2() {
-  const interfaces = os.networkInterfaces();
-  for (let iface in interfaces) {
-    for (let i = 0; i < interfaces[iface].length; i++) {
-      const address = interfaces[iface][i];
-      if (address.family === 'IPv4' && !address.internal) {
-        return address.address;
-      }
-    }
-  }
-  return '127.0.0.1';
-}
 
 function getLocalIP() {
   const interfaces = os.networkInterfaces();
