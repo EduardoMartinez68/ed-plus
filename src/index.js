@@ -15,6 +15,8 @@ serverExpress.set('views', path.join(__dirname, 'views'));
 
 const { machineIdSync } = require('node-machine-id');
 const deviceId = machineIdSync();
+const { exec } = require('child_process');
+const os = require('os');
 
 
 if (!tokenExists()) {
@@ -147,6 +149,19 @@ res.send(`
 
   serverExpress.listen(4000, () => {
     console.log('Esperando registro del token en http://localhost:4000');
+    let command;
+    const url='http://localhost:4000';
+    if (os.platform() === 'win32') {
+      command = `start "" "${url}"`;
+    } else if (os.platform() === 'darwin') {
+      command = `open "${url}"`;
+    } else {
+      command = `xdg-open "${url}"`;
+    }
+
+    exec(command, (err) => {
+      if (err) console.error('❌ Error al abrir el navegador:', err);
+    });
   });
 
   // Detiene la ejecución aquí hasta que se registre
@@ -464,7 +479,7 @@ serverExpress.use('/uploads', express.static(pathFolder)); //this is for that th
 */
 
 //this is for get the IP of the computer that is the server
-const os = require('os');
+//const os = require('os');
 
 function getLocalIP() {
   const interfaces = os.networkInterfaces();
@@ -487,7 +502,7 @@ function getLocalIP() {
 
 // starting the server in the computer
 //const open = (...args) => import('open').then(mod => mod.default(...args));
-const { exec } = require('child_process');
+//const { exec } = require('child_process');
 
 serverExpress.listen(serverExpress.get('port'), '0.0.0.0', () => {
   //const url = `http://${getLocalIP()}:${serverExpress.get('port')}`;
