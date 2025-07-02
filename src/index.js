@@ -2,6 +2,158 @@
 const fs = require('fs');
 const path = require('path');
 
+//----------------------her we will see if exist a token in the system
+const { tokenExists, saveToken } = require('./middleware/tokenCheck');
+
+// 🚨 Nueva parte: verifica el token antes de todo
+const express = require('express');
+const serverExpress = express();
+serverExpress.use(express.urlencoded({ extended: true }));
+
+serverExpress.set('views', path.join(__dirname, 'views'));
+//serverExpress.set('view engine', 'hbs');
+
+const { machineIdSync } = require('node-machine-id');
+const deviceId = machineIdSync();
+
+
+if (!tokenExists()) {
+  serverExpress.get('*', (req, res) => {
+res.send(`
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registrar Token</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 2rem;
+    }
+    .card {
+      max-width: 400px;
+      margin: 2rem auto;
+      padding: 2rem;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    input, button {
+      padding: 10px;
+      margin: 8px 0;
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      background-color: #1649FF;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0f35c5;
+    }
+    .support {
+      font-size: 14px;
+      margin-top: 1rem;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Registrar Token</h2>
+    <form id="tokenForm">
+      <input type="text" id="tokenInput" placeholder="Ingresa tu token aquí" required>
+      <input type="hidden" name="deviceId" id="deviceId" value="${deviceId}">
+      <button type="submit">Guardar Token</button>
+    </form>
+    <div id="message" style="margin-top: 1rem; color: red;"></div>
+    <div class="support">
+      ¿No tienes un token? <br>
+      <a href="https://pluspuntodeventa.com" target="_blank">Créalo aquí</a><br>
+      o escríbenos por <a href="https://wa.me/524443042129" target="_blank">WhatsApp +52 444 304 2129</a>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("tokenForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const token = document.getElementById("tokenInput").value.trim();
+      const deviceId = document.getElementById("deviceId").value;
+      const messageDiv = document.getElementById("message");
+
+      // Verificar si el token existe
+      try {
+        const res = await fetch("https://pluspuntodeventa.com/api/see_if_exist_this_token_in_the_database_of_the_web.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token })
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          // Si existe, entonces lo actualizamos
+          const saveRes = await fetch("https://pluspuntodeventa.com/api/save_the_uui_of_the_user_in_the_database.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ token, deviceId })
+          });
+
+          const saveData = await saveRes.json();
+
+          if (saveData.success) {
+            // Ahora guardar en local server
+            const localRes = await fetch("/registrar-token", {
+              method: "POST",
+              headers: { "Content-Type": "application/x-www-form-urlencoded" },
+              body: "token=" + encodeURIComponent(token) + "&deviceId=" + encodeURIComponent(deviceId)
+            });
+
+            if (localRes.ok) {
+              messageDiv.style.color = "green";
+              messageDiv.innerText = "✅ Token guardado correctamente. Reinicia la app para comenzar.";
+            } else {
+              messageDiv.innerText = "Error al guardar el token localmente.";
+            }
+          } else {
+            messageDiv.innerText = saveData.message || "Error al guardar en el servidor remoto.";
+          }
+        } else {
+          messageDiv.innerText = "❌ Token no válido. Por favor verifica.";
+        }
+      } catch (error) {
+        console.error(error);
+        messageDiv.innerText = "Error de red o del servidor.";
+      }
+    });
+  </script>
+</body>
+</html>
+`);
+  });
+
+  serverExpress.post('/registrar-token', (req, res) => {
+    const { token } = req.body;
+    if (token && token.trim().length > 0) {
+      saveToken(token);
+      return res.redirect('/');
+    }
+    res.send('Token inválido');
+  });
+
+  serverExpress.listen(4000, () => {
+    console.log('Esperando registro del token en http://localhost:4000');
+  });
+
+  // Detiene la ejecución aquí hasta que se registre
+  return;
+}
+
+
 //----------------------first we will create the folder of PLUS in the systme 
 /*
 This is for when the user would like have a version lite of PLUS for do a app all in one.
@@ -30,7 +182,7 @@ if (!checkTrialStatus()) {
 
 //----------------------server application
 //her we will start the server and his character 
-const express = require('express');
+//const express = require('express');
 const morgan = require('morgan');
 const { engine } = require('express-handlebars');
 const multer = require('multer');
@@ -150,7 +302,7 @@ nodePersist.init({
 
 
 //*------------------initializations-----------------------------------------//
-const serverExpress = express();
+//const serverExpress = express();
 require('./lib/passport');
 
 //*-----------------------------------------------------------settings-----------------------------------------//
