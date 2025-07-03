@@ -114,6 +114,16 @@
                     {{/each}}
                     {{/if}}
 
+                    {{#if user.return_ticket}}
+                        {{#each branchFree}}
+                        <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/returns')">
+                            <img src="/img/apps/returns.webp" alt="Impresoras" loading="lazy">
+                            <span>Devoluciones</span>
+                            <label class="shortcuts-label">F6</label>
+                        </div>
+                        {{/each}}
+                    {{/if}}
+
                     <!--
                         {{#if user.view_inventory}}
                             {{#each branchFree}}
