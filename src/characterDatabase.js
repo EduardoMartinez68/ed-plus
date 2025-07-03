@@ -204,6 +204,13 @@ async function create_update_of_the_database(adminPool) {
         ------------------------------------TICKETS-----------------------------------
         DO $$
         BEGIN
+            ALTER TABLE "Employee".roles_employees
+            ADD COLUMN IF NOT EXISTS view_ticket BOOLEAN DEFAULT TRUE NOT NULL,
+            ADD COLUMN IF NOT EXISTS return_ticket BOOLEAN DEFAULT FALSE NOT NULL;
+        END$$;
+
+        DO $$
+        BEGIN
             -- Tabla "Box".ticket
             CREATE TABLE IF NOT EXISTS "Box".ticket (
                 id bigserial PRIMARY KEY,
@@ -295,6 +302,10 @@ async function create_update_of_the_database_mysqlite(db) {
 
     //this query is for create the table of services for sale rechange or buy service as in the oxxo
     var query = `
+        ALTER TABLE roles_employees ADD COLUMN view_ticket BOOLEAN DEFAULT TRUE NOT NULL;
+        ALTER TABLE roles_employees ADD COLUMN return_ticket BOOLEAN DEFAULT TRUE NOT NULL;
+
+
         -- Crear tabla ticket si no existe
         CREATE TABLE IF NOT EXISTS ticket (
             id INTEGER PRIMARY KEY AUTOINCREMENT,

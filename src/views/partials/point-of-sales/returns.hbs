@@ -44,6 +44,20 @@
 
 
 <script>
+    async function open_pop_returns(id) {
+        const return_ticket = document.getElementById('return_ticket');
+        if (return_ticket == null) {
+            //first we will see if the user have this permmits
+            if (!await this_user_is_admin('Devolver ticket 📄', 'return_ticket')) {
+                warningMessage('🕵️‍♂️ ¡Acceso denegado!', 'No tienes permiso para hacer devoluciones de tickets.');
+                return;
+            }
+        }
+
+        show_message_pop(id);
+        document.getElementById('search-ticket').focus();
+    }
+
     const containerTicket = document.getElementById('container-data-ticket')
     containerTicket.style.display = 'none';
 
@@ -91,7 +105,7 @@
         const dataTicket = await get_information_of_the_ticket(ticketCode);
         containerTicket.style.display = 'none';
 
-        if (!dataTicket){
+        if (!dataTicket) {
             warningMessage('🤔 ¿Dónde está?', 'El ticket que buscas no existe...¿Seguro que escribiste bien el código?');
             return;
         };
@@ -245,7 +259,7 @@
     async function save_return() {
         const money = document.getElementById('total-devolucion').textContent;
         //first we will see if exist money for return 
-        if(parseFloat(money)>0){
+        if (parseFloat(money) > 0) {
             warningMessage('🤔 ¿Nada que devolver?', 'Tienes que elegir al menos un producto para devolver al cliente.');
             return;
         }
@@ -258,7 +272,7 @@
 
 
 
-            confirmationMessage(`✅ ¡Listo!`,`$${money} devueltos al cliente sin problemas. El dinero de tu caja fue actualizada exitosamente.`);
+            confirmationMessage(`✅ ¡Listo!`, `$${money} devueltos al cliente sin problemas. El dinero de tu caja fue actualizada exitosamente.`);
         }
     }
 </script>

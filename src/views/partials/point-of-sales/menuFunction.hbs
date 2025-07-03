@@ -94,6 +94,13 @@
   <label for="" id="add_product_flash"></label>
 {{/if}}
 
+{{#if user.view_ticket}}
+  <label for="" id="view_ticket"></label>
+{{/if}}
+
+{{#if user.return_ticket}}
+  <label for="" id="return_ticket"></label>
+{{/if}}
 
   <div class="menu-most-oprtions-container">
     <button class="menu-most-oprtions-toggle" onclick="toggleMenu()">
@@ -107,7 +114,6 @@
             <a onclick="show_popup_cart_in_wait()">Recuperar Venta (Alt+W)</a>
             <a onclick="seleccionarOpcion('recargas')">Recargas Telefonicas (Alt+T)</a>
             <a  onclick="seleccionarOpcion('servicios')">Pagos de servicios (Alt+S)</a>
-            <a  onclick="show_message_pop('pop-returns')">Devoluciones (Alt+Q)</a>
             <!---
             <a onclick="seleccionarOpcion('recargas')">Recargas Telefonicas</a>
             <a  onclick="seleccionarOpcion('servicios')">Pagos de servicios</a>
@@ -118,6 +124,7 @@
             <a onclick="select_customer('{{id_companies}}')">Buscar Cliente (Alt+B)</a>
             <a  onclick="cash_movement('{{id}}','{{id_branches}}')">Movimiento de caja (Alt+M)</a>
             <a onclick="show_popup_ticket_history()">Imprimir Ultima Venta (Alt+I)</a>
+            <a  onclick="open_pop_returns('pop-returns')">Devoluciones (Alt+Q)</a>
             <a href="javascript:void(0)" onclick="openPopConfigScales()">Conectar Báscula</a>
         {{/each}}
     </div>

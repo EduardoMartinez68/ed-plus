@@ -140,13 +140,13 @@ async function show_popup_cart_in_wait() {
 }
 
 async function show_popup_ticket_history() {
-    // Validar permisos (opcional)
-    /*
-    if (!await this_user_is_admin('Ver historial de tickets 📄', 'view_ticket_history')) {
-        warningMessage('🕵️‍♂️ ¡Acceso denegado!', 'No tienes permiso para ver el historial de tickets.');
-        return;
+    const view_ticket=document.getElementById('view_ticket');
+    if(view_ticket==null){
+        if (!await this_user_is_admin('Ver historial de tickets 📄', 'view_ticket')) {
+            warningMessage('🕵️‍♂️ ¡Acceso denegado!', 'No tienes permiso para ver el historial de tickets.');
+            return;
+        }
     }
-        */
 
     if (!listTicket || listTicket.length === 0) {
         errorMessage('Sin Tickets 😅', 'No hay tickets guardados para mostrar.');
@@ -945,7 +945,6 @@ async function this_user_is_admin(title,permissionToCheck) {
         }
 
         const result = await response.json();
-
         if (result.isAuthorized) {
             return true;
         } else {
