@@ -4,6 +4,7 @@ const {TYPE_DATABASE}=process.env;
 const fs = require('fs');
 const path=require('path');
 const sqlite3 = require('sqlite3').verbose();
+const { create_update_of_the_database_mysqlite } = require('./characterDatabase');
 
 //get the path home of the system 
 const homeDir = process.env.HOME || process.env.USERPROFILE;
@@ -59,6 +60,17 @@ async function create_the_database_lite() {
   } else {
       console.log('La base de datos ya existe.');
   }
+
+
+  //her we will connect with the database and update the database
+  const db = new sqlite3.Database(dbPath, (err) => {
+    if (err) {
+      console.error('Error al abrir la base de datos:', err.message);
+    } else {
+      console.log('Conectado a la base de datos SQLite.');
+      create_update_of_the_database_mysqlite(db);
+    }
+  });
 }
 
 function get_path_folder_upload(){

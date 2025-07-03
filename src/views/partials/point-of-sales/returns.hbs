@@ -32,6 +32,9 @@
             <div style="margin-top: 10px;">
                 <strong>Total a devolver: $<span id="total-devolucion">0.00</span></strong>
             </div>
+
+            <br>
+            <button class="btn btn-success" onclick="save_return()">Devolver</button>
         </div>
     </div>
 </div>
@@ -80,10 +83,18 @@
 
     async function search_ticket() {
         const ticketCode = document.getElementById('search-ticket').value;
+        if (!ticketCode.trim()) {
+            warningMessage('👁️ Campo vacío', 'Por favor escribe un número de ticket.');
+            return;
+        }
+
         const dataTicket = await get_information_of_the_ticket(ticketCode);
         containerTicket.style.display = 'none';
 
-        if (!dataTicket) return;
+        if (!dataTicket){
+            warningMessage('🤔 ¿Dónde está?', 'El ticket que buscas no existe...¿Seguro que escribiste bien el código?');
+            return;
+        };
 
 
         containerTicket.style.display = 'block';
@@ -155,10 +166,22 @@
         input.value = val;
         actualizarTotales();
     }
+
     function agregarListenersCantidad() {
         const inputs = document.querySelectorAll('[id^="input-prod-"]');
         inputs.forEach(input => {
-            input.addEventListener('input', actualizarTotales);
+            input.addEventListener('input', () => {
+                const max = parseInt(input.dataset.max);
+                let val = parseInt(input.value) || 0;
+                if (val > max) {
+                    input.value = max;
+                    val = max;
+                } else if (val < 0) {
+                    input.value = 0;
+                    val = 0;
+                }
+                actualizarTotales();
+            });
         });
 
         // Filtro por nombre o código
@@ -216,4 +239,26 @@
 
 
     agregarListenersDevoluciones()
+
+
+    //-------------------------------------------------------
+    async function save_return() {
+        const money = document.getElementById('total-devolucion').textContent;
+        //first we will see if exist money for return 
+        if(parseFloat(money)>0){
+            warningMessage('🤔 ¿Nada que devolver?', 'Tienes que elegir al menos un producto para devolver al cliente.');
+            return;
+        }
+
+        if (await questionMessage('¿Confirmar devolución al cliente?', `Se va a devolver $${money} al cliente. ¿Está seguro de que desea continuar con esta operación?`)) {
+            const container = document.getElementById('container-ticket');
+            containerTicket.style.display = 'none';
+            container.innerHTML = '';
+            hidden_message_pop('pop-returns');
+
+
+
+            confirmationMessage(`✅ ¡Listo!`,`$${money} devueltos al cliente sin problemas. El dinero de tu caja fue actualizada exitosamente.`);
+        }
+    }
 </script>
