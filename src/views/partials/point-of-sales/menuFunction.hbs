@@ -1,179 +1,169 @@
+<link rel="stylesheet"
+  href="https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-straight/css/uicons-regular-straight.css">
+<style>
+  :root {
+    --primary: #3b82f6;
+    --bg: #f9fafb;
+    --shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+  }
 
-  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-straight/css/uicons-regular-straight.css">
-  <style>
-    :root {
-      --primary: #3b82f6;
-      --bg: #f9fafb;
-      --shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
-    }
+  .menu-most-oprtions-container {
+    position: relative;
+    z-index: 10;
+  }
 
-    .menu-most-oprtions-container {
-      position: relative;
-      z-index: 10;
-    }
+  .menu-most-oprtions-toggle {
+    background: transparent;
+    border: none;
+    padding: 6px;
+    font-size: 22px;
+    cursor: pointer;
+    transition: background 0.25s, transform 0.25s;
+  }
 
-    .menu-most-oprtions-toggle {
-      background: transparent;
-      border: none;
-      padding: 6px;
-      font-size: 22px;
-      cursor: pointer;
-      transition: background 0.25s, transform 0.25s;
-    }
+  .menu-most-oprtions-toggle.open {
+    transform: rotate(90deg);
+  }
 
-    .menu-most-oprtions-toggle.open {
-      transform: rotate(90deg);
-    }
+  .menu-most-oprtions-toggle:hover {
+    /*background: #f0f0f0;*/
+  }
 
-    .menu-most-oprtions-toggle:hover {
-      /*background: #f0f0f0;*/
-    }
+  .menu-most-oprtions-options {
+    position: absolute;
+    top: 110%;
+    right: 0;
+    background: white;
+    border-radius: 12px;
+    padding: 8px 0;
+    box-shadow: var(--shadow);
+    min-width: 200px;
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
+    transition: all 0.25s ease;
+  }
 
-    .menu-most-oprtions-options {
-      position: absolute;
-      top: 110%;
-      right: 0;
-      background: white;
-      border-radius: 12px;
-      padding: 8px 0;
-      box-shadow: var(--shadow);
-      min-width: 200px;
-      opacity: 0;
-      transform: translateY(-10px);
-      pointer-events: none;
-      transition: all 0.25s ease;
-    }
+  .menu-most-oprtions-options.show {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
 
-    .menu-most-oprtions-options.show {
-      opacity: 1;
-      transform: translateY(0);
-      pointer-events: auto;
-    }
+  .menu-most-oprtions-options a {
+    display: block;
+    padding: 12px 18px;
+    color: #333;
+    text-decoration: none;
+    font-size: 15px;
+    transition: background 0.2s;
+  }
 
-    .menu-most-oprtions-options a {
-      display: block;
-      padding: 12px 18px;
-      color: #333;
-      text-decoration: none;
-      font-size: 15px;
-      transition: background 0.2s;
-    }
+  .menu-most-oprtions-options a:hover {
+    background: #f1f5f9;
+  }
 
-    .menu-most-oprtions-options a:hover {
-      background: #f1f5f9;
-    }
-
-    .menu-most-oprtions-options a + a {
-      border-top: 1px solid #f0f0f0;
-    }
-  </style>
+  .menu-most-oprtions-options a+a {
+    border-top: 1px solid #f0f0f0;
+  }
+</style>
 
 
 <!-----permits-------->
 {{#if user.delete_the_shopping_cart}}
-  <input type="hidden" id="delete_the_shopping_cart" value="{{user.delete_the_shopping_cart}}">
+<input type="hidden" id="delete_the_shopping_cart" value="{{user.delete_the_shopping_cart}}" class="info-permition">
 {{/if}}
 {{#if user.remove_product_for_sale}}
-  <input type="hidden" id="remove_product_for_sale" value="{{user.remove_product_for_sale}}">
+<input type="hidden" id="remove_product_for_sale" value="{{user.remove_product_for_sale}}" class="info-permition">
 {{/if}}
 {{#if user.add_product_on_backorder}}
-  <label for="" id="add_product_on_backorder"></label>
+<label id="add_product_on_backorder" data-value="{{user.add_product_on_backorder}}" class="info-permition"></label>
 {{/if}}
 
 {{#if user.view_products_on_backorder}}
-  <label for="" id="view_products_on_backorder"></label>
+<label id="view_products_on_backorder" data-value="{{user.view_products_on_backorder}}" class="info-permition"></label>
 {{/if}}
-
 
 {{#if user.select_product_on_backorder}}
-  <label for="" id="select_product_on_backorder"></label>
+<label id="select_product_on_backorder" data-value="{{user.select_product_on_backorder}}"
+  class="info-permition"></label>
 {{/if}}
 
-
 {{#if user.add_product_flash}}
-  <label for="" id="add_product_flash"></label>
+<label id="add_product_flash" data-value="{{user.add_product_flash}}" class="info-permition"></label>
 {{/if}}
 
 {{#if user.view_ticket}}
-  <label for="" id="view_ticket"></label>
+<label id="view_ticket" data-value="{{user.view_ticket}}" class="info-permition"></label>
 {{/if}}
 
 {{#if user.return_ticket}}
-  <label for="" id="return_ticket"></label>
+<label id="return_ticket" data-value="{{user.return_ticket}}" class="info-permition"></label>
 {{/if}}
 
-  <div class="menu-most-oprtions-container">
-    <button class="menu-most-oprtions-toggle" onclick="toggleMenu()">
-      <i class="fi fi-rs-menu-dots"></i>
-    </button>
-    <div class="menu-most-oprtions-options" id="menuMostOptions">
-        {{#each dataEmployee}}
-            <input type="text" value="{{id_branches}}" style="display: none;" id="id_branch">
-            <input type="text" value="{{id}}" style="display: none;" id="id_employee_menu">
-            <a onclick="create_a_sale_in_wait()">Venta en espera (Alt+G)</a>
-            <a onclick="show_popup_cart_in_wait()">Recuperar Venta (Alt+W)</a>
-            <a onclick="seleccionarOpcion('recargas')">Recargas Telefonicas (Alt+T)</a>
-            <a  onclick="seleccionarOpcion('servicios')">Pagos de servicios (Alt+S)</a>
-            <!---
+<div class="menu-most-oprtions-container">
+  <button class="menu-most-oprtions-toggle" onclick="toggleMenu()">
+    <i class="fi fi-rs-menu-dots"></i>
+  </button>
+  <div class="menu-most-oprtions-options" id="menuMostOptions">
+    {{#each dataEmployee}}
+    <input type="text" value="{{id_branches}}" style="display: none;" id="id_branch">
+    <input type="text" value="{{id}}" style="display: none;" id="id_employee_menu">
+    <a onclick="create_a_sale_in_wait()">Venta en espera (Alt+G)</a>
+    <a onclick="show_popup_cart_in_wait()">Recuperar Venta (Alt+W)</a>
+    <a onclick="seleccionarOpcion('recargas')">Recargas Telefonicas (Alt+T)</a>
+    <a onclick="seleccionarOpcion('servicios')">Pagos de servicios (Alt+S)</a>
+    <!---
             <a onclick="seleccionarOpcion('recargas')">Recargas Telefonicas</a>
             <a  onclick="seleccionarOpcion('servicios')">Pagos de servicios</a>
             <a onclick="update_credit_for_my_rechange()">Actualizar mis creditos</a>
             <a onclick="openCFDIPopup()">CFDI</a>
             -->
-            
-            <a onclick="select_customer('{{id_companies}}')">Buscar Cliente (Alt+B)</a>
-            <a  onclick="cash_movement('{{id}}','{{id_branches}}')">Movimiento de caja (Alt+M)</a>
-            <a onclick="show_popup_ticket_history()">Imprimir Ultima Venta (Alt+I)</a>
-            <a  onclick="open_pop_returns('pop-returns')">Devoluciones (Alt+Q)</a>
-            <a href="javascript:void(0)" onclick="openPopConfigScales()">Conectar Báscula</a>
-        {{/each}}
-    </div>
+
+    <a onclick="select_customer('{{id_companies}}')">Buscar Cliente (Alt+B)</a>
+    <a onclick="cash_movement('{{id}}','{{id_branches}}')">Movimiento de caja (Alt+M)</a>
+    <a onclick="show_popup_ticket_history()">Imprimir Ultima Venta (Alt+I)</a>
+    <a onclick="open_pop_returns('pop-returns')">Devoluciones (Alt+Q)</a>
+    <a href="javascript:void(0)" onclick="openPopConfigScales()">Conectar Báscula</a>
+    {{/each}}
   </div>
+</div>
 
-  <script>
-    function toggleMenu() {
-      const menu = document.getElementById("menuMostOptions");
-      const toggleButton = document.querySelector(".menu-most-oprtions-toggle");
+<script>
+  function toggleMenu() {
+    const menu = document.getElementById("menuMostOptions");
+    const toggleButton = document.querySelector(".menu-most-oprtions-toggle");
 
-      // Mostrar/ocultar el menú
-      menu.classList.toggle("show");
-      
-      // Cambiar el estado de rotación del botón
-      toggleButton.classList.toggle("open");
+    // Mostrar/ocultar el menú
+    menu.classList.toggle("show");
+
+    // Cambiar el estado de rotación del botón
+    toggleButton.classList.toggle("open");
+  }
+
+  // Cerrar el menú si haces clic fuera
+  document.addEventListener("click", (e) => {
+    const menu = document.getElementById("menuMostOptions");
+    const toggle = document.querySelector(".menu-most-oprtions-toggle");
+    if (!menu.contains(e.target) && !toggle.contains(e.target)) {
+      menu.classList.remove("show");
+      toggle.classList.remove("open");
     }
+  });
+</script>
 
-    // Cerrar el menú si haces clic fuera
-    document.addEventListener("click", (e) => {
-      const menu = document.getElementById("menuMostOptions");
-      const toggle = document.querySelector(".menu-most-oprtions-toggle");
-      if (!menu.contains(e.target) && !toggle.contains(e.target)) {
-        menu.classList.remove("show");
-        toggle.classList.remove("open");
-      }
-    });
-  </script>
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
 
+
+<script>
+  //this is for read all the permition in SQLIte, if the permition is equal to 0, we will delete the permition
+  document.querySelectorAll('.info-permition').forEach(el => {
+    const val = el.dataset.value ?? el.value ?? ""; // soporta tanto <label> como <input>
+    const normalized = val?.toString().trim().toLowerCase();
+
+    const isValid = normalized === "true" || normalized === "1" || normalized === "yes" || normalized === "on" || normalized === 1 || normalized===true;
+    if (!isValid) {
+
+      el.remove();
+    }
+  });
+</script>
