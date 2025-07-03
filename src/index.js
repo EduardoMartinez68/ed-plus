@@ -63,6 +63,10 @@ res.send(`
       color: #333;
     }
   </style>
+  <script>
+    // 🔒 Bloquear clic derecho
+    document.addEventListener('contextmenu', event => event.preventDefault());
+  </script>
 </head>
 <body>
   <div class="card">
@@ -81,60 +85,54 @@ res.send(`
   </div>
 
   <script>
-    document.getElementById("tokenForm").addEventListener("submit", async function (e) {
-      e.preventDefault();
-      const token = document.getElementById("tokenInput").value.trim();
-      const deviceId = document.getElementById("deviceId").value;
-      const messageDiv = document.getElementById("message");
-
-      // Verificar si el token existe
-      try {
-        const res = await fetch("https://pluspuntodeventa.com/api/see_if_exist_this_token_in_the_database_of_the_web.php", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token })
-        });
-
-        const data = await res.json();
-
-        if (data.success) {
-          // Si existe, entonces lo actualizamos
-          const saveRes = await fetch("https://pluspuntodeventa.com/api/save_the_uui_of_the_user_in_the_database.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ token, deviceId })
-          });
-
-          const saveData = await saveRes.json();
-
-          if (saveData.success) {
-            // Ahora guardar en local server
-            const localRes = await fetch("/registrar-token", {
-              method: "POST",
-              headers: { "Content-Type": "application/x-www-form-urlencoded" },
-              body: "token=" + encodeURIComponent(token) + "&deviceId=" + encodeURIComponent(deviceId)
-            });
-
-            if (localRes.ok) {
-              messageDiv.style.color = "green";
-              messageDiv.innerText = "✅ Token guardado correctamente. Reinicia la app para comenzar.";
-            } else {
-              messageDiv.innerText = "Error al guardar el token localmente.";
+    // 🔐 Código JavaScript ofuscado
+    (function(){
+      const _0x5eac = [
+        '#tokenForm', 'addEventListener', 'submit', 'preventDefault',
+        '#tokenInput', 'value', 'trim', '#deviceId', 'message',
+        'Content-Type', 'application/json', 'POST', 'stringify',
+        'success', 'style', 'color', 'innerText',
+        '✅ Token guardado correctamente. Reinicia la app para comenzar.',
+        'Error al guardar el token localmente.', 'message',
+        'Error al guardar en el servidor remoto.',
+        '❌ Token no válido. Por favor verifica.',
+        'Error de red o del servidor.', 'log'
+      ];
+      document.querySelector(_0x5eac[0])[_0x5eac[1]](_0x5eac[2],async function(e){
+        e[_0x5eac[3]]();
+        const token=document.querySelector(_0x5eac[4])[_0x5eac[5]][_0x5eac[6]]();
+        const deviceId=document.querySelector(_0x5eac[7])[_0x5eac[5]];
+        const messageDiv=document.getElementById(_0x5eac[8]);
+        try{
+          const res=await fetch("https://pluspuntodeventa.com/api/see_if_exist_this_token_in_the_database_of_the_web.php",{method:_0x5eac[11],headers:{[_0x5eac[9]]:_0x5eac[10]},body:JSON[_0x5eac[12]]({token})});
+          const data=await res.json();
+          if(data[_0x5eac[13]]){
+            const saveRes=await fetch("https://pluspuntodeventa.com/api/save_the_uui_of_the_user_in_the_database.php",{method:_0x5eac[11],headers:{[_0x5eac[9]]:_0x5eac[10]},body:JSON[_0x5eac[12]]({token,deviceId})});
+            const saveData=await saveRes.json();
+            if(saveData[_0x5eac[13]]){
+              const localRes=await fetch("/registrar-token",{method:_0x5eac[11],headers:{[_0x5eac[9]]:"application/x-www-form-urlencoded"},body:"token="+encodeURIComponent(token)+"&deviceId="+encodeURIComponent(deviceId)});
+              if(localRes.ok){
+                messageDiv[_0x5eac[14]][_0x5eac[15]]="green";
+                messageDiv[_0x5eac[16]]=_0x5eac[17];
+              }else{
+                messageDiv[_0x5eac[16]]=_0x5eac[18];
+              }
+            }else{
+              messageDiv[_0x5eac[16]]=saveData[_0x5eac[19]]||_0x5eac[20];
             }
-          } else {
-            messageDiv.innerText = saveData.message || "Error al guardar en el servidor remoto.";
+          }else{
+            messageDiv[_0x5eac[16]]=_0x5eac[21];
           }
-        } else {
-          messageDiv.innerText = "❌ Token no válido. Por favor verifica.";
+        }catch(error){
+          console[_0x5eac[22]](error);
+          messageDiv[_0x5eac[16]]=_0x5eac[23];
         }
-      } catch (error) {
-        console.error(error);
-        messageDiv.innerText = "Error de red o del servidor.";
-      }
-    });
+      });
+    })();
   </script>
 </body>
 </html>
+
 `);
   });
 
