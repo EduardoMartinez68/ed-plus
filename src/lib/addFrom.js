@@ -5643,7 +5643,7 @@ async function send_email(APP_EMAIL_EMAIL,APP_PASSWORD_EMAIL,toEmail, subjectEma
 //-----------------------------------------------------------------------------------Prontipagos------------------------------------------------------
 const fetch = require('node-fetch');
 //const helpers=require('../lib/helpers.js');
-const urlProntipagos='https://prontipagos-api-dev.domainscm.com'
+const urlProntipagos='https://api.prontipagos.mx' //'https://prontipagos-api-dev.domainscm.com'
 //-----this is for do a sale in prontipagos cada 2 segundos. 
 router.post('/links/send_information_to_prontipagos', async (req, res) => {
 
@@ -5872,9 +5872,6 @@ async function delete_reachange_service(id) {
 
 //cada 2 segundos hasta completar 61 segundos 5555444666
 async function update_status_prontipagos(transaction_id, id_branch, token,startTime2) {
-    console.log('--------------------------------token--------------------------------')
-    console.log('token')
-    console.log(token)
     const url = `${urlProntipagos}/prontipagos-external-api-ws/ws/protected/v1/check-status?transactionId=${transaction_id}`;
 
     let success = false;
@@ -6078,7 +6075,7 @@ async function get_token_prontipagos(id_branch) {
     const password = decryptPassword(dataBranch.password_prontipagos, dataBranch.iv_for_password);  //check if the user is correct
 
     try {
-        const response = await fetch(`https://prontipagos-api-dev.domainscm.com/prontipagos-external-api-ws/ws/v1/auth/login`, {
+        const response = await fetch(`https://api.prontipagos.mx/prontipagos-external-api-ws/ws/v1/auth/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

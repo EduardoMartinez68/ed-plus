@@ -349,7 +349,7 @@
         const loadingOverlay = document.getElementById("loadingOverlay");
         loadingOverlay.style.display = 'flex'; // Mostrar overlay de carga
         try {
-            const response = await fetch(`http://localhost:5656/read-scale/${com}?baudRate=${baudRate}`);
+            const response = await fetch(`http://localhost:5000/read-scale/${com}?baudRate=${baudRate}`);
             const result = await response.json();
             if (result.status === 'OK') {
                 const peso = parseFloat(result.weight.replace(/[^\d.]/g, ''));
@@ -368,12 +368,4 @@
 
         loadingOverlay.style.display = 'none'; // Ocultar overlay de carga
     });
-</script>
-
-
-<!--------ticket-------->
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-
-});
 </script>

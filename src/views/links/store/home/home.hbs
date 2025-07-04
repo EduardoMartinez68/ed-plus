@@ -228,11 +228,10 @@
     }
 
     function generarTokenUnicoTicket() {
-        // Genera un ID corto estilo: TK-AB12CD34
-        const random = Math.random().toString(36).substr(2, 8).toUpperCase();
-        return 'TK-' + random;
+        const array = new Uint8Array(8); // 8 bytes = 16 hex chars
+        crypto.getRandomValues(array);
+        return Array.from(array, b => b.toString(16).padStart(2, '0')).join('').toUpperCase();
     }
-
 
     function get_date_ticket() {
         const ahora = new Date();
@@ -291,6 +290,6 @@
 
 
     //load the cookies
-    //load_tickets_from_cookies();
+    load_tickets_from_cookies();
     load_printer();
 </script>

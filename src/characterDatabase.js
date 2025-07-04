@@ -160,10 +160,7 @@ async function create_update_of_the_database(adminPool) {
             ADD COLUMN IF NOT EXISTS products_with_low_stock BOOLEAN DEFAULT FALSE NOT NULL,
             ADD COLUMN IF NOT EXISTS there_are_products_out_of_stock BOOLEAN DEFAULT FALSE NOT NULL,
             ADD COLUMN IF NOT EXISTS there_are_expired_products BOOLEAN DEFAULT FALSE NOT NULL,
-            ADD COLUMN IF NOT EXISTS an_employee_logged_in_outside_of_his_shift BOOLEAN DEFAULT FALSE NOT NULL,
-            ADD COLUMN IF NOT EXISTS notification_cut_box BOOLEAN DEFAULT FALSE NOT NULL,
-            ADD COLUMN IF NOT EXISTS notification_cut_box BOOLEAN DEFAULT FALSE NOT NULL,
-            ADD COLUMN IF NOT EXISTS notification_cut_box BOOLEAN DEFAULT FALSE NOT NULL;
+            ADD COLUMN IF NOT EXISTS an_employee_logged_in_outside_of_his_shift BOOLEAN DEFAULT FALSE NOT NULL;
         END$$;
 
         -------------------------ROLE-----------------------
@@ -223,89 +220,43 @@ async function create_update_of_the_database(adminPool) {
                 CONSTRAINT key_ticket UNIQUE (id)
             );
 
-            -- Asegurar columnas (por si actualizas tabla después)
-            ALTER TABLE "Box".ticket
-                ADD COLUMN IF NOT EXISTS cash numeric(10,2),
-                ADD COLUMN IF NOT EXISTS debit numeric(10,2),
-                ADD COLUMN IF NOT EXISTS credit numeric(10,2),
-                ADD COLUMN IF NOT EXISTS total numeric(10,2) DEFAULT 0,
-                ADD COLUMN IF NOT EXISTS date_sale timestamp DEFAULT CURRENT_TIMESTAMP,
-                ADD COLUMN IF NOT EXISTS note text,
-                ADD COLUMN IF NOT EXISTS id_customers bigint,
-                ADD COLUMN IF NOT EXISTS id_employees bigint,
-                ADD COLUMN IF NOT EXISTS id_branches bigint,
-                ADD COLUMN IF NOT EXISTS id_companies bigint;
-
-            -- Relaciones
-            ALTER TABLE "Box".ticket
-                ADD CONSTRAINT IF NOT EXISTS customers_fk
-                FOREIGN KEY (id_customers)
-                REFERENCES "Company".customers (id)
-                ON DELETE SET NULL
-                ON UPDATE CASCADE;
-
-            ALTER TABLE "Box".ticket
-                ADD CONSTRAINT IF NOT EXISTS employees_fk
-                FOREIGN KEY (id_employees)
-                REFERENCES "Company".employees (id)
-                ON DELETE SET NULL
-                ON UPDATE CASCADE;
-
-            ALTER TABLE "Box".ticket
-                ADD CONSTRAINT IF NOT EXISTS branches_fk
-                FOREIGN KEY (id_branches)
-                REFERENCES "Company".branches (id)
-                ON DELETE SET NULL
-                ON UPDATE CASCADE;
-
-            ALTER TABLE "Box".ticket
-                ADD CONSTRAINT IF NOT EXISTS companies_fk
-                FOREIGN KEY (id_companies)
-                REFERENCES "User".companies (id)
-                ON DELETE SET NULL
-                ON UPDATE CASCADE;
+            -- Asegurar columnas una por una
+            ALTER TABLE "Box".ticket ADD COLUMN IF NOT EXISTS cash numeric(10,2);
+            ALTER TABLE "Box".ticket ADD COLUMN IF NOT EXISTS debit numeric(10,2);
+            ALTER TABLE "Box".ticket ADD COLUMN IF NOT EXISTS credit numeric(10,2);
+            ALTER TABLE "Box".ticket ADD COLUMN IF NOT EXISTS total numeric(10,2) DEFAULT 0;
+            ALTER TABLE "Box".ticket ADD COLUMN IF NOT EXISTS date_sale timestamp DEFAULT CURRENT_TIMESTAMP;
+            ALTER TABLE "Box".ticket ADD COLUMN IF NOT EXISTS note text;
+            ALTER TABLE "Box".ticket ADD COLUMN IF NOT EXISTS id_customers bigint;
+            ALTER TABLE "Box".ticket ADD COLUMN IF NOT EXISTS id_employees bigint;
+            ALTER TABLE "Box".ticket ADD COLUMN IF NOT EXISTS id_branches bigint;
+            ALTER TABLE "Box".ticket ADD COLUMN IF NOT EXISTS id_companies bigint;
 
             -- Tabla "Box".history_returns
             CREATE TABLE IF NOT EXISTS "Box".history_returns (
                 id bigserial PRIMARY KEY,
                 id_employees bigint,
                 id_ticket bigint,
-                old_ticket json NOT NULL,
-                products_returns json NOT NULL,
+                old_ticket json NOT NULL DEFAULT '{}'::json,
+                products_returns json NOT NULL DEFAULT '[]'::json,
                 total_return numeric(10,2) NOT NULL DEFAULT 0,
                 date_return timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                note text NOT NULL
+                note text NOT NULL DEFAULT ''
             );
 
-            -- Asegurar columnas (si modificas luego)
-            ALTER TABLE "Box".history_returns
-                ADD COLUMN IF NOT EXISTS id_employees bigint,
-                ADD COLUMN IF NOT EXISTS id_ticket bigint,
-                ADD COLUMN IF NOT EXISTS old_ticket json NOT NULL,
-                ADD COLUMN IF NOT EXISTS products_returns json NOT NULL,
-                ADD COLUMN IF NOT EXISTS total_return numeric(10,2) NOT NULL DEFAULT 0,
-                ADD COLUMN IF NOT EXISTS date_return timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                ADD COLUMN IF NOT EXISTS note text NOT NULL;
-
-            -- Relaciones
-            ALTER TABLE "Box".history_returns
-                ADD CONSTRAINT IF NOT EXISTS ticket_fk
-                FOREIGN KEY (id_ticket)
-                REFERENCES "Box".ticket (id)
-                ON DELETE SET NULL
-                ON UPDATE CASCADE;
-
-            ALTER TABLE "Box".history_returns
-                ADD CONSTRAINT IF NOT EXISTS employees_fk
-                FOREIGN KEY (id_employees)
-                REFERENCES "Company".employees (id)
-                ON DELETE SET NULL
-                ON UPDATE CASCADE;
+            -- Asegurar columnas (evita error si ya existen)
+            ALTER TABLE "Box".history_returns ADD COLUMN IF NOT EXISTS id_employees bigint;
+            ALTER TABLE "Box".history_returns ADD COLUMN IF NOT EXISTS id_ticket bigint;
+            ALTER TABLE "Box".history_returns ADD COLUMN IF NOT EXISTS old_ticket json NOT NULL DEFAULT '{}'::json;
+            ALTER TABLE "Box".history_returns ADD COLUMN IF NOT EXISTS products_returns json NOT NULL DEFAULT '[]'::json;
+            ALTER TABLE "Box".history_returns ADD COLUMN IF NOT EXISTS total_return numeric(10,2) NOT NULL DEFAULT 0;
+            ALTER TABLE "Box".history_returns ADD COLUMN IF NOT EXISTS date_return timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP;
+            ALTER TABLE "Box".history_returns ADD COLUMN IF NOT EXISTS note text NOT NULL DEFAULT '';
         END
         $$;
 
-    `
 
+    `
     await adminPool.query(query);
     console.log('📂 La base de datos EDPLUS fue actualizada.');
 }
@@ -369,9 +320,9 @@ async function create_update_of_the_database_mysqlite(db) {
     `;
     db.exec(query, (err) => {
         if (err) {
-        console.error('Error al ejecutar script de actualización para SQLite:', err.message);
+            console.error('Error al ejecutar script de actualización para SQLite:', err.message);
         } else {
-        console.log('Base de datos SQLite actualizada correctamente.');
+            console.log('Base de datos SQLite actualizada correctamente.');
         }
         db.close(); // Importante cerrar conexión
     });
