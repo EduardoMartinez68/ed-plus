@@ -1,71 +1,49 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mensajes Pop</title>
-  <style>
-    /* Fondo oscuro */
-    .plus-popup-overlay {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background-color: rgba(0, 0, 0, 0.7);
-      z-index: 9999;
-      justify-content: center;
-      align-items: center;
-    }
-
-    /* Contenedor del popup */
-    .plus-popup-message {
-      background-color: #fff;
-      width: 300px;
-      max-width: 90%;
-      padding: 16px;
-      box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      box-sizing: border-box;
-    }
-
-    /* Botón de cerrar */
-    .plus-popup-close {
-      position: absolute;
-      top: 4px;
-      right: 8px;
-      font-size: 18px;
-      font-weight: bold;
-      color: #000;
-      cursor: pointer;
-      user-select: none;
-    }
-  </style>
+<meta charset="UTF-8" />
+<title>Imprimir texto plano</title>
+<style>
+  @media print {
+    @page { margin: 0; }
+    body { margin: 0; font-family: monospace; white-space: pre; }
+  }
+</style>
 </head>
 <body>
 
-  <!-- Ejemplo de un popup -->
-  <div id="popup1" class="plus-popup-overlay">
-    <div class="plus-popup-message">
-      <span class="plus-popup-close" onclick="ocultarPopup('popup1')">x</span>
-      <h2>Título del Popup</h2>
-      <p>Aquí el programador puede colocar su contenido personalizado.</p>
-    </div>
-  </div>
+<pre id="texto">
+Mi Restaurante
+Fecha: 2025-07-04 09:30
 
-  <button onclick="mostrarPopup('popup1')">Mostrar Popup</button>
+Producto 1 ........... $10.00
+Producto 2 ........... $20.00
 
-  <script>
-    function show_message_pop(id) {
-      const el = document.getElementById(id);
-      if (el) el.style.display = 'flex';
-    }
+Total: $30.00
 
-    function hidden_message_pop(id) {
-      const el = document.getElementById(id);
-      if (el) el.style.display = 'none';
-    }
-  </script>
+Gracias por su compra
+</pre>
+
+<button id="imprimirBtn">Imprimir texto plano</button>
+
+<script>
+  function imprimirTexto() {
+    const texto = document.getElementById('texto').textContent;
+
+    const printWindow = window.open('', '', 'width=300,height=400');
+    printWindow.document.write(`
+      <pre style="font-family: monospace; white-space: pre; margin: 0; padding: 10px;">
+${texto}
+      </pre>
+    `);
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+    printWindow.close();
+  }
+
+  document.getElementById('imprimirBtn').addEventListener('click', imprimirTexto);
+</script>
+
 </body>
 </html>
