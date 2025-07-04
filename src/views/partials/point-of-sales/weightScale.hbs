@@ -417,7 +417,7 @@
 
     async function sned_information_to_the_server_for_print_the_ticket(textoTicket,flash=false){
         const printerIndex = localStorage.getItem('selectedPrinter') || 0; // o puedes usar otro identificador si guardaste algo más
-        if (!printerIndex || printerIndex.trim() === '' || printerIndex === '0' || printerIndex == 0) {
+        if (!printerIndex || printerIndex.trim() === '') {
             if(flash){
                 warningMessage('¡Ups, impresora fugitiva! 🖨️💨', 'Estás intentando imprimir un ticket, pero... ¿y la impresora? 🤔 Selecciona una antes de seguir con la magia.');
             }

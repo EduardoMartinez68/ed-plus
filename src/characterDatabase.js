@@ -204,13 +204,6 @@ async function create_update_of_the_database(adminPool) {
         ------------------------------------TICKETS-----------------------------------
         DO $$
         BEGIN
-            ALTER TABLE "Employee".roles_employees
-            ADD COLUMN IF NOT EXISTS view_ticket BOOLEAN DEFAULT TRUE NOT NULL,
-            ADD COLUMN IF NOT EXISTS return_ticket BOOLEAN DEFAULT FALSE NOT NULL;
-        END$$;
-
-        DO $$
-        BEGIN
             -- Tabla "Box".ticket
             CREATE TABLE IF NOT EXISTS "Box".ticket (
                 id bigserial PRIMARY KEY,
@@ -225,6 +218,8 @@ async function create_update_of_the_database(adminPool) {
                 note text,
                 id_customers bigint,
                 id_employees bigint,
+                id_branches bigint,
+                id_companies bigint,
                 CONSTRAINT key_ticket UNIQUE (id)
             );
 
@@ -237,7 +232,9 @@ async function create_update_of_the_database(adminPool) {
                 ADD COLUMN IF NOT EXISTS date_sale timestamp DEFAULT CURRENT_TIMESTAMP,
                 ADD COLUMN IF NOT EXISTS note text,
                 ADD COLUMN IF NOT EXISTS id_customers bigint,
-                ADD COLUMN IF NOT EXISTS id_employees bigint;
+                ADD COLUMN IF NOT EXISTS id_employees bigint,
+                ADD COLUMN IF NOT EXISTS id_branches bigint,
+                ADD COLUMN IF NOT EXISTS id_companies bigint;
 
             -- Relaciones
             ALTER TABLE "Box".ticket
@@ -251,6 +248,20 @@ async function create_update_of_the_database(adminPool) {
                 ADD CONSTRAINT IF NOT EXISTS employees_fk
                 FOREIGN KEY (id_employees)
                 REFERENCES "Company".employees (id)
+                ON DELETE SET NULL
+                ON UPDATE CASCADE;
+
+            ALTER TABLE "Box".ticket
+                ADD CONSTRAINT IF NOT EXISTS branches_fk
+                FOREIGN KEY (id_branches)
+                REFERENCES "Company".branches (id)
+                ON DELETE SET NULL
+                ON UPDATE CASCADE;
+
+            ALTER TABLE "Box".ticket
+                ADD CONSTRAINT IF NOT EXISTS companies_fk
+                FOREIGN KEY (id_companies)
+                REFERENCES "User".companies (id)
                 ON DELETE SET NULL
                 ON UPDATE CASCADE;
 
@@ -268,11 +279,13 @@ async function create_update_of_the_database(adminPool) {
 
             -- Asegurar columnas (si modificas luego)
             ALTER TABLE "Box".history_returns
+                ADD COLUMN IF NOT EXISTS id_employees bigint,
+                ADD COLUMN IF NOT EXISTS id_ticket bigint,
+                ADD COLUMN IF NOT EXISTS old_ticket json NOT NULL,
+                ADD COLUMN IF NOT EXISTS products_returns json NOT NULL,
                 ADD COLUMN IF NOT EXISTS total_return numeric(10,2) NOT NULL DEFAULT 0,
                 ADD COLUMN IF NOT EXISTS date_return timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                ADD COLUMN IF NOT EXISTS note text NOT NULL,
-                ADD COLUMN IF NOT EXISTS id_ticket bigint,
-                ADD COLUMN IF NOT EXISTS id_employees bigint;
+                ADD COLUMN IF NOT EXISTS note text NOT NULL;
 
             -- Relaciones
             ALTER TABLE "Box".history_returns
@@ -288,9 +301,9 @@ async function create_update_of_the_database(adminPool) {
                 REFERENCES "Company".employees (id)
                 ON DELETE SET NULL
                 ON UPDATE CASCADE;
-
         END
         $$;
+
     `
 
     await adminPool.query(query);
@@ -301,90 +314,59 @@ async function create_update_of_the_database(adminPool) {
 async function create_update_of_the_database_mysqlite(db) {
 
     //this query is for create the table of services for sale rechange or buy service as in the oxxo
-    var query = `
-        ALTER TABLE roles_employees ADD COLUMN view_ticket BOOLEAN DEFAULT TRUE NOT NULL;
-        ALTER TABLE roles_employees ADD COLUMN return_ticket BOOLEAN DEFAULT TRUE NOT NULL;
+    const query = `
 
+    -- Activar claves foráneas en SQLite
+    PRAGMA foreign_keys = ON;
 
-        -- Crear tabla ticket si no existe
-        CREATE TABLE IF NOT EXISTS ticket (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            key TEXT NOT NULL UNIQUE,
-            original_ticket JSON NOT NULL,
-            current_ticket JSON NOT NULL,
-            date_sale TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            cash NUMERIC(10,2),
-            debit NUMERIC(10,2),
-            credit NUMERIC(10,2),
-            total NUMERIC(10,2) DEFAULT 0,
-            note TEXT,
-            id_customers INTEGER,
-            id_employees INTEGER
-        );
+    -- Asegurar que las tablas referenciadas existan
+    CREATE TABLE IF NOT EXISTS customers (id INTEGER PRIMARY KEY);
+    CREATE TABLE IF NOT EXISTS employees (id INTEGER PRIMARY KEY);
+    CREATE TABLE IF NOT EXISTS branches (id INTEGER PRIMARY KEY);
+    CREATE TABLE IF NOT EXISTS companies (id INTEGER PRIMARY KEY);
 
-        -- Crear tabla history_returns si no existe
-        CREATE TABLE IF NOT EXISTS history_returns (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            id_employees INTEGER,
-            id_ticket INTEGER,
-            old_ticket JSON NOT NULL,
-            products_returns JSON NOT NULL,
-            total_return NUMERIC(10,2) DEFAULT 0 NOT NULL,
-            date_return TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-            note TEXT NOT NULL
-        );
+    -- Asegurar columnas en roles_employees (no hay IF NOT EXISTS, usar try-catch si usas sqlite3 en JS)
+    ALTER TABLE roles_employees ADD COLUMN view_ticket BOOLEAN DEFAULT 1 NOT NULL;
+    ALTER TABLE roles_employees ADD COLUMN return_ticket BOOLEAN DEFAULT 1 NOT NULL;
 
-        -- Agregar claves foráneas
-        PRAGMA foreign_keys = ON;
+    -- Eliminar tabla ticket si existe (para volver a crearla con relaciones)
+    DROP TABLE IF EXISTS ticket;
+    CREATE TABLE ticket (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        key TEXT NOT NULL UNIQUE,
+        original_ticket JSON NOT NULL,
+        current_ticket JSON NOT NULL,
+        date_sale TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        cash NUMERIC(10,2),
+        debit NUMERIC(10,2),
+        credit NUMERIC(10,2),
+        total NUMERIC(10,2) DEFAULT 0,
+        note TEXT,
+        id_customers INTEGER,
+        id_employees INTEGER,
+        id_branches INTEGER,
+        id_companies INTEGER,
+        FOREIGN KEY (id_customers) REFERENCES customers(id) ON DELETE SET NULL ON UPDATE CASCADE,
+        FOREIGN KEY (id_employees) REFERENCES employees(id) ON DELETE SET NULL ON UPDATE CASCADE,
+        FOREIGN KEY (id_branches) REFERENCES branches(id) ON DELETE SET NULL ON UPDATE CASCADE,
+        FOREIGN KEY (id_companies) REFERENCES companies(id) ON DELETE SET NULL ON UPDATE CASCADE
+    );
 
-        -- Asegurar relaciones (nota: SQLite requiere que existan las tablas referenciadas)
-        -- Si las tablas customers y employees existen:
-        CREATE TABLE IF NOT EXISTS customers (
-            id INTEGER PRIMARY KEY
-        );
-
-        CREATE TABLE IF NOT EXISTS employees (
-            id INTEGER PRIMARY KEY
-        );
-
-        -- Relaciones (se deben definir al crear la tabla, así que necesitarías recrearlas si ya existen)
-        -- Alternativa: crear temporalmente tablas con relaciones ya embebidas
-
-        -- Para recrear con relaciones, deberías usar algo así (si necesitas relaciones reales en SQLite):
-
-        DROP TABLE IF EXISTS ticket;
-        CREATE TABLE ticket (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            key TEXT NOT NULL UNIQUE,
-            original_ticket JSON NOT NULL,
-            current_ticket JSON NOT NULL,
-            date_sale TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            cash NUMERIC(10,2),
-            debit NUMERIC(10,2),
-            credit NUMERIC(10,2),
-            total NUMERIC(10,2) DEFAULT 0,
-            note TEXT,
-            id_customers INTEGER,
-            id_employees INTEGER,
-            FOREIGN KEY (id_customers) REFERENCES customers(id) ON DELETE SET NULL ON UPDATE CASCADE,
-            FOREIGN KEY (id_employees) REFERENCES employees(id) ON DELETE SET NULL ON UPDATE CASCADE
-        );
-
-        DROP TABLE IF EXISTS history_returns;
-        CREATE TABLE history_returns (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            id_employees INTEGER,
-            id_ticket INTEGER,
-            old_ticket JSON NOT NULL,
-            products_returns JSON NOT NULL,
-            total_return NUMERIC(10,2) DEFAULT 0 NOT NULL,
-            date_return TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-            note TEXT NOT NULL,
-            FOREIGN KEY (id_ticket) REFERENCES ticket(id) ON DELETE SET NULL ON UPDATE CASCADE,
-            FOREIGN KEY (id_employees) REFERENCES employees(id) ON DELETE SET NULL ON UPDATE CASCADE
-        );
-
-    `
+    -- Eliminar y crear tabla history_returns
+    DROP TABLE IF EXISTS history_returns;
+    CREATE TABLE history_returns (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id_employees INTEGER,
+        id_ticket INTEGER,
+        old_ticket JSON NOT NULL,
+        products_returns JSON NOT NULL,
+        total_return NUMERIC(10,2) NOT NULL DEFAULT 0,
+        date_return TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        note TEXT NOT NULL,
+        FOREIGN KEY (id_ticket) REFERENCES ticket(id) ON DELETE SET NULL ON UPDATE CASCADE,
+        FOREIGN KEY (id_employees) REFERENCES employees(id) ON DELETE SET NULL ON UPDATE CASCADE
+    );
+    `;
     db.exec(query, (err) => {
         if (err) {
         console.error('Error al ejecutar script de actualización para SQLite:', err.message);

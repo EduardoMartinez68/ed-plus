@@ -1,3 +1,4 @@
+{{>loading}}
 {{>returns/formReturn}}
 <br><br>
 <div class="container">
@@ -16,3 +17,15 @@
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+    // Aquí defines o asignas la función para que esté lista después del DOM
+    async function open_pop_returns(id) {
+        show_message_pop(id);
+        document.getElementById('search-ticket').focus();
+    }
+
+    // Opcional: asignar a window si quieres que sea global
+    window.open_pop_returns = open_pop_returns;
+    });
+</script>

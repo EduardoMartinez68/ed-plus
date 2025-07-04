@@ -67,5 +67,80 @@ router.get('/:id_company/:id_branch/returns', isLoggedIn, async (req, res) => {
     res.render('links/returns/returns', {branchFree});
 });
 
+router.post('/get-data-ticket', isLoggedIn, async (req, res) => {
+    //get the information of the user and of the ticket
+    const id_branch=req.user.id_branch;
+    const id_company=req.user.id_company;
+    const {ticketCode}=req.body;
+
+
+    //now we will get the information of the ticket
+    const dataTicket=get_the_information_of_the_ticket(ticketCode);
+    return dataTicket;
+});
+
+
+async function get_the_information_of_the_ticket(ticketCode) {
+    try {
+        let query;
+        let values;
+        let result;
+
+        if (!ticketCode) {
+            return { success: false, error: "Código de ticket requerido." };
+        }
+
+        if (TYPE_DATABASE === 'sqlite') {
+            query = `
+                SELECT 
+                    t.*,
+                    hr.id AS history_return_id,
+                    hr.old_ticket,
+                    hr.date_return,
+                    hr.total_return,
+                    hr.products_returns,
+                    hr.note AS return_note
+                FROM ticket t
+                LEFT JOIN history_returns hr ON hr.id_ticket = t.id
+                WHERE t.key = ?;
+            `;
+
+            result = await database.all(query, [ticketCode]);
+
+            return {
+                success: true,
+                message: "Información del ticket obtenida.",
+                data: result
+            };
+
+        } else {
+            query = `
+                SELECT 
+                    t.*,
+                    hr.id AS history_return_id,
+                    hr.old_ticket,
+                    hr.date_return,
+                    hr.total_return,
+                    hr.products_returns,
+                    hr.note AS return_note
+                FROM "Box".ticket t
+                LEFT JOIN "Box".history_returns hr ON hr.id_ticket = t.id
+                WHERE t.key = $1;
+            `;
+
+            const pgResult = await database.query(query, [ticketCode]);
+
+            return {
+                success: true,
+                message: "Información del ticket obtenida.",
+                data: pgResult.rows
+            };
+        }
+
+    } catch (error) {
+        console.error("Error al obtener información del ticket:", error);
+        return { success: false, error: "No se pudo obtener la información del ticket." };
+    }
+}
 
 module.exports = router;

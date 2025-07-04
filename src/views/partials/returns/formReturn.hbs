@@ -45,46 +45,46 @@
 
 
 <script>
-    async function open_pop_returns(id) {
-        show_message_pop(id);
-        document.getElementById('search-ticket').focus();
-    }
-
     const containerTicket = document.getElementById('container-data-ticket')
     containerTicket.style.display = 'none';
 
+    
+
     async function get_information_of_the_ticket(ticket) {
+        
         if (!ticket) {
             return null;
         }
-        const miTicket = [
-            {
-                codigo_barras: '1234567890123',
-                nombre: 'Coca-Cola',
-                cant: 2,
-                descuento: 0,
-                total: 40
-            },
-            {
-                codigo_barras: '9876543210987',
-                nombre: 'Sabritas',
-                cant: 1,
-                descuento: 5,
-                total: 20
-            }
-        ];
 
-        return {
-            employee_name: 'Admin Admin',
-            customer_name: '',
-            time_sale: '1',
-            total: 1,
-            money_received: 1,
-            credit_card: 0,
-            debit_card: 0,
-            change: 0,
-            ticket: miTicket
-        };
+        //show the screen load
+        const loadingOverlay=document.getElementById('loadingOverlay');
+        loadingOverlay.style.display = 'flex';
+
+        //now her we will get the information of the server for get the information of the ticket
+        try {
+            const response = await fetch('/get-data-ticket', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ ticketCode: ticket })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+            throw new Error(data.message || 'Error al obtener el ticket');
+            }
+
+            // Devolver los datos
+            return data.ticket;
+        } catch (error) {
+            console.error('Error al obtener el ticket:', error.message);
+            return null;
+        }finally{
+            loadingOverlay.style.display = 'none'; //hidden the screen load
+        }
+        
     }
 
     async function search_ticket() {
@@ -244,7 +244,7 @@
     }
 
 
-    agregarListenersDevoluciones()
+    agregarListenersDevoluciones();
 
 
     //-------------------------------------------------------
