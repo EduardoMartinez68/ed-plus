@@ -1,75 +1,219 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <title>POS Báscula Web Serial</title>
+  <meta charset="UTF-8">
+  <title>Editor de Tickets</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    input { padding: 5px; font-size: 16px; margin: 5px 0; }
-    button { padding: 10px 20px; font-size: 16px; }
+    body {
+      font-family: 'Courier New', monospace;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .editor, .preview {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 800px;
+      margin: 10px auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h2, h3 {
+      text-align: center;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+
+    input[type="text"], input[type="number"], textarea {
+      width: 100%;
+      padding: 6px;
+      margin-top: 5px;
+    }
+
+    .checkbox-group {
+      margin-top: 10px;
+    }
+
+    .ticket-preview {
+      border: 1px dashed #ccc;
+      padding: 10px;
+      background: #fff;
+      text-align: center;
+    }
+
+    .ticket {
+      max-width: 300px;
+      margin: auto;
+      font-size: 14px;
+    }
+
+    .logo {
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .product-table {
+      width: 100%;
+      margin: 10px 0;
+      border-top: 1px dashed #000;
+      border-bottom: 1px dashed #000;
+    }
+
+    .product-table th, .product-table td {
+      padding: 3px;
+      text-align: center;
+    }
+
+    .qr img {
+      margin-top: 10px;
+      width: 120px;
+      height: 120px;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+
+    .hidden {
+      display: none;
+    }
   </style>
 </head>
 <body>
+  <h2>Editor de Ticket</h2>
 
-  <h2>Conectar Báscula</h2>
+  <div class="editor">
+    <label>Tamaño del Ticket (mm):</label>
+    <input type="number" id="ticketWidth" value="80" />
 
-  <label for="baudRate">Baud Rate:</label>
-  <input type="number" id="baudRate" min="300" max="115200" step="100" />
-  <button id="guardarBaud">Guardar BaudRate</button>
-  <br><br>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="mostrarNombreEmpresa" checked> Mostrar nombre de la empresa</label>
+      <label><input type="checkbox" id="mostrarDireccion" checked> Mostrar dirección</label>
+      <label><input type="checkbox" id="mostrarLogo" checked> Mostrar logo de empresa</label>
+      <label><input type="checkbox" id="mostrarFecha" checked> Mostrar fecha actual</label>
+      <label><input type="checkbox" id="mostrarQR" checked> Mostrar código QR</label>
+    </div>
 
-  <button id="conectar">Conectar Báscula</button>
-  <p><strong>Peso actual:</strong></p>
-  <input id="peso" readonly />
+    <!-- Inputs ocultos -->
+    <input type="hidden" id="empresa" value="Mi Empresa S.A. de C.V." />
+    <input type="hidden" id="direccion" value="Calle Falsa 123, Ciudad" />
+
+    <label>Productos (uno por línea, formato: nombre|cant|precio|total):</label>
+    <textarea id="productos">Coca-Cola|2|15.00|30.00\nHamburguesa|1|50.00|50.00</textarea>
+
+    <label>Total:</label>
+    <input type="text" id="total" value="$80.00" />
+
+    <label>Contenido del QR (si aplica):</label>
+    <input type="text" id="contenidoQR" value="https://miempresa.com" />
+
+    <label>Mensaje de agradecimiento:</label>
+    <input type="text" id="mensaje" value="¡Gracias por su compra!" />
+
+    <button onclick="actualizarVistaPrevia()">Actualizar Vista Previa</button>
+  </div>
+
+  <div class="preview">
+    <h3>Vista Previa del Ticket</h3>
+    <div class="ticket-preview">
+      <div class="ticket" id="vistaTicket">
+        <!-- Aquí se genera el ticket -->
+      </div>
+      <div class="qr" id="qrContainer" class="hidden"></div>
+    </div>
+  </div>
+
+  <!-- Librería QR -->
+  <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
 
   <script>
-    let port;
-    let reader;
+    function actualizarVistaPrevia() {
+      const empresa = document.getElementById('empresa').value;
+      const direccion = document.getElementById('direccion').value;
+      const productos = document.getElementById('productos').value;
+      const total = document.getElementById('total').value;
+      const mostrarLogo = document.getElementById('mostrarLogo').checked;
+      const mostrarFecha = document.getElementById('mostrarFecha').checked;
+      const mostrarQR = document.getElementById('mostrarQR').checked;
+      const mostrarNombreEmpresa = document.getElementById('mostrarNombreEmpresa').checked;
+      const mostrarDireccion = document.getElementById('mostrarDireccion').checked;
+      const contenidoQR = document.getElementById('contenidoQR').value;
+      const mensaje = document.getElementById('mensaje').value;
+      const ticketWidth = document.getElementById('ticketWidth').value;
 
-    // Cargar baudRate guardado desde localStorage (o usar 9600 por defecto)
-    const baudInput = document.getElementById("baudRate");
-    baudInput.value = localStorage.getItem("baudRate") || 9600;
+      let html = "";
 
-    // Guardar nuevo baudRate en localStorage
-    document.getElementById("guardarBaud").addEventListener("click", () => {
-      const nuevoBaud = parseInt(baudInput.value);
-      if (isNaN(nuevoBaud) || nuevoBaud < 300 || nuevoBaud > 115200) {
-        alert("BaudRate inválido. Usa un valor entre 300 y 115200.");
-        return;
+      if (mostrarLogo) {
+        html += `<div class="logo">[LOGO DE EMPRESA]</div>`;
       }
-      localStorage.setItem("baudRate", nuevoBaud);
-      alert("BaudRate guardado: " + nuevoBaud);
-    });
 
-    document.getElementById("conectar").addEventListener("click", async () => {
-      try {
-        const baudRate = parseInt(localStorage.getItem("baudRate")) || 9600;
+      if (mostrarNombreEmpresa) {
+        html += `<div>${empresa}</div>`;
+      }
 
-        // Solicita al usuario seleccionar el puerto
-        port = await navigator.serial.requestPort();
-        await port.open({ baudRate });
+      if (mostrarDireccion) {
+        html += `<div>${direccion}</div>`;
+      }
 
-        const textDecoder = new TextDecoderStream();
-        const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
-        reader = textDecoder.readable.getReader();
+      if (mostrarFecha) {
+        const fecha = new Date().toLocaleString();
+        html += `<div>${fecha}</div>`;
+      }
 
-        // Leer datos continuamente
-        while (true) {
-          const { value, done } = await reader.read();
-          if (done) break;
-          if (value) {
-            const peso = parseFloat(value.replace(/[^\d.]/g, ''));
-            if (!isNaN(peso)) {
-              document.getElementById("peso").value = peso.toFixed(2);
-            }
-          }
+      // Tabla de productos
+      html += `
+        <table class="product-table">
+          <thead>
+            <tr><th>Producto</th><th>Cant</th><th>Precio</th><th>Total</th></tr>
+          </thead>
+          <tbody>
+      `;
+
+      const lineas = productos.split('\n');
+      lineas.forEach(linea => {
+        const [nombre, cant, precio, subtotal] = linea.split('|');
+        if (nombre && cant && precio && subtotal) {
+          html += `<tr><td>${nombre}</td><td>${cant}</td><td>$${precio}</td><td>$${subtotal}</td></tr>`;
         }
+      });
 
-      } catch (err) {
-        alert("Error al conectar la báscula: " + err);
-        console.error(err);
+      html += `
+          </tbody>
+        </table>
+      `;
+
+      html += `<div><strong>TOTAL: ${total}</strong></div>`;
+
+      if (mensaje) {
+        html += `<div>${mensaje}</div>`;
       }
-    });
+
+      document.getElementById('vistaTicket').innerHTML = html;
+
+      // Mostrar QR
+      const qrContainer = document.getElementById('qrContainer');
+      qrContainer.innerHTML = "";
+
+      if (mostrarQR && contenidoQR.trim() !== "") {
+        const qr = new QRious({
+          value: contenidoQR,
+          size: 120
+        });
+
+        const img = document.createElement('img');
+        img.src = qr.toDataURL();
+        qrContainer.appendChild(img);
+      }
+    }
+
+    window.onload = actualizarVistaPrevia;
   </script>
 </body>
 </html>

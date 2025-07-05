@@ -1,0 +1,370 @@
+<br><br>
+<style>
+    .editor,
+    .preview {
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        max-width: 800px;
+        margin: 10px auto;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2,
+    h3 {
+        text-align: center;
+    }
+
+    label {
+        display: block;
+        margin-top: 10px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    textarea {
+        width: 100%;
+        padding: 6px;
+        margin-top: 5px;
+    }
+
+    .checkbox-group {
+        margin-top: 10px;
+    }
+
+    .ticket-preview {
+        border: 1px dashed #ccc;
+        padding: 10px;
+        background: #fff;
+        text-align: center;
+    }
+
+    .ticket {
+        max-width: 300px;
+        margin: auto;
+        font-size: 16px;
+    }
+
+    .logo {
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .product-table {
+        width: 100%;
+        margin: 10px 0;
+        border-top: 1px dashed #000;
+        border-bottom: 1px dashed #000;
+    }
+
+    .product-table th,
+    .product-table td {
+        padding: 3px;
+        text-align: center;
+    }
+
+    .qr img {
+        margin-top: 10px;
+        width: 120px;
+        height: 120px;
+    }
+
+    button {
+        margin-top: 15px;
+        padding: 10px 20px;
+        font-size: 16px;
+    }
+
+    .hidden {
+        display: none;
+    }
+</style>
+
+{{#each dataCompany}}
+<input type="hidden" value="{{name}}" id="name_company">
+<img src="{{path_logo}}" alt="" id="icon_company" class="hidden">
+<input type="hidden" value="{{email_company}}" id="email_company">
+{{/each}}
+{{#each branchFree}}
+<input type="hidden" value="{{name_branch}}" id="name_branch">
+<input type="hidden" value="{{address}}" id="address">
+<input type="hidden" value="{{cell_phone}}" id="cell_phone">
+<input type="hidden" value="{{phone}}" id="phone">
+<input type="hidden" value="{{email_branch}}" id="email_branch">
+{{/each}}
+
+<div class="container">
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <label for=""><i class="fi fi-ss-receipt"></i> Tickets</label>
+                <hr>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="editor">
+                        <div class="row">
+                            <label>Seleccionar impresora:</label>
+                            <select id="impresoraSelect"></select>
+                        </div>
+                        <label>Tamaño del Ticket (mm):</label>
+                        <input type="number" id="ticketWidth" value="80" />
+
+                        <div class="checkbox-group">
+                        <label><input type="checkbox" id="show_employee" checked> Mostrar nombre del Cajero</label>
+                        <label><input type="checkbox" id="show_customer" checked> Mostrar nombre del Cliente</label>
+                        <label><input type="checkbox" id="mostrarNombreEmpresa" checked> Mostrar nombre de la empresa</label>
+                        <label><input type="checkbox" id="mostrarDireccion" checked> Mostrar dirección</label>
+                        <label><input type="checkbox" id="mostrarSucursal" checked> Mostrar nombre de la sucursal</label>
+                        <label><input type="checkbox" id="mostrarTelefono" checked> Mostrar teléfono fijo</label>
+                        <label><input type="checkbox" id="mostrarCelular" checked> Mostrar celular</label>
+                        <label><input type="checkbox" id="mostrarEmailEmpresa" checked> Mostrar email de empresa</label>
+                        <label><input type="checkbox" id="mostrarEmailSucursal" checked> Mostrar email de sucursal</label>
+                        <label><input type="checkbox" id="mostrarLogo" checked> Mostrar logo de empresa</label>
+                        <label><input type="checkbox" id="mostrarFecha" checked> Mostrar fecha actual</label>
+                        <label><input type="checkbox" id="mostrarQR" checked> Mostrar código QR</label>
+                        </div>
+
+                        <!-- Inputs ocultos -->
+                        <input type="hidden" id="empresa" value="Mi Empresa S.A. de C.V." />
+                        <input type="hidden" id="direccion" value="Calle Falsa 123, Ciudad" />
+
+                        <label class="hidden">Productos (uno por línea, formato: nombre|cant|precio|total):</label>
+                        <textarea id="productos" class="hidden">
+                            Coca-Cola|2|15.00|30.00
+                            Hamburguesa|1|50.00|50.00
+                        </textarea>
+
+                        <label>Total:</label>
+                        <input type="text" id="total" value="$80.00" />
+
+                        <label>Contenido del QR (si aplica):</label>
+                        <input type="text" id="contenidoQR" value="https://miempresa.com" />
+
+                        <label>Mensaje de agradecimiento:</label>
+                        <input type="text" id="mensaje" value="¡Gracias por su compra!" />
+
+                        <button onclick="actualizarVistaPrevia()">Actualizar Vista Previa</button>
+                        <button onclick="print_ticket()" class="btn btn-edit">Imprimir Ticket de prueba</button>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="preview">
+                        <h3>Vista Previa del Ticket</h3>
+                        <div class="ticket-preview" id="vistaTicket">
+                            <div class="ticket" id="headerTicket">
+                                <!-- Aquí se genera el ticket headerTicket-->
+                            </div>
+                            <div class="qr" id="qrContainer" class="hidden"></div>
+                            <div class="ticket" id="infoTicket">
+                                <!-- Aquí se genera el ticket -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--esto es para imprimir el ticker, convierte el html en imagen--->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+
+<!-- Librería QR -->
+<script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+<script>
+async function cargarImpresoras() {
+    try {
+        const res = await fetch("http://localhost:5000/impresoras");
+        const impresoras = await res.json();
+        const select = document.getElementById("impresoraSelect");
+
+        select.innerHTML = ""; // Limpiar contenido
+
+        impresoras.forEach(impresora => {
+            const option = document.createElement("option");
+            option.value = impresora.name;
+            option.textContent = `${impresora.name} (${impresora.type.split(',')[0]})`;
+            select.appendChild(option);
+        });
+    } catch (e) {
+        console.error("Error al cargar impresoras:", e);
+    }
+}
+
+    function actualizarVistaPrevia() {
+        // Datos desde inputs ocultos
+        const name_company = document.getElementById('name_company')?.value || '';
+        const email_company = document.getElementById('email_company')?.value || '';
+        const icon_company = document.getElementById('icon_company')?.src || '';
+
+        const name_branch = document.getElementById('name_branch')?.value || '';
+        const address = document.getElementById('address')?.value || '';
+        const cell_phone = document.getElementById('cell_phone')?.value || '';
+        const phone = document.getElementById('phone')?.value || '';
+        const email_branch = document.getElementById('email_branch')?.value || '';
+
+        const productos = document.getElementById('productos').value;
+        const total = document.getElementById('total').value;
+        const mostrarLogo = document.getElementById('mostrarLogo').checked;
+        const mostrarFecha = document.getElementById('mostrarFecha').checked;
+        const mostrarQR = document.getElementById('mostrarQR').checked;
+        const mostrarNombreEmpresa = document.getElementById('mostrarNombreEmpresa').checked;
+        const mostrarDireccion = document.getElementById('mostrarDireccion').checked;
+        const contenidoQR = document.getElementById('contenidoQR').value;
+        const mensaje = document.getElementById('mensaje').value;
+        const ticketWidth = document.getElementById('ticketWidth').value;
+
+        const show_employee=document.getElementById('show_employee').checked;
+        const show_customer=document.getElementById('show_customer').checked;
+        const mostrarSucursal = document.getElementById('mostrarSucursal').checked;
+        const mostrarTelefono = document.getElementById('mostrarTelefono').checked;
+        const mostrarCelular = document.getElementById('mostrarCelular').checked;
+        const mostrarEmailEmpresa = document.getElementById('mostrarEmailEmpresa').checked;
+        const mostrarEmailSucursal = document.getElementById('mostrarEmailSucursal').checked;
+        let html = "";
+
+        html += `<div style="text-align:center;">`;
+            if (mostrarLogo && icon_company) {
+                html += `<img src="${icon_company}" style="max-width:80px; margin-bottom:5px;"><br>`;
+            }
+
+            if (mostrarNombreEmpresa) {
+                html += `<strong>${name_company}</strong><br>`;
+            }
+
+            if (mostrarSucursal && name_branch) {
+                html += `${name_branch}<br>`;
+            }
+            if (mostrarDireccion && address) {
+                html += `${address}<br>`;
+            }
+        html += `</div>`;
+
+        if (mostrarFecha) {
+            const fecha = new Date().toLocaleString();
+            html += `<small>${fecha}</small><br>`;
+        }
+
+        html += `<div style="text-align:left;">`;
+            if(show_employee){
+                html += `<small>Empleado: Nombre del Empleado</small><br>`;
+            }
+
+            if(show_customer){
+                html += `<small>Cliente: Nombre del Cliente</small><br>`;
+            }
+        html += `</div>`;
+
+
+        
+        // Tabla de productos
+        html += `
+            <table class="product-table" style="width:100%; margin-top:10px;">
+            <thead>
+                <tr><th>Producto</th><th>Cant</th><th>Precio</th><th>Total</th></tr>
+            </thead>
+            <tbody>
+        `;
+
+        const lineas = productos.split('\n');
+        lineas.forEach(linea => {
+            const [nombre, cant, precio, subtotal] = linea.split('|');
+            if (nombre && cant && precio && subtotal) {
+                html += `<tr><td>${nombre}</td><td>${cant}</td><td>$${precio}</td><td>$${subtotal}</td></tr>`;
+            }
+        });
+
+        html += `</tbody></table>`;
+
+        html += `<div style="text-align:right;">`;
+            html += `<div style="text-align:right; margin-top:10px;"><strong>TOTAL: ${total}</strong></div>`;
+        html += `</div>`;
+
+        html += `
+            <div style="text-align:center; margin: 15px 0;">
+                <div style="font-size: 12px; font-weight: bold;">TOKEN DEL TICKET</div>
+                <div style="font-size: 16px;">
+                B875A3117D5A97C8
+                </div>
+            </div>
+        `;
+
+        if (mensaje) {
+            html += `<div style="text-align:center; margin-top:10px;">${mensaje}</div>`;
+        }
+        
+
+        document.getElementById('headerTicket').innerHTML = html;
+        
+        // Mostrar QR
+        const qrContainer = document.getElementById('qrContainer');
+        qrContainer.innerHTML = "";
+
+        if (mostrarQR && contenidoQR.trim() !== "") {
+            const qr = new QRious({
+                value: contenidoQR,
+                size: 120
+            });
+
+            const img = document.createElement('img');
+            img.src = qr.toDataURL();
+            qrContainer.appendChild(img);
+        }
+
+        let htmlLast = "<br>";
+        if (mostrarEmailEmpresa && email_company) {
+            htmlLast += `<small>${email_company}</small><br>`;
+        }
+
+        if (mostrarEmailSucursal && email_branch) {
+            htmlLast += `<small>${email_branch}</small><br>`;
+        }
+
+        if (mostrarTelefono && phone) {
+            htmlLast += `Tel: ${phone}<br>`;
+        }
+
+        if (mostrarCelular && cell_phone) {
+            htmlLast += `Cel: ${cell_phone}<br>`;
+        }
+        document.getElementById('infoTicket').innerHTML = htmlLast;
+    }
+
+    window.onload = function () {
+        actualizarVistaPrevia();
+        cargarImpresoras();
+    };
+
+
+
+function getTicketPlainText() {
+    const ticketElement = document.getElementById("vistaTicket");
+    let text = ticketElement.innerText || ticketElement.textContent;
+    return text.trim();
+}
+
+function print_ticket() {
+    const ticket = document.getElementById('vistaTicket');
+    const impresora = document.getElementById("impresoraSelect").value;
+    const ticketWidth = document.getElementById('ticketWidth').value;
+    html2canvas(ticket, { scale: 4 }).then(canvas => {
+        const imageData = canvas.toDataURL("image/png");
+        console.log(imageData)
+        fetch("http://localhost:5000/imprimir-imagen", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ image: imageData, impresora:impresora ,ticketWidth:ticketWidth})
+        })
+        .then(res => res.json())
+        .then(data => {
+            alert(data.ok ? "✅ Ticket enviado con imagen." : "❌ Error al imprimir");
+        })
+        .catch(err => alert("❌ No se pudo conectar al servidor de impresión."));
+    });
+}
+</script>

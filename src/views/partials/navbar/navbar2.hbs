@@ -491,6 +491,17 @@
                     {{/each}}
                     {{/if}}
 
+
+                    {{#if user.add_box}}
+                    {{#each branchFree}}
+                    <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/tickets')">
+                        <img src="/img/apps/ticket.webp" alt="Impresoras" loading="lazy">
+                        <span>Tickets</span>
+                    </div>
+                    {{/each}}
+                    {{/if}}
+
+
                     {{#if user.view_label}}
                     {{#each branchFree}}
                     <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/labels')">
