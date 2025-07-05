@@ -176,7 +176,7 @@
         display: none;
     }
 </style>
-<div class="ticket-preview" id="vistaTicket">
+<div class="ticket-preview" id="vistaTicket" >
     <div class="ticket" id="headerTicket">
         <!-- Aquí se genera el ticket headerTicket-->
     </div>
@@ -251,16 +251,21 @@
 
     async function print_ticket(total, moneyReceived, change, comment) {
         //console.log(get_texto_ticket(total, moneyReceived, change, comment));
-        //const textoTicket = get_texto_ticket(total, moneyReceived, change, comment); // Aquí obtienes el texto del ticket, puedes personalizarlo
+        const dateTicket = get_date_ticket()
+        const textoTicket = get_texto_ticket(total, moneyReceived, change, comment, dateTicket); // Aquí obtienes el texto del ticket, puedes personalizarlo
         //await sned_information_to_the_server_for_print_the_ticket(textoTicket)
-        create_ticket_html(total, moneyReceived, change, comment); 
+
+
+
+        create_ticket_html(total, moneyReceived, change, comment, dateTicket); 
         await print_ticket_with_html();
+        
     }
 
     async function print_ticket_with_html() {
         const ticket = document.getElementById('vistaTicket');
         const impresora = localStorage.getItem('selectedPrinter');
-        const ticketWidth = document.getElementById('ticketWidth').value*2; //3.5
+        const ticketWidth = document.getElementById('ticketWidth').value*3.5; //3.5
         html2canvas(ticket, { scale: 1 }).then(canvas => {
             const imageData = canvas.toDataURL("image/png");
             fetch("http://localhost:5000/imprimir-imagen", {
@@ -320,7 +325,7 @@
     }
 
 
-    function create_ticket_html(total, moneyReceived, change, comment = '') {
+    function create_ticket_html(total, moneyReceived, change, comment = '',dateTicket) {
         //transform the value of the variable to number
         moneyReceived = parseFloat(moneyReceived);
         change = parseFloat(change);
@@ -338,7 +343,7 @@
 
         if (config.show_name_company) {
             const name_company = document.getElementById('name-company').value;
-            html += `<strong>${name_company}</strong><br>`;
+            html += `<strong style="font-size: 24px;">${name_company}</strong><br>`;
         }
 
         if (config.show_name_branch) {
@@ -353,26 +358,25 @@
         html += `</div>`;
 
         if (config.show_date) {
-            const fecha = get_date_ticket();
-            html += `<small>${fecha}</small><br>`;
+            html += `<small>${dateTicket}</small><br>`;
         }
 
         html += `<div style="text-align:left;">`;
         if (config.show_name_employee) {
             const nameEmployee = document.getElementById('employee-name').textContent;
-            html += `<small>Empleado: ${nameEmployee}</small><br>`;
+            html += `<small style="font-size: 16px;">Empleado: ${nameEmployee}</small><br>`;
         }
 
         if (config.show_name_customer) {
             const customer = document.getElementById('emailClient').textContent;
-            html += `<small>Cliente: ${customer}</small><br>`;
+            html += `<small style="font-size: 16px;">Cliente: ${customer}</small><br>`;
         }
         html += `</div>`;
 
 
         //----------------------Tabla de productos----------------------------
         html += `
-            <table class="product-table" style="width:100%; margin-top:10px;">
+            <table class="product-table" style="width:100%; margin-top:10px; margin-left:10px; margin-right:10px;">
             <thead>
                 <tr><th>Producto</th><th>Cant</th><th>Precio</th><th>Total</th></tr>
             </thead>
@@ -399,9 +403,9 @@
 
 
         html += `<div style="text-align:right;">`;
-        html += `<div style="text-align:right; margin-top:10px;">TOTAL: ${total.toFixed(2).padStart(9)}</div>`;
-        html += `<div style="text-align:right; margin-top:10px;">Recibido: ${moneyReceived.toFixed(2).padStart(9)}</div>`;
-        html += `<div style="text-align:right; margin-top:10px;">Cambio: ${change.toFixed(2).padStart(9)}</div>`;
+        html += `<div style="text-align:right; margin-top:10px; margin-right:20px; font-size: 20px;">TOTAL: ${total.toFixed(2).padStart(9)}</div>`;
+        html += `<div style="text-align:right; margin-top:10px; margin-right:20px; font-size: 20px;">Recibido: ${moneyReceived.toFixed(2).padStart(9)}</div>`;
+        html += `<div style="text-align:right; margin-top:10px; margin-right:20px; font-size: 20px;">Cambio: ${change.toFixed(2).padStart(9)}</div>`;
         html += `</div>`;
 
         html += `<div style="text-align:center;">`;
@@ -412,7 +416,7 @@
         html += `
             <div style="text-align:center; margin: 15px 0;">
                 <div style="font-size: 12px; font-weight: bold;">TOKEN DEL TICKET</div>
-                <div style="font-size: 18px;">
+                <div style="font-size: 24px;">
                 ${token}
                 </div>
             </div>
@@ -465,7 +469,7 @@
     }
     create_info_ticket();
 
-    function get_texto_ticket(total, moneyReceived, change, comment = '') {
+    function get_texto_ticket(total, moneyReceived, change, comment = '', dateTicket) {
         moneyReceived = parseFloat(moneyReceived);
         change = parseFloat(change);
         total = parseFloat(total);
@@ -473,7 +477,7 @@
         const nameBranch = document.getElementById('name-company').value;
         const nameEmployee = document.getElementById('employee-name').textContent;
         const customer = document.getElementById('emailClient').textContent;
-        const dateTicket = get_date_ticket()
+ 
         let texto = '';
         texto += '\n\n';
         texto += '-------------------------------\n';
