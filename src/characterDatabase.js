@@ -196,6 +196,11 @@ async function create_update_of_the_database(adminPool) {
             ADD COLUMN IF NOT EXISTS add_label BOOLEAN DEFAULT FALSE NOT NULL,
             ADD COLUMN IF NOT EXISTS edit_label BOOLEAN DEFAULT FALSE NOT NULL,
             ADD COLUMN IF NOT EXISTS delete_label BOOLEAN DEFAULT FALSE NOT NULL;
+
+            -----------tickets
+            ADD COLUMN IF NOT EXISTS view_ticket BOOLEAN DEFAULT TRUE NOT NULL;
+            ADD COLUMN IF NOT EXISTS return_ticket BOOLEAN DEFAULT TRUE NOT NULL;
+            ADD COLUMN IF NOT EXISTS edit_ticket BOOLEAN DEFAULT TRUE NOT NULL;
         END$$;
 
         ------------------------------------TICKETS-----------------------------------
@@ -255,7 +260,88 @@ async function create_update_of_the_database(adminPool) {
         END
         $$;
 
+        ----------------------------------------SETTING TICKETS-----------------------------------
+        DO $$
+        BEGIN
+            IF NOT EXISTS (
+                SELECT FROM information_schema.tables 
+                WHERE table_schema = 'Box' AND table_name = 'setting_ticket'
+            ) THEN
+                EXECUTE '
+                    CREATE TABLE "Box".setting_ticket (
+                        id bigserial PRIMARY KEY,
+                        id_companies bigint,
+                        id_branches bigint,
+                        show_name_employee boolean DEFAULT true,
+                        show_name_customer boolean DEFAULT true,
+                        show_name_company boolean DEFAULT true,
+                        show_address boolean DEFAULT true,
+                        show_name_branch boolean DEFAULT true,
+                        show_phone boolean DEFAULT true,
+                        show_cellphone boolean DEFAULT true,
+                        show_email_company boolean DEFAULT true,
+                        show_email_branch boolean DEFAULT true,
+                        show_logo boolean DEFAULT true,
+                        show_date boolean DEFAULT true,
+                        show_qr boolean DEFAULT true,
+                        qr text DEFAULT ''https://pluspuntodeventa.com'',
+                        message varchar(300) DEFAULT ''¡Gracias por su compra!'',
+                        size_ticket numeric(10,2)
+                    );
+                ';
+            END IF;
+        END$$;
 
+        -- Constraint: companies_fk
+        DO $$
+        BEGIN
+            IF NOT EXISTS (
+                SELECT 1
+                FROM information_schema.table_constraints
+                WHERE constraint_name = 'companies_fk'
+                AND table_schema = 'Box'
+                AND table_name = 'setting_ticket'
+            ) THEN
+                ALTER TABLE "Box".setting_ticket
+                ADD CONSTRAINT companies_fk FOREIGN KEY (id_companies)
+                REFERENCES "User".companies (id)
+                ON DELETE SET NULL
+                ON UPDATE CASCADE;
+            END IF;
+        END$$;
+
+        -- Constraint: branches_fk
+        DO $$
+        BEGIN
+            IF NOT EXISTS (
+                SELECT 1
+                FROM information_schema.table_constraints
+                WHERE constraint_name = 'branches_fk'
+                AND table_schema = 'Box'
+                AND table_name = 'setting_ticket'
+            ) THEN
+                ALTER TABLE "Box".setting_ticket
+                ADD CONSTRAINT branches_fk FOREIGN KEY (id_branches)
+                REFERENCES "Company".branches (id)
+                ON DELETE SET NULL
+                ON UPDATE CASCADE;
+            END IF;
+        END$$;
+
+        -- Unique Constraint: setting_ticket_uq
+        DO $$
+        BEGIN
+            IF NOT EXISTS (
+                SELECT 1
+                FROM information_schema.table_constraints
+                WHERE constraint_name = 'setting_ticket_uq'
+                AND table_schema = 'Box'
+                AND table_name = 'setting_ticket'
+            ) THEN
+                ALTER TABLE "Box".setting_ticket
+                ADD CONSTRAINT setting_ticket_uq UNIQUE (id_branches);
+            END IF;
+        END$$;
     `
     await adminPool.query(query);
     console.log('📂 La base de datos EDPLUS fue actualizada.');
@@ -266,7 +352,6 @@ async function create_update_of_the_database_mysqlite(db) {
 
     //this query is for create the table of services for sale rechange or buy service as in the oxxo
     const query = `
-
     -- Activar claves foráneas en SQLite
     PRAGMA foreign_keys = ON;
 
@@ -276,13 +361,8 @@ async function create_update_of_the_database_mysqlite(db) {
     CREATE TABLE IF NOT EXISTS branches (id INTEGER PRIMARY KEY);
     CREATE TABLE IF NOT EXISTS companies (id INTEGER PRIMARY KEY);
 
-    -- Asegurar columnas en roles_employees (no hay IF NOT EXISTS, usar try-catch si usas sqlite3 en JS)
-    ALTER TABLE roles_employees ADD COLUMN view_ticket BOOLEAN DEFAULT 1 NOT NULL;
-    ALTER TABLE roles_employees ADD COLUMN return_ticket BOOLEAN DEFAULT 1 NOT NULL;
-
     -- Eliminar tabla ticket si existe (para volver a crearla con relaciones)
-    DROP TABLE IF EXISTS ticket;
-    CREATE TABLE ticket (
+    CREATE TABLE IF NOT EXISTS ticket (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         key TEXT NOT NULL UNIQUE,
         original_ticket JSON NOT NULL,
@@ -304,8 +384,7 @@ async function create_update_of_the_database_mysqlite(db) {
     );
 
     -- Eliminar y crear tabla history_returns
-    DROP TABLE IF EXISTS history_returns;
-    CREATE TABLE history_returns (
+    CREATE TABLE IF NOT EXISTS history_returns (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         id_employees INTEGER,
         id_ticket INTEGER,
@@ -317,15 +396,63 @@ async function create_update_of_the_database_mysqlite(db) {
         FOREIGN KEY (id_ticket) REFERENCES ticket(id) ON DELETE SET NULL ON UPDATE CASCADE,
         FOREIGN KEY (id_employees) REFERENCES employees(id) ON DELETE SET NULL ON UPDATE CASCADE
     );
+
+    CREATE TABLE IF NOT EXISTS setting_ticket (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id_companies INTEGER,
+        id_branches INTEGER UNIQUE,  -- Constraint UNIQUE directamente
+        show_name_employee BOOLEAN DEFAULT 1,
+        show_name_customer BOOLEAN DEFAULT 1,
+        show_name_company BOOLEAN DEFAULT 1,
+        show_address BOOLEAN DEFAULT 1,
+        show_name_branch BOOLEAN DEFAULT 1,
+        show_phone BOOLEAN DEFAULT 1,
+        show_cellphone BOOLEAN DEFAULT 1,
+        show_email_company BOOLEAN DEFAULT 1,
+        show_email_branch BOOLEAN DEFAULT 1,
+        show_logo BOOLEAN DEFAULT 1,
+        show_date BOOLEAN DEFAULT 1,
+        show_qr BOOLEAN DEFAULT 1,
+        qr TEXT DEFAULT 'https://pluspuntodeventa.com',
+        message TEXT DEFAULT '¡Gracias por su compra!',
+        size_ticket NUMERIC(10,2),
+
+        FOREIGN KEY (id_companies) REFERENCES companies(id) ON DELETE SET NULL ON UPDATE CASCADE,
+        FOREIGN KEY (id_branches) REFERENCES branches(id) ON DELETE SET NULL ON UPDATE CASCADE
+    );
     `;
+    await create_table_mysqlite(db,query)
+
+    let queryPermition=`
+        -- Asegurar columnas en roles_employees (no hay IF NOT EXISTS, usar try-catch si usas sqlite3 en JS)
+        ALTER TABLE roles_employees ADD COLUMN view_ticket BOOLEAN DEFAULT 1 NOT NULL;
+    `
+
+    queryPermition=`
+    ALTER TABLE roles_employees ADD COLUMN return_ticket BOOLEAN DEFAULT 1 NOT NULL;
+    `
+    await create_table_mysqlite(db,queryPermition)
+
+
+
+    queryPermition=`
+        -- Asegurar columnas en roles_employees (no hay IF NOT EXISTS, usar try-catch si usas sqlite3 en JS)
+        ALTER TABLE roles_employees ADD COLUMN edit_ticket BOOLEAN DEFAULT 1 NOT NULL;
+    `
+
+    await create_table_mysqlite(db,queryPermition)
+    db.close();
+}
+
+async function create_table_mysqlite(db,query){
     db.exec(query, (err) => {
         if (err) {
             console.error('Error al ejecutar script de actualización para SQLite:', err.message);
         } else {
             console.log('Base de datos SQLite actualizada correctamente.');
         }
-        db.close(); // Importante cerrar conexión
-    });
+        //db.close(); // Importante cerrar conexión
+    }); 
 }
 
 

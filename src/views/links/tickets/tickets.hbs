@@ -93,6 +93,8 @@
 <input type="hidden" value="{{email_branch}}" id="email_branch">
 {{/each}}
 
+
+
 <div class="container">
     <div class="card">
         <div class="card-body">
@@ -102,51 +104,94 @@
             </div>
             <div class="row">
                 <div class="col">
-                    <div class="editor">
-                        <div class="row">
-                            <label>Seleccionar impresora:</label>
-                            <select id="impresoraSelect"></select>
+                    {{#each settingTicket}}
+                    <form action="/links/:id_companies/:id_branches/:id/update_ticket" method="post">
+                    {{/each}}
+                        <div class="editor">
+                            <div class="row">
+                                <label>Seleccionar impresora:</label>
+                                <select id="impresoraSelect" class="form-select"
+                                    aria-label="Default select example"></select>
+                            </div>
+                            <label>Tamaño del Ticket (mm):</label>
+                            <input type="number" id="ticketWidth" value-ticket="{{settingTicket.size_ticket}}" placeholder="80" class="form-control" name="size_ticket">
+
+                            <div class="form-check">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="mostrarLogo" value-ticket="{{settingTicket.show_logo}}" name="show_logo">
+                                    <label class="form-check-label" for="mostrarLogo">Mostrar logo</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="mostrarFecha" value-ticket="{{settingTicket.show_date}}" name="show_date">
+                                    <label class="form-check-label" for="mostrarFecha">Mostrar fecha</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="show_employee" value-ticket="{{settingTicket.show_name_employee}}" name="show_name_employee">
+                                    <label class="form-check-label" for="show_employee">Mostrar nombre del empleado</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="show_customer" value-ticket="{{settingTicket.show_name_customer}}" name="show_name_customer">
+                                    <label class="form-check-label" for="show_customer">Mostrar nombre del cliente</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="mostrarNombreEmpresa" value-ticket="{{settingTicket.show_name_company}}" name="show_name_company">
+                                    <label class="form-check-label" for="mostrarNombreEmpresa">Mostrar nombre de la empresa</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="mostrarDireccion" value-ticket="{{settingTicket.show_address}}" name="show_address">
+                                    <label class="form-check-label" for="mostrarDireccion">Mostrar dirección</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="mostrarSucursal" value-ticket="{{settingTicket.show_name_branch}}" name="show_name_branch">
+                                    <label class="form-check-label" for="mostrarSucursal">Mostrar nombre de la sucursal</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="mostrarTelefono" value-ticket="{{settingTicket.show_phone}}" name="show_phone">
+                                    <label class="form-check-label" for="mostrarTelefono">Mostrar teléfono</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="mostrarCelular" value-ticket="{{settingTicket.show_cellphone}}" name="show_cellphone">
+                                    <label class="form-check-label" for="mostrarCelular">Mostrar celular</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="mostrarEmailEmpresa" value-ticket="{{settingTicket.show_email_company}}" name="show_email_company">
+                                    <label class="form-check-label" for="mostrarEmailEmpresa">Mostrar email de la empresa</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="mostrarEmailSucursal" value-ticket="{{settingTicket.show_email_branch}}" name="show_email_branch">
+                                    <label class="form-check-label" for="mostrarEmailSucursal">Mostrar email de la sucursal</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="mostrarQR" value-ticket="{{settingTicket.show_qr}}" name="show_qr">
+                                    <label class="form-check-label" for="mostrarQR">Mostrar código QR</label>
+                                </div>
+                            </div>
+
+                            <!-- Inputs ocultos -->
+                            <input type="hidden" id="empresa" value="Mi Empresa S.A. de C.V." />
+                            <input type="hidden" id="direccion" value="Calle Falsa 123, Ciudad" />
+
+                            <label class="hidden">Productos (uno por línea, formato: nombre|cant|precio|total):</label>
+                            <textarea id="productos" class="hidden">
+                                Bebida Energetica|2|15.00|30.00
+                                Hamburguesa|1|50.00|50.00
+                            </textarea>
+
+                            <label class="hidden">Total:</label>
+                            <input type="hidden" id="total" value="$80.00" />
+
+                            <label>Contenido del QR (si aplica):</label>
+                            <input type="text" id="contenidoQR" value-ticket="{{settingTicket.qr}}" placeholder="https://miempresa.com" class="form-control" name="qr">
+
+                            <label>Mensaje de agradecimiento:</label>
+                            <input type="text" id="mensaje" value-ticket="{{settingTicket.message}}" placeholder="¡Gracias por su compra!" class="form-control" name="message">
+
+                            <button onclick="actualizarVistaPrevia()" type="button">Actualizar Vista Previa</button><br>
+                            <button onclick="print_ticket()" class="btn btn-edit" type="button">Imprimir Ticket de
+                                prueba</button>
+                            <button class="btn btn-add">Actualizar Ticket</button>
                         </div>
-                        <label>Tamaño del Ticket (mm):</label>
-                        <input type="number" id="ticketWidth" value="80" />
-
-                        <div class="checkbox-group">
-                        <label><input type="checkbox" id="show_employee" checked> Mostrar nombre del Cajero</label>
-                        <label><input type="checkbox" id="show_customer" checked> Mostrar nombre del Cliente</label>
-                        <label><input type="checkbox" id="mostrarNombreEmpresa" checked> Mostrar nombre de la empresa</label>
-                        <label><input type="checkbox" id="mostrarDireccion" checked> Mostrar dirección</label>
-                        <label><input type="checkbox" id="mostrarSucursal" checked> Mostrar nombre de la sucursal</label>
-                        <label><input type="checkbox" id="mostrarTelefono" checked> Mostrar teléfono fijo</label>
-                        <label><input type="checkbox" id="mostrarCelular" checked> Mostrar celular</label>
-                        <label><input type="checkbox" id="mostrarEmailEmpresa" checked> Mostrar email de empresa</label>
-                        <label><input type="checkbox" id="mostrarEmailSucursal" checked> Mostrar email de sucursal</label>
-                        <label><input type="checkbox" id="mostrarLogo" checked> Mostrar logo de empresa</label>
-                        <label><input type="checkbox" id="mostrarFecha" checked> Mostrar fecha actual</label>
-                        <label><input type="checkbox" id="mostrarQR" checked> Mostrar código QR</label>
-                        </div>
-
-                        <!-- Inputs ocultos -->
-                        <input type="hidden" id="empresa" value="Mi Empresa S.A. de C.V." />
-                        <input type="hidden" id="direccion" value="Calle Falsa 123, Ciudad" />
-
-                        <label class="hidden">Productos (uno por línea, formato: nombre|cant|precio|total):</label>
-                        <textarea id="productos" class="hidden">
-                            Coca-Cola|2|15.00|30.00
-                            Hamburguesa|1|50.00|50.00
-                        </textarea>
-
-                        <label>Total:</label>
-                        <input type="text" id="total" value="$80.00" />
-
-                        <label>Contenido del QR (si aplica):</label>
-                        <input type="text" id="contenidoQR" value="https://miempresa.com" />
-
-                        <label>Mensaje de agradecimiento:</label>
-                        <input type="text" id="mensaje" value="¡Gracias por su compra!" />
-
-                        <button onclick="actualizarVistaPrevia()">Actualizar Vista Previa</button>
-                        <button onclick="print_ticket()" class="btn btn-edit">Imprimir Ticket de prueba</button>
-                    </div>
+                    </form>
                 </div>
                 <div class="col">
                     <div class="preview">
@@ -174,25 +219,42 @@
 
 <!-- Librería QR -->
 <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+
 <script>
-async function cargarImpresoras() {
-    try {
-        const res = await fetch("http://localhost:5000/impresoras");
-        const impresoras = await res.json();
-        const select = document.getElementById("impresoraSelect");
-
-        select.innerHTML = ""; // Limpiar contenido
-
-        impresoras.forEach(impresora => {
-            const option = document.createElement("option");
-            option.value = impresora.name;
-            option.textContent = `${impresora.name} (${impresora.type.split(',')[0]})`;
-            select.appendChild(option);
+    function aplicarConfiguracionDelTicketDesdeValores() {
+        const checkboxes = document.querySelectorAll('input[type="checkbox"][value-ticket]');
+        checkboxes.forEach(checkbox => {
+            const val = checkbox.getAttribute('value-ticket');
+            checkbox.checked = val === '1' || val === 'true' || val === 'True' || val===true;
         });
-    } catch (e) {
-        console.error("Error al cargar impresoras:", e);
+
+        const inputs = document.querySelectorAll('input[type="text"][value-ticket], input[type="number"][value-ticket]');
+        inputs.forEach(input => {
+            const val = input.getAttribute('value-ticket');
+            if (val !== null) {
+                input.value = val;
+            }
+        });
     }
-}
+
+    async function cargarImpresoras() {
+        try {
+            const res = await fetch("http://localhost:5000/impresoras");
+            const impresoras = await res.json();
+            const select = document.getElementById("impresoraSelect");
+
+            select.innerHTML = ""; // Limpiar contenido
+
+            impresoras.forEach(impresora => {
+                const option = document.createElement("option");
+                option.value = impresora.name;
+                option.textContent = `${impresora.name} (${impresora.type.split(',')[0]})`;
+                select.appendChild(option);
+            });
+        } catch (e) {
+            console.error("Error al cargar impresoras:", e);
+        }
+    }
 
     function actualizarVistaPrevia() {
         // Datos desde inputs ocultos
@@ -217,8 +279,8 @@ async function cargarImpresoras() {
         const mensaje = document.getElementById('mensaje').value;
         const ticketWidth = document.getElementById('ticketWidth').value;
 
-        const show_employee=document.getElementById('show_employee').checked;
-        const show_customer=document.getElementById('show_customer').checked;
+        const show_employee = document.getElementById('show_employee').checked;
+        const show_customer = document.getElementById('show_customer').checked;
         const mostrarSucursal = document.getElementById('mostrarSucursal').checked;
         const mostrarTelefono = document.getElementById('mostrarTelefono').checked;
         const mostrarCelular = document.getElementById('mostrarCelular').checked;
@@ -227,20 +289,20 @@ async function cargarImpresoras() {
         let html = "";
 
         html += `<div style="text-align:center;">`;
-            if (mostrarLogo && icon_company) {
-                html += `<img src="${icon_company}" style="max-width:80px; margin-bottom:5px;"><br>`;
-            }
+        if (mostrarLogo && icon_company) {
+            html += `<img src="${icon_company}" style="max-width:80px; margin-bottom:5px;"><br>`;
+        }
 
-            if (mostrarNombreEmpresa) {
-                html += `<strong>${name_company}</strong><br>`;
-            }
+        if (mostrarNombreEmpresa) {
+            html += `<strong>${name_company}</strong><br>`;
+        }
 
-            if (mostrarSucursal && name_branch) {
-                html += `${name_branch}<br>`;
-            }
-            if (mostrarDireccion && address) {
-                html += `${address}<br>`;
-            }
+        if (mostrarSucursal && name_branch) {
+            html += `${name_branch}<br>`;
+        }
+        if (mostrarDireccion && address) {
+            html += `${address}<br>`;
+        }
         html += `</div>`;
 
         if (mostrarFecha) {
@@ -249,17 +311,17 @@ async function cargarImpresoras() {
         }
 
         html += `<div style="text-align:left;">`;
-            if(show_employee){
-                html += `<small>Empleado: Nombre del Empleado</small><br>`;
-            }
+        if (show_employee) {
+            html += `<small>Empleado: Nombre del Empleado</small><br>`;
+        }
 
-            if(show_customer){
-                html += `<small>Cliente: Nombre del Cliente</small><br>`;
-            }
+        if (show_customer) {
+            html += `<small>Cliente: Nombre del Cliente</small><br>`;
+        }
         html += `</div>`;
 
 
-        
+
         // Tabla de productos
         html += `
             <table class="product-table" style="width:100%; margin-top:10px;">
@@ -280,13 +342,13 @@ async function cargarImpresoras() {
         html += `</tbody></table>`;
 
         html += `<div style="text-align:right;">`;
-            html += `<div style="text-align:right; margin-top:10px;"><strong>TOTAL: ${total}</strong></div>`;
+        html += `<div style="text-align:right; margin-top:10px;">TOTAL: ${total}</div>`;
         html += `</div>`;
 
         html += `
             <div style="text-align:center; margin: 15px 0;">
                 <div style="font-size: 12px; font-weight: bold;">TOKEN DEL TICKET</div>
-                <div style="font-size: 16px;">
+                <div style="font-size: 18px;">
                 B875A3117D5A97C8
                 </div>
             </div>
@@ -295,10 +357,10 @@ async function cargarImpresoras() {
         if (mensaje) {
             html += `<div style="text-align:center; margin-top:10px;">${mensaje}</div>`;
         }
-        
+
 
         document.getElementById('headerTicket').innerHTML = html;
-        
+
         // Mostrar QR
         const qrContainer = document.getElementById('qrContainer');
         qrContainer.innerHTML = "";
@@ -315,56 +377,62 @@ async function cargarImpresoras() {
         }
 
         let htmlLast = "<br>";
-        if (mostrarEmailEmpresa && email_company) {
+        if (mostrarEmailEmpresa) {
             htmlLast += `<small>${email_company}</small><br>`;
         }
 
-        if (mostrarEmailSucursal && email_branch) {
+        if (mostrarEmailSucursal) {
             htmlLast += `<small>${email_branch}</small><br>`;
         }
 
-        if (mostrarTelefono && phone) {
+        if (mostrarTelefono) {
             htmlLast += `Tel: ${phone}<br>`;
         }
 
-        if (mostrarCelular && cell_phone) {
+        if (mostrarCelular) {
             htmlLast += `Cel: ${cell_phone}<br>`;
         }
         document.getElementById('infoTicket').innerHTML = htmlLast;
     }
 
+
     window.onload = function () {
+        aplicarConfiguracionDelTicketDesdeValores();
         actualizarVistaPrevia();
         cargarImpresoras();
     };
 
 
 
-function getTicketPlainText() {
-    const ticketElement = document.getElementById("vistaTicket");
-    let text = ticketElement.innerText || ticketElement.textContent;
-    return text.trim();
-}
+    function getTicketPlainText() {
+        const ticketElement = document.getElementById("vistaTicket");
+        let text = ticketElement.innerText || ticketElement.textContent;
+        return text.trim();
+    }
 
-function print_ticket() {
-    const ticket = document.getElementById('vistaTicket');
-    const impresora = document.getElementById("impresoraSelect").value;
-    const ticketWidth = document.getElementById('ticketWidth').value;
-    html2canvas(ticket, { scale: 4 }).then(canvas => {
-        const imageData = canvas.toDataURL("image/png");
-        console.log(imageData)
-        fetch("http://localhost:5000/imprimir-imagen", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ image: imageData, impresora:impresora ,ticketWidth:ticketWidth})
-        })
-        .then(res => res.json())
-        .then(data => {
-            alert(data.ok ? "✅ Ticket enviado con imagen." : "❌ Error al imprimir");
-        })
-        .catch(err => alert("❌ No se pudo conectar al servidor de impresión."));
-    });
-}
+    function print_ticket() {
+        const ticket = document.getElementById('vistaTicket');
+        const impresora = document.getElementById("impresoraSelect").value;
+        const ticketWidth = document.getElementById('ticketWidth').value;
+        html2canvas(ticket, { scale: 1 }).then(canvas => {
+            const imageData = canvas.toDataURL("image/png");
+            console.log(imageData)
+            fetch("http://localhost:5000/imprimir-imagen", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ image: imageData, impresora: impresora, ticketWidth: ticketWidth })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.ok){
+                        notificationMessage('✅','Ticket enviado correctamente')
+                    }else{
+                        notificationMessageError('❌', "Error al imprimir")
+                    }
+                })
+                .catch(err => warningMessage('Error ❌',"Nos perdimos en el camino. No se pudo conectar al servidor de impresión."));
+        });
+    }
 </script>

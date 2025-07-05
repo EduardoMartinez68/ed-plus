@@ -75,12 +75,6 @@ table {
     box-shadow: none;
 }
 
-/* styles of the button loading */
-.btn-loading-off:disabled {
-    cursor: not-allowed;
-    opacity: 0.7;
-}
-
 /* Contenedor del ícono */
 .btn-loading-off .bnt-loading-icon {
     display: inline-block;
@@ -114,7 +108,8 @@ table {
     background: transparent;
     position: absolute;
     top: 10px;
-    transform: translateX(+22.5%);
+    transform: translateX(22.5%);
+    z-index: 9999; /* 100000000000000000 es exagerado y puede causar bugs */
 }
 
 /*this is a style Boobstarp*/
@@ -148,10 +143,6 @@ table {
     background-color: var(--color-body);
 }
 
-/*styles messages*/
-.container-message {
-    z-index: 100000000000000000;
-}
 
 .btn-confirm-message {
     background: var(--color-confirmation);
@@ -196,10 +187,15 @@ table {
     border-radius: 1.4rem;
     margin: 14px;
     cursor: pointer;
-    transition: .3s ease;
+    transition: background-color 0.3s ease, transform 0.2s ease;
     width: 50%;
     text-align: center;
     align-items: center;
+}
+
+.btn-button:focus-visible {
+    outline: 2px dashed #fff;
+    outline-offset: 2px;
 }
 
 .btn-button:hover {
@@ -267,6 +263,12 @@ body {
     height: 100%;
     border-radius: .3rem;
     font-size: 1.4rem;
+}
+
+
+.btn-add:hover {
+    background-color: rgb(39, 121, 61);
+    color: white;
 }
 
 /*footer*/
@@ -622,17 +624,13 @@ label #btn-navbar-cancel {
 .search-input {
     width: 100%;
     padding: 10px 20px;
-    padding-left: 60px;
-    /* Espacio para el ícono */
-    border: 2px solid #ddd;
-    border-radius: 25px;
+    padding-left: 60px; /* Espacio para ícono */
     font-size: 1rem;
-    transition: border-color 0.3s;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+    transition: border-color 0.2s ease-in-out;
 }
 
 .search-input:focus {
-    border-color: #0273FF;
+    border-color: var(--color-company, #007BFF);
     outline: none;
 }
 

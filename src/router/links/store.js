@@ -52,6 +52,10 @@ const {
     this_user_have_this_permission
 } = require('../../services/permission');
 
+const {
+    get_the_setting_of_the_ticket
+} = require('../../services/ticket');
+
 router.get('/:id_user/:id_company/:id_branch/:id_employee/:id_role/store-home', isLoggedIn, async (req, res) => {
     try {
 
@@ -141,6 +145,9 @@ router.get('/:id_company/:id_branch/point-sales', isLoggedIn, async (req, res) =
 
         //const productsSales=await get_all_products_in_sales(id_branch);
         const dataCompany=await get_data_company_with_id(id_company);
+        const dataTicket=await get_the_setting_of_the_ticket(id_company, id_branch);
+        console.log(dataTicket)
+
         const templateData = {
             branchFree,
             dishAndCombo,
@@ -148,6 +155,7 @@ router.get('/:id_company/:id_branch/point-sales', isLoggedIn, async (req, res) =
             boxes,
             dataCompany,
             promotions,
+            dataTicket,
             addition: JSON.stringify(addition)
         };
 

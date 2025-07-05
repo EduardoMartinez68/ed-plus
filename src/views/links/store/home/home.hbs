@@ -8,6 +8,14 @@
 {{#each dataCompany}}
 <input type="hidden" value="{{path_logo}}" id="path-icon-company">
 <input type="hidden" value="{{name}}" id="name-company">
+<input type="hidden" value="{{email_company}}" id="{{email_company}}">
+{{/each}}
+{{#each branchFree}}
+<input type="hidden" value="{{name}}" id="name_branch">
+<input type="hidden" value="{{address}}" id="address_branch">
+<input type="hidden" value="{{email_branch}}" id="{{email_company}}">
+<input type="hidden" value="{{cell_phone}}" id="cell_phone">
+<input type="hidden" value="{{phone}}" id="phone">
 {{/each}}
 <h6 id="employee-name" style="display: none;">{{user.first_name}} {{user.second_name}} {{user.last_name}}</h6>
 
@@ -66,8 +74,8 @@
 <script src="/js/desktop/popper.min.js" defer></script>
 <script src="/js/desktop/bootstrap.min.js" defer></script>
 <script src="/js/desktop/bootstrap.bundle.min.js"
-    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-    crossorigin="anonymous" defer></script>
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"
+    defer></script>
 <script src="/js/desktop/bootstrap-nav.bundle.min.js" defer></script>
 
 
@@ -87,9 +95,125 @@
     let ticketScriptsLoaded = false;
 </script>
 
+<!----------------------TICKET-------------------->
+<!-- Ocultos con los datos de configuración del ticket -->
+<input type="hidden" id="show_name_employee" value="{{dataTicket.show_name_employee}}">
+<input type="hidden" id="show_name_customer" value="{{dataTicket.show_name_customer}}">
+<input type="hidden" id="show_name_company" value="{{dataTicket.show_name_company}}">
+<input type="hidden" id="show_address" value="{{dataTicket.show_address}}">
+<input type="hidden" id="show_name_branch" value="{{dataTicket.show_name_branch}}">
+<input type="hidden" id="show_phone" value="{{dataTicket.show_phone}}">
+<input type="hidden" id="show_cellphone" value="{{dataTicket.show_cellphone}}">
+<input type="hidden" id="show_email_company" value="{{dataTicket.show_email_company}}">
+<input type="hidden" id="show_email_branch" value="{{dataTicket.show_email_branch}}">
+<input type="hidden" id="show_logo" value="{{dataTicket.show_logo}}">
+<input type="hidden" id="show_date" value="{{dataTicket.show_date}}">
+<input type="hidden" id="show_qr" value="{{dataTicket.show_qr}}">
+<input type="hidden" id="qr_value" value="{{dataTicket.qr}}">
+<input type="hidden" id="ticket_message" value="{{dataTicket.message}}">
+<input type="hidden" id="ticketWidth" value="{{dataTicket.size_ticket}}">
+
+
+
+
+<style>
+    .editor,
+    .preview {
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        max-width: 800px;
+        margin: 10px auto;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2,
+    h3 {
+        text-align: center;
+    }
+    .checkbox-group {
+        margin-top: 10px;
+    }
+
+    .ticket-preview {
+        border: 1px dashed #ccc;
+        padding: 10px;
+        background: #fff;
+        text-align: center;
+    }
+
+    .ticket {
+        max-width: 300px;
+        margin: auto;
+        font-size: 16px;
+    }
+
+    .logo {
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .product-table {
+        width: 100%;
+        margin: 10px 0;
+        border-top: 1px dashed #000;
+        border-bottom: 1px dashed #000;
+    }
+
+    .product-table th,
+    .product-table td {
+        padding: 3px;
+        text-align: center;
+    }
+
+    .qr img {
+        margin-top: 10px;
+        width: 120px;
+        height: 120px;
+    }
+
+    .hidden {
+        display: none;
+    }
+</style>
+<div class="ticket-preview" id="vistaTicket">
+    <div class="ticket" id="headerTicket">
+        <!-- Aquí se genera el ticket headerTicket-->
+    </div>
+    <div class="qr" id="qrContainer" class="hidden"></div>
+    <div class="ticket" id="infoTicket">
+        <!-- Aquí se genera el ticket -->
+    </div>
+</div>
+
+
+<!--esto es para imprimir el ticker, convierte el html en imagen--->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<!-- Librería QR -->
+<script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
 <script>
     const selectPrinter = document.getElementById('dataPrinter');
     let listTicket = [];
+
+    //her we will get the information of the setting of the ticket
+    const config = {
+        show_logo: document.getElementById('show_logo')?.value == 1,
+        show_date: document.getElementById('show_date')?.value == 1,
+        show_name_employee: document.getElementById('show_name_employee')?.value == 1,
+        show_name_customer: document.getElementById('show_name_customer')?.value == 1,
+        show_name_company: document.getElementById('show_name_company')?.value == 1,
+        show_name_branch: document.getElementById('show_name_branch')?.value == 1,
+        show_address: document.getElementById('show_address')?.value == 1,
+        show_phone: document.getElementById('show_phone')?.value == 1,
+        show_cellphone: document.getElementById('show_cellphone')?.value == 1,
+        show_email_company: document.getElementById('show_email_company')?.value == 1,
+        show_email_branch: document.getElementById('show_email_branch')?.value == 1,
+        show_qr: document.getElementById('show_qr')?.value == 1,
+        qr_value: document.getElementById('qr_value')?.value || '',
+        message: document.getElementById('ticket_message')?.value || '¡Gracias por su compra!'
+    };
+
 
     async function load_printer() {
         const savedPrinter = localStorage.getItem('selectedPrinter');
@@ -127,10 +251,36 @@
 
     async function print_ticket(total, moneyReceived, change, comment) {
         //console.log(get_texto_ticket(total, moneyReceived, change, comment));
-        const textoTicket = get_texto_ticket(total, moneyReceived, change, comment); // Aquí obtienes el texto del ticket, puedes personalizarlo
-        await sned_information_to_the_server_for_print_the_ticket(textoTicket)
+        //const textoTicket = get_texto_ticket(total, moneyReceived, change, comment); // Aquí obtienes el texto del ticket, puedes personalizarlo
+        //await sned_information_to_the_server_for_print_the_ticket(textoTicket)
+        create_ticket_html(total, moneyReceived, change, comment); 
+        await print_ticket_with_html();
     }
 
+    async function print_ticket_with_html() {
+        const ticket = document.getElementById('vistaTicket');
+        const impresora = localStorage.getItem('selectedPrinter');
+        const ticketWidth = document.getElementById('ticketWidth').value*2; //3.5
+        html2canvas(ticket, { scale: 1 }).then(canvas => {
+            const imageData = canvas.toDataURL("image/png");
+            fetch("http://localhost:5000/imprimir-imagen", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ image: imageData, impresora: impresora, ticketWidth: ticketWidth })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.ok){
+                        notificationMessage('✅','Ticket enviado correctamente')
+                    }else{
+                        notificationMessageError('❌', "Error al imprimir")
+                    }
+                })
+                .catch(err => warningMessage('Error ❌',"Nos perdimos en el camino. No se pudo conectar al servidor de impresión."));
+        });
+    }
 
     async function sned_information_to_the_server_for_print_the_ticket(textoTicket, flash = false) {
         const printerName = localStorage.getItem('selectedPrinter'); // ahora guardamos el nombre
@@ -168,6 +318,152 @@
             console.error('❌ Error de conexión al servidor de impresión:', err);
         }
     }
+
+
+    function create_ticket_html(total, moneyReceived, change, comment = '') {
+        //transform the value of the variable to number
+        moneyReceived = parseFloat(moneyReceived);
+        change = parseFloat(change);
+        total = parseFloat(total);
+        moneyReceived = parseFloat(moneyReceived);
+
+        //now we will see would like to the user print in his ticket with help of the config 
+        let html = "";
+
+        html += `<div style="text-align:center;">`;
+        if (config.show_logo) {
+            const icon_company = document.getElementById('path-icon-company')?.value || 'https://pluspuntodeventa.com/img/logo-white-complete.webp';
+            html += `<img src="${icon_company}" style="max-width:80px; margin-bottom:5px;"><br>`;
+        }
+
+        if (config.show_name_company) {
+            const name_company = document.getElementById('name-company').value;
+            html += `<strong>${name_company}</strong><br>`;
+        }
+
+        if (config.show_name_branch) {
+            const name_branch = document.getElementById('name_branch').value;
+            html += `${name_branch}<br>`;
+        }
+
+        if (config.show_address) {
+            const address = document.getElementById('address_branch').value;
+            html += `${address}<br>`;
+        }
+        html += `</div>`;
+
+        if (config.show_date) {
+            const fecha = get_date_ticket();
+            html += `<small>${fecha}</small><br>`;
+        }
+
+        html += `<div style="text-align:left;">`;
+        if (config.show_name_employee) {
+            const nameEmployee = document.getElementById('employee-name').textContent;
+            html += `<small>Empleado: ${nameEmployee}</small><br>`;
+        }
+
+        if (config.show_name_customer) {
+            const customer = document.getElementById('emailClient').textContent;
+            html += `<small>Cliente: ${customer}</small><br>`;
+        }
+        html += `</div>`;
+
+
+        //----------------------Tabla de productos----------------------------
+        html += `
+            <table class="product-table" style="width:100%; margin-top:10px;">
+            <thead>
+                <tr><th>Producto</th><th>Cant</th><th>Precio</th><th>Total</th></tr>
+            </thead>
+            <tbody>
+        `;
+
+        //---------aqui creamos los productos
+        cartItems.forEach(item => {
+            const nombre = item.name || '';
+            const cantidad = item.quantity || 0;
+            const precio = parseFloat(item.price).toFixed(2);
+            const subtotal = (item.price * item.quantity).toFixed(2);
+
+            html += `<tr>
+                <td>${nombre}</td>
+                <td>${cantidad}</td>
+                <td>$${precio}</td>
+                <td>$${subtotal}</td>
+            </tr>`;
+        });
+        //--------------
+
+        html += `</tbody></table>`;
+
+
+        html += `<div style="text-align:right;">`;
+        html += `<div style="text-align:right; margin-top:10px;">TOTAL: ${total.toFixed(2).padStart(9)}</div>`;
+        html += `<div style="text-align:right; margin-top:10px;">Recibido: ${moneyReceived.toFixed(2).padStart(9)}</div>`;
+        html += `<div style="text-align:right; margin-top:10px;">Cambio: ${change.toFixed(2).padStart(9)}</div>`;
+        html += `</div>`;
+
+        html += `<div style="text-align:center;">`;
+        html += `<div style="text-align:center; margin-top:10px;">Comentario: ${comment}</div>`;
+        html += `</div>`;
+
+        const token = generarTokenUnicoTicket();
+        html += `
+            <div style="text-align:center; margin: 15px 0;">
+                <div style="font-size: 12px; font-weight: bold;">TOKEN DEL TICKET</div>
+                <div style="font-size: 18px;">
+                ${token}
+                </div>
+            </div>
+        `;
+        html += `<div style="text-align:center; margin-top:10px;">${config.message}</div>`;
+        document.getElementById('headerTicket').innerHTML = html;
+    }
+
+    function create_qr(){
+        //---------------------------her we will show the QR
+        const qrContainer = document.getElementById('qrContainer');
+        qrContainer.innerHTML = "";
+
+        if (config.show_qr) {
+            const qr = new QRious({
+                value: config.qr,
+                size: 120
+            });
+
+            const img = document.createElement('img');
+            img.src = qr.toDataURL();
+            qrContainer.appendChild(img);
+        }
+    }
+    create_qr();
+
+    function create_info_ticket(){
+        //---------------------------pie del ticket
+        let htmlLast = "<br>";
+        if (config.show_email_company) {
+            const email_company=document.getElementById('email_company').value;
+            htmlLast += `<small>${email_company}</small><br>`;
+        }
+
+        if (config.show_email_branch) {
+            const email_company=document.getElementById('email_branch').value;
+            htmlLast += `<small>${email_branch}</small><br>`;
+        }
+
+        if (config.show_phone) {
+            const phone=document.getElementById('phone').value;
+            htmlLast += `Tel: ${phone}<br>`;
+        }
+
+        if (config.show_cellphone) {
+            const cell_phone=document.getElementById('cell_phone').value;
+            htmlLast += `Cel: ${cell_phone}<br>`;
+        }
+        document.getElementById('infoTicket').innerHTML = htmlLast;
+    }
+    create_info_ticket();
 
     function get_texto_ticket(total, moneyReceived, change, comment = '') {
         moneyReceived = parseFloat(moneyReceived);
@@ -214,7 +510,7 @@
         }
         texto += '\n\n\n';
         // 🎯 TOKEN LLAMATIVO
-        const token=generarTokenUnicoTicket();
+        const token = generarTokenUnicoTicket();
         texto += '-------------------------------\n';
         texto += '       TOKEN DEL TICKET \n';
         texto += `           ${token}\n`;
@@ -256,7 +552,7 @@
             try {
                 listTicket = JSON.parse(decodeURIComponent(cookies.split('=')[1]));
             } catch (e) {
-                listTicket=[]
+                listTicket = []
             }
         }
 
