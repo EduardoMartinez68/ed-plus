@@ -250,7 +250,7 @@ router.get('/:id_company/:id_branch/products-free', isLoggedIn, async (req, res)
 
     if (branchFree != null) {
         const combos = await get_combo_features(id_branch,true);
-        const labels=await get_all_the_labels(id_branch);
+        const labels=await get_all_the_labels(id_company,id_branch);
         res.render('links/free/products/products', { branchFree, combos, labels});
     } else {
         res.render('links/store/branchLost');
@@ -1938,8 +1938,7 @@ router.get('/view_label/:id/name=:name/barcode=:barcode/price=:price', isLoggedI
     const { id, name, barcode, price } = req.params;
 
     const id_branch = req.user.id_branch;
-    const branchFree = await get_data_branch(id_branch);
-    const id_company = branchFree.id_company;
+    const id_company = req.user.id_company;
 
     // Verificar permisos
     if (!this_user_have_this_permission(req.user, id_company, id_branch, 'view_label')) {
@@ -1961,7 +1960,8 @@ router.get('/view_label/:id/name=:name/barcode=:barcode/price=:price', isLoggedI
             barcode,
             price
         }];
-
+        
+        const branchFree = await get_data_branch(id_branch);
         res.render('links/labels/viewLabel', { branchFree, label, product });
     } catch (error) {
         console.error("Error al obtener la etiqueta:", error);

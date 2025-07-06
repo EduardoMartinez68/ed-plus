@@ -229,6 +229,12 @@
     <div class="row">
         <div class="col">
             <div class="toolbar">
+                <div class="row">
+                    <label for="">Selecciona una impresora</label>
+                    <select name="" id="dataPrinter">
+
+                    </select>
+                </div>
                 <form id="labelForm">
                     <input type="hidden" id="labelId" value="{{label.id}}">
                     <div class="row">
@@ -314,7 +320,7 @@
                         <button onclick="updateLabel()" class="btn btn-confirm-message">Actualizar</button>
                     </div>
                     <div class="col">
-                        <button onclick="printCanvas()" class="btn btn-edit">Imprimir</button>
+                        <button onclick="print_ticket_with_html()" class="btn btn-edit" type="button">Imprimir</button>
                     </div>
                 </div>
                 <br>
@@ -337,6 +343,81 @@
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
 
+
+
+<!--printer--->
+<!--this is for create a barcode in the canva-->
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<!-- Librería QR -->
+<script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+
+<script>
+    const selectPrinter = document.getElementById('dataPrinter');
+
+    async function load_printer() {
+        const savedPrinter = localStorage.getItem('selectedPrinter');
+
+        try {
+            const response = await fetch('http://localhost:5000/impresoras');
+            const printers = await response.json();
+            console.log(printers)
+            if (Array.isArray(printers) && printers.length > 0) {
+                // Limpiar opciones previas
+                selectPrinter.innerHTML = '<option value="">Selecciona una impresora</option>';
+
+                printers.forEach((printer) => {
+                    const option = document.createElement('option');
+                    option.value = printer.name;
+                    option.textContent = `${printer.name} - ${printer.type.split(',')[0]}`; // Mostrar solo el primer dato del campo "type"
+                    if (printer.name === savedPrinter) {
+                        option.selected = true;
+                    }
+                    selectPrinter.appendChild(option);
+                });
+            } else {
+                selectPrinter.innerHTML = '<option value="">No se detectaron impresoras</option>';
+            }
+        } catch (err) {
+            console.error('Error al cargar impresoras:', err);
+            selectPrinter.innerHTML = '<option value="">Error de conexión</option>';
+        }
+    }
+
+    load_printer()
+
+
+    async function print_ticket_with_html() {
+        const maxWidth = canvas.getWidth() - 20;
+        const maxHeight = canvas.getHeight() - 20;
+        let scaleImg = 1//Math.min(maxWidth , maxHeight );
+
+        const ticket = document.getElementById('canvas');
+        const impresora = localStorage.getItem('selectedPrinter');
+        const ticketWidth = parseFloat(document.getElementById('width').value)*3.5;
+
+        html2canvas(ticket, { scale: scaleImg }).then(canvas => {
+            const imageData = canvas.toDataURL("image/png");
+            fetch("http://localhost:5000/imprimir-imagen", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ image: imageData, impresora: impresora, ticketWidth: ticketWidth })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.ok){
+                        notificationMessage('✅','Ticket enviado correctamente')
+                    }else{
+                        notificationMessageError('❌', "Error al imprimir")
+                    }
+                })
+                .catch(err => warningMessage('Error ❌',"Nos perdimos en el camino. No se pudo conectar al servidor de impresión."));
+        });
+    }
+</script>
 
 <!--canva-->
 <script>

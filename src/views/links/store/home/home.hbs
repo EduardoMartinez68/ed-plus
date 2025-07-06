@@ -221,7 +221,6 @@
         try {
             const response = await fetch('http://localhost:5000/impresoras');
             const printers = await response.json();
-            console.log(printers)
             if (Array.isArray(printers) && printers.length > 0) {
                 // Limpiar opciones previas
                 selectPrinter.innerHTML = '<option value="">Selecciona una impresora</option>';
