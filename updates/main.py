@@ -89,9 +89,13 @@ def update_exe(new_path,exe_path):
     shutil.move(new_path, exe_path)
 
 
-def update_setting(version):
+def update_setting_plus(version):
+    with open(SETTINGS_FILE, "a") as file:
+        file.write(f"version_plus={version}")
+
+def update_setting_driver(version):
     with open(SETTINGS_FILE, "w") as file:
-        file.write(f"version={version}")
+        file.write(f"version_driver={version}\n")
 
 
 def run_software(EXE_PATH):
@@ -107,28 +111,33 @@ def update_software(version_local, last_version, url_download,TEMP_EXE_PATH, EXE
         if download_the_last_version_from_the_server(url_download, TEMP_EXE_PATH):
             #if can download the last version of PLUS, now remplace our exe with the new exe
             update_exe(TEMP_EXE_PATH,EXE_PATH)
-            update_setting(last_version)
             print("Actualización completada.") #show a message that exist a new update
     else:
         print("Ya tienes la última versión.")
 
 def get_machine_guid():
+    return None
     try:
+        # Leer MachineGuid desde el registro de Windows
         reg_key = winreg.OpenKey(
             winreg.HKEY_LOCAL_MACHINE,
             r"SOFTWARE\Microsoft\Cryptography",
             0,
             winreg.KEY_READ | winreg.KEY_WOW64_64KEY
         )
-        value, regtype = winreg.QueryValueEx(reg_key, "MachineGuid")
+        value, _ = winreg.QueryValueEx(reg_key, "MachineGuid")
         winreg.CloseKey(reg_key)
-        return value
+
+        # Hacerle SHA-1 para que sea igual a node-machine-id
+        hash_obj = hashlib.sha1(value.encode('utf-8'))
+        return hash_obj.hexdigest()
     except Exception as e:
         print("Error al obtener el MachineGuid:", e)
         return None
     
 
 import os
+import hashlib
 
 #get the path of the user folder
 user_dir = os.path.expanduser("~")
@@ -148,7 +157,7 @@ def read_token():
         return None
     
 def see_if_the_token_is_activate(token,device_id):
-    if not token or not device_id:
+    if not token:
         print("Faltan datos para verificar la licencia.")
         return False
 
@@ -157,6 +166,7 @@ def see_if_the_token_is_activate(token,device_id):
         "device_id": device_id
     }
 
+    print('Comprobar el token de la pc')
     try:
         response = requests.post("https://pluspuntodeventa.com/api/this_token_is_active.php", json=data)
         if response.status_code == 200:
@@ -170,7 +180,45 @@ def see_if_the_token_is_activate(token,device_id):
         print("Error al conectarse al servidor:", e)
         return False
 
+def see_if_exist_a_new_update_for_plus():
+    #her is the most import because, her we will read the last version of PLUS from my server
+    print('Comprobando si existen nuevas actualizaciones...')
+    info_api = get_the_last_version_from_the_server() 
 
+    #if exist a answer from the server, we will filter his information
+    if info_api:
+        #first we will read all the local version of the software
+        version_local = read_local_version() #[0]=version software, [1]=version driver
+
+        #get the information of the server
+        last_version_plus = info_api.get("version_plus")
+        url_download_plus = info_api.get("url_plus")
+        last_version_drive = info_api.get("version_drive")
+        url_download_drive = info_api.get("url_drive")
+
+        #her we will update the drivers
+        print('Comprobar Actualizaciones de los drivers')
+        update_software(version_local[1], last_version_drive,url_download_drive,TEMP_DRIVER_PATH, DRIVER_PATH)
+        update_setting_driver(last_version_drive)
+
+        #now we will update the POS 
+        print('Comprobar Actualizaciones de PLUS')
+        update_software(version_local[0], last_version_plus,url_download_plus,TEMP_EXE_PATH, EXE_PATH)
+        update_setting_plus(last_version_drive)
+    else:
+        print("No se pudo verificar la versión remota.") 
+
+def show_menu():
+    os.system('cls' if os.name == 'nt' else 'clear')  # Limpia pantalla
+
+    print("="*50)
+    print("🚀  PLUS Software Punto de Venta".center(50))
+    print("by {ED} SOFTWARE DEVELOPER".center(50))
+    print("="*50)
+    print("\nSeleccione una opción:\n")
+    print("1 --- Correr el software")
+    print("2 --- Actualizar el software")
+    print("="*50)
 
 def main():
     #get the token of the user and his guid
@@ -179,31 +227,25 @@ def main():
 
     #we will see if exist a token save in this pc or is the token is activate from the server for update the software
     #if not have a token save in the pc it is that is the first that the user use PLUS 
-    if token_user==None or see_if_the_token_is_activate(token_user,guid):
-        #her is the most import because, her we will read the last version of PLUS from my server
-        print('Comprobando si existen nuevas actualizaciones...')
-        info_api = get_the_last_version_from_the_server() 
+    if token_user==None:
+        see_if_exist_a_new_update_for_plus()
+    else:
+        #if exist a token in this pc, we will do a question to the user, if the would like run the software or update
+        option=0
+        while option not in [1, 2]:
+            show_menu()
+            try:
+                option = int(input("¿Qué opción quieres hacer?: "))
+                if option!=1 and option!=2:
+                    print("\n❌ Opción no válida. Intenta de nuevo.\n")
+            except ValueError:
+                print("\n⚠️ Por favor ingresa un número válido.\n")
 
-        #if exist a answer from the server, we will filter his information
-        if info_api:
-            #first we will read all the local version of the software
-            version_local = read_local_version() #[0]=version software, [1]=version driver
-
-            #get the information of the server
-            last_version_plus = info_api.get("version_plus")
-            url_download_plus = info_api.get("url_plus")
-            last_version_drive = info_api.get("version_drive")
-            url_download_drive = info_api.get("url_drive")
-
-            #her we will update the drivers
-            print('Comprobar Actualizaciones de los drivers')
-            update_software(version_local[1], last_version_drive,url_download_drive,TEMP_DRIVER_PATH, DRIVER_PATH)
-
-            #now we will update the POS 
-            print('Comprobar Actualizaciones de PLUS')
-            update_software(version_local[0], last_version_plus,url_download_plus,TEMP_EXE_PATH, EXE_PATH)
-        else:
-            print("No se pudo verificar la versión remota.")
+        #if the user would like update the software
+        if option==2:
+            #if have a token save, we will see if the token is activate
+            if see_if_the_token_is_activate(token_user,guid):
+                see_if_exist_a_new_update_for_plus()
 
     #run the post 
     run_software(DRIVER_PATH) #first run the driver for the printer and scales
