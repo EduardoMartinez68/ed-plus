@@ -3,6 +3,7 @@ import os
 import shutil
 import subprocess
 from tqdm import tqdm
+import winreg
 
 # === setting ===
 API_VERSION_URL = "https://pluspuntodeventa.com/SOFTWARES/setting.php"  # this API return {"version": "1.8.0", "url": "https://tusitio.com/downloads/pos_1.8.0.exe"}
@@ -111,34 +112,98 @@ def update_software(version_local, last_version, url_download,TEMP_EXE_PATH, EXE
     else:
         print("Ya tienes la última versión.")
 
- 
+def get_machine_guid():
+    try:
+        reg_key = winreg.OpenKey(
+            winreg.HKEY_LOCAL_MACHINE,
+            r"SOFTWARE\Microsoft\Cryptography",
+            0,
+            winreg.KEY_READ | winreg.KEY_WOW64_64KEY
+        )
+        value, regtype = winreg.QueryValueEx(reg_key, "MachineGuid")
+        winreg.CloseKey(reg_key)
+        return value
+    except Exception as e:
+        print("Error al obtener el MachineGuid:", e)
+        return None
+    
+
+import os
+
+#get the path of the user folder
+user_dir = os.path.expanduser("~")
+token_path = os.path.join(user_dir, "token_p1lt.key")
+
+#read the token of the file
+def read_token():
+    try:
+        with open(token_path, "r") as file:
+            token = file.read().strip()
+            return token
+    except FileNotFoundError:
+        print("El archivo no existe")
+        return None
+    except Exception as e:
+        print("Error al leer el archivo:", e)
+        return None
+    
+def see_if_the_token_is_activate(token,device_id):
+    if not token or not device_id:
+        print("Faltan datos para verificar la licencia.")
+        return False
+
+    data = {
+        "token": token,
+        "device_id": device_id
+    }
+
+    try:
+        response = requests.post("https://pluspuntodeventa.com/api/this_token_is_active.php", json=data)
+        if response.status_code == 200:
+            result = response.json()
+            print("Servidor:", result.get("message", "Sin mensaje"))
+            return result.get("valid", False)
+        else:
+            print("Error en la solicitud HTTP:", response.status_code)
+            return False
+    except Exception as e:
+        print("Error al conectarse al servidor:", e)
+        return False
+
+
 
 def main():
+    #get the token of the user and his guid
+    token_user=read_token()
+    guid=get_machine_guid()
 
-    #her is the most import because, her we will read the last version of PLUS from my server
-    print('Comprobando si existen nuevas actualizaciones...')
-    info_api = get_the_last_version_from_the_server() 
+    #we will see if exist a token save in this pc or is the token is activate from the server for update the software
+    #if not have a token save in the pc it is that is the first that the user use PLUS 
+    if token_user==None or see_if_the_token_is_activate(token_user,guid):
+        #her is the most import because, her we will read the last version of PLUS from my server
+        print('Comprobando si existen nuevas actualizaciones...')
+        info_api = get_the_last_version_from_the_server() 
 
-    #if exist a answer from the server, we will filter his information
-    if info_api:
-        #first we will read all the local version of the software
-        version_local = read_local_version() #[0]=version software, [1]=version driver
+        #if exist a answer from the server, we will filter his information
+        if info_api:
+            #first we will read all the local version of the software
+            version_local = read_local_version() #[0]=version software, [1]=version driver
 
-        #get the information of the server
-        last_version_plus = info_api.get("version_plus")
-        url_download_plus = info_api.get("url_plus")
-        last_version_drive = info_api.get("version_drive")
-        url_download_drive = info_api.get("url_drive")
+            #get the information of the server
+            last_version_plus = info_api.get("version_plus")
+            url_download_plus = info_api.get("url_plus")
+            last_version_drive = info_api.get("version_drive")
+            url_download_drive = info_api.get("url_drive")
 
-        #her we will update the drivers
-        print('Comprobar Actualizaciones de los drivers')
-        update_software(version_local[1], last_version_drive,url_download_drive,TEMP_DRIVER_PATH, DRIVER_PATH)
+            #her we will update the drivers
+            print('Comprobar Actualizaciones de los drivers')
+            update_software(version_local[1], last_version_drive,url_download_drive,TEMP_DRIVER_PATH, DRIVER_PATH)
 
-        #now we will update the POS 
-        print('Comprobar Actualizaciones de PLUS')
-        update_software(version_local[0], last_version_plus,url_download_plus,TEMP_EXE_PATH, EXE_PATH)
-    else:
-        print("No se pudo verificar la versión remota.")
+            #now we will update the POS 
+            print('Comprobar Actualizaciones de PLUS')
+            update_software(version_local[0], last_version_plus,url_download_plus,TEMP_EXE_PATH, EXE_PATH)
+        else:
+            print("No se pudo verificar la versión remota.")
 
     #run the post 
     run_software(DRIVER_PATH) #first run the driver for the printer and scales
