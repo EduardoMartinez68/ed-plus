@@ -9,22 +9,33 @@ API_VERSION_URL = "https://pluspuntodeventa.com/SOFTWARES/setting.php"  # this A
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 EXE_PATH = os.path.join(BASE_DIR, "PLUS", "PLUS.exe") #this is the exe that run the POS
 TEMP_EXE_PATH = os.path.join(BASE_DIR, "PLUS", "PLUS_temp.exe") #this is for save the change
+
+DRIVER_PATH = os.path.join(BASE_DIR, "DRIVER","dist", "DRIVER.exe") #this is the exe that run the POS
+TEMP_DRIVER_PATH = os.path.join(BASE_DIR, "DRIVER", "DRIVER_temp.exe") #this is for save the change
+
 SETTINGS_FILE = os.path.join(BASE_DIR, "settings.txt")
 
 def read_local_version():
-    #if not exist, the file, we will create the file with the version 0
+    info_version=["0.0.0","0.0.0"]
+
+    #if not exist, the file, we will create the file with the version 0 version_driver
     if not os.path.exists(SETTINGS_FILE):
-        return "0.0.0"
+        return ["0.0.0","0.0.0"]
     with open(SETTINGS_FILE, "r") as file:
         for line in file:
             #her get the local version
-            if line.startswith("version="):
-                return line.strip().split("=")[1]
+            if line.startswith("version_plus="):
+                info_version[0]=line.strip().split("=")[1]
             
+            #her get the local version
+            if line.startswith("version_driver="):
+                info_version[1]=line.strip().split("=")[1]
+
     #if exist the file but not exist the information that need, return the first version
-    return "0.0.0"
+    return info_version
 
 
 def get_the_last_version_from_the_server():
@@ -71,10 +82,10 @@ def download_the_last_version_from_the_server(url, destiny):
         return False 
 
 
-def update_exe(new_path):
-    if os.path.exists(EXE_PATH):
-        os.remove(EXE_PATH)
-    shutil.move(new_path, EXE_PATH)
+def update_exe(new_path,exe_path):
+    if os.path.exists(exe_path):
+        os.remove(exe_path)
+    shutil.move(new_path, exe_path)
 
 
 def update_setting(version):
@@ -82,13 +93,27 @@ def update_setting(version):
         file.write(f"version={version}")
 
 
-def run_pos():
+def run_software(EXE_PATH):
     subprocess.Popen([EXE_PATH], shell=True)
 
 
+def update_software(version_local, last_version, url_download,TEMP_EXE_PATH, EXE_PATH):
+    #now, we will compare the version for know if exist a new version in the server
+    if compare_versions(version_local, last_version):
+
+        #if we watch that exist a new version, so now going to download the last version
+        print(f"Nueva versión disponible: {last_version}")
+        if download_the_last_version_from_the_server(url_download, TEMP_EXE_PATH):
+            #if can download the last version of PLUS, now remplace our exe with the new exe
+            update_exe(TEMP_EXE_PATH,EXE_PATH)
+            update_setting(last_version)
+            print("Actualización completada.") #show a message that exist a new update
+    else:
+        print("Ya tienes la última versión.")
+
+ 
+
 def main():
-    #first we will read all the local version of the software
-    version_local = read_local_version()
 
     #her is the most import because, her we will read the last version of PLUS from my server
     print('Comprobando si existen nuevas actualizaciones...')
@@ -96,25 +121,28 @@ def main():
 
     #if exist a answer from the server, we will filter his information
     if info_api:
-        last_version = info_api.get("version")
-        url_download = info_api.get("url")
+        #first we will read all the local version of the software
+        version_local = read_local_version() #[0]=version software, [1]=version driver
 
-        #now, we will compare the version for know if exist a new version in the server
-        if compare_versions(version_local, last_version):
+        #get the information of the server
+        last_version_plus = info_api.get("version_plus")
+        url_download_plus = info_api.get("url_plus")
+        last_version_drive = info_api.get("version_drive")
+        url_download_drive = info_api.get("url_drive")
 
-            #if we watch that exist a new version, so now going to download the last version
-            print(f"Nueva versión disponible: {last_version}")
-            if download_the_last_version_from_the_server(url_download, TEMP_EXE_PATH):
-                #if can download the last version of PLUS, now remplace our exe with the new exe
-                update_exe(TEMP_EXE_PATH)
-                update_setting(last_version)
-                print("Actualización completada.") #show a message that exist a new update
-        else:
-            print("Ya tienes la última versión.")
+        #her we will update the drivers
+        print('Comprobar Actualizaciones de los drivers')
+        update_software(version_local[1], last_version_drive,url_download_drive,TEMP_DRIVER_PATH, DRIVER_PATH)
+
+        #now we will update the POS 
+        print('Comprobar Actualizaciones de PLUS')
+        update_software(version_local[0], last_version_plus,url_download_plus,TEMP_EXE_PATH, EXE_PATH)
     else:
         print("No se pudo verificar la versión remota.")
 
-    run_pos()
+    #run the post 
+    run_software(DRIVER_PATH) #first run the driver for the printer and scales
+    run_software(EXE_PATH) #after run the POS
 
 
 if __name__ == "__main__":
