@@ -16,7 +16,12 @@
         <a class="nav-link" id="navbar-navbar-notification" data-toggle="pill" href="#navbar-notification" role="tab"
             aria-controls="navbar-navbar" aria-selected="true"><i class="fi-icon fi-ss-bell"></i> Notificaciones</a>
 
-        
+        {{#if user.edit_shop_online}}
+            <a class="nav-link" id="navbar-navbar-plus" data-toggle="pill" href="#navbar-plus" role="tab"
+                aria-controls="navbar-navbar" aria-selected="true"><i class="fi fi-ss-rocket-lunch"></i> Cuenta PLUS</a>     
+        {{/if}}
+
+
         <!---
         <a class="nav-link" id="nanvar-navbar-cfdi" data-toggle="pill" href="#navbar-cfdi" role="tab"
             aria-controls="navbar-navbar" aria-selected="true"><i class="fi-icon fi-sr-file-invoice-dollar"></i> Informacion de facturacion</a>
@@ -62,6 +67,7 @@
       {{>options/ring}}
       {{>options/company}}
       {{>options/notification}}
+      {{>options/plus}}
     </div>
   </div>
 </div>

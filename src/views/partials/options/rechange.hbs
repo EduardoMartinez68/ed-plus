@@ -209,7 +209,8 @@
 
     const user = document.getElementById("user").value.trim();
     const password = document.getElementById("password").value.trim();
-
+    const loadingOverlay=document.getElementById('loadingOverlay')
+    loadingOverlay.style.display = 'flex';
     try {
       const response = await fetch("/links/update_session_prontipagos", {
         method: "POST",
@@ -235,6 +236,8 @@
       errorMessage('Hubo un error al activar la cuenta',error);
     } finally {
       e.target.reset(); // Limpia el formulario
+      loadingOverlay.style.display = 'none';
     }
   });
+  
 </script>

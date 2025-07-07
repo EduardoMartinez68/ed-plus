@@ -1,219 +1,292 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8">
-  <title>Editor de Tickets</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tienda Online - SICAR X</title>
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/3.0.0/uicons-solid-rounded/css/uicons-solid-rounded.css">
+  <link rel='stylesheet'
+    href='https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+  <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-solid-chubby/css/uicons-solid-chubby.css'>
+
   <style>
+    :root {
+      --color-company-store: #0071DC;
+      --color-price: #2A8703;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: 'Courier New', monospace;
-      background: #f4f4f4;
       margin: 0;
-      padding: 20px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f6fa;
+      color: #1a1a1a;
     }
 
-    .editor, .preview {
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      max-width: 800px;
-      margin: 10px auto;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    header {
+      background-color: var(--color-company-store);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: white;
     }
 
-    h2, h3 {
-      text-align: center;
+    header .logo {
+      display: flex;
+      align-items: center;
     }
 
-    label {
+    header .logo img {
+      height: 40px;
+      margin-right: 10px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.2rem;
+    }
+
+
+    .search-bar {
+      flex: 1;
+      display: flex;
+      width: 45%;
+      max-width: 700px;
+      margin: 0 1rem;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-bar input {
+      flex: 1;
+      padding: 0.6rem 1rem;
+      border: none;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    .search-btn {
+      background-color: transparent;
+      border: none;
+      padding: 0 1rem;
+      color:var(--color-company-store);
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: filter 0.3s ease;
+    }
+
+    .search-btn:hover {
+      filter: brightness(0.85);
+    }
+
+
+    .logo-text h1 {
+      margin: 0;
+      font-size: 1.2rem;
+      color: white;
+    }
+
+    .visit-link {
+      font-size: 1rem;
+      color: #dcdcdc;
+      text-decoration: underline;
       display: block;
-      margin-top: 10px;
+      margin-top: 0.2rem;
     }
 
-    input[type="text"], input[type="number"], textarea {
+    .btn {
+      background-color: var(--color-company-store);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn i {
+      font-size: 1.3rem;
+      /* o 24px */
+    }
+
+    .btn:hover {
+      filter: brightness(0.85);
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      padding: 1rem 2rem;
+      background-color: #fff;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .filters input,
+    .filters select {
+      padding: 0.5rem 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+      width: 200px;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 2rem;
+      padding: 2rem;
+    }
+
+    .product-card {
+      background-color: #fff;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s ease;
+    }
+
+    .product-image {
       width: 100%;
-      padding: 6px;
-      margin-top: 5px;
+      height: 180px;
+      object-fit: contain;
+      background-color: #f5f5f5;
+      padding: 1rem;
     }
 
-    .checkbox-group {
-      margin-top: 10px;
+    .product-info {
+      padding: 1rem;
+      flex-grow: 1;
     }
 
-    .ticket-preview {
-      border: 1px dashed #ccc;
-      padding: 10px;
-      background: #fff;
-      text-align: center;
+    .product-info h3 {
+      margin: 0 0 0.5rem;
+      font-size: 1.1rem;
+      color: #222;
     }
 
-    .ticket {
-      max-width: 300px;
-      margin: auto;
-      font-size: 14px;
+    .product-info p {
+      margin: 0.3rem 0;
+      color: #555;
+      font-size: 0.9rem;
     }
 
-    .logo {
+    .barcode {
+      font-family: monospace;
+      color: #444;
+      font-size: 0.85rem;
+    }
+
+    .product-actions {
+      padding: 1rem;
+      display: flex;
+      justify-content: flex-end;
+      border-top: 1px solid #eee;
+    }
+
+    .add-cart-btn {
+      background-color: var(--color-company-store);
+      color: white;
+      border: none;
+      padding: 0.5rem 0.8rem;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: background-color 0.3s ease;
+    }
+
+    .add-cart-btn:hover {
+      filter: brightness(0.85);
+    }
+
+    .product-info .price {
+      color: var(--color-price);
       font-weight: bold;
-      margin-bottom: 10px;
+      font-size: 1.2rem;
+      margin-top: 0.5rem;
     }
 
-    .product-table {
-      width: 100%;
-      margin: 10px 0;
-      border-top: 1px dashed #000;
-      border-bottom: 1px dashed #000;
-    }
+    @media (max-width: 600px) {
+      .filters {
+        flex-direction: column;
+      }
 
-    .product-table th, .product-table td {
-      padding: 3px;
-      text-align: center;
-    }
-
-    .qr img {
-      margin-top: 10px;
-      width: 120px;
-      height: 120px;
-    }
-
-    button {
-      margin-top: 15px;
-      padding: 10px 20px;
-      font-size: 16px;
-    }
-
-    .hidden {
-      display: none;
+      .filters input,
+      .filters select {
+        width: 100%;
+      }
     }
   </style>
 </head>
+
 <body>
-  <h2>Editor de Ticket</h2>
 
-  <div class="editor">
-    <label>Tamaño del Ticket (mm):</label>
-    <input type="number" id="ticketWidth" value="80" />
-
-    <div class="checkbox-group">
-      <label><input type="checkbox" id="mostrarNombreEmpresa" checked> Mostrar nombre de la empresa</label>
-      <label><input type="checkbox" id="mostrarDireccion" checked> Mostrar dirección</label>
-      <label><input type="checkbox" id="mostrarLogo" checked> Mostrar logo de empresa</label>
-      <label><input type="checkbox" id="mostrarFecha" checked> Mostrar fecha actual</label>
-      <label><input type="checkbox" id="mostrarQR" checked> Mostrar código QR</label>
-    </div>
-
-    <!-- Inputs ocultos -->
-    <input type="hidden" id="empresa" value="Mi Empresa S.A. de C.V." />
-    <input type="hidden" id="direccion" value="Calle Falsa 123, Ciudad" />
-
-    <label>Productos (uno por línea, formato: nombre|cant|precio|total):</label>
-    <textarea id="productos">Coca-Cola|2|15.00|30.00\nHamburguesa|1|50.00|50.00</textarea>
-
-    <label>Total:</label>
-    <input type="text" id="total" value="$80.00" />
-
-    <label>Contenido del QR (si aplica):</label>
-    <input type="text" id="contenidoQR" value="https://miempresa.com" />
-
-    <label>Mensaje de agradecimiento:</label>
-    <input type="text" id="mensaje" value="¡Gracias por su compra!" />
-
-    <button onclick="actualizarVistaPrevia()">Actualizar Vista Previa</button>
-  </div>
-
-  <div class="preview">
-    <h3>Vista Previa del Ticket</h3>
-    <div class="ticket-preview">
-      <div class="ticket" id="vistaTicket">
-        <!-- Aquí se genera el ticket -->
+  <header>
+    <div class="logo">
+      <img src="https://pluspuntodeventa.com/img/logo-white-complete.webp" alt="Logo Empresa">
+      <div class="logo-text">
+        <h1>Tienda Online</h1>
+        <a href="https://www.google.com/maps?q=tu+direccion+aqui" target="_blank" class="visit-link">Visítanos <i
+            class="fi fi-sc-map-marker-smile"></i></a>
       </div>
-      <div class="qr" id="qrContainer" class="hidden"></div>
     </div>
-  </div>
 
-  <!-- Librería QR -->
-  <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+    <div class="search-bar">
+      <input type="text" placeholder="Buscar por nombre o código de barras...">
+      <button class="search-btn"><i class="fi fi-rr-search"></i></button>
+    </div>
 
-  <script>
-    function actualizarVistaPrevia() {
-      const empresa = document.getElementById('empresa').value;
-      const direccion = document.getElementById('direccion').value;
-      const productos = document.getElementById('productos').value;
-      const total = document.getElementById('total').value;
-      const mostrarLogo = document.getElementById('mostrarLogo').checked;
-      const mostrarFecha = document.getElementById('mostrarFecha').checked;
-      const mostrarQR = document.getElementById('mostrarQR').checked;
-      const mostrarNombreEmpresa = document.getElementById('mostrarNombreEmpresa').checked;
-      const mostrarDireccion = document.getElementById('mostrarDireccion').checked;
-      const contenidoQR = document.getElementById('contenidoQR').value;
-      const mensaje = document.getElementById('mensaje').value;
-      const ticketWidth = document.getElementById('ticketWidth').value;
+    <button class="btn"><i class="fi fi-rr-shopping-cart"></i></button>
+  </header>
 
-      let html = "";
+  <section class="product-grid">
 
-      if (mostrarLogo) {
-        html += `<div class="logo">[LOGO DE EMPRESA]</div>`;
-      }
+    <!-- Producto 1 -->
+    <div class="product-card">
+      <img class="product-image" src="https://coca-colafemsa.com/wp-content/uploads/2020/02/1-1.png"
+        alt="Coca Cola 600ml" />
+      <div class="product-info">
+        <h3>Coca Cola 600ml</h3>
+        <p>Bebida carbonatada sabor cola.</p>
+        <p class="barcode">7501055312345</p>
+        <p class="price">$79.99</p>
+      </div>
+      <div class="product-actions">
+        <button class="add-cart-btn">
+          <i class="fi fi-sr-cart-arrow-down"></i> Agregar
+        </button>
+      </div>
+    </div>
 
-      if (mostrarNombreEmpresa) {
-        html += `<div>${empresa}</div>`;
-      }
+    <!-- Producto 2 -->
+    <div class="product-card">
+      <img class="product-image" src="https://via.placeholder.com/250x200.png?text=Producto" alt="Producto Genérico" />
+      <div class="product-info">
+        <h3>Producto Genérico</h3>
+        <p>Descripción breve del producto.</p>
+        <p class="barcode">7501055377777</p>
+      </div>
+      <div class="product-actions">
+        <button class="add-cart-btn">
+          <i class="fi fi-sr-cart-arrow-down"></i> Agregar
+        </button>
+      </div>
+    </div>
 
-      if (mostrarDireccion) {
-        html += `<div>${direccion}</div>`;
-      }
+  </section>
 
-      if (mostrarFecha) {
-        const fecha = new Date().toLocaleString();
-        html += `<div>${fecha}</div>`;
-      }
-
-      // Tabla de productos
-      html += `
-        <table class="product-table">
-          <thead>
-            <tr><th>Producto</th><th>Cant</th><th>Precio</th><th>Total</th></tr>
-          </thead>
-          <tbody>
-      `;
-
-      const lineas = productos.split('\n');
-      lineas.forEach(linea => {
-        const [nombre, cant, precio, subtotal] = linea.split('|');
-        if (nombre && cant && precio && subtotal) {
-          html += `<tr><td>${nombre}</td><td>${cant}</td><td>$${precio}</td><td>$${subtotal}</td></tr>`;
-        }
-      });
-
-      html += `
-          </tbody>
-        </table>
-      `;
-
-      html += `<div><strong>TOTAL: ${total}</strong></div>`;
-
-      if (mensaje) {
-        html += `<div>${mensaje}</div>`;
-      }
-
-      document.getElementById('vistaTicket').innerHTML = html;
-
-      // Mostrar QR
-      const qrContainer = document.getElementById('qrContainer');
-      qrContainer.innerHTML = "";
-
-      if (mostrarQR && contenidoQR.trim() !== "") {
-        const qr = new QRious({
-          value: contenidoQR,
-          size: 120
-        });
-
-        const img = document.createElement('img');
-        img.src = qr.toDataURL();
-        qrContainer.appendChild(img);
-      }
-    }
-
-    window.onload = actualizarVistaPrevia;
-  </script>
 </body>
+
 </html>

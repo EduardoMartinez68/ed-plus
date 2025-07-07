@@ -5,41 +5,11 @@ require('dotenv').config();
 const { TYPE_DATABASE } = process.env;
 const database = require('../../database');
 
-/*
-*----------------------functions-----------------*/
-//functions image
-const {
-    get_path_img,
-    delate_image_upload,
-    upload_image_to_space,
-    delete_image_from_space,
-    create_a_new_image,
-    delate_image
-} = require('../../services/connectionWithDatabaseImage');
+
 //functions branch
 const {
-    get_data_branch,
-    get_all_box_of_the_branch_with_his_id
+    get_data_branch
 } = require('../../services/branch');
-
-const {
-    get_data_employee
-} = require('../../services/employees');
-
-const {
-    get_all_ad,
-} = require('../../services/ad');
-
-const {
-    this_employee_works_here,
-    get_all_dish_and_combo,
-    get_all_data_combo_most_sold,
-    get_data_recent_combos,
-    get_all_products_in_sales,
-    get_all_the_promotions,
-    get_the_products_most_sales_additions,
-    get_all_dish_and_combo_without_lots
-} = require('../../services/store');
 
 const {
     get_all_invoice_with_the_id_of_the_branch
@@ -130,6 +100,47 @@ function normalizeTicketData(data) {
 
     return normalized;
 }
+
+
+//---------------------------her we will save the tickets in the software desktop-------------------------------------------
+const {getToken}=require('../../middleware/tokenCheck.js');
+
+router.post('/save_ticket', isLoggedIn, async (req, res) => {
+    //get the information of the software desktop 
+    const id_company = req.user.id_company;
+    const id_branch = req.user.id_branch;
+    const form=req.body;
+    
+    const ticket=create_a_new_ticket(id_company,id_branch,form)
+});
+
+function create_a_new_ticket(id_company,id_branch,bodyForm){
+    return {
+        id_company,
+        id_branch,
+        employee: bodyForm.name_employee
+    }
+}
+
+
+
+router.post('/synchronized-ticket', isLoggedIn, async (req, res) => {
+    //get the information of the software desktop 
+    const id_company = req.user.id_company;
+    const id_branch = req.user.id_branch;
+    const token=getToken();
+
+    //if have a token save, we will send this information to the server
+    if(token){
+        if (await update_setting_ticket(id_branch, normalizedData)) {
+            req.flash('success', 'Configuración del ticket actualizada 🎉');
+        } else {
+            req.flash('message', 'No se pudo actualizar la configuración del ticket. Intenta de nuevo más tarde 😅');
+        }
+    }
+
+    res.redirect(`/links/${id_company}/${id_branch}/tickets`);
+});
 
 
 module.exports = router;

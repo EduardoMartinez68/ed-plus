@@ -12,7 +12,17 @@ function tokenExists() {
 }
 
 function getToken() {
-  return fs.readFileSync(tokenFilePath, 'utf8').trim();
+  try {
+    if (fs.existsSync(tokenFilePath)) {
+      return fs.readFileSync(tokenFilePath, 'utf8').trim();
+    } else {
+      console.warn('El archivo del token no existe.');
+      return null;
+    }
+  } catch (err) {
+    console.error('Error al leer el token:', err.message);
+    return null;
+  }
 }
 
 function saveToken(token) {

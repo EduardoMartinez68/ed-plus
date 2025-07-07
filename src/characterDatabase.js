@@ -201,6 +201,9 @@ async function create_update_of_the_database(adminPool) {
             ADD COLUMN IF NOT EXISTS view_ticket BOOLEAN DEFAULT TRUE NOT NULL;
             ADD COLUMN IF NOT EXISTS return_ticket BOOLEAN DEFAULT TRUE NOT NULL;
             ADD COLUMN IF NOT EXISTS edit_ticket BOOLEAN DEFAULT TRUE NOT NULL;
+
+            ----------store online 
+            ADD COLUMN IF NOT EXISTS edit_shop_online BOOLEAN DEFAULT TRUE NOT NULL;
         END$$;
 
         ------------------------------------TICKETS-----------------------------------
@@ -236,6 +239,9 @@ async function create_update_of_the_database(adminPool) {
             ALTER TABLE "Box".ticket ADD COLUMN IF NOT EXISTS id_employees bigint;
             ALTER TABLE "Box".ticket ADD COLUMN IF NOT EXISTS id_branches bigint;
             ALTER TABLE "Box".ticket ADD COLUMN IF NOT EXISTS id_companies bigint;
+
+
+            ALTER TABLE "Box".ticket ADD COLUMN IF NOT EXISTS synchronized BOOLEAN DEFAULT FALSE NOT NULL;
 
             -- Tabla "Box".history_returns
             CREATE TABLE IF NOT EXISTS "Box".history_returns (
@@ -439,7 +445,17 @@ async function create_update_of_the_database_mysqlite(db) {
         -- Asegurar columnas en roles_employees (no hay IF NOT EXISTS, usar try-catch si usas sqlite3 en JS)
         ALTER TABLE roles_employees ADD COLUMN edit_ticket BOOLEAN DEFAULT 1 NOT NULL;
     `
+    await create_table_mysqlite(db,queryPermition)
 
+    queryPermition=`
+        -- Asegurar columnas en roles_employees (no hay IF NOT EXISTS, usar try-catch si usas sqlite3 en JS)
+        ALTER TABLE roles_employees ADD COLUMN edit_shop_online BOOLEAN DEFAULT 1 NOT NULL;
+    `
+    await create_table_mysqlite(db,queryPermition)
+    
+    queryPermition=`
+    ALTER TABLE ticket ADD COLUMN synchronized BOOLEAN NOT NULL DEFAULT FALSE;
+    `
     await create_table_mysqlite(db,queryPermition)
     db.close();
 }

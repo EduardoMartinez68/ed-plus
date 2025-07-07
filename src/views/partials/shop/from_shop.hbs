@@ -1,0 +1,152 @@
+<style>
+.div-token {
+  margin: 1rem auto;
+  max-width: 600px;
+  padding: 1rem;
+  border-radius: 12px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.div-token label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: #333;
+  font-size: 1rem;
+}
+
+.token-box {
+  padding: 0.75rem 1rem;
+  background-color: #f1f4ff;
+  border: 1px dashed #1649FF;
+  color: #1649FF;
+  font-size: 1rem;
+  word-break: break-all;
+  border-radius: 8px;
+  font-family: monospace;
+}
+</style>
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-body">
+      <label><i class="fi fi-sr-store-alt"></i> <strong>Configuración de Tienda Online</strong></label>
+      <hr>
+
+      <form action="https://pluspuntodeventa.com/api/branch_online/update_information_branch_online.php" method="POST" enctype="multipart/form-data">
+      
+      <!---information for in the web--->
+      <input type="hidden" value="{{token}}" name="token">
+      <input type="hidden" value="{{token}}" name="user_email">
+      <input type="hidden" value="{{token}}" name="password">
+
+
+
+
+
+
+
+
+
+        <div class="row">
+          <!-- Datos -->
+          <div class="col">
+            <div class="div-token">
+                <label>Tu Token de Seguridad:</label>
+                <div class="token-box" id="user-token">{{token}}</div>       
+            </div>
+
+            <div class="row">
+            <div class="form-group text-center">
+              <img src="https://cdn.pixabay.com/photo/2017/01/25/17/35/picture-2008484_1280.png"
+                id="imgEmployee" class="img-fluid rounded" style="max-height: 160px;">
+            </div>
+                            <center>
+                                <label for="inputImg" class="custom-file-upload">
+                                    <input type="file" name="image" accept="image/*" id="inputImg"
+                                        style="display: none;">
+                                    <input type="text" name="imageUrl" id="imageUrl" class="form-control"
+                                        placeholder="https://ejemplo.com/imagen.jpg" style="display: none;">
+                                    <i class="fas fa-upload"></i> Subir imagen
+                                </label>
+                            </center>
+            </div>
+            <div class="mb-3">
+              <label for="nombreSitio" class="form-label">Nombre de la tienda</label>
+              <input type="text" class="form-control" id="nombreSitio" name="nombreSitio"
+                placeholder="Ejemplo: Super Pepe Market">
+            </div>
+
+            <div class="mb-3">
+              <label for="direccion" class="form-label">Dirección del negocio</label>
+              <input type="text" class="form-control" id="direccion" name="direccion"
+                placeholder="Ejemplo: Calle 123, Ciudad, Estado">
+            </div>
+
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="checkWhatsapp" name="enable_whatsapp">
+              <label class="form-check-label" for="checkWhatsapp">Permitir pedidos por WhatsApp</label>
+            </div>
+
+            <div class="mb-3">
+              <label for="whatsapp" class="form-label">Número de WhatsApp</label>
+              <input type="text" class="form-control" id="whatsapp" name="whatsapp"
+                placeholder="Ejemplo: +5215512345678" disabled>
+            </div>
+
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="checkPaypal" name="enable_paypal">
+              <label class="form-check-label" for="checkPaypal">Permitir pagos con PayPal</label>
+            </div>
+
+            <div class="mb-3">
+              <label for="paypalKey" class="form-label">Client ID de PayPal</label>
+              <input type="text" class="form-control" id="paypalKey" name="paypalKey"
+                placeholder="Ejemplo: AbcdEFghIJKLmnopQRstUvWXyz1234" disabled>
+            </div>
+
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="mostrarUbicacion" name="mostrarUbicacion">
+              <label class="form-check-label" for="mostrarUbicacion">Mostrar ubicación en la tienda</label>
+            </div>
+
+            <div class="mb-3">
+              <label for="googleMaps" class="form-label">URL de Google Maps</label>
+              <input type="text" class="form-control" id="googleMaps" name="googleMaps"
+                placeholder="Ejemplo: https://maps.google.com/..." disabled>
+            </div>
+
+            <div class="mb-3">
+              <label for="nombreSitio" class="form-label">Email para notificar los pagos</label>
+              <input type="text" class="form-control" id="nombreSitio" name="nombreSitio"
+                placeholder="Ejemplo: email@123hotmail.com" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="color" class="form-label">Color principal de la tienda</label>
+              <input type="color" class="form-control form-control-color" id="color" name="color"
+                value="#1649FF" title="Elige tu color">
+            </div>
+
+
+            <button type="submit" class="btn btn-success w-100">Guardar Cambios</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Activar inputs según el check
+  document.getElementById('checkWhatsapp').addEventListener('change', function () {
+    document.getElementById('whatsapp').disabled = !this.checked;
+  });
+
+  document.getElementById('checkPaypal').addEventListener('change', function () {
+    document.getElementById('paypalKey').disabled = !this.checked;
+  });
+
+  document.getElementById('mostrarUbicacion').addEventListener('change', function () {
+    document.getElementById('googleMaps').disabled = !this.checked;
+  });
+</script>

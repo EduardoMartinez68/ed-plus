@@ -507,18 +507,20 @@ serverExpress.listen(serverExpress.get('port'), '0.0.0.0', () => {
   const url = `http://localhost:${serverExpress.get('port')}`; 
   console.log(`Server running on ${url}`);
 
-  let command;
-  if (os.platform() === 'win32') {
-    command = `start "" "${url}"`;
-  } else if (os.platform() === 'darwin') {
-    command = `open "${url}"`;
-  } else {
-    command = `xdg-open "${url}"`;
-  }
+  if(TYPE_SYSTME=='desktop'){
+    let command;
+    if (os.platform() === 'win32') {
+      command = `start "" "${url}"`;
+    } else if (os.platform() === 'darwin') {
+      command = `open "${url}"`;
+    } else {
+      command = `xdg-open "${url}"`;
+    }
 
-  exec(command, (err) => {
-    if (err) console.error('❌ Error al abrir el navegador:', err);
-  });
+    exec(command, (err) => {
+      if (err) console.error('❌ Error al abrir el navegador:', err);
+    });
+  }
 });
 
 

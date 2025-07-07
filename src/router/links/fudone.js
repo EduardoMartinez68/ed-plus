@@ -1792,6 +1792,7 @@ router.get('/:id_company/:id_branch/:id_app/create-database', isLoggedIn, async 
 
 
 //------------------------------------options 
+const {getToken}=require('../../middleware/tokenCheck.js');
 router.get('/:id_company/:id_branch/options', isLoggedIn, async (req, res) => {
     const { id_company, id_branch } = req.params;
 
@@ -1804,7 +1805,8 @@ router.get('/:id_company/:id_branch/options', isLoggedIn, async (req, res) => {
     const branchFree = await get_data_branch(id_branch);
     const dataCompany = await get_data_company_with_id(id_company);
     const country=await get_country();
-    res.render('links/options/options', { branchFree, dataCompany, country });
+    const token=getToken();
+    res.render('links/options/options', { branchFree, dataCompany, country, token });
 })
 
 router.get('/:id_company/:id_branch/prices', isLoggedIn, async (req, res) => {

@@ -120,6 +120,54 @@ async function update_setting_ticket(id_branch, data) {
     }
 }
 
+
+async function add_a_new_ticket(ticket) {
+
+    const fields = [
+        "show_name_employee", "show_name_customer", "show_name_company",
+        "show_address", "show_name_branch", "show_phone", "show_cellphone",
+        "show_email_company", "show_email_branch", "show_logo", "show_date",
+        "show_qr", "qr", "message", "size_ticket"
+    ];
+
+    const values = fields.map(field => data[field] !== undefined ? data[field] : null);
+
+
+    
+    if (TYPE_DATABASE === "mysqlite") {
+        return new Promise((resolve, reject) => {
+            const setClause = fields.map(field => `${field} = ?`).join(", ");
+            const query = `
+                UPDATE setting_ticket
+                SET ${setClause}
+                WHERE id_branches = ?;
+            `;
+            database.run(query, [...values, id_branch], function (err) {
+                if (err) {
+                    console.error("SQLite update error:", err);
+                    return resolve(false);
+                }
+                return resolve(true);
+            });
+        });
+    } else {
+        try {
+            const setClause = fields.map((field, i) => `${field} = $${i + 1}`).join(", ");
+            const query = `
+                UPDATE "Box".setting_ticket
+                SET ${setClause}
+                WHERE id_branches = $${fields.length + 1};
+            `;
+            await database.query(query, [...values, id_branch]);
+            return true;
+        } catch (error) {
+            console.error("PostgreSQL update error:", error);
+            return false;
+        }
+    }
+}
+
+
 module.exports = {
     get_the_setting_of_the_ticket,
     update_setting_ticket
