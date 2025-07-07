@@ -1,43 +1,43 @@
 <style>
-.div-token {
-  margin: 1rem auto;
-  max-width: 600px;
-  padding: 1rem;
-  border-radius: 12px;
-  font-family: 'Segoe UI', sans-serif;
-}
+  .div-token {
+    margin: 1rem auto;
+    max-width: 600px;
+    padding: 1rem;
+    border-radius: 12px;
+    font-family: 'Segoe UI', sans-serif;
+  }
 
-.div-token label {
-  display: block;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-  color: #333;
-  font-size: 1rem;
-}
+  .div-token label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: #333;
+    font-size: 1rem;
+  }
 
-.token-box {
-  padding: 0.75rem 1rem;
-  background-color: #f1f4ff;
-  border: 1px dashed #1649FF;
-  color: #1649FF;
-  font-size: 1rem;
-  word-break: break-all;
-  border-radius: 8px;
-  font-family: monospace;
-}
+  .token-box {
+    padding: 0.75rem 1rem;
+    background-color: #f1f4ff;
+    border: 1px dashed #1649FF;
+    color: #1649FF;
+    font-size: 1rem;
+    word-break: break-all;
+    border-radius: 8px;
+    font-family: monospace;
+  }
 </style>
 <div class="container mt-4">
   <div class="card">
     <div class="card-body">
       <label><i class="fi fi-sr-store-alt"></i> <strong>Configuración de Tienda Online</strong></label>
       <hr>
+      <div id="loginMessage"></div>
+      <form id="formDataBranch" enctype="multipart/form-data">
 
-      <form action="https://pluspuntodeventa.com/api/branch_online/update_information_branch_online.php" method="POST" enctype="multipart/form-data">
-      
-      <!---information for in the web--->
-      <input type="hidden" value="{{token}}" name="token">
-      <input type="hidden" value="{{token}}" name="user_email">
-      <input type="hidden" value="{{token}}" name="password">
+        <!---information for in the web--->
+        <input type="hidden" value="{{token}}" name="token" id="token">
+        <input type="hidden" value="{{token}}" name="user_email" id="user_email">
+        <input type="hidden" value="{{token}}" name="password" id="password">
 
 
 
@@ -50,35 +50,35 @@
         <div class="row">
           <!-- Datos -->
           <div class="col">
-            <div class="div-token">
-                <label>Tu Token de Seguridad:</label>
-                <div class="token-box" id="user-token">{{token}}</div>       
+            <a href="https://pluspuntodeventa.com/app/store/store.php?token={{token}}" target="_blank">👉 Vista previa
+              de tu web</a>
+
+            <div class="form-group text-center">
+              <img src="https://cdn.pixabay.com/photo/2017/01/25/17/35/picture-2008484_1280.png" id="imgEmployee"
+                class="img-fluid rounded" style="max-height: 160px;">
             </div>
 
-            <div class="row">
-            <div class="form-group text-center">
-              <img src="https://cdn.pixabay.com/photo/2017/01/25/17/35/picture-2008484_1280.png"
-                id="imgEmployee" class="img-fluid rounded" style="max-height: 160px;">
+            <center>
+              <label for="inputImg" class="custom-file-upload" style="cursor:pointer; color:#1649FF;">
+                <input type="file" name="image" accept="image/*" id="inputImg" style="display:none;">
+                <i class="fas fa-upload"></i> Subir imagen
+              </label>
+            </center>
+
+            <div class="mb-3">
+              <label for="paypalKey" class="form-label">Titulo de la web</label>
+              <input type="text" class="form-control" name="title_web" placeholder="Ejemplo: Mi Tienda Online">
             </div>
-                            <center>
-                                <label for="inputImg" class="custom-file-upload">
-                                    <input type="file" name="image" accept="image/*" id="inputImg"
-                                        style="display: none;">
-                                    <input type="text" name="imageUrl" id="imageUrl" class="form-control"
-                                        placeholder="https://ejemplo.com/imagen.jpg" style="display: none;">
-                                    <i class="fas fa-upload"></i> Subir imagen
-                                </label>
-                            </center>
-            </div>
+
             <div class="mb-3">
               <label for="nombreSitio" class="form-label">Nombre de la tienda</label>
-              <input type="text" class="form-control" id="nombreSitio" name="nombreSitio"
+              <input type="text" class="form-control" id="nombreSitio" name="name"
                 placeholder="Ejemplo: Super Pepe Market">
             </div>
 
             <div class="mb-3">
               <label for="direccion" class="form-label">Dirección del negocio</label>
-              <input type="text" class="form-control" id="direccion" name="direccion"
+              <input type="text" class="form-control" id="direccion" name="address"
                 placeholder="Ejemplo: Calle 123, Ciudad, Estado">
             </div>
 
@@ -100,35 +100,36 @@
 
             <div class="mb-3">
               <label for="paypalKey" class="form-label">Client ID de PayPal</label>
-              <input type="text" class="form-control" id="paypalKey" name="paypalKey"
+              <input type="text" class="form-control" id="paypalKey" name="paypal_id"
                 placeholder="Ejemplo: AbcdEFghIJKLmnopQRstUvWXyz1234" disabled>
             </div>
 
             <div class="form-check">
-              <input type="checkbox" class="form-check-input" id="mostrarUbicacion" name="mostrarUbicacion">
+              <input type="checkbox" class="form-check-input" id="show_address" name="show_address">
               <label class="form-check-label" for="mostrarUbicacion">Mostrar ubicación en la tienda</label>
             </div>
 
             <div class="mb-3">
               <label for="googleMaps" class="form-label">URL de Google Maps</label>
-              <input type="text" class="form-control" id="googleMaps" name="googleMaps"
+              <input type="text" class="form-control" id="googleMaps" name="address_google"
                 placeholder="Ejemplo: https://maps.google.com/..." disabled>
             </div>
 
             <div class="mb-3">
               <label for="nombreSitio" class="form-label">Email para notificar los pagos</label>
-              <input type="text" class="form-control" id="nombreSitio" name="nombreSitio"
+              <input type="text" class="form-control" id="email_pay" name="email_pay"
                 placeholder="Ejemplo: email@123hotmail.com" required>
             </div>
 
             <div class="mb-3">
               <label for="color" class="form-label">Color principal de la tienda</label>
-              <input type="color" class="form-control form-control-color" id="color" name="color"
-                value="#1649FF" title="Elige tu color">
+              <input type="color" class="form-control form-control-color" id="color" name="color" value="#1649FF"
+                title="Elige tu color">
             </div>
 
 
-            <button type="submit" class="btn btn-success w-100">Guardar Cambios</button>
+            <button type="button" class="btn btn-success w-100" onclick="send_information_to_the_server()">Guardar
+              Cambios</button>
           </div>
         </div>
       </form>
@@ -137,7 +138,33 @@
 </div>
 
 <script>
-  // Activar inputs según el check
+  // Preview instantáneo de la imagen seleccionada
+  document.getElementById('inputImg').addEventListener('change', function () {
+    const file = this.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      document.getElementById('imgEmployee').src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+</script>
+<script>
+  const loadingOverlay = document.getElementById('loadingOverlay');
+  //update the inputs of email and password 
+  const savedEmail = localStorage.getItem('user_email');
+  const savedPassword = localStorage.getItem('user_password');
+
+  if (savedEmail) {
+    document.getElementById('user_email').value = savedEmail;
+  }
+
+  if (savedPassword) {
+    document.getElementById('password').value = savedPassword;
+  }
+
+  //her on the inputs with his check
   document.getElementById('checkWhatsapp').addEventListener('change', function () {
     document.getElementById('whatsapp').disabled = !this.checked;
   });
@@ -146,7 +173,113 @@
     document.getElementById('paypalKey').disabled = !this.checked;
   });
 
-  document.getElementById('mostrarUbicacion').addEventListener('change', function () {
+  document.getElementById('show_address').addEventListener('change', function () {
     document.getElementById('googleMaps').disabled = !this.checked;
   });
+
+  //her we will send this infotmation to the api of plus
+  async function send_information_to_the_server() {
+    const messageDiv = document.getElementById('loginMessage') || document.createElement('div');
+    loadingOverlay.style.display = 'flex';
+
+    const form = document.getElementById('formDataBranch');
+    const formData = new FormData(form);
+
+    // Asegurarse de enviar los checkbox con valores 1 o 0
+    formData.set('enable_whatsapp', document.getElementById('checkWhatsapp').checked ? 1 : 0);
+    formData.set('enable_paypal', document.getElementById('checkPaypal').checked ? 1 : 0);
+    formData.set('show_address', document.getElementById('show_address').checked ? 1 : 0);
+
+    try {
+      const response = await fetch('https://pluspuntodeventa.com/api/branch_online/update_information_branch_online.php', {
+        method: 'POST',
+        body: formData
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        messageDiv.innerHTML = `<div class="alert alert-success">✅ ${result.message || 'Cambios guardados correctamente.'}</div>`;
+
+        // Si el backend responde con la ruta de imagen, actualizar la interfaz
+        if (result.imageUrl) {
+          document.getElementById('imgEmployee').src = result.imageUrl;
+          document.getElementById('imageUrl').value = result.imageUrl;
+        }
+      } else {
+        messageDiv.innerHTML = `<div class="alert alert-danger">❌ ${result.message || 'No se pudo guardar.'}</div>`;
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      messageDiv.innerHTML = '<div class="alert alert-danger">❌ Error de conexión con el servidor.</div>';
+    }
+
+    if (!document.getElementById('loginMessage')) {
+      messageDiv.id = 'loginMessage';
+      form.parentNode.insertBefore(messageDiv, form);
+    }
+
+    loadingOverlay.style.display = 'none';
+  }
+
+
+
+  async function load_data_store_from_the_server() {
+    const email = localStorage.getItem('user_email');
+    const password = localStorage.getItem('user_password');
+    const token = document.getElementById('token').value;
+
+    if (!email || !password || !token) {
+      console.warn("Faltan credenciales para obtener los datos.");
+      return;
+    }
+
+    
+    loadingOverlay.style.display = 'flex';
+    try {
+      const response = await fetch('https://pluspuntodeventa.com/api/branch_online/get_information_branch_online.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_email: email, password, token })
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        const data = result.data;
+
+        // Rellenar campos con los datos obtenidos
+        document.querySelector('input[name="image"]').value = data.img;
+        document.getElementById('imgEmployee').src = data.img;
+
+        document.querySelector('input[name="name"]').value = data.name || '';
+        document.querySelector('input[name="address"]').value = data.address || '';
+        document.querySelector('input[name="address_google"]').value = data.address_google || '';
+        document.querySelector('input[name="whatsapp"]').value = data.whatsapp || '';
+        document.querySelector('input[name="paypal_id"]').value = data.paypal_id || '';
+        document.querySelector('input[name="color"]').value = data.color || '#1649FF';
+        document.querySelector('input[name="title_web"]').value = data.title_web || 'Tienda Online por PLUS';
+        document.querySelector('input[name="email_pay"]').value = data.email_pay || '';
+
+        // Checks
+        document.getElementById('checkWhatsapp').checked = data.enable_whatsapp == 1;
+        document.getElementById('whatsapp').disabled = data.enable_whatsapp != 1;
+
+        document.getElementById('checkPaypal').checked = data.enable_paypal == 1;
+        document.getElementById('paypalKey').disabled = data.enable_paypal != 1;
+
+        document.getElementById('show_address').checked = data.show_address == 1;
+        document.getElementById('googleMaps').disabled = data.show_address != 1;
+
+        console.log("✅ Datos de la tienda cargados correctamente.");
+      } else {
+        console.warn("❌ No se pudieron obtener los datos: " + result.message);
+      }
+    } catch (error) {
+      console.error("❌ Error al cargar los datos:", error);
+    }
+
+    loadingOverlay.style.display = 'none';
+  }
+
+  document.addEventListener('DOMContentLoaded', load_data_store_from_the_server);
 </script>
