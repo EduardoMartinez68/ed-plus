@@ -528,6 +528,15 @@
                     {{/each}}
                     {{/if}}
 
+                    {{#if user.edit_shop_online}}
+                    {{#each branchFree}}
+                    <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/products-shop')">
+                        <img src="/img/apps/catalogo.webp" alt="Editar Sucursal" loading="lazy">
+                        <span>Catálogo Online</span>
+                    </div>
+                    {{/each}}
+                    {{/if}}
+
                     {{#if user.modify_hardware}}
                     {{#each branchFree}}
                     <div class="app-icon" onclick="nextWeb('{{id}}/{{id_companies}}/edit-branch-free')">

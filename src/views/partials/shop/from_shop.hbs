@@ -234,7 +234,7 @@
       return;
     }
 
-    
+
     loadingOverlay.style.display = 'flex';
     try {
       const response = await fetch('https://pluspuntodeventa.com/api/branch_online/get_information_branch_online.php', {
@@ -248,7 +248,7 @@
         const data = result.data;
 
         // Rellenar campos con los datos obtenidos
-        document.querySelector('input[name="image"]').value = data.img;
+        //document.querySelector('input[name="image"]').value = data.img;
         document.getElementById('imgEmployee').src = data.img;
 
         document.querySelector('input[name="name"]').value = data.name || '';
