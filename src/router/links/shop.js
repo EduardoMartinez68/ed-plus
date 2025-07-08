@@ -89,6 +89,27 @@ router.get('/:id_company/:id_branch/add-products-shop', isLoggedIn, async (req, 
     }
 });
 
+router.get('/:id_company/:id_branch/:id_product/edit-products-shop', isLoggedIn, async (req, res) => {
+    const { id_company, id_branch, id_product } = req.params;
+ 
+    //fitst we will see if exist a token in this desktop
+    const token=getToken();
+    if(token){
+        //we will see if the user not have the permission for this App.
+        if (!this_user_have_this_permission(req.user, id_company, id_branch, 'edit_shop_online')) {
+            req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
+            return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
+        }
+
+
+        const branchFree = await get_data_branch(id_branch);
+        res.render('links/shop/editProducts', {branchFree, token, id_product});
+    }else{
+        req.flash('message', 'Lo siento, no tienes ningun Token valido en este equipo 😅');
+        return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);  
+    }
+});
+
 
 
 module.exports = router;

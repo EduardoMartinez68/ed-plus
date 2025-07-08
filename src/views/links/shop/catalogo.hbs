@@ -1,10 +1,11 @@
 <style>
 .container-products {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
   gap: 1rem;
-  justify-content: center;
-  padding-top: 1rem;
+  padding: 1rem;
+  justify-items: stretch;
+  align-items: start;
 }
 
 .product-card {
@@ -74,6 +75,10 @@
 </style>
 <br>
 <input type="hidden" id="token" name="token" value="{{token}}">
+{{#each branchFree}}
+<input type="hidden" id="branchId" value="{{id}}">
+<input type="hidden" id="companyId" value="{{id_companies}}">
+{{/each}}
 <div class="container">
     <div class="card">
         <div class="card-body">
@@ -81,11 +86,10 @@
             <hr>
             <div class="row">
                 <div class="col-10">
-                    <div class="input-group mb-3">
-                        <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3" placeholder="Escribe un codigo de barra o nombre">
-                        <button class="btn btn-edit">Buscar</button>
-                        
-                    </div>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" id="searchInput" aria-describedby="basic-addon3" placeholder="Escribe un código de barra o nombre">
+                    <button class="btn btn-edit" type="button" onclick="searchProducts()">Buscar</button>
+                </div>
                 </div>
                 <div class="col-2">
                     {{#each branchFree}}
@@ -116,11 +120,11 @@
 
 
 <script>
-
-
 function renderProducts(products) {
   const container = document.getElementById('productList');
   container.innerHTML = '';
+  const idBranch=document.getElementById('branchId').value;
+  const idCompany=document.getElementById('companyId').value;
 
   products.forEach(prod => {
     const card = document.createElement('div');
@@ -133,7 +137,7 @@ function renderProducts(products) {
         <div class="price">$${prod.price.toFixed(2)}</div>
         <small>Existencia: ${prod.exist}</small>
         <div class="actions">
-          <button onclick="editProduct(${prod.id_producto})" class="btn btn-edit">Editar</button>
+          <button onclick="nextWeb('${idCompany}/${idBranch}/${prod.id_producto}/edit-products-shop')" class="btn btn-edit">Editar</button>
           <a href="/producto/${prod.id_producto}" target="_blank" class="btn btn-edit">Ver</a>
         </div>
       </div>
@@ -195,4 +199,44 @@ function renderProducts(products) {
 
 
   load_the_menu_from_the_server();
+
+
+
+async function searchProducts() {
+  const query = document.getElementById('searchInput').value.trim();
+  if (!query) return;
+
+  if (!email || !password || !token) {
+    console.warn("Faltan credenciales para buscar.");
+    return;
+  }
+
+  loadingOverlay.style.display = 'flex';
+  
+  try {
+    const response = await fetch('https://pluspuntodeventa.com/api/branch_online/search_products.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        user_email: email,
+        password,
+        token,
+        query
+      })
+    });
+
+    const result = await response.json();
+    if (result.success) {
+      renderProducts(result.data);
+      document.getElementById('pageNumber').textContent = `Resultados de búsqueda (${result.data.length})`;
+    } else {
+      console.warn("❌ No se pudieron obtener los datos: " + result.message);
+      document.getElementById('productList').innerHTML = '<p>No se encontraron resultados.</p>';
+    }
+  } catch (error) {
+    console.error("❌ Error al buscar productos:", error);
+  }
+
+  loadingOverlay.style.display = 'none';
+}
 </script>
