@@ -8,9 +8,12 @@ import winreg
 # === setting ===
 API_VERSION_URL = "https://pluspuntodeventa.com/SOFTWARES/setting.php"  # this API return {"version": "1.8.0", "url": "https://tusitio.com/downloads/pos_1.8.0.exe"}
 
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
+import sys
+if getattr(sys, 'frozen', False):
+    BASE_DIR = os.path.dirname(sys.executable)
+else:
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    
 EXE_PATH = os.path.join(BASE_DIR, "PLUS", "PLUS.exe") #this is the exe that run the POS
 TEMP_EXE_PATH = os.path.join(BASE_DIR, "PLUS", "PLUS_temp.exe") #this is for save the change
 
@@ -99,7 +102,8 @@ def update_setting_driver(version):
 
 
 def run_software(EXE_PATH):
-    subprocess.Popen([EXE_PATH], shell=True)
+    exe_dir = os.path.dirname(EXE_PATH)
+    subprocess.Popen([EXE_PATH], shell=True, cwd=exe_dir)
 
 
 def update_software(version_local, last_version, url_download,TEMP_EXE_PATH, EXE_PATH):

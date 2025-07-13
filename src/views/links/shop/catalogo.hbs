@@ -72,6 +72,14 @@
 .nav-btn:hover {
   background-color: var(--color-hover);
 }
+
+.description-cat{
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* Cambia a 2 o 1 si deseas menos líneas */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 </style>
 <br>
 <input type="hidden" id="token" name="token" value="{{token}}">
@@ -133,7 +141,7 @@ function renderProducts(products) {
       <img src="${prod.img}" alt="${prod.name}">
       <div class="product-card-body">
         <h5>${prod.name}</h5>
-        <p>${prod.description}</p>
+        <p class="description-cat">${prod.description}</p>
         <div class="price">$${prod.price.toFixed(2)}</div>
         <small>Existencia: ${prod.exist}</small>
         <div class="actions">

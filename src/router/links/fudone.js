@@ -399,7 +399,7 @@ router.post('/:id_lot/edit-lot-quantity', isLoggedIn, async (req, res) => {
     try {
         let updatedLot;
 
-        if (TYPE_DATABASE === 'sqlite') {
+        if (TYPE_DATABASE === 'mysqlite') {
             const updateQuery = `
                 UPDATE lots 
                 SET current_existence = ?
@@ -460,7 +460,7 @@ router.post('/:id_lot/update-lot-quantity-for-sale', isLoggedIn, async (req, res
     try {
         let updatedLot;
 
-        if (TYPE_DATABASE === 'sqlite') {
+        if (TYPE_DATABASE === 'mysqlite') {
             // Actualizamos la existencia
             const updateQuery = `
                 UPDATE lots 
@@ -510,7 +510,7 @@ async function add_move_to_the_history(id_companies, id_branches, id_employees, 
         let insertQuery;
         let result;
 
-        if (TYPE_DATABASE === 'sqlite') {
+        if (TYPE_DATABASE === 'mysqlite') {
             insertQuery = `
                 INSERT INTO history_move_lot 
                 (id_companies, id_branches, id_employees, id_lots, newCant, type_move) 
@@ -663,7 +663,7 @@ router.post('/:id_combo_features/add-lot', isLoggedIn, async (req, res) => {
     }
 
     try {
-        if (TYPE_DATABASE === 'sqlite') {
+        if (TYPE_DATABASE === 'mysqlite') {
             const insertQuery = `
                 INSERT INTO lots
                 (number_lote, initial_existence, current_existence, date_of_manufacture, expiration_date, id_dish_and_combo_features, id_branches, id_companies)
@@ -748,7 +748,7 @@ async function update_existence_use_lot(id_combo_features) {
     try {
         let totalExistence = 0;
 
-        if (TYPE_DATABASE === 'sqlite') {
+        if (TYPE_DATABASE === 'mysqlite') {
             // Paso 1: Sumar existencias actuales en SQLite
             totalExistence = await new Promise((resolve, reject) => {
                 const query = `
@@ -812,7 +812,7 @@ router.post('/:id_combo_features/:id_lot/edit-lot', isLoggedIn, async (req, res)
     }
 
     try {
-        if (TYPE_DATABASE === 'sqlite') {
+        if (TYPE_DATABASE === 'mysqlite') {
             // Para SQLite usamos ? como placeholders
             const updateQuery = `
                 UPDATE lots
@@ -889,7 +889,7 @@ router.post('/:id_lot/delete-lot', isLoggedIn, async (req, res) => {
     }
 
     try {
-        if (TYPE_DATABASE === 'sqlite') {
+        if (TYPE_DATABASE === 'mysqlite') {
             // SQLite no tiene rowCount, usamos changes en run callback
             await new Promise((resolve, reject) => {
                 database.run(`DELETE FROM lots WHERE id = ?`, [id_lot], function (err) {
@@ -979,7 +979,7 @@ router.post('/:id_dish_and_combo_features/add-promotion-free', isLoggedIn, async
 });
 
 async function insert_promotion(id_company, id_branch, id_dish_and_combo_features, newPromotion) {
-    if (TYPE_DATABASE === 'sqlite') {
+    if (TYPE_DATABASE === 'mysqlite') {
         // En SQLite: sin esquema, con '?' como placeholders, y RETURNING no funciona, se obtiene lastID
         const queryText = `
             INSERT INTO promotions
@@ -1060,7 +1060,7 @@ router.post('/update-promotion', isLoggedIn, async (req, res) => {
 });
 
 async function update_promotion(newPromotion) {
-    if (TYPE_DATABASE === 'sqlite') {
+    if (TYPE_DATABASE === 'mysqlite') {
         // SQLite: sin esquema, placeholders '?', no RETURNING, usamos run + lastID no aplica para UPDATE, así que verificamos cambios con changes
         const queryText = `
             UPDATE promotions
@@ -1149,7 +1149,7 @@ router.post('/:id_promotion/delete-promotion', isLoggedIn, async (req, res) => {
 
 
 async function delete_promotion(id_promotion) {
-    if (TYPE_DATABASE === 'sqlite') {
+    if (TYPE_DATABASE === 'mysqlite') {
         // SQLite no soporta RETURNING, usamos run + this.changes para verificar si borró algo
         const queryText = `DELETE FROM promotions WHERE id = ?;`;
         return new Promise((resolve, reject) => {

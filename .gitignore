@@ -8,6 +8,12 @@ build/installers/*
 # Ignorar todo el contenido dentro de updates/PLUS/* que son los ejecutables de puebra para actualizar el POS
 updates/PLUS/*
 updates/DRIVER/*
+updates/build/*
+updates/dist/*
+updates/PLUS.exe
+
+printer_and_scales/build/*
+printer_and_scales/dist/*
 
 # Ignorar todo el contenido dentro de dist
 dist/*

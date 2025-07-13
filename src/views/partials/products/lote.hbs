@@ -362,8 +362,8 @@
             // add cell with the value
             newRow.innerHTML = `
                 <td><label><strong>${lot.value}</strong></label></td>
-                <td><label date_of_manufacture="${answer.current_existence}">${formatDateForm(creation_date.value)}</label></td>
-                <td><label expiration_date="${answer.date_of_manufacture}">${formatDateForm(expiration_date.value)}</label></td>
+                <td><label date_of_manufacture="${answer.date_of_manufacture}">${formatDateForm(creation_date.value)}</label></td>
+                <td><label expiration_date="${answer.expiration_date}">${formatDateForm(expiration_date.value)}</label></td>
                 <td><label>${amount.value}</label></td>
                 <td>
                     <button onclick="editLot('${answer.id}',this)"  type="button"
@@ -391,6 +391,7 @@
 
 
         update_inventory();
+        draw_lot_expired_in_my_table();
     }
 
     async function send_information_to_the_server(lot, creation_date, expiration_date, amount) {
@@ -402,7 +403,6 @@
             const initial_existence=amount;
             const current_existence=amount;
             const date_of_manufacture=creation_date;
-
             const response = await fetch(`/links/${id_productFacture}/add-lot`, { // Se eliminó el paréntesis incorrecto aquí
                 method: 'POST',
                 headers: {
@@ -430,9 +430,17 @@
 
     //----------------------------------
     async function deleteLot(idLot,button){
+        
         let row = button.closest("tr"); // Obtiene la fila más cercana
         let currentExistenceCell = row.querySelector("td:nth-child(4) label"); // Obtiene la celda de existencia actual
 
+        //first we will see if exist a exist with the first 
+        if (!currentExistenceCell) {
+            let dataRow=row.querySelector("td:nth-child(4)");
+            currentExistenceCell = dataRow;
+        }
+
+        //now we will see if exist the cant
         if (!currentExistenceCell) {
             warningMessage('Ups! 😅',"No se pudo verificar la existencia actual.");
             return;
@@ -511,21 +519,40 @@
         openPopupEdit(button);
     }
 
-    function openPopupEdit(button) {
+    function openPopupEdit(button, initial) {
         let row = button.closest("tr"); // get the row most close
         let cells = row.getElementsByTagName("td");
         cellEditLot=cells; //her save the cell for update after
 
         //get all the value of the lot
         let numberLote = cells[0].textContent.trim();
+
+        //we will see if the data was create in this session or was create from the database. 
         let dateOfManufacture = cells[1].getAttribute("date_of_manufacture");
+        if(dateOfManufacture==null){
+            //if was create in this moment, we will get the information of the label
+            let labelCell1 = cells[1].querySelector("label"); 
+            dateOfManufacture = labelCell1.getAttribute("date_of_manufacture");
+            document.getElementById('creation_date-edit').value=dateOfManufacture;
+        }else{
+            document.getElementById('creation_date-edit').value=dateOfManufacture;//create_date_of_the_lot(new Date(dateOfManufacture));
+        }
+        
+        //we will see if the data was create in this session or was create from the database. 
         let expirationDate = cells[2].getAttribute("expiration_date");
+        if(expirationDate==null){
+            //if was create in this moment, we will get the information of the label
+            let labelCell2 = cells[2].querySelector("label"); 
+            expirationDate = labelCell2.getAttribute("expiration_date");
+            document.getElementById('expiration_date-edit').value=expirationDate; //create_date_of_the_lot(new Date(expirationDate));
+        }else{
+            document.getElementById('expiration_date-edit').value=expirationDate;
+        }
+
         let currentExistence = cells[3].textContent.trim();
 
         //her we will update the inputs of the pop
         document.getElementById('lot-edit').value=numberLote;
-        document.getElementById('creation_date-edit').value=create_date_of_the_lot(new Date(dateOfManufacture));
-        document.getElementById('expiration_date-edit').value=create_date_of_the_lot(new Date(expirationDate));
         document.getElementById('amount-edit').value=currentExistence;
 
         //open the popup
@@ -713,7 +740,7 @@
                 expirationDateCell.textContent = formatDate(expirationDateCell.textContent);
             }
             if (existenceDateCell) {
-                existenceDateCell.textContent = formatDate(existenceDateCell.textContent);
+                existenceDateCell.textContent = formatDateForm(existenceDateCell.textContent)//formatDate(existenceDateCell.textContent);
             }
         });
     });

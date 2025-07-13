@@ -327,9 +327,7 @@
 
         //know if could add the lot to the database 
         if (answer.answer) {
-            console.log(answer)
-            console.log(answer.idPromotion.id)
-            add_the_promotion_to_the_table(newPromotion,answer.idPromotion.id); //add the promotion to the table
+            add_the_promotion_to_the_table(newPromotion,answer.idPromotion); //add the promotion to the table
             closePopupPromotion();
             confirmationMessage('Promoción agregada 😁', '')
         } else {
@@ -362,7 +360,6 @@
             }
 
             const data = await response.json();
-
             if (data.message) {
                 return { answer: true, message: data.message, idPromotion:data.idPromotion };  // Usar el mensaje del servidor
             } else {

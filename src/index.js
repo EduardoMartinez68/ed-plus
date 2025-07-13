@@ -179,6 +179,7 @@ create_all_the_file();
 const notifier = require('node-notifier');
 const { checkTrialStatus} = require('./plusD');
 checkTrialStatus();
+/*
 if (!checkTrialStatus()) {
     notifier.notify({
         title: 'Licencia Expirada',
@@ -188,9 +189,10 @@ if (!checkTrialStatus()) {
     });
     //activation.html
     // Bloqueas toda la app
+    console.log('Licencia Demo Expirada')
     process.exit(1);
 }
-
+*/
 
 
 //----------------------server application

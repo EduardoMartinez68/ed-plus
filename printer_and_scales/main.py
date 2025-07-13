@@ -11,6 +11,11 @@ from escpos.printer import Usb
 app = Flask(__name__)
 CORS(app)
 
+import escpos
+print('escops')
+print(escpos.__file__)
+
+
 @app.route("/impresoras", methods=["GET"])
 def impresoras():
     return jsonify(get_connected_printers())
