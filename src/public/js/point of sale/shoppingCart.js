@@ -11,7 +11,7 @@ window.onload = () => {
 
 let cartTotal = 0;
 
-const carsInWait=[]
+const carsInWait = []
 
 //update value of the cars in wait, this is for that the user can see the cars in wait after refresh the page
 /*
@@ -22,11 +22,11 @@ if (storedCarts) {
 }
 */
 
-async function create_a_sale_in_wait(){
-    const add_product_on_backorder=document.getElementById('add_product_on_backorder');
-    if(add_product_on_backorder==null){
+async function create_a_sale_in_wait() {
+    const add_product_on_backorder = document.getElementById('add_product_on_backorder');
+    if (add_product_on_backorder == null) {
         //if the user not have the permission to remove the product, we will send a message of warning
-        if(!await this_user_is_admin('Crear Venta en espera ⌛','add_product_on_backorder')){
+        if (!await this_user_is_admin('Crear Venta en espera ⌛', 'add_product_on_backorder')) {
             warningMessage('🐣 ¡Ay, travieso!', 'Este superpoder está bloqueado para ti... por ahora.');
             return;
         }
@@ -46,14 +46,14 @@ async function create_a_sale_in_wait(){
     const copyCartItems = [...cartItems];
 
 
-    const copyRecipe=[...information_of_recipe];
-    const informationCartInWait={
-        emailClient:emailClient.textContent,
-        id_customer:id_customer,
-        date:formattedDate,
-        items:copyCartItems,
-        cartTotal:cartTotal,
-        recipe:copyRecipe
+    const copyRecipe = [...information_of_recipe];
+    const informationCartInWait = {
+        emailClient: emailClient.textContent,
+        id_customer: id_customer,
+        date: formattedDate,
+        items: copyCartItems,
+        cartTotal: cartTotal,
+        recipe: copyRecipe
     };
 
     carsInWait.push(informationCartInWait); //add the cart to the array of cars
@@ -64,7 +64,7 @@ async function create_a_sale_in_wait(){
     emailClient.textContent = '';
 
     cartItems.length = 0; //restart the cart
-    information_of_recipe.length=0; //restart the recipe
+    information_of_recipe.length = 0; //restart the recipe
     updateCart(); //update the UI of the shooping cart for delete all the products
 
     notificationMessage(`Nuevo carrito agregado ❤️`, 'Acabas de agregar un carrito a la lista de espera');
@@ -72,10 +72,10 @@ async function create_a_sale_in_wait(){
 
 
 async function show_popup_cart_in_wait() {
-    const view_products_on_backorder=document.getElementById('view_products_on_backorder');
-    if(view_products_on_backorder==null){
+    const view_products_on_backorder = document.getElementById('view_products_on_backorder');
+    if (view_products_on_backorder == null) {
         //if the user not have the permission to remove the product, we will send a message of warning
-        if(!await this_user_is_admin('Ver Ventas en espera ⌛','view_products_on_backorder')){
+        if (!await this_user_is_admin('Ver Ventas en espera ⌛', 'view_products_on_backorder')) {
             warningMessage('🐣 ¡Ay, travieso!', 'Este superpoder está bloqueado para ti... por ahora.');
             return;
         }
@@ -131,7 +131,7 @@ async function show_popup_cart_in_wait() {
             const index = parseInt(item.getAttribute('data-index'));
 
             //we will see if can return the cart to the point of sale
-            if(await update_cart_in_wait(index)){
+            if (await update_cart_in_wait(index)) {
                 carsInWait.splice(index, 1);
                 localStorage.setItem('carsInWait', JSON.stringify(carsInWait)); // actualizar localStorage
             }
@@ -140,8 +140,8 @@ async function show_popup_cart_in_wait() {
 }
 
 async function show_popup_ticket_history() {
-    const view_ticket=document.getElementById('view_ticket');
-    if(view_ticket==null){
+    const view_ticket = document.getElementById('view_ticket');
+    if (view_ticket == null) {
         if (!await this_user_is_admin('Ver historial de tickets 📄', 'view_ticket')) {
             warningMessage('🕵️‍♂️ ¡Acceso denegado!', 'No tienes permiso para ver el historial de tickets.');
             return;
@@ -186,22 +186,22 @@ async function show_popup_ticket_history() {
 
     // Botones de reimpresión
     document.querySelectorAll('.btn-reprint-ticket').forEach(btn => {
-        btn.addEventListener('click',async (e) => {
+        btn.addEventListener('click', async (e) => {
             const index = parseInt(btn.getAttribute('data-index'));
             overlay.remove();
 
             const ticket = listTicket[index];
-            await sned_information_to_the_server_for_print_the_ticket(ticket.texto || ticket,true); // Usa tu función de impresión aquí
+            await sned_information_to_the_server_for_print_the_ticket(ticket.texto || ticket, true); // Usa tu función de impresión aquí
         });
     });
 }
 
 
-async function update_cart_in_wait(index) {  
-    const select_product_on_backorder=document.getElementById('select_product_on_backorder');
-    if(select_product_on_backorder==null){
+async function update_cart_in_wait(index) {
+    const select_product_on_backorder = document.getElementById('select_product_on_backorder');
+    if (select_product_on_backorder == null) {
         //if the user not have the permission to remove the product, we will send a message of warning
-        if(!await this_user_is_admin('Seleccionar Venta en espera ⌛','select_product_on_backorder')){
+        if (!await this_user_is_admin('Seleccionar Venta en espera ⌛', 'select_product_on_backorder')) {
             warningMessage('🐣 ¡Ay, travieso!', 'Este superpoder está bloqueado para ti... por ahora.');
             return;
         }
@@ -210,7 +210,7 @@ async function update_cart_in_wait(index) {
     //first we will see if exist a product in the cart 
     if (cartItems.length > 0) {
         //we will see if the user would like delete the product
-        if (!await questionMessage('Tienes productos en este carrito 🛒','¿Estás seguro de querer eliminar el carrito actual?')) {
+        if (!await questionMessage('Tienes productos en este carrito 🛒', '¿Estás seguro de querer eliminar el carrito actual?')) {
             return false; //if the user not would like delete the product, we will return false
         }
     }
@@ -221,9 +221,9 @@ async function update_cart_in_wait(index) {
     emailClient.textContent = cart.emailClient;
 
     cartItems = [...cart.items]; //copy the cart to the cart of the point of sale
-    cartTotal=cart.cartTotal;
+    cartTotal = cart.cartTotal;
 
-    information_of_recipe=[...cart.recipe]; //copy the recipe to the recipe of the point of sale
+    information_of_recipe = [...cart.recipe]; //copy the recipe to the recipe of the point of sale
 
     updateCart(); //update the UI of the shooping cart for delete all the products
 
@@ -280,12 +280,12 @@ async function buy_my_car() {
     }
 }
 
-async function save_the_recipe_in_the_database(lotId,id_customer){
+async function save_the_recipe_in_the_database(lotId, id_customer) {
     //her we will save the recipe in the database
     const answerServer = await get_answer_server(information_of_recipe_for_sned_to_the_server, `/fud/recipe-post`);
 
-    selectedLots=[] //this is for remove all the lot of the product in the cart
-    information_of_recipe_for_sned_to_the_server=[] //this is for remove all the recipe in the cart
+    selectedLots = [] //this is for remove all the lot of the product in the cart
+    information_of_recipe_for_sned_to_the_server = [] //this is for remove all the recipe in the cart
 }
 
 async function send_buy_to_the_server(total, moneyReceived, exchange, comment, id_customer, cash, credit, debit) {
@@ -319,28 +319,28 @@ async function update_the_lots_of_the_product_in_the_car(id_customer) {
     const existProductThatNeedPrescription = information_of_recipe.length > 0;
     for (let lotElement of document.querySelectorAll('.lot-item')) { // Usar 'for...of' en lugar de 'forEach'
         let lotId = lotElement.getAttribute('data-lot-id'); // ID del lote en el DOM
-        
+
         let foundLot = selectedLots.find(lot => lot.idLot == lotId); // Buscar en la lista de lotes seleccionados
         if (foundLot) {
             let currentExistence = parseInt(lotElement.getAttribute('data-current-existence'), 10);
-            
+
             if (!isNaN(currentExistence)) { // Asegurar que sea un número válido
                 let newQuantity = foundLot.quantity //currentExistence - foundLot.quantity;
 
                 // Evitar valores negativos
                 newQuantity = newQuantity < 0 ? 0 : newQuantity;
-                
+
                 // Llamar a la función asíncrona
-                await get_answer_server_for_lot({newQuantity:newQuantity}, `/links/${lotId}/update-lot-quantity-for-sale`);
+                await get_answer_server_for_lot({ newQuantity: newQuantity }, `/links/${lotId}/update-lot-quantity-for-sale`);
 
                 // Actualizar el atributo y mostrar en el HTML
                 //lotElement.setAttribute('data-current-existence', newQuantity);
-                
+
                 //we will see if exist product that need prescription in the cart
                 if (existProductThatNeedPrescription) {
                     //her we will know if the product need presciption
-                    const newPrescription=update_the_prescription_for_save_after(foundLot.barcode, lotId, foundLot.quantity, id_customer);
-                    if(newPrescription){ //her know will see if the product need a recipe
+                    const newPrescription = update_the_prescription_for_save_after(foundLot.barcode, lotId, foundLot.quantity, id_customer);
+                    if (newPrescription) { //her know will see if the product need a recipe
                         information_of_recipe_for_sned_to_the_server.push(newPrescription);
                     }
                 }
@@ -360,7 +360,7 @@ async function update_the_lots_of_the_product_in_the_car(id_customer) {
 function update_the_prescription_for_save_after(barcode, newIdLot, newAmount, newIdCustomer) {
     for (let i = 0; i < information_of_recipe.length; i++) {
         let recipe = information_of_recipe[i];
-        
+
         if (recipe.barcode === barcode) {
             let newRecipe = {
                 id_dishes_and_combos: recipe.id_dishes_and_combos,
@@ -503,7 +503,7 @@ async function delete_all_car(total, moneyReceived, exchange, comment) {
     return true;
 }
 
-async function addToCart(img, name, barcode, price, purchaseUnit, this_product_is_sold_in_bulk, id_dishes_and_combos,thisIsProductWithLot=true,this_product_need_a_recipe=false) {
+async function addToCart(img, name, barcode, price, purchaseUnit, this_product_is_sold_in_bulk, id_dishes_and_combos, thisIsProductWithLot = true, this_product_need_a_recipe = false) {
     //her we will see if exist a product in the cart
     const existingItem = cartItems.find(item => item.barcode === barcode);
 
@@ -512,25 +512,25 @@ async function addToCart(img, name, barcode, price, purchaseUnit, this_product_i
 
     //we will see if exit lot of the product
     if (lotsInfo && thisIsProductWithLot) {
-        if(existingItem){
-            warningMessage('Mucho Ojo 👁️','Para agregar más cantidad de este producto, debes eliminarlo y volver a seleccionar los lotes.')
+        if (existingItem) {
+            warningMessage('Mucho Ojo 👁️', 'Para agregar más cantidad de este producto, debes eliminarlo y volver a seleccionar los lotes.')
             return;
         }
 
         //her we will see if the product need a recipe 
-        if (this_product_need_a_recipe=='true' || this_product_need_a_recipe=='1' || this_product_need_a_recipe=='on') {
-            show_recipe(img, name, barcode, price, purchaseUnit, this_product_is_sold_in_bulk, id_dishes_and_combos,thisIsProductWithLot,this_product_need_a_recipe); //this is for show the message pop for get the data of the recipe
+        if (this_product_need_a_recipe == 'true' || this_product_need_a_recipe == '1' || this_product_need_a_recipe == 'on') {
+            show_recipe(img, name, barcode, price, purchaseUnit, this_product_is_sold_in_bulk, id_dishes_and_combos, thisIsProductWithLot, this_product_need_a_recipe); //this is for show the message pop for get the data of the recipe
             return;
         }
 
-        show_all_the_lot_of_the_product(lotsInfo,img, name, barcode, price, purchaseUnit, this_product_is_sold_in_bulk, id_dishes_and_combos);
+        show_all_the_lot_of_the_product(lotsInfo, img, name, barcode, price, purchaseUnit, this_product_is_sold_in_bulk, id_dishes_and_combos);
         return;
     }
 
     //we will see if exist this item in the cart for add a new quantity 
     if (existingItem) {
         //we will see if the product is sold in bulk
-        if (this_product_is_sold_in_bulk == 'true' || this_product_is_sold_in_bulk == '1' || this_product_is_sold_in_bulk=='on') {
+        if (this_product_is_sold_in_bulk == 'true' || this_product_is_sold_in_bulk == '1' || this_product_is_sold_in_bulk == 'on') {
             //update the cant of the product in the scale 
             document.getElementById('scales-store-weight-input').value = existingItem.quantity;
             update_weight_of_the_scale();
@@ -559,7 +559,7 @@ async function addToCart(img, name, barcode, price, purchaseUnit, this_product_i
             //if the product is sould in bulk, we will ask the user the quantity of the product
             quantityForSales = await open_ui_weight_scale(barcode, name, price, 0, 0, 1);
         }
-        
+
         //add a new product to the cart
         cartItems.push({
             img: document.getElementById(img).src,
@@ -575,22 +575,22 @@ async function addToCart(img, name, barcode, price, purchaseUnit, this_product_i
 
         //show a new notification
         notificationMessage(`${name} fue agregado ❤️`, 'El Producto fue agregado correctamente');
-    
+
     }
 
     //update the cart
     updateCart(lotsInfo);
-    
+
 }
 
-function remove_all_the_item_in_the_cart_that_not_exist_in_the_array_of_the_recipe(){
+function remove_all_the_item_in_the_cart_that_not_exist_in_the_array_of_the_recipe() {
     //her code is for that not exist a product in the cart that not exist in the array of the recipe. 
     //This is for not save recipe that the user no have in the cart
-    information_of_recipe = information_of_recipe.filter(recipe => 
+    information_of_recipe = information_of_recipe.filter(recipe =>
         cartItems.some(item => item.barcode === recipe.barcode)
     );
 
-    information_of_recipe_for_sned_to_the_server = information_of_recipe_for_sned_to_the_server.filter(recipe => 
+    information_of_recipe_for_sned_to_the_server = information_of_recipe_for_sned_to_the_server.filter(recipe =>
         cartItems.some(item => item.barcode === recipe.barcode)
     );
 }
@@ -608,7 +608,7 @@ function get_the_lot_of_the_product(barcode) {
     return lotsInfo;
 }
 
-function show_all_the_lot_of_the_product(lotsInfo,img, name, barcode, price, purchaseUnit, this_product_is_sold_in_bulk, id_dishes_and_combos) {
+function show_all_the_lot_of_the_product(lotsInfo, img, name, barcode, price, purchaseUnit, this_product_is_sold_in_bulk, id_dishes_and_combos) {
     // get all the lots
     let lots = [];
     let lotElements = lotsInfo.querySelectorAll("li");
@@ -620,7 +620,7 @@ function show_all_the_lot_of_the_product(lotsInfo,img, name, barcode, price, pur
         let existence = parseInt(lotElement.getAttribute('data-current-existence'), 10);
         let manufactureDate = lotElement.getAttribute('data-manufacture-date');
         let expirationDate = lotElement.getAttribute('data-expiration-date');
-    
+
         lots.push({
             id: idLot,
             nombre: lotNumber,
@@ -631,19 +631,19 @@ function show_all_the_lot_of_the_product(lotsInfo,img, name, barcode, price, pur
     });
 
     // open the popup and show the lot
-    openLotPopup(lots,img, name, barcode, price, purchaseUnit, this_product_is_sold_in_bulk, id_dishes_and_combos);
+    openLotPopup(lots, img, name, barcode, price, purchaseUnit, this_product_is_sold_in_bulk, id_dishes_and_combos);
 }
 //promotionsList
-function updateCart2(lotsInfo=null) {
+function updateCart2(lotsInfo = null) {
     remove_all_the_item_in_the_cart_that_not_exist_in_the_array_of_the_recipe(); //clear the list
 
     const cartItemsContainer = document.getElementById('cart-items');
     cartItemsContainer.innerHTML = '';
 
     cartItems.forEach(item => {
-        
+
         const itemTotal = (item.price - item.discount) * item.quantity;
-        if(lotsInfo){
+        if (lotsInfo) {
             cartItemsContainer.innerHTML += `
             <div class="cart-item-point-of-sales">
                 <img src="${item.img}" alt="${item.name}">
@@ -661,8 +661,8 @@ function updateCart2(lotsInfo=null) {
                 <button class="cart-item-remove-point-of-sales" onclick="removeItem('${item.barcode}')">X</button>
             </div>
         `;
-        }else{
-                cartItemsContainer.innerHTML += `
+        } else {
+            cartItemsContainer.innerHTML += `
                 <div class="cart-item-point-of-sales">
                     <img src="${item.img}" alt="${item.name}">
                     <div class="cart-item-info-point-of-sales">
@@ -693,7 +693,7 @@ function updateCart2(lotsInfo=null) {
 
 function getAllPromotions() {
     const promotionsList = [];
-    
+
     document.querySelectorAll('.div-promotions').forEach(div => {
         const promotion = {
             id: div.getAttribute('id_promotion'),
@@ -716,7 +716,7 @@ function getAllPromotions() {
     return promotionsList;
 }
 
-const promotionsList=getAllPromotions();
+const promotionsList = getAllPromotions();
 
 function updateCart(lotsInfo = null) {
     remove_all_the_item_in_the_cart_that_not_exist_in_the_array_of_the_recipe(); // Limpiar lista
@@ -732,6 +732,7 @@ function updateCart(lotsInfo = null) {
         let discount = 0;
         // Buscar promociones aplicables
         const applicablePromotions = promotionsList.filter(promo => {
+            
             // Convertir fechas a objetos Date para comparación
             const promoDateFrom = promo.date_from ? new Date(promo.date_from) : null;
             const promoDateTo = promo.date_to ? new Date(promo.date_to) : null;
@@ -741,29 +742,33 @@ function updateCart(lotsInfo = null) {
             const promoToTime = promo.toTime ? parseInt(promo.toTime.split(':')[0]) * 60 + parseInt(promo.toTime.split(':')[1]) : null;
 
             //first we will see if the promotion need a quantity equal how 3,6,9,12,
-            if(promo.promotions_from==promo.promotions_to){
+            //if (promo.promotions_from == promo.promotions_to) {
+            if (item.quantity >= promo.promotions_from && promo.promotions_from == promo.promotions_to) {
                 return (
+                    promo.id_dishes_and_combos === item.id_dishes_and_combos &&
+                    item.quantity >= promo.promotions_from &&
+                    /*
                     //her is for know if the product is the promotion
                     promo.id_dishes_and_combos === item.id_dishes_and_combos &&
-    
+
                     //her is for know if the quantity is the success
-                    item.quantity % promo.promotions_from== 0 &&
-    
+                    item.quantity % promo.promotions_from == 0 &&
+                    */
                     //her is for know the date and hour of the promotion
                     (promoDateFrom === null || promoDateFrom <= now) &&
                     (promoDateTo === null || promoDateTo >= now) &&
                     (promoFromTime === null || promoFromTime <= currentTime) &&
                     (promoToTime === null || promoToTime >= currentTime)
-                );               
+                );
             }
-            
+
             return (
                 //her is for know if the product is the promotion
                 promo.id_dishes_and_combos === item.id_dishes_and_combos &&
-
+                
                 //her is for know if the quantity is the success
                 item.quantity >= promo.promotions_from &&
-                (item.quantity <= promo.promotions_to || promo.promotions_to===null) &&
+                (item.quantity <= promo.promotions_to || promo.promotions_to === null) &&
 
                 //her is for know the date and hour of the promotion
                 (promoDateFrom === null || promoDateFrom <= now) &&
@@ -774,16 +779,62 @@ function updateCart(lotsInfo = null) {
         });
 
         // Aplicar el mayor descuento disponible
-
+        /*
         if (applicablePromotions.length > 0) {
             discount = Math.max(...applicablePromotions.map(promo => promo.discount_percentage));
         }
 
         item.discount = (item.price * discount) / 100; // Calcular descuento
         const itemTotal = (item.price - item.discount) * item.quantity;
+        */
+
+        let itemTotal = 0;
+
+        if (applicablePromotions.length > 0) {
+            
+            const bestPromo = applicablePromotions[0];
+            discount = bestPromo.discount_percentage;
+
+            const fromQty = parseInt(bestPromo.promotions_from);
+            const toQty = parseInt(bestPromo.promotions_to);
+
+            if (fromQty && toQty && fromQty === toQty) {
+                // Promoción especial tipo 3x2 (multiplo exacto, pero también aplicable con extras)
+                const groupSize = toQty;   // 3
+                const paidItems = fromQty - 1; // Si es 3x2 => pagas 2
+
+                const fullGroups = Math.floor(item.quantity / groupSize);
+                const extras = item.quantity % groupSize;
+
+                const totalToPay = fullGroups * paidItems + extras;
+
+                const itemTotalRaw = item.price * totalToPay;
+                itemTotal = Math.round(itemTotalRaw * 100) / 100;
+                
+                //90==100%
+                //72==x
+                item.discount = 100-((itemTotal*100)/(item.price * item.quantity));
+                discount=item.discount;
+            } else {                
+                //this is for promotion when quantity of 5 to 10 
+                let totalP=item.price * item.quantity;
+                discount=bestPromo.discount_percentage;
+                itemTotal=(totalP*(100-discount))/100;
+            }
+        } else {
+            //this is when not exist promotion for this product
+            item.discount = 0;
+            discount = 0;
+            const itemTotalRaw = (item.price * item.quantity);
+            itemTotal = Math.round(itemTotalRaw * 100) / 100;
+        }
+
+        // 💾 Guardar el total exacto
+        item.itemTotal = itemTotal;
+
 
         // Crear la estructura HTML
-        if(lotsInfo){
+        if (lotsInfo) {
             cartItemsContainer.innerHTML += `
             <div class="cart-item-point-of-sales">
                 <img src="${item.img}" alt="${item.name}">
@@ -801,8 +852,8 @@ function updateCart(lotsInfo = null) {
                 <button class="cart-item-remove-point-of-sales" onclick="removeItem('${item.barcode}')">X</button>
             </div>
         `;
-        }else{
-                cartItemsContainer.innerHTML += `
+        } else {
+            cartItemsContainer.innerHTML += `
                 <div class="cart-item-point-of-sales">
                     <img src="${item.img}" alt="${item.name}">
                     <div class="cart-item-info-point-of-sales">
@@ -820,11 +871,14 @@ function updateCart(lotsInfo = null) {
                 </div>
             `;
         }
-        
+
     });
 
     // Actualizar el total del carrito
-    cartTotal = cartItems.reduce((total, item) => total + (item.price - item.discount) * item.quantity, 0);
+    //cartTotal = cartItems.reduce((total, item) => total + (item.price - item.discount) * item.quantity, 0);
+    cartTotal = cartItems.reduce((total, item) => total + item.itemTotal, 0);
+
+
     document.getElementById('cart-total').textContent = cartTotal.toFixed(2);
 
     // Actualizar número de productos en el carrito
@@ -894,9 +948,9 @@ async function get_the_key_of_the_admin(title) {
 
 async function removeItem(barcode) {
     const remove_product_for_sale = document.getElementById('remove_product_for_sale');
-    if(remove_product_for_sale==null){
+    if (remove_product_for_sale == null) {
         //if the user not have the permission to remove the product, we will send a message of warning
-        if(!await this_user_is_admin('Eliminar producto 🗑️','delete_the_shopping_cart')){
+        if (!await this_user_is_admin('Eliminar producto 🗑️', 'delete_the_shopping_cart')) {
             warningMessage('🐣 ¡Ay, travieso!', 'Este superpoder está bloqueado para ti... por ahora.');
             return;
         }
@@ -917,7 +971,7 @@ async function removeItem(barcode) {
     }
 }
 
-async function this_user_is_admin(title,permissionToCheck) {
+async function this_user_is_admin(title, permissionToCheck) {
     const credentials = await get_the_key_of_the_admin(title);
 
     if (!credentials || !credentials[0] || !credentials[1]) {
