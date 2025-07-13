@@ -250,11 +250,12 @@ async function buy_my_car() {
         const id_customer = emailClient.getAttribute('idClient');
 
         //we will see if the user can buy all the shooping cart
-        if (await send_buy_to_the_server(total, moneyReceived, change, comment, id_customer, cash, credit, debit)) {
+        const token = generarTokenUnicoTicket();
+        if (await send_buy_to_the_server(total, moneyReceived, change, comment, id_customer, cash, credit, debit, token)) {
             await update_the_lots_of_the_product_in_the_car(id_customer);
 
             //we will print ticket
-            await print_ticket(total, moneyReceived, change, comment);
+            await print_ticket(total, moneyReceived, change, comment, token);
 
             //this is for delete all the shooping cart
             cartItems.splice(0, cartItems.length);
@@ -288,13 +289,13 @@ async function save_the_recipe_in_the_database(lotId, id_customer) {
     information_of_recipe_for_sned_to_the_server = [] //this is for remove all the recipe in the cart
 }
 
-async function send_buy_to_the_server(total, moneyReceived, exchange, comment, id_customer, cash, credit, debit) {
+async function send_buy_to_the_server(total, moneyReceived, exchange, comment, id_customer, cash, credit, debit, token) {
     // Show loading overlay
     loadingOverlay.style.display = "flex";
 
     try {
         //we will watching if the server can complete the pay and setting the inventory
-        const answerServer = await get_answer_server({ products: cartItems, total: total, moneyReceived: moneyReceived, change: exchange, comment: comment, id_customer: id_customer, cash, credit, debit }, `/fud/car-post`);
+        const answerServer = await get_answer_server({ products: cartItems, total: total, moneyReceived: moneyReceived, change: exchange, comment: comment, id_customer: id_customer, cash, credit, debit, token }, `/fud/car-post`);
 
         //we will see if save the commander 
         if (!isNaN(answerServer.message)) {
@@ -545,6 +546,7 @@ async function addToCart(img, name, barcode, price, purchaseUnit, this_product_i
             else {
                 existingItem.quantity = quantityForSales; //update the product in the cart
             }
+            purchaseUnit='Kg';
         } else {
             //if not exist lot of the product, we will add a new product to the cart
             existingItem.quantity += 1; //update the product in the cart
@@ -558,6 +560,7 @@ async function addToCart(img, name, barcode, price, purchaseUnit, this_product_i
         if (this_product_is_sold_in_bulk == 'true' || this_product_is_sold_in_bulk == '1' || this_product_is_sold_in_bulk == 'on') {
             //if the product is sould in bulk, we will ask the user the quantity of the product
             quantityForSales = await open_ui_weight_scale(barcode, name, price, 0, 0, 1);
+            purchaseUnit='Kg';
         }
 
         //add a new product to the cart

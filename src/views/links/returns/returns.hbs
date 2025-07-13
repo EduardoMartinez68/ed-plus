@@ -14,8 +14,40 @@
                     <button onclick="open_pop_returns('pop-returns')" class="btn btn-edit">Devolver un producto</button>
                 </div>
             </div> 
+
+
+            <div class="row">
+                <table border="1" cellspacing="0" cellpadding="6" style="width: 100%; font-family: monospace; font-size: 13px;">
+                <thead>
+                    <tr style="background-color: #f2f2f2;">
+                    <th>Token</th>
+                    <th>Fecha</th>
+                    <th>Efectivo</th>
+                    <th>Débito</th>
+                    <th>Crédito</th>
+                    <th>Total</th>
+                    <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each tickets}}
+                        <tr>
+                            <td>{{key}}</td>
+                            <td>{{date_sale}}</td>
+                            <td>${{cash}}</td>
+                            <td>${{debit}}</td>
+                            <td>${{credit}}</td>
+                            <td><strong>${{total}}</strong></td>
+                            <td><button class="btn btn-edit" onclick="open_edit_ticket_table('{{key}}')">Ver</button></td>
+                        </tr>
+                    {{/each}}
+                </tbody>
+                </table>
+
+            </div>
         </div>
     </div>
+
 </div>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -28,4 +60,11 @@
     // Opcional: asignar a window si quieres que sea global
     window.open_pop_returns = open_pop_returns;
     });
+
+    async function open_edit_ticket_table(tokenTicket){
+        document.getElementById('search-ticket').value=tokenTicket;
+        open_pop_returns('pop-returns')
+        await search_ticket();
+        
+    }
 </script>

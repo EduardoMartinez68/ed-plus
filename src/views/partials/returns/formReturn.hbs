@@ -62,7 +62,7 @@
 
         //now her we will get the information of the server for get the information of the ticket
         try {
-            const response = await fetch('/get-data-ticket', {
+            const response = await fetch('/links/get-data-ticket', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -95,8 +95,8 @@
         }
 
         const dataTicket = await get_information_of_the_ticket(ticketCode);
+        
         containerTicket.style.display = 'none';
-
         if (!dataTicket) {
             warningMessage('🤔 ¿Dónde está?', 'El ticket que buscas no existe...¿Seguro que escribiste bien el código?');
             return;
@@ -105,59 +105,73 @@
 
         containerTicket.style.display = 'block';
         const container = document.getElementById('container-ticket');
-        container.innerHTML = ''; // limpiar contenido anterior
+        container.innerHTML = ''; //clear the container of the table
 
+
+        //get the table that show
         const table = document.createElement('table');
         table.className = 'table table-bordered table-striped';
         table.style.width = '100%';
 
         const thead = document.createElement('thead');
         thead.innerHTML = `
-        <tr>
-            <th>Producto</th>
-            <th>Cant. Comprada</th>
-            <th>Devolver</th>
-            <th>Precio Unitario</th>
-            <th>Subtotal</th>
-        </tr>
-    `;
+            <tr>
+                <th>Producto</th>
+                <th>Cant. Comprada</th>
+                <th>Devolver</th>
+                <th>Precio Unitario</th>
+                <th>Descuento</th>
+                <th>Total</th>
+                <th>Subtotal</th>
+            </tr>
+        `;
 
+
+        //get the body of the table
         const tbody = document.createElement('tbody');
         tbody.id = 'body-productos';
 
-        dataTicket.ticket.forEach((prod, index) => {
-            const precioUnitario = prod.total / prod.cant;
+        //with a for we will show all the data of the ticket 
+        dataTicket.current_ticket.forEach((prod, index) => {
+
+            //her we will create the row with his information
             const rowId = `prod-${index}`;
-
             const tr = document.createElement('tr');
-            tr.dataset.nombre = prod.nombre.toLowerCase();
-            tr.dataset.codigo = prod.codigo_barras.toLowerCase();
+            tr.dataset.name = prod.name.toLowerCase();
+            tr.dataset.barcode = prod.barcode.toLowerCase();
 
+            //now we will show the information of the table
             tr.innerHTML = `
-            <td><strong>${prod.codigo_barras}</strong><br>${prod.nombre}</td>
-            <td>${prod.cant}</td>
+            <td><strong>${prod.barcode}</strong><br>${prod.name}</td>
+            <td>${prod.quantity}</td>
             <td>
                 <div style="display: flex; align-items: center; justify-content: center;">
-                    <button class="btn btn-edit" onclick="cambiarCantidad('${rowId}', -1)">-</button>
-                    <input type="number" min="0" max="${prod.cant}" value="0" 
-                        id="input-${rowId}" 
-                        data-precio="${precioUnitario}" 
-                        data-max="${prod.cant}"
-                        class="form-control" style="width: 60px; margin: 0 5px;" />
-                    <button class="btn btn-edit" onclick="cambiarCantidad('${rowId}', 1)">+</button>
+                <button class="btn btn-edit" onclick="cambiarCantidad('${rowId}', -1)">-</button>
+                <input type="number" min="0" max="${prod.quantity}" value="0" 
+                    id="input-${rowId}" 
+                    data-precio="${prod.price}" 
+                    data-max="${prod.quantity}"
+                    discount="${prod.discount}"
+                    total="${prod.itemTotal}"
+                    class="form-control" style="width: 60px; margin: 0 5px;" />
+                <button class="btn btn-edit" onclick="cambiarCantidad('${rowId}', 1)">+</button>
                 </div>
             </td>
-            <td>$${precioUnitario.toFixed(2)}</td>
+            <td>$${prod.price.toFixed(2)}</td>
+            <td>${prod.discount.toFixed(2)}%</td>
+            <td>$${prod.itemTotal.toFixed(2)}</td>
             <td id="subtotal-${rowId}">$0.00</td>
-        `;
+            `;
 
             tbody.appendChild(tr);
         });
 
+        //add the body of the table
         table.appendChild(thead);
         table.appendChild(tbody);
         container.appendChild(table);
 
+        //her we will add the information and event of the
         document.getElementById('total-devolucion').textContent = '0.00';
         mostrarPopup('pop-returns');
         agregarListenersCantidad();
@@ -206,7 +220,18 @@
         document.querySelectorAll('[id^="input-prod-"]').forEach(input => {
             const precio = parseFloat(input.dataset.precio);
             const cantidad = parseInt(input.value) || 0;
-            const subtotal = cantidad * precio;
+            //const subtotal = cantidad * precio;
+
+            //precio=18
+            //descuento=33.33%
+            ///total=36
+            //cant=3
+
+            //totalSinDescuento=precio*cant;=54
+            const totalP = parseFloat(input.getAttribute('total'));
+            const max = parseFloat(input.dataset.max);
+            const subtotal=(cantidad*totalP)/max;
+
             const rowId = input.id.replace('input-', '');
             document.getElementById(`subtotal-${rowId}`).textContent = `$${subtotal.toFixed(2)}`;
             total += subtotal;

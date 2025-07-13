@@ -247,17 +247,16 @@
         localStorage.setItem('selectedPrinter', printerSelected);
     });
 
-    async function print_ticket(total, moneyReceived, change, comment) {
+    async function print_ticket(total, moneyReceived, change, comment, token) {
         //console.log(get_texto_ticket(total, moneyReceived, change, comment));
         const dateTicket = get_date_ticket()
         const textoTicket = get_texto_ticket(total, moneyReceived, change, comment, dateTicket); // Aquí obtienes el texto del ticket, puedes personalizarlo
         //await sned_information_to_the_server_for_print_the_ticket(textoTicket)
 
 
-
-        create_ticket_html(total, moneyReceived, change, comment, dateTicket); 
-        await print_ticket_with_html();
         
+        create_ticket_html(total, moneyReceived, change, comment, dateTicket, token); 
+        await print_ticket_with_html();
     }
 
     async function print_ticket_with_html() {
@@ -323,7 +322,7 @@
     }
 
 
-    function create_ticket_html(total, moneyReceived, change, comment = '',dateTicket) {
+    function create_ticket_html(total, moneyReceived, change, comment = '',dateTicket, token) {
         //transform the value of the variable to number
         moneyReceived = parseFloat(moneyReceived);
         change = parseFloat(change);
@@ -410,7 +409,6 @@
         html += `<div style="text-align:center; margin-top:10px;">Comentario: ${comment}</div>`;
         html += `</div>`;
 
-        const token = generarTokenUnicoTicket();
         html += `
             <div style="text-align:center; margin: 15px 0;">
                 <div style="font-size: 12px; font-weight: bold;">TOKEN DEL TICKET</div>

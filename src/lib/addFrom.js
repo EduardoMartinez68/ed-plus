@@ -3704,6 +3704,9 @@ router.post('/fud/car-post', isLoggedIn, async (req, res) => {
                 await save_box_history(idEmployee, id_customer, req.body.cash, req.body.credit, req.body.debit, req.body.comment, day, req.body.change);
             }
 
+            //her we will save the ticket in our database
+            await save_the_ticket(idCompany,idBranch,idEmployee, id_customer, req.body.total, req.body.cash, req.body.credit, req.body.debit, req.body.comment, day, req.body.change, req.body.token, products)
+
             //save the comander
             commander = create_commander(idBranch, idEmployee, id_customer, commanderDish, req.body.total, req.body.moneyReceived, req.body.change, req.body.comment, day);
             text = await addDatabase.add_commanders(commander); //save the id commander
@@ -3716,6 +3719,85 @@ router.post('/fud/car-post', isLoggedIn, async (req, res) => {
         res.status(500).json({ error: 'Hubo un error al procesar la solicitud' });
     }
 })
+
+async function save_the_ticket(id_company,id_branch,id_employee, id_customer, total, cash, credit, debit, note, day, change, token, products){
+  const idCustomerParam = id_customer === "null" ? null : id_customer;
+
+  // Helper para convertir a número
+  const parseToFloat = (value) => {
+    if (value === null || value === undefined || value === '') return 0;
+    return parseFloat(value) || 0;
+  };
+
+  cash = parseToFloat(cash);
+  credit = parseToFloat(credit);
+  debit = parseToFloat(debit);
+  change = parseToFloat(change);
+
+
+  //now we will save in the database 
+  if (TYPE_DATABASE === 'mysqlite') {
+    return new Promise((resolve) => {
+      const queryText = `
+        INSERT INTO ticket 
+        (key, original_ticket, current_ticket, cash, debit, credit, total, note, id_customers, id_employees, id_branches, id_companies)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `;
+      database.run(
+        queryText,
+        [
+          token,
+          JSON.stringify(products),
+          JSON.stringify(products),
+          cash,
+          debit,
+          credit,
+          total,
+          note,
+          idCustomerParam,
+          id_employee,
+          id_branch,
+          id_company
+        ],
+        function (err) {
+          if (err) {
+            console.error('Error save_ticket (SQLite):', err);
+            return resolve(false);
+          }
+          resolve(true);
+        }
+      );
+    });
+  } else {
+    const queryText = `
+      INSERT INTO "Box".ticket 
+      (key, original_ticket, current_ticket, cash, debit, credit, total, note, id_customers, id_employees, id_branches, id_companies)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+    `;
+    try {
+      await database.query(queryText, [
+        token,
+        JSON.stringify(products),
+        JSON.stringify(products),
+        cash,
+        debit,
+        credit,
+        total,
+        note,
+        idCustomerParam,
+        id_employee,
+        id_branch,
+        id_company
+      ]);
+      return true;
+    } catch (error) {
+      console.error('Error save_ticket (PostgreSQL):', error);
+      return false;
+    }
+  }
+}
+
+
 
 async function save_box_history(idEmployee, id_customer, cash, credit, debit, comment, day, change) {
   const idCustomerParam = id_customer === "null" ? null : id_customer;
@@ -3761,6 +3843,8 @@ async function save_box_history(idEmployee, id_customer, cash, credit, debit, co
     }
   }
 }
+
+
 
 async function add_table_box_history() {
   if (TYPE_DATABASE === 'mysqlite') {

@@ -6,43 +6,16 @@ const { TYPE_DATABASE } = process.env;
 
 /*
 *----------------------functions-----------------*/
-//functions image
-const {
-    get_path_img,
-    delate_image_upload,
-    upload_image_to_space,
-    delete_image_from_space,
-    create_a_new_image,
-    delate_image
-} = require('../../services/connectionWithDatabaseImage');
 //functions branch
 const {
     get_data_branch,
-    get_all_box_of_the_branch_with_his_id
 } = require('../../services/branch');
 
 const {
     get_data_employee
 } = require('../../services/employees');
 
-const {
-    get_all_ad,
-} = require('../../services/ad');
 
-const {
-    this_employee_works_here,
-    get_all_dish_and_combo,
-    get_all_data_combo_most_sold,
-    get_data_recent_combos,
-    get_all_products_in_sales,
-    get_all_the_promotions,
-    get_the_products_most_sales_additions,
-    get_all_dish_and_combo_without_lots
-} = require('../../services/store');
-
-const {
-    get_all_invoice_with_the_id_of_the_branch
-} = require('../../services/invoice');
 
 const {
     get_data_company_with_id
@@ -53,6 +26,8 @@ const {
     this_user_have_this_permission
 } = require('../../services/permission');
 
+const database = require('../../database');
+
 router.get('/:id_company/:id_branch/returns', isLoggedIn, async (req, res) => {
     const { id_company, id_branch } = req.params;
 
@@ -62,10 +37,116 @@ router.get('/:id_company/:id_branch/returns', isLoggedIn, async (req, res) => {
         return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
     }
 
-
+    const tickets=await get_tickets_by_branch(id_branch);
     const branchFree = await get_data_branch(id_branch);
-    res.render('links/returns/returns', {branchFree});
+    res.render('links/returns/returns', {branchFree, tickets});
 });
+
+async function get_ticket_by_branch_and_key(id_branch, ticketKey) {
+  if (!id_branch || !ticketKey) return null;
+
+  if (TYPE_DATABASE === 'mysqlite') {
+    return new Promise((resolve) => {
+      const query = `
+        SELECT *
+        FROM ticket
+        WHERE id_branches = ? AND key = ?
+        LIMIT 1
+      `;
+      database.get(query, [id_branch, ticketKey], (err, row) => {
+        if (err) {
+          console.error("Error get_ticket_by_branch_and_key (SQLite):", err);
+          return resolve(null);
+        }
+
+        // Parseamos los campos JSON
+        if (row) {
+          row.original_ticket = JSON.parse(row.original_ticket);
+          row.current_ticket = JSON.parse(row.current_ticket);
+        }
+
+        resolve(row || null);
+      });
+    });
+  } else {
+    const query = `
+      SELECT *
+      FROM "Box".ticket
+      WHERE id_branches = $1 AND key = $2
+      LIMIT 1
+    `;
+    try {
+      const result = await database.query(query, [id_branch, ticketKey]);
+
+      if (result.rows.length > 0) {
+        const row = result.rows[0];
+        row.original_ticket = JSON.parse(row.original_ticket);
+        row.current_ticket = JSON.parse(row.current_ticket);
+        return row;
+      }
+
+      return null;
+    } catch (error) {
+      console.error("Error get_ticket_by_branch_and_key (PostgreSQL):", error);
+      return null;
+    }
+  }
+}
+
+
+async function get_tickets_by_branch(id_branch) {
+  if (TYPE_DATABASE === 'mysqlite') {
+    return new Promise((resolve) => {
+      const queryText = `
+        SELECT id, key, original_ticket, current_ticket, date_sale, cash, debit, credit, total, note,
+               id_customers, id_employees, id_branches, id_companies
+        FROM ticket
+        WHERE id_branches = ?
+        ORDER BY date_sale DESC
+        LIMIT 20
+      `;
+      database.all(queryText, [id_branch], (err, rows) => {
+        if (err) {
+          console.error('Error get_tickets_by_branch (SQLite):', err);
+          return resolve([]);
+        }
+
+        // Parse JSON fields
+        const tickets = rows.map(row => ({
+          ...row,
+          original_ticket: JSON.parse(row.original_ticket),
+          current_ticket: JSON.parse(row.current_ticket),
+        }));
+
+        resolve(tickets);
+      });
+    });
+  } else {
+    const queryText = `
+      SELECT id, key, original_ticket, current_ticket, date_sale, cash, debit, credit, total, note,
+             id_customers, id_employees, id_branches, id_companies
+      FROM "Box".ticket
+      WHERE id_branches = $1
+      ORDER BY date_sale DESC
+      LIMIT 20
+    `;
+    try {
+      const result = await database.query(queryText, [id_branch]);
+
+      return result.rows.map(row => ({
+        ...row,
+        original_ticket: JSON.parse(row.original_ticket),
+        current_ticket: JSON.parse(row.current_ticket),
+      }));
+    } catch (error) {
+      console.error('Error get_tickets_by_branch (PostgreSQL):', error);
+      return [];
+    }
+  }
+}
+
+
+
 
 router.post('/get-data-ticket', isLoggedIn, async (req, res) => {
     //get the information of the user and of the ticket
@@ -75,8 +156,14 @@ router.post('/get-data-ticket', isLoggedIn, async (req, res) => {
 
 
     //now we will get the information of the ticket
-    const dataTicket=get_the_information_of_the_ticket(ticketCode);
-    return dataTicket;
+    //const dataTicket=await get_the_information_of_the_ticket(ticketCode);
+    const dataTicket=await get_ticket_by_branch_and_key(id_branch, ticketCode)
+    console.log(dataTicket)
+    return res.json({
+      success: true,
+      message: 'Ticket obtenido correctamente.',
+      ticket: dataTicket
+    });
 });
 
 
@@ -90,7 +177,7 @@ async function get_the_information_of_the_ticket(ticketCode) {
             return { success: false, error: "Código de ticket requerido." };
         }
 
-        if (TYPE_DATABASE === 'sqlite') {
+        if (TYPE_DATABASE === 'mysqlite') {
             query = `
                 SELECT 
                     t.*,
