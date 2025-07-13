@@ -5,39 +5,39 @@
             onclick="hidden_message_pop('pop-returns')">&times;</button>
 
 
-<div class="row">
-    <div class="col-10">
-        <label for="">Escribe el codigo del Ticket que deceas buscar</label>
-        <input type="text" placeholder="Buscar un Ticket" class="form-control" id="search-ticket">
-    </div>
-    <div class="col-2">
-        <br>
-        <button class="btn btn-edit" onclick="search_ticket()">Buscar</button>
-    </div>
-</div>
+        <div class="row">
+            <div class="col-10">
+                <label for="">Escribe el codigo del Ticket que deceas buscar</label>
+                <input type="text" placeholder="Buscar un Ticket" class="form-control" id="search-ticket">
+            </div>
+            <div class="col-2">
+                <br>
+                <button class="btn btn-edit" onclick="search_ticket()">Buscar</button>
+            </div>
+        </div>
 
-<div class="row" id="container-data-ticket">
-    <br>
-    <hr>
-    <div class="row">
-        <input type="text" id="filtro-productos" placeholder="Buscar producto por nombre o código" class="form-control"
-            style="margin-bottom: 8px; width: 50%;">
-        <div id="container-ticket" style="max-height: 300px; overflow-y: auto; width: 100%;"></div>
-    </div>
-    <div id="container-ticket">
-    </div>
-    <div style="margin-top: 10px;">
-        <label for="nota-general">Nota:</label>
-        <textarea id="nota-general" class="form-control" rows="3"
-            placeholder="Escribe una nota sobre esta devolución..."></textarea>
-    </div>
-    <div style="margin-top: 10px;">
-        <strong>Total a devolver: $<span id="total-devolucion">0.00</span></strong>
-    </div>
+        <div class="row" id="container-data-ticket">
+            <br>
+            <hr>
+            <div class="row">
+                <input type="text" id="filter-products" placeholder="Buscar producto por nombre o código"
+                    class="form-control" style="margin-bottom: 8px; width: 50%;">
+                <div id="container-ticket" style="max-height: 300px; overflow-y: auto; width: 100%;"></div>
+            </div>
+            <div id="container-ticket">
+            </div>
+            <div style="margin-top: 10px;">
+                <label for="nota-general">Nota:</label>
+                <textarea id="note-general" class="form-control" rows="3"
+                    placeholder="Escribe una nota sobre esta devolución..."></textarea>
+            </div>
+            <div style="margin-top: 10px;">
+                <strong>Total a devolver: $<span id="total-devolucion">0.00</span></strong>
+            </div>
 
-    <br>
-    <button class="btn btn-success" onclick="save_return()">Devolver</button>
-</div>
+            <br>
+            <button class="btn btn-success" onclick="save_return()">Devolver</button>
+        </div>
 
     </div>
 </div>
@@ -48,32 +48,32 @@
     const containerTicket = document.getElementById('container-data-ticket')
     containerTicket.style.display = 'none';
 
-    
+    let tokenTicketEdit = null;
 
     async function get_information_of_the_ticket(ticket) {
-        
+
         if (!ticket) {
             return null;
         }
 
         //show the screen load
-        const loadingOverlay=document.getElementById('loadingOverlay');
+        const loadingOverlay = document.getElementById('loadingOverlay');
         loadingOverlay.style.display = 'flex';
 
         //now her we will get the information of the server for get the information of the ticket
         try {
             const response = await fetch('/links/get-data-ticket', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ ticketCode: ticket })
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ ticketCode: ticket })
             });
 
             const data = await response.json();
 
             if (!response.ok || !data.success) {
-            throw new Error(data.message || 'Error al obtener el ticket');
+                throw new Error(data.message || 'Error al obtener el ticket');
             }
 
             // Devolver los datos
@@ -81,10 +81,10 @@
         } catch (error) {
             console.error('Error al obtener el ticket:', error.message);
             return null;
-        }finally{
+        } finally {
             loadingOverlay.style.display = 'none'; //hidden the screen load
         }
-        
+
     }
 
     async function search_ticket() {
@@ -94,8 +94,9 @@
             return;
         }
 
+        tokenTicketEdit = ticketCode;
         const dataTicket = await get_information_of_the_ticket(ticketCode);
-        
+
         containerTicket.style.display = 'none';
         if (!dataTicket) {
             warningMessage('🤔 ¿Dónde está?', 'El ticket que buscas no existe...¿Seguro que escribiste bien el código?');
@@ -139,6 +140,12 @@
             const tr = document.createElement('tr');
             tr.dataset.name = prod.name.toLowerCase();
             tr.dataset.barcode = prod.barcode.toLowerCase();
+            tr.dataset.img = prod.img;
+            tr.dataset.price = prod.price;
+            tr.dataset.discount = prod.discount;
+            tr.dataset.purchaseUnit = prod.purchaseUnit;
+            tr.dataset.bulk = prod.this_product_is_sold_in_bulk;
+            tr.dataset.combo = prod.id_dishes_and_combos;
 
             //now we will show the information of the table
             tr.innerHTML = `
@@ -174,7 +181,7 @@
         //her we will add the information and event of the
         document.getElementById('total-devolucion').textContent = '0.00';
         mostrarPopup('pop-returns');
-        agregarListenersCantidad();
+        addListenerQuantity();
     }
 
 
@@ -187,7 +194,8 @@
         actualizarTotales();
     }
 
-    function agregarListenersCantidad() {
+
+    function addListenerQuantity() {
         const inputs = document.querySelectorAll('[id^="input-prod-"]');
         inputs.forEach(input => {
             input.addEventListener('input', () => {
@@ -230,7 +238,7 @@
             //totalSinDescuento=precio*cant;=54
             const totalP = parseFloat(input.getAttribute('total'));
             const max = parseFloat(input.dataset.max);
-            const subtotal=(cantidad*totalP)/max;
+            const subtotal = (cantidad * totalP) / max;
 
             const rowId = input.id.replace('input-', '');
             document.getElementById(`subtotal-${rowId}`).textContent = `$${subtotal.toFixed(2)}`;
@@ -239,7 +247,7 @@
         document.getElementById('total-devolucion').textContent = total.toFixed(2);
     }
 
-    function agregarListenersDevoluciones() {
+    function addListenersReturns() {
         const inputs = document.querySelectorAll('.input-devolver');
         inputs.forEach(input => {
             input.addEventListener('input', () => {
@@ -257,39 +265,143 @@
         });
 
 
-        // Filtro por nombre o código de barras
-        const filtro = document.getElementById('filtro-productos');
+        //her we will filter the products of the tabla of return for name or barcode
+        const filtro = document.getElementById('filter-products');
         filtro.addEventListener('input', () => {
             const valor = filtro.value.toLowerCase();
             document.querySelectorAll('#body-productos tr').forEach(row => {
-                const coincide = row.dataset.nombre.includes(valor) || row.dataset.codigo.includes(valor);
+                const coincide = row.dataset.name.includes(valor) || row.dataset.barcode.includes(valor);
                 row.style.display = coincide ? '' : 'none';
             });
         });
     }
 
 
-    agregarListenersDevoluciones();
+    addListenersReturns();
 
 
     //-------------------------------------------------------
     async function save_return() {
         const money = document.getElementById('total-devolucion').textContent;
+
         //first we will see if exist money for return 
-        if (parseFloat(money) > 0) {
+        if (parseFloat(money) <= 0) {
             warningMessage('🤔 ¿Nada que devolver?', 'Tienes que elegir al menos un producto para devolver al cliente.');
             return;
         }
 
         if (await questionMessage('¿Confirmar devolución al cliente?', `Se va a devolver $${money} al cliente. ¿Está seguro de que desea continuar con esta operación?`)) {
+            //now we will save the new history ticket in the database 
+            const newTicket = get_new_ticket()
+            await save_new_ticket(newTicket);
+
+            //clear all the container
             const container = document.getElementById('container-ticket');
             containerTicket.style.display = 'none';
             container.innerHTML = '';
+            document.getElementById('search-ticket').value = '';
             hidden_message_pop('pop-returns');
 
 
-
+            //show a message of confirmation
             confirmationMessage(`✅ ¡Listo!`, `$${money} devueltos al cliente sin problemas. El dinero de tu caja fue actualizada exitosamente.`);
+        }
+    }
+
+
+    function get_new_ticket() {
+        const tableBody = document.getElementById('body-productos');
+        const rows = tableBody.querySelectorAll('tr');
+        const newTicket = [];
+        const returnedProducts = [];
+
+        rows.forEach((row, index) => {
+            const input = row.querySelector(`#input-prod-${index}`);
+
+            const quantityToReturn = parseFloat(input.value) || 0;
+            const maxQuantity = parseFloat(input.getAttribute('data-max')) || 0;
+            const unitPrice = parseFloat(input.getAttribute('data-precio')) || 0;
+            const discount = parseFloat(input.getAttribute('discount')) || 0;
+
+            const remainingQuantity = maxQuantity - quantityToReturn;
+
+            const discountedPrice = unitPrice * (1 - discount / 100);
+
+            // Producto que aún se conserva en el ticket
+            if (remainingQuantity > 0) {
+                const newTotal = discountedPrice * remainingQuantity;
+
+                newTicket.push({
+                    img: row.dataset.img,
+                    name: row.dataset.name,
+                    barcode: row.dataset.barcode,
+                    price: unitPrice,
+                    discount: discount,
+                    purchaseUnit: row.dataset.purchaseunit || '',
+                    this_product_is_sold_in_bulk: row.dataset.bulk,
+                    id_dishes_and_combos: row.dataset.combo,
+                    quantity: remainingQuantity,
+                    itemTotal: parseFloat(newTotal.toFixed(2)),
+                });
+            }
+
+            // Producto que será devuelto
+            if (quantityToReturn > 0) {
+                const returnTotal = discountedPrice * quantityToReturn;
+
+                returnedProducts.push({
+                    barcode: row.dataset.barcode,
+                    name: row.dataset.name,
+                    quantityReturned: quantityToReturn,
+                    itemTotalReturned: parseFloat(returnTotal.toFixed(2)),
+                });
+            }
+        });
+
+
+        //her save the information of this history 
+        let totalReturn=parseFloat(document.getElementById('total-devolucion').textContent);
+        totalReturn=totalReturn.toFixed(2);
+
+        const note=document.getElementById('note-general').value;
+
+        return {
+            newTicket,
+            returnedProducts,
+            totalReturn,
+            note
+        };
+    }
+
+
+    async function save_new_ticket(dataTicket) {
+        // Show loading overlay
+        const loadingOverlay = document.getElementById("loadingOverlay");
+        loadingOverlay.style.display = "flex";
+
+        //now her we will get the information of the server for get the information of the ticket
+        try {
+            const response = await fetch('/links/update_ticket', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ dataTicket: dataTicket, tokenTicket: tokenTicketEdit })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+                throw new Error(data.message || 'Error al obtener el ticket');
+            }
+
+            // Devolver los datos
+            return data.ticket;
+        } catch (error) {
+            console.error('Error al obtener el ticket:', error.message);
+            return null;
+        } finally {
+            loadingOverlay.style.display = 'none'; //hidden the screen load
         }
     }
 </script>

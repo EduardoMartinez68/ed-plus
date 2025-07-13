@@ -158,7 +158,7 @@ router.post('/get-data-ticket', isLoggedIn, async (req, res) => {
     //now we will get the information of the ticket
     //const dataTicket=await get_the_information_of_the_ticket(ticketCode);
     const dataTicket=await get_ticket_by_branch_and_key(id_branch, ticketCode)
-    console.log(dataTicket)
+    //console.log(dataTicket)
     return res.json({
       success: true,
       message: 'Ticket obtenido correctamente.',
@@ -229,5 +229,151 @@ async function get_the_information_of_the_ticket(ticketCode) {
         return { success: false, error: "No se pudo obtener la información del ticket." };
     }
 }
+
+router.post('/update_ticket', isLoggedIn, async (req, res) => {
+    let flag=false;
+    //get the information of the user and of the ticket
+    const id_branch=req.user.id_branch;
+    const id_company=req.user.id_company;
+    const id_employee=req.user.id_employee;
+    const {dataTicket, tokenTicket}=req.body;
+
+    //first we will get the old information of the ticket
+    const dataTicketOld=await get_ticket_by_branch_and_key(id_branch, tokenTicket)
+    if(dataTicketOld){
+        //update the information of ticket for change the variable 'current_ticket'
+        const idTicket=await update_current_ticket(tokenTicket,id_branch,dataTicket.newTicket);
+        if(idTicket){
+          //now we will save this change in the history of the ticket.
+          await save_ticket_return_history(id_employee, idTicket, dataTicketOld.current_ticket, dataTicket.returnedProducts, dataTicket.totalReturn, dataTicket.note);
+          flag=true;
+        }
+    }
+
+
+
+    //if we can update all the ticket and save his history, we will return true to the frontend
+    if(flag){
+      return res.json({
+        success: true,
+        message: 'Ticket guardado correctamente.',
+      });
+    }else{
+      return res.json({
+        success: false,
+        message: 'Ocurrio un problema al guardar el Ticket.',
+      });
+    }
+});
+
+async function update_current_ticket(ticketKey, id_branch, newCurrentTicket) {
+  const jsonTicket = JSON.stringify(newCurrentTicket);
+
+  if (TYPE_DATABASE === 'mysqlite') {
+    return new Promise((resolve) => {
+      const updateQuery = `
+        UPDATE ticket
+        SET current_ticket = ?
+        WHERE key = ? AND id_branches = ?
+      `;
+
+      const selectQuery = `
+        SELECT id FROM ticket
+        WHERE key = ? AND id_branches = ?
+        LIMIT 1
+      `;
+
+      database.run(updateQuery, [jsonTicket, ticketKey, id_branch], function (err) {
+        if (err) {
+          console.error('Error update_current_ticket (SQLite):', err);
+          return resolve(null);
+        }
+
+        database.get(selectQuery, [ticketKey, id_branch], (err, row) => {
+          if (err || !row) {
+            console.error('Error fetching ticket ID (SQLite):', err);
+            return resolve(null);
+          }
+          resolve(row.id);
+        });
+      });
+    });
+  } else {
+    const updateQuery = `
+      UPDATE "Box".ticket
+      SET current_ticket = $1
+      WHERE key = $2 AND id_branches = $3
+      RETURNING id
+    `;
+
+    try {
+      const result = await database.query(updateQuery, [
+        jsonTicket,
+        ticketKey,
+        id_branch,
+      ]);
+
+      if (result.rows.length > 0) {
+        return result.rows[0].id;
+      }
+
+      return null;
+    } catch (error) {
+      console.error('Error update_current_ticket (PostgreSQL):', error);
+      return null;
+    }
+  }
+}
+
+async function save_ticket_return_history(id_employee, id_ticket, old_ticket, products_returns, total_return, note = '') {
+  if (TYPE_DATABASE === 'mysqlite') {
+    return new Promise((resolve) => {
+      const queryText = `
+        INSERT INTO history_returns 
+        (id_employees, id_ticket, old_ticket, products_returns, total_return, note)
+        VALUES (?, ?, ?, ?, ?, ?)
+      `;
+      database.run(
+        queryText,
+        [
+          id_employee,
+          id_ticket,
+          JSON.stringify(old_ticket),
+          JSON.stringify(products_returns),
+          total_return,
+          note
+        ],
+        function (err) {
+          if (err) {
+            console.error('Error save_ticket_return_history (SQLite):', err);
+            return resolve(false);
+          }
+          resolve(true);
+        }
+      );
+    });
+  } else {
+    const queryText = `
+      INSERT INTO "Box".history_returns 
+      (id_employees, id_ticket, old_ticket, products_returns, total_return, note)
+      VALUES ($1, $2, $3, $4, $5, $6)
+    `;
+    try {
+      await database.query(queryText, [
+        id_employee,
+        id_ticket,
+        JSON.stringify(old_ticket),
+        JSON.stringify(products_returns),
+        total_return,
+        note
+      ]);
+      return true;
+    } catch (error) {
+      console.error('Error save_ticket_return_history (PostgreSQL):', error);
+      return false;
+    }
+  }
+}
+
 
 module.exports = router;
