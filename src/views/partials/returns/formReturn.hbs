@@ -20,8 +20,13 @@
             <br>
             <hr>
             <div class="row">
-                <input type="text" id="filter-products" placeholder="Buscar producto por nombre o código"
-                    class="form-control" style="margin-bottom: 8px; width: 50%;">
+                <div class="col-10">
+                    <input type="text" id="filter-products" placeholder="Buscar producto por nombre o código"
+                        class="form-control" style="margin-bottom: 8px; width: 100%;">
+                </div>
+                <div class="col-2">
+                    <button class="btn btn-edit" onclick="viewHistoryTicket()">Ver Historial</button>
+                </div>
                 <div id="container-ticket" style="max-height: 300px; overflow-y: auto; width: 100%;"></div>
             </div>
             <div id="container-ticket">
@@ -49,6 +54,15 @@
     containerTicket.style.display = 'none';
 
     let tokenTicketEdit = null;
+    function viewHistoryTicket(){
+        //we will see if exist a token of ticket
+        if (tokenTicketEdit) {
+            window.location.href = `/links/view_history_ticket/${tokenTicketEdit}`;
+        } else {
+            alert('No hay un ticket seleccionado para ver el historial.');
+        }
+    }
+
 
     async function get_information_of_the_ticket(ticket) {
 
@@ -96,7 +110,7 @@
 
         tokenTicketEdit = ticketCode;
         const dataTicket = await get_information_of_the_ticket(ticketCode);
-
+        console.log(dataTicket)
         containerTicket.style.display = 'none';
         if (!dataTicket) {
             warningMessage('🤔 ¿Dónde está?', 'El ticket que buscas no existe...¿Seguro que escribiste bien el código?');
@@ -396,6 +410,7 @@
             }
 
             // Devolver los datos
+            tokenTicketEdit=null;
             return data.ticket;
         } catch (error) {
             console.error('Error al obtener el ticket:', error.message);

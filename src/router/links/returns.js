@@ -239,13 +239,21 @@ router.post('/update_ticket', isLoggedIn, async (req, res) => {
     const {dataTicket, tokenTicket}=req.body;
 
     //first we will get the old information of the ticket
-    const dataTicketOld=await get_ticket_by_branch_and_key(id_branch, tokenTicket)
+    const dataTicketOld=await get_ticket_by_branch_and_key(id_branch, tokenTicket);
     if(dataTicketOld){
         //update the information of ticket for change the variable 'current_ticket'
         const idTicket=await update_current_ticket(tokenTicket,id_branch,dataTicket.newTicket);
         if(idTicket){
           //now we will save this change in the history of the ticket.
           await save_ticket_return_history(id_employee, idTicket, dataTicketOld.current_ticket, dataTicket.returnedProducts, dataTicket.totalReturn, dataTicket.note);
+
+          //now we will create a new move in the history for that the move show in the cut box
+          const date_move = new Date();
+          const move = `Se realizó una devolución del ticket con folio "${tokenTicket}", con un total devuelto de $${dataTicket.totalReturn}. NOTA: ${dataTicket.note}`;
+          const newHistoryMove = create_new_history_move(id_branch, id_employee, -dataTicket.totalReturn, move, date_move);
+          console.log(newHistoryMove)
+          await add_movement_history(newHistoryMove);
+
           flag=true;
         }
     }
@@ -375,5 +383,116 @@ async function save_ticket_return_history(id_employee, id_ticket, old_ticket, pr
   }
 }
 
+
+//**history ticket**/
+router.get('/view_history_ticket/:token_ticket', isLoggedIn, async (req, res) => {
+    const { token_ticket } = req.params;
+    const id_branch=req.user.id_branch;
+    const id_company=req.user.id_company;
+
+    //we will see if the user not have the permission for this App.
+    if (!this_user_have_this_permission(req.user, id_company, id_branch, 'return_ticket')) {
+        req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
+        return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
+    }
+
+    const dataTicketOld=await get_ticket_by_branch_and_key(id_branch, token_ticket);
+    const historyTicket=await get_ticket_return_history_by_ticket_id(dataTicketOld.id);
+    const branchFree = await get_data_branch(id_branch);
+    res.render('links/returns/history_ticket', {branchFree, dataTicketOld, historyTicket});
+});
+
+
+async function get_ticket_return_history_by_ticket_id(id_ticket) {
+  if (!id_ticket) return [];
+
+  if (TYPE_DATABASE === 'mysqlite') {
+    return new Promise((resolve) => {
+      const queryText = `
+        SELECT id, id_employees, id_ticket, old_ticket, products_returns, total_return, date_return, note
+        FROM history_returns
+        WHERE id_ticket = ?
+        ORDER BY date_return DESC
+      `;
+
+      database.all(queryText, [id_ticket], (err, rows) => {
+        if (err) {
+          console.error('Error get_ticket_return_history_by_ticket_id (SQLite):', err);
+          return resolve([]);
+        }
+
+        const parsedRows = rows.map(row => ({
+          ...row,
+          old_ticket: JSON.parse(row.old_ticket),
+          products_returns: JSON.parse(row.products_returns)
+        }));
+
+        resolve(parsedRows);
+      });
+    });
+  } else {
+    const queryText = `
+      SELECT id, id_employees, id_ticket, old_ticket, products_returns, total_return, date_return, note
+      FROM "Box".history_returns
+      WHERE id_ticket = $1
+      ORDER BY date_return DESC
+    `;
+    try {
+      const result = await database.query(queryText, [id_ticket]);
+
+      return result.rows.map(row => ({
+        ...row,
+        old_ticket: JSON.parse(row.old_ticket),
+        products_returns: JSON.parse(row.products_returns)
+      }));
+    } catch (error) {
+      console.error('Error get_ticket_return_history_by_ticket_id (PostgreSQL):', error);
+      return [];
+    }
+  }
+}
+
+
+async function add_movement_history(data) {
+    const values = Object.values(data);
+
+    if (TYPE_DATABASE === 'mysqlite') {
+        const columns = Object.keys(data).join(', ');
+        const placeholders = Object.keys(data).map(() => '?').join(', ');
+        const queryText = `INSERT INTO movement_history (id_branches, id_boxes, id_employees, move, comment, date_move) VALUES (?,?,?,?,?,?)`;
+
+        return new Promise((resolve) => {
+            database.run(queryText, values, function(err) {
+                if (err) {
+                    console.error('Error insertando movement_history en SQLite:', err);
+                    resolve(false);
+                } else {
+                    resolve(true);
+                }
+            });
+        });
+
+    } else {
+        const queryText = 'INSERT INTO "Box".movement_history(id_branches, id_boxes, id_employees, move, comment, date_move) VALUES ($1, $2, $3, $4, $5, $6)';
+        try {
+            await database.query(queryText, values);
+            return true;
+        } catch (error) {
+            console.error('Error to add in the database movement_history:', error);
+            return false;
+        }
+    }
+}
+
+function create_new_history_move(id_branches,id_employees, move, comment, date_move){
+  return {
+    id_branches,
+    id_boxes: 0, 
+    id_employees,
+    move,
+    comment,
+    date_move
+  }
+}
 
 module.exports = router;
