@@ -411,6 +411,8 @@
 
             // Devolver los datos
             tokenTicketEdit=null;
+            document.getElementById('note-general').value='';
+            
             return data.ticket;
         } catch (error) {
             console.error('Error al obtener el ticket:', error.message);

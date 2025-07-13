@@ -251,7 +251,6 @@ router.post('/update_ticket', isLoggedIn, async (req, res) => {
           const date_move = new Date();
           const move = `Se realizó una devolución del ticket con folio "${tokenTicket}", con un total devuelto de $${dataTicket.totalReturn}. NOTA: ${dataTicket.note}`;
           const newHistoryMove = create_new_history_move(id_branch, id_employee, -dataTicket.totalReturn, move, date_move);
-          console.log(newHistoryMove)
           await add_movement_history(newHistoryMove);
 
           flag=true;
