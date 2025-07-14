@@ -2,47 +2,154 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8" />
-<title>Imprimir texto plano</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Gestión de CSDs SAT - Facturama</title>
 <style>
-  @media print {
-    @page { margin: 0; }
-    body { margin: 0; font-family: monospace; white-space: pre; }
-  }
+  body { font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto; }
+  label { display: block; margin-top: 10px; }
+  input[type=text], select, input[type=file] { width: 100%; padding: 8px; margin-top: 4px; box-sizing: border-box; }
+  button { margin-top: 15px; padding: 10px 20px; font-size: 16px; cursor: pointer; }
+  #response { margin-top: 20px; white-space: pre-wrap; background: #f4f4f4; padding: 10px; border: 1px solid #ccc; }
 </style>
 </head>
 <body>
 
-<pre id="texto">
-Mi Restaurante
-Fecha: 2025-07-04 09:30
+<h1>Gestión de CSDs SAT - Facturama API</h1>
 
-Producto 1 ........... $10.00
-Producto 2 ........... $20.00
+<form id="csdForm">
+  <label for="action">Acción:</label>
+  <select id="action" name="action" required>
+    <option value="">Selecciona una acción</option>
+    <option value="add">Agregar CSD</option>
+    <option value="update">Actualizar CSD</option>
+    <option value="delete">Eliminar CSD</option>
+  </select>
 
-Total: $30.00
+  <label for="rfc">RFC:</label>
+  <input type="text" id="rfc" name="rfc" placeholder="Ejemplo: EKU9003173C9" required />
 
-Gracias por su compra
-</pre>
+  <div id="fileInputs">
+    <label for="certificateFile">Certificate (.cer):</label>
+    <input type="file" id="certificateFile" accept=".cer" />
 
-<button id="imprimirBtn">Imprimir texto plano</button>
+    <label for="privateKeyFile">PrivateKey (.key):</label>
+    <input type="file" id="privateKeyFile" accept=".key" />
+
+    <label for="privateKeyPassword">PrivateKey Password:</label>
+    <input type="text" id="privateKeyPassword" name="privateKeyPassword" placeholder="Contraseña de la llave privada" />
+  </div>
+
+  <button type="submit">Enviar</button>
+</form>
+
+<div id="response"></div>
 
 <script>
-  function imprimirTexto() {
-    const texto = document.getElementById('texto').textContent;
+  const form = document.getElementById('csdForm');
+  const responseDiv = document.getElementById('response');
+  const actionSelect = document.getElementById('action');
+  const fileInputsDiv = document.getElementById('fileInputs');
 
-    const printWindow = window.open('', '', 'width=300,height=400');
-    printWindow.document.write(`
-      <pre style="font-family: monospace; white-space: pre; margin: 0; padding: 10px;">
-${texto}
-      </pre>
-    `);
-    printWindow.document.close();
-    printWindow.focus();
-    printWindow.print();
-    printWindow.close();
+  // Mostrar u ocultar inputs de archivos según acción
+  function toggleFileInputs() {
+    const action = actionSelect.value;
+    if (action === 'delete') {
+      fileInputsDiv.style.display = 'none';
+      // limpiar inputs
+      document.getElementById('certificateFile').value = '';
+      document.getElementById('privateKeyFile').value = '';
+      document.getElementById('privateKeyPassword').value = '';
+    } else {
+      fileInputsDiv.style.display = 'block';
+    }
+  }
+  actionSelect.addEventListener('change', toggleFileInputs);
+  toggleFileInputs(); // inicial
+
+  // Convierte un archivo a base64 sin el prefijo data:
+  function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64String = reader.result.split(',')[1]; // quitar "data:*/*;base64,"
+        resolve(base64String);
+      };
+      reader.onerror = err => reject(err);
+      reader.readAsDataURL(file);
+    });
   }
 
-  document.getElementById('imprimirBtn').addEventListener('click', imprimirTexto);
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const action = actionSelect.value;
+    const rfc = form.rfc.value.trim();
+
+    if (!action) {
+      alert('Selecciona una acción');
+      return;
+    }
+    if (!rfc) {
+      alert('Ingresa el RFC');
+      return;
+    }
+
+    // Para delete no se necesitan archivos ni password
+    if ((action === 'add' || action === 'update')) {
+      const certFile = document.getElementById('certificateFile').files[0];
+      const keyFile = document.getElementById('privateKeyFile').files[0];
+      const privateKeyPassword = document.getElementById('privateKeyPassword').value.trim();
+
+      if (!certFile || !keyFile || !privateKeyPassword) {
+        alert('Para agregar o actualizar, sube los archivos .cer, .key y escribe la contraseña de la llave privada');
+        return;
+      }
+
+      try {
+        const certificateBase64 = await fileToBase64(certFile);
+        const privateKeyBase64 = await fileToBase64(keyFile);
+
+        const payload = {
+          Rfc: rfc,
+          Certificate: certificateBase64,
+          PrivateKey: privateKeyBase64,
+          PrivateKeyPassword: privateKeyPassword
+        };
+
+        sendRequest(action, rfc, payload);
+
+      } catch (error) {
+        responseDiv.textContent = 'Error leyendo archivos: ' + error.message;
+      }
+
+    } else if (action === 'delete') {
+      // Para delete solo se manda RFC como query param, no body
+      sendRequest(action, rfc, null);
+    }
+  });
+
+  async function sendRequest(action, rfc, payload) {
+    let url = 'https://pluspuntodeventa.com/api/factura/load_csds.php?action=' + encodeURIComponent(action);
+    if (action === 'delete') {
+      url += '&rfc=' + encodeURIComponent(rfc);
+    }
+
+    const options = {
+      method: (action === 'delete') ? 'DELETE' : 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    };
+    if (payload) {
+      options.body = JSON.stringify(payload);
+    }
+
+    try {
+      const res = await fetch(url, options);
+      const text = await res.text();
+      responseDiv.textContent = `Status: ${res.status}\n\n${text}`;
+    } catch (error) {
+      responseDiv.textContent = 'Error en la solicitud: ' + error.message;
+    }
+  }
 </script>
 
 </body>

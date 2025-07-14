@@ -1,292 +1,125 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tienda Online - SICAR X</title>
-  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/3.0.0/uicons-solid-rounded/css/uicons-solid-rounded.css">
-  <link rel='stylesheet'
-    href='https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
-  <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-solid-chubby/css/uicons-solid-chubby.css'>
-
+  <meta charset="UTF-8">
+  <title>Generar CFDI 4.0 - Organizado</title>
   <style>
-    :root {
-      --color-company-store: #0071DC;
-      --color-price: #2A8703;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f4f6fa;
-      color: #1a1a1a;
-    }
-
-    header {
-      background-color: var(--color-company-store);
-      padding: 1rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      color: white;
-    }
-
-    header .logo {
-      display: flex;
-      align-items: center;
-    }
-
-    header .logo img {
-      height: 40px;
-      margin-right: 10px;
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 1.2rem;
-    }
-
-
-    .search-bar {
-      flex: 1;
-      display: flex;
-      width: 45%;
-      max-width: 700px;
-      margin: 0 1rem;
-      background: white;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-    }
-
-    .search-bar input {
-      flex: 1;
-      padding: 0.6rem 1rem;
-      border: none;
-      font-size: 1rem;
-      outline: none;
-    }
-
-    .search-btn {
-      background-color: transparent;
-      border: none;
-      padding: 0 1rem;
-      color:var(--color-company-store);
-      cursor: pointer;
-      font-size: 1.2rem;
-      transition: filter 0.3s ease;
-    }
-
-    .search-btn:hover {
-      filter: brightness(0.85);
-    }
-
-
-    .logo-text h1 {
-      margin: 0;
-      font-size: 1.2rem;
-      color: white;
-    }
-
-    .visit-link {
-      font-size: 1rem;
-      color: #dcdcdc;
-      text-decoration: underline;
-      display: block;
-      margin-top: 0.2rem;
-    }
-
-    .btn {
-      background-color: var(--color-company-store);
-      color: white;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    .btn i {
-      font-size: 1.3rem;
-      /* o 24px */
-    }
-
-    .btn:hover {
-      filter: brightness(0.85);
-    }
-
-    .filters {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      padding: 1rem 2rem;
-      background-color: #fff;
-      border-bottom: 1px solid #e0e0e0;
-    }
-
-    .filters input,
-    .filters select {
-      padding: 0.5rem 1rem;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 1rem;
-      width: 200px;
-    }
-
-    .product-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 2rem;
-      padding: 2rem;
-    }
-
-    .product-card {
-      background-color: #fff;
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
-      display: flex;
-      flex-direction: column;
-      transition: transform 0.2s ease;
-    }
-
-    .product-image {
-      width: 100%;
-      height: 180px;
-      object-fit: contain;
-      background-color: #f5f5f5;
-      padding: 1rem;
-    }
-
-    .product-info {
-      padding: 1rem;
-      flex-grow: 1;
-    }
-
-    .product-info h3 {
-      margin: 0 0 0.5rem;
-      font-size: 1.1rem;
-      color: #222;
-    }
-
-    .product-info p {
-      margin: 0.3rem 0;
-      color: #555;
-      font-size: 0.9rem;
-    }
-
-    .barcode {
-      font-family: monospace;
-      color: #444;
-      font-size: 0.85rem;
-    }
-
-    .product-actions {
-      padding: 1rem;
-      display: flex;
-      justify-content: flex-end;
-      border-top: 1px solid #eee;
-    }
-
-    .add-cart-btn {
-      background-color: var(--color-company-store);
-      color: white;
-      border: none;
-      padding: 0.5rem 0.8rem;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 1rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      transition: background-color 0.3s ease;
-    }
-
-    .add-cart-btn:hover {
-      filter: brightness(0.85);
-    }
-
-    .product-info .price {
-      color: var(--color-price);
-      font-weight: bold;
-      font-size: 1.2rem;
-      margin-top: 0.5rem;
-    }
-
-    @media (max-width: 600px) {
-      .filters {
-        flex-direction: column;
-      }
-
-      .filters input,
-      .filters select {
-        width: 100%;
-      }
-    }
+    body { font-family: Arial, sans-serif; background: #f8f9fa; padding: 20px; }
+    h2, h3 { margin-top: 30px; }
+    input, textarea, button { width: 100%; margin: 10px 0; padding: 10px; }
+    button { background-color: #007bff; color: white; border: none; cursor: pointer; }
+    button:hover { background-color: #0056b3; }
+    .response { white-space: pre-wrap; background: #fff; padding: 10px; border: 1px solid #ccc; }
+    .section { background: #ffffff; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 0 5px rgba(0,0,0,0.1); }
   </style>
 </head>
-
 <body>
 
-  <header>
-    <div class="logo">
-      <img src="https://pluspuntodeventa.com/img/logo-white-complete.webp" alt="Logo Empresa">
-      <div class="logo-text">
-        <h1>Tienda Online</h1>
-        <a href="https://www.google.com/maps?q=tu+direccion+aqui" target="_blank" class="visit-link">Visítanos <i
-            class="fi fi-sc-map-marker-smile"></i></a>
-      </div>
-    </div>
+  <h2>Generar CFDI Multiemisor (Organizado)</h2>
 
-    <div class="search-bar">
-      <input type="text" placeholder="Buscar por nombre o código de barras...">
-      <button class="search-btn"><i class="fi fi-rr-search"></i></button>
-    </div>
+  <!-- DATOS GENERALES -->
+  <div class="section">
+    <h3>Datos Generales</h3>
+    <input type="text" id="nameId" placeholder="NameId (ej. 1)">
+    <input type="text" id="cfdiType" placeholder="Tipo CFDI (ej. I)">
+    <input type="text" id="expeditionPlace" placeholder="Código Postal de Expedición (ej. 78116)">
+    <input type="text" id="logoUrl" placeholder="Logo URL">
+    <input type="text" id="paymentForm" placeholder="Forma de pago (ej. 03)">
+    <input type="text" id="paymentMethod" placeholder="Método de pago (ej. PUE)">
+    <input type="text" id="folio" placeholder="Folio (ej. 100)">
+  </div>
 
-    <button class="btn"><i class="fi fi-rr-shopping-cart"></i></button>
-  </header>
+  <!-- DATOS DEL EMISOR -->
+  <div class="section">
+    <h3>Datos del Emisor (el negocio que la emite desde el POS) </h3>
+    <input type="text" id="issuerName" placeholder="Nombre del Emisor">
+    <input type="text" id="issuerRfc" placeholder="RFC del Emisor">
+    <input type="text" id="issuerRegimen" placeholder="Régimen Fiscal (ej. 601)">
+  </div>
 
-  <section class="product-grid">
+  <!-- DATOS DEL RECEPTOR -->
+  <div class="section">
+    <h3>Datos del Receptor (el cliente que pide factura) </h3>
+    <input type="text" id="receiverName" placeholder="Nombre del Receptor">
+    <input type="text" id="receiverRfc" placeholder="RFC del Receptor">
+    <input type="text" id="receiverRegimen" placeholder="Régimen Fiscal (ej. 601)">
+    <input type="text" id="receiverCfdiUse" placeholder="Uso CFDI (ej. G03)">
+    <input type="text" id="receiverZip" placeholder="Código Postal (ej. 65000)">
+  </div>
 
-    <!-- Producto 1 -->
-    <div class="product-card">
-      <img class="product-image" src="https://coca-colafemsa.com/wp-content/uploads/2020/02/1-1.png"
-        alt="Coca Cola 600ml" />
-      <div class="product-info">
-        <h3>Coca Cola 600ml</h3>
-        <p>Bebida carbonatada sabor cola.</p>
-        <p class="barcode">7501055312345</p>
-        <p class="price">$79.99</p>
-      </div>
-      <div class="product-actions">
-        <button class="add-cart-btn">
-          <i class="fi fi-sr-cart-arrow-down"></i> Agregar
-        </button>
-      </div>
-    </div>
+  <!-- ENVIAR -->
+  <button onclick="enviarFactura()">Emitir CFDI</button>
 
-    <!-- Producto 2 -->
-    <div class="product-card">
-      <img class="product-image" src="https://via.placeholder.com/250x200.png?text=Producto" alt="Producto Genérico" />
-      <div class="product-info">
-        <h3>Producto Genérico</h3>
-        <p>Descripción breve del producto.</p>
-        <p class="barcode">7501055377777</p>
-      </div>
-      <div class="product-actions">
-        <button class="add-cart-btn">
-          <i class="fi fi-sr-cart-arrow-down"></i> Agregar
-        </button>
-      </div>
-    </div>
+  <h3>Respuesta:</h3>
+  <div id="respuesta" class="response"></div>
 
-  </section>
+  <script>
+    // Datos generales
+    function obtenerDatosGenerales() {
+      return {
+        NameId: document.getElementById("nameId").value,
+        CfdiType: document.getElementById("cfdiType").value,
+        ExpeditionPlace: document.getElementById("expeditionPlace").value,
+        LogoUrl: document.getElementById("logoUrl").value,
+        PaymentForm: document.getElementById("paymentForm").value,
+        PaymentMethod: document.getElementById("paymentMethod").value,
+        Folio: document.getElementById("folio").value
+      };
+    }
 
+    // Datos del emisor
+    function obtenerDatosEmisor() {
+      return {
+        Name: document.getElementById("issuerName").value,
+        Rfc: document.getElementById("issuerRfc").value,
+        FiscalRegime: document.getElementById("issuerRegimen").value
+      };
+    }
+
+    // Datos del receptor
+    function obtenerDatosReceptor() {
+      return {
+        Name: document.getElementById("receiverName").value,
+        Rfc: document.getElementById("receiverRfc").value,
+        FiscalRegime: document.getElementById("receiverRegimen").value,
+        CfdiUse: document.getElementById("receiverCfdiUse").value,
+        TaxZipCode: document.getElementById("receiverZip").value
+      };
+    }
+
+    // Enviar a la API
+    async function enviarFactura() {
+      const datos = {
+        ...obtenerDatosGenerales(),
+        Issuer: obtenerDatosEmisor(),
+        Receiver: obtenerDatosReceptor(),
+        Items: [{
+          ProductCode: "25173108",
+          Description: "GPS estandar pruebas",
+          UnitCode: "E48",
+          Quantity: 1,
+          UnitPrice: 100.0,
+          Subtotal: 100.0,
+          TaxObject: "01",
+          Total: 116
+        }]
+      };
+
+      try {
+        const res = await fetch("https://www.pluspuntodeventa.com/api/factura/factura.php", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(datos)
+        });
+
+        const data = await res.json();
+        document.getElementById("respuesta").textContent = JSON.stringify(data, null, 2);
+      } catch (error) {
+        document.getElementById("respuesta").textContent = "Error: " + error.message;
+      }
+    }
+  </script>
 </body>
-
 </html>

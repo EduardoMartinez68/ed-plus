@@ -81,7 +81,7 @@
         color: #7f8c8d;
     }
 
-    .color-link{
+    .color-link {
         color: var(--color-company);
         text-decoration: none;
     }
@@ -175,15 +175,18 @@
                 </div>
 
                 <label for="password">RFC:</label>
-                <input type="text" name="rfc" id="rfcUser" placeholder="Clave del Registro Federal de Contribuyentes" required>
+                <input type="text" name="rfc" id="rfcUser" placeholder="Clave del Registro Federal de Contribuyentes"
+                    required>
 
                 <label for="password">Contraseña de la llave .KEY:</label>
-                <input type="password" name="password" id="password" placeholder="Ingresa tu contraseña" required>
+                <input type="password" name="password" id="passwordKey" placeholder="Ingresa tu contraseña" required>
                 <center>
-                    <label>Al subir tus archivos, aceptas que los datos serán almacenados en nuestros servidores y serán
-                        utilizados para la validación de tu información fiscal. <a href="" class="color-link">Lee nuestros terminos y condiciones para usar este servicio</a>
-                    .Si no tienes los archivos, puedes generarlos desde el portal del SAT.
-                    Si no tienes la contraseña de tu llave .KEY, puedes recuperarla desde el portal del SAT.</label>
+                    <label>Al subir tus archivos, aceptas que los datos serán almacenados en nuestros servidores y en
+                        los servidores de <a href="https://facturama.mx">Facturama</a> y que esta información serán
+                        utilizados para la validación de tu información fiscal. <a href="" class="color-link">Lee
+                            nuestros terminos y condiciones para usar este servicio</a>
+                        .Si no tienes los archivos, puedes generarlos desde el portal del SAT.
+                        Si no tienes la contraseña de tu llave .KEY, puedes recuperarla desde el portal del SAT.</label>
                 </center>
                 <button type="submit">Subir Datos</button>
             </form>
@@ -193,13 +196,12 @@
 </div>
 
 <script>
+    /*
     function showFileName(input) {
         const fileName = input.files[0]?.name || '';
         const display = input.id === 'keyFile' ? 'keyFileName' : 'cerFileName';
         document.getElementById(display).textContent = fileName;
     }
-</script>
-<script>
 
 
     async function enviarFormularioArchivo(formId, campoArchivo, ruta) {
@@ -267,8 +269,7 @@
         enviarFormularioArchivo('formCer', 'cerFile', '/links/subir-sat');
         enviarFormularioPassword();
     });
-</script>
-<script>
+
 
     //this script is for the new API of Facturama to upload the keys and cer files
 document.getElementById('formKeyCfdi').addEventListener('submit', async function (e) {
@@ -309,4 +310,87 @@ document.getElementById('formKeyCfdi').addEventListener('submit', async function
     console.error(error);
   }
 });
+*/
+</script>
+<script>
+    function showFileName(input) {
+        const fileName = input.files[0]?.name || '';
+        const display = input.id === 'keyFile' ? 'keyFileName' : 'cerFileName';
+        document.getElementById(display).textContent = fileName;
+    }
+
+    document.getElementById('formKeyCfdi').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const rfc = document.getElementById('rfcUser').value.trim();
+        const password = document.getElementById('passwordKey').value.trim();
+        const keyFile = document.getElementById('keyFile').files[0];
+        const cerFile = document.getElementById('cerFile').files[0];
+
+        const action = 'add'; // o "update" o "delete" si quieres que sea dinámico
+
+        if (!rfc || !password || !keyFile || !cerFile) {
+            infoMessage('😳 Espera un momento ', 'Por favor completa todos los campos y selecciona los archivos .KEY y .CER')
+            return;
+        }
+
+        // Convierte archivos a base64
+        const toBase64 = file => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result.split(',')[1]);
+            reader.onerror = error => reject(error);
+            reader.readAsDataURL(file);
+        });
+
+        const loadingOverlay=document.getElementById('loadingOverlay')
+        loadingOverlay.style.display = 'flex';
+
+        try {
+            const certBase64 = await toBase64(cerFile);
+            const keyBase64 = await toBase64(keyFile);
+
+            const payload = {
+                Rfc: rfc,
+                Certificate: certBase64,
+                PrivateKey: keyBase64,
+                PrivateKeyPassword: password
+            };
+
+            const url = `https://pluspuntodeventa.com/api/factura/load_csds.php?action=${encodeURIComponent(action)}`;
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const resultText = await response.text();
+
+            if (response.ok){
+                if (resultText.includes('Operación realizada correctamente')) {
+                    confirmationMessage('✅ ¡Listo!', 'Los datos se han enviado correctamente y fueron procesados exitosamente.');
+                } else {
+                    infoMessage(
+                        '😕 Algo salió mal',
+                        'No pudimos completar la operación en este momento. Por favor, verifica tu conexión o intenta nuevamente más tarde.'
+                    );
+                }
+            } else {
+                warningMessage('❌', 'Error al enviar los datos. Intentalo más tarde.')
+                console.error('Respuesta del servidor:', resultText);
+            }
+
+        } catch (error) {
+            warningMessage('❌', ' Error al procesar los archivos o al conectar con el servidor')
+            console.error('Error:', error);
+        }
+
+        loadingOverlay.style.display = 'none';
+    });
+
+
+    async function save_RFC(){
+        
+    }
 </script>
