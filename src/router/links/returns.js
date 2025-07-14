@@ -32,6 +32,11 @@ const {
     get_data_combo_factures
 } = require('../../services/combos');
 
+const {
+  search_customer_by_email_and_company,
+  search_customers
+} = require('../../services/customers');
+
 const database = require('../../database');
 
 router.get('/:id_company/:id_branch/returns', isLoggedIn, async (req, res) => {
@@ -150,8 +155,6 @@ async function get_tickets_by_branch(id_branch) {
     }
   }
 }
-
-
 
 
 router.post('/get-data-ticket', isLoggedIn, async (req, res) => {
@@ -539,7 +542,6 @@ async function get_ticket_return_history_by_ticket_id(id_ticket) {
   }
 }
 
-
 async function add_movement_history(data) {
     const values = Object.values(data);
 
@@ -581,5 +583,46 @@ function create_new_history_move(id_branches,id_employees, move, comment, date_m
     date_move
   }
 }
+
+
+//** -----------------------------------------CFDI----------------------------------- */
+router.get('/:id_company/:id_branch/tickets-sale', isLoggedIn, async (req, res) => {
+    const { id_company, id_branch } = req.params;
+
+    //we will see if the user not have the permission for this App.
+    if (!this_user_have_this_permission(req.user, id_company, id_branch, 'return_ticket')) {
+        req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
+        return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
+    }
+
+    const tickets=await get_tickets_by_branch(id_branch);
+    const branchFree = await get_data_branch(id_branch);
+    res.render('links/tickets/viewTickets', {branchFree, tickets});
+});
+
+
+router.get('/:id_company/:id_branch/:token_ticket/view_tickets_sale', isLoggedIn, async (req, res) => {
+    const { id_company, id_branch , token_ticket} = req.params;
+
+    //we will see if the user not have the permission for this App.
+    if (!this_user_have_this_permission(req.user, id_company, id_branch, 'return_ticket')) {
+        req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
+        return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
+    }
+
+    const dataTicketOld=await get_ticket_by_branch_and_key(id_branch, token_ticket);
+
+    //now we will see if this sale have a customer
+    const idCustomer=dataTicketOld.id_customers;
+    let infoCustomer=[{}]
+    if(idCustomer){
+      infoCustomer=await search_customers(dataTicketOld.id_customers) //if have save a customer, get the information of the customer
+    }
+    
+    const branchFree = await get_data_branch(id_branch);
+    console.log(infoCustomer)
+    res.render('links/tickets/viewATickets', {branchFree, dataTicketOld, infoCustomer});
+});
+
 
 module.exports = router;

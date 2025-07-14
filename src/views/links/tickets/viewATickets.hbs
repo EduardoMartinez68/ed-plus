@@ -1,0 +1,155 @@
+<!--information of the branch-->
+{{#each branchFree}}
+    <input type="hidden" value="{{rfc}}" id="rfcCFDI">
+    <input type="hidden" value="{{rfc}}" id="namebranchCFDI">
+{{/each}}
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-body">
+            <form id="facturaForm">
+            <label>🧾 Generar Factura CFDI</label>
+            <hr>
+            <div class="btn-group">
+                <button class="btn-select btn-active" onclick="showSection('select-1', this)" type="button"> Informacion de factura</button>
+                <button class="btn-select" onclick="showSection('select-3', this)" type="button"> Informacion del receptor</button>
+                <button class="btn-select" onclick="showSection('select-2', this)" type="button"> Recibo de factura</button>
+            </div>
+            <div id="select-1" class="content-section active">
+                <hr>
+                {{>tickets/formCFDI}}
+            </div>
+            <div id="select-3" class="content-section">
+                <hr>
+                {{>tickets/formAddress}}
+            </div>
+            <div id="select-2" class="content-section">
+                <hr>
+                {{>tickets/tableCFDI}}
+            </div>
+
+            <button type="submit" class="btn btn-add mt-4">Generar Factura</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+document.getElementById('facturaForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    // Obtener productos directamente desde la tabla
+    const filas = document.querySelectorAll('#tabla-productos tbody tr');
+    const current_ticket = [];
+
+    filas.forEach(fila => {
+        const name = fila.cells[1].textContent.trim();
+        const barcode = fila.cells[2].textContent.trim();
+        const quantity = parseFloat(fila.querySelector('.cantidad').textContent) || 0;
+        const price = parseFloat(fila.querySelector('.precio').textContent) || 0;
+        const itemTotal = quantity * price;
+
+        current_ticket.push({
+            name,
+            barcode,
+            price,
+            quantity,
+            itemTotal
+        });
+    });
+
+    // Datos del receptor del formulario
+    const receptor = {
+        Rfc: document.getElementById('rfcReceptor').value.trim(),
+        Name: document.getElementById('nombreReceptor').value.trim(),
+        CfdiUse: document.getElementById('usoCfdi').value,
+        FiscalRegime: document.getElementById('regimenFiscal').value.trim(),
+        TaxZipCode: document.getElementById('codigoPostal').value.trim(),
+        Address: {
+            Street: document.getElementById('calleReceptor').value.trim(),
+            ExteriorNumber: document.getElementById('numeroExteriorReceptor').value.trim(),
+            InteriorNumber: document.getElementById('numeroInteriorReceptor').value.trim(),
+            Neighborhood: document.getElementById('coloniaReceptor').value.trim(),
+            ZipCode: document.getElementById('codigoPostal').value.trim(),
+            Municipality: document.getElementById('municipioReceptor').value.trim(),
+            State: document.getElementById('estadoReceptor').value.trim(),
+            Country: document.getElementById('paisReceptor').value.trim()
+        }
+    };
+
+    // Armar el array de items con impuestos
+    const items = current_ticket.map(item => {
+        const subtotal = item.price * item.quantity;
+        const iva = subtotal * 0.16;
+        const total = subtotal + iva;
+
+        return {
+            ProductCode: "25173301", // código genérico
+            Description: item.name,
+            UnitCode: "H87",
+            Quantity: item.quantity,
+            UnitPrice: item.price,
+            Subtotal: subtotal,
+            TaxObject: "01",
+            Taxes: [
+                {
+                    TaxId: "002", // IVA
+                    Base: subtotal,
+                    Rate: 0.16,
+                    Amount: iva,
+                    IsRetention: false
+                }
+            ],
+            Total: total
+        };
+    });
+
+    // Obtener RFC del emisor desde inputs ocultos
+    const rfc = document.getElementById('rfcCFDI')?.value?.trim() || '';
+    const name = document.getElementById('namebranchCFDI')?.value?.trim() || '';
+
+    const paymentForm = document.getElementById('paymentForm').value;
+    // Armar el payload completo
+    const payload = {
+        CfdiType: "I",
+        PaymentForm: paymentForm, // Efectivo
+        PaymentMethod: "PUE", // Pago en una sola exhibición
+        ExpeditionPlace: receptor.TaxZipCode,
+        Date: new Date().toISOString(), // o usa la fecha de venta si está disponible
+        Folio: Math.floor(Math.random() * 10000),
+        Issuer: {
+            FiscalRegime: "601",
+            Rfc: rfc,
+            Name: name
+        },
+        Receiver: receptor,
+        Items: items
+    };
+
+    // Enviar a tu API
+    try {
+        const response = await fetch('https://pluspuntodeventa.com/api/factura/factura.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const responseText = await response.text();
+
+        if (response.ok) {
+            confirmationMessage("✅ ¡Factura creada!", "La factura fue generada correctamente.");
+            console.log(responseText);
+        } else {
+            warningMessage("❌ Error al generar factura", responseText);
+            console.error(responseText);
+        }
+
+    } catch (error) {
+        errorMessage("❌ Error de conexión", error.message);
+    }
+});
+</script>

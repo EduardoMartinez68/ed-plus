@@ -1,0 +1,48 @@
+<label class="mb-3">🧾 Productos a facturar</label>
+<div class="table-responsive">
+    <table id="tabla-productos" class="table table-hover">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Código</th>
+                <th>Cantidad</th>
+                <th>Precio Unitario</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each dataTicketOld.current_ticket}}
+            <tr>
+                <td>{{this.name}}</td>
+                <td>{{this.barcode}}</td>
+                <td class="cantidad">{{this.quantity}}</td>
+                <td class="precio">{{this.price}}</td>
+                <td class="total"></td>
+            </tr>
+            {{/each}}
+        </tbody>
+        <tfoot>
+            <tr style="background: #e9e9e9;">
+                <td colspan="4" style="text-align: right;"><strong>Total General:</strong></td>
+                <td id="total-general"><strong>$ 0.00</strong></td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const filas = document.querySelectorAll('#tabla-productos tbody tr');
+    let totalGeneral = 0;
+
+    filas.forEach(fila => {
+        const cantidad = parseFloat(fila.querySelector('.cantidad').textContent) || 0;
+        const precio = parseFloat(fila.querySelector('.precio').textContent) || 0;
+        const total = cantidad * precio;
+        fila.querySelector('.total').textContent = `$ ${total.toFixed(2)}`;
+        totalGeneral += total;
+    });
+
+    document.getElementById('total-general').innerHTML = `<strong>$ ${totalGeneral.toFixed(2)}</strong>`;
+});
+</script>

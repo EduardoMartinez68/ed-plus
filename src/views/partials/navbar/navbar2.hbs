@@ -321,8 +321,17 @@
                     {{#if user.view_movement_history}}
                     {{#each branchFree}}
                     <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/0/services')">
+                        <img src="/img/apps/prontipagos.webp" alt="Ventas" loading="lazy">
+                        <span>Prontipagos</span>
+                    </div>
+                    {{/each}}
+                    {{/if}}
+
+                    {{#if user.return_ticket}}
+                    {{#each branchFree}}
+                    <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/tickets-sale')">
                         <img src="/img/apps/services.webp" alt="Ventas" loading="lazy">
-                        <span>Pago de Servicios</span>
+                        <span>CFDI</span>
                     </div>
                     {{/each}}
                     {{/if}}

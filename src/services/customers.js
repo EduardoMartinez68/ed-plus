@@ -81,9 +81,34 @@ async function delete_customer(idCustomer) {
     }
 }
 
+async function search_customer_by_email_and_company(email, id_company) {
+    try {
+        if (TYPE_DATABASE === 'mysqlite') {
+            return new Promise((resolve, reject) => {
+                const queryText = 'SELECT * FROM customers WHERE email = ? AND id_companies = ?';
+                database.all(queryText, [email, id_company], (err, rows) => {
+                    if (err) {
+                        console.error('Error fetching customer (SQLite):', err.message);
+                        return reject(err);
+                    }
+                    resolve(rows);
+                });
+            });
+        } else {
+            const queryText = 'SELECT * FROM "Company".customers WHERE email = $1 AND id_companies = $2';
+            const values = [email, id_company];
+            const result = await database.query(queryText, values);
+            return result.rows;
+        }
+    } catch (error) {
+        console.error('Error fetching customer:', error.message);
+        throw error;
+    }
+}
 
 module.exports = {
     search_all_customers,
     search_customers,
-    delete_customer
+    delete_customer,
+    search_customer_by_email_and_company
 };
