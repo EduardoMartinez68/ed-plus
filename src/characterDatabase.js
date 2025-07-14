@@ -348,6 +348,15 @@ async function create_update_of_the_database(adminPool) {
                 ADD CONSTRAINT setting_ticket_uq UNIQUE (id_branches);
             END IF;
         END$$;
+
+        ----------------------------------------CFDI----------------------------
+        DO $$
+        BEGIN
+            -- Asegurar columnas (evita error si ya existen)
+            ALTER TABLE "Company".branches ADD COLUMN IF NOT EXISTS rfc varchar(13);
+        END
+        $$;
+
     `
     await adminPool.query(query);
     console.log('📂 La base de datos EDPLUS fue actualizada.');
@@ -456,6 +465,13 @@ async function create_update_of_the_database_mysqlite(db) {
     queryPermition=`
     ALTER TABLE ticket ADD COLUMN synchronized BOOLEAN NOT NULL DEFAULT FALSE;
     `
+    await create_table_mysqlite(db,queryPermition)
+
+
+    queryPermition=`
+    ALTER TABLE branches ADD COLUMN rfc varchar(13);
+    `
+
     await create_table_mysqlite(db,queryPermition)
     db.close();
 }

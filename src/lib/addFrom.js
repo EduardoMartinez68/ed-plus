@@ -5551,7 +5551,6 @@ router.post('/links/update-labels/:id', async (req, res) => {
     const { name, width, length, label } = req.body;
 
     const result = await update_label(id, name, width, length, label);
-    console.log(label)
     if (result.success) {
         res.json({ success: true, message: 'Etiqueta actualizada correctamente' });
     } else {
@@ -5598,6 +5597,66 @@ async function update_label(id, name, width, length, labelJson) {
         }
     }
 }
+
+
+router.post('/links/update_rfc', async (req, res) => {
+    const { id_company, id_branch } = req.user;
+    const { rfc } = req.body;
+    await update_rfc_branch(id_branch,rfc)
+    res.json({ success: true, message: 'Etiqueta actualizada correctamente' });
+ 
+});
+
+async function update_rfc_branch(id_branch, rfc) {
+    if (TYPE_DATABASE === 'mysqlite') {
+        return new Promise((resolve) => {
+            // Verifica que la columna exista en SQLite
+            database.all(`PRAGMA table_info(branches)`, [], function (err, columns) {
+                if (err) {
+                    console.error('Error al obtener columnas de branches (SQLite):', err);
+                    return resolve(false);
+                }
+
+                const existingColumns = columns.map(col => col.name);
+                if (!existingColumns.includes('rfc')) {
+                    console.warn('La columna "rfc" no existe en SQLite.');
+                    return resolve(false);
+                }
+
+                const queryText = `
+                    UPDATE branches
+                    SET rfc = ?
+                    WHERE id = ?
+                `;
+
+                database.run(queryText, [rfc, id_branch], function (err) {
+                    if (err) {
+                        console.error('Error actualizando RFC en SQLite:', err);
+                        return resolve(false);
+                    }
+                    resolve(this.changes > 0);
+                });
+            });
+        });
+    } else {
+        // PostgreSQL
+        const queryText = `
+            UPDATE "Company".branches
+            SET rfc = $1
+            WHERE id = $2
+        `;
+
+        try {
+            await database.query(queryText, [rfc, id_branch]);
+            return true;
+        } catch (error) {
+            console.error('Error actualizando RFC en PostgreSQL:', error);
+            return false;
+        }
+    }
+}
+
+
 
 //-----------------------------------------------------------------------------------notifications----------------------------------------------------
 router.post('/links/update_notification', async (req, res) => {

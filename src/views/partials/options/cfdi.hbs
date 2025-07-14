@@ -174,9 +174,11 @@
                     <div id="cerFileName" class="file-name"></div>
                 </div>
 
+                {{#each branchFree}}
                 <label for="password">RFC:</label>
-                <input type="text" name="rfc" id="rfcUser" placeholder="Clave del Registro Federal de Contribuyentes"
+                <input type="text" name="rfc" id="rfcUser" placeholder="Clave del Registro Federal de Contribuyentes" value="{{rfc}}"
                     required>
+                {{/each}}
 
                 <label for="password">Contraseña de la llave .KEY:</label>
                 <input type="password" name="password" id="passwordKey" placeholder="Ingresa tu contraseña" required>
@@ -344,7 +346,7 @@ document.getElementById('formKeyCfdi').addEventListener('submit', async function
 
         const loadingOverlay=document.getElementById('loadingOverlay')
         loadingOverlay.style.display = 'flex';
-
+        await save_RFC(rfc);
         try {
             const certBase64 = await toBase64(cerFile);
             const keyBase64 = await toBase64(keyFile);
@@ -366,19 +368,36 @@ document.getElementById('formKeyCfdi').addEventListener('submit', async function
             });
 
             const resultText = await response.text();
-
+            console.log(resultText)
             if (response.ok){
                 if (resultText.includes('Operación realizada correctamente')) {
                     confirmationMessage('✅ ¡Listo!', 'Los datos se han enviado correctamente y fueron procesados exitosamente.');
                 } else {
                     infoMessage(
                         '😕 Algo salió mal',
-                        'No pudimos completar la operación en este momento. Por favor, verifica tu conexión o intenta nuevamente más tarde.'
+                        resultText
                     );
                 }
             } else {
-                warningMessage('❌', 'Error al enviar los datos. Intentalo más tarde.')
-                console.error('Respuesta del servidor:', resultText);
+                    let serverMessage = 'Ocurrió un error desconocido al procesar tu solicitud.';
+                    
+                    try {
+                        const parsedError = JSON.parse(resultText);
+                        if (parsedError?.ModelState) {
+                            // Extrae todos los errores del objeto ModelState
+                            const errorList = Object.values(parsedError.ModelState)
+                                .flat()
+                                .join('<br>');
+                            serverMessage = errorList;
+                        } else if (parsedError?.Message) {
+                            serverMessage = parsedError.Message;
+                        }
+                    } catch (parseError) {
+                        console.warn('No se pudo interpretar el JSON de error:', parseError);
+                    }
+
+                    warningMessage('❌ Error al enviar los datos', serverMessage);
+                    console.error('Respuesta del servidor:', resultText);
             }
 
         } catch (error) {
@@ -390,7 +409,14 @@ document.getElementById('formKeyCfdi').addEventListener('submit', async function
     });
 
 
-    async function save_RFC(){
-        
+    async function save_RFC(rfc){
+        const url = `/links/update_rfc`;
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+           body: JSON.stringify({ rfc })
+        });
     }
 </script>
