@@ -1,7 +1,8 @@
 <!--information of the branch-->
 {{#each branchFree}}
     <input type="hidden" value="{{rfc}}" id="rfcCFDI">
-    <input type="hidden" value="{{rfc}}" id="namebranchCFDI">
+    <input type="hidden" value="{{name_branch}}" id="namebranchCFDI">
+    <input type="hidden" id="expeditionPlaceCFDI" value="{{postal_code}}">
 {{/each}}
 
 <div class="container mt-4">
@@ -33,7 +34,7 @@
         </div>
     </div>
 </div>
-
+{{>loading}}
 
 
 <script>
@@ -61,11 +62,13 @@ document.getElementById('facturaForm').addEventListener('submit', async function
     });
 
     // Datos del receptor del formulario
+    const rfcReceptor = document.getElementById('rfcReceptor').value.trim();
+    const fiscalRegimeReceptor = document.getElementById('regimenFiscal').value.trim();
+
     const receptor = {
-        Rfc: document.getElementById('rfcReceptor').value.trim(),
+        Rfc: rfcReceptor,
         Name: document.getElementById('nombreReceptor').value.trim(),
-        CfdiUse: document.getElementById('usoCfdi').value,
-        FiscalRegime: document.getElementById('regimenFiscal').value.trim(),
+        CfdiUse: document.getElementById('usoCfdi').value.trim().toUpperCase(),
         TaxZipCode: document.getElementById('codigoPostal').value.trim(),
         Address: {
             Street: document.getElementById('calleReceptor').value.trim(),
@@ -79,45 +82,67 @@ document.getElementById('facturaForm').addEventListener('submit', async function
         }
     };
 
+    // Agregar FiscalRegime solo si no es RFC público en general y régimen no vacío
+    if (rfcReceptor !== 'XAXX010101000') {
+        const regimen = document.getElementById('regimenFiscal').value.trim();
+        if (regimen) {
+            receptor.FiscalRegime = regimen;
+        } else {
+            warningMessage("⚠️ El régimen fiscal del receptor no puede estar vacío.");
+            return;
+        }
+    }
+
     // Armar el array de items con impuestos
     const items = current_ticket.map(item => {
-        const subtotal = item.price * item.quantity;
-        const iva = subtotal * 0.16;
-        const total = subtotal + iva;
+    const subtotal = parseFloat((item.price * item.quantity).toFixed(2));
+    const iva = parseFloat((subtotal * 0.16).toFixed(2));
+    const total = parseFloat((subtotal + iva).toFixed(2));
 
-        return {
-            ProductCode: "25173301", // código genérico
-            Description: item.name,
-            UnitCode: "H87",
-            Quantity: item.quantity,
-            UnitPrice: item.price,
-            Subtotal: subtotal,
-            TaxObject: "01",
-            Taxes: [
-                {
-                    TaxId: "002", // IVA
-                    Base: subtotal,
-                    Rate: 0.16,
-                    Amount: iva,
-                    IsRetention: false
-                }
-            ],
-            Total: total
-        };
+
+    return {
+        ProductCode: "25173301",
+        Description: item.name,
+        UnitCode: "H87",
+        Quantity: item.quantity,
+        UnitPrice: item.price,
+        Subtotal: subtotal,
+        TaxObject: "02",
+        Taxes: [
+            {
+                TaxId: "002",
+                Base: subtotal,
+                Rate: 0.16,
+                Amount: iva,
+                IsRetention: false
+            }
+        ],
+        Total: total
+    };
     });
 
     // Obtener RFC del emisor desde inputs ocultos
     const rfc = document.getElementById('rfcCFDI')?.value?.trim() || '';
     const name = document.getElementById('namebranchCFDI')?.value?.trim() || '';
+    const expeditionPlace = document.getElementById('expeditionPlaceCFDI')?.value?.trim() || '00000';
 
     const paymentForm = document.getElementById('paymentForm').value;
+    const dateObj = new Date();
+    const date = dateObj.getFullYear() + "-" +
+        String(dateObj.getMonth() + 1).padStart(2, '0') + "-" +
+        String(dateObj.getDate()).padStart(2, '0') + " " +
+        String(dateObj.getHours()).padStart(2, '0') + ":" +
+        String(dateObj.getMinutes()).padStart(2, '0') + ":" +
+        String(dateObj.getSeconds()).padStart(2, '0');
+
+
     // Armar el payload completo
     const payload = {
         CfdiType: "I",
         PaymentForm: paymentForm, // Efectivo
         PaymentMethod: "PUE", // Pago en una sola exhibición
-        ExpeditionPlace: receptor.TaxZipCode,
-        Date: new Date().toISOString(), // o usa la fecha de venta si está disponible
+        ExpeditionPlace: expeditionPlace,
+        Date: date, // o usa la fecha de venta si está disponible
         Folio: Math.floor(Math.random() * 10000),
         Issuer: {
             FiscalRegime: "601",
@@ -129,6 +154,9 @@ document.getElementById('facturaForm').addEventListener('submit', async function
     };
 
     // Enviar a tu API
+    const loadingOverlay=document.getElementById('loadingOverlay')
+    loadingOverlay.style.display = 'flex';
+    console.log(JSON.stringify(payload, null, 2));
     try {
         const response = await fetch('https://pluspuntodeventa.com/api/factura/factura.php', {
             method: 'POST',
@@ -138,18 +166,21 @@ document.getElementById('facturaForm').addEventListener('submit', async function
             body: JSON.stringify(payload)
         });
 
-        const responseText = await response.text();
+        const responseText = await response.json();
 
-        if (response.ok) {
-            confirmationMessage("✅ ¡Factura creada!", "La factura fue generada correctamente.");
-            console.log(responseText);
+        if (response.ok && responseText.success) {
+            confirmationMessage("✅ ¡Factura creada!", responseText.message);
+            console.log(responseText.response);
         } else {
-            warningMessage("❌ Error al generar factura", responseText);
-            console.error(responseText);
+
+            warningMessage("❌ Error al generar factura", responseText.error || "Algo salió mal.");
+            console.error(responseText.error || responseText);
         }
 
     } catch (error) {
         errorMessage("❌ Error de conexión", error.message);
     }
+
+    loadingOverlay.style.display = 'none';
 });
 </script>

@@ -620,7 +620,6 @@ router.get('/:id_company/:id_branch/:token_ticket/view_tickets_sale', isLoggedIn
     }
     
     const branchFree = await get_data_branch(id_branch);
-    console.log(infoCustomer)
     res.render('links/tickets/viewATickets', {branchFree, dataTicketOld, infoCustomer});
 });
 
