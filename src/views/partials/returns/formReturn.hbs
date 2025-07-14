@@ -110,7 +110,6 @@
 
         tokenTicketEdit = ticketCode;
         const dataTicket = await get_information_of_the_ticket(ticketCode);
-        console.log(dataTicket)
         containerTicket.style.display = 'none';
         if (!dataTicket) {
             warningMessage('🤔 ¿Dónde está?', 'El ticket que buscas no existe...¿Seguro que escribiste bien el código?');
@@ -159,7 +158,7 @@
             tr.dataset.discount = prod.discount;
             tr.dataset.purchaseUnit = prod.purchaseUnit;
             tr.dataset.bulk = prod.this_product_is_sold_in_bulk;
-            tr.dataset.combo = prod.id_dishes_and_combos;
+            tr.dataset.id_dishes_and_combos = prod.id_dishes_and_combos;
 
             //now we will show the information of the table
             tr.innerHTML = `
@@ -331,11 +330,13 @@
 
         rows.forEach((row, index) => {
             const input = row.querySelector(`#input-prod-${index}`);
+            
 
             const quantityToReturn = parseFloat(input.value) || 0;
             const maxQuantity = parseFloat(input.getAttribute('data-max')) || 0;
             const unitPrice = parseFloat(input.getAttribute('data-precio')) || 0;
             const discount = parseFloat(input.getAttribute('discount')) || 0;
+            
 
             const remainingQuantity = maxQuantity - quantityToReturn;
 
@@ -353,7 +354,7 @@
                     discount: discount,
                     purchaseUnit: row.dataset.purchaseunit || '',
                     this_product_is_sold_in_bulk: row.dataset.bulk,
-                    id_dishes_and_combos: row.dataset.combo,
+                    id_dishes_and_combos: row.dataset.id_dishes_and_combos,
                     quantity: remainingQuantity,
                     itemTotal: parseFloat(newTotal.toFixed(2)),
                 });
@@ -368,6 +369,7 @@
                     name: row.dataset.name,
                     quantityReturned: quantityToReturn,
                     itemTotalReturned: parseFloat(returnTotal.toFixed(2)),
+                    id_dishes_and_combos: row.dataset.id_dishes_and_combos,
                 });
             }
         });

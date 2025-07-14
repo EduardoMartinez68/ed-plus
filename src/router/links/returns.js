@@ -26,6 +26,12 @@ const {
     this_user_have_this_permission
 } = require('../../services/permission');
 
+const {
+    search_combo,
+    search_supplies_combo,
+    get_data_combo_factures
+} = require('../../services/combos');
+
 const database = require('../../database');
 
 router.get('/:id_company/:id_branch/returns', isLoggedIn, async (req, res) => {
@@ -253,6 +259,21 @@ router.post('/update_ticket', isLoggedIn, async (req, res) => {
           const newHistoryMove = create_new_history_move(id_branch, id_employee, -dataTicket.totalReturn, move, date_move);
           await add_movement_history(newHistoryMove);
 
+          //now we will return the product in the inventory if the product use inventory
+          for(var i=0;i<dataTicket.returnedProducts.length;i++){
+            const product=dataTicket.returnedProducts[i]
+            const suppliesCombo=await search_supplies_combo(product.id_dishes_and_combos);
+            const itemReturn=product.quantityReturned; //this is the cant that the user return
+
+
+            //her we will read all the supplies of the combo
+            for(var j=0;j<suppliesCombo.length;j++){
+              //get the id of the product and the supplies for change the inventory after
+              const id_products_and_supplies=suppliesCombo[j].id_products_and_supplies;
+              const amount=suppliesCombo[j].amount*itemReturn; //this is the cant that the user return with the combo
+              await change_the_inventory(id_branch, id_products_and_supplies, amount) //update the inventory
+            }
+          }
           flag=true;
         }
     }
@@ -272,6 +293,73 @@ router.post('/update_ticket', isLoggedIn, async (req, res) => {
       });
     }
 });
+
+async function change_the_inventory(idBranch, idSupplies, quantityToAdd = 0) {
+  if (TYPE_DATABASE === 'mysqlite') {
+    return new Promise((resolve) => {
+      const selectQuery = `
+        SELECT 
+          existence,
+          minimum_inventory
+        FROM product_and_suppiles_features
+        WHERE id_branches = ? AND id_products_and_supplies = ?
+      `;
+      database.get(selectQuery, [idBranch, idSupplies], (err, row) => {
+        if (err) {
+          console.error('Error get data supplies features (SQLite):', err);
+          return resolve(false);
+        }
+        if (!row) return resolve(null);
+
+        const newExistence = row.existence + quantityToAdd;
+
+        const updateQuery = `
+          UPDATE product_and_suppiles_features
+          SET existence = ?
+          WHERE id_branches = ? AND id_products_and_supplies = ?
+        `;
+        database.run(updateQuery, [newExistence, idBranch, idSupplies], (updateErr) => {
+          if (updateErr) {
+            console.error('Error updating existence (SQLite):', updateErr);
+            return resolve(false);
+          }
+          resolve({ ...row, existence: newExistence });
+        });
+      });
+    });
+
+  } else {
+    // PostgreSQL
+    const selectQuery = `
+      SELECT 
+        existence,
+        minimum_inventory
+      FROM "Inventory".product_and_suppiles_features
+      WHERE id_branches = $1 AND id_products_and_supplies = $2
+    `;
+    try {
+      const result = await database.query(selectQuery, [idBranch, idSupplies]);
+      if (result.rows.length === 0) return null;
+
+      const current = result.rows[0];
+      const newExistence = current.existence + quantityToAdd;
+
+      const updateQuery = `
+        UPDATE "Inventory".product_and_suppiles_features
+        SET existence = $1
+        WHERE id_branches = $2 AND id_products_and_supplies = $3
+      `;
+      await database.query(updateQuery, [newExistence, idBranch, idSupplies]);
+
+      return { ...current, existence: newExistence };
+
+    } catch (error) {
+      console.error('Error get/update data supplies features (PostgreSQL):', error);
+      return false;
+    }
+  }
+}
+
 
 async function update_current_ticket(ticketKey, id_branch, newCurrentTicket) {
   const jsonTicket = JSON.stringify(newCurrentTicket);
