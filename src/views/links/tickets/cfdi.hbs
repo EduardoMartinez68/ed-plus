@@ -53,10 +53,15 @@
         </div>
     </div>
 </div>
+
+
+{{>loading}}
 {{>tickets/popFacture}}
 
 <script>
 async function cargarFacturas() {
+  const loadingOverlay=document.getElementById('loadingOverlay')
+  loadingOverlay.style.display = 'flex';
   const rfc = document.getElementById('rfc')?.value || '';
 
   try {
@@ -66,6 +71,7 @@ async function cargarFacturas() {
     if (!data.success) {
       document.getElementById('loadingMsg').textContent = '❌ Error al obtener facturas.';
       console.error(data.message || data.error);
+      loadingOverlay.style.display = 'none';
       return;
     }
 
@@ -74,6 +80,7 @@ async function cargarFacturas() {
 
     if (facturas.length === 0) {
       document.getElementById('loadingMsg').textContent = 'No se encontraron facturas.';
+      loadingOverlay.style.display = 'none';
       return;
     }
 
@@ -96,6 +103,8 @@ async function cargarFacturas() {
     document.getElementById('loadingMsg').textContent = '❌ Error al conectar con la API.';
     console.error(err);
   }
+
+  loadingOverlay.style.display = 'none';
 }
 
 cargarFacturas();

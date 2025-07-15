@@ -159,7 +159,6 @@ document.getElementById('facturaForm').addEventListener('submit', async function
     // Enviar a tu API
     const loadingOverlay=document.getElementById('loadingOverlay')
     loadingOverlay.style.display = 'flex';
-    console.log(JSON.stringify(payload, null, 2));
     try {
         const response = await fetch('https://pluspuntodeventa.com/api/factura/factura.php', {
             method: 'POST',
