@@ -67,6 +67,7 @@ document.getElementById('facturaForm').addEventListener('submit', async function
 
     const receptor = {
         Rfc: rfcReceptor,
+        //----name of the company of the customer
         Name: document.getElementById('nombreReceptor').value.trim(),
         CfdiUse: document.getElementById('usoCfdi').value.trim().toUpperCase(),
         TaxZipCode: document.getElementById('codigoPostal').value.trim(),
@@ -99,25 +100,26 @@ document.getElementById('facturaForm').addEventListener('submit', async function
     const iva = parseFloat((subtotal * 0.16).toFixed(2));
     const total = parseFloat((subtotal + iva).toFixed(2));
 
-
     return {
-        ProductCode: "25173301",
+        ProductCode: "32101601", ////////////////////-----------------------------------------------
         Description: item.name,
         UnitCode: "H87",
         Quantity: item.quantity,
         UnitPrice: item.price,
         Subtotal: subtotal,
+        Total: total,
         TaxObject: "02",
         Taxes: [
             {
                 TaxId: "002",
+                Total: 16,
+                Name: "IVA",
                 Base: subtotal,
                 Rate: 0.16,
                 Amount: iva,
                 IsRetention: false
             }
-        ],
-        Total: total
+        ]
     };
     });
 
@@ -147,7 +149,8 @@ document.getElementById('facturaForm').addEventListener('submit', async function
         Issuer: {
             FiscalRegime: "601",
             Rfc: rfc,
-            Name: name
+            //name of the company in the SAT of the user-------------------------------------------------------------------
+            Name:name
         },
         Receiver: receptor,
         Items: items
