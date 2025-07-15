@@ -35,7 +35,7 @@
     </div>
 </div>
 {{>loading}}
-
+{{>tickets/popFacture}}
 
 <script>
 document.getElementById('facturaForm').addEventListener('submit', async function (e) {
@@ -173,7 +173,11 @@ document.getElementById('facturaForm').addEventListener('submit', async function
 
         if (response.ok && responseText.success) {
             confirmationMessage("✅ ¡Factura creada!", responseText.message);
-            console.log(responseText.response);
+
+            const idFactura = responseText.response.Id; // <-- ID de la factura
+            mostrarPopupFactura(idFactura); // <-- mostrar el popup y guardar
+
+            console.log("Factura creada con ID:", idFactura);
         } else {
 
             warningMessage("❌ Error al generar factura", responseText.error || "Algo salió mal.");

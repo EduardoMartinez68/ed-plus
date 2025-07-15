@@ -1,0 +1,102 @@
+
+  <style>
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f0f0f0;
+    }
+
+    .loading {
+      font-weight: bold;
+      margin-top: 20px;
+    }
+  </style>
+
+{{#each branchFree}}
+<input type="hidden" value="{{rfc}}" id="rfc">
+{{/each}}
+<br><br>
+<div class="container">
+    <div class="card">
+        <div class="card-body">
+            <label>Mis Facturas CFDI</label>
+            <hr>
+            <div class="loading" id="loadingMsg">Cargando facturas...</div>
+
+            <table id="tablaFacturas" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Folio</th>
+                    <th>Receptor</th>
+                    <th>RFC</th>
+                    <th>Fecha</th>
+                    <th>Total</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{{>tickets/popFacture}}
+
+<script>
+async function cargarFacturas() {
+  const rfc = document.getElementById('rfc')?.value || '';
+
+  try {
+    const res = await fetch(`https://pluspuntodeventa.com/api/factura/obtener_facturas.php?rfc=${encodeURIComponent(rfc)}`);
+    const data = await res.json();
+
+    if (!data.success) {
+      document.getElementById('loadingMsg').textContent = '❌ Error al obtener facturas.';
+      console.error(data.message || data.error);
+      return;
+    }
+
+    const facturas = data.facturas;
+    const tbody = document.querySelector('#tablaFacturas tbody');
+
+    if (facturas.length === 0) {
+      document.getElementById('loadingMsg').textContent = 'No se encontraron facturas.';
+      return;
+    }
+
+    facturas.forEach(f => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${f.Folio || '-'}</td>
+        <td>${f.TaxName || '-'}</td>
+        <td>${f.Rfc || '-'}</td>
+        <td>${f.Date?.split('T')[0] || '-'}</td>
+        <td>$${Number(f.Total).toFixed(2)}</td>
+        <td><button class="btn btn-edit" onclick="mostrarPopupFactura('${f.Id}')">Ver</button></td>
+      `;
+      tbody.appendChild(row);
+    });
+
+    document.getElementById('loadingMsg').style.display = 'none';
+    document.getElementById('tablaFacturas').style.display = 'table';
+  } catch (err) {
+    document.getElementById('loadingMsg').textContent = '❌ Error al conectar con la API.';
+    console.error(err);
+  }
+}
+
+cargarFacturas();
+</script>
