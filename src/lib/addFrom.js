@@ -5754,7 +5754,10 @@ router.post('/links/notification/cash-cut', async (req, res) => {
 });
 
 async function send_email(APP_EMAIL_EMAIL,APP_PASSWORD_EMAIL,toEmail, subjectEmail, message) {
-
+    console.log(APP_EMAIL_EMAIL)
+    console.log(APP_PASSWORD_EMAIL)
+    console.log(toEmail)
+  try {
     //this is for email google
     const transport = nodemailer.createTransport({
         service: 'Gmail',
@@ -5782,7 +5785,23 @@ async function send_email(APP_EMAIL_EMAIL,APP_PASSWORD_EMAIL,toEmail, subjectEma
     });
 
     return true;
+  } catch (error) {
+    console.error('❌ Error al enviar el correo electrónico:', error);
+    return false;
+  }
 }
+
+router.post('/links/send_facture_for_email', async (req, res) => {
+    const { id_company, id_branch } = req.user;
+    const {contenidoHtml, toNotification, emailNotification, tokenEmailNotification}=req.body;
+    
+    if(await send_email(emailNotification,tokenEmailNotification,toNotification, 'Factura', contenidoHtml)){
+        return res.status(200).json({ success: true, error: 'Correo enviado con exito' });
+    }else{
+        return res.status(500).json({ success: false, error: 'Correo no enviado' });
+    }
+});
+
 //-----------------------------------------------------------------------------------Prontipagos------------------------------------------------------
 const fetch = require('node-fetch');
 //const helpers=require('../lib/helpers.js');
@@ -6182,7 +6201,6 @@ router.post('/links/get_status_sale_in_prontipagos/:transaction_id', async (req,
         //first we will get the password and user of prontipagos use the id of the branch
         const id_branch = req.user.id_branch;
         const token = await get_token_prontipagos(id_branch); //create the token for the prontipagos API
-        console.log(token)
         //send the message to the server of prontipagos
         const response = await fetch(url, {
             method: 'GET',

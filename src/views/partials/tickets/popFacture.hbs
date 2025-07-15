@@ -151,7 +151,7 @@
 
   async function mostrarPopupFactura(idFactura) {
     currentFacturaId = idFactura;
-    document.getElementById('facturaLink').innerText = `https://pluspuntodeventa.com/cfdi/${idFactura}`;
+    document.getElementById('facturaLink').innerText = `https://pluspuntodeventa.com/api/factura/watch_facture.php?id=${idFactura}`;
     document.getElementById('facturaPopup').style.display = 'flex';
     await update_container_facture();
 
