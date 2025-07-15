@@ -76,6 +76,8 @@
   font-size: 10px;
   color: var(--color-company);
 }
+
+
 </style>
 <div class="pop-cfdi-overlay" id="facturaPopup" style="display:none;">
   <div class="pop-cfdi-card">
@@ -87,6 +89,10 @@
       https://pluspuntodeventa.com/cfdi/IDFACTURA
     </div>
 
+    <div id="container-facture" class="preview-box">
+
+    </div>
+    <br>
     <div class="factura-actions">
       <div class="factura-btn" onclick="descargarFactura(currentFacturaId, 'pdf')">
         <i class="fi fi-sr-file-pdf"></i>
@@ -100,7 +106,7 @@
         <i class="fi fi-sr-poll-h"></i>
         <span>HTML</span>
       </div>
-      <div class="factura-btn" onclick="imprimirFactura(currentFacturaId)">
+      <div class="factura-btn" onclick="imprimirFactura()">
         <i class="fi fi-ss-print"></i>
         <span>Imprimir</span>
       </div>
@@ -143,10 +149,11 @@
   //-------------------------------------------------script for dowload facture--------------------------------------
   let currentFacturaId = '';
 
-  function mostrarPopupFactura(idFactura) {
+  async function mostrarPopupFactura(idFactura) {
     currentFacturaId = idFactura;
     document.getElementById('facturaLink').innerText = `https://pluspuntodeventa.com/cfdi/${idFactura}`;
     document.getElementById('facturaPopup').style.display = 'flex';
+    await update_container_facture();
 
     document.getElementById('popCfdiBtnPdf').onclick = () => {
       descargarFactura(idFactura, 'pdf');
@@ -163,45 +170,81 @@
     document.getElementById('popBtnCancell').onclick = () => {
       mostrarCancelPopup(idFactura);
     };
+  }
+
+  async function update_container_facture() {
+      const id = currentFacturaId;
+      const loadingOverlay = document.getElementById('loadingOverlay');
+      loadingOverlay.style.display = 'flex';
+
+      try {
+          const response = await fetch('https://pluspuntodeventa.com/api/factura/descargar_factura.php', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ id, formato: 'html' })  // Asegúrate que el backend acepte 'formato'
+          });
+
+          const result = await response.json();
+
+          if (!result.success || !result.base64) {
+              throw new Error(result.message || 'Error desconocido.');
+          }
+
+          // Decodificamos base64 a texto HTML
+          const decodedHtml = atob(result.base64);
+
+          // Mostramos el contenido HTML en el div "factura-html"
+          const facturaDiv = document.getElementById('container-facture');
+          facturaDiv.innerHTML = decodedHtml;
+
+      } catch (error) {
+          console.error('❌ Error al obtener la factura HTML:', error);
+          alert('❌ Error al obtener la factura:\n' + error.message);
+      }
+
+      loadingOverlay.style.display = 'none';
   }
 
   function cerrarPopup() {
     document.getElementById('facturaPopup').style.display = 'none';
   }
 
-  function imprimirFactura(id) {
-    window.open(`https://pluspuntodeventa.com/cfdi/${id}?print=true`, '_blank');
+  function imprimirFactura() {
+      const contenido = document.getElementById('container-facture').innerHTML;
+
+      const ventana = window.open('', '_blank', 'width=800,height=600');
+      ventana.document.write(`
+        <html>
+          <head>
+            <title>Factura</title>
+            <style>
+              body { font-family: Arial, sans-serif; margin: 40px; }
+              table { border-collapse: collapse; width: 100%; }
+              th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+            </style>
+          </head>
+          <body>
+            ${contenido}
+            <script>
+              window.onload = function() {
+                window.print();
+                window.onafterprint = function() {
+                  window.close();
+                };
+              };
+            <\/script>
+          </body>
+        </html>
+      `);
+      ventana.document.close();
   }
 
   function enviarPorEmail(id) {
-    alert("📧 Enviar por correo electrónico aún no implementado.");
-    // Aquí puedes llamar a tu endpoint para enviar la factura por correo
+    currentFacturaId=id;
+    abrirModalEmail()
   }
-  /*
-  function mostrarPopupFactura(idFactura) {
-    const overlay = document.querySelector('.pop-cfdi-overlay');
-    overlay.style.display = 'flex';
-
-    guardar_facture(idFactura);
-
-    document.getElementById('popCfdiBtnPdf').onclick = () => {
-      descargarFactura(idFactura, 'pdf');
-    };
-
-    document.getElementById('popCfdiBtnXml').onclick = () => {
-      descargarFactura(idFactura, 'xml');
-    };
-
-    document.getElementById('popCfdiBtnEmail').onclick = () => {
-      descargarFactura(idFactura, 'html');
-    };
-
-    document.getElementById('popBtnCancell').onclick = () => {
-      mostrarCancelPopup(idFactura);
-    };
-    
-  }
-  */
 
   // Función que usarás para guardar en base de datos
   function guardar_facture(idFactura) {
@@ -308,3 +351,6 @@ async function enviarCancelacion() {
   }
 }
 </script>
+
+
+{{>tickets/sendEmail}}
