@@ -24,6 +24,14 @@
       font-weight: bold;
       margin-top: 20px;
     }
+
+    .pagination-container {
+      display: flex;
+      justify-content: space-between;
+      margin: 20px 0;
+      padding: 0 10px;
+    }
+
   </style>
 
 {{#each branchFree}}
@@ -35,6 +43,16 @@
         <div class="card-body">
             <label>Mis Facturas CFDI</label>
             <hr>
+            <div style="margin-bottom: 16px;">
+              <label>Filtrar por estado:</label>
+              <select class="form-select" aria-label="Default select example" id="estadoFiltro" onchange="reiniciarPaginaYFiltrar()">
+                <option value="active">Activas</option>
+                <option value="canceled">Canceladas</option>
+                <option value="pending">Pendientes</option>
+                <option value="expired">Expiradas</option>
+              </select>
+            </div>
+
             <div class="loading" id="loadingMsg">Cargando facturas...</div>
 
             <table id="tablaFacturas" style="display: none;">
@@ -50,6 +68,12 @@
             </thead>
             <tbody></tbody>
             </table>
+
+            <br>
+            <div class="pagination-container">
+              <button onclick="cambiarPagina(-1)" class="btn btn-edit">⬅ Anterior</button>
+              <button onclick="cambiarPagina(1)" class="btn btn-edit">Siguiente ➡</button>
+            </div>
         </div>
     </div>
 </div>
@@ -57,47 +81,77 @@
 
 {{>loading}}
 {{>tickets/popFacture}}
-
 <script>
+let paginaActual = 0;
+
+function reiniciarPaginaYFiltrar() {
+  paginaActual = 0;
+  cargarFacturas();
+}
+
+function cambiarPagina(delta) {
+  if (paginaActual + delta < 0) return;
+  paginaActual += delta;
+  cargarFacturas();
+}
+
 async function cargarFacturas() {
-  const loadingOverlay=document.getElementById('loadingOverlay')
+  const loadingOverlay = document.getElementById('loadingOverlay');
   loadingOverlay.style.display = 'flex';
+
   const rfc = document.getElementById('rfc')?.value || '';
+  const status = document.getElementById('estadoFiltro')?.value || 'active';
 
   try {
-    const res = await fetch(`https://pluspuntodeventa.com/api/factura/obtener_facturas.php?rfc=${encodeURIComponent(rfc)}`);
+    const res = await fetch(`https://pluspuntodeventa.com/api/factura/obtener_facturas.php?rfc=${encodeURIComponent(rfc)}&status=${status}&page=${paginaActual}`);
     const data = await res.json();
 
+    const loadingMsg = document.getElementById('loadingMsg');
+    const tbody = document.querySelector('#tablaFacturas tbody');
+    tbody.innerHTML = ''; // limpiar
+
     if (!data.success) {
-      document.getElementById('loadingMsg').textContent = '❌ Error al obtener facturas.';
+      loadingMsg.textContent = '❌ Error al obtener facturas.';
       console.error(data.message || data.error);
       loadingOverlay.style.display = 'none';
       return;
     }
 
     const facturas = data.facturas;
-    const tbody = document.querySelector('#tablaFacturas tbody');
 
     if (facturas.length === 0) {
-      document.getElementById('loadingMsg').textContent = 'No se encontraron facturas.';
+      loadingMsg.textContent = 'No se encontraron facturas.';
       loadingOverlay.style.display = 'none';
       return;
     }
 
     facturas.forEach(f => {
       const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${f.Folio || '-'}</td>
-        <td>${f.TaxName || '-'}</td>
-        <td>${f.Rfc || '-'}</td>
-        <td>${f.Date?.split('T')[0] || '-'}</td>
-        <td>$${Number(f.Total).toFixed(2)}</td>
-        <td><button class="btn btn-edit" onclick="mostrarPopupFactura('${f.Id}')">Ver</button></td>
-      `;
+
+      //her we will see if the factura can be cancel
+      if(status=='active'){
+        row.innerHTML = `
+          <td>${f.Folio || '-'}</td>
+          <td>${f.TaxName || '-'}</td>
+          <td>${f.Rfc || '-'}</td>
+          <td>${f.Date?.split('T')[0] || '-'}</td>
+          <td>$${Number(f.Total).toFixed(2)}</td>
+          <td><button class="btn btn-edit" onclick="mostrarPopupFactura('${f.Id}')">Ver</button> <button class="btn btn-danger" onclick="mostrarCancelPopup('${f.Id}')">Cancelar</button></td>
+        `;
+      }else{
+        row.innerHTML = `
+          <td>${f.Folio || '-'}</td>
+          <td>${f.TaxName || '-'}</td>
+          <td>${f.Rfc || '-'}</td>
+          <td>${f.Date?.split('T')[0] || '-'}</td>
+          <td>$${Number(f.Total).toFixed(2)}</td>
+          <td><button class="btn btn-edit" onclick="mostrarCancelPopup('${f.Id}')">Ver</button></td>
+        `;
+      }
       tbody.appendChild(row);
     });
 
-    document.getElementById('loadingMsg').style.display = 'none';
+    loadingMsg.style.display = 'none';
     document.getElementById('tablaFacturas').style.display = 'table';
   } catch (err) {
     document.getElementById('loadingMsg').textContent = '❌ Error al conectar con la API.';
@@ -107,5 +161,6 @@ async function cargarFacturas() {
   loadingOverlay.style.display = 'none';
 }
 
-cargarFacturas();
+
+reiniciarPaginaYFiltrar();
 </script>
