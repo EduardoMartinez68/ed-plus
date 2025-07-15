@@ -101,7 +101,7 @@ document.getElementById('facturaForm').addEventListener('submit', async function
     const total = parseFloat((subtotal + iva).toFixed(2));
 
     return {
-        ProductCode: "32101601", ////////////////////-----------------------------------------------
+        ProductCode: item.sat_key , ////////////////////-----------------------------------------------32101601
         Description: item.name,
         UnitCode: "H87",
         Quantity: item.quantity,

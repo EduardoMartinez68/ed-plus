@@ -378,6 +378,7 @@ router.get('/:id_company/:id_branch/:id_combo_features/edit-products-free', isLo
         const branchFree = await get_data_branch(id_branch); //get data of rol free
         //get the data of the product that is in the combo. This is the information of the product 
         const productFacture=await get_supplies_or_features_with_id_products_and_supplies(suppliesCombo[0].id_products_and_supplies,promotions);
+        console.log(comboFeactures)
         res.render('links/branch/products/editProduct', { comboFeactures, suppliesCombo , branchFree, productFacture,lots,promotions, departments, category});      
     }else{
         const branch = await get_data_branch(id_branch);

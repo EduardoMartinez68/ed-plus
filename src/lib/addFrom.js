@@ -2698,7 +2698,6 @@ router.post('/links/add_new_product_with_flask', isLoggedIn, async (req, res) =>
 router.post('/fud/:id_company/:id_branch/:id_combo/update-product-branch', isLoggedIn, async (req, res) => {
     const { id_company, id_branch, id_combo } = req.params;
     const { name, barcode, description } = req.body;
-    console.log(req.body)
 
 
     //get the id of the supplies and of the combo for edit his data in the company
