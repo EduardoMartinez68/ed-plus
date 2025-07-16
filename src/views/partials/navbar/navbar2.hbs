@@ -117,8 +117,8 @@
                     {{#if user.return_ticket}}
                         {{#each branchFree}}
                         <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/returns')">
-                            <img src="/img/apps/returns.webp" alt="Impresoras" loading="lazy">
-                            <span>Devoluciones</span>
+                            <img src="/img/apps/ticket.webp" alt="Impresoras" loading="lazy">
+                            <span>Tickets</span>
                             <label class="shortcuts-label">F6</label>
                         </div>
                         {{/each}}
@@ -488,9 +488,6 @@
                                 </div>
                             {{/each}}
                         {{/each}}
-                        --->
-
-
 
                     {{#if user.add_box}}
                     {{#each branchFree}}
@@ -500,13 +497,17 @@
                     </div>
                     {{/each}}
                     {{/if}}
+                        --->
+
+
+
 
 
                     {{#if user.edit_ticket}}
                     {{#each branchFree}}
                     <div class="app-icon" onclick="nextWeb('{{id_companies}}/{{id}}/tickets')">
-                        <img src="/img/apps/ticket.webp" alt="Impresoras" loading="lazy">
-                        <span>Tickets</span>
+                        <img src="/img/apps/box.webp" alt="Impresoras" loading="lazy">
+                        <span>Impresora</span>
                     </div>
                     {{/each}}
                     {{/if}}
