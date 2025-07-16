@@ -123,6 +123,7 @@ def imprimir_imagen():
 
     try:
         imprimir_imagen_win32(impresora_nombre, image)
+        success = print_text('', impresora_nombre)
         return jsonify({"ok": True})
     except Exception as e:
         print(e)

@@ -19,6 +19,30 @@ def print_text(text, printer_name=None):
         hPrinter = win32print.OpenPrinter(printer_name)
         hJob = win32print.StartDocPrinter(hPrinter, 1, ("Ticket", None, "RAW"))
         win32print.StartPagePrinter(hPrinter)
+
+        # Imprime el texto
+        win32print.WritePrinter(hPrinter, text.encode("utf-8"))
+
+        # Enviar comando para abrir cajón (ESC p 0 25 250)
+        open_drawer_cmd = b'\x1B\x70\x00\x19\xFA'
+        win32print.WritePrinter(hPrinter, open_drawer_cmd)
+
+        win32print.EndPagePrinter(hPrinter)
+        win32print.EndDocPrinter(hPrinter)
+        win32print.ClosePrinter(hPrinter)
+        return True
+    except Exception as e:
+        print(f"Error al imprimir: {e}")
+        return False
+    
+def print_text2(text, printer_name=None):
+    try:
+        if not printer_name:
+            printer_name = win32print.GetDefaultPrinter()
+
+        hPrinter = win32print.OpenPrinter(printer_name)
+        hJob = win32print.StartDocPrinter(hPrinter, 1, ("Ticket", None, "RAW"))
+        win32print.StartPagePrinter(hPrinter)
         win32print.WritePrinter(hPrinter, text.encode("utf-8"))
         win32print.EndPagePrinter(hPrinter)
         win32print.EndDocPrinter(hPrinter)
