@@ -147,8 +147,107 @@ async function get_all_dish_and_combo(idCompany, idBranch) {
     }
 }
 
-
 async function get_all_dish_and_combo_without_lots(idBranch) {
+  try {
+    if (TYPE_DATABASE === 'mysqlite') {
+      const query = `
+        SELECT 
+            i.*,
+            d.barcode,
+            d.name,
+            d.description,
+            d.img,
+            d.id_product_department,
+            d.id_product_category,
+            d.this_product_is_sold_in_bulk,
+            d.this_product_need_recipe
+        FROM dish_and_combo_features i
+        INNER JOIN dishes_and_combos d ON i.id_dishes_and_combos = d.id
+        LEFT JOIN lots l ON l.id_dish_and_combo_features = i.id
+        WHERE i.id_branches = ?
+          AND l.id IS NULL
+      `;
+
+      const rows = await new Promise((resolve, reject) => {
+        database.all(query, [idBranch], async (err, rows) => {
+          if (err) {
+            console.error("SQLite error in get_all_dish_and_combo_without_lots:", err.message);
+            reject(err);
+          } else {
+            resolve(rows);
+          }
+        });
+      });
+
+      if (!rows || rows.length === 0) {
+        console.warn('🔍 No se encontraron productos sin lotes (SQLite).');
+        return [];
+      }
+
+      const withTaxes = await Promise.all(
+        rows.map(async (product) => {
+          try {
+            const taxes = await get_taxes_by_feature_id(product.id);
+            return { ...product, taxes: taxes || [] };
+          } catch (err) {
+            console.error(`❌ Error obteniendo impuestos para producto ${product.id}:`, err);
+            return { ...product, taxes: [] };
+          }
+        })
+      );
+
+      return withTaxes;
+
+    } else {
+      const query = `
+        SELECT 
+            i.*,
+            d.barcode,
+            d.name,
+            d.description,
+            d.img,
+            d.id_product_department,
+            d.id_product_category,
+            d.this_product_is_sold_in_bulk,
+            d.this_product_need_recipe
+        FROM "Inventory".dish_and_combo_features i
+        INNER JOIN "Kitchen".dishes_and_combos d ON i.id_dishes_and_combos = d.id
+        LEFT JOIN "Inventory".lots l ON l.id_dish_and_combo_features = i.id
+        WHERE i.id_branches = $1
+          AND l.id IS NULL
+        GROUP BY i.id, d.id
+      `;
+
+      const result = await database.query(query, [idBranch]);
+
+      if (!result.rows || result.rows.length === 0) {
+        console.warn('🔍 No se encontraron productos sin lotes (PostgreSQL).');
+        return [];
+      }
+
+      const withTaxes = await Promise.all(
+        result.rows.map(async (product) => {
+          try {
+            const taxes = await get_taxes_by_feature_id(product.id);
+            return { ...product, taxes: taxes || [] };
+          } catch (err) {
+            console.error(`❌ Error obteniendo impuestos para producto ${product.id}:`, err);
+            return { ...product, taxes: [] };
+          }
+        })
+      );
+
+      return withTaxes;
+    }
+
+  } catch (error) {
+    console.error("❌ Error general en get_all_dish_and_combo_without_lots:", error);
+    return [];
+  }
+}
+
+
+async function get_all_dish_and_combo_without_lots2(idBranch) {
     try {
         if (TYPE_DATABASE === 'mysqlite') {
             // SQLite no tiene schema, y no soporta GROUP BY tan complejo ni LEFT JOIN con filtro IS NULL tan directo

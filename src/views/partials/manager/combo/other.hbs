@@ -1,11 +1,12 @@
 <hr>
 <div class="row">
-    <div class="col">
-        {{#each comboFeactures}}
-        <label for="validationCustom01">CLAVE SAT</label>
-        <input type="text" class="form-control" id="validationCustom01" placeholder="Sat Key" name="satKey" value="{{sat_key}}">
-        {{/each}}
-    </div>
+  <div class="col">
+    {{#each comboFeactures}}
+    <label for="validationCustom01">CLAVE SAT</label>
+    <input type="text" class="form-control" id="validationCustom01" placeholder="Sat Key" name="satKey"
+      value="{{sat_key}}">
+    {{/each}}
+  </div>
 </div>
 
 
@@ -22,75 +23,81 @@
 
 <!-- Modal: pop-taxes -->
 <style>
-.modal-taxes {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 4000;
-}
-.modal-content-taxes {
-  background: #fff;
-  padding: 20px 30px;
-  border-radius: 12px;
-  width:40%;
-  min-width: 400px;
-  max-width: 90%;
-  box-shadow: 0 0 20px rgba(0,0,0,0.3);
-}
-.modal-content-taxes h3 {
-  margin-bottom: 20px;
-}
-.form-group {
-  margin-bottom: 15px;
-}
-.form-buttons {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-}
+  .modal-taxes {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 4000;
+  }
+
+  .modal-content-taxes {
+    background: #fff;
+    padding: 20px 30px;
+    border-radius: 12px;
+    width: 40%;
+    min-width: 400px;
+    max-width: 90%;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .modal-content-taxes h3 {
+    margin-bottom: 20px;
+  }
+
+  .form-group {
+    margin-bottom: 15px;
+  }
+
+  .form-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
 </style>
 {{#each comboFeactures}}
-  <input type="hidden" value="{{id}}" id="idComboTaxes">
+<input type="hidden" value="{{id}}" id="idComboTaxes">
 {{/each}}
 
 <div id="pop-taxes" class="modal-taxes" style="display: none;">
   <div class="modal-content-taxes">
     <h3>Crear nuevo impuesto</h3>
-      <div class="form-group">
-        <label for="taxName">Nombre</label>
-        <input type="text" id="taxName" name="nameTaxes" class="form-control" placeholder="Ej. IVA">
-      </div>
+    <div class="form-group">
+      <label for="taxName">Nombre</label>
+      <input type="text" id="taxName" name="nameTaxes" class="form-control" placeholder="Ej. IVA">
+    </div>
 
-      <div class="form-group">
-        <label for="taxId">Tax ID (SAT)</label>
-        <select id="taxId" name="taxId" class="form-control">
-          <option value="001">ISR (001)</option>
-          <option value="002" selected>IVA (002)</option>
-          <option value="003">IEPS (003)</option>
-        </select>
-      </div>
+    <div class="form-group">
+      <label for="taxId">Tax ID (SAT)</label>
+      <select id="taxId" name="taxId" class="form-control">
+        <option value="001">ISR (001)</option>
+        <option value="002" selected>IVA (002)</option>
+        <option value="003">IEPS (003)</option>
+      </select>
+    </div>
 
-      <div class="form-group">
-        <label for="rate">Tasa (%)</label>
-        <input type="number" id="rate" name="rate" class="form-control" placeholder="Ej. 16" min="0" step="0.01">
-      </div>
+    <div class="form-group">
+      <label for="rate">Tasa (%)</label>
+      <input type="number" id="rate" name="rate" class="form-control" placeholder="Ej. 16" min="0" step="0.01">
+    </div>
 
-      <div class="form-group">
-        <label for="isRetention">¿Es retención?</label>
-        <select id="isRetention" name="isRetention" class="form-control">
-          <option value="false" selected>No</option>
-          <option value="true">Sí</option>
-        </select>
-      </div>
+    <div class="form-group">
+      <label for="isRetention">¿Es retención?</label>
+      <select id="isRetention" name="isRetention" class="form-control">
+        <option value="false" selected>No</option>
+        <option value="true">Sí</option>
+      </select>
+    </div>
 
-      <div class="form-buttons">
-        <button type="button" class="btn btn-edit" >Guardar impuesto</button>
-        <button type="button" class="btn btn-danger" onclick="closeTaxPop()">Cancelar</button>
-      </div>
+    <div class="form-buttons">
+      <button type="button" class="btn btn-edit">Guardar impuesto</button>
+      <button type="button" class="btn btn-danger" onclick="closeTaxPop()">Cancelar</button>
+    </div>
   </div>
 </div>
 
@@ -98,133 +105,139 @@
 
 
 <div class="row">
-    <label>Agregar impuesto:</label>
-    <div class="input-group mb-4">
+  <label>Agregar impuesto:</label>
+  <div class="input-group mb-4">
     <select class="form-select" id="select-taxes">
-        {{#each taxes}}
-            <option value="{{id}}">{{name}}</option>
-        {{/each}}
+      {{#each taxes}}
+      <option value="{{id}}" data-name="{{name}}" data-taxid="{{taxId}}" data-base="{{base}}" data-rate="{{rate}}"
+        data-retention="{{is_retention}}" data-activate="{{activate}}">
+        {{name}}
+      </option>
+      {{/each}}
     </select>
     <button onclick="addTax()" class="btn btn-edit" type="button">Agregar</button>
     <button onclick="openTaxPop()" class="btn btn-edit" type="button">+</button>
 
-    </div>
+  </div>
 
-{{#each comboFeactures}}
+  {{#each comboFeactures}}
   <div class="producto">
     {{#if taxes.length}}
-      <table class="table-information" style="width: 100%;">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Clave SAT</th>
-            <th>Base</th>
-            <th>Tasa (%)</th>
-            <th>¿Es retención?</th>
-            <th>Activo</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {{#each taxes}}
-            <tr data-id="{{tax_id}}">
-              <td>{{name}}</td>
-              <td>{{taxId}}</td>
-              <td>{{base}}</td>
-              <td>{{rate}}</td>
-              <td>{{#if is_retention}}Sí{{else}}No{{/if}}</td>
-              <td>{{#if activate}}Sí{{else}}No{{/if}}</td>
-              <td><button class="btn btn-danger" onclick="deleteTax('{{tax_id}}')" type="button">Eliminar</button></td>
-            </tr>
-          {{/each}}
-        </tbody>
-      </table>
+    <table class="table-information" style="width: 100%;">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Clave SAT</th>
+          <th>Base</th>
+          <th>Tasa (%)</th>
+          <th>¿Es retención?</th>
+          <th>Activo</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="table-taxes">
+        {{#each taxes}}
+        <tr data-id="{{tax_id}}">
+          <td>{{name}}</td>
+          <td>{{taxId}}</td>
+          <td>{{base}}</td>
+          <td>{{rate}}</td>
+          <td>{{#if is_retention}}Sí{{else}}No{{/if}}</td>
+          <td>{{#if activate}}Sí{{else}}No{{/if}}</td>
+          <td><button class="btn btn-danger" onclick="deleteTax('{{tax_id}}')" type="button">Eliminar</button></td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
     {{else}}
-      <p style="font-style: italic;">Este producto no tiene impuestos asignados.</p>
+    <p style="font-style: italic;">Este producto no tiene impuestos asignados.</p>
     {{/if}}
   </div>
-{{/each}}
+  {{/each}}
 
 
 </div>
 
 
 <script>
-function openTaxPop() {
-  document.getElementById('pop-taxes').style.display = 'flex';
-}
-function closeTaxPop() {
-  document.getElementById('pop-taxes').style.display = 'none';
-}
+  function openTaxPop() {
+    document.getElementById('pop-taxes').style.display = 'flex';
+  }
+  function closeTaxPop() {
+    document.getElementById('pop-taxes').style.display = 'none';
+  }
 </script>
 <script>
 
-document.querySelector('#pop-taxes .btn.btn-edit').addEventListener('click', async () => {
-  const name = document.getElementById('taxName').value.trim();
-  const taxId = document.getElementById('taxId').value;
-  const rate = parseFloat(document.getElementById('rate').value);
-  const isRetention = document.getElementById('isRetention').value === 'true';
+  document.querySelector('#pop-taxes .btn.btn-edit').addEventListener('click', async () => {
+    const name = document.getElementById('taxName').value.trim();
+    const taxId = document.getElementById('taxId').value;
+    const rate = parseFloat(document.getElementById('rate').value);
+    const isRetention = document.getElementById('isRetention').value === 'true';
 
-  if (!name) {
-    errorMessage('Espera un momento','Por favor, ingresa el nombre del impuesto.');
-    return;
-  }
-  if (isNaN(rate) || rate < 0) {
-    errorMessage('Espera un momento','Por favor, ingresa una tasa válida (número positivo).');
-    return;
-  }
-
-  // Mostrar pantalla de carga
-  const loadingOverlay = document.getElementById('loadingOverlay');
-  loadingOverlay.style.display = 'flex';
-
-  try {
-    const response = await fetch('/links/add-taxe', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, taxId, rate, isRetention })
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      warningMessage('Error al crear impuesto',`${errorData.error || 'Error desconocido'}`);
+    if (!name) {
+      errorMessage('Espera un momento', 'Por favor, ingresa el nombre del impuesto.');
+      return;
+    }
+    if (isNaN(rate) || rate < 0) {
+      errorMessage('Espera un momento', 'Por favor, ingresa una tasa válida (número positivo).');
       return;
     }
 
-    const data = await response.json();
+    // Mostrar pantalla de carga
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    loadingOverlay.style.display = 'flex';
 
-    if (data.id) {
-      confirmationMessage('Impuesto Agregado','Impuesto creado con éxito!');
+    try {
+      const response = await fetch('/links/add-taxe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, taxId, rate, isRetention })
+      });
 
-      // Agregar al select
-      const selectTaxes = document.getElementById('select-taxes');
-      const option = document.createElement('option');
-      option.value = data.id;
-      option.textContent = name;
-      selectTaxes.appendChild(option);
+      if (!response.ok) {
+        const errorData = await response.json();
+        warningMessage('Error al crear impuesto', `${errorData.error || 'Error desconocido'}`);
+        return;
+      }
 
-      // Opcional: seleccionar el nuevo impuesto automáticamente
-      selectTaxes.value = data.id;
+      const data = await response.json();
 
-      // Cerrar popup
-      closeTaxPop();
+      if (data.id) {
+        confirmationMessage('Impuesto Agregado', 'Impuesto creado con éxito!');
 
-    } else {
-      warningMessage('ERROR','No se pudo obtener el ID del impuesto creado.');
+        // Agregar al select
+        const selectTaxes = document.getElementById('select-taxes');
+        const option = document.createElement('option');
+        option.value = data.id;
+        option.textContent = name;
+        selectTaxes.appendChild(option);
+
+        // Opcional: seleccionar el nuevo impuesto automáticamente
+        selectTaxes.value = data.id;
+
+        // Cerrar popup
+        closeTaxPop();
+
+      } else {
+        warningMessage('ERROR', 'No se pudo obtener el ID del impuesto creado.');
+      }
+
+    } catch (error) {
+      errorMessage('Error de conexión: ', `${error.message}`);
+    } finally {
+      loadingOverlay.style.display = 'none';
     }
+  });
 
-  } catch (error) {
-    errorMessage('Error de conexión: ',`${error.message}`);
-  } finally {
-    loadingOverlay.style.display = 'none';
-  }
-});
+
+
 </script>
 <script>
   async function addTax() {
     const select = document.getElementById('select-taxes');
     const idTax = select.value;
-    const idProduct =  document.getElementById('idComboTaxes').value; // Asegúrate que este ID esté disponible desde Handlebars
+    const idProduct = document.getElementById('idComboTaxes').value; // Asegúrate que este ID esté disponible desde Handlebars
 
     if (!idTax) {
       warningMessage('Espera un momento', 'Selecciona un impuesto para agregar.');
@@ -232,9 +245,9 @@ document.querySelector('#pop-taxes .btn.btn-edit').addEventListener('click', asy
     }
 
     //her we will see if this tax exist in this product
-    if(this_tax_exist_in_this_product(idTax)){
+    if (this_tax_exist_in_this_product(idTax)) {
       warningMessage('Ya existe', 'Este impuesto ya ha sido agregado al producto.');
-      return;   
+      return;
     }
 
     const loadingOverlay = document.getElementById('loadingOverlay');
@@ -251,6 +264,7 @@ document.querySelector('#pop-taxes .btn.btn-edit').addEventListener('click', asy
       const result = await response.json();
 
       if (result.success) {
+        add_tax_row_to_table(result.idTax, idTax, select.options[select.selectedIndex])
         confirmationMessage('Impuesto Agregado', 'El impuesto fue vinculado correctamente.');
       } else {
         warningMessage('Error', result.error || 'No se pudo agregar el impuesto.');
@@ -262,8 +276,39 @@ document.querySelector('#pop-taxes .btn.btn-edit').addEventListener('click', asy
     }
   }
 
+  function add_tax_row_to_table(id_tax_table, idTax, selectedOption) {
+    const taxData = {
+      id: idTax,
+      name: selectedOption.dataset.name,
+      taxId: selectedOption.dataset.taxid,
+      base: selectedOption.dataset.base,
+      rate: selectedOption.dataset.rate,
+      is_retention: selectedOption.dataset.retention,
+      activate: selectedOption.dataset.activate
+    };
 
-  function this_tax_exist_in_this_product(idTax){
+    const tableBody = document.getElementById('table-taxes');
+    if (!tableBody) return;
+
+    const row = document.createElement('tr');
+    row.setAttribute('data-id', idTax);
+    row.innerHTML = `
+      <td>${taxData.name}</td>
+      <td>${taxData.taxId}</td>
+      <td>${taxData.base}</td>
+      <td>${taxData.rate}</td>
+      <td>${taxData.is_retention === 'true' || taxData.is_retention === true ? 'Sí' : 'No'}</td>
+      <td>${taxData.activate === 'true' || taxData.activate === true ? 'Sí' : 'No'}</td>
+      <td><button class="btn btn-danger" onclick="deleteTax('${taxData.id}')" type="button">Eliminar</button></td>
+    `;
+
+    tableBody.appendChild(row);
+
+    // Opcional: actualizamos el total automáticamente
+    update_the_total_of_the_product();
+  }
+
+  function this_tax_exist_in_this_product(idTax) {
     const existingRows = document.querySelectorAll('.table-information tbody tr');
     for (const row of existingRows) {
       if (row.dataset.id === idTax) {
@@ -275,82 +320,94 @@ document.querySelector('#pop-taxes .btn.btn-edit').addEventListener('click', asy
   }
 
 
-async function deleteTax(idTax) {
-  if (!idTax) {
-    warningMessage('Error', 'No se especificó el ID del impuesto a eliminar.');
-    return;
+  async function deleteTax(idTax) {
+    if (!idTax) {
+      warningMessage('Error', 'No se especificó el ID del impuesto a eliminar.');
+      return;
+    }
+
+    const confirmDelete = await questionMessage('🤔 ¿Estás seguro?', 'Este impuesto será eliminado del producto.');
+    if (!confirmDelete) return;
+
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    loadingOverlay.style.display = 'flex';
+    const idProduct = document.getElementById('idComboTaxes').value;
+    try {
+      remove_tax_row_from_table(idTax); //first delete of the camp
+      const response = await fetch(`/links/delete-tax-from-product/${idProduct}/${idTax}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        confirmationMessage('Impuesto eliminado', 'El impuesto fue desvinculado correctamente.');
+      } else {
+        warningMessage('Error', result.error || 'No se pudo eliminar el impuesto.');
+      }
+    } catch (error) {
+      errorMessage('Error de conexión', error.message);
+    } finally {
+      loadingOverlay.style.display = 'none';
+    }
   }
 
-  const confirmDelete = await questionMessage('🤔 ¿Estás seguro?', 'Este impuesto será eliminado del producto.');
-  if (!confirmDelete) return;
+  function remove_tax_row_from_table(idTax) {
+    const tableBody = document.getElementById('table-taxes');
+    if (!tableBody) return;
 
-  const loadingOverlay = document.getElementById('loadingOverlay');
-  loadingOverlay.style.display = 'flex';
-  const idProduct =  document.getElementById('idComboTaxes').value;
-  try {
-    const response = await fetch(`/links/delete-tax-from-product/${idProduct}/${idTax}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
+
+    const rowToRemove = tableBody.querySelector(`tbody tr[data-id="${idTax}"]`);
+    console.log(tableBody)
+    if (rowToRemove) {
+      rowToRemove.remove();
+      update_the_total_of_the_product(); //update the total of the product after of delete the tax
+    }
+  }
+
+
+  function update_the_total_of_the_product() {
+    const pricePublic = document.getElementById('pricePublic');
+    const priceInput = document.getElementById('price1');
+    const price = parseFloat(priceInput.value);
+
+    if (isNaN(price) || price < 0) {
+      pricePublic.value = "0.00";
+      return;
+    }
+
+    let total = price;
+
+    // Recorremos todas las filas de la tabla de impuestos
+    const taxRows = document.querySelectorAll('.producto table.table-information tbody tr');
+
+    taxRows.forEach(row => {
+      const rateCell = row.children[3]; // tasa
+      const activeCell = row.children[5]; // activo
+      const isRetentionCell = row.children[4]; // ¿es retención?
+
+      const rate = parseFloat(rateCell.textContent) / 100;
+      const isActive = activeCell.textContent.trim().toLowerCase() === 'sí';
+      const isRetention = isRetentionCell.textContent.trim().toLowerCase() === 'sí';
+
+      if (!isNaN(rate) && isActive) {
+        const taxAmount = price * rate;
+
+        // Si es retención, se resta; si no, se suma
+        if (isRetention) {
+          total -= taxAmount;
+        } else {
+          total += taxAmount;
+        }
       }
     });
 
-    const result = await response.json();
-
-    if (result.success) {
-      confirmationMessage('Impuesto eliminado', 'El impuesto fue desvinculado correctamente.');
-      //location.reload(); // o elimina el tr con JS si prefieres no recargar
-      update_the_total_of_the_product();
-    } else {
-      warningMessage('Error', result.error || 'No se pudo eliminar el impuesto.');
-    }
-  } catch (error) {
-    errorMessage('Error de conexión', error.message);
-  } finally {
-    loadingOverlay.style.display = 'none';
-  }
-}
-
-
-function update_the_total_of_the_product() {
-  const pricePublic=document.getElementById('pricePublic');
-  const priceInput = document.getElementById('price1');
-  const price = parseFloat(priceInput.value);
-
-  if (isNaN(price) || price < 0) {
-    pricePublic.value = "0.00";
-    return;
+    // Mostramos el total con 2 decimales
+    pricePublic.value = total.toFixed(2);
   }
 
-  let total = price;
-
-  // Recorremos todas las filas de la tabla de impuestos
-  const taxRows = document.querySelectorAll('.producto table.table-information tbody tr');
-
-  taxRows.forEach(row => {
-    const rateCell = row.children[3]; // tasa
-    const activeCell = row.children[5]; // activo
-    const isRetentionCell = row.children[4]; // ¿es retención?
-
-    const rate = parseFloat(rateCell.textContent) / 100;
-    const isActive = activeCell.textContent.trim().toLowerCase() === 'sí';
-    const isRetention = isRetentionCell.textContent.trim().toLowerCase() === 'sí';
-
-    if (!isNaN(rate) && isActive) {
-      const taxAmount = price * rate;
-
-      // Si es retención, se resta; si no, se suma
-      if (isRetention) {
-        total -= taxAmount;
-      } else {
-        total += taxAmount;
-      }
-    }
-  });
-
-  // Mostramos el total con 2 decimales
-  pricePublic.value = total.toFixed(2);
-}
-
-update_the_total_of_the_product();
+  update_the_total_of_the_product();
 </script>

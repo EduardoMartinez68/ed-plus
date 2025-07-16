@@ -1,192 +1,270 @@
 <!--information of the branch-->
 {{#each branchFree}}
-    <input type="hidden" value="{{rfc}}" id="rfcCFDI">
-    <input type="hidden" value="{{name_branch}}" id="namebranchCFDI">
-    <input type="hidden" id="expeditionPlaceCFDI" value="{{postal_code}}">
+<input type="hidden" value="{{rfc}}" id="rfcCFDI">
+<input type="hidden" value="{{name_branch}}" id="namebranchCFDI">
+<input type="hidden" id="expeditionPlaceCFDI" value="{{postal_code}}">
 {{/each}}
 
 <div class="container mt-4">
     <div class="card">
         <div class="card-body">
             <form id="facturaForm">
-            <label>🧾 Generar Factura CFDI</label>
-            <hr>
-            <div class="btn-group">
-                <button class="btn-select btn-active" onclick="showSection('select-1', this)" type="button"> Informacion de factura</button>
-                <button class="btn-select" onclick="showSection('select-3', this)" type="button"> Informacion del receptor</button>
-                <button class="btn-select" onclick="showSection('select-2', this)" type="button"> Recibo de factura</button>
-            </div>
-            <div id="select-1" class="content-section active">
+                <label>🧾 Generar Factura CFDI</label>
                 <hr>
-                {{>tickets/formCFDI}}
-            </div>
-            <div id="select-3" class="content-section">
-                <hr>
-                {{>tickets/formAddress}}
-            </div>
-            <div id="select-2" class="content-section">
-                <hr>
-                {{>tickets/tableCFDI}}
-            </div>
+                <div class="btn-group">
+                    <button class="btn-select btn-active" onclick="showSection('select-1', this)" type="button">
+                        Informacion de factura</button>
+                    <button class="btn-select" onclick="showSection('select-3', this)" type="button"> Informacion del
+                        receptor</button>
+                    <button class="btn-select" onclick="showSection('select-2', this)" type="button"> Recibo de
+                        factura</button>
+                    <button class="btn-select" onclick="showSection('select-4', this)" type="button"> Impuestos de los
+                        Productos</button>
+                </div>
+                <div id="select-1" class="content-section active">
+                    <hr>
+                    {{>tickets/formCFDI}}
+                </div>
+                <div id="select-3" class="content-section">
+                    <hr>
+                    {{>tickets/formAddress}}
+                </div>
+                <div id="select-2" class="content-section">
+                    <hr>
+                    {{>tickets/tableCFDI}}
+                </div>
+                <div id="select-4" class="content-section">
+                    <hr>
+                    {{>tickets/tableTaxes}}
+                </div>
 
-            <button type="submit" class="btn btn-add mt-4">Generar Factura</button>
+                <button type="submit" class="btn btn-add mt-4">Generar Factura</button>
             </form>
         </div>
     </div>
 </div>
+
 {{>loading}}
 {{>tickets/popFacture}}
 
 <script>
-document.getElementById('facturaForm').addEventListener('submit', async function (e) {
-    e.preventDefault();
-
-    // Obtener productos directamente desde la tabla
-    const filas = document.querySelectorAll('#tabla-productos tbody tr');
-    const current_ticket = [];
-
-    filas.forEach(fila => {
-        const name = fila.cells[1].textContent.trim();
-        const barcode = fila.cells[2].textContent.trim();
-        const quantity = parseFloat(fila.querySelector('.cantidad').textContent) || 0;
-        const price = parseFloat(fila.querySelector('.precio').textContent) || 0;
-        const itemTotal = quantity * price;
-
-        current_ticket.push({
-            name,
-            barcode,
-            price,
-            quantity,
-            itemTotal
-        });
-    });
-
-    // Datos del receptor del formulario
-    const rfcReceptor = document.getElementById('rfcReceptor').value.trim();
-    const fiscalRegimeReceptor = document.getElementById('regimenFiscal').value.trim();
-
-    const receptor = {
-        Rfc: rfcReceptor,
-        //----name of the company of the customer
-        Name: document.getElementById('nombreReceptor').value.trim(),
-        CfdiUse: document.getElementById('usoCfdi').value.trim().toUpperCase(),
-        TaxZipCode: document.getElementById('codigoPostal').value.trim(),
-        Address: {
-            Street: document.getElementById('calleReceptor').value.trim(),
-            ExteriorNumber: document.getElementById('numeroExteriorReceptor').value.trim(),
-            InteriorNumber: document.getElementById('numeroInteriorReceptor').value.trim(),
-            Neighborhood: document.getElementById('coloniaReceptor').value.trim(),
-            ZipCode: document.getElementById('codigoPostal').value.trim(),
-            Municipality: document.getElementById('municipioReceptor').value.trim(),
-            State: document.getElementById('estadoReceptor').value.trim(),
-            Country: document.getElementById('paisReceptor').value.trim()
-        }
-    };
-
-    // Agregar FiscalRegime solo si no es RFC público en general y régimen no vacío
-    if (rfcReceptor !== 'XAXX010101000') {
-        const regimen = document.getElementById('regimenFiscal').value.trim();
-        if (regimen) {
-            receptor.FiscalRegime = regimen;
-        } else {
-            warningMessage("⚠️ El régimen fiscal del receptor no puede estar vacío.");
+    document.getElementById('facturaForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const codigoPostal = document.getElementById('codigoPostal').value;
+        if (codigoPostal == '') {
+            warningMessage(
+                'Código postal requerido',
+                'Por favor, ingresa el código postal del cliente en la pestaña "Información del receptor".'
+            );
             return;
         }
-    }
 
-    // Armar el array de items con impuestos
-    const items = current_ticket.map(item => {
-    const subtotal = parseFloat((item.price * item.quantity).toFixed(2));
-    const iva = parseFloat((subtotal * 0.16).toFixed(2));
-    const total = parseFloat((subtotal + iva).toFixed(2));
-
-    return {
-        ProductCode: item.sat_key , ////////////////////-----------------------------------------------32101601
-        Description: item.name,
-        UnitCode: "H87",
-        Quantity: item.quantity,
-        UnitPrice: item.price,
-        Subtotal: subtotal,
-        Total: total,
-        TaxObject: "02",
-        Taxes: [
-            {
-                TaxId: "002",
-                Total: 16,
-                Name: "IVA",
-                Base: subtotal,
-                Rate: 0.16,
-                Amount: iva,
-                IsRetention: false
-            }
-        ]
-    };
-    });
-
-    // Obtener RFC del emisor desde inputs ocultos
-    const rfc = document.getElementById('rfcCFDI')?.value?.trim() || '';
-    const name = document.getElementById('namebranchCFDI')?.value?.trim() || '';
-    const expeditionPlace = document.getElementById('expeditionPlaceCFDI')?.value?.trim() || '00000';
-
-    const paymentForm = document.getElementById('paymentForm').value;
-    const dateObj = new Date();
-    const date = dateObj.getFullYear() + "-" +
-        String(dateObj.getMonth() + 1).padStart(2, '0') + "-" +
-        String(dateObj.getDate()).padStart(2, '0') + " " +
-        String(dateObj.getHours()).padStart(2, '0') + ":" +
-        String(dateObj.getMinutes()).padStart(2, '0') + ":" +
-        String(dateObj.getSeconds()).padStart(2, '0');
-
-
-    // Armar el payload completo
-    const payload = {
-        CfdiType: "I",
-        PaymentForm: paymentForm, // Efectivo
-        PaymentMethod: "PUE", // Pago en una sola exhibición
-        ExpeditionPlace: expeditionPlace,
-        Date: date, // o usa la fecha de venta si está disponible
-        Folio: Math.floor(Math.random() * 10000),
-        Issuer: {
-            FiscalRegime: "601",
-            Rfc: rfc,
-            //name of the company in the SAT of the user-------------------------------------------------------------------
-            Name:name
-        },
-        Receiver: receptor,
-        Items: items
-    };
-
-    // Enviar a tu API
-    const loadingOverlay=document.getElementById('loadingOverlay')
-    loadingOverlay.style.display = 'flex';
-    try {
-        const response = await fetch('https://pluspuntodeventa.com/api/factura/factura.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-        });
-
-        const responseText = await response.json();
-
-        if (response.ok && responseText.success) {
-            confirmationMessage("✅ ¡Factura creada!", responseText.message);
-
-            const idFactura = responseText.response.Id; // <-- ID de la factura
-            mostrarPopupFactura(idFactura); // <-- mostrar el popup y guardar
-
-            console.log("Factura creada con ID:", idFactura);
-        } else {
-
-            warningMessage("❌ Error al generar factura", responseText.error || "Algo salió mal.");
-            console.error(responseText.error || responseText);
+        const nombreReceptor = document.getElementById('nombreReceptor').value;
+        if (nombreReceptor == '') {
+            warningMessage(
+                'Nombre o Razón Social requerido',
+                'Por favor, completa el campo "Nombre o Razón Social" en la pestaña "Información de factura".'
+            );
+            return;
         }
 
-    } catch (error) {
-        errorMessage("❌ Error de conexión", error.message);
-    }
+        //after we will question to the user if he would like make this facture 
+        if (!await questionMessage('¿Deseas generar la factura?','Una vez emitida, la factura no se puede modificar ni eliminar solo cancelar. ¿Estás seguro de continuar?')) {
+            return;
+        }
 
-    loadingOverlay.style.display = 'none';
-});
+        // Obtener productos directamente desde la tabla
+        const filas = document.querySelectorAll('.tabla-productos-sales tbody tr');
+        const current_ticket = [];
+
+        filas.forEach(fila => {
+            const sat_key = fila.cells[0].textContent.trim();
+            const name = fila.cells[1].textContent.trim();
+            const barcode = fila.cells[2].textContent.trim();
+            const quantity = parseFloat(fila.querySelector('.cantidad').textContent) || 0;
+            const priceWithoutTaxes = parseFloat(fila.querySelector('.priceWithoutTaxes').textContent) || 0;
+            const price = parseFloat(fila.querySelector('.precio').textContent) || 0;
+            const itemTotal = quantity * price;
+
+            current_ticket.push({
+                sat_key,
+                name,
+                barcode,
+                priceWithoutTaxes,
+                price,
+                quantity,
+                itemTotal
+            });
+        });
+
+        // Datos del receptor del formulario
+        const rfcReceptor = document.getElementById('rfcReceptor').value.trim();
+        const fiscalRegimeReceptor = document.getElementById('regimenFiscal').value.trim();
+
+        const receptor = {
+            Rfc: rfcReceptor,
+            //----name of the company of the customer
+            Name: document.getElementById('nombreReceptor').value.trim(),
+            CfdiUse: document.getElementById('usoCfdi').value.trim().toUpperCase(),
+            TaxZipCode: document.getElementById('codigoPostal').value.trim(),
+            Address: {
+                Street: document.getElementById('calleReceptor').value.trim(),
+                ExteriorNumber: document.getElementById('numeroExteriorReceptor').value.trim(),
+                InteriorNumber: document.getElementById('numeroInteriorReceptor').value.trim(),
+                Neighborhood: document.getElementById('coloniaReceptor').value.trim(),
+                ZipCode: document.getElementById('codigoPostal').value.trim(),
+                Municipality: document.getElementById('municipioReceptor').value.trim(),
+                State: document.getElementById('estadoReceptor').value.trim(),
+                Country: document.getElementById('paisReceptor').value.trim()
+            }
+        };
+
+        // Agregar FiscalRegime solo si no es RFC público en general y régimen no vacío
+        if (rfcReceptor !== 'XAXX010101000') {
+            const regimen = document.getElementById('regimenFiscal').value.trim();
+            if (regimen) {
+                receptor.FiscalRegime = regimen;
+            } else {
+                warningMessage("⚠️ El régimen fiscal del receptor no puede estar vacío.");
+                return;
+            }
+        }
+
+        // Armar el array de items con impuestos
+        const items = current_ticket.map(item => {
+            const subtotal = parseFloat((item.priceWithoutTaxes * item.quantity).toFixed(2));
+            const total = item.price * item.quantity;
+
+            return {
+                ProductCode: item.sat_key, ////////////////////-----------------------------------------------32101601
+                Description: item.name,
+                UnitCode: "H87", //--indica unidad de medida H87=pieza KGM=kilogramo LTR=litro
+                Quantity: item.quantity,
+                UnitPrice: item.priceWithoutTaxes,
+                Subtotal: subtotal,
+                Total: total,
+                TaxObject: "02",
+
+                //her we will get the taxes of the product
+                Taxes: get_taxes_for_product(item.barcode, subtotal)
+            };
+        });
+
+        function get_taxes_for_product(barcode, base) {
+            console.log(barcode)
+            const tableBody = document.getElementById(`table-tax-${barcode}`);
+            const taxes = [];
+
+            if (!tableBody) {
+                console.warn(`❌ No se encontró la tabla de impuestos para el producto con código: ${barcode}`);
+                return taxes;
+            }
+
+            const rows = tableBody.querySelectorAll('tr');
+
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length < 4) return;
+
+                const name = cells[0].textContent.trim();
+                const taxId = cells[1].textContent.trim();
+                const rate = parseFloat(cells[2].textContent.trim()) || 0;
+                const isRetention = cells[3].textContent.trim().toLowerCase() === 'sí' || cells[3].textContent.trim() === '1';
+
+                const taxAmount = parseFloat((base * (rate / 100)).toFixed(2));
+
+                taxes.push({
+                    TaxId: taxId,
+                    Total: taxAmount,
+                    Name: name,
+                    Base: base,
+                    Rate: rate / 100, // convertir a decimal
+                    Amount: taxAmount,
+                    IsRetention: isRetention
+                });
+            });
+
+            return taxes;
+        }
+        
+        // Obtener RFC del emisor desde inputs ocultos
+        const rfc = document.getElementById('rfcCFDI')?.value?.trim() || '';
+        const name = document.getElementById('namebranchCFDI')?.value?.trim() || '';
+        const expeditionPlace = document.getElementById('expeditionPlaceCFDI')?.value?.trim() || '00000';
+
+        const paymentForm = document.getElementById('paymentForm').value;
+        const dateObj = new Date();
+        const date = dateObj.getFullYear() + "-" +
+            String(dateObj.getMonth() + 1).padStart(2, '0') + "-" +
+            String(dateObj.getDate()).padStart(2, '0') + " " +
+            String(dateObj.getHours()).padStart(2, '0') + ":" +
+            String(dateObj.getMinutes()).padStart(2, '0') + ":" +
+            String(dateObj.getSeconds()).padStart(2, '0');
+
+
+        // Armar el payload completo
+        const payload = {
+            CfdiType: document.getElementById('cfdiType').value,
+            PaymentForm: paymentForm, // Efectivo
+            PaymentMethod: document.getElementById('paymentMethod').value, // Pago en una sola exhibición
+            ExpeditionPlace: expeditionPlace,
+            Date: date, // o usa la fecha de venta si está disponible
+            Folio: Math.floor(Math.random() * 10000),
+            Issuer: {
+                FiscalRegime: document.getElementById('regimenFiscal').value,
+                Rfc: rfc,
+                //name of the company in the SAT of the user-------------------------------------------------------------------
+                Name: name
+            },
+            Receiver: receptor,
+            Items: items
+        };
+
+        // Enviar a tu API
+        const loadingOverlay = document.getElementById('loadingOverlay')
+        loadingOverlay.style.display = 'flex';
+        console.log(JSON.stringify(payload))
+        try {
+            const response = await fetch('https://pluspuntodeventa.com/api/factura/factura.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+    
+            const responseText = await response.json();
+    
+            if (response.ok && responseText.success) {
+                confirmationMessage("✅ ¡Factura creada!", responseText.message);
+    
+                const idFactura = responseText.response.Id; // <-- ID de la factura
+                mostrarPopupFactura(idFactura); // <-- mostrar el popup y guardar
+    
+                console.log("Factura creada con ID:", idFactura);
+            } else {
+    
+                warningMessage("❌ Error al generar factura", responseText.error || "Algo salió mal.");
+                console.error(responseText.error || responseText);
+            }
+    
+        } catch (error) {
+            errorMessage("❌ Error de conexión", error.message);
+        }
+        loadingOverlay.style.display = 'none';
+
+
+
+
+
+
+
+
+
+
+
+
+
+    });
+
 </script>

@@ -129,7 +129,7 @@ router.get('/:id_company/:id_branch/point-sales', isLoggedIn, async (req, res) =
         const dataEmployee = await get_data_employee(req);
 
         const dishAndCombo = await get_all_dish_and_combo_without_lots(id_branch) //get_the_products_most_sales_additions(id_branch);
-        
+        console.log(dishAndCombo)
         /*
         const newCombos = await get_data_recent_combos(id_company);
         const mostSold = await get_all_data_combo_most_sold(id_branch);
@@ -146,7 +146,6 @@ router.get('/:id_company/:id_branch/point-sales', isLoggedIn, async (req, res) =
         //const productsSales=await get_all_products_in_sales(id_branch);
         const dataCompany=await get_data_company_with_id(id_company);
         const dataTicket=await get_the_setting_of_the_ticket(id_company, id_branch);
-        console.log(dataTicket)
 
         const templateData = {
             branchFree,
@@ -200,7 +199,110 @@ router.post('/search-products', isLoggedIn, async (req, res) => {
   }
 })
 
+
 async function get_the_products_with_barcode(id_branch, barcode) {
+  const likeValue = `%${barcode}%`;
+
+  if (TYPE_DATABASE === 'mysqlite') {
+    return new Promise((resolve, reject) => {
+      const query = `
+        SELECT 
+            i.*,
+            d.barcode,
+            d.name,
+            d.description,
+            d.img,
+            d.id_product_department,
+            d.id_product_category,
+            d.this_product_is_sold_in_bulk,
+            d.this_product_need_recipe,
+            COALESCE(json_group_array(
+              json_object(
+                'id', l.id,
+                'number_lote', l.number_lote,
+                'initial_existence', l.initial_existence,
+                'current_existence', l.current_existence,
+                'date_of_manufacture', l.date_of_manufacture,
+                'expiration_date', l.expiration_date
+              )
+            ), '[]') AS lots
+        FROM dish_and_combo_features i
+        INNER JOIN dishes_and_combos d ON i.id_dishes_and_combos = d.id
+        LEFT JOIN lots l ON l.id_dish_and_combo_features = i.id
+        WHERE i.id_branches = ? AND (d.barcode LIKE ? OR d.name LIKE ?)
+        GROUP BY i.id, d.id
+        LIMIT 20;
+      `;
+
+      database.all(query, [id_branch, likeValue], async (err, rows) => {
+        if (err) {
+          console.error('Error filtering products by barcode (SQLite):', err);
+          return resolve([]);
+        }
+
+        // Obtener los impuestos para cada producto
+        const productsWithTaxes = await Promise.all(
+          rows.map(async (product) => {
+            const taxes = await get_taxes_by_feature_id(product.id);
+            return { ...product, taxes };
+          })
+        );
+
+        resolve(productsWithTaxes);
+      });
+    });
+  } else {
+    const queryText = `
+      SELECT 
+          i.*,
+          d.barcode,
+          d.name,
+          d.description,
+          d.img,
+          d.id_product_department,
+          d.id_product_category,
+          d.this_product_is_sold_in_bulk,
+          d.this_product_need_recipe,
+          COALESCE(
+              json_agg(
+                  jsonb_build_object(
+                      'id', l.id,
+                      'number_lote', l.number_lote,
+                      'initial_existence', l.initial_existence,
+                      'current_existence', l.current_existence,
+                      'date_of_manufacture', l.date_of_manufacture,
+                      'expiration_date', l.expiration_date
+                  )
+                  ORDER BY l.expiration_date ASC
+              ) FILTER (WHERE l.id IS NOT NULL), '[]'
+          ) AS lots
+      FROM "Inventory".dish_and_combo_features i
+      INNER JOIN "Kitchen".dishes_and_combos d ON i.id_dishes_and_combos = d.id
+      LEFT JOIN "Inventory".lots l ON l.id_dish_and_combo_features = i.id
+      WHERE i.id_branches = $1 AND (d.barcode ILIKE $2 OR d.name ILIKE $2)
+      GROUP BY i.id, d.id
+      LIMIT 20;
+    `;
+
+    try {
+      const result = await database.query(queryText, [id_branch, likeValue]);
+
+      const productsWithTaxes = await Promise.all(
+        result.rows.map(async (product) => {
+          const taxes = await get_taxes_by_feature_id(product.id);
+          return { ...product, taxes };
+        })
+      );
+
+      return productsWithTaxes;
+    } catch (error) {
+      console.error('Error filtering products by barcode (PostgreSQL):', error);
+      return [];
+    }
+  }
+}
+
+async function get_the_products_with_barcode2(id_branch, barcode) {
   const likeValue = `%${barcode}%`;
 
   if (TYPE_DATABASE === 'mysqlite') {
@@ -283,6 +385,66 @@ async function get_the_products_with_barcode(id_branch, barcode) {
       return [];
     }
   }
+}
+
+
+async function get_taxes_by_feature_id(idFeature) {
+    if (TYPE_DATABASE === 'mysqlite') {
+        return new Promise((resolve, reject) => {
+            const query = `
+                SELECT 
+                    t.id AS tax_id,
+                    t.name,
+                    t."taxId",
+                    t.base,
+                    t.rate,
+                    t.is_retention,
+                    t.activate,
+                    t.this_taxes_is_in_all,
+                    t.id_branches
+                FROM 
+                    taxes_relation tr
+                INNER JOIN 
+                    taxes_product t ON tr.id_taxes = t.id
+                WHERE 
+                    tr.id_dish_and_combo_features = ?
+            `;
+            database.all(query, [idFeature], (err, rows) => {
+                if (err) {
+                    console.error("❌ Error en get_taxes_by_feature_id (SQLite):", err);
+                    return resolve([]);
+                }
+                resolve(rows || []);
+            });
+        });
+
+    } else {
+        try {
+            const query = `
+                SELECT 
+                    t.id AS tax_id,
+                    t.name,
+                    t."taxId",
+                    t.base,
+                    t.rate,
+                    t.is_retention,
+                    t.activate,
+                    t.this_taxes_is_in_all,
+                    t.id_branches
+                FROM 
+                    "Branch".taxes_relation tr
+                INNER JOIN 
+                    "Branch".taxes_product t ON tr.id_taxes = t.id
+                WHERE 
+                    tr.id_dish_and_combo_features = $1
+            `;
+            const result = await database.query(query, [idFeature]);
+            return result.rows || [];
+        } catch (error) {
+            console.error("❌ Error en get_taxes_by_feature_id (PostgreSQL):", error);
+            return [];
+        }
+    }
 }
 
 

@@ -619,7 +619,8 @@ router.get('/:id_company/:id_branch/:token_ticket/view_tickets_sale', isLoggedIn
     }
 
     const dataTicketOld=await get_ticket_by_branch_and_key(id_branch, token_ticket);
-
+    console.log(dataTicketOld);
+    
     //now we will see if this sale have a customer
     const idCustomer=dataTicketOld.id_customers;
     let infoCustomer=[{}]

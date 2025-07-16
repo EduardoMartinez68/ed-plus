@@ -129,26 +129,31 @@ function updateProductCards(products) {
     card.setAttribute('this_product_is_sold_in_bulk', product.this_product_is_sold_in_bulk);
     card.setAttribute('id_dishes_and_combos', product.id_dishes_and_combos);
 
+    const tax=JSON.stringify(product.taxes).replace(/'/g, "\\'");
+    card.setAttribute('taxes', tax);
+    card.setAttribute('sat_key', product.sat_key);
+
+    //${JSON.stringify(product.taxes).replace(/'/g, "\\'")}
     card.setAttribute('onclick', `
       addToCart(
-        'product-${product.id}', 
+        'product-${product.img}', 
         '${product.name}', 
         '${product.barcode}', 
-        ${product.price_1}, 
+        ${product.price_2}, 
         '${product.purchase_unit}', 
         '${product.this_product_is_sold_in_bulk}', 
         '${product.id_dishes_and_combos}', 
+        ${JSON.stringify(product.taxes).replace(/'/g, "\\'")}
         true, 
         '${product.this_product_need_recipe}'
       )
     `);
-
     const imgSrc = product.img ? product.img : '/img/icons_first/product.webp';
 
     card.innerHTML = `
       <img src="${imgSrc}" alt="Producto" id="product-${product.id}" loading="lazy">
       <br>
-      <label class="card-text">$${product.price_1}</label>
+      <label class="card-text">$${product.price_2}</label>
       <div class="product-name-point-of-sales">${product.name}</div>
       <div class="product-barcode-point-of-sales">${product.barcode}</div>
       <input type="hidden" class="this_product_is_sold_in_bulk" value="${product.this_product_is_sold_in_bulk}">

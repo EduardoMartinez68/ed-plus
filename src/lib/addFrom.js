@@ -3120,11 +3120,12 @@ router.post('/links/:id_product/:id_tax/add-tax-to-the-product', isLoggedIn, asy
 
   const success = await add_tax_relation_to_product(id_product, id_tax);
   if (success) {
-    res.json({ success: true, message: 'Impuesto vinculado al producto' });
+    res.json({ success: true, message: 'Impuesto vinculado al producto' , idTax:success});
   } else {
     res.status(500).json({ success: false, error: 'No se pudo agregar el impuesto' });
   }
 });
+
 
 async function add_tax_relation_to_product(id_product, id_tax) {
   if (TYPE_DATABASE === 'mysqlite') {
@@ -3135,26 +3136,28 @@ async function add_tax_relation_to_product(id_product, id_tax) {
       `;
       database.run(query, [id_product, id_tax], function (err) {
         if (err) {
-          console.error('Error en add_tax_relation_to_product (SQLite):', err);
-          return resolve(false);
+          console.error('❌ Error en add_tax_relation_to_product (SQLite):', err);
+          return resolve(null);
         }
-        resolve(true);
+        resolve(this.lastID); // ✅ Devolvemos el ID insertado
       });
     });
   } else {
     const query = `
       INSERT INTO "Branch".taxes_relation (id_dish_and_combo_features, id_taxes)
       VALUES ($1, $2)
+      RETURNING id
     `;
     try {
-      await database.query(query, [id_product, id_tax]);
-      return true;
+      const result = await database.query(query, [id_product, id_tax]);
+      return result.rows[0]?.id || null; // ✅ Devolvemos el ID insertado
     } catch (error) {
-      console.error('Error en add_tax_relation_to_product (PostgreSQL):', error);
-      return false;
+      console.error('❌ Error en add_tax_relation_to_product (PostgreSQL):', error);
+      return null;
     }
   }
 }
+
 
 
 router.post('/links/delete-tax-from-product/:id_product/:idTaxRelation', isLoggedIn, async (req, res) => {
