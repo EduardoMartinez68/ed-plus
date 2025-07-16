@@ -3157,14 +3157,14 @@ async function add_tax_relation_to_product(id_product, id_tax) {
 }
 
 
-router.post('/links/delete-tax-from-product/:idTaxRelation', isLoggedIn, async (req, res) => {
-  const { idTaxRelation } = req.params;
+router.post('/links/delete-tax-from-product/:id_product/:idTaxRelation', isLoggedIn, async (req, res) => {
+  const { idTaxRelation, id_product } = req.params;
 
   if (!idTaxRelation) {
     return res.status(400).json({ success: false, error: 'ID de impuesto no especificado' });
   }
 
-  const result = await delete_tax_from_product(idTaxRelation);
+  const result = await delete_tax_from_product(id_product, idTaxRelation);
 
   if (result) {
     return res.json({ success: true, message: 'Impuesto eliminado correctamente' });
@@ -3173,11 +3173,11 @@ router.post('/links/delete-tax-from-product/:idTaxRelation', isLoggedIn, async (
   }
 });
 
-async function delete_tax_from_product(idRelation) {
+async function delete_tax_from_product(id_dish_and_combo_features,id_taxes_product) {
   if (TYPE_DATABASE === 'mysqlite') {
     return new Promise((resolve) => {
-      const query = `DELETE FROM taxes_relation WHERE id = ?`;
-      database.run(query, [idRelation], function (err) {
+      const query = `DELETE FROM taxes_relation WHERE id_dish_and_combo_features = ? and id_taxes= ?`;
+      database.run(query, [id_dish_and_combo_features, id_taxes_product], function (err) {
         if (err) {
           console.error('Error al eliminar impuesto (SQLite):', err);
           return resolve(false);
@@ -3187,8 +3187,8 @@ async function delete_tax_from_product(idRelation) {
     });
   } else {
     try {
-      const query = `DELETE FROM "Branch".taxes_relation WHERE id = $1`;
-      const result = await database.query(query, [idRelation]);
+      const query = `DELETE FROM "Branch".taxes_relation WHERE id_dish_and_combo_features = $1 and id_taxes = $2 `;
+      const result = await database.query(query, [id_dish_and_combo_features, id_taxes_product]);
       return result.rowCount > 0;
     } catch (error) {
       console.error('Error al eliminar impuesto (PostgreSQL):', error);

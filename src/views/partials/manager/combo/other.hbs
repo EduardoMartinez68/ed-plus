@@ -286,9 +286,9 @@ async function deleteTax(idTax) {
 
   const loadingOverlay = document.getElementById('loadingOverlay');
   loadingOverlay.style.display = 'flex';
-
+  const idProduct =  document.getElementById('idComboTaxes').value;
   try {
-    const response = await fetch(`/links/delete-tax-from-product/${idTax}`, {
+    const response = await fetch(`/links/delete-tax-from-product/${idProduct}/${idTax}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -299,7 +299,8 @@ async function deleteTax(idTax) {
 
     if (result.success) {
       confirmationMessage('Impuesto eliminado', 'El impuesto fue desvinculado correctamente.');
-      location.reload(); // o elimina el tr con JS si prefieres no recargar
+      //location.reload(); // o elimina el tr con JS si prefieres no recargar
+      update_the_total_of_the_product();
     } else {
       warningMessage('Error', result.error || 'No se pudo eliminar el impuesto.');
     }
@@ -310,4 +311,46 @@ async function deleteTax(idTax) {
   }
 }
 
+
+function update_the_total_of_the_product() {
+  const pricePublic=document.getElementById('pricePublic');
+  const priceInput = document.getElementById('price1');
+  const price = parseFloat(priceInput.value);
+
+  if (isNaN(price) || price < 0) {
+    pricePublic.value = "0.00";
+    return;
+  }
+
+  let total = price;
+
+  // Recorremos todas las filas de la tabla de impuestos
+  const taxRows = document.querySelectorAll('.producto table.table-information tbody tr');
+
+  taxRows.forEach(row => {
+    const rateCell = row.children[3]; // tasa
+    const activeCell = row.children[5]; // activo
+    const isRetentionCell = row.children[4]; // ¿es retención?
+
+    const rate = parseFloat(rateCell.textContent) / 100;
+    const isActive = activeCell.textContent.trim().toLowerCase() === 'sí';
+    const isRetention = isRetentionCell.textContent.trim().toLowerCase() === 'sí';
+
+    if (!isNaN(rate) && isActive) {
+      const taxAmount = price * rate;
+
+      // Si es retención, se resta; si no, se suma
+      if (isRetention) {
+        total -= taxAmount;
+      } else {
+        total += taxAmount;
+      }
+    }
+  });
+
+  // Mostramos el total con 2 decimales
+  pricePublic.value = total.toFixed(2);
+}
+
+update_the_total_of_the_product();
 </script>
