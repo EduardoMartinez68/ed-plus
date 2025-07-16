@@ -372,96 +372,194 @@ async function get_all_dish_and_combo(idCompany, idBranch) {
 
 
 async function get_data_combo_factures(idComboFacture) {
+  if (TYPE_DATABASE === 'mysqlite') {
+    // Primero obtener el producto
+    const producto = await new Promise((resolve, reject) => {
+      const queryText = `
+        SELECT 
+          f.id,
+          f.id_companies,
+          f.id_branches,
+          f.id_dishes_and_combos,
+          f.price_1,
+          f.revenue_1,
+          f.price_2,
+          f.revenue_2,
+          f.price_3,
+          f.revenue_3,
+          f.favorites,
+          f.sat_key,
+          f.purchase_unit,
+          f.existence,
+          f.amount,
+          f.product_cost,
+          f.id_providers,
+          d.name AS dish_name,
+          d.this_product_is_sold_in_bulk,
+          d.description AS dish_description,
+          d.img AS dish_img,
+          d.barcode AS dish_barcode,
+          d.id_product_department AS dish_product_department,
+          d.id_product_category AS dish_product_category,
+          d.this_product_need_recipe AS this_product_need_recipe
+        FROM 
+          dish_and_combo_features f
+        INNER JOIN 
+          dishes_and_combos d ON f.id_dishes_and_combos = d.id
+        WHERE 
+          f.id = ?
+      `;
+      database.get(queryText, [idComboFacture], (err, row) => {
+        if (err) {
+          console.error('Error en get_data_combo_factures (SQLite):', err);
+          return resolve(null);
+        }
+        resolve(row);
+      });
+    });
+
+    if (!producto) return [];
+
+    // Luego obtener los impuestos del producto
+    const taxes = await new Promise((resolve, reject) => {
+      const queryTaxes = `
+        SELECT 
+          t.id AS tax_id,
+          t.name,
+          t.taxId,
+          t.base,
+          t.rate,
+          t.is_retention,
+          t.activate,
+          t.this_taxes_is_in_all,
+          t.id_branches
+        FROM 
+          taxes_relation tr
+        INNER JOIN 
+          taxes_product t ON tr.id_taxes = t.id
+        WHERE 
+          tr.id_dish_and_combo_features = ?
+      `;
+      database.all(queryTaxes, [idComboFacture], (err, rows) => {
+        if (err) {
+          console.error("❌ Error en get_taxes_by_feature_id (SQLite):", err);
+          return resolve([]);
+        }
+        resolve(rows || []);
+      });
+    });
+
+    producto.taxes = taxes; // agregamos los impuestos
+
+    return [producto]; // para que sea igual que en PostgreSQL
+  } else {
+    try {
+      const queryText = `
+        SELECT 
+          f.id,
+          f.id_companies,
+          f.id_branches,
+          f.id_dishes_and_combos,
+          f.price_1,
+          f.revenue_1,
+          f.price_2,
+          f.revenue_2,
+          f.price_3,
+          f.revenue_3,
+          f.favorites,
+          f.sat_key,
+          f.purchase_unit,
+          f.existence,
+          f.amount,
+          f.product_cost,
+          f.id_providers,
+          d.name AS dish_name,
+          d.this_product_is_sold_in_bulk,
+          d.description AS dish_description,
+          d.img AS dish_img,
+          d.barcode AS dish_barcode,
+          d.id_product_department AS dish_product_department,
+          d.id_product_category AS dish_product_category,
+          d.this_product_need_recipe AS this_product_need_recipe
+        FROM 
+          "Inventory".dish_and_combo_features f
+        INNER JOIN 
+          "Kitchen".dishes_and_combos d ON f.id_dishes_and_combos = d.id
+        WHERE 
+          f.id = $1
+      `;
+      const result = await database.query(queryText, [idComboFacture]);
+      const taxes = await get_taxes_by_feature_id(idComboFacture);
+      result.rows[0].taxes = taxes;
+      return result.rows;
+    } catch (error) {
+      console.error('Error en get_data_combo_factures (PostgreSQL):', error);
+      return [];
+    }
+  }
+}
+
+
+async function get_taxes_by_feature_id(idFeature) {
     if (TYPE_DATABASE === 'mysqlite') {
         return new Promise((resolve, reject) => {
-            const queryText = `
+            const query = `
                 SELECT 
-                    f.id,
-                    f.id_companies,
-                    f.id_branches,
-                    f.id_dishes_and_combos,
-                    f.price_1,
-                    f.revenue_1,
-                    f.price_2,
-                    f.revenue_2,
-                    f.price_3,
-                    f.revenue_3,
-                    f.favorites,
-                    f.sat_key,
-                    f.purchase_unit,
-                    f.existence,
-                    f.amount,
-                    f.product_cost,
-                    f.id_providers,
-                    d.name AS dish_name,
-                    d.this_product_is_sold_in_bulk,
-                    d.description AS dish_description,
-                    d.img AS dish_img,
-                    d.barcode AS dish_barcode,
-                    d.id_product_department AS dish_product_department,
-                    d.id_product_category AS dish_product_category,
-                    d.this_product_need_recipe AS this_product_need_recipe
-                    FROM 
-                        dish_and_combo_features f
-                    INNER JOIN 
-                        dishes_and_combos d ON f.id_dishes_and_combos = d.id
-                    WHERE 
-                        f.id = ?
+                    t.id AS tax_id,
+                    t.name,
+                    t."taxId",
+                    t.base,
+                    t.rate,
+                    t.is_retention,
+                    t.activate,
+                    t.this_taxes_is_in_all,
+                    t.id_branches
+                FROM 
+                    taxes_relation tr
+                INNER JOIN 
+                    taxes_product t ON tr.id_taxes = t.id
+                WHERE 
+                    tr.id_dish_and_combo_features = ?
             `;
-            database.get(queryText, [idComboFacture], (err, row) => {
+            database.all(query, [idFeature], (err, rows) => {
                 if (err) {
-                    console.error('Error en get_data_combo_factures (SQLite):', err);
-                    return resolve(null);
+                    console.error("❌ Error en get_taxes_by_feature_id (SQLite):", err);
+                    return resolve([]);
                 }
-                
-                resolve(row ? [row] : []);
+                resolve(rows || []);
             });
         });
-    }
-    else{
+
+    } else {
         try {
-            const queryText = `
+            const query = `
                 SELECT 
-                    f.id,
-                    f.id_companies,
-                    f.id_branches,
-                    f.id_dishes_and_combos,
-                    f.price_1,
-                    f.revenue_1,
-                    f.price_2,
-                    f.revenue_2,
-                    f.price_3,
-                    f.revenue_3,
-                    f.favorites,
-                    f.sat_key,
-                    f.purchase_unit,
-                    f.existence,
-                    f.amount,
-                    f.product_cost,
-                    f.id_providers,
-                    d.name AS dish_name,
-                    d.this_product_is_sold_in_bulk,
-                    d.description AS dish_description,
-                    d.img AS dish_img,
-                    d.barcode AS dish_barcode,
-                    d.id_product_department AS dish_product_department,
-                    d.id_product_category AS dish_product_category,
-                    d.this_product_need_recipe AS this_product_need_recipe
+                    t.id AS tax_id,
+                    t.name,
+                    t."taxId",
+                    t.base,
+                    t.rate,
+                    t.is_retention,
+                    t.activate,
+                    t.this_taxes_is_in_all,
+                    t.id_branches
                 FROM 
-                    "Inventory".dish_and_combo_features f
+                    "Branch".taxes_relation tr
                 INNER JOIN 
-                    "Kitchen".dishes_and_combos d ON f.id_dishes_and_combos = d.id
+                    "Branch".taxes_product t ON tr.id_taxes = t.id
                 WHERE 
-                    f.id = $1
+                    tr.id_dish_and_combo_features = $1
             `;
-            const result = await database.query(queryText, [idComboFacture]);
-            return result.rows;
+            const result = await database.query(query, [idFeature]);
+            return result.rows || [];
         } catch (error) {
-            console.error('Error en get_data_combo_factures (PostgreSQL):', error);
+            console.error("❌ Error en get_taxes_by_feature_id (PostgreSQL):", error);
             return [];
         }
     }
 }
+
+
 
 async function get_all_price_supplies_branch(idCombo, idBranch) {
     if (TYPE_DATABASE === 'mysqlite') {

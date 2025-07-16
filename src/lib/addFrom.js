@@ -3045,7 +3045,159 @@ async function update_supplies_image(id_supplies, image) {
     }
   }
 }
+//------------------------------------taxes--------------------------------------
+router.post('/links/add-taxe', isLoggedIn, async (req, res) => {
+  try {
+    const id_branches = req.user.id_branch; // Ajusta según dónde guardes id_branch en usuario
+    const { name, taxId, rate, isRetention } = req.body;
 
+    if (!name || !taxId || rate === undefined) {
+      return res.status(400).json({ succes:false,  error: 'Faltan datos obligatorios' });
+    }
+
+    const rateNum = parseFloat(rate);
+    if (isNaN(rateNum) || rateNum < 0) {
+      return res.status(400).json({ succes:false,  error: 'Tasa inválida' });
+    }
+
+    const id = await add_tax({
+      id_branches,
+      name,
+      taxId,
+      rate: rateNum,
+      is_retention: isRetention === true || isRetention === 'true',
+    });
+
+    if (id) {
+      res.json({  succes:true, message: 'Impuesto creado', id });
+    } else {
+      res.status(500).json({ succes:false, error: 'No se pudo crear el impuesto' });
+    }
+
+  } catch (error) {
+    console.error('Error en /links/add-taxe:', error);
+    res.status(500).json({ succes:false, error: 'Error interno del servidor' });
+  }
+});
+
+async function add_tax({ id_branches, name, taxId, rate, is_retention }) {
+  if (TYPE_DATABASE === 'mysqlite') {
+    return new Promise((resolve) => {
+      const query = `
+        INSERT INTO taxes_product (id_branches, name, "taxId", rate, is_retention, base, activate, this_taxes_is_in_all)
+        VALUES (?, ?, ?, ?, ?, 100, 1, 0)
+      `;
+      database.run(query, [id_branches, name, taxId, rate, is_retention ? 1 : 0], function (err) {
+        if (err) {
+          console.error('Error al insertar impuesto (SQLite):', err);
+          return resolve(null);
+        }
+        resolve(this.lastID);
+      });
+    });
+  } else {
+    const query = `
+      INSERT INTO "Branch".taxes_product (id_branches, name, "taxId", rate, is_retention, base, activate, this_taxes_is_in_all)
+      VALUES ($1, $2, $3, $4, $5, 100, true, false)
+      RETURNING id
+    `;
+    try {
+      const result = await database.query(query, [id_branches, name, taxId, rate, is_retention]);
+      return result.rows[0]?.id || null;
+    } catch (error) {
+      console.error('Error al insertar impuesto (PostgreSQL):', error);
+      return null;
+    }
+  }
+}
+
+router.post('/links/:id_product/:id_tax/add-tax-to-the-product', isLoggedIn, async (req, res) => {
+  const { id_product, id_tax } = req.params;
+
+  if (!id_product || !id_tax) {
+    return res.status(400).json({ success: false, error: 'Faltan parámetros' });
+  }
+
+  const success = await add_tax_relation_to_product(id_product, id_tax);
+  if (success) {
+    res.json({ success: true, message: 'Impuesto vinculado al producto' });
+  } else {
+    res.status(500).json({ success: false, error: 'No se pudo agregar el impuesto' });
+  }
+});
+
+async function add_tax_relation_to_product(id_product, id_tax) {
+  if (TYPE_DATABASE === 'mysqlite') {
+    return new Promise((resolve) => {
+      const query = `
+        INSERT INTO taxes_relation (id_dish_and_combo_features, id_taxes)
+        VALUES (?, ?)
+      `;
+      database.run(query, [id_product, id_tax], function (err) {
+        if (err) {
+          console.error('Error en add_tax_relation_to_product (SQLite):', err);
+          return resolve(false);
+        }
+        resolve(true);
+      });
+    });
+  } else {
+    const query = `
+      INSERT INTO "Branch".taxes_relation (id_dish_and_combo_features, id_taxes)
+      VALUES ($1, $2)
+    `;
+    try {
+      await database.query(query, [id_product, id_tax]);
+      return true;
+    } catch (error) {
+      console.error('Error en add_tax_relation_to_product (PostgreSQL):', error);
+      return false;
+    }
+  }
+}
+
+
+router.post('/links/delete-tax-from-product/:idTaxRelation', isLoggedIn, async (req, res) => {
+  const { idTaxRelation } = req.params;
+
+  if (!idTaxRelation) {
+    return res.status(400).json({ success: false, error: 'ID de impuesto no especificado' });
+  }
+
+  const result = await delete_tax_from_product(idTaxRelation);
+
+  if (result) {
+    return res.json({ success: true, message: 'Impuesto eliminado correctamente' });
+  } else {
+    return res.status(500).json({ success: false, error: 'No se pudo eliminar el impuesto' });
+  }
+});
+
+async function delete_tax_from_product(idRelation) {
+  if (TYPE_DATABASE === 'mysqlite') {
+    return new Promise((resolve) => {
+      const query = `DELETE FROM taxes_relation WHERE id = ?`;
+      database.run(query, [idRelation], function (err) {
+        if (err) {
+          console.error('Error al eliminar impuesto (SQLite):', err);
+          return resolve(false);
+        }
+        resolve(this.changes > 0);
+      });
+    });
+  } else {
+    try {
+      const query = `DELETE FROM "Branch".taxes_relation WHERE id = $1`;
+      const result = await database.query(query, [idRelation]);
+      return result.rowCount > 0;
+    } catch (error) {
+      console.error('Error al eliminar impuesto (PostgreSQL):', error);
+      return false;
+    }
+  }
+}
+
+//-----------------------------------
 router.post('/fud/:id/:id_branch/add-supplies-free', isLoggedIn, async (req, res) => {
     const { id, id_branch } = req.params;
 

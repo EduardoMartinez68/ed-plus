@@ -363,7 +363,7 @@ router.get('/:id_company/:id_branch/:id_combo_features/edit-products-free', isLo
 
     //get all the data of the combo
     const comboFeactures = await get_data_combo_factures(id_combo_features); //this is the data of the combo
-
+    
     //this is for get the supplies of the combo
     const suppliesCombo = await get_all_price_supplies_branch(comboFeactures[0].id_dishes_and_combos, id_branch)
 
@@ -373,18 +373,70 @@ router.get('/:id_company/:id_branch/:id_combo_features/edit-products-free', isLo
     const departments=await get_department(id_company);
     const category=await get_category(id_company);
 
+    const taxes=await get_all_taxes_by_branch(id_branch);
+
     //we will see if the user have a suscription free
     if(req.user.rol_user==rolFree){
         const branchFree = await get_data_branch(id_branch); //get data of rol free
         //get the data of the product that is in the combo. This is the information of the product 
         const productFacture=await get_supplies_or_features_with_id_products_and_supplies(suppliesCombo[0].id_products_and_supplies,promotions);
-        console.log(comboFeactures)
-        res.render('links/branch/products/editProduct', { comboFeactures, suppliesCombo , branchFree, productFacture,lots,promotions, departments, category});      
+        console.log(comboFeactures[0].taxes)
+        res.render('links/branch/products/editProduct', { comboFeactures, suppliesCombo , branchFree, productFacture,lots,promotions, departments, category, taxes});      
     }else{
         const branch = await get_data_branch(id_branch);
         res.render('links/branch/products/editProduct', { comboFeactures, suppliesCombo, branch, lots});
     }
 })
+
+async function get_all_taxes_by_branch(idBranch) {
+  if (TYPE_DATABASE === 'mysqlite') {
+    return new Promise((resolve, reject) => {
+      const query = `
+        SELECT 
+          id,
+          id_branches,
+          base,
+          rate,
+          is_retention,
+          activate,
+          this_taxes_is_in_all,
+          name,
+          taxId
+        FROM taxes_product
+        WHERE id_branches = ? AND activate = 1
+      `;
+      database.all(query, [idBranch], (err, rows) => {
+        if (err) {
+          console.error('❌ Error en get_all_taxes_by_branch (SQLite):', err);
+          return resolve([]);
+        }
+        resolve(rows || []);
+      });
+    });
+  } else {
+    try {
+      const query = `
+        SELECT 
+          id,
+          id_branches,
+          base,
+          rate,
+          is_retention,
+          activate,
+          this_taxes_is_in_all,
+          name,
+          "taxId"
+        FROM "Branch".taxes_product
+        WHERE id_branches = $1 AND activate = true
+      `;
+      const result = await database.query(query, [idBranch]);
+      return result.rows || [];
+    } catch (error) {
+      console.error('❌ Error en get_all_taxes_by_branch (PostgreSQL):', error);
+      return [];
+    }
+  }
+}
 
 router.post('/:id_lot/edit-lot-quantity', isLoggedIn, async (req, res) => {
     const { id_lot } = req.params;

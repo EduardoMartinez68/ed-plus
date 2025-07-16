@@ -356,7 +356,39 @@ async function create_update_of_the_database(adminPool) {
             ALTER TABLE "Company".branches ADD COLUMN IF NOT EXISTS rfc varchar(13);
         END
         $$;
+        DO $$
+        BEGIN
+            IF NOT EXISTS CREATE TABLE "Branch".taxes_product (
+                    id bigserial PRIMARY KEY,
+                    id_branches bigint,
+                    name varchar(15) NOT NULL,
+                    "taxId" varchar(10) NOT NULL DEFAULT '002',
+                    base numeric(10,2) NOT NULL DEFAULT 100.00,
+                    rate numeric(6,4) NOT NULL DEFAULT 0.1600,
+                    is_retention boolean NOT NULL DEFAULT false,
+                    activate boolean NOT NULL DEFAULT true,
+                    this_taxes_is_in_all boolean NOT NULL DEFAULT false,
+                    CONSTRAINT fk_taxes_branch FOREIGN KEY (id_branches)
+                        REFERENCES "Company".branches(id)
+                        ON DELETE SET NULL ON UPDATE CASCADE
+                );
+            END IF;
+        END
+        $$;
 
+        DO $$
+        BEGIN
+            IF NOT EXISTS CREATE TABLE "Branch".taxes_relation (
+                    id bigserial PRIMARY KEY,
+                    id_dish_and_combo_features bigint,
+                    id_taxes bigint,
+                    CONSTRAINT id_key_taxes_relation PRIMARY KEY (id),
+                    FOREIGN KEY (id_dish_and_combo_features) REFERENCES "Dish".dish_and_combo_features(id) ON DELETE CASCADE,
+                    FOREIGN KEY (id_taxes) REFERENCES "Branch".taxes_product(id) ON DELETE CASCADE
+                );
+            END IF;
+        END
+        $$;
     `
     await adminPool.query(query);
     console.log('📂 La base de datos EDPLUS fue actualizada.');
@@ -471,15 +503,45 @@ async function create_update_of_the_database_mysqlite(db) {
     queryPermition=`
     ALTER TABLE branches ADD COLUMN rfc varchar(13);
     `
-
     await create_table_mysqlite(db,queryPermition)
+
+    //her we will create the table of taxes
+    queryPermition=`
+        CREATE TABLE IF NOT EXISTS taxes_product (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_branches INTEGER,
+            name TEXT NOT NULL,
+            taxId TEXT NOT NULL DEFAULT '002',
+            base NUMERIC(10,2) NOT NULL DEFAULT 100.00,
+            rate NUMERIC(6,4) NOT NULL DEFAULT 0.1600,
+            is_retention BOOLEAN NOT NULL DEFAULT 0,
+            activate BOOLEAN NOT NULL DEFAULT 1,
+            this_taxes_is_in_all BOOLEAN NOT NULL DEFAULT 0,
+
+            FOREIGN KEY (id_branches) REFERENCES branches(id) ON DELETE SET NULL ON UPDATE CASCADE
+        );
+    `
+    await create_table_mysqlite(db,queryPermition)
+
+    queryPermition=`
+    CREATE TABLE IF NOT EXISTS taxes_relation (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id_dish_and_combo_features INTEGER,
+        id_taxes INTEGER,
+
+        FOREIGN KEY (id_dish_and_combo_features) REFERENCES dish_and_combo_features(id) ON DELETE CASCADE,
+        FOREIGN KEY (id_taxes) REFERENCES taxes_product(id) ON DELETE CASCADE
+    );
+    `
+    await create_table_mysqlite(db,queryPermition)
+
     db.close();
 }
 
 async function create_table_mysqlite(db,query){
     db.exec(query, (err) => {
         if (err) {
-            console.error('Error al ejecutar script de actualización para SQLite:', err.message);
+            //console.error('Error al ejecutar script de actualización para SQLite:', err.message);
         } else {
             console.log('Base de datos SQLite actualizada correctamente.');
         }
