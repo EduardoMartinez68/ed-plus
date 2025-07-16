@@ -145,7 +145,7 @@ async function cargarFacturas() {
           <td>${f.Rfc || '-'}</td>
           <td>${f.Date?.split('T')[0] || '-'}</td>
           <td>$${Number(f.Total).toFixed(2)}</td>
-          <td><button class="btn btn-edit" onclick="mostrarCancelPopup('${f.Id}')">Ver</button></td>
+          <td><button class="btn btn-edit" onclick="mostrarPopupFactura('${f.Id}')">Ver</button></td>
         `;
       }
       tbody.appendChild(row);

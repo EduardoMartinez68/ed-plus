@@ -8,7 +8,7 @@
             <hr>
             <div class="row">
                 <div class="col-10">
-                    <input type="text" placeholder="Buscar un Ticket" class="form-control">
+                    <input type="text" placeholder="Buscar un Ticket" class="form-control" id="search-ticket">
                 </div>
                 <div class="col-2">
                     <button onclick="open_pop_returns('pop-returns')" class="btn btn-edit">Devolver un producto</button>
@@ -27,6 +27,7 @@
                     <th>Crédito</th>
                     <th>Total</th>
                     <th></th>
+                    <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -38,7 +39,8 @@
                             <td>${{debit}}</td>
                             <td>${{credit}}</td>
                             <td><strong>${{total}}</strong></td>
-                            <td><button class="btn btn-edit" onclick="open_edit_ticket_table('{{key}}')">Ver</button></td>
+                            <td><button class="btn btn-edit" onclick="nextWeb('/{{key}}/view_tickets_sale')">Crear Factura</button></td>
+                            <td><button class="btn btn-edit" onclick="open_edit_ticket_table('{{key}}')">Devolver</button></td>
                         </tr>
                     {{/each}}
                 </tbody>
@@ -67,3 +69,4 @@
         await search_ticket();
     }
 </script>
+

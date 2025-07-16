@@ -103,7 +103,101 @@ async function get_ticket_by_branch_and_key(id_branch, ticketKey) {
     }
   }
 }
+async function search_tickets_by_token(id_branch, ticketKey = '') {
+  if (!id_branch) return null;
 
+  if (TYPE_DATABASE === 'mysqlite') {
+    return new Promise((resolve) => {
+      let query;
+      let params;
+
+      if (ticketKey.trim() === '') {
+        // Si no hay token, devolver últimos 20 tickets del branch
+        query = `
+          SELECT *
+          FROM ticket
+          WHERE id_branches = ?
+          ORDER BY date_sale DESC
+          LIMIT 20
+        `;
+        params = [id_branch];
+      } else {
+        // Buscar tokens parecidos con LIKE
+        query = `
+          SELECT *
+          FROM ticket
+          WHERE id_branches = ? AND key LIKE ?
+          ORDER BY date_sale DESC
+          LIMIT 20
+        `;
+        params = [id_branch, `%${ticketKey}%`];
+      }
+
+      database.all(query, params, (err, rows) => {
+        if (err) {
+          console.error("Error search_tickets_by_token (SQLite):", err);
+          return resolve([]);
+        }
+
+        // Parsear campos JSON para cada fila
+        const parsedRows = rows.map(row => {
+          try {
+            row.original_ticket = JSON.parse(row.original_ticket);
+            row.current_ticket = JSON.parse(row.current_ticket);
+          } catch {
+            // si no es JSON válido, se ignora
+          }
+          return row;
+        });
+
+        resolve(parsedRows);
+      });
+    });
+  } else {
+    try {
+      let query;
+      let params;
+
+      if (ticketKey.trim() === '') {
+        query = `
+          SELECT *
+          FROM "Box".ticket
+          WHERE id_branches = $1
+          ORDER BY date_sale DESC
+          LIMIT 20
+        `;
+        params = [id_branch];
+      } else {
+        query = `
+          SELECT *
+          FROM "Box".ticket
+          WHERE id_branches = $1 AND key ILIKE $2
+          ORDER BY date_sale DESC
+          LIMIT 20
+        `;
+        params = [id_branch, `%${ticketKey}%`];
+      }
+
+      const result = await database.query(query, params);
+
+      // Parsear JSON
+      const parsedRows = result.rows.map(row => {
+        try {
+          row.original_ticket = JSON.parse(row.original_ticket);
+          row.current_ticket = JSON.parse(row.current_ticket);
+        } catch {
+          // ignorar si no válido
+        }
+        return row;
+      });
+
+      return parsedRows;
+    } catch (error) {
+      console.error("Error search_tickets_by_token (PostgreSQL):", error);
+      return [];
+    }
+  }
+}
 
 async function get_tickets_by_branch(id_branch) {
   if (TYPE_DATABASE === 'mysqlite') {
@@ -238,6 +332,19 @@ async function get_the_information_of_the_ticket(ticketCode) {
         return { success: false, error: "No se pudo obtener la información del ticket." };
     }
 }
+
+
+router.post('/filter-sales-for-token', isLoggedIn, async (req, res) => {
+    //get the information of the user and of the ticket
+    const id_branch=req.user.id_branch;
+    const id_company=req.user.id_company;
+    const {token}=req.body;
+    const dataTicket=await search_tickets_by_token(id_branch, token)
+    return res.json({
+      dataTicket
+    });
+});
+
 
 router.post('/update_ticket', isLoggedIn, async (req, res) => {
     let flag=false;
@@ -608,6 +715,28 @@ router.get('/:id_company/:id_branch/cfdi', isLoggedIn, async (req, res) => {
 });
 
 
+router.get('/:token_ticket/view_tickets_sale', isLoggedIn, async (req, res) => {
+    const {token_ticket} = req.params;
+    const {id_company, id_branch}=req.user;
+
+    //we will see if the user not have the permission for this App.
+    if (!this_user_have_this_permission(req.user, id_company, id_branch, 'return_ticket')) {
+        req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
+        return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
+    }
+
+    const dataTicketOld=await get_ticket_by_branch_and_key(id_branch, token_ticket);
+    
+    //now we will see if this sale have a customer
+    const idCustomer=dataTicketOld.id_customers;
+    let infoCustomer=[{}]
+    if(idCustomer){
+      infoCustomer=await search_customers(dataTicketOld.id_customers) //if have save a customer, get the information of the customer
+    }
+    
+    const branchFree = await get_data_branch(id_branch);
+    res.render('links/tickets/viewATickets', {branchFree, dataTicketOld, infoCustomer});
+});
 
 router.get('/:id_company/:id_branch/:token_ticket/view_tickets_sale', isLoggedIn, async (req, res) => {
     const { id_company, id_branch , token_ticket} = req.params;
