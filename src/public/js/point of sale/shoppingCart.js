@@ -234,6 +234,9 @@ async function update_cart_in_wait(index) {
 
 
 async function buy_my_car() {
+    const loadingOverlay=document.getElementById('loadingOverlay');
+    loadingOverlay.style.display = 'flex';
+
     //get the price of the car with all the combo
     const cash = parseFloat(document.getElementById('cash').value) || 0;
     const credit = parseFloat(document.getElementById('credit').value) || 0;
@@ -254,9 +257,6 @@ async function buy_my_car() {
         if (await send_buy_to_the_server(total, moneyReceived, change, comment, id_customer, cash, credit, debit, token)) {
             await update_the_lots_of_the_product_in_the_car(id_customer);
 
-            //we will print ticket
-            await print_ticket(total, moneyReceived, change, comment, token);
-
             //this is for delete all the shooping cart
             cartItems.splice(0, cartItems.length);
             updateCart(); //update the UI of the shooping cart for delete all the products
@@ -268,17 +268,29 @@ async function buy_my_car() {
 
             closePopSales(); //close the UI of the shooping cart for that the user get the Purchase money
 
+            //we will watching if exist exchange in the buy
+            //var text = (change != 0) ? 'Tu Cambio es de ' + change + '💲' : 'Vuelve pronto 😄';
+            var text = 'Tu Cambio es de ' + change + '$';
+            //confirmationMessage(text, 'Gracias por su compra ❤️');
+            document.getElementById('change-pop').textContent=text;
+            document.getElementById('total-pop').textContent="Total: "+total;
+            open_my_pop('pop-data-sale-ticket');
+
             //we will playing a effect sound 
             var sound = new Audio('/effect/buy.mp3');
             sound.play();
+            
+            //we will print ticket
+            await print_ticket(total, moneyReceived, change, comment, token);
 
-            //we will watching if exist exchange in the buy
-            var text = (change != 0) ? 'Tu Cambio es de ' + change + '💲' : 'Vuelve pronto 😄';
-            confirmationMessage(text, 'Gracias por su compra ❤️');
+            loadingOverlay.style.display = 'none';
         }
     } else {
+        loadingOverlay.style.display = 'none';
         errorMessage('ERROR 👁️', 'El dinero no es suficiente para la compra');
     }
+
+
 }
 
 async function save_the_recipe_in_the_database(lotId, id_customer) {

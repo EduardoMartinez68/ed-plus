@@ -4,7 +4,9 @@
     --color-footer: #131313;
     /*rgb(57,78,194);*/
     --color-hover: #074a85;
-
+    --color-norm: #3182ce;
+    --color-norm-hover:#2b6cb0;
+    
     /*rgb(46, 62, 151);*/
     --color-body: #F5F6FA;
     /*rgb(246, 245, 248);*/

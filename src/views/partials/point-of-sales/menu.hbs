@@ -2,6 +2,59 @@
     .icon-lot{
         color:var(--color-company)
     }
+
+    .div-ad {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f3f4f6;
+    border-radius: 1rem;
+    padding: 1rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+    }
+
+    .div-ad img {
+    max-width: 120px;
+    height: auto;
+    border-radius: 0.5rem;
+    object-fit: contain;
+    }
+
+    .information-sale {
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    }
+
+    .information-sale h1 {
+    font-size: 2rem;
+    color: #38a169; /* verde elegante */
+    margin-bottom: 0.5rem;
+    }
+
+    .information-sale h5 {
+    font-size: 1.2rem;
+    color: #4a5568;
+    }
+
+    .information-sale .btn-sale {
+        margin-top: 1rem;
+        padding: 0.6rem 1.5rem;
+        font-size: 1rem;
+        border-radius: 0.5rem;
+        background-color: #3182ce;
+        color: white;
+        border: none;
+        transition: background-color 0.3s ease;
+        width: 100%;
+        min-width: 500px;
+        max-width: 100%;
+    }
+
+    .information-sale .btn-sale:hover {
+        background-color: #2b6cb0;
+    }
 </style>
 <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-straight/css/uicons-solid-straight.css'>
 
@@ -372,6 +425,32 @@
     }
 
 </script>
+
+
+<!--sale--->
+<div id="pop-data-sale-ticket" class="my-pop">
+    <div class="my-pop-content-wrapper">
+
+        <div class="my-pop-header">
+            <h4 class="my-pop-title">Compra exitosa</h4>
+            <button class="close-btn" onclick="close_my_pop('pop-data-sale-ticket')" type="button">×</button>
+        </div>    
+
+        <div class="my-pop-content">
+            <div class="div-ad">
+                <img src="https://pluspuntodeventa.com/img/recargas-pagos.png" alt="">
+            </div>
+            <br>
+            <div class="information-sale">
+                <h6>Vuelve pronto 😄</h6>
+                <h1 id="change-pop">Cambio: $200</h1>
+                <h5 id="total-pop">Total: $100</h5>
+                <br>
+                <button class="btn-sale btn-add" onclick="close_my_pop('pop-data-sale-ticket')">Acpetar</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 

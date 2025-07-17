@@ -4,9 +4,13 @@
 
 {{#each infoCustomer}}
 <div class="row">
-  <div class="col-4">
+  <div class="col-6">
       <label for="regimenFiscal">Régimen Fiscal *</label>
       <input type="text" class="form-control" id="regimenFiscalReceptor" placeholder="Ej. 601" required value="601">
+  </div>
+  <div class="col-6">
+      <label for="codigoPostal">Código Postal *</label>
+      <input type="text" class="form-control" id="codigoPostal" value="{{postal_code}}" placeholder="Ej: 06700">
   </div>
 </div>
 <div class="row">
@@ -20,47 +24,62 @@
     </div>
 </div>
 <br>
-<label class="mt-3 mb-2">🏠 Dirección Fiscal del Receptor</label>
-<hr>
-<div class="row">
-  <div class="col-md-6 mb-3">
-    <label for="calleReceptor">Calle</label>
-    <input type="text" class="form-control" id="calleReceptor" value="{{street}}" placeholder="Ej: Insurgentes Sur" >
-  </div>
 
-  <div class="col-md-3 mb-3">
-    <label for="numeroExteriorReceptor">Número Exterior</label>
-    <input type="text" class="form-control" id="numeroExteriorReceptor" value="{{num_ext}}" placeholder="Ej: 123" >
-  </div>
 
-  <div class="col-md-3 mb-3">
-    <label for="numeroInteriorReceptor">Número Interior</label>
-    <input type="text" class="form-control" id="numeroInteriorReceptor" value="{{num_int}}" placeholder="Ej: A">
-  </div>
 
-  <div class="col-md-6 mb-3">
-    <label for="coloniaReceptor">Colonia</label>
-    <input type="text" class="form-control" id="coloniaReceptor" value="{{company_address}}" placeholder="Ej: Roma Norte" >
-  </div>
 
-  <div class="col-md-6 mb-3">
-    <label for="municipioReceptor">Municipio / Delegación</label>
-    <input type="text" class="form-control" id="municipioReceptor" value="{{city}}" placeholder="Ej: Cuauhtémoc" >
-  </div>
 
-  <div class="col-md-6 mb-3">
-    <label for="estadoReceptor">Estado</label>
-    <input type="text" class="form-control" id="estadoReceptor" value="{{states}}" placeholder="Ej: Ciudad de México" >
-  </div>
 
-  <div class="col-md-3 mb-3">
-    <label for="codigoPostal">Código Postal *</label>
-    <input type="text" class="form-control" id="codigoPostal" value="{{postal_code}}" placeholder="Ej: 06700">
-  </div>
 
-  <div class="col-md-3 mb-3">
-    <label for="paisReceptor">País</label>
-    <input type="text" class="form-control" id="paisReceptor" value="México" readonly>
-  </div>
+                <!-- Dirección del Receptor -->
+<div class="dropdown-toggle-box">
+    <div class="dropdown-header" onclick="watch_most('addressSectionForm')">
+        <label class="mb-0 fw-semibold">Domicilio</label>
+        <i class="fi fi-rr-angle-down" id="icon-addressSection"></i>
+    </div>
+
+    <!-- Contenido oculto con animación -->
+    <div id="addressSectionForm" class="dropdown-content collapsed">
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="calleReceptor">Calle</label>
+          <input type="text" class="form-control" id="calleReceptor" value="{{street}}" placeholder="Ej: Insurgentes Sur" >
+        </div>
+
+        <div class="col-md-3 mb-3">
+          <label for="numeroExteriorReceptor">Número Exterior</label>
+          <input type="text" class="form-control" id="numeroExteriorReceptor" value="{{num_ext}}" placeholder="Ej: 123" >
+        </div>
+
+        <div class="col-md-3 mb-3">
+          <label for="numeroInteriorReceptor">Número Interior</label>
+          <input type="text" class="form-control" id="numeroInteriorReceptor" value="{{num_int}}" placeholder="Ej: A">
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label for="coloniaReceptor">Colonia</label>
+          <input type="text" class="form-control" id="coloniaReceptor" value="{{company_address}}" placeholder="Ej: Roma Norte" >
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label for="municipioReceptor">Municipio / Delegación</label>
+          <input type="text" class="form-control" id="municipioReceptor" value="{{city}}" placeholder="Ej: Cuauhtémoc" >
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label for="estadoReceptor">Estado</label>
+          <input type="text" class="form-control" id="estadoReceptor" value="{{states}}" placeholder="Ej: Ciudad de México" >
+        </div>
+
+        <div class="col-md-3 mb-3">
+          <label for="paisReceptor">País</label>
+          <input type="text" class="form-control" id="paisReceptor" value="México" readonly>
+        </div>
+      </div>
+
+
+
+    </div>
 </div>
 {{/each}}
