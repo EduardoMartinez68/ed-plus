@@ -1,0 +1,14 @@
+<div class="btn-group">
+    <button class="btn-select active" onclick="showSection('select-2', this)" type="button"> Recibo de
+        factura</button>
+    <button class="btn-select" onclick="showSection('select-4', this)" type="button"> Impuestos de los
+        Productos</button>
+</div>
+<div id="select-2" class="content-section active">
+    <hr>
+    {{>tickets/tableCFDI}}
+</div>
+<div id="select-4" class="content-section">
+    <hr>
+    {{>tickets/tableTaxes}}
+</div>

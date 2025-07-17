@@ -1,38 +1,38 @@
-const color_company='#075DA8'//'rgb(204,3,40)' rgb(255,0,42); 171C3A
-const color_hover='#2D3972;'
-const color_session1='#2D3972';
-const color_session2='#2D3972';
+const color_company = '#075DA8'//'rgb(204,3,40)' rgb(255,0,42); 171C3A
+const color_hover = '#2D3972;'
+const color_session1 = '#2D3972';
+const color_session2 = '#2D3972';
 
 ///
-function set_color_company(rgb){
-    return color_company=rgb;
+function set_color_company(rgb) {
+    return color_company = rgb;
 }
 
-function set_hover(rgb){
-    return color_hover=rgb;;
+function set_hover(rgb) {
+    return color_hover = rgb;;
 }
 
-function get_session1(rgb){
-    return color_session1=rgb;;
+function get_session1(rgb) {
+    return color_session1 = rgb;;
 }
 
-function set_session2(rgb){
-    return color_session2=rgb;;
+function set_session2(rgb) {
+    return color_session2 = rgb;;
 }
 ////
-function get_color_company(){
+function get_color_company() {
     return color_company;
 }
 
-function get_hover(){
+function get_hover() {
     return color_hover;
 }
 
-function get_session1(){
+function get_session1() {
     return color_session1;
 }
 
-function get_session2(){
+function get_session2() {
     return color_session2;
 }
 //get the reference about the element <link> of the css files
@@ -49,6 +49,6 @@ if (elementLink) {
     styleSheet.cssRules[0].style.setProperty('--color-session1', get_color_company());
     styleSheet.cssRules[0].style.setProperty('--color-session2', get_color_company());
 }
-else{
+else {
     console.log('style file not found');
 }

@@ -1,5 +1,6 @@
 ///-----CORRECTO
 pyinstaller --onefile --add-data "C:\\Users\\USER\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\escpos\\capabilities:escpos/capabilities" main.py
+pyinstaller --onefile --add-data 'C:/Users/USER/AppData/Local/Programs/Python/Python311/Lib/site-packages/escpos/capabilities:escpos/capabilities' driver.py
 
 
 

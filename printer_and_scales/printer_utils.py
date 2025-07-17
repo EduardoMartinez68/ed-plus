@@ -35,6 +35,22 @@ def print_text(text, printer_name=None):
         print(f"Error al imprimir: {e}")
         return False
     
+def abrir_cajon(printer_name=None):
+    if not printer_name:
+        printer_name = win32print.GetDefaultPrinter()
+    try:
+        hPrinter = win32print.OpenPrinter(printer_name)
+        win32print.StartDocPrinter(hPrinter, 1, ("Abrir Cajon", None, "RAW"))
+        win32print.StartPagePrinter(hPrinter)
+        win32print.WritePrinter(hPrinter, b'\x1B\x70\x00\x19\xFA')
+        win32print.EndPagePrinter(hPrinter)
+        win32print.EndDocPrinter(hPrinter)
+        win32print.ClosePrinter(hPrinter)
+        return True
+    except Exception as e:
+        print(f"Error abriendo cajón: {e}")
+        return False
+    
 def print_text2(text, printer_name=None):
     try:
         if not printer_name:

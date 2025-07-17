@@ -22,6 +22,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-bold-rounded/css/uicons-bold-rounded.css'>
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
 
     <link href='/css/ultimate/main.min.css' rel='stylesheet'> 
     <link rel="stylesheet" href="/css/Styles.css">
@@ -45,6 +46,16 @@
     <script src="/js/store/other.js" defer></script>
     <script src="/js/ultimate/main.min.js" defer></script>
     <script src="/js/messagePop.js" defer></script>
-    
+    <script>
+        function open_my_pop(id) {
+            const el = document.getElementById(id);
+            if (el) el.style.display = 'flex';
+        }
+
+        function close_my_pop(id) {
+            const el = document.getElementById(id);
+            if (el) el.style.display = 'none';
+        }
+    </script>
 </body>
 </html>

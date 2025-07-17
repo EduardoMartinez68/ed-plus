@@ -5,44 +5,113 @@
 <input type="hidden" id="expeditionPlaceCFDI" value="{{postal_code}}">
 {{/each}}
 
+
+<style>
+    .btn-div {
+        width: 100%;
+        background-color: #ffffff;
+        border: 1px solid #ccc;
+        padding: 10px 12px;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        margin-bottom: 8px;
+    }
+
+    .btn-div-content {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .btn-div label {
+        font-weight: bold;
+        margin-bottom: 8px;
+        color: #333;
+    }
+
+    .btn-div p {
+        margin: 0;
+        color: #666;
+        font-size: 13px;
+    }
+
+    .btn-div i {
+        font-size: 20px;
+        color: #999;
+        margin-top: 13px;
+    }
+</style>
+
 <div class="container mt-4">
     <div class="card">
         <div class="card-body">
             <form id="facturaForm">
                 <label>🧾 Generar Factura CFDI</label>
                 <hr>
-                <div class="btn-group">
-                    <button class="btn-select btn-active" onclick="showSection('select-1', this)" type="button">
-                        Informacion de factura</button>
-                    <button class="btn-select" onclick="showSection('select-3', this)" type="button"> Informacion del
-                        receptor</button>
-                    <button class="btn-select" onclick="showSection('select-2', this)" type="button"> Recibo de
-                        factura</button>
-                    <button class="btn-select" onclick="showSection('select-4', this)" type="button"> Impuestos de los
-                        Productos</button>
+
+
+
+                {{>tickets/formCFDI}}
+                <br>
+                <div id="informationSales" class="my-pop">
+                    <div class="my-pop-content-wrapper">
+                        <button class="close-btn" onclick="close_my_pop('informationSales')" type="button">x</button>
+                        <div class="my-pop-content">
+                            {{>tickets/informationSales}}
+                        </div>
+                    </div>
                 </div>
-                <div id="select-1" class="content-section active">
-                    <hr>
-                    {{>tickets/formCFDI}}
-                </div>
-                <div id="select-3" class="content-section">
-                    <hr>
-                    {{>tickets/formAddress}}
-                </div>
-                <div id="select-2" class="content-section">
-                    <hr>
-                    {{>tickets/tableCFDI}}
-                </div>
-                <div id="select-4" class="content-section">
-                    <hr>
-                    {{>tickets/tableTaxes}}
+                <div class="btn-div" onclick="open_my_pop('informationSales')">
+                    <div class="btn-div-content">
+                        <label>Datos de la Venta</label>
+                        <p>Total de Venta: ${{dataTicketOld.total}}</p>
+                    </div>
+                    <i class="fi fi-rr-angle-right"></i>
                 </div>
 
-                <button type="submit" class="btn btn-add mt-4">Generar Factura</button>
+
+
+
+
+
+                <div id="informationAddress" class="my-pop">
+                    <div class="my-pop-content-wrapper">
+                        <button class="close-btn" onclick="close_my_pop('informationAddress')" type="button">x</button>
+                        <div class="my-pop-content">
+                            {{>tickets/formAddress}}
+                        </div>
+                    </div>
+                </div>
+                <div class="btn-div" onclick="open_my_pop('informationAddress')">
+                    <div class="btn-div-content">
+                        <label>Datos de Facturación</label>
+                        <p>XAXX010101000</p>
+                    </div>
+                    <i class="fi fi-rr-angle-right"></i>
+                </div>
+
+                <br><br><br><br><br><br><br><br>
+                <div class="row mt-3">
+                    <div class="col">
+                        {{>tickets/useCFDI}}
+                    </div>
+                    <div class="col">
+                        {{>tickets/metpay}}
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-add mt-4">Generar Factura por ${{dataTicketOld.total}}</h3></button>
             </form>
         </div>
     </div>
 </div>
+
+
+
+
+
 
 {{>loading}}
 {{>tickets/popFacture}}
@@ -69,7 +138,7 @@
         }
 
         //after we will question to the user if he would like make this facture 
-        if (!await questionMessage('¿Deseas generar la factura?','Una vez emitida, la factura no se puede modificar ni eliminar solo cancelar. ¿Estás seguro de continuar?')) {
+        if (!await questionMessage('¿Deseas generar la factura?', 'Una vez emitida, la factura no se puede modificar ni eliminar solo cancelar. ¿Estás seguro de continuar?')) {
             return;
         }
 
@@ -101,6 +170,9 @@
         const rfcReceptor = document.getElementById('rfcReceptor').value.trim();
         const fiscalRegimeReceptor = document.getElementById('regimenFiscal').value.trim();
 
+
+
+        //this is when the receptor is public general
         const receptor = {
             Rfc: rfcReceptor,
             //----name of the company of the customer
@@ -119,9 +191,10 @@
             }
         };
 
-        // Agregar FiscalRegime solo si no es RFC público en general y régimen no vacío
+        //Add FiscalRegime only if it is not a general public RFC and a non-empty regime
         if (rfcReceptor !== 'XAXX010101000') {
-            const regimen = document.getElementById('regimenFiscal').value.trim();
+            //get the regimen of the receptor not of the company
+            const regimen = document.getElementById('regimenFiscalReceptor').value.trim();
             if (regimen) {
                 receptor.FiscalRegime = regimen;
             } else {
@@ -186,8 +259,8 @@
 
             return taxes;
         }
-        
-        // Obtener RFC del emisor desde inputs ocultos
+
+        //get the RFC of the emisor, the emisor is the user 
         const rfc = document.getElementById('rfcCFDI')?.value?.trim() || '';
         const name = document.getElementById('namebranchCFDI')?.value?.trim() || '';
         const expeditionPlace = document.getElementById('expeditionPlaceCFDI')?.value?.trim() || '00000';
@@ -204,18 +277,25 @@
 
         // Armar el payload completo
         const payload = {
+            //information of the CFDI
             CfdiType: document.getElementById('cfdiType').value,
             PaymentForm: paymentForm, // Efectivo
             PaymentMethod: document.getElementById('paymentMethod').value, // Pago en una sola exhibición
             ExpeditionPlace: expeditionPlace,
             Date: date, // o usa la fecha de venta si está disponible
             Folio: Math.floor(Math.random() * 10000),
+
+            //this is the information of the user. The owner of the company
             Issuer: {
-                FiscalRegime: document.getElementById('regimenFiscal').value,
+                FiscalRegime: document.getElementById('regimenFiscalUser').value,
                 Rfc: rfc,
                 //name of the company in the SAT of the user-------------------------------------------------------------------
                 Name: name
             },
+
+
+
+            //information of the container of the CFDI
             Receiver: receptor,
             Items: items
         };
@@ -232,22 +312,22 @@
                 },
                 body: JSON.stringify(payload)
             });
-    
+
             const responseText = await response.json();
-    
+
             if (response.ok && responseText.success) {
                 confirmationMessage("✅ ¡Factura creada!", responseText.message);
-    
+
                 const idFactura = responseText.response.Id; // <-- ID de la factura
                 mostrarPopupFactura(idFactura); // <-- mostrar el popup y guardar
-    
+
                 console.log("Factura creada con ID:", idFactura);
             } else {
-    
+
                 warningMessage("❌ Error al generar factura", responseText.error || "Algo salió mal.");
                 console.error(responseText.error || responseText);
             }
-    
+
         } catch (error) {
             errorMessage("❌ Error de conexión", error.message);
         }

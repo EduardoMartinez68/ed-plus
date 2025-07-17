@@ -257,6 +257,7 @@
         
         create_ticket_html(total, moneyReceived, change, comment, dateTicket, token); 
         await print_ticket_with_html();
+        await sned_information_to_the_server_for_print_the_ticket('');
     }
 
     async function print_ticket_with_html() {
