@@ -1,0 +1,102 @@
+<style>
+.card-info-fiscal {
+  width: 100%;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0 ,0, 0,.1);
+  padding: 0.8rem 2rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #2c3e50;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  font-weight: 600;
+  font-size: 0.8rem;
+  flex: 1 1 40%;
+  color: #34495e;
+}
+
+.info-value {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex: 1 1 55%;
+  font-weight: 500;
+  font-size: 0.8rem;
+  color: #34495e;
+}
+
+.edit-btn {
+  background: transparent;
+  border: none;
+  color: #2980b9;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.3s ease;
+  display: flex;
+  align-items: center;
+}
+
+.edit-btn:hover {
+  color: #1c5980;
+}
+
+.edit-btn svg {
+  display: block;
+}
+</style>
+
+
+
+
+
+
+<div class="input-group mb-4">
+    <input type="text" class="form-select">
+    <button class="btn btn-edit" onclick="open_my_pop('pop-data-facture')">Agregar</button>
+</div>
+{{>cfdi/formDataFacture}}
+
+
+
+
+
+
+<div class="card-info-fiscal">
+  <div class="info-row">
+    <p class="info-label">RFC del Cliente *</p>
+    <div class="info-value">
+      <label>XZXXXXXXX</label>
+      <button class="edit-btn" aria-label="Editar RFC">
+        <!-- Ícono lápiz SVG -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+          <path d="M12.146.854a.5.5 0 0 1 .708 0l2.292 2.292a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 3L13 4.793 14.793 3 13 1.207 11.207 3zM12 5.207 9.5 7.707V9h1.293L14.793 5.5 12 5.207z"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+  <div class="info-row">
+    <p class="info-label">Nombre o Razón Social *</p>
+    <div class="info-value">
+      <label>XXXXXXXXXXXXXXXXXXXXXXXXXX</label>
+      <button class="edit-btn" aria-label="Editar Nombre o Razón Social">
+        <!-- mismo icono lápiz -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+          <path d="M12.146.854a.5.5 0 0 1 .708 0l2.292 2.292a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 3L13 4.793 14.793 3 13 1.207 11.207 3zM12 5.207 9.5 7.707V9h1.293L14.793 5.5 12 5.207z"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>

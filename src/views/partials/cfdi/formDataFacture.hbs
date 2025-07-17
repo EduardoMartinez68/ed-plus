@@ -1,0 +1,155 @@
+<style>
+    .dropdown-toggle-box {
+        border-radius: 0.5rem;
+        overflow: hidden;
+        margin-bottom: 0.5rem;
+    }
+
+    .dropdown-header {
+        cursor: pointer;
+        background-color: #f8f9fa;
+        padding: 0.35rem 1rem border: 1px solid #dee2e6;
+        border-radius: 0.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: background-color 0.3s ease;
+    }
+
+    .dropdown-header:hover {
+        background-color: #e9ecef;
+    }
+
+    .dropdown-content {
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+        transition: max-height 0.4s ease, opacity 0.4s ease;
+    }
+
+    .dropdown-content.expanded {
+        max-height: 1000px;
+        /* lo suficiente para mostrar el contenido */
+        opacity: 1;
+        padding-top: 0.8rem;
+    }
+
+    /* Opcional: animación más suave si quieres íconos que giren */
+    .dropdown-header i {
+        transition: transform 0.3s ease;
+        margin-top: 14px;
+        font-size: 1rem;
+    }
+
+    .dropdown-header i.rotated {
+        transform: rotate(180deg);
+    }
+</style>
+
+<div id="pop-data-facture" class="my-pop">
+    <div class="my-pop-content-wrapper">
+        <div class="my-pop-header">
+            <h4 class="my-pop-title">Datos de Facturación</h4>
+            <button class="close-btn" onclick="close_my_pop('pop-data-facture')" type="button">×</button>
+        </div>    
+
+        <div class="my-pop-content">
+
+            <!-- Formulario de Datos de Facturación del Cliente -->
+            <form class="p-4 shadow-sm rounded bg-white" style="max-width: 700px; margin: auto;">
+                <!-- Datos Generales del Receptor -->
+                <div class="mb-3">
+                    <label for="rfc" class="form-label">RFC del Cliente *</label>
+                    <input type="text" class="form-control" id="rfc" name="rfc" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="name" class="form-label">Nombre o Razón Social *</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+
+                <div class="mb-3">
+                    {{>tickets/useCFDI}}
+                </div>
+
+                <div class="mb-3">
+                    {{>cfdi/regimenFiscal}}
+                </div>
+
+                <div class="mb-3">
+                    <label for="zip" class="form-label">Código Postal *</label>
+                    <input type="text" class="form-control" id="taxZipCode" name="taxZipCode" required>
+                </div>
+
+                <hr class="my-4">
+
+                <!-- Dirección del Receptor -->
+                <div class="dropdown-toggle-box">
+                    <div class="dropdown-header" onclick="toggleSection('addressSection')">
+                        <label class="mb-0 fw-semibold">Domicilio</label>
+                        <i class="fi fi-rr-angle-down" id="icon-addressSection"></i>
+                    </div>
+
+                    <!-- Contenido oculto con animación -->
+                    <div id="addressSection" class="dropdown-content collapsed">
+                        <div class="mb-3">
+                            <label for="street" class="form-label">Calle</label>
+                            <input type="text" class="form-control" id="street" name="street">
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label for="exterior" class="form-label">Número Exterior</label>
+                                <input type="text" class="form-control" id="exterior" name="exterior">
+                            </div>
+                            <div class="col">
+                                <label for="interior" class="form-label">Número Interior</label>
+                                <input type="text" class="form-control" id="interior" name="interior">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="neighborhood" class="form-label">Colonia</label>
+                            <input type="text" class="form-control" id="neighborhood" name="neighborhood">
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label for="municipality" class="form-label">Municipio</label>
+                                <input type="text" class="form-control" id="municipality" name="municipality">
+                            </div>
+                            <div class="col">
+                                <label for="state" class="form-label">Estado</label>
+                                <input type="text" class="form-control" id="state" name="state">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="country" class="form-label">País</label>
+                            <input type="text" class="form-control" id="country" name="country" value="México">
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Botón de guardar -->
+                <div class="d-grid mt-4">
+                    <button type="submit" class="btn btn-add">Guardar Datos</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    function toggleSection(sectionId) {
+        const section = document.getElementById(sectionId);
+        const icon = document.getElementById(`icon-${sectionId}`);
+
+        section.classList.toggle('expanded');
+        section.classList.toggle('collapsed');
+        //icon.classList.toggle('rotated');
+    }
+</script>

@@ -18,7 +18,7 @@
                     <hr>
                     <!---this is for get the data of the customer to edit-->
                     {{#each customer}}
-                    <form action="/fud/{{id_companies}}/{{id}}/editCustomer" method="POST" id="myForm">
+                        <form action="/fud/{{id_companies}}/{{id}}/editCustomer" method="POST" id="myForm">
                     {{/each}}
 
                     <!--this is a for that when the form be send, we can see if the user is use the UI <one> or <branch>-->
@@ -31,25 +31,24 @@
 
 
                         <!---this is for choose the form to create-->
-                        
-                            <ul class="nav nav-tabs" id="myTab" role="tablist">
-                                <li class="nav-item">
-                                    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home"
-                                        aria-selected="true">Información Personal</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile"
-                                        aria-selected="false">Información Adicional</a>
-                                </li>
-                            </ul>
-                            <div class="tab-content" id="myTabContent">
-                                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                                    {{>CEO/customers/formEdit1}}
-                                </div>
-                                <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                                    {{>manager/CRM/formCustomer2Edit}}
-                                </div>
-                            </div>
+                        <div class="btn-group">
+                            <button class="btn-select btn-active" onclick="showSection('select-1', this)" type="button"> Información Personal</button>
+                            <button class="btn-select" onclick="showSection('select-2', this)" type="button"> Información Adicional</button>
+                            <button class="btn-select" onclick="showSection('select-3', this)" type="button"> Información de Facturación</button>
+                        </div>
+                        <div id="select-1" class="content-section active">
+                            <hr>
+                            {{>CEO/customers/formEdit1}}
+                        </div>
+                        <div id="select-2" class="content-section">
+                            <hr>
+                            {{>manager/CRM/formCustomer2Edit}}
+                        </div>
+                        <div id="select-3" class="content-section">
+                            <hr>
+                            {{>cfdi/cfdCustomer}}
+                        </div>
+
                         <!--this is the button for save-->
                         <div class="content_box">
                             <br>                  

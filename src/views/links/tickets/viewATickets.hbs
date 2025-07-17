@@ -55,9 +55,12 @@
 
                 {{>tickets/formCFDI}}
                 <br>
-                <div id="informationSales" class="my-pop">
+                <div id="informationSales" class="my-pop">   
                     <div class="my-pop-content-wrapper">
-                        <button class="close-btn" onclick="close_my_pop('informationSales')" type="button">x</button>
+                        <div class="my-pop-header">
+                            <h4 class="my-pop-title">Datos de la Venta</h4>
+                            <button class="close-btn" onclick="close_my_pop('informationSales')" type="button">×</button>
+                        </div> 
                         <div class="my-pop-content">
                             {{>tickets/informationSales}}
                         </div>
@@ -76,9 +79,12 @@
 
 
 
-                <div id="informationAddress" class="my-pop">
+                <div id="informationAddress" class="my-pop">  
                     <div class="my-pop-content-wrapper">
-                        <button class="close-btn" onclick="close_my_pop('informationAddress')" type="button">x</button>
+                        <div class="my-pop-header">
+                            <h4 class="my-pop-title">Datos de Facturación</h4>
+                            <button class="close-btn" onclick="close_my_pop('informationAddress')" type="button">×</button>
+                        </div>  
                         <div class="my-pop-content">
                             {{>tickets/formAddress}}
                         </div>
