@@ -1,0 +1,16 @@
+<button class="btn btn-edit" onclick="open_my_pop('pop-data-facture-list')" type="button">Buscar Datos de Facturación de mis clientes</button>
+<br><br>
+<div id="pop-data-facture-list" class="my-pop">
+    <div class="my-pop-content-wrapper">
+        <div class="my-pop-header">
+            <h4 class="my-pop-title">Datos de Facturación de mis Clientes</h4>
+            <button class="close-btn" onclick="close_my_pop('pop-data-facture-list')" type="button">×</button>
+        </div>    
+
+        <div class="my-pop-content">
+            {{>cfdi/cfdCustomer}}
+        </div>
+    </div>
+</div>
+
+

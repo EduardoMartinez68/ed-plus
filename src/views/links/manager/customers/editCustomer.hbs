@@ -34,7 +34,9 @@
                         <div class="btn-group">
                             <button class="btn-select btn-active" onclick="showSection('select-1', this)" type="button"> Información Personal</button>
                             <button class="btn-select" onclick="showSection('select-2', this)" type="button"> Información Adicional</button>
+                            <!---
                             <button class="btn-select" onclick="showSection('select-3', this)" type="button"> Información de Facturación</button>
+                            --->
                         </div>
                         <div id="select-1" class="content-section active">
                             <hr>
@@ -43,10 +45,6 @@
                         <div id="select-2" class="content-section">
                             <hr>
                             {{>manager/CRM/formCustomer2Edit}}
-                        </div>
-                        <div id="select-3" class="content-section">
-                            <hr>
-                            {{>cfdi/cfdCustomer}}
                         </div>
 
                         <!--this is the button for save-->
