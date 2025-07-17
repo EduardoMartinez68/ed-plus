@@ -504,15 +504,16 @@ async function delete_all_car(total, moneyReceived, exchange, comment) {
     return true;
 }
 
-async function addToCart(img, name, barcode, price, purchaseUnit, this_product_is_sold_in_bulk, id_dishes_and_combos, taxes, thisIsProductWithLot = true, this_product_need_a_recipe = false) {
+async function addToCart(img, name, barcode, price, purchaseUnit, this_product_is_sold_in_bulk, id_dishes_and_combos, thisIsProductWithLot = true, this_product_need_a_recipe = false) {
     //her we will see if exist a product in the cart
     const existingItem = cartItems.find(item => item.barcode === barcode);
     //now her, we will see if the product is sale for lot
     let lotsInfo = get_the_lot_of_the_product(barcode) // get the lot of the product
     const p=document.getElementById(barcode)
-    taxes=p.getAttribute('taxes');
-    let priceWithoutTaxes=p.getAttribute('data-price-1');
-    let sat_key=p.getAttribute('sat_key');
+    const taxes=p.getAttribute('taxes') || [];
+    let priceWithoutTaxes=p.getAttribute('data-price-2');
+    let sat_key=p.getAttribute('sat_key') || '';
+
     //we will see if exit lot of the product
     if (lotsInfo && thisIsProductWithLot) {
         if (existingItem) {
@@ -566,6 +567,14 @@ async function addToCart(img, name, barcode, price, purchaseUnit, this_product_i
         }
 
         //add a new product to the cart
+        let parsedTaxes = [];
+        try {
+            if (typeof taxes === 'string' && taxes.trim()) {
+                parsedTaxes = JSON.parse(taxes);
+            }
+        } catch (e) {
+            parsedTaxes = [];
+        }
         cartItems.push({
             img: document.getElementById(img).src,
             sat_key,
@@ -578,7 +587,7 @@ async function addToCart(img, name, barcode, price, purchaseUnit, this_product_i
             purchaseUnit,
             this_product_is_sold_in_bulk: this_product_is_sold_in_bulk,
             id_dishes_and_combos: id_dishes_and_combos,
-            taxes:JSON.parse(taxes)
+            taxes:parsedTaxes
         });
 
         //show a new notification

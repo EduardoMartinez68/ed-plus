@@ -17,11 +17,10 @@
                         'product-{{id}}', 
                         '{{name}}', 
                         '{{barcode}}', 
-                        {{price_2}}, 
+                        {{price_1}}, 
                         '{{purchase_unit}}', 
                         '{{this_product_is_sold_in_bulk}}', 
                         '{{id_dishes_and_combos}}', 
-                        '{{taxes}}',
                         true,  <!-- Pass boolean instead of assignment -->
                         '{{this_product_need_recipe}}',
                     )"
@@ -44,7 +43,7 @@
                         <img src="/img/icons_first/product.webp" alt="Producto 1" id="product-{{id}}" loading="lazy">
                     {{/if}}
                     <br>
-                    <label for="" class="card-text">${{price_2}}</label>
+                    <label for="" class="card-text">${{price_1}}</label>
                     <div class="product-name-point-of-sales">{{name}}</div>
                     <div class="product-barcode-point-of-sales">{{barcode}}</div>
                     <input type="hidden" class="this_product_is_sold_in_bulk" value="{{this_product_is_sold_in_bulk}}">

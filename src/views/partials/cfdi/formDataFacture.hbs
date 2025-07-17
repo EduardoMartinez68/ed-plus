@@ -85,7 +85,7 @@
 
                 <!-- Dirección del Receptor -->
                 <div class="dropdown-toggle-box">
-                    <div class="dropdown-header" onclick="toggleSection('addressSection')">
+                    <div class="dropdown-header" onclick="watch_most('addressSection')">
                         <label class="mb-0 fw-semibold">Domicilio</label>
                         <i class="fi fi-rr-angle-down" id="icon-addressSection"></i>
                     </div>
@@ -134,7 +134,7 @@
 
                 <!-- Botón de guardar -->
                 <div class="d-grid mt-4">
-                    <button type="submit" class="btn btn-add">Guardar Datos</button>
+                    <button type="button" class="btn btn-add" onclick="create_a_new_information_of_facture()">Guardar Datos</button>
                 </div>
             </form>
         </div>
@@ -144,12 +144,35 @@
 
 
 <script>
-    function toggleSection(sectionId) {
-        const section = document.getElementById(sectionId);
-        const icon = document.getElementById(`icon-${sectionId}`);
+    //her we will get the information of the form for after send to the server and get the answer of the server
+    function get_the_information_of_the_form(){
+        return {
+            rfc: document.getElementById('rfc').value.trim(),
+            name: document.getElementById('name').value.trim(),
+            usoCFDI: document.querySelector('[name="usoCFDI"]')?.value || "", 
+            regimenFiscal: document.querySelector('[name="regimenFiscal"]')?.value || "",
+            taxZipCode: document.getElementById('taxZipCode').value.trim(),
+            street: document.getElementById('street').value.trim(),
+            exterior: document.getElementById('exterior').value.trim(),
+            interior: document.getElementById('interior').value.trim(),
+            neighborhood: document.getElementById('neighborhood').value.trim(),
+            municipality: document.getElementById('municipality').value.trim(),
+            state: document.getElementById('state').value.trim(),
+            country: document.getElementById('country').value.trim(),
+            id_customer: document.getElementById('id_customer').value
+        };
+    }
 
-        section.classList.toggle('expanded');
-        section.classList.toggle('collapsed');
-        //icon.classList.toggle('rotated');
+
+    async function create_a_new_information_of_facture(){
+        const dataFacture=get_the_information_of_the_form(); //her we will get all the information of the form 
+
+        //her we will send this information to the server and get the new information of the facture 
+        const answerServer=await send_data_to_server('/links/add-data-facture-customer',dataFacture)
+        if(answerServer.success){
+
+        }else{
+
+        }
     }
 </script>
