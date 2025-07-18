@@ -718,11 +718,15 @@ router.get('/:token_ticket/view_tickets_sale', isLoggedIn, async (req, res) => {
     const {id_company, id_branch}=req.user;
 
     //we will see if the user not have the permission for this App.
+    /*
     if (!this_user_have_this_permission(req.user, id_company, id_branch, 'return_ticket')) {
         req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
         return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
     }
+    */
 
+    const branchFree = await get_data_branch(id_branch);
+    console.log(branchFree[0].postal_code)
     const dataTicketOld=await get_ticket_by_branch_and_key(id_branch, token_ticket);
     
     //now we will see if this sale have a customer
@@ -733,7 +737,10 @@ router.get('/:token_ticket/view_tickets_sale', isLoggedIn, async (req, res) => {
     //this is when the sale not have a customer save and the user can create a facture to public
     let firstDataFacture={
       rfc:'XAXX010101000',
-      fiscalRegime: '601'
+      fiscalRegime: '616',  //SIN OBLIGASIONES FISCALES
+      company_name:'PUBLICO EN GENERAL',
+      useCFDI: 'S01', //SIN EFECTOS FISCALES
+      postal_code: branchFree[0].postal_code
     }
 
     if(idCustomer){
@@ -747,7 +754,7 @@ router.get('/:token_ticket/view_tickets_sale', isLoggedIn, async (req, res) => {
     }
 
 
-    const branchFree = await get_data_branch(id_branch);
+    
     res.render('links/tickets/viewATickets', {branchFree, dataTicketOld, infoCustomer, dataFacture, firstDataFacture});
 });
 

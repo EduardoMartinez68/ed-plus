@@ -215,14 +215,13 @@ async function add_facture_cfdi(data) {
 router.post('/get-info-facture-cfdi', isLoggedIn, async (req, res) => {
     const { id_company } = req.user;
     const {id_customer,query }=req.body;
-    console.log(req.body)
-
+    
     //first we will see if can get all the data of the form with success
     if(query){
         let data=null;
 
         //her we will see if the user is creation a facture for a customer or the facture not have a customer save
-        if(id_customer){
+        if(exist_id_customer(id_customer)){
             data=await get_factures_by_customer_with_search(id_customer, query)
         }else{
             data=await get_factures_by_company_with_search(id_company,query)
@@ -234,6 +233,10 @@ router.post('/get-info-facture-cfdi', isLoggedIn, async (req, res) => {
     }
 });
 
+function exist_id_customer(id_customer){
+    const parsedId = parseInt(id_customer, 10);
+    return (isNaN(parsedId) || parsedId < 0) 
+}
 
 
 

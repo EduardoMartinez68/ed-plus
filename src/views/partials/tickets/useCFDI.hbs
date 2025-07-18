@@ -1,8 +1,8 @@
 <label for="usoCfdi">Uso CFDI</label>
-<select class="form-select" id="usoCfdi" required>
-    <option value="G03">G03 - Gastos en general</option>
+<select class="form-select" id="usoCfdi" required value="{{firstDataFacture.useCFDI}}">
     <option value="G01">G01 - Adquisición de mercancías</option>
     <option value="G02">G02 - Devoluciones, descuentos o bonificaciones</option>
+    <option value="G03">G03 - Gastos en general</option>
     <option value="I01">I01 - Construcciones</option>
     <option value="I02">I02 - Mobiliario y equipo de oficina por inversiones</option>
     <option value="I03">I03 - Equipo de transporte</option>
@@ -21,4 +21,6 @@
     <option value="D08">D08 - Gastos de transportación escolar obligatoria</option>
     <option value="D09">D09 - Depósitos en cuentas para el ahorro, primas que tengan como base planes de pensiones</option>
     <option value="D10">D10 - Pagos por servicios educativos (colegiaturas)</option>
+    <option value="P01">P01 - Por definir</option>
+    <option value="S01">S01 - Sin efectos fiscales</option>
 </select>

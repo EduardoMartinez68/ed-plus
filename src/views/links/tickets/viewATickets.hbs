@@ -51,7 +51,7 @@
                 <input type="hidden" value="{{id}}" id="id_customer">
             {{/each}}
 
-            <form id="facturaForm">
+            <form id="formCreateFactureCFDI">
                 <label>🧾 Generar Factura CFDI</label>
                 <hr>
 
@@ -112,7 +112,7 @@
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-add mt-4">Generar Factura por ${{dataTicketOld.total}}</h3></button>
+                <button type="button" class="btn btn-add mt-4" onclick="create_my_facture_cfdi()">Generar Factura por ${{dataTicketOld.total}}</button>
             </form>
         </div>
     </div>
@@ -123,12 +123,15 @@
 
 
 
+
 {{>loading}}
 {{>tickets/popFacture}}
+{{>updateSelects}}
+
 
 <script>
-    document.getElementById('facturaForm').addEventListener('submit', async function (e) {
-        e.preventDefault();
+
+    async function create_my_facture_cfdi(){
         const codigoPostal = document.getElementById('codigoPostal').value;
         if (codigoPostal == '') {
             warningMessage(
@@ -137,8 +140,9 @@
             );
             return;
         }
-
+        
         const nombreReceptor = document.getElementById('nombreReceptor').value;
+
         if (nombreReceptor == '') {
             warningMessage(
                 'Nombre o Razón Social requerido',
@@ -178,7 +182,7 @@
 
         // Datos del receptor del formulario
         const rfcReceptor = document.getElementById('rfcReceptor').value.trim();
-        const fiscalRegimeReceptor = document.getElementById('regimenFiscal').value.trim();
+        const fiscalRegimeReceptor = document.getElementById('regimenFiscalUser').value.trim();
 
 
 
@@ -189,20 +193,36 @@
             Name: document.getElementById('nombreReceptor').value.trim(),
             CfdiUse: document.getElementById('usoCfdi').value.trim().toUpperCase(),
             TaxZipCode: document.getElementById('codigoPostal').value.trim(),
-            Address: {
-                Street: document.getElementById('calleReceptor').value.trim(),
-                ExteriorNumber: document.getElementById('numeroExteriorReceptor').value.trim(),
-                InteriorNumber: document.getElementById('numeroInteriorReceptor').value.trim(),
-                Neighborhood: document.getElementById('coloniaReceptor').value.trim(),
-                ZipCode: document.getElementById('codigoPostal').value.trim(),
-                Municipality: document.getElementById('municipioReceptor').value.trim(),
-                State: document.getElementById('estadoReceptor').value.trim(),
-                Country: document.getElementById('paisReceptor').value.trim()
-            }
         };
 
+        //her we will see if the customer have the information of his address beacuse facturama not acept data null in this data
+        const calle = document.getElementById('calleReceptor').value.trim();
+        const exterior = document.getElementById('numeroExteriorReceptor').value.trim();
+        const interior = document.getElementById('numeroInteriorReceptor').value.trim();
+        const colonia = document.getElementById('coloniaReceptor').value.trim();
+        const municipio = document.getElementById('municipioReceptor').value.trim();
+        const estado = document.getElementById('estadoReceptor').value.trim();
+        const pais = document.getElementById('paisReceptor').value.trim();
+        const cp = document.getElementById('codigoPostal').value.trim();
+
+        //if the user have data of his address, we will save in the facture
+        if (calle && exterior && colonia && municipio && estado && pais) {
+            receptor.Address = {
+                Street: calle,
+                ExteriorNumber: exterior,
+                InteriorNumber: interior, // this can be null
+                Neighborhood: colonia,
+                ZipCode: cp,
+                Municipality: municipio,
+                State: estado,
+                Country: pais
+            };
+        }
+
+
+
         //Add FiscalRegime only if it is not a general public RFC and a non-empty regime
-        if (rfcReceptor !== 'XAXX010101000') {
+        
             //get the regimen of the receptor not of the company
             const regimen = document.getElementById('regimenFiscalReceptor').value.trim();
             if (regimen) {
@@ -211,7 +231,7 @@
                 warningMessage("⚠️ El régimen fiscal del receptor no puede estar vacío.");
                 return;
             }
-        }
+        
 
         // Armar el array de items con impuestos
         const items = current_ticket.map(item => {
@@ -309,6 +329,29 @@
             Receiver: receptor,
             Items: items
         };
+        
+
+        //now we will see if the user would like do a facture to public, if the user would like create a facture to the public,
+        //we will that save the information of facture global in the data that send to the API of facturama
+        if (rfcReceptor === 'XAXX010101000') {
+
+            //get the information that the user have save in his data of facture to public
+            const periodicidad = document.getElementById('periodicidad').value;
+            const meses = document.getElementById('meses').value;
+            const anio = document.getElementById('anio').value.trim();
+
+            //if not have this data, we will show a message of error
+            if (!periodicidad || !meses || !anio) {
+                warningMessage('Datos globales incompletos', 'Por favor, completa periodicidad, meses y año para facturación global. Esta en el apartado de "Datos de Facturación" y "Publico en General" ');
+                return;
+            }
+
+            payload.GlobalInformation = {
+                Periodicity: periodicidad,
+                Months: meses,
+                Year: anio
+            };
+        }
 
         // Enviar a tu API
         const loadingOverlay = document.getElementById('loadingOverlay')
@@ -337,7 +380,6 @@
                 warningMessage("❌ Error al generar factura", responseText.error || "Algo salió mal.");
                 console.error(responseText.error || responseText);
             }
-
         } catch (error) {
             errorMessage("❌ Error de conexión", error.message);
         }
@@ -355,6 +397,6 @@
 
 
 
-    });
-
+    };
 </script>
+

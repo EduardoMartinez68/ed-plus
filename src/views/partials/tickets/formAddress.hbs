@@ -29,9 +29,7 @@
 
 
 
-
-
-                <!-- Dirección del Receptor -->
+<!-- Dirección del Receptor -->
 <div class="dropdown-toggle-box">
     <div class="dropdown-header" onclick="watch_most('addressSectionForm')">
         <label class="mb-0 fw-semibold">Domicilio</label>
@@ -83,3 +81,61 @@
     </div>
 </div>
 
+
+
+
+
+<div class="dropdown-toggle-box">
+    <div class="dropdown-header" onclick="watch_most('infoPublicGeneral')">
+        <label class="mb-0 fw-semibold">Publico en General</label>
+        <i class="fi fi-rr-angle-down" id="icon-addressSection"></i>
+    </div>
+
+    <!-- Contenido oculto con animación -->
+    <div id="infoPublicGeneral" class="dropdown-content collapsed">
+
+      <div class="row">
+        <div class="col">
+          <label for="periodicidad">Periodicidad</label>
+          <select id="periodicidad" class="form-select" required>
+            <option value="01">01 - Diario</option>
+            <option value="02">02 - Semanal</option>
+            <option value="03">03 - Quincenal</option>
+            <option value="04">04 - Mensual</option>
+            <option value="05">05 - Bimestral</option>
+            <option value="06">06 - Trimestral</option>
+            <option value="07">07 - Cuatrimestral</option>
+            <option value="08">08 - Semestral</option>
+            <option value="09">09 - Anual</option>
+          </select>
+        </div>
+
+
+        <div class="col">
+          <label for="meses">Mes(es) (Formato: 01 para enero, o 012 para enero y febrero)</label>
+          <select id="meses" class="form-select" required>
+            <option value="01">01-Enero</option>
+            <option value="02">02-Febrero</option>
+            <option value="03">03-Marzo</option>
+            <option value="04">04-Abril</option>
+            <option value="05">05-Mayo</option>
+            <option value="06">06-Junio</option>
+            <option value="07">07-Julio</option>
+            <option value="08">08-Agosto</option>
+            <option value="09">09-Septiembre</option>
+            <option value="10">10-Octubre</option>
+            <option value="11">11-Noviembre</option>
+            <option value="12">12-Diciembre</option>
+          </select>
+        </div>
+
+        <div class="col">
+          <label for="anio">Año</label>
+          <input type="number" id="anio" class="form-control" min="2000" max="2100" value="{{currentYear}}" required>
+        </div>
+      </div>
+
+
+
+    </div>
+</div>
