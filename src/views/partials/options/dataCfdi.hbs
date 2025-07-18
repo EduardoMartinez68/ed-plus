@@ -1,0 +1,180 @@
+<style>
+    .sat-form-container {
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .sat-form-container h2,
+    .sat-form-container label {
+        color: #2c3e50;
+    }
+
+    .sat-form-container form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .input-wrapper {
+        position: relative;
+    }
+
+    .custom-file-upload {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #ecf0f1;
+        border: 2px dashed #bdc3c7;
+        padding: 12px 15px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+    }
+
+    .custom-file-upload:hover {
+        background: #dde4e7;
+    }
+
+    .custom-file-upload i {
+        margin-right: 10px;
+        color: #3498db;
+    }
+
+    input[type="file"] {
+        display: none;
+    }
+
+    input[type="password"] {
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        width: 100%;
+    }
+
+    input[type="text"] {
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        width: 100%;
+    }
+
+    button[type="submit"] {
+        background-color: var(--color-company);
+        color: white;
+        border: none;
+        padding: 12px;
+        width: 100%;
+        border-radius: 10px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: 0.3s ease;
+    }
+
+    button[type="submit"]:hover {
+        background-color: var(--color-hover);
+    }
+
+    .file-name {
+        font-style: italic;
+        font-size: 0.9rem;
+        margin-top: 5px;
+        color: #7f8c8d;
+    }
+
+    .color-link {
+        color: var(--color-company);
+        text-decoration: none;
+    }
+</style>
+
+<div class="tab-pane fade show" id="navbar-cfdi" role="tabpanel" aria-labelledby="navbar-company-tab">
+    <div class="card">
+        <div class="card-body sat-form-container">
+            <label><i class="fi-icon fi-sr-shield-check"></i> Información de mi factura</label>
+
+            <form id="formDataCfdi">
+
+                {{#each branchFree}}
+
+
+                <label for="password">Link de tu logo:</label>
+                <input type="text" name="linkCFDI" id="rfcUser" placeholder="https://img/mi-logo.png"
+                    value="{{linkCFDI}}">
+                <label for="password">RFC: *</label>
+                <input type="text" name="rfc" id="rfcUser" placeholder="Clave del Registro Federal de Contribuyentes"
+                    value="{{rfc}}" required>
+                <label for="password">Razón Social: *</label>
+                <input type="text" name="name_branch" id="rfcUser" placeholder="Ej: Restaurante La Esquina S.A. de C.V."
+                    value="{{name_branch}}" required>
+                {{>cfdi/regimenFiscal}}
+                <label for="password">Codigo Postal: *</label>
+                <input type="text" name="postal_code" id="rfcUser" placeholder="Ej: 03100" value="{{postal_code}}"
+                    required>
+                {{/each}}
+
+
+
+
+
+                <!-- address of the branch -->
+                <div class="dropdown-toggle-box">
+                    <div class="dropdown-header" onclick="watch_most('addressSection')">
+                        <label class="mb-0 fw-semibold">Domicilio</label>
+                        <i class="fi fi-rr-angle-down" id="icon-addressSection"></i>
+                    </div>
+
+                    <!-- Contenido oculto con animación -->
+                    <div id="addressSection" class="dropdown-content collapsed">
+                        {{>options/formAdressCFDI}}
+                    </div>
+                </div>
+
+
+
+                <button type="submit">Actualizar Datos</button>
+            </form>
+
+        </div>
+    </div>
+</div>
+<br>
+{{>updateSelects}}
+
+<script>
+document.getElementById('formDataCfdi').addEventListener('submit', async function(event) {
+    event.preventDefault(); //this avoid that the form be send to the server
+
+    //get the data of the form
+    const data = get_data_form_data_cfdi(event);
+
+    //her we will send this information to the server for update the data of the branch and update his data
+    const answer=await send_data_to_server('/links/update-data-cfdi', data);
+    if (answer.success) {
+        confirmationMessage('🎉 ¡Actualización Exitosa!', 'Tus datos de facturación han sido actualizados correctamente. ¡Gracias por mantener todo al día!');
+    } else {
+        errorMessage('😥 Ocurrió un problema', 'Hubo un error al actualizar tus datos. Por favor, intenta nuevamente más tarde.');
+    }
+});
+
+
+function get_data_form_data_cfdi(event){
+    const form = event.target;
+    const formData = new FormData(form);
+    const data = {};
+
+    // Convertimos FormData en objeto JSON
+    for (const [key, value] of formData.entries()) {
+        // Si hay varias entradas con el mismo "name", convertimos en array
+        if (data[key]) {
+            if (Array.isArray(data[key])) {
+                data[key].push(value);
+            } else {
+                data[key] = [data[key], value];
+            }
+        } else {
+            data[key] = value;
+        }
+    }
+    return data;
+}
+</script>

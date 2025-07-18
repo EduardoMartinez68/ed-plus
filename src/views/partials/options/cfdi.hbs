@@ -87,71 +87,10 @@
     }
 </style>
 
-<div class="tab-pane fade show" id="navbar-cfdi" role="tabpanel" aria-labelledby="navbar-company-tab">
+<div class="tab-pane fade show" id="navbar-cfdi-sat" role="tabpanel" aria-labelledby="navbar-company-tab">
     <div class="card">
         <div class="card-body sat-form-container">
             <label><i class="fi-icon fi-sr-shield-check"></i> Subir Llaves del SAT</label>
-
-            <!---
-            <form id="formKey">
-
-                <div class="row">
-                    <div class="col-8">
-                        <label for="keyFile">Archivo .KEY:</label>
-                        <div class="input-wrapper">
-                            <label class="custom-file-upload">
-                                <i class="fi-icon fi-sr-key"></i> Seleccionar archivo .KEY
-                                <input type="file" name="keyFile" id="keyFile" accept=".key" required
-                                    onchange="showFileName(this)">
-                            </label>
-                            <div id="keyFileName" class="file-name"></div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <br>
-                        <button type="submit">Subir y Validar</button>
-                    </div>
-                </div>
-
-            </form>
-
-            <form id="formCer">
-                <div class="row">           
-                    <div class="col-8">
-                        <label for="cerFile">Archivo .CER:</label>
-                        <div class="input-wrapper">
-                            <label class="custom-file-upload">
-                                <i class="fi-icon fi-sr-certificate"></i> Seleccionar archivo .CER
-                                <input type="file" name="cerFile" id="cerFile" accept=".cer" required
-                                    onchange="showFileName(this)">
-                            </label>
-                            <div id="cerFileName" class="file-name"></div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <br>
-                        <button type="submit">Subir y Validar</button>
-                    </div>
-                </div>
-            </form>
-
-
-            <form id="formPassword">
-                <div class="row">
-                    <div class="col">
-                        <label for="password">Contraseña de la llave .KEY:</label>
-                        <input type="password" name="password" id="password" placeholder="Ingresa tu contraseña" required>
-                    </div>
-                    <div class="col">
-                        <br>
-                        <button type="submit">Actualizar</button>
-                    </div>
-                </div>
-            </form>
-            --->
-
-
-
             <form id="formKeyCfdi">
                 <label for="keyFile">Archivo .KEY:</label>
                 <div class="input-wrapper">
@@ -175,50 +114,19 @@
 
                 <label for="password">Contraseña de la llave .KEY:</label>
                 <input type="password" name="password" id="passwordKey" placeholder="Ingresa tu contraseña" required>
-                
-                <div class="dropdown-toggle-box">
-                    <div class="dropdown-header" onclick="watch_most('dataCFDI')">
-                        <label class="mb-0 fw-semibold">Información CFD</label>
-                        <i class="fi fi-rr-angle-down" id="icon-addressSection"></i>
-                    </div>
 
-                    <!-- Contenido oculto con animación -->
-                    <div id="dataCFDI" class="dropdown-content collapsed">
-                        {{#each branchFree}}
-                        <label for="password">Link de tu logo:</label>
-                        <input type="text" name="linkCFDI" id="rfcUser" placeholder="https://img/mi-logo.png" value="{{path_icon_cfdi}}">
-                        <label for="password">RFC: *</label>
-                        <input type="text" name="rfc" id="rfcUser" placeholder="Clave del Registro Federal de Contribuyentes" value="{{rfc}}"
-                            required>
-                        <label for="password">Razón Social: *</label>
-                        <input type="text" name="name_branch" id="rfcUser" placeholder="Ej: Restaurante La Esquina S.A. de C.V."  value="{{name_branch}}"
-                            required>
-                        {{>cfdi/regimenFiscal}}
-                        <label for="password">Codigo Postal: *</label>
-                        <input type="text" name="postal_code" id="rfcUser"  placeholder="Ej: 03100"  value="{{postal_code}}"
-                            required>
-                        {{/each}}
-                    </div>
-                </div>
+                {{#each branchFree}}
+                    <label for="password">RFC: *</label>
+                    <input type="text" name="rfc" id="rfcUserUpdate" placeholder="Clave del Registro Federal de Contribuyentes"
+                        value="{{rfc}}" required>
+                {{/each}}
 
-
-
- 
-                <!-- address of the branch -->
-                <div class="dropdown-toggle-box">
-                    <div class="dropdown-header" onclick="watch_most('addressSection')">
-                        <label class="mb-0 fw-semibold">Domicilio</label>
-                        <i class="fi fi-rr-angle-down" id="icon-addressSection"></i>
-                    </div>
-
-                    <!-- Contenido oculto con animación -->
-                    <div id="addressSection" class="dropdown-content collapsed">
-                        {{>options/formAdressCFDI}}
-                    </div>
-                </div>
-
-               
-
+                <label for="password">Acción: *</label>
+                <select  class="form-select" id="selectActtionCfdi">
+                    <option value="add">Subir</option>
+                    <option value="update">Actualizar</option>
+                    <option value="delete">Eliminar</option>
+                </select>
 
                 <center>
                     <label>Al subir tus archivos, aceptas que los datos serán almacenados en nuestros servidores y en
@@ -362,12 +270,12 @@ document.getElementById('formKeyCfdi').addEventListener('submit', async function
     document.getElementById('formKeyCfdi').addEventListener('submit', async function (e) {
         e.preventDefault();
 
-        const rfc = document.getElementById('rfcUser').value.trim();
+        const rfc = document.getElementById('rfcUserUpdate').value.trim();
         const password = document.getElementById('passwordKey').value.trim();
         const keyFile = document.getElementById('keyFile').files[0];
         const cerFile = document.getElementById('cerFile').files[0];
 
-        const action = 'add'; // o "update" o "delete" si quieres que sea dinámico
+        const action = document.getElementById('selectActtionCfdi').value || 'add'; // o "update" o "delete" si quieres que sea dinámico
 
         if (!rfc || !password || !keyFile || !cerFile) {
             infoMessage('😳 Espera un momento ', 'Por favor completa todos los campos y selecciona los archivos .KEY y .CER')
@@ -384,7 +292,6 @@ document.getElementById('formKeyCfdi').addEventListener('submit', async function
 
         const loadingOverlay=document.getElementById('loadingOverlay')
         loadingOverlay.style.display = 'flex';
-        await save_RFC(rfc);
         try {
             const certBase64 = await toBase64(cerFile);
             const keyBase64 = await toBase64(keyFile);
@@ -445,16 +352,4 @@ document.getElementById('formKeyCfdi').addEventListener('submit', async function
 
         loadingOverlay.style.display = 'none';
     });
-
-
-    async function save_RFC(rfc){
-        const url = `/links/update_rfc`;
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-           body: JSON.stringify({ rfc })
-        });
-    }
 </script>

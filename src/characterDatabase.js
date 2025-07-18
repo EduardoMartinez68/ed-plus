@@ -354,6 +354,8 @@ async function create_update_of_the_database(adminPool) {
         BEGIN
             -- Asegurar columnas (evita error si ya existen)
             ALTER TABLE "Company".branches ADD COLUMN IF NOT EXISTS rfc varchar(13);
+            ALTER TABLE "Company".branches ADD COLUMN IF NOT EXISTS fiscalRegime varchar(6);
+            ALTER TABLE "Company".branches ADD COLUMN IF NOT EXISTS linkCFDI text;
         END
         $$;
         DO $$
@@ -534,7 +536,11 @@ async function create_update_of_the_database_mysqlite(db) {
     );
     `
     await create_table_mysqlite(db,queryPermition)
-
+    queryPermition=`
+        ALTER TABLE branches ADD COLUMN fiscalRegime varchar(6);
+        ALTER TABLE branches ADD COLUMN linkCFDI text;
+    `
+    await create_table_mysqlite(db,queryPermition)
     db.close();
 }
 
