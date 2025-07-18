@@ -98,17 +98,17 @@
 
 
                 <label for="password">Link de tu logo:</label>
-                <input type="text" name="linkCFDI" id="rfcUser" placeholder="https://img/mi-logo.png"
+                <input type="text" name="linkCFDI" id="linkIconRFC" placeholder="https://img/mi-logo.png"
                     value="{{linkCFDI}}">
                 <label for="password">RFC: *</label>
                 <input type="text" name="rfc" id="rfcUser" placeholder="Clave del Registro Federal de Contribuyentes"
                     value="{{rfc}}" required>
                 <label for="password">Razón Social: *</label>
-                <input type="text" name="name_branch" id="rfcUser" placeholder="Ej: Restaurante La Esquina S.A. de C.V."
+                <input type="text" name="name_branch" id="name_razon" placeholder="Ej: Restaurante La Esquina S.A. de C.V."
                     value="{{name_branch}}" required>
                 {{>cfdi/regimenFiscal}}
                 <label for="password">Codigo Postal: *</label>
-                <input type="text" name="postal_code" id="rfcUser" placeholder="Ej: 03100" value="{{postal_code}}"
+                <input type="text" name="postal_code" id="postal_code_cfdi" placeholder="Ej: 03100" value="{{postal_code}}"
                     required>
                 {{/each}}
 
@@ -143,6 +143,12 @@
 <script>
 document.getElementById('formDataCfdi').addEventListener('submit', async function(event) {
     event.preventDefault(); //this avoid that the form be send to the server
+    //her we will see if have all the data that the api of facturame need for create a facture CFDI 
+    if(document.getElementById('rfcUser').value=='' || document.getElementById('linkIconRFC').value=='' || document.getElementById('name_razon').value=='' || document.getElementById('postal_code_cfdi')==''){
+        errorMessage('🤔 ¡Faltan algunos datos!', 'Para actualizar tu información de facturación, necesitamos que completes todos los campos requeridos.');       
+         return;
+    }   
+
 
     //get the data of the form
     const data = get_data_form_data_cfdi(event);

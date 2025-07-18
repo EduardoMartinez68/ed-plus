@@ -132,4 +132,84 @@ async function update_information_of_the_cfdi_of_the_branch(id_branch, branchDat
     }
 }
 
+
+router.post('/add-data-facture-customer', isLoggedIn, async (req, res) => {
+    const { id_company } = req.user;
+    const {
+        id_customer,
+        rfc,
+        name,
+        regimenFiscal,
+        taxZipCode,
+        street,
+        exterior,
+        interior,
+        neighborhood,
+        municipality,
+        state,
+        country
+    } = req.body;
+
+    const values = {
+        rfc,
+        company_name: name,
+        use_cfdi: 'G03', // Puedes adaptarlo si el frontend lo envía
+        fiscalRegime: regimenFiscal,
+        postal_code: taxZipCode,
+        street,
+        num_i: interior,
+        num_e: exterior,
+        cologne: neighborhood,
+        municipy: municipality,
+        state,
+        country: country || 'México',
+        id_customers: id_customer,
+        id_companies: id_company
+    };
+
+    const insertResult = await add_facture_cfdi(values);
+    if (insertResult.success) {
+        res.json({ success: true, message: 'Datos CFDI guardados correctamente' });
+    } else {
+        res.json({ success: false, message: 'No se pudo guardar los datos CFDI' });
+    }
+});
+
+
+async function add_facture_cfdi(data) {
+    const keys = Object.keys(data);
+    const values = Object.values(data);
+
+    if (TYPE_DATABASE === 'mysqlite') {
+        const columns = keys.join(', ');
+        const placeholders = keys.map(() => '?').join(', ');
+        const query = `INSERT INTO facture_cfdi (${columns}) VALUES (${placeholders})`;
+
+        return new Promise((resolve) => {
+            database.run(query, values, function(err) {
+                if (err) {
+                    console.error('Error insertando CFDI cliente en SQLite:', err.message);
+                    resolve({ success: false });
+                } else {
+                    resolve({ success: true });
+                }
+            });
+        });
+
+    } else {
+        const columns = keys.map(k => `"${k}"`).join(', ');
+        const placeholders = keys.map((_, i) => `$${i + 1}`).join(', ');
+        const query = `INSERT INTO "Company".facture_cfdi (${columns}) VALUES (${placeholders})`;
+
+        try {
+            await database.query(query, values);
+            return { success: true };
+        } catch (error) {
+            console.error('Error insertando CFDI cliente en PostgreSQL:', error.message);
+            return { success: false };
+        }
+    }
+}
+
+
 module.exports = router;

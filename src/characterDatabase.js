@@ -391,6 +391,29 @@ async function create_update_of_the_database(adminPool) {
             END IF;
         END
         $$;
+
+        DO $$
+        BEGIN
+            IF NOT EXISTS CREATE TABLE "Company".facture_cfdi (
+                    id bigserial PRIMARY KEY,
+                    rfc varchar(16),
+                    company_name text NOT NULL,
+                    use_cfdi varchar(6) NOT NULL,
+                    "fiscalRegime" varchar(6) NOT NULL,
+                    postal_code varchar(15) NOT NULL,
+                    street text,
+                    num_i varchar(6),
+                    num_e varchar(6),
+                    cologne text,
+                    municipy text,
+                    state text,
+                    country text DEFAULT 'México',
+                    id_customers bigint,
+                    id_companies bigint
+                );
+            END IF;
+        END
+        $$;
     `
     await adminPool.query(query);
     console.log('📂 La base de datos EDPLUS fue actualizada.');
@@ -541,6 +564,36 @@ async function create_update_of_the_database_mysqlite(db) {
         ALTER TABLE branches ADD COLUMN linkCFDI text;
     `
     await create_table_mysqlite(db,queryPermition)
+
+
+
+    queryPermition=`
+        CREATE TABLE IF NOT EXISTS facture_cfdi (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            rfc TEXT,
+            company_name TEXT NOT NULL,
+            use_cfdi TEXT NOT NULL,
+            fiscalRegime TEXT NOT NULL,
+            postal_code TEXT NOT NULL,
+            street TEXT,
+            num_i TEXT,
+            num_e TEXT,
+            cologne TEXT,
+            municipy TEXT,
+            state TEXT,
+            country TEXT DEFAULT 'México',
+            id_customers INTEGER
+        );
+    `
+    await create_table_mysqlite(db,queryPermition)
+    queryPermition=`
+        ALTER TABLE facture_cfdi ADD COLUMN id_companies bigint;
+    `
+    await create_table_mysqlite(db,queryPermition)
+
+
+
+
     db.close();
 }
 

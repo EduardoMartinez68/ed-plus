@@ -75,10 +75,12 @@
 
 
 <div class="card-info-fiscal">
+
+  {{#each dataFacture}}
   <div class="info-row">
     <p class="info-label">RFC del Cliente *</p>
     <div class="info-value">
-      <label>XZXXXXXXX</label>
+      <label>{{rfc}}</label>
       <button class="edit-btn" aria-label="Editar RFC">
         <!-- Ícono lápiz SVG -->
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
@@ -87,10 +89,11 @@
       </button>
     </div>
   </div>
+
   <div class="info-row">
     <p class="info-label">Nombre o Razón Social *</p>
     <div class="info-value">
-      <label>XXXXXXXXXXXXXXXXXXXXXXXXXX</label>
+      <label>{{company_name}}</label>
       <button class="edit-btn" aria-label="Editar Nombre o Razón Social">
         <!-- mismo icono lápiz -->
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
@@ -99,4 +102,6 @@
       </button>
     </div>
   </div>
+
+  {{/each}}
 </div>

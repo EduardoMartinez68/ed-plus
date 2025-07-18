@@ -710,10 +710,8 @@ router.get('/:id_company/:id_branch/tickets-sale', isLoggedIn, async (req, res) 
 router.get('/:id_company/:id_branch/cfdi', isLoggedIn, async (req, res) => {
     const { id_company, id_branch } = req.params;
     const branchFree = await get_data_branch(id_branch);
-    console.log(branchFree)
     res.render('links/tickets/cfdi', {branchFree});
 });
-
 
 router.get('/:token_ticket/view_tickets_sale', isLoggedIn, async (req, res) => {
     const {token_ticket} = req.params;
@@ -729,14 +727,89 @@ router.get('/:token_ticket/view_tickets_sale', isLoggedIn, async (req, res) => {
     
     //now we will see if this sale have a customer
     const idCustomer=dataTicketOld.id_customers;
+    let dataFacture=null;
     let infoCustomer=[{}]
+    let firstDataFacture=null;
     if(idCustomer){
-      infoCustomer=await search_customers(dataTicketOld.id_customers) //if have save a customer, get the information of the customer
+      infoCustomer=await search_customers(idCustomer) //if have save a customer, get the information of the customer
+      dataFacture=await get_factures_by_customer(idCustomer)
+      firstDataFacture=dataFacture[0]
     }
-    
+    else{
+      //if the facture not have a customer save, we will show all the facture of the company
+      dataFacture=await get_factures_by_company(id_company)
+      firstDataFacture=dataFacture[0]
+    }
+
+
     const branchFree = await get_data_branch(id_branch);
-    res.render('links/tickets/viewATickets', {branchFree, dataTicketOld, infoCustomer});
+    res.render('links/tickets/viewATickets', {branchFree, dataTicketOld, infoCustomer, dataFacture, firstDataFacture});
 });
+
+async function get_factures_by_customer(id_customer) {
+    const queryParams = [id_customer];
+
+    if (TYPE_DATABASE === 'mysqlite') {
+        const query = `
+            SELECT * FROM facture_cfdi WHERE id_customers = ?
+        `;
+        return new Promise((resolve) => {
+            database.all(query, queryParams, (err, rows) => {
+                if (err) {
+                    console.error('Error consultando facture_cfdi en SQLite:', err);
+                    resolve([]);
+                } else {
+                    resolve(rows);
+                }
+            });
+        });
+
+    } else {
+        const query = `
+            SELECT * FROM "Company".facture_cfdi WHERE id_customers = $1
+        `;
+        try {
+            const result = await database.query(query, queryParams);
+            return result.rows || [];
+        } catch (error) {
+            console.error('Error consultando facture_cfdi en PostgreSQL:', error);
+            return [];
+        }
+    }
+}
+
+async function get_factures_by_company(id_company) {
+    const queryParams = [id_company];
+
+    if (TYPE_DATABASE === 'mysqlite') {
+        const query = `
+            SELECT * FROM facture_cfdi WHERE id_companies = ? LIMIT 20
+        `;
+        return new Promise((resolve) => {
+            database.all(query, queryParams, (err, rows) => {
+                if (err) {
+                    console.error('Error consultando facture_cfdi en SQLite:', err);
+                    resolve([]);
+                } else {
+                    resolve(rows);
+                }
+            });
+        });
+
+    } else {
+        const query = `
+            SELECT * FROM "Company".facture_cfdi WHERE id_companies = $1 LIMIT 20
+        `;
+        try {
+            const result = await database.query(query, queryParams);
+            return result.rows || [];
+        } catch (error) {
+            console.error('Error consultando facture_cfdi en PostgreSQL:', error);
+            return [];
+        }
+    }
+}
+
 
 router.get('/:id_company/:id_branch/:token_ticket/view_tickets_sale', isLoggedIn, async (req, res) => {
     const { id_company, id_branch , token_ticket} = req.params;

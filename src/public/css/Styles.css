@@ -56,18 +56,13 @@ table {
 
 
 .btn-edit {
-    /*
     background-color: var(--color-session1);
-    */
-    background-color: var(--color-norm);
+    
     color: white;
 }
 
 .btn-edit:hover {
-    /*
     background-color: var(--color-hover);
-    */
-    background-color: var(--color-norm-hover);
     color: white;
 }
 

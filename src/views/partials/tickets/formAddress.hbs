@@ -2,25 +2,25 @@
                
 
 
-{{#each infoCustomer}}
+
 <div class="row">
   <div class="col-6">
       <label for="regimenFiscal">Régimen Fiscal *</label>
-      <input type="text" class="form-control" id="regimenFiscalReceptor" placeholder="Ej. 601" required value="601">
+      <input type="text" class="form-control" id="regimenFiscalReceptor" placeholder="Ej. 601" required value="601" value="{{firstDataFacture.fiscalRegime}}">
   </div>
   <div class="col-6">
       <label for="codigoPostal">Código Postal *</label>
-      <input type="text" class="form-control" id="codigoPostal" value="{{postal_code}}" placeholder="Ej: 06700">
+      <input type="text" class="form-control" id="codigoPostal" value="{{firstDataFacture.postal_code}}" placeholder="Ej: 06700">
   </div>
 </div>
 <div class="row">
     <div class="col-md-6">
         <label for="rfcReceptor">RFC del Cliente *</label>
-        <input type="text" class="form-control" id="rfcReceptor" required value="XAXX010101000">
+        <input type="text" class="form-control" id="rfcReceptor" required value="XAXX010101000" value="{{firstDataFacture.rfc}}">
     </div>
     <div class="col-md-6">
         <label for="nombreReceptor">Nombre o Razón Social *</label>
-        <input type="text" class="form-control" id="nombreReceptor" value="{{company_name}}">
+        <input type="text" class="form-control" id="nombreReceptor" value="{{firstDataFacture.company_name}}">
     </div>
 </div>
 <br>
@@ -44,37 +44,37 @@
       <div class="row">
         <div class="col-md-6 mb-3">
           <label for="calleReceptor">Calle</label>
-          <input type="text" class="form-control" id="calleReceptor" value="{{street}}" placeholder="Ej: Insurgentes Sur" >
+          <input type="text" class="form-control" id="calleReceptor" value="{{firstDataFacture.street}}" placeholder="Ej: Insurgentes Sur" >
         </div>
 
         <div class="col-md-3 mb-3">
           <label for="numeroExteriorReceptor">Número Exterior</label>
-          <input type="text" class="form-control" id="numeroExteriorReceptor" value="{{num_ext}}" placeholder="Ej: 123" >
+          <input type="text" class="form-control" id="numeroExteriorReceptor" value="{{firstDataFacture.num_e}}" placeholder="Ej: 123" >
         </div>
 
         <div class="col-md-3 mb-3">
           <label for="numeroInteriorReceptor">Número Interior</label>
-          <input type="text" class="form-control" id="numeroInteriorReceptor" value="{{num_int}}" placeholder="Ej: A">
+          <input type="text" class="form-control" id="numeroInteriorReceptor" value="{{firstDataFacture.num_i}}" placeholder="Ej: A">
         </div>
 
         <div class="col-md-6 mb-3">
           <label for="coloniaReceptor">Colonia</label>
-          <input type="text" class="form-control" id="coloniaReceptor" value="{{company_address}}" placeholder="Ej: Roma Norte" >
+          <input type="text" class="form-control" id="coloniaReceptor" value="{{firstDataFacture.company_address}}" placeholder="Ej: Roma Norte" >
         </div>
 
         <div class="col-md-6 mb-3">
           <label for="municipioReceptor">Municipio / Delegación</label>
-          <input type="text" class="form-control" id="municipioReceptor" value="{{city}}" placeholder="Ej: Cuauhtémoc" >
+          <input type="text" class="form-control" id="municipioReceptor" value="{{firstDataFacture.state}}" placeholder="Ej: Cuauhtémoc" >
         </div>
 
         <div class="col-md-6 mb-3">
           <label for="estadoReceptor">Estado</label>
-          <input type="text" class="form-control" id="estadoReceptor" value="{{states}}" placeholder="Ej: Ciudad de México" >
+          <input type="text" class="form-control" id="estadoReceptor" value="{{firstDataFacture.state}}" placeholder="Ej: Ciudad de México" >
         </div>
 
         <div class="col-md-3 mb-3">
           <label for="paisReceptor">País</label>
-          <input type="text" class="form-control" id="paisReceptor" value="México" readonly>
+          <input type="text" class="form-control" id="paisReceptor" value="{{firstDataFacture.country}}">
         </div>
       </div>
 
@@ -82,4 +82,4 @@
 
     </div>
 </div>
-{{/each}}
+
