@@ -192,6 +192,7 @@ router.post('/search-products', isLoggedIn, async (req, res) => {
 
   try {
     const products = await get_the_products_with_barcode(id_branch, barcode);
+    console.log(products)
     res.json({ success: true, products });
   } catch (error) {
     console.error('Error searching products:', error);
@@ -200,9 +201,68 @@ router.post('/search-products', isLoggedIn, async (req, res) => {
 })
 
 
+async function get_taxes_by_feature_id(idFeature) {
+    if (TYPE_DATABASE === 'mysqlite') {
+        return new Promise((resolve, reject) => {
+            const query = `
+                SELECT 
+                    t.id AS tax_id,
+                    t.name,
+                    t."taxId",
+                    t.base,
+                    t.rate,
+                    t.is_retention,
+                    t.activate,
+                    t.this_taxes_is_in_all,
+                    t.id_branches
+                FROM 
+                    taxes_relation tr
+                INNER JOIN 
+                    taxes_product t ON tr.id_taxes = t.id
+                WHERE 
+                    tr.id_dish_and_combo_features = ?
+            `;
+            database.all(query, [idFeature], (err, rows) => {
+                if (err) {
+                    console.error("❌ Error en get_taxes_by_feature_id (SQLite):", err);
+                    return resolve([]);
+                }
+                resolve(rows || []);
+            });
+        });
+
+    } else {
+        try {
+            const query = `
+                SELECT 
+                    t.id AS tax_id,
+                    t.name,
+                    t."taxId",
+                    t.base,
+                    t.rate,
+                    t.is_retention,
+                    t.activate,
+                    t.this_taxes_is_in_all,
+                    t.id_branches
+                FROM 
+                    "Branch".taxes_relation tr
+                INNER JOIN 
+                    "Branch".taxes_product t ON tr.id_taxes = t.id
+                WHERE 
+                    tr.id_dish_and_combo_features = $1
+            `;
+            const result = await database.query(query, [idFeature]);
+            return result.rows || [];
+        } catch (error) {
+            console.error("❌ Error en get_taxes_by_feature_id (PostgreSQL):", error);
+            return [];
+        }
+    }
+}
+
 async function get_the_products_with_barcode(id_branch, barcode) {
   const likeValue = `%${barcode}%`;
-
+  console.log(barcode)
   if (TYPE_DATABASE === 'mysqlite') {
     return new Promise((resolve, reject) => {
       const query = `
@@ -229,12 +289,12 @@ async function get_the_products_with_barcode(id_branch, barcode) {
         FROM dish_and_combo_features i
         INNER JOIN dishes_and_combos d ON i.id_dishes_and_combos = d.id
         LEFT JOIN lots l ON l.id_dish_and_combo_features = i.id
-        WHERE i.id_branches = ? AND (d.barcode LIKE ? OR d.name LIKE ?)
+        WHERE i.id_branches = ? AND (d.barcode LIKE ? OR d.name LIKE ? OR d.description LIKE ?)
         GROUP BY i.id, d.id
         LIMIT 20;
       `;
 
-      database.all(query, [id_branch, likeValue], async (err, rows) => {
+      database.all(query, [id_branch, likeValue, likeValue, likeValue], async (err, rows) => {
         if (err) {
           console.error('Error filtering products by barcode (SQLite):', err);
           return resolve([]);
@@ -301,6 +361,9 @@ async function get_the_products_with_barcode(id_branch, barcode) {
     }
   }
 }
+
+
+
 
 async function get_the_products_with_barcode2(id_branch, barcode) {
   const likeValue = `%${barcode}%`;
@@ -386,67 +449,6 @@ async function get_the_products_with_barcode2(id_branch, barcode) {
     }
   }
 }
-
-
-async function get_taxes_by_feature_id(idFeature) {
-    if (TYPE_DATABASE === 'mysqlite') {
-        return new Promise((resolve, reject) => {
-            const query = `
-                SELECT 
-                    t.id AS tax_id,
-                    t.name,
-                    t."taxId",
-                    t.base,
-                    t.rate,
-                    t.is_retention,
-                    t.activate,
-                    t.this_taxes_is_in_all,
-                    t.id_branches
-                FROM 
-                    taxes_relation tr
-                INNER JOIN 
-                    taxes_product t ON tr.id_taxes = t.id
-                WHERE 
-                    tr.id_dish_and_combo_features = ?
-            `;
-            database.all(query, [idFeature], (err, rows) => {
-                if (err) {
-                    console.error("❌ Error en get_taxes_by_feature_id (SQLite):", err);
-                    return resolve([]);
-                }
-                resolve(rows || []);
-            });
-        });
-
-    } else {
-        try {
-            const query = `
-                SELECT 
-                    t.id AS tax_id,
-                    t.name,
-                    t."taxId",
-                    t.base,
-                    t.rate,
-                    t.is_retention,
-                    t.activate,
-                    t.this_taxes_is_in_all,
-                    t.id_branches
-                FROM 
-                    "Branch".taxes_relation tr
-                INNER JOIN 
-                    "Branch".taxes_product t ON tr.id_taxes = t.id
-                WHERE 
-                    tr.id_dish_and_combo_features = $1
-            `;
-            const result = await database.query(query, [idFeature]);
-            return result.rows || [];
-        } catch (error) {
-            console.error("❌ Error en get_taxes_by_feature_id (PostgreSQL):", error);
-            return [];
-        }
-    }
-}
-
 
 //-----------------------------this is cfor create facture CDFI
 const fs = require('fs');

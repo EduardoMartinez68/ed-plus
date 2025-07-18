@@ -34,11 +34,10 @@ router.get('/:id_company/:id_branch/cashCut', isLoggedIn, async (req, res) => {
     const dateFinish = new Date();
     dateFinish.setHours(23, 59, 59, 999);
 
-    const salesForMoney=await get_all_the_buy(idEmployee,dateStart,dateFinish);
+    const salesForMoney=[await get_all_the_buy(idEmployee,dateStart,dateFinish)];
     const moveUser=await get_total_movements_by_employee(idEmployee,dateStart,dateFinish);
     const movePositive=await get_all_the_movements_positive(idEmployee,dateStart,dateFinish);
     const moveNegative=await get_all_the_movements_negative(idEmployee,dateStart,dateFinish);
-
 
     const numberOfSales=await get_the_number_of_sales(idEmployee,dateStart);
     const numberInputOutput=await get_the_number_input_and_output(idEmployee,dateStart,dateFinish);
@@ -196,6 +195,62 @@ async function get_the_number_input_and_output(id_employee, dateStart, dateFinis
 
 
 async function get_all_the_buy(id_employee, dateStart, dateFinish) {
+  // Formato ISO para fechas
+  const start = new Date(dateStart).toISOString();
+  const end = new Date(dateFinish).toISOString();
+
+  if (TYPE_DATABASE === 'mysqlite') {
+    return new Promise((resolve) => {
+      const query = `
+        SELECT 
+          COALESCE(SUM(cash), 0) AS total_cash_sales,
+          COALESCE(SUM(credit), 0) AS total_credit_sales,
+          COALESCE(SUM(debit), 0) AS total_debit_sales,
+          COALESCE(SUM(cash + credit + debit - total), 0) AS total_change_of_sale
+        FROM ticket
+        WHERE id_employees = ?
+          AND datetime(date_sale) BETWEEN datetime(?) AND datetime(?)
+      `;
+      database.get(query, [id_employee, start, end], (err, row) => {
+        if (err) {
+          console.error('Error get_all_the_buy (SQLite):', err);
+          return resolve({
+            total_cash_sales: 0,
+            total_credit_sales: 0,
+            total_debit_sales: 0,
+            total_change_of_sale: 0
+          });
+        }
+        resolve(row);
+      });
+    });
+  } else {
+    const query = `
+      SELECT 
+        COALESCE(SUM(cash), 0) AS total_cash_sales,
+        COALESCE(SUM(credit), 0) AS total_credit_sales,
+        COALESCE(SUM(debit), 0) AS total_debit_sales,
+        COALESCE(SUM(cash + credit + debit - total), 0) AS total_change_of_sale
+      FROM "Box".ticket
+      WHERE id_employees = $1
+        AND date_sale BETWEEN $2 AND $3
+    `;
+    try {
+      const result = await database.query(query, [id_employee, start, end]);
+      return result.rows[0];
+    } catch (error) {
+      console.error('Error get_all_the_buy (PostgreSQL):', error);
+      return {
+        total_cash_sales: 0,
+        total_credit_sales: 0,
+        total_debit_sales: 0,
+        total_change_of_sale: 0
+      };
+    }
+  }
+}
+
+async function get_all_the_buy_falla_al_sumar(id_employee, dateStart, dateFinish) {
     try {
         if (TYPE_DATABASE === 'mysqlite') {
             // SQLite no soporta schemas y usa '?' como placeholders
@@ -411,7 +466,6 @@ async function add_table_box_history() {
     }
 }
 
-
 async function get_data_of_the_employee(id_employee) {
     try {
         if (TYPE_DATABASE === 'mysqlite') {
@@ -465,7 +519,6 @@ async function get_data_of_the_employee(id_employee) {
         return [];
     }
 }
-
 
 function formatDate(dateString) {
     const date = new Date(dateString);

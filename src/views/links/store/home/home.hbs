@@ -187,11 +187,22 @@
 </div>
 
 <!-----tickets--->
-<script src="/js/printer/JsBarcode.all.min.js"></script>
-<script src="/js/printer/html2canvas.min.js"></script>
-<script src="/js/printer/qrious.min.js"></script>
+<script src="/js/printer/JsBarcode.all.min.js" defer></script>
+<script src="/js/printer/html2canvas.min.js" defer></script>
+<script src="/js/printer/qrious.min.js" defer></script>
 
 <script>
+document.addEventListener('DOMContentLoaded', () => {
+
+
+
+
+
+
+
+
+
+
     const selectPrinter = document.getElementById('dataPrinter');
     let listTicket = [];
 
@@ -589,4 +600,24 @@
     //load the cookies
     load_tickets_from_cookies();
     load_printer();
+
+
+
+
+
+
+
+
+    //her we will do all the variable global
+    window.config = config;
+    window.selectPrinter = selectPrinter;
+    window.listTicket = listTicket;
+
+    window.load_printer = load_printer;
+    window.print_ticket = print_ticket;
+    window.get_texto_ticket = get_texto_ticket;
+    window.create_ticket_html = create_ticket_html;
+    window.generarTokenUnicoTicket = generarTokenUnicoTicket;
+    window.load_tickets_from_cookies = load_tickets_from_cookies;
+});
 </script>

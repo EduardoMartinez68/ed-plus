@@ -130,40 +130,45 @@
 </div>
 
 <script>
-  function toggleMenu() {
+  // Asegura que el código solo se ejecute cuando el DOM esté listo
+  document.addEventListener("DOMContentLoaded", () => {
     const menu = document.getElementById("menuMostOptions");
     const toggleButton = document.querySelector(".menu-most-oprtions-toggle");
 
-    // Mostrar/ocultar el menú
-    menu.classList.toggle("show");
+    // Si los elementos no existen aún, salir (seguridad extra)
+    if (!menu || !toggleButton) return;
 
-    // Cambiar el estado de rotación del botón
-    toggleButton.classList.toggle("open");
-  }
+    // Hacer accesible la función globalmente
+    window.toggleMenu = function () {
+      menu.classList.toggle("show");
+      toggleButton.classList.toggle("open");
+    };
 
-  // Cerrar el menú si haces clic fuera
-  document.addEventListener("click", (e) => {
-    const menu = document.getElementById("menuMostOptions");
-    const toggle = document.querySelector(".menu-most-oprtions-toggle");
-    if (!menu.contains(e.target) && !toggle.contains(e.target)) {
-      menu.classList.remove("show");
-      toggle.classList.remove("open");
-    }
+    // Cerrar el menú si se hace clic fuera
+    document.addEventListener("click", (e) => {
+      if (!menu.contains(e.target) && !toggleButton.contains(e.target)) {
+        menu.classList.remove("show");
+        toggleButton.classList.remove("open");
+      }
+    });
   });
+</script
 </script>
 
 
 
 <script>
-  //this is for read all the permition in SQLIte, if the permition is equal to 0, we will delete the permition
+document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll('.info-permition').forEach(el => {
-    const val = el.dataset.value ?? el.value ?? ""; // soporta tanto <label> como <input>
-    const normalized = val?.toString().trim().toLowerCase();
+    const rawVal = el.dataset.value ?? el.value ?? ""; // Lee desde data-value o value
+    const normalized = rawVal.toString().trim().toLowerCase();
 
-    const isValid = normalized === "true" || normalized === "1" || normalized === "yes" || normalized === "on" || normalized === 1 || normalized===true;
+    // Condiciones que consideramos como "permitido"
+    const isValid = ["true", "1", "yes", "on"].includes(normalized);
+
     if (!isValid) {
-
-      el.remove();
+      el.remove(); // Si no es un valor válido, lo eliminamos del DOM
     }
   });
+});
 </script>
