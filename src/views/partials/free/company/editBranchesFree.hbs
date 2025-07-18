@@ -16,7 +16,7 @@
                                 <hr>
                                 <div class="form-group">
                                     <label>Nombre de la sucursal *</label><br>
-                                    <input type="text" class="form-control" name="name" placeholder="Nombre de la sucursal"  maxlength="60" value="{{name_branch}}" required>
+                                    <input type="hidden" class="form-control" name="name" placeholder="Nombre de la sucursal"  maxlength="60" value="{{name_branch}}" required>
                                 </div>
                                 <div class="form-group">
                                     <label>Alias *</label><br>
@@ -48,7 +48,7 @@
                                 </div>
                             {{/each}} 
 
-                            <div class="form-group">
+                            <div class="form-group" style="hidden">
                                 <label>País *</label><br>
                                 {{#each branchFree}} 
                                 <select id="country" class="form-control" name="country" value="{{id_country}}">
@@ -61,36 +61,28 @@
 
                             {{#each branchFree}} 
                                 <div class="form-group">
-                                    <label>Municipio *</label><br>
-                                    <input type="text" class="form-control" name="municipality"  placeholder="Municipio" value="{{municipality}}" required>
+                                    <input type="hidden" class="form-control" name="municipality"  placeholder="Municipio" value="{{municipality}}" required>
                                 </div>
                                 <div class="form-group">
-                                    <label>Ciudad *</label><br>
-                                    <input type="text" class="form-control" name="city" placeholder="Ciudad" value="{{city}}" required>
+                                    <input type="hidden" class="form-control" name="city" placeholder="Ciudad" value="{{city}}" required>
                                 </div>
                                 <div class="form-group">
-                                    <label>Colonia *</label><br>
-                                    <input type="text" class="form-control" name="cologne" placeholder="Colonia" value="{{cologne}}" required>
+                                    <input type="hidden" class="form-control" name="cologne" placeholder="Colonia" value="{{cologne}}" required>
                                 </div>
                                 <div class="form-group">
-                                    <label>Dirección *</label><br>
-                                    <input type="text" class="form-control" name="street" placeholder="Dirección"  maxlength="30" value="{{address}}" required>
+                                    <input type="hidden" class="form-control" name="street" placeholder="Dirección"  maxlength="30" value="{{address}}" required>
                                 </div>
                                 <div class="form-group">
-                                    <label>Números exteriores</label><br>
-                                    <input type="text" class="form-control" name="num_o" placeholder="Número exterior"  maxlength="5" value="{{num_ext}}">
+                                    <input type="hidden" class="form-control" name="num_o" placeholder="Número exterior"  maxlength="5" value="{{num_ext}}">
                                 </div>
                                 <div class="form-group">
-                                    <label>Número interior</label><br>
-                                    <input type="text" class="form-control" name="num_i" placeholder="Número interior"  maxlength="5" value="{{num_int}}">
+                                    <input type="hidden" class="form-control" name="num_i" placeholder="Número interior"  maxlength="5" value="{{num_int}}">
                                 </div>
                                 <div class="form-group">
-                                    <label>Código Postal *</label><br>
-                                    <input type="text" class="form-control" name="postal_code" placeholder="Código Postal"  pattern="[0-9]{5}" value="{{postal_code}}" required>
+                                    <input type="hidden" class="form-control" name="postal_code" placeholder="Código Postal"  pattern="[0-9]{5}" value="{{postal_code}}" required>
                                 </div>
                                 <div class="form-group">
-                                    <label>Token UberEat</label><br>
-                                    <input type="text" class="form-control" name="token_uber_eat" placeholder="Token UberEat" value="{{token_uber}}">
+                                    <input type="hidden" class="form-control" name="token_uber_eat" placeholder="Token UberEat" value="{{token_uber}}">
                                 </div>
                             {{/each}} 
 

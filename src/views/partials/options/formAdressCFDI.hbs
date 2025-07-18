@@ -1,0 +1,39 @@
+<div class="form-group">
+    <label>País</label><br>
+    {{#each branchFree}}
+    <select id="country" class="form-control" name="country" value="{{id_country}}">
+        {{/each}}
+        {{#each country}}
+        <option value="{{id}}">{{name}}</option>
+        {{/each}}
+    </select>
+</div>
+
+{{#each branchFree}}
+<div class="form-group">
+    <label>Municipio</label><br>
+    <input type="text" class="form-control" name="municipality" placeholder="Municipio" value="{{municipality}}">
+</div>
+<div class="form-group">
+    <label>Ciudad</label><br>
+    <input type="text" class="form-control" name="city" placeholder="Ciudad" value="{{city}}">
+</div>
+<div class="form-group">
+    <label>Colonia</label><br>
+    <input type="text" class="form-control" name="cologne" placeholder="Colonia" value="{{cologne}}">
+</div>
+<div class="form-group">
+    <label>Dirección</label><br>
+    <input type="text" class="form-control" name="street" placeholder="Dirección" maxlength="30" value="{{address}}">
+</div>
+<div class="form-group">
+    <label>Números exteriores</label><br>
+    <input type="text" class="form-control" name="num_o" placeholder="Número exterior" maxlength="5"
+        value="{{num_ext}}">
+</div>
+<div class="form-group">
+    <label>Número interior</label><br>
+    <input type="text" class="form-control" name="num_i" placeholder="Número interior" maxlength="5"
+        value="{{num_int}}">
+</div>
+{{/each}}

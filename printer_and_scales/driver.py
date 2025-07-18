@@ -74,7 +74,7 @@ def preparar_imagen_para_impresion(image, ancho_mm=80, dpi=203):
     max_width = int(dpi * ancho_pulgadas)
     if max_width <= 0:
         print("El ancho máximo calculado es inválido (<=0). [WARNING] dpi o ancho inválido, usando ancho por defecto")
-        max_width = int(203 * 3.0 *4)  # 609 px (77mm a 203dpi) #559
+        max_width = int(203 * 3.0 *3.5)  # 609 px (77mm a 203dpi) #559
         print('Ancho por defecto max_width')
         print(max_width)
 
@@ -111,18 +111,18 @@ def imprimir_imagen_win32(nombre_impresora, image):
         printer_height = hDC.GetDeviceCaps(111)  # VERTRES
 
         # Calcular el offset horizontal para centrar
-        x_offset = 0
-        y_offset = 0
+        #x_offset = 0
+        #y_offset = 0
 
-        dib.draw(
-            hDC.GetHandleOutput(),
-            (x_offset, y_offset, x_offset + image.width, y_offset + image.height)
-        )
+        #dib.draw(
+            #hDC.GetHandleOutput(),
+            #(x_offset, y_offset, x_offset + image.width, y_offset + image.height)
+        #)
 
-        #x_offset = (printer_width - image.width) // 2
-        #y_offset = 0  # puedes ajustar si quieres centrar también verticalmente
+        x_offset = (printer_width - image.width) // 2
+        y_offset = 0  # puedes ajustar si quieres centrar también verticalmente
 
-        #dib.draw(hDC.GetHandleOutput(), (x_offset, y_offset, x_offset + image.width, y_offset + image.height))
+        dib.draw(hDC.GetHandleOutput(), (x_offset, y_offset, x_offset + image.width, y_offset + image.height))
         hDC.EndPage()
         hDC.EndDoc()
         hDC.DeleteDC()

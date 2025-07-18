@@ -153,7 +153,6 @@
 
 
             <form id="formKeyCfdi">
-
                 <label for="keyFile">Archivo .KEY:</label>
                 <div class="input-wrapper">
                     <label class="custom-file-upload">
@@ -174,14 +173,53 @@
                     <div id="cerFileName" class="file-name"></div>
                 </div>
 
-                {{#each branchFree}}
-                <label for="password">RFC:</label>
-                <input type="text" name="rfc" id="rfcUser" placeholder="Clave del Registro Federal de Contribuyentes" value="{{rfc}}"
-                    required>
-                {{/each}}
-
                 <label for="password">Contraseña de la llave .KEY:</label>
                 <input type="password" name="password" id="passwordKey" placeholder="Ingresa tu contraseña" required>
+                
+                <div class="dropdown-toggle-box">
+                    <div class="dropdown-header" onclick="watch_most('dataCFDI')">
+                        <label class="mb-0 fw-semibold">Información CFD</label>
+                        <i class="fi fi-rr-angle-down" id="icon-addressSection"></i>
+                    </div>
+
+                    <!-- Contenido oculto con animación -->
+                    <div id="dataCFDI" class="dropdown-content collapsed">
+                        {{#each branchFree}}
+                        <label for="password">Link de tu logo:</label>
+                        <input type="text" name="linkCFDI" id="rfcUser" placeholder="https://img/mi-logo.png" value="{{path_icon_cfdi}}">
+                        <label for="password">RFC: *</label>
+                        <input type="text" name="rfc" id="rfcUser" placeholder="Clave del Registro Federal de Contribuyentes" value="{{rfc}}"
+                            required>
+                        <label for="password">Razón Social: *</label>
+                        <input type="text" name="name_branch" id="rfcUser" placeholder="Ej: Restaurante La Esquina S.A. de C.V."  value="{{name_branch}}"
+                            required>
+                        {{>cfdi/regimenFiscal}}
+                        <label for="password">Codigo Postal: *</label>
+                        <input type="text" name="postal_code" id="rfcUser"  placeholder="Ej: 03100"  value="{{postal_code}}"
+                            required>
+                        {{/each}}
+                    </div>
+                </div>
+
+
+
+ 
+                <!-- address of the branch -->
+                <div class="dropdown-toggle-box">
+                    <div class="dropdown-header" onclick="watch_most('addressSection')">
+                        <label class="mb-0 fw-semibold">Domicilio</label>
+                        <i class="fi fi-rr-angle-down" id="icon-addressSection"></i>
+                    </div>
+
+                    <!-- Contenido oculto con animación -->
+                    <div id="addressSection" class="dropdown-content collapsed">
+                        {{>options/formAdressCFDI}}
+                    </div>
+                </div>
+
+               
+
+
                 <center>
                     <label>Al subir tus archivos, aceptas que los datos serán almacenados en nuestros servidores y en
                         los servidores de <a href="https://facturama.mx">Facturama</a> y que esta información serán
@@ -196,7 +234,7 @@
         </div>
     </div>
 </div>
-
+<br>
 <script>
     /*
     function showFileName(input) {
