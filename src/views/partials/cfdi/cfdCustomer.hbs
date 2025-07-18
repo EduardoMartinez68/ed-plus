@@ -64,7 +64,7 @@
 
 
 <div class="input-group mb-4">
-    <input type="text" class="form-control">
+    <input type="text" class="form-control" id="search-the-data-cfdi">
     <button class="btn btn-edit" onclick="open_my_pop('pop-data-facture')" type="button">Agregar</button>
 </div>
 {{>cfdi/formDataFacture}}
@@ -74,7 +74,7 @@
 
 
 
-<div class="card-info-fiscal">
+<div class="card-info-fiscal" id="card-info-fiscal">
   {{#each dataFacture}}
     <div class="info-row">
       <div class="info-value">
@@ -126,5 +126,98 @@
     close_my_pop('pop-data-facture-list');
     close_my_pop('informationAddress');
     confirmationMessage('Listo','Los datos de la factura fueron actualizados con éxito');
+  }
+</script>
+<script>
+  let timeoutId;
+  let lastSearchValue = "";
+  const oldInforCfd=document.getElementById('card-info-fiscal').innerHTML;
+
+  document.getElementById("search-the-data-cfdi").addEventListener("input", function () {
+    const currentValue = this.value.trim();
+
+    // Cancelamos el temporizador anterior
+    clearTimeout(timeoutId);
+
+    // Esperamos 500ms después de que el usuario deja de escribir
+    timeoutId = setTimeout(() => {
+      // Solo si el valor ha cambiado
+      if (currentValue !== lastSearchValue) {
+        lastSearchValue = currentValue;
+        update_info(currentValue);
+      }
+    }, 500);
+  });
+
+  async function update_info(query) {
+    //first we will see if exist a query 
+    if(query==''){
+      //if not exist we will show the fist information save from the backend 
+      document.getElementById('card-info-fiscal').innerHTML=oldInforCfd;
+      return;
+    }
+
+
+    //if exist a new search, we will send a message to the server for get the new data of the cfdi
+    try {
+      const id_customer=document.getElementById('id_customer').value;
+      const answer = await send_data_to_server('/links/get-info-facture-cfdi', {query, id_customer},false);
+      const container = document.getElementById('card-info-fiscal');
+
+      //clear the container
+      container.innerHTML = '';
+
+      //we will see if get a answer from the server
+      if (answer.success && Array.isArray(answer.data)) {
+        answer.data.forEach(data => {
+          const divRow = document.createElement('div');
+          divRow.className = 'info-row';
+
+          const divValue = document.createElement('div');
+          divValue.className = 'info-value';
+
+          const labelRfc = document.createElement('label');
+          labelRfc.textContent = 'RFC del Cliente: ' + data.rfc;
+
+          const br1 = document.createElement('br');
+
+          const labelName = document.createElement('label');
+          labelName.textContent = 'Nombre o Razón Social: ' + data.company_name;
+
+          const br2 = document.createElement('br');
+
+          const button = document.createElement('button');
+          button.className = 'btn btn-edit';
+          button.textContent = 'Usar';
+          button.setAttribute('onclick', 'use_data_for_the_facture(this)');
+          button.dataset.id = data.id;
+          button.dataset.rfc = data.rfc;
+          button.dataset.company_name = data.company_name;
+          button.dataset.use_cfdi = data.use_cfdi;
+          button.dataset.fiscal_regime = data.fiscalRegime;
+          button.dataset.postal_code = data.postal_code;
+          button.dataset.street = data.street;
+          button.dataset.num_i = data.num_i;
+          button.dataset.num_e = data.num_e;
+          button.dataset.cologne = data.cologne;
+          button.dataset.municipy = data.municipy;
+          button.dataset.state = data.state;
+          button.dataset.country = data.country;
+
+          divValue.appendChild(labelRfc);
+          divValue.appendChild(br1);
+          divValue.appendChild(labelName);
+          divValue.appendChild(br2);
+          divValue.appendChild(button);
+
+          divRow.appendChild(divValue);
+          container.appendChild(divRow);
+        });
+      } else {
+        container.innerHTML = '<p>No se encontraron resultados.</p>';
+      }
+    } catch (error) {
+      console.error('Error al obtener los datos:', error);
+    }
   }
 </script>
