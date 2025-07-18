@@ -75,33 +75,56 @@
 
 
 <div class="card-info-fiscal">
-
   {{#each dataFacture}}
-  <div class="info-row">
-    <p class="info-label">RFC del Cliente *</p>
-    <div class="info-value">
-      <label>{{rfc}}</label>
-      <button class="edit-btn" aria-label="Editar RFC">
-        <!-- Ícono lápiz SVG -->
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
-          <path d="M12.146.854a.5.5 0 0 1 .708 0l2.292 2.292a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 3L13 4.793 14.793 3 13 1.207 11.207 3zM12 5.207 9.5 7.707V9h1.293L14.793 5.5 12 5.207z"/>
-        </svg>
-      </button>
+    <div class="info-row">
+      <div class="info-value">
+        <label>RFC del Cliente: {{rfc}}</label><br>
+        <label>Nombre o Razón Social: {{company_name}}</label><br>
+        <button
+          class="btn btn-edit"
+          onclick="use_data_for_the_facture(this)"
+          data-id="{{id}}"
+          data-rfc="{{rfc}}"
+          data-company_name="{{company_name}}"
+          data-use_cfdi="{{use_cfdi}}"
+          data-fiscal_regime="{{fiscalRegime}}"
+          data-postal_code="{{postal_code}}"
+          data-street="{{street}}"
+          data-num_i="{{num_i}}"
+          data-num_e="{{num_e}}"
+          data-cologne="{{cologne}}"
+          data-municipy="{{municipy}}"
+          data-state="{{state}}"
+          data-country="{{country}}"
+        >
+          Usar
+        </button>
+      </div>
     </div>
-  </div>
-
-  <div class="info-row">
-    <p class="info-label">Nombre o Razón Social *</p>
-    <div class="info-value">
-      <label>{{company_name}}</label>
-      <button class="edit-btn" aria-label="Editar Nombre o Razón Social">
-        <!-- mismo icono lápiz -->
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
-          <path d="M12.146.854a.5.5 0 0 1 .708 0l2.292 2.292a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 3L13 4.793 14.793 3 13 1.207 11.207 3zM12 5.207 9.5 7.707V9h1.293L14.793 5.5 12 5.207z"/>
-        </svg>
-      </button>
-    </div>
-  </div>
-
   {{/each}}
 </div>
+
+
+<script>
+  function use_data_for_the_facture(button) {
+    const formData = {
+      regimenFiscal: button.dataset.fiscal_regime || "",
+      taxZipCode: button.dataset.postal_code || "",
+      rfc: button.dataset.rfc || "",
+      name: button.dataset.company_name || "",
+      street: button.dataset.street || "",
+      exterior: button.dataset.num_e || "",
+      interior: button.dataset.num_i || "",
+      neighborhood: button.dataset.cologne || "",
+      municipality: button.dataset.municipy || "",
+      state: button.dataset.state || "",
+      country: button.dataset.country || ""
+    };
+
+    set_customer_facture_info(formData);
+    close_my_pop('pop-data-facture');
+    close_my_pop('pop-data-facture-list');
+    close_my_pop('informationAddress');
+    confirmationMessage('Listo','Los datos de la factura fueron actualizados con éxito');
+  }
+</script>

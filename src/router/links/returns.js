@@ -729,7 +729,13 @@ router.get('/:token_ticket/view_tickets_sale', isLoggedIn, async (req, res) => {
     const idCustomer=dataTicketOld.id_customers;
     let dataFacture=null;
     let infoCustomer=[{}]
-    let firstDataFacture=null;
+
+    //this is when the sale not have a customer save and the user can create a facture to public
+    let firstDataFacture={
+      rfc:'XAXX010101000',
+      fiscalRegime: '601'
+    }
+
     if(idCustomer){
       infoCustomer=await search_customers(idCustomer) //if have save a customer, get the information of the customer
       dataFacture=await get_factures_by_customer(idCustomer)
@@ -738,7 +744,6 @@ router.get('/:token_ticket/view_tickets_sale', isLoggedIn, async (req, res) => {
     else{
       //if the facture not have a customer save, we will show all the facture of the company
       dataFacture=await get_factures_by_company(id_company)
-      firstDataFacture=dataFacture[0]
     }
 
 
@@ -751,7 +756,7 @@ async function get_factures_by_customer(id_customer) {
 
     if (TYPE_DATABASE === 'mysqlite') {
         const query = `
-            SELECT * FROM facture_cfdi WHERE id_customers = ?
+            SELECT * FROM facture_cfdi WHERE id_customers = ? ORDER BY id DESC
         `;
         return new Promise((resolve) => {
             database.all(query, queryParams, (err, rows) => {
@@ -766,7 +771,7 @@ async function get_factures_by_customer(id_customer) {
 
     } else {
         const query = `
-            SELECT * FROM "Company".facture_cfdi WHERE id_customers = $1
+            SELECT * FROM "Company".facture_cfdi WHERE id_customers = $1 ORDER BY id DESC
         `;
         try {
             const result = await database.query(query, queryParams);

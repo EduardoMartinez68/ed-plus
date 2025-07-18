@@ -1,6 +1,8 @@
 <div class="row">
     <div class="col-6">
-        <input type="hidden" class="form-control" id="regimenFiscalUser" placeholder="Ej. 601" required value="601">
+        {{#each branchFree}}
+            <input type="hidden" class="form-control" id="regimenFiscalUser" placeholder="Ej. 601" required value="{{fiscalRegime}}">
+        {{/each}}
     </div>
 </div>
 <div class="row">

@@ -121,12 +121,35 @@
         const dataFacture = get_the_information_of_the_form(); //her we will get all the information of the form 
 
         //her we will send this information to the server and get the new information of the facture 
-        const answerServer = await send_data_to_server('/links/add-data-facture-customer', dataFacture)
+        const answerServer = await send_data_to_server('/links/add-data-facture-customer', dataFacture);
+
+        //her close all the pop for that the user can see the message of the server
+        close_my_pop('pop-data-facture');
+        close_my_pop('pop-data-facture-list');
+        close_my_pop('informationAddress');
+
         if (answerServer.success) {
-            close_my_pop('pop-data-facture');
+            set_customer_facture_info(dataFacture); //her update the data of the facture to the last information that add to the database
             confirmationMessage('Perecto',answerServer.message);
         } else {
             errorMessage('Error', answerServer.message)
         }
+    }
+
+    function set_customer_facture_info(formData) {
+        // Datos generales
+        document.getElementById('regimenFiscalReceptor').value = formData.regimenFiscal || "";
+        document.getElementById('codigoPostal').value = formData.taxZipCode || "";
+        document.getElementById('rfcReceptor').value = formData.rfc || "";
+        document.getElementById('nombreReceptor').value = formData.name || "";
+
+        // Dirección
+        document.getElementById('calleReceptor').value = formData.street || "";
+        document.getElementById('numeroExteriorReceptor').value = formData.exterior || "";
+        document.getElementById('numeroInteriorReceptor').value = formData.interior || "";
+        document.getElementById('coloniaReceptor').value = formData.neighborhood || "";
+        document.getElementById('municipioReceptor').value = formData.municipality || "";
+        document.getElementById('estadoReceptor').value = formData.state || "";
+        document.getElementById('paisReceptor').value = formData.country || "";
     }
 </script>
