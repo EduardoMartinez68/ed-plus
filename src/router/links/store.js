@@ -129,7 +129,6 @@ router.get('/:id_company/:id_branch/point-sales', isLoggedIn, async (req, res) =
         const dataEmployee = await get_data_employee(req);
 
         const dishAndCombo = await get_all_dish_and_combo_without_lots(id_branch) //get_the_products_most_sales_additions(id_branch);
-        console.log(dishAndCombo)
         /*
         const newCombos = await get_data_recent_combos(id_company);
         const mostSold = await get_all_data_combo_most_sold(id_branch);
@@ -192,7 +191,6 @@ router.post('/search-products', isLoggedIn, async (req, res) => {
 
   try {
     const products = await get_the_products_with_barcode(id_branch, barcode);
-    console.log(products)
     res.json({ success: true, products });
   } catch (error) {
     console.error('Error searching products:', error);

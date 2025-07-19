@@ -354,46 +354,65 @@ function updateProductCards(products) {
       await update_the_menu(barcodeInput);
 
       //we will to read all the card of the menu
+      existOnlyAProduct=false;
       cards = document.querySelectorAll('.product-card-point-of-sales');
       cards.forEach(card => {
         const barcode = card.id.toLowerCase();
         card.style.display = ''; //show all the card
-
-        //if we found the product, save his exist 
-        if (barcode == barcodeInput) {
+        //her we will see if exist only a product with the name, barcode or description
+        //if exist only a product, we will select his product
+        existOnlyAProduct=(cards.length === 1);
+        if(!existOnlyAProduct){
+          //if exist most of a product, we will to filter for barcode. 
+          //if we found the product, save his exist 
+          if (barcode == barcodeInput) {
+            cardProduct = card;
+          }
+        }else{
           cardProduct = card;
         }
       });
 
-      //we will see if we found the products for add to the card
+
+      //we will see if we found the products for add to the card and if only exist most of a product in the menu
       if (cardProduct) {
-        // get all the data that need for add the product to the card
-        const productId = cardProduct.getAttribute('id-product');
-        const productName = cardProduct.querySelector('.product-name-point-of-sales').textContent.trim();
-        const purchaseUnit = cardProduct.getAttribute('purchase_unit');
-        const productPrice1 = parseFloat(cardProduct.querySelector('.card-text').textContent.trim().replace('$', '').replace(',', ''));
-        const productPrice2 = cardProduct.getAttribute('data-price-2') || '0';
-        const productPrice3 = cardProduct.getAttribute('data-price-3') || '0';
-        const typeProduct = cardProduct.getAttribute('this_product_is_sold_in_bulk');
-        const id_dishes_and_combos = cardProduct.getAttribute('id_dishes_and_combos');
-
-        //we will see if the product that the user would like add to the card is a product is sold in bulk
-        if (typeProduct == 'true') {
-          //update the cant in the scale
-          repeatCount = parseFloat(match[1], 10); //this is for get decimals
-          document.getElementById('scales-store-weight-input').value = repeatCount;
-          update_weight_of_the_scale();
-
-
-          addToCart('product-' + productId, productName, barcodeInput, productPrice1, purchaseUnit, typeProduct, id_dishes_and_combos)
-        } else {
-          //if exist a cant that the user would add of the product, we use a loop "for" for add the product to the card
-          for (let i = 0; i < repeatCount; i++) {
-            // call to the function addFish with the product data
-            const idImagen = 'product-' + productId;
-            addToCart(idImagen, productName, barcodeInput, productPrice1, purchaseUnit, typeProduct, id_dishes_and_combos);
+          // get all the data that need for add the product to the card
+          const productId = cardProduct.getAttribute('id-product');
+          const productName = cardProduct.querySelector('.product-name-point-of-sales').textContent.trim();
+          const purchaseUnit = cardProduct.getAttribute('purchase_unit');
+          const productPrice1 = parseFloat(cardProduct.querySelector('.card-text').textContent.trim().replace('$', '').replace(',', ''));
+          const productPrice2 = cardProduct.getAttribute('data-price-2') || '0';
+          const productPrice3 = cardProduct.getAttribute('data-price-3') || '0';
+          const typeProduct = cardProduct.getAttribute('this_product_is_sold_in_bulk');
+          const id_dishes_and_combos = cardProduct.getAttribute('id_dishes_and_combos');
+          console.log(typeProduct)
+          //we will see if the product that the user would like add to the card is a product that is sold in bulk
+          if (typeProduct == 'true' || typeProduct==1 || typeProduct=='1' || typeProduct=='on') {
+            //update the cant in the scale
+            repeatCount = parseFloat(match[1], 10); //this is for get decimals
+            document.getElementById('scales-store-weight-input').value = repeatCount;
+            update_weight_of_the_scale();
+            if(existOnlyAProduct){
+              cardProduct.click();
+            }else{
+              addToCart('product-' + productId, productName, barcodeInput, productPrice1, purchaseUnit, typeProduct, id_dishes_and_combos)
+            }
+          } else {
+            //if exist a cant that the user would add of the product, we use a loop "for" for add the product to the card
+            for (let i = 0; i < repeatCount; i++) {
+              //we will see if exist most of a product in the menu
+              if(existOnlyAProduct){
+                cardProduct.click();
+              }else{
+                // call to the function addFish with the product data
+                const idImagen = 'product-' + productId;
+                addToCart(idImagen, productName, barcodeInput, productPrice1, purchaseUnit, typeProduct, id_dishes_and_combos);
+              }
+            }
           }
-        }
+        
+
+
 
         searchInput.value = ""; //delete the value of the input
         clear_the_menu(); //clear the menu for show all the products again
