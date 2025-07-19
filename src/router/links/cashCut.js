@@ -544,7 +544,7 @@ router.post('/:id_company/:id_branch/cash-cut-date', isLoggedIn, async (req, res
     const dateFinish = req.body.dateFinish;
     const idEmployee = req.body.idEmployee;
 
-    const salesForMoney=await get_all_the_buy(idEmployee,dateStart,dateFinish);
+    const salesForMoney=[await get_all_the_buy(idEmployee,dateStart,dateFinish)];
     const moveUser=await get_total_movements_by_employee(idEmployee,dateStart,dateFinish);
     const movePositive=await get_all_the_movements_positive(idEmployee,dateStart,dateFinish);
     const moveNegative=await get_all_the_movements_negative(idEmployee,dateStart,dateFinish);
