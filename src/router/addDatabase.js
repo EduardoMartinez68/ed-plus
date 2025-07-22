@@ -1216,7 +1216,7 @@ async function add_combo_branch(combo) {
     const values = Object.values(combo);
 
     if (TYPE_DATABASE === 'mysqlite') {
-        const queryText = `INSERT INTO dish_and_combo_features (id_companies, id_branches, id_dishes_and_combos, price_1, amount, product_cost, revenue_1, purchase_unit) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+        const queryText = `INSERT INTO dish_and_combo_features (id_companies, id_branches, id_dishes_and_combos, price_1, price_2, amount, product_cost, revenue_1, purchase_unit) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
         return new Promise((resolve) => {
             database.run(queryText, values, function(err) {
@@ -1229,7 +1229,7 @@ async function add_combo_branch(combo) {
             });
         });
     } else {
-        const queryText = 'INSERT INTO "Inventory".dish_and_combo_features(id_companies, id_branches, id_dishes_and_combos, price_1, amount, product_cost, revenue_1, purchase_unit) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id';
+        const queryText = 'INSERT INTO "Inventory".dish_and_combo_features(id_companies, id_branches, id_dishes_and_combos, price_1, price_2, amount, product_cost, revenue_1, purchase_unit) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id';
 
         try {
             const result = await database.query(queryText, values);

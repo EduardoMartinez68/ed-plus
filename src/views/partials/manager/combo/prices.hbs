@@ -1,48 +1,54 @@
 <hr>
 <div class="row">
-    <div class="col-5">
-        <label for="validationCustom01">Precio promedio *</label>
-        <input type="text" id="averagePrice" class="form-control" name="averagePrice" min="0" step="1" placeholder="Price" required readonly>
+    <div class="col">
+        <info-label label="Precio de venta al publico *"
+            message="Este es el precio que se mostrara en el punto de venta. Contiene tu % de ganancia , el precio de compra al proveedor y los impuestos.">
+        </info-label>
+        <input type="text" id="pricePublic" class="form-control" name="price1" min="0" step="1"
+            placeholder="Precio al publico" value="{{price_1}}" readonly>
     </div>
-    <div class="col-2">
+    <div class="col" style="display: none;">
+        <info-label label="Precio recomendado *"
+            message="Este es el precio sugerido para el producto calculado por el sistema.">
+        </info-label>
+        <input type="text" id="averagePrice" class="form-control" name="averagePrice" min="0" step="1"
+            placeholder="Price" required readonly>
+    </div>
+    <div class="col-2" style="display: none;">
         <label for="validationCustom01">Divisa *</label>
         <select name="selectCurrency" class="form-select" aria-label="Default select example">
             {{>unity/unitOfMoney}}
         </select>
     </div>
 </div>
-    <!--price with taxes--->
-    <div class="row">
-        <div class="col">
-            <label for="validationCustom01">Precio de venta al publico</label>
-            <input type="text" id="pricePublic" class="form-control"  name="price1" min="0" step="1" placeholder="Precio al publico" value="{{price_1}}" readonly>
-        </div>
+
+
+<!--price out taxes--->
+<div class="row mt-2">
+    <div class="col">
+        <label for="validationCustom01">Precio de venta por (unidad/kg)*</label>
+        <input type="text" id="price1" class="form-control" name="price2" min="0" step="1" placeholder="Sale price"
+            required oninput="calculate_input_price(1)" value="{{price_2}}">
     </div>
-
-
-    <!--price out taxes--->
-    <div class="row mt-2">
-        <div class="col">
-            <label for="validationCustom01">Precio de venta por (unidad/kg)*</label>
-            <input type="text" id="price1" class="form-control"  name="price2" min="0" step="1" placeholder="Sale price" required oninput="calculate_input_price(1)" value="{{price_2}}">
-        </div>
-        <div class="col">
-            <label for="validationCustom01">% Ganancia por (unidad/kg)*</label>
-            <input type="text" id="revenue1" class="form-control"  name="revenue1" min="0" step="1" placeholder="Revenue" required oninput="calculate_input_revenue(1)" value="{{revenue_1}}">
-        </div>
+    <div class="col">
+        <label for="validationCustom01">% Ganancia por (unidad/kg)*</label>
+        <input type="text" id="revenue1" class="form-control" name="revenue1" min="0" step="1" placeholder="Revenue"
+            required oninput="calculate_input_revenue(1)" value="{{revenue_1}}">
     </div>
+</div>
 
-    <br>
-    <div class="row">
-        <div class="col-3">
-            <button type="button" onclick="toggleDiv(1)" class="form-control">Añadir más precio <i class="fi-icon fi-sr-add"></i></button>
-        </div>
+<br>
+<div class="row" style="display: none;">
+    <div class="col-3">
+        <button type="button" onclick="toggleDiv(1)" class="form-control">Añadir más precio <i
+                class="fi-icon fi-sr-add"></i></button>
     </div>
+</div>
 
 
-    <div class="row">
-        <div id="div1" class="hidden">
-            <!--
+<div class="row">
+    <div id="div1" class="hidden">
+        <!--
             <div class="row">
                 <div class="col">
                     <label for="validationCustom01">Segundo precio de venta</label>
@@ -65,72 +71,72 @@
                 </div>
             </div>
             --->
-        </div>
     </div>
+</div>
 
 
 
 <script>
-    function calculate_input_price(input){
-        const price=get_input_price(input)
-        const revenue=get_input_revenue(input)
-        calculate_revenue(price,revenue);
+    function calculate_input_price(input) {
+        const price = get_input_price(input)
+        const revenue = get_input_revenue(input)
+        calculate_revenue(price, revenue);
         update_the_total_of_the_product();
     }
 
-    function calculate_input_revenue(input){
-        const price=get_input_price(input)
-        const revenue=get_input_revenue(input)
-        calculate_price(price,revenue)
+    function calculate_input_revenue(input) {
+        const price = get_input_price(input)
+        const revenue = get_input_revenue(input)
+        calculate_price(price, revenue)
     }
 
-    function get_input_price(input){
+    function get_input_price(input) {
         var price = document.getElementById("price1");
 
-        if (input==2){
+        if (input == 2) {
             price = document.getElementById("price2");
         }
-        else if (input==3){
+        else if (input == 3) {
             price = document.getElementById("price3");
         }
 
         return price;
     }
 
-    function get_input_revenue(input){
+    function get_input_revenue(input) {
         var revenue = document.getElementById("revenue1");
 
-        if (input==2){
+        if (input == 2) {
             revenue = document.getElementById("revenue2");
         }
-        else if (input==3){
+        else if (input == 3) {
             revenue = document.getElementById("revenue3");
         }
 
         return revenue;
     }
 
-    function calculate_price(price,revenue){
+    function calculate_price(price, revenue) {
         //we will doing a rule of three for calculate the price 
-        const total=get_price_total();
-        const valueRevenue=revenue.value;
-        const newPrice=(valueRevenue*total)/100;
+        const total = get_price_total();
+        const valueRevenue = revenue.value;
+        const newPrice = (valueRevenue * total) / 100;
 
         //update the input of the price 
-        price.value=total+newPrice;
+        price.value = total + newPrice;
     }
 
-    function calculate_revenue(price,revenue){
+    function calculate_revenue(price, revenue) {
         //we will doing a rule of three for calculate the revenue 
-        const total=get_price_total();
-        const valuePrice=price.value;
-        const newRevenue=(valuePrice*100)/total;
+        const total = get_price_total();
+        const valuePrice = price.value;
+        const newRevenue = (valuePrice * 100) / total;
 
         //update the input of the revenue 
-        revenue.value=newRevenue-100;
+        revenue.value = newRevenue - 100;
     }
 
-    function get_price_total(){
+    function get_price_total() {
         const total = document.getElementById("total");
         return parseFloat(total.textContent);
     }

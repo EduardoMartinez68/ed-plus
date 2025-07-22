@@ -751,6 +751,7 @@ function create_combo_data_branch(idCombo, idCompany, id_branch) {
         idBranch: id_branch,
         idDishesAndCombos: idCombo,
         price_1: 0,
+        price_2: 0,
         amount: 0,
         product_cost: 0,
         revenue_1: 0,
@@ -2511,12 +2512,11 @@ router.post('/fud/:id_company/:id_branch/add-product-free', isLoggedIn, async (r
             //get the new combo
             const combo = await create_a_new_combo(req);
             combo.path_image = infoSupplies.img;
-            
             const dataProduct = { idProduct: idSupplies, amount: 1, foodWaste: supplies.sale_amount, unity: supplies.sale_unity, additional: 0 }
             combo.supplies.push(dataProduct); //update the data of supplies use only the barcode of the product
 
             //we will see if can add the combo to the database
-            const idCombos = await addDatabase.add_product_combo_company(combo) 
+            const idCombos = await addDatabase.add_product_combo_company(combo);
 
             //we will wach if the user have a branch free or a franquicia
             if (req.user.rol_user != rolFree) {
@@ -2532,12 +2532,14 @@ router.post('/fud/:id_company/:id_branch/add-product-free', isLoggedIn, async (r
             } else {
                 //get the data combo in the branch
                 const comboData = create_combo_data_branch(idCombos, id_company, id_branch);
-
+                comboData.price_1=req.body.sale_price;
+                comboData.price_2=req.body.sale_price;
+                comboData.amount=req.body.sale_amount;
                 // save the combo in the branch
                 const idComboFacture = await addDatabase.add_combo_branch(comboData); //--
                 if (idComboFacture) {
                     canAdd = true;
-                    await update_price_combo_for_excel(supplies.sale_price, idComboFacture);
+                    //await update_price_combo_for_excel(supplies.sale_price, idComboFacture);
                     res.redirect(`/links/${id_company}/${id_branch}/${idComboFacture}/edit-products-free`);
                 }
             }

@@ -5,126 +5,145 @@
 
     {{>free/combo/form}}
 
+    <div class="row">
+        <div class="row">
+            <div class="col">
+                <label>Monto de Venta *</label><br>
+                <input type="tex" class="form-control" name="sale_amount" placeholder="Monto de Venta" required
+                    value="{{purchase_price}}" value="1">
+            </div>
+            <div class="col">
+                <label>Unidad de Venta</label>
+                <select value="{{sale_unity}}" name="sale_unity" class="form-select">
+                    {{>unity/unitOfMeasure}}
+                </select>
+            </div>
+            <div class="col">
+                <label>Precio de Venta</label><br>
+                <input type="tex" class="form-control" name="sale_price" placeholder="Precio de Venta" required
+                    value="{{sale_price}}" id="sale_price">
+            </div>
+            <div class="col" style="display: none;">
+                <label>Moneda de uso</label>
+                <select value="{{currency_sale}}" name="currency_sale" class="form-select">
+                    {{>unity/unitOfMoney}}
+                </select>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="dropdown-toggle-box">
+        <div class="dropdown-header" onclick="watch_most('informationOfInventory')">
+            <label class="mb-0 fw-semibold">Información de Inventario</label>
+            <i class="fi fi-rr-angle-down" id="icon-addressSection"></i>
+        </div>
 
-    <!--this is for data of the supplies-->
-    <div class="form-group">
-        <div class="form-check" name="">
-            <input class="form-check-input" type="checkbox" id="invalidCheck2" name="inventory">
-            <label class="form-check-label" for="invalidCheck2">
-                Usar inventario
-            </label>
+        <!-- Contenido oculto con animación -->
+        <div id="informationOfInventory" class="dropdown-content collapsed">
+            <div class="row">
+                <hr>
+                <label for="">Informacion de Venta</label>
+                <!--this is for data of the supplies-->
+                <div class="form-group">
+                    <div class="form-check" name="">
+                        <input class="form-check-input" type="checkbox" id="invalidCheck2" name="inventory">
+                        <label class="form-check-label" for="invalidCheck2">
+                            Usar inventario
+                        </label>
+                    </div>
+                </div>
+                <br>
+                <div class="content_box">
+
+                    <div class="content-sales active">
+                        <br>
+                        <div class="row">
+                            <div class="col">
+                                <label>Inventario Máximo</label><br>
+                                <input type="tex" class="form-control" name="max_inventory"
+                                    placeholder="Inventario Máximo" value="{{max_inventary}}">
+                            </div>
+                            <div class="col">
+                                <label>Inventario Mínimo</label><br>
+                                <input type="tex" class="form-control" name="minimum_inventory"
+                                    placeholder="Inventario Mínimo" value="{{minimum_inventory}}">
+                            </div>
+                            <div class="col">
+                                <label>Unidad de Medida *</label><br>
+                                <select value="{{unit_inventory}}" name="unit_inventory" class="form-select">
+                                    {{>unity/unitOfMeasure}}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label>Existencia</label><br>
+                                <input type="tex" class="form-control" name="existence" placeholder="Existencia"
+                                    required value="{{existence}}">
+                            </div>
+                        </div>
+
+                        <br>
+                    </div>
+                    <br>
+                </div>
+            </div>
         </div>
     </div>
 
     <div class="row">
-        <hr>
-        <label for="">Informacion de Venta</label>
-        <br><br>
-        <div class="content_box">
+        <div class="dropdown-toggle-box">
+            <div class="dropdown-header" onclick="watch_most('infromationOfSale')">
+                <label class="mb-0 fw-semibold">Información de Compra a Provedor</label>
+                <i class="fi fi-rr-angle-down" id="icon-addressSection"></i>
+            </div>
 
-            <div class="content-sales active">
-
+            <!-- Contenido oculto con animación -->
+            <div id="infromationOfSale" class="dropdown-content collapsed">
                 <div class="row">
                     <div class="col">
-                        <label>Monto de Venta *</label><br>
-                        <input type="tex" class="form-control" name="sale_amount" placeholder="Monto de Venta" required
-                            value="{{purchase_price}}" value="1">
+                        <label>Cantidad que compras al proveedor *</label><br>
+                        <input type="tex" class="form-control" name="purchase_amount"
+                            placeholder="Monto de Compra al Proveedor" autofocus value="{{purchase_amount}}">
                     </div>
                     <div class="col">
-                        <label>Unidad de Venta</label>
-                        <select value="{{sale_unity}}" name="sale_unity" class="form-select">
+                        <label>Unidad de Compra al proveedor</label>
+                        <select value="{{purchase_unity}}" name="purchase_unity" class="form-select">
                             {{>unity/unitOfMeasure}}
                         </select>
                     </div>
                     <div class="col">
-                        <label>Precio de Venta</label><br>
-                        <input type="tex" class="form-control" name="sale_price" placeholder="Precio de Venta" required
-                            value="{{sale_price}}" id="sale_price">
+                        <info-label label="Precio que pagas al proveedor *"
+                            message="Este es el total que pagaste al proveedor por toda la cantidad comprada.">
+                        </info-label>
+                        <br>
+                        <input type="tex" class="form-control" name="purchase_price"
+                            placeholder="Precio total de compra" value="{{purchase_price}}">
                     </div>
                     <div class="col">
-                        <label>Moneda de uso</label>
-                        <select value="{{currency_sale}}" name="currency_sale" class="form-select">
+                        <label>Moneda de compra al proveedor *</label>
+                        <select value="{{currency_purchase}}" name="currency_purchase" class="form-select">
                             {{>unity/unitOfMoney}}
                         </select>
                     </div>
-                </div>
-                <br>
-                <div class="row">
-                    <div class="col">
-                        <label>Inventario Máximo</label><br>
-                        <input type="tex" class="form-control" name="max_inventory" placeholder="Inventario Máximo"
-                            value="{{max_inventary}}">
-                    </div>
-                    <div class="col">
-                        <label>Inventario Mínimo</label><br>
-                        <input type="tex" class="form-control" name="minimum_inventory" placeholder="Inventario Mínimo"
-                            value="{{minimum_inventory}}">
-                    </div>
-                    <div class="col">
-                        <label>Unidad de Medida *</label><br>
-                        <select value="{{unit_inventory}}" name="unit_inventory" class="form-select">
-                            {{>unity/unitOfMeasure}}
-                        </select>
-                    </div>
+                    <br>
                 </div>
                 <div class="row">
-                    <div class="col">
-                        <label>Existencia</label><br>
-                        <input type="tex" class="form-control" name="existence" placeholder="Existencia" required
-                            value="{{existence}}">
-                    </div>
-                </div>
-
-                <br>
-                <div class="dropdown-toggle-box">
-                    <div class="dropdown-header" onclick="watch_most('infromationOfSale')">
-                        <label class="mb-0 fw-semibold">Información de Compra a Provedor</label>
-                        <i class="fi fi-rr-angle-down" id="icon-addressSection"></i>
-                    </div>
-
-                    <!-- Contenido oculto con animación -->
-                    <div id="infromationOfSale" class="dropdown-content collapsed">
-                        <div class="row">
-                            <div class="col">
-                                <label>Cantidad que compras al proveedor *</label><br>
-                                <input type="tex" class="form-control" name="purchase_amount" placeholder="Monto de Compra al Proveedor"
-                                    autofocus required value="{{purchase_amount}}">
-                            </div>
-                            <div class="col">
-                                <label>Unidad de Compra al proveedor</label>
-                                <select value="{{purchase_unity}}" name="purchase_unity" class="form-select">
-                                    {{>unity/unitOfMeasure}}
-                                </select>
-                            </div>
-                            <div class="col">
-                                <info-label label="Precio que pagas al proveedor *"
-                                        message="Este es el total que pagaste al proveedor por toda la cantidad comprada.">
-                                </info-label>
-                                <br>
-                                <input type="tex" class="form-control" name="purchase_price" placeholder="Precio total de compra"
-                                    required value="{{purchase_price}}">
-                            </div>
-                            <div class="col">
-                                <label>Moneda de compra al proveedor *</label>
-                                <select value="{{currency_purchase}}" name="currency_purchase" class="form-select">
-                                    {{>unity/unitOfMoney}}
-                                </select>
-                            </div>
-                            <br>
-                        </div>
-                        <div class="row">
-                            <br><br><br>
-                            <small class="text-muted">
-                                Ejemplo: Compraste 10 kilos de carne a tu proveedor por 300.00 pesos. Aquí debes registrar que compraste "10", en "kilos", por "300.00", en "MXN".
-                            </small>
-                        </div>
-                    </div>
-
+                    <label class="text-muted">
+                        <br>
+                        Ejemplo: Compraste 10 kilos de carne a tu proveedor por 300.00 pesos. Aquí debes registrar que
+                        compraste "10", en "kilos", por "300.00", en "MXN".
+                    </label
+                    >
                 </div>
             </div>
-            <br>
+
         </div>
     </div>
+
+
+
+
     <div class="form-group">
         <div class="row">
             <!--
@@ -143,7 +162,7 @@
 </form>
 
 <script>
-    async function create_new_product_flash(){
+    async function create_new_product_flash() {
         const loadingOverlay = document.getElementById("loadingOverlay");
 
         //if in our api not exist this product, we will search in the API free
@@ -181,12 +200,12 @@
             });
 
             const result = await response.json();
-            
+
             if (result.code) {
-                notificationMessage(data.name+" agregado", result.message);
-                selectedProductData={}
+                notificationMessage(data.name + " agregado", result.message);
+                selectedProductData = {}
             } else {
-                errorMessage("El producto '"+data.name+"' no se pudo agregar", result.message);
+                errorMessage("El producto '" + data.name + "' no se pudo agregar", result.message);
             }
 
         } catch (error) {
@@ -194,7 +213,7 @@
             errorMessage("💥 Error al crear producto Flash:", error);
         } finally {
             loadingOverlay.style.display = "none";
-        }    
+        }
     }
 </script>
 <script>
