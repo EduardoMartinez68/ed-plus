@@ -9,8 +9,8 @@
         <div class="row">
             <div class="col">
                 <label>Monto de Venta *</label><br>
-                <input type="tex" class="form-control" name="sale_amount" placeholder="Monto de Venta" required
-                    value="{{purchase_price}}" value="1">
+                <input type="number" class="form-control" name="sale_amount" placeholder="Monto de Venta" required
+                    value="{{purchase_price}}" value="1" min="1" step="1">
             </div>
             <div class="col">
                 <label>Unidad de Venta</label>
@@ -19,8 +19,8 @@
                 </select>
             </div>
             <div class="col">
-                <label>Precio de Venta</label><br>
-                <input type="tex" class="form-control" name="sale_price" placeholder="Precio de Venta" required
+                <label>Precio de Venta *</label><br>
+                <input type="number" class="form-control" name="sale_price" placeholder="Precio de Venta" required
                     value="{{sale_price}}" id="sale_price">
             </div>
             <div class="col" style="display: none;">
@@ -60,12 +60,12 @@
                         <div class="row">
                             <div class="col">
                                 <label>Inventario Máximo</label><br>
-                                <input type="tex" class="form-control" name="max_inventory"
+                                <input type="number" class="form-control" name="max_inventory"
                                     placeholder="Inventario Máximo" value="{{max_inventary}}">
                             </div>
                             <div class="col">
                                 <label>Inventario Mínimo</label><br>
-                                <input type="tex" class="form-control" name="minimum_inventory"
+                                <input type="number" class="form-control" name="minimum_inventory"
                                     placeholder="Inventario Mínimo" value="{{minimum_inventory}}">
                             </div>
                             <div class="col">
@@ -78,7 +78,7 @@
                         <div class="row">
                             <div class="col">
                                 <label>Existencia</label><br>
-                                <input type="tex" class="form-control" name="existence" placeholder="Existencia"
+                                <input type="number" class="form-control" name="existence" placeholder="Existencia"
                                     required value="{{existence}}">
                             </div>
                         </div>
@@ -102,25 +102,29 @@
             <div id="infromationOfSale" class="dropdown-content collapsed">
                 <div class="row">
                     <div class="col">
-                        <label>Cantidad que compras al proveedor *</label><br>
-                        <input type="tex" class="form-control" name="purchase_amount"
+                        <info-label label="Cantidad que compras al proveedor *"
+                            message="La cantidad de este articulo que le compras al proveedor.">
+                        </info-label>
+                        <input type="number" class="form-control" name="purchase_amount"
                             placeholder="Monto de Compra al Proveedor" autofocus value="{{purchase_amount}}">
                     </div>
                     <div class="col">
-                        <label>Unidad de Compra al proveedor</label>
+                        <info-label label="Unidad de Compra al proveedor"
+                            message="Esta es la unidad en la que compras al proveedor. Que sea la misma que usas para vender.">
+                        </info-label>
                         <select value="{{purchase_unity}}" name="purchase_unity" class="form-select">
                             {{>unity/unitOfMeasure}}
                         </select>
                     </div>
                     <div class="col">
-                        <info-label label="Precio que pagas al proveedor *"
-                            message="Este es el total que pagaste al proveedor por toda la cantidad comprada.">
+                        <info-label label="Precio del proveedor *"
+                            message="Este es el precio que pagas al proveedor por cada unidad.">
                         </info-label>
                         <br>
-                        <input type="tex" class="form-control" name="purchase_price"
+                        <input type="number" class="form-control" name="purchase_price"
                             placeholder="Precio total de compra" value="{{purchase_price}}">
                     </div>
-                    <div class="col">
+                    <div class="col" style="display: none;">
                         <label>Moneda de compra al proveedor *</label>
                         <select value="{{currency_purchase}}" name="currency_purchase" class="form-select">
                             {{>unity/unitOfMoney}}
@@ -153,8 +157,7 @@
             -->
             <div class="col">
                 <div class="d-flex">
-                    <button type="submit" class="btn btn-edit ms-auto" id="btn-send"
-                        onclick="saveProduct()">Siguiente</button>
+                    <button type="submit" class="btn btn-edit ms-auto" id="btn-send">Siguiente</button>
                 </div>
             </div>
         </div>

@@ -145,8 +145,7 @@ async function create_a_new_image(req) {
     // 1. Cuando subes un archivo local
     if (req.file) {
         const filePath = req.file.path;
-
-        // Verifica que el archivo original exista
+        
         if (!fs.existsSync(filePath)) {
             console.error(`❌ El archivo no existe: ${filePath}`);
             return null;
@@ -156,22 +155,17 @@ async function create_a_new_image(req) {
         const destPath = path.join(path.dirname(filePath), filenameWebp);
 
         try {
-            // Convertir la imagen a webp
             await sharp(filePath)
                 .webp({ quality: 80 })
                 .toFile(destPath);
 
-            // Esperar un poco (Windows fix)
             await new Promise(resolve => setTimeout(resolve, 100));
-
-            // Eliminar archivo original
             await fs.promises.unlink(filePath);
         } catch (err) {
             console.error(`⚠️ Error al procesar la imagen: ${err.message}`);
-            return null;
+            return `/uploads/${filenameWebp}`;
         }
 
-        // Subir la nueva imagen webp
         const imageUrl = await upload_image_to_space(destPath, filenameWebp);
         return imageUrl;
     }
@@ -2512,6 +2506,8 @@ router.post('/fud/:id_company/:id_branch/add-product-free', isLoggedIn, async (r
             //get the new combo
             const combo = await create_a_new_combo(req);
             combo.path_image = infoSupplies.img;
+            console.log(combo)
+            console.log(infoSupplies)
             const dataProduct = { idProduct: idSupplies, amount: 1, foodWaste: supplies.sale_amount, unity: supplies.sale_unity, additional: 0 }
             combo.supplies.push(dataProduct); //update the data of supplies use only the barcode of the product
 

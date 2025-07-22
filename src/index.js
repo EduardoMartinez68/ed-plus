@@ -505,8 +505,8 @@ function getLocalIP() {
 //const { exec } = require('child_process');
 
 serverExpress.listen(serverExpress.get('port'), '0.0.0.0', () => {
-  //const url = `http://${getLocalIP()}:${serverExpress.get('port')}`;
-  const url = `http://localhost:${serverExpress.get('port')}`; 
+  const url = `http://${getLocalIP()}:${serverExpress.get('port')}`;
+  //const url = `http://localhost:${serverExpress.get('port')}`; 
   console.log(`Server running on ${url}`);
 
   if(TYPE_SYSTME=='desktop'){
