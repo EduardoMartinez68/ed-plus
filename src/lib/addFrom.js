@@ -145,7 +145,7 @@ async function create_a_new_image(req) {
     // 1. Cuando subes un archivo local
     if (req.file) {
         const filePath = req.file.path;
-        
+
         if (!fs.existsSync(filePath)) {
             console.error(`❌ El archivo no existe: ${filePath}`);
             return null;
@@ -174,25 +174,24 @@ async function create_a_new_image(req) {
     if (req.body.imageUrl && req.body.imageUrl.startsWith('http')) {
         const url = req.body.imageUrl.trim();
         const filename = `img_${Date.now()}.webp`;
-
         const originalPath = path.join(pathFolderUpload, `temp_${filename}`);
-        await downloadImageFromUrl(url, `temp_${filename}`);
-
-        const destPath = path.join(pathFolderUpload, filename);
-        await sharp(filePath)
-            .webp({ quality: 80 })
-            .toFile(destPath);
 
         try {
-            await fs.promises.unlink(filePath);
+            await downloadImageFromUrl(url, `temp_${filename}`);
+
+            const destPath = path.join(pathFolderUpload, filename);
+            await sharp(originalPath)
+                .webp({ quality: 80 })
+                .toFile(destPath);
+
+            await fs.promises.unlink(originalPath); // Elimina el archivo temporal
+
+            return `/uploads/${filename}`;
         } catch (err) {
-            console.error('No se pudo eliminar el archivo:', err.message);
+            console.error('⚠️ Error procesando imagen remota:', err.message);
+            return '';
         }
-
-        fs.unlinkSync(originalPath);
-        return `/uploads/${filename}`;
     }
-
     return '';
 }
 

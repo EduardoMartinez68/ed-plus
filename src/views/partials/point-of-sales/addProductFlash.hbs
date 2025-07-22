@@ -409,7 +409,7 @@
                 existence: document.querySelector('input[name="existence"]').value,
                 inventory: document.querySelector('input[name="inventory"]').checked
             };
-
+            
             // LLAMADA A TU BACKEND LOCAL
             const response = await fetch(`/links/add_new_product_with_flask`, {
                 method: 'POST',
@@ -426,7 +426,7 @@
             } else {
                 errorMessage("El producto '"+data.name+"' no se pudo agregar", result.message);
             }
-
+            
         } catch (error) {
             closeInformationPop();
             selectedProductData={}
