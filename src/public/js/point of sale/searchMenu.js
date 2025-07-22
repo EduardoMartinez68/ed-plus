@@ -385,7 +385,7 @@ function updateProductCards(products) {
           const productPrice3 = cardProduct.getAttribute('data-price-3') || '0';
           const typeProduct = cardProduct.getAttribute('this_product_is_sold_in_bulk');
           const id_dishes_and_combos = cardProduct.getAttribute('id_dishes_and_combos');
-          console.log(typeProduct)
+          
           //we will see if the product that the user would like add to the card is a product that is sold in bulk
           if (typeProduct == 'true' || typeProduct==1 || typeProduct=='1' || typeProduct=='on') {
             //update the cant in the scale

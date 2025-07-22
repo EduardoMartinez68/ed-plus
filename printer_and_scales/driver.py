@@ -26,6 +26,68 @@ print(escpos.__file__)
 def impresoras():
     return jsonify(get_connected_printers())
 
+
+
+
+@app.route("/imprimir_odoo", methods=["POST"])
+def imprimir_odoo():
+    try:
+        data = request.get_json()
+        texto='Impresion exitosa'
+        
+        
+        # Construir el texto del ticket como cadena
+        lineas = []
+        lineas.append("     Antojos de San Luis       \n")
+        lineas.append(" Muchas gracias por tu compra\n")
+        lineas.append("-----------------------------\n")
+        lineas.append(f"Fecha: {data.get('date', '')}\n")
+        lineas.append(f"Cajero: {data.get('cashier', '')}\n")
+        lineas.append(f"Pedido: {data.get('name', '')}\n")
+        lineas.append("-----------------------------\n")
+        for linea in data.get('orderlines', []):
+            nombre = linea.get('productName', '')[:20].ljust(20)
+
+            # qty viene como string, convertir a float
+            try:
+                qty = float(linea.get('qty', '0').replace(',', '.'))
+            except Exception:
+                qty = 0.0
+
+            # price viene como string con símbolo $ y espacio no estándar, limpiar
+            raw_price = linea.get('price', '0').replace('$', '').replace('\xa0', '').strip()
+            try:
+                price = float(raw_price.replace(',', '.'))
+            except Exception:
+                price = 0.0
+
+            total = qty * price
+            lineas.append(f"{nombre}{qty:.2f} pza x {price:.2f}$ = {total:.2f}$\n")
+        lineas.append("-----------------------------\n")
+        
+        # Totales alineados a la derecha
+        amount_total = data.get('amount_total', 0.0)
+        total_paid = data.get('total_paid', 0.0)
+        change = data.get('change', 0.0)
+
+        lineas.append(f"TOTAL:      {amount_total:.2f}$\n")
+        lineas.append(f"EFECTIVO:   {total_paid:.2f}$\n")
+        lineas.append(f"CAMBIO:     {change:.2f}$\n")
+        lineas.append("\n")
+        lineas.append("     ¡Gracias por su compra!\n\n")
+        
+        texto = "".join(lineas)
+        
+
+        # Imprimir el texto con tu función
+        impresora = "POS-58"  # Cambia al nombre de tu impresora si es diferente
+        print(texto)
+        success = print_text(texto, impresora)
+
+        return jsonify({"ok": success})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)})
+    
 @app.route("/imprimir", methods=["POST"])
 def imprimir():
     data = request.get_json()
@@ -134,6 +196,7 @@ def imprimir_imagen():
     data = request.get_json()
     image_data = data.get("image", "")
     impresora_nombre = data.get("impresora", None)
+    print(impresora_nombre)
     ticket_width_mm = data.get("ticketWidth", 80)  # lee el tamaño
 
     if not image_data.startswith("data:image/png;base64,"):

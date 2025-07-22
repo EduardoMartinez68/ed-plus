@@ -1,5 +1,5 @@
 {{#each branchFree}}
-<form action="/fud/{{id_companies}}/{{id}}/add-product-free" method="post">
+<form action="/fud/{{id_companies}}/{{id}}/add-product-free" method="post" enctype="multipart/form-data">
     <input type="hidden" value="{{id}}" name="id_branch">
     {{/each}}
 
@@ -23,31 +23,6 @@
         <div class="content_box">
 
             <div class="content-sales active">
-                <div class="row">
-                    <div class="col">
-                        <label>Monto de Compra *</label><br>
-                        <input type="tex" class="form-control" name="purchase_amount" placeholder="Monto de Compra"
-                            autofocus required value="{{purchase_amount}}">
-                    </div>
-                    <div class="col">
-                        <label>Unidad de Compra</label>
-                        <select value="{{purchase_unity}}" name="purchase_unity" class="form-select">
-                            {{>unity/unitOfMeasure}}
-                        </select>
-                    </div>
-                    <div class="col">
-                        <label>Precio de Compra *</label><br>
-                        <input type="tex" class="form-control" name="purchase_price" placeholder="Precio de Compra"
-                            required value="{{purchase_price}}">
-                    </div>
-                    <div class="col">
-                        <label>Moneda de compra</label>
-                        <select value="{{currency_purchase}}" name="currency_purchase" class="form-select">
-                            {{>unity/unitOfMoney}}
-                        </select>
-                    </div>
-                </div>
-                <br>
 
                 <div class="row">
                     <div class="col">
@@ -98,6 +73,53 @@
                         <input type="tex" class="form-control" name="existence" placeholder="Existencia" required
                             value="{{existence}}">
                     </div>
+                </div>
+
+                <br>
+                <div class="dropdown-toggle-box">
+                    <div class="dropdown-header" onclick="watch_most('infromationOfSale')">
+                        <label class="mb-0 fw-semibold">Información de Compra a Provedor</label>
+                        <i class="fi fi-rr-angle-down" id="icon-addressSection"></i>
+                    </div>
+
+                    <!-- Contenido oculto con animación -->
+                    <div id="infromationOfSale" class="dropdown-content collapsed">
+                        <div class="row">
+                            <div class="col">
+                                <label>Cantidad que compras al proveedor *</label><br>
+                                <input type="tex" class="form-control" name="purchase_amount" placeholder="Monto de Compra al Proveedor"
+                                    autofocus required value="{{purchase_amount}}">
+                            </div>
+                            <div class="col">
+                                <label>Unidad de Compra al proveedor</label>
+                                <select value="{{purchase_unity}}" name="purchase_unity" class="form-select">
+                                    {{>unity/unitOfMeasure}}
+                                </select>
+                            </div>
+                            <div class="col">
+                                <info-label label="Precio que pagas al proveedor *"
+                                        message="Este es el total que pagaste al proveedor por toda la cantidad comprada.">
+                                </info-label>
+                                <br>
+                                <input type="tex" class="form-control" name="purchase_price" placeholder="Precio total de compra"
+                                    required value="{{purchase_price}}">
+                            </div>
+                            <div class="col">
+                                <label>Moneda de compra al proveedor *</label>
+                                <select value="{{currency_purchase}}" name="currency_purchase" class="form-select">
+                                    {{>unity/unitOfMoney}}
+                                </select>
+                            </div>
+                            <br>
+                        </div>
+                        <div class="row">
+                            <br><br><br>
+                            <small class="text-muted">
+                                Ejemplo: Compraste 10 kilos de carne a tu proveedor por 300.00 pesos. Aquí debes registrar que compraste "10", en "kilos", por "300.00", en "MXN".
+                            </small>
+                        </div>
+                    </div>
+
                 </div>
             </div>
             <br>

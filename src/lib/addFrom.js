@@ -140,77 +140,67 @@ async function delete_image_upload(pathImg) {
 }
 
 async function create_a_new_image(req) {
-    
+    const pathFolderUpload = get_path_folder_upload();
+
+    // 1. Cuando subes un archivo local
     if (req.file) {
         const filePath = req.file.path;
+
+        // Verifica que el archivo original exista
+        if (!fs.existsSync(filePath)) {
+            console.error(`❌ El archivo no existe: ${filePath}`);
+            return null;
+        }
+
         const filenameWebp = path.parse(req.file.filename).name + '.webp';
         const destPath = path.join(path.dirname(filePath), filenameWebp);
 
-        // Convierte la imagen a webp
-        await sharp(filePath)
-            .webp({ quality: 80 })  // Calidad 80, puedes ajustar
-            .toFile(destPath);
+        try {
+            // Convertir la imagen a webp
+            await sharp(filePath)
+                .webp({ quality: 80 })
+                .toFile(destPath);
 
-        // Opcional: borrar el archivo original para ahorrar espacio
-        fs.unlinkSync(filePath);
+            // Esperar un poco (Windows fix)
+            await new Promise(resolve => setTimeout(resolve, 100));
 
-        // Subir o devolver la nueva imagen webp
+            // Eliminar archivo original
+            await fs.promises.unlink(filePath);
+        } catch (err) {
+            console.error(`⚠️ Error al procesar la imagen: ${err.message}`);
+            return null;
+        }
+
+        // Subir la nueva imagen webp
         const imageUrl = await upload_image_to_space(destPath, filenameWebp);
         return imageUrl;
     }
 
+    // 2. Cuando llega una URL
     if (req.body.imageUrl && req.body.imageUrl.startsWith('http')) {
         const url = req.body.imageUrl.trim();
-        const pathFolderUpload=get_path_folder_upload()
+        const filename = `img_${Date.now()}.webp`;
 
-        const cleanUrl = url.split('?')[0];
-        // Siempre .webp porque vamos a convertir
-        const filename = Date.now() + '.webp';
+        const originalPath = path.join(pathFolderUpload, `temp_${filename}`);
+        await downloadImageFromUrl(url, `temp_${filename}`);
 
-        // Descarga la imagen original en formato original primero
-        
-        //const originalPath = path.join(__dirname, '../public/img/uploads', 'temp_' + filename);
-        const originalPath = path.join(pathFolderUpload, 'temp_' + filename);
-        await downloadImageFromUrl(url, 'temp_' + filename);
-
-        // Convierte la imagen descargada a webp
-        //const destPath = path.join(__dirname, '../public/img/uploads', filename);
         const destPath = path.join(pathFolderUpload, filename);
-
-        await sharp(originalPath)
+        await sharp(filePath)
             .webp({ quality: 80 })
             .toFile(destPath);
 
-        // Borrar archivo original descargado
-        fs.unlinkSync(originalPath);
+        try {
+            await fs.promises.unlink(filePath);
+        } catch (err) {
+            console.error('No se pudo eliminar el archivo:', err.message);
+        }
 
+        fs.unlinkSync(originalPath);
         return `/uploads/${filename}`;
     }
 
     return '';
-    /*
-    if (req.file) {
-        const filePath = req.file.path;
-        const objectName = req.file.filename;
-        const imageUrl = await upload_image_to_space(filePath, objectName);
-
-        return imageUrl;
-    }
-
-    if (req.body.imageUrl && req.body.imageUrl.startsWith('http')) {
-        const url = req.body.imageUrl.trim();
-        const cleanUrl = url.split('?')[0]; // ✅ eliminamos los parámetros
-        const extension = path.extname(cleanUrl) || '.webp'; // por si no tiene extensión
-        const filename = Date.now() + extension;
-        const imageUrl = await downloadImageFromUrl(url, filename);
-        return imageUrl;
-    }
-
-
-    return '';
-    */
 }
-
 
 //packs 
 async function get_pack_database(id_company) {
@@ -2502,10 +2492,10 @@ router.post('/fud/:id_company/:id_branch/add-product-free', isLoggedIn, async (r
 
     //this is for create the new supplies and save the id of the supplies
     const newSupplies = await get_supplies_or_product_company(req, false);
-
     newSupplies.id_company = id_company; //update the data of id_company because the function "get_supplies_or_product_company" not have this data,
 
-    const idSupplies = await addDatabase.add_supplies_company(newSupplies); //get the id of the supplies that added
+    const infoSupplies = await addDatabase.add_supplies_company(newSupplies); //get the id of the supplies that added
+    const idSupplies = infoSupplies.id;
 
     //we will see if the product can be save in the database
     if (idSupplies) {
@@ -2520,7 +2510,8 @@ router.post('/fud/:id_company/:id_branch/add-product-free', isLoggedIn, async (r
 
             //get the new combo
             const combo = await create_a_new_combo(req);
-
+            combo.path_image = infoSupplies.img;
+            
             const dataProduct = { idProduct: idSupplies, amount: 1, foodWaste: supplies.sale_amount, unity: supplies.sale_unity, additional: 0 }
             combo.supplies.push(dataProduct); //update the data of supplies use only the barcode of the product
 

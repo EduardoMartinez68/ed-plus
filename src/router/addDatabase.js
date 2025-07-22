@@ -438,7 +438,10 @@ async function save_supplies_company(supplies) {
                         console.error('Error al insertar en SQLite:', err);
                         reject(null);
                     } else {
-                        resolve(this.lastID); // SQLite devuelve el id del último insert con this.lastID
+                        resolve({
+                            id: this.lastID,
+                            img: supplies.img
+                        });
                     }
                 });
             });
@@ -464,7 +467,10 @@ async function save_supplies_company(supplies) {
 
         try {
             const result = await database.query(queryText, values);
-            return result.rows[0].id;
+            return {
+                id: result.rows[0].id,
+                img: supplies.img
+            };
         } catch (error) {
             console.error('Error al insertar en PostgreSQL:', error);
             return null;

@@ -8,8 +8,9 @@
 -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    
+
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,19 +25,20 @@
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-bold-rounded/css/uicons-bold-rounded.css'>
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
 
-    <link href='/css/ultimate/main.min.css' rel='stylesheet'> 
+    <link href='/css/ultimate/main.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="/css/Styles.css">
 
     <!--select-->
     <link href="https://cdn.jsdelivr.net/npm/chosen-js@1.8.7/dist/css/chosen.min.css" rel="stylesheet" />
 </head>
+
 <body>
     {{>load}}
     {{#if user}}
-        {{>titleBar}}
-        {{{body}}}
+    {{>titleBar}}
+    {{{body}}}
     {{else}}
-        {{{body}}}
+    {{{body}}}
     {{/if}}
     {{>message}}
 
@@ -66,10 +68,10 @@
         }
     </script>
     <script>
-        async function send_data_to_server(url, data, load=true) {
+        async function send_data_to_server(url, data, load = true) {
             //her we will see if exist the bar load and if the user would like activate the load bar
-            const loadingOverlay=document.getElementById('loadingOverlay');
-            if(loadingOverlay && load){
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            if (loadingOverlay && load) {
                 //if exist the load bar, we will activate the load
                 loadingOverlay.style.display = 'flex';
             }
@@ -96,13 +98,52 @@
             } catch (error) {
                 console.error('Error al enviar los datos al servidor:', error);
                 return { success: false, error: error.message };
-            }finally{
+            } finally {
                 //if exist the load bar, and the user the activate, we will off the bar 
-                if(loadingOverlay && load){
+                if (loadingOverlay && load) {
                     loadingOverlay.style.display = 'none';
                 }
             }
         }
     </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const tooltip = document.createElement("div");
+            tooltip.className = "erp-tooltip";
+            document.body.appendChild(tooltip);
+
+            document.querySelectorAll("info-label").forEach(el => {
+                const labelText = el.getAttribute("label") || "";
+                const message = el.getAttribute("message") || "";
+
+                const label = document.createElement("label");
+                label.classList.add("info-label-generated");
+
+                const span = document.createElement("span");
+                span.textContent = labelText;
+
+                const icon = document.createElement("i");
+                icon.className = "fi fi-sr-interrogation";
+
+                // Tooltip sobre el ícono
+                icon.addEventListener("mouseenter", () => {
+                    tooltip.textContent = message;
+                    tooltip.style.opacity = "1";
+                });
+                icon.addEventListener("mousemove", (e) => {
+                    tooltip.style.left = (e.pageX + 15) + "px";
+                    tooltip.style.top = (e.pageY - 30) + "px";
+                });
+                icon.addEventListener("mouseleave", () => {
+                    tooltip.style.opacity = "0";
+                });
+
+                label.appendChild(span);
+                label.appendChild(icon);
+                el.replaceWith(label);
+            });
+        });
+    </script>
 </body>
+
 </html>
