@@ -47,34 +47,34 @@ const bucketName = APP_NYCE;
 
 const sharp = require('sharp'); //this is for resize the image and make like webp
 require('dotenv').config();
-const {TYPE_DATABASE}=process.env;
+const {TYPE_DATABASE, TYPE}=process.env;
 const {get_path_folder_upload, get_path_folder_plus}=require('../initialAppForDesktop.js');
 
 async function downloadImageFromUrl(url, filename) {
     const res = await fetch(url);
     if (!res.ok) throw new Error(`Error al descargar imagen: ${res.statusText}`);
 
-    //we will see if the user is use plus lite or server
-    let destPath = get_path_folder_upload(); //this is for when the user is use the lite version
-
-    if (TYPE_DATABASE != 'mysqlite') {
-        destPath = path.join(__dirname, '../public/img/uploads', filename); // para servidor
+    let destPath = get_path_folder_upload();
+    if (TYPE === 'server') {
+        destPath = path.join(__dirname, '../public/img/uploads', filename);
     } else {
-        destPath = path.join(destPath, filename); // ← concatenar el filename
+        destPath = path.join(destPath, filename);
     }
-
 
     const fileStream = fs.createWriteStream(destPath);
 
     await new Promise((resolve, reject) => {
         res.body.pipe(fileStream);
         res.body.on("error", reject);
-        fileStream.on("finish", resolve);
+        fileStream.on("finish", () => {
+            fileStream.close(resolve); // importante para Windows
+        });
     });
 
+    // ✅ Esperar 100ms para dar tiempo al sistema a liberar el archivo
+    await new Promise(resolve => setTimeout(resolve, 100));
 
-    console.log(`/uploads/${filename}`)
-    return `/uploads/${filename}`;
+    return destPath; // cambia aquí: devuelve la ruta absoluta
 }
 
 async function upload_image_to_space(filePath, objectName) {
@@ -162,7 +162,7 @@ async function create_a_new_image(req) {
             await new Promise(resolve => setTimeout(resolve, 100));
             await fs.promises.unlink(filePath);
         } catch (err) {
-            console.error(`⚠️ Error al procesar la imagen: ${err.message}`);
+            console.error(`⚠️ Error al procesar la imagen subida: ${err.message}`);
             return `/uploads/${filenameWebp}`;
         }
 
@@ -174,22 +174,30 @@ async function create_a_new_image(req) {
     if (req.body.imageUrl && req.body.imageUrl.startsWith('http')) {
         const url = req.body.imageUrl.trim();
         const filename = `img_${Date.now()}.webp`;
-        const originalPath = path.join(pathFolderUpload, `temp_${filename}`);
+        //const pathDownload = path.join(pathFolderUpload, `temp_${filename}`);
+
+        // Here we will download the image from the URL and get his name
+        const downloadedPath = await downloadImageFromUrl(url, `temp_${filename}`);
 
         try {
-            await downloadImageFromUrl(url, `temp_${filename}`);
-
+            
+            //this is the path where we will save the image finish converted to webp if not exist
             const destPath = path.join(pathFolderUpload, filename);
-            await sharp(originalPath)
+
+            //convert the image download to a image webp  with the size of 80 quality
+            await sharp(downloadedPath)
                 .webp({ quality: 80 })
                 .toFile(destPath);
 
-            await fs.promises.unlink(originalPath); // Elimina el archivo temporal
+            //wait for the system to release the file
+            await new Promise(resolve => setTimeout(resolve, 100));
 
+            await fs.promises.unlink(downloadedPath); //delete the temporary file of the image downloaded
             return `/uploads/${filename}`;
         } catch (err) {
             console.error('⚠️ Error procesando imagen remota:', err.message);
-            return '';
+            await delete_image_upload(downloadedPath);
+            return `/uploads/${filename}`;
         }
     }
     return '';
@@ -2234,7 +2242,8 @@ router.post('/links/:id_company/:id_branch/upload-products', async (req, res) =>
         const use_inventory = product.UsaInventario;
         const this_is_a_supplies = product.EsUnInsumo;
         const newProducts = create_new_product_with_excel(id_company, barcode, name, description, use_inventory, this_is_a_supplies);
-        const idSupplies = await addDatabase.add_supplies_company(newProducts);
+        const infoSupplies = await addDatabase.add_supplies_company(newProducts);
+        const idSupplies = infoSupplies.id;
 
         //we will see if the product can be save in the database
         if (idSupplies) {
@@ -2558,7 +2567,8 @@ router.post('/fud/:id_company/:id_branch/add-product-free-speed', isLoggedIn, as
     console.log(newSupplies)
     newSupplies.id_company = id_company; //update the data of id_company because the function "get_supplies_or_product_company" not have this data,
 
-    const idSupplies = await addDatabase.add_supplies_company(newSupplies); //get the id of the supplies that added
+    const infoSupplies = await addDatabase.add_supplies_company(newSupplies);
+    const idSupplies = infoSupplies.id; //get the id of the supplies that added
 
     //we will see if the product can be save in the database
     if (idSupplies) {
@@ -2624,7 +2634,8 @@ router.post('/links/add_new_product_with_flask', isLoggedIn, async (req, res) =>
     const newSupplies = await get_supplies_or_product_company(req, false);
     newSupplies.id_company = id_company; //update the data of id_company because the function "get_supplies_or_product_company" not have this data,
 
-    const idSupplies = await addDatabase.add_supplies_company(newSupplies); //get the id of the supplies that added
+    const infoSupplies = await addDatabase.add_supplies_company(newSupplies);
+    const idSupplies = infoSupplies.id; //get the id of the supplies that added
 
     //we will see if the product can be save in the database
     if (idSupplies) {
@@ -2823,7 +2834,6 @@ async function update_product_in_inventory(id_product, inventory) {
   }
 }
 
-
 async function get_data_photo(id_combo) {
   if (TYPE_DATABASE === 'mysqlite') {
     return new Promise((resolve) => {
@@ -2856,7 +2866,6 @@ async function get_data_photo(id_combo) {
     }
   }
 }
-
 
 async function update_other_information_of_combo(req, id_combo) {
   const this_product_need_recipe =
@@ -2950,7 +2959,6 @@ async function update_combo_image(id_combo, image) {
     }
   }
 }
-
 
 async function update_information_combo_product(name, barcode, description, thisProductIsSoldInBulk, id_combo) {
   if (TYPE_DATABASE === 'mysqlite') {
@@ -3206,7 +3214,8 @@ router.post('/fud/:id/:id_branch/add-supplies-free', isLoggedIn, async (req, res
 
     //this is for create the new supplies and save the id of the supplies
     const newSupplies = await get_supplies_or_product_company(req, true);
-    const idSupplies = await addDatabase.add_supplies_company(newSupplies); //get the id of the supplies that added
+    const infoSupplies = await addDatabase.add_supplies_company(newSupplies);
+    const idSupplies = infoSupplies.id; //get the id of the supplies that added
     if (idSupplies) {
         //we will create the supplies in the branch
         const idSuppliesFactures = await addDatabase.add_product_and_suppiles_features(id_branch, idSupplies) //add the supplies in the branch 
