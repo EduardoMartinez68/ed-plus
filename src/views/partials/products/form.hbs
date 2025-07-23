@@ -1,5 +1,5 @@
 {{#each branchFree}}
-<form action="/fud/{{id_companies}}/{{id}}/add-product-free" method="post" enctype="multipart/form-data">
+<form action="/fud/{{id_companies}}/{{id}}/add-product-free" method="post" enctype="multipart/form-data" id="formAddProductFree">
     <input type="hidden" value="{{id}}" name="id_branch">
     {{/each}}
 
@@ -157,7 +157,7 @@
             -->
             <div class="col">
                 <div class="d-flex">
-                    <button type="submit" class="btn btn-edit ms-auto" id="btn-send" onclick="saveProduct()">Siguiente</button>
+                    <button type="button" class="btn btn-edit ms-auto" id="btn-send" onclick="send_form_for_add_a_new_product()">Siguiente</button>
                 </div>
             </div>
         </div>
@@ -165,6 +165,20 @@
 </form>
 
 <script>
+    async function send_form_for_add_a_new_product(){
+        //first we will check if the image input is empty, if it is empty we will create a new product flash
+        //if it is not empty we will submit the form
+        const imageInput = document.getElementById('imageUrl');
+        if(imageInput && imageInput.value === ''){
+            //if have a image save with help of a url, we will save the product with flash
+            await create_new_product_flash();
+        }else{
+            //if not get a new image from the server with image flash, we will submit the form
+            document.getElementById('formAddProductFree').submit();
+        }
+    }
+
+
     async function create_new_product_flash() {
         const loadingOverlay = document.getElementById("loadingOverlay");
 
@@ -172,6 +186,7 @@
         try {
             loadingOverlay.style.display = "flex";
             const data = {
+                imageUrl: document.getElementById('imageUrl').value,
                 barcode: document.getElementById("productBarcodePop").value,
                 name: document.getElementById("productNamePop").value,
                 sale_price: document.getElementById("productPricePop").value,
@@ -204,13 +219,16 @@
 
             const result = await response.json();
 
+            //now we will see if can add the product in the database
             if (result.code) {
-                notificationMessage(data.name + " agregado", result.message);
+                //notificationMessage(data.name + " agregado", result.message);
                 selectedProductData = {}
+
+                //if we caned add the product, we will redirect to the edit page for that the user edit the product
+                window.location.href = result.link;
             } else {
                 errorMessage("El producto '" + data.name + "' no se pudo agregar", result.message);
             }
-
         } catch (error) {
             console.error("💥 Error al crear producto Flash:", error);
             errorMessage("💥 Error al crear producto Flash:", error);

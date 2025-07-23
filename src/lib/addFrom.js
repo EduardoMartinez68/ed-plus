@@ -192,11 +192,11 @@ async function create_a_new_image(req) {
             //wait for the system to release the file
             await new Promise(resolve => setTimeout(resolve, 100));
 
-            await fs.promises.unlink(downloadedPath); //delete the temporary file of the image downloaded
+            await fs.promises.unlink(`temp_${filename}`); //delete the temporary file of the image downloaded
             return `/uploads/${filename}`;
         } catch (err) {
             console.error('⚠️ Error procesando imagen remota:', err.message);
-            await delete_image_upload(downloadedPath);
+            await delete_image_upload(`temp_${filename}`);
             return `/uploads/${filename}`;
         }
     }
@@ -2629,6 +2629,7 @@ router.post('/fud/:id_company/:id_branch/add-product-free-speed', isLoggedIn, as
 router.post('/links/add_new_product_with_flask', isLoggedIn, async (req, res) => {
     const { id_company, id_branch } = req.user;
     let canAdd = false;
+    let idComboFacture=null;
 
     //this is for create the new supplies and save the id of the supplies
     const newSupplies = await get_supplies_or_product_company(req, false);
@@ -2670,7 +2671,7 @@ router.post('/links/add_new_product_with_flask', isLoggedIn, async (req, res) =>
                 const comboData = create_combo_data_branch(idCombos, id_company, id_branch);
 
                 // save the combo in the branch
-                const idComboFacture = await addDatabase.add_combo_branch(comboData);
+                idComboFacture = await addDatabase.add_combo_branch(comboData);
                 if (idComboFacture) {
                     canAdd = true;
                     await update_price_combo_for_excel(supplies.sale_price, idComboFacture);
@@ -2689,7 +2690,9 @@ router.post('/links/add_new_product_with_flask', isLoggedIn, async (req, res) =>
     }else{
         return res.status(200).json({
             message: 'El producto fue agregado con éxito ❤️',
-            code:true
+            code:true,
+            idComboFacture: idComboFacture,
+            link:'/links/' + id_company + '/' + id_branch + '/' + idComboFacture + '/edit-products-free'
         });
     }
 })
