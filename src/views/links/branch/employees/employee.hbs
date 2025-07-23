@@ -4,6 +4,20 @@
 <body>
     <br>
     <div class="container">
+        <div class="video-help" data-id="help-create-employee">
+            <div class="help-content">
+                <p class="help-title">Estos videos podrían ayudarte:</p>
+                <div class="videos">
+                            <iframe loading="lazy" src="https://www.youtube.com/embed/BoaU5oZBMxg?si=Af6X5PFp3ULdlzjN"
+                                allowfullscreen></iframe>
+                </div>
+                <button class="hide-help">✓ Ya lo sé</button>
+            </div>
+            <div class="help-toggle">¿Necesitas ayuda?</div>
+        </div>
+    </div>
+
+    <div class="container">
         <div id="App" class="row pt-5">
             {{>manager/employees/table}}
             {{>manager/employees/description}}

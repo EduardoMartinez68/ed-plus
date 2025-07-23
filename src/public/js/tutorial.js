@@ -1,19 +1,38 @@
-  function hideTutorial(id) {
-    localStorage.setItem("hide_" + id, "true");
-    document.getElementById(id).style.display = "none";
-    document.getElementById("helpToggle").style.display = "block";
-  }
+document.addEventListener("DOMContentLoaded", () => {
+  const helpBoxes = document.querySelectorAll(".video-help");
 
-  function showTutorial(id) {
-    localStorage.removeItem("hide_" + id);
-    document.getElementById(id).style.display = "block";
-    document.getElementById("helpToggle").style.display = "none";
-  }
+  helpBoxes.forEach(box => {
+    const helpId = box.dataset.id;
+    const helpContent = box.querySelector(".help-content");
+    const helpToggle = box.querySelector(".help-toggle");
+    const hideBtn = box.querySelector(".hide-help");
 
-  function checkTutorialVisibility(id) {
-    const hidden = localStorage.getItem("hide_" + id);
-    if (hidden === "true") {
-      document.getElementById(id).style.display = "none";
-      document.getElementById("helpToggle").style.display = "block";
+    const isHidden = localStorage.getItem(`help-${helpId}`) === "hidden";
+
+    function showContent() {
+      helpContent.style.display = "block";
+      helpToggle.style.display = "none";
     }
-  }
+
+    function hideContent() {
+      helpContent.style.display = "none";
+      helpToggle.style.display = "inline-block";
+    }
+
+    if (isHidden) {
+      hideContent();
+    } else {
+      showContent();
+    }
+
+    hideBtn.addEventListener("click", () => {
+      localStorage.setItem(`help-${helpId}`, "hidden");
+      hideContent();
+    });
+
+    helpToggle.addEventListener("click", () => {
+      localStorage.removeItem(`help-${helpId}`);
+      showContent();
+    });
+  });
+});
