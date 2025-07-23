@@ -6,8 +6,8 @@
     --color-hover: #074a85;
 
     --color-norm: #3182ce;
-    --color-norm-hover:#2b6cb0;
-    
+    --color-norm-hover: #2b6cb0;
+
     /*rgb(46, 62, 151);*/
     --color-body: #F5F6FA;
     /*rgb(246, 245, 248);*/
@@ -57,7 +57,7 @@ table {
 
 .btn-edit {
     background-color: var(--color-session1);
-    
+
     color: white;
 }
 
@@ -936,98 +936,100 @@ label #btn-navbar-cancel {
 
 
 .my-pop-header {
-  position: relative;
-  background-color: var(--color-company); /* Azul bootstrap */
-  color: white;
-  padding: 1rem 2rem;
-  border-top-left-radius: 6px;
-  border-top-right-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+    position: relative;
+    background-color: var(--color-company);
+    /* Azul bootstrap */
+    color: white;
+    padding: 1rem 2rem;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 /* Ajusta el título */
 .my-pop-title {
-  margin: 0;
-  font-weight: 600;
-  font-size: 1.25rem;
+    margin: 0;
+    font-weight: 600;
+    font-size: 1.25rem;
 }
 
 /* Ajusta el botón cerrar para que esté en el header y se vea blanco */
 .my-pop-header .close-btn {
-  color: white;
-  font-size: 1.5rem;
-  position: static;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  line-height: 1;
-  transition: color 0.3s ease;
+    color: white;
+    font-size: 1.5rem;
+    position: static;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    transition: color 0.3s ease;
 }
 
 .my-pop-header .close-btn:hover {
-  color: #d1d1d1;
+    color: #d1d1d1;
 }
 
 /* Ajusta el contenedor para que el contenido no se superponga */
 .my-pop-content {
-  border-bottom-left-radius: 6px;
-  border-bottom-right-radius: 6px;
-  padding: 20px 20px 30px 20px; /* un poco más abajo para que no esté pegado */
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+    padding: 20px 20px 30px 20px;
+    /* un poco más abajo para que no esté pegado */
 }
 
 /*-----------------------------------------MOST INFO----------------------------------------------*/
-    .dropdown-toggle-box {
-        border-radius: 0.5rem;
-        overflow: hidden;
-        margin-bottom: 0.5rem;
-    }
+.dropdown-toggle-box {
+    border-radius: 0.5rem;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
 
-    .dropdown-header {
-        cursor: pointer;
-        background-color: #f8f9fa;
-        padding: 0.35rem 1rem ;
-        border: 1px solid #dee2e6;
-        border-radius: 0.5rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        transition: background-color 0.3s ease;
-    }
+.dropdown-header {
+    cursor: pointer;
+    background-color: #f8f9fa;
+    padding: 0.35rem 1rem;
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.3s ease;
+}
 
-    .dropdown-header:hover {
-        background-color: #e9ecef;
-    }
+.dropdown-header:hover {
+    background-color: #e9ecef;
+}
 
-    .dropdown-content {
-        max-height: 0;
-        opacity: 0;
-        overflow: hidden;
-        transition: max-height 0.4s ease, opacity 0.4s ease;
-    }
+.dropdown-content {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, opacity 0.4s ease;
+}
 
-    .dropdown-content.expanded {
-        max-height: 1000px;
-        /* lo suficiente para mostrar el contenido */
-        opacity: 1;
-        padding-top: 0.8rem;
-    }
+.dropdown-content.expanded {
+    max-height: 1000px;
+    /* lo suficiente para mostrar el contenido */
+    opacity: 1;
+    padding-top: 0.8rem;
+}
 
-    /* Opcional: animación más suave si quieres íconos que giren */
-    .dropdown-header i {
-        transition: transform 0.3s ease;
-        margin-top: 14px;
-        font-size: 1rem;
-    }
+/* Opcional: animación más suave si quieres íconos que giren */
+.dropdown-header i {
+    transition: transform 0.3s ease;
+    margin-top: 14px;
+    font-size: 1rem;
+}
 
-    .dropdown-header i.rotated {
-        transform: rotate(180deg);
-    }
+.dropdown-header i.rotated {
+    transform: rotate(180deg);
+}
 
 
-    /*this is for show the message of help of the text with the mouse*/
+/*this is for show the message of help of the text with the mouse*/
 .erp-tooltip {
     position: absolute;
     background-color: rgba(0, 0, 0, 0.7);
@@ -1040,7 +1042,7 @@ label #btn-navbar-cancel {
     opacity: 0;
     transition: opacity 0.15s ease;
     z-index: 9999;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .info-label-generated {
@@ -1059,4 +1061,103 @@ label #btn-navbar-cancel {
 
 .info-label-generated i:hover {
     color: #3f3f3f;
+}
+
+
+/*----------------------------tutorales------------------------*/
+.tutorial-section {
+    margin-top: 20px;
+    padding: 15px;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    
+}
+
+.tutorial-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.tutorial-header h5 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0;
+}
+
+.tutorial-header h5 span {
+    display: block;
+    font-weight: 400;
+    font-size: 0.9rem;
+    color: #7f8c8d;
+}
+
+.tutorial-btn {
+    font-size: 0.8rem;
+    background: transparent;
+    color: #888;
+    border: none;
+    cursor: pointer;
+    padding: 4px 10px;
+    border-radius: 5px;
+}
+
+.tutorial-btn:hover {
+    background-color: #f2f2f2;
+}
+
+.tutorial-card {
+    margin-bottom: 15px;
+}
+
+.tutorial-iframe {
+    width: 100%;
+    height: 180px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.help-toggle {
+    margin-top: 10px;
+    text-align: center;
+    color: #3498db;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: none;
+}
+
+.help-toggle:hover {
+    text-decoration: underline;
+}
+
+  #helpToggle {
+    position: fixed;
+    transform: translateY(-50%);
+    background: rgba(52, 152, 219, 0.1); /* color azul muy suave */
+    color: #2980b9; /* azul menos intenso */
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.3s, color 0.3s;
+    box-shadow: none; /* sin sombra para minimalismo */
+    z-index: 3;
+    display: none;
+  }
+
+  #helpToggle:hover {
+    background: rgba(52, 152, 219, 0.2);
+    color: #1c5980;
+  }
+
+/* Responsive: una columna en móvil */
+@media (max-width: 768px) {
+    .tutorial-iframe {
+        height: 160px;
+    }
 }

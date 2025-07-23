@@ -2,6 +2,7 @@
 <br>
 <br>
 <div class="container">
+    {{>products/tutorail}}
     <label><i class="fi-icon fi-sr-box-alt"></i> Productos</label>
     <hr>
     <div class="row mt-5">
@@ -187,7 +188,8 @@
 
         <div class="label-modal-actions">
             {{#each branchFree}}
-            <button class="btn btn-confirm-message" onclick="nextWeb('/{{id_companies}}/{{id}}/add-labels')">Agregar nueva
+            <button class="btn btn-confirm-message" onclick="nextWeb('/{{id_companies}}/{{id}}/add-labels')">Agregar
+                nueva
                 etiqueta</button>
             {{/each}}
             <div>
@@ -202,11 +204,11 @@
     let selectedLabelName = "";
     let productForPrint = null;
 
-    function openLabelModal(name, barcode,price) {
+    function openLabelModal(name, barcode, price) {
         selectedLabelId = null;
         selectedLabelName = "";
         productForPrint = {
-            name, 
+            name,
             barcode,
             price
         };

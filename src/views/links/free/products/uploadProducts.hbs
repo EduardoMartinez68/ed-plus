@@ -1,97 +1,132 @@
 <link rel="stylesheet" href="/css/manager/supplies_products.css">
 <style>
+  /* Card estilizada */
+  .card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+    width: 100%;
+  }
 
-/* Card estilizada */
-.card {
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  text-align: center;
-  width: 100%;
-}
+  /* Estilos del formulario */
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
 
-/* Estilos del formulario */
-form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
+  /* Estilos del input de archivo */
+  .file-input {
+    padding: 12px 20px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
 
-/* Estilos del input de archivo */
-.file-input {
-  padding: 12px 20px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #f9f9f9;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
+  .file-input:hover {
+    border-color: var(--color-company);
+    background-color: #f1f8ff;
+  }
 
-.file-input:hover {
-  border-color: var(--color-company);
-  background-color: #f1f8ff;
-}
+  /* Estilo del botón */
+  .submit-btn {
+    padding: 12px 25px;
+    font-size: 16px;
+    color: white;
+    background-color: var(--color-company);
+    ;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
 
-/* Estilo del botón */
-.submit-btn {
-  padding: 12px 25px;
-  font-size: 16px;
-  color: white;
-  background-color: var(--color-company);;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
+  .submit-btn:hover {
+    background-color: var(--color-company);
+    ;
+  }
 
-.submit-btn:hover {
-  background-color: var(--color-company);;
-}
+  .submit-btn:focus {
+    outline: none;
+  }
 
-.submit-btn:focus {
-  outline: none;
-}
+  .submit-btn:active {
+    background-color: var(--color-company);
+    ;
+  }
 
-.submit-btn:active {
-  background-color: var(--color-company);;
-}
+  /* Animación de suavizado al pasar el mouse */
+  .file-input:focus,
+  .submit-btn:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
 
-/* Animación de suavizado al pasar el mouse */
-.file-input:focus, .submit-btn:focus {
-  outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-}
-
-/* Asegura que todo esté centrado */
-.card-body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-}
+  /* Asegura que todo esté centrado */
+  .card-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
 </style>
 <br><br>
 {{#each branchFree}}
-  <div class="container">
-    <label for="">Sube tus productos desde un archivo de excel <i class="fi-icon fi-sr-boxes"></i></label>
-    <hr>
-    <div class="card">
-      <form action="/links/{{id_companies}}/{{id}}/upload-products" method="POST" enctype="multipart/form-data">
-        <div class="file-upload">
-          <input type="file" name="image" accept=".xlsx,.xls,.csv" class="file-input" />
-          <br><br>
-          <button type="submit" class="submit-btn">Subir Excel</button>
-        </div>
-      </form>
+<div class="container">
+  <label for="">Sube tus productos desde un archivo de excel <i class="fi-icon fi-sr-boxes"></i></label>
+  <hr>
+
+
+
+
+
+  <div id="tutorialAddProductContainer">
+    <div id="tutorialAddProductUpload" class="tutorial-section">
+      <div class="tutorial-header">
+        <h5>¿Nuevo aquí? Mira estos tutoriales para agregar productos
+          <span>Te guiarán paso a paso sin complicaciones</span>
+        </h5>
+        <button class="tutorial-btn" onclick="hideTutorial('tutorialAddProductUpload')">Ya lo sé</button>
+      </div>
+      <div class="row" style="height: 500px;">
+<iframe width="100%" height="auto" src="https://www.youtube.com/embed/T-2NI4GFy4g?si=ysvZntR2xe7_LJi6" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+      </div>
     </div>
-    <br>
-    <center>
-        <a href="/links/download-excel-product" target="_blank">
-            <button type="button" class="btn btn-edit">Descargar Excel de prueba</button>
-        </a>
-    </center>
-    <br>
+
+    <div id="helpToggle" class="help-toggle" onclick="showTutorial('tutorialAddProductUpload')">
+      ¿Necesitas ayuda?
+    </div>
   </div>
+  <br><br>
+
+
+
+
+
+
+
+
+
+  <div class="card">
+    <form action="/links/{{id_companies}}/{{id}}/upload-products" method="POST" enctype="multipart/form-data">
+      <div class="file-upload">
+        <input type="file" name="image" accept=".xlsx,.xls,.csv" class="file-input" />
+        <br><br>
+        <button type="submit" class="submit-btn">Subir Excel</button>
+      </div>
+    </form>
+  </div>
+  <br>
+  <center>
+    <a href="/links/download-excel-product" target="_blank">
+      <button type="button" class="btn btn-edit">Descargar Excel de prueba</button>
+    </a>
+  </center>
+  <br>
+</div>
 {{/each}}
