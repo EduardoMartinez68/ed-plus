@@ -6,48 +6,11 @@
 <br>
 <div class="content_box">
     <div class="content-sales active">
-        <div class="row">
-            <div class="form-group">
-                <div class="form-check" name="">
-                    <input type="hidden" value="{{id_products_and_supplies}}" name="id_products_and_supplies">
-                    {{#if use_inventory}}
-                        <input class="form-check-input" type="checkbox" id="invalidCheck2" name="inventory" checked>
-                    {{else}}
-                        <input class="form-check-input" type="checkbox" id="invalidCheck2" name="inventory">
-                    {{/if}}
-                    <label class="form-check-label" for="invalidCheck2">
-                        Usar inventario
-                    </label>
-                </div>
-            </div>
-            <div class="col">
-                <label>Monto de Compra *</label><br>
-                <input type="tex" class="form-control" name="purchase_amount" placeholder="Monto de Compra"
-                    autofocus required value="{{purchase_amount}}">
-            </div>
-            <div class="col">
-                <label>Unidad de Compra</label>
-                <select value="{{purchase_unity}}" name="purchase_unity" class="form-select">
-                    {{>unity/unitOfMeasure}}
-                </select>
-            </div>
-            <div class="col">
-                <label>Precio de Compra *</label><br>
-                <input type="tex" class="form-control" name="purchase_price" placeholder="Precio de Compra" required
-                    value="{{purchase_price}}">
-            </div>
-            <div class="col">
-                <label>Moneda</label>
-                <select value="{{currency_purchase}}" name="currency_purchase" class="form-select">
-                    {{>unity/unitOfMoney}}
-                </select>
-            </div>
-        </div>
-        <br>
+
         <div class="row">
             <div class="col">
                 <label>Monto de Venta *</label><br>
-                <input type="tex" class="form-control" name="sale_amount" placeholder="Monto de Venta" required
+                <input type="number" class="form-control" name="sale_amount" placeholder="Monto de Venta" required
                     value="{{sale_amount}}">
             </div>
             <div class="col">
@@ -58,10 +21,10 @@
             </div>
             <div class="col">
                 <label>Precio de Venta *</label><br>
-                <input type="tex" class="form-control" name="sale_price" placeholder="Precio de Venta" required
+                <input type="number" class="form-control" name="sale_price" placeholder="Precio de Venta" required
                     value="{{sale_price}}">
             </div>
-            <div class="col">
+            <div class="col" style="display: none;">
                 <label>Moneda</label>
                 <select value="{{currency_sale}}" name="currency_sale" class="form-select">
                     {{>unity/unitOfMoney}}
@@ -70,30 +33,128 @@
         </div>
         <br>
         <div class="row">
-            <div class="col">
-                <label>Inventario Máximo</label><br>
-                <input type="tex" class="form-control" name="max_inventory" placeholder="Inventario Máximo"
-                    value="{{max_inventary}}">
+
+
+
+            <div class="dropdown-toggle-box">
+                <div class="dropdown-header" onclick="watch_most('infromationOfInventory')">
+                    <label class="mb-0 fw-semibold">Información de Inventario</label>
+                    <i class="fi fi-rr-angle-down" id="icon-addressSection"></i>
+                </div>
+
+                <!-- Contenido oculto con animación -->
+                <div id="infromationOfInventory" class="dropdown-content collapsed">
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="form-check" name="">
+                                <input type="hidden" value="{{id_products_and_supplies}}" name="id_products_and_supplies">
+                                {{#if use_inventory}}
+                                <input class="form-check-input" type="checkbox" id="invalidCheck2" name="inventory" checked>
+                                {{else}}
+                                <input class="form-check-input" type="checkbox" id="invalidCheck2" name="inventory">
+                                {{/if}}
+                                <label class="form-check-label" for="invalidCheck2">
+                                    Usar inventario
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label>Inventario Máximo</label><br>
+                            <input type="number" class="form-control" name="max_inventory" placeholder="Inventario Máximo"
+                                value="{{max_inventary}}">
+                        </div>
+                        <div class="col">
+                            <label>Inventario Mínimo</label><br>
+                            <input type="number" class="form-control" name="minimum_inventory"
+                                placeholder="Inventario Mínimo" value="{{minimum_inventory}}">
+                        </div>
+                        <div class="col">
+                            <label>Unidad de Medida *</label><br>
+                            <select value="{{unit_inventory}}" name="unit_inventory" class="form-select">
+                                {{>unity/unitOfMeasure}}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label>Existencia</label><br>
+                            <input type="number" class="form-control" name="existence" placeholder="Existencia" required
+                                value="{{existence}}" id="input-ammount">
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="col">
-                <label>Inventario Mínimo</label><br>
-                <input type="tex" class="form-control" name="minimum_inventory" placeholder="Inventario Mínimo"
-                    value="{{minimum_inventory}}">
+
+
+
+
+            <div class="dropdown-toggle-box">
+                <div class="dropdown-header" onclick="watch_most('infromationOfSale')">
+                    <label class="mb-0 fw-semibold">Información de Compra a Provedor</label>
+                    <i class="fi fi-rr-angle-down" id="icon-addressSection"></i>
+                </div>
+
+                <!-- Contenido oculto con animación -->
+                <div id="infromationOfSale" class="dropdown-content collapsed">
+                    <div class="row">
+                            <div class="col">
+                                <info-label label="Cantidad que compras al proveedor *"
+                                    message="La cantidad de este articulo que le compras al proveedor.">
+                                </info-label>
+                                <input type="number" class="form-control" name="purchase_amount" placeholder="Monto de Compra"
+                                    autofocus required value="{{purchase_amount}}" >
+                            </div>
+                            <div class="col">
+                                <info-label label="Unidad de Compra al proveedor"
+                                    message="Esta es la unidad en la que compras al proveedor. Que sea la misma que usas para vender.">
+                                </info-label>
+                                <select value="{{purchase_unity}}" name="purchase_unity" class="form-select">
+                                    {{>unity/unitOfMeasure}}
+                                </select>
+                            </div>
+                            <div class="col">
+                                <info-label label="Precio del proveedor *"
+                                    message="Este es el precio que pagas al proveedor por cada unidad.">
+                                </info-label>
+                                <input type="number" class="form-control" name="purchase_price" placeholder="Precio de Compra"
+                                    required value="{{purchase_price}}">
+                            </div>
+                            <div class="col" style="display: none;">
+                                <label>Moneda</label>
+                                <select value="{{currency_purchase}}" name="currency_purchase" class="form-select">
+                                    {{>unity/unitOfMoney}}
+                                </select>
+                            </div>
+                        <br>
+                    </div>
+
+
+
+
+                    <div class="row">
+                        <label class="text-muted">
+                            <br>
+                            <center>
+                                Ejemplo: Compraste 10 kilos de carne a tu proveedor por 300.00 pesos. Aquí debes registrar
+                                que
+                                compraste "10", en "kilos", por "300.00", en "MXN".
+                            </center>
+                        </label>
+                    </div>
+                </div>
             </div>
-            <div class="col">
-                <label>Unidad de Medida *</label><br>
-                <select value="{{unit_inventory}}" name="unit_inventory" class="form-select">
-                    {{>unity/unitOfMeasure}}
-                </select>
-            </div>
+
+
+
+
+
+
+
+
         </div>
-        <div class="row">
-            <div class="col">
-                <label>Existencia</label><br>
-                <input type="tex" class="form-control" name="existence" placeholder="Existencia" required
-                    value="{{existence}}" id="input-ammount">
-            </div>
-        </div>
+        <br>
     </div>
 </div>
 {{/each}}
