@@ -1,0 +1,54 @@
+<style>
+.select-dept-button {
+  border-color: #999;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 5px 18px;
+
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.select-dept-button i {
+  font-size: 14px;
+  color: #666;
+  
+  transform: translateY(12px);
+}
+
+/* Hover: borde más oscuro */
+.select-dept-button:hover {
+  background-color: transparent;
+  color: #333;
+
+}
+</style>
+<div id="informationAddress" class="my-pop">  
+    <div class="my-pop-content-wrapper">
+        <div class="my-pop-header">
+            <h4 class="my-pop-title">Departamentos y Categorias</h4>
+            <button class="close-btn" onclick="close_my_pop('informationAddress')" type="button">×</button>
+        </div>  
+        <div class="my-pop-content">
+            {{>shop/formDepartaments}}
+        </div>
+    </div>
+</div>
+
+
+<div class="form-group">
+    <label for="">Seleccionar Departamento y Categoría</label><br>
+    <button onclick="open_my_pop('informationAddress')" type="button" class="select-dept-button" id="select-category-and-departament">
+        Departamento > Categoría
+        <i class="fi fi-rr-angle-right"></i>
+    </button>
+</div>

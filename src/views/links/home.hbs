@@ -50,29 +50,179 @@
         box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
         color: var(--color-company);
     }
+
+
+
+    /**/
+.help-section {
+  padding: 30px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  text-align: center;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.help-section h3 {
+  font-size: 22px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.help-options {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+.help-card {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  padding: 25px;
+  border-radius: 8px;
+  width: 240px;
+  transition: transform 0.2s ease;
+}
+
+.help-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.help-icon {
+  width: 60px;
+  margin-bottom: 15px;
+}
+
+.help-card p {
+  font-size: 16px;
+  color: #444;
+  margin-bottom: 10px;
+}
+
+.help-button {
+  display: inline-block;
+  padding: 8px 14px;
+  border-radius: 6px;
+  background-color: #e0e0e0;
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.help-button:hover {
+  background-color: #ccc;
+}
+
+.help-button.whatsapp {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.help-button.whatsapp:hover {
+  background-color: #3b853e;
+}
+
+/*ADS*/
+.ad-grid-banner {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 150px;
+  gap: 12px;
+  max-width: 100%;
+  margin: 20px auto;
+  padding: 10px;
+}
+
+.ad-item {
+  display: block;
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+
+.ad-item:hover {
+  transform: scale(1.02);
+}
+
+.ad-item img {
+  width: 100%;
+  height: 100%;
+  /*
+  object-fit: cover;
+  */
+}
+
+/* Tamaños tipo Tetris */
+.ad-large {
+  grid-column: span 4;
+  grid-row: span 1;
+}
+
+.ad-small {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+
+.ad-tall {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+
+@media (max-width: 768px) {
+  .ad-grid-banner {
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 120px;
+  }
+  .ad-large, .ad-small, .ad-tall {
+    grid-column: span 2;
+    grid-row: span 1;
+  }
+}
 </style>
+
 <div style="text-align: right;  padding: 1rem;">
-    <h5>{{user.user_name}}</h5>
-    <label>{{user.first_name}} {{user.second_name}} {{user.last_name}}</label><br>
-    <label>{{user.email}}</label>
+    <label>{{user.first_name}} {{user.second_name}} {{user.last_name}} || {{user.email}}</label>
 </div>
-<div class="container" style="text-align: center;">
-    {{#each dataCompany}}
-        <h1 class="welcome-message">¡Bienvenido a {{name}}! ❤️</h1>
-        {{#if path_logo}}
-            <img src="{{path_logo}}" class="icon">
-        {{else}}
-            <img src="/img/logo.png" class="icon">
-        {{/if}}
-    {{/each}}
-    <br><br>
+
+<div class="container">
+    <div class="ad-grid-banner">
+        <a href="https://pluspuntodeventa.com" class="ad-item ad-large" target="_blank">
+            <img src="/img/ad/ad3.webp" alt="Anuncio 1">
+        </a>
+        <a href="https://wa.me/524443042129" class="ad-item ad-small" target="_blank">
+            <img src="/img/ad/ad1.webp" alt="Anuncio 2">
+        </a>
+        <a href="https://pluspuntodeventa.com/app/store/store.php?token=7efa08d5" class="ad-item ad-tall" target="_blank">
+            <img src="/img/ad/ad2.webp" alt="Anuncio 3">
+        </a>
+    </div>
 
 
-    <button class="explore-button" onclick="open_menu()"> Comenzar (Esc) <i class="fi fi-ss-rocket-lunch"></i> </button>
 
-    <br><br><br>
-    <div class="clock">
-        <span id="time"></span>
+    <div class="help-section">
+        <h3>¿Necesitas ayuda? 🤔</h3>
+        <div class="help-options">
+            <!-- Opción YouTube -->
+            <div class="help-card">
+            <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube" class="help-icon">
+            <p>Visita nuestro canal de YouTube</p>
+            <a href="https://www.youtube.com/@bestpointsoftwarepuntodeve2638" target="_blank" class="help-button">
+                Ir al canal
+            </a>
+            </div>
+
+            <!-- Opción WhatsApp -->
+            <div class="help-card">
+            <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WhatsApp" class="help-icon">
+            <p>Mándanos un mensaje por WhatsApp</p>
+            <a href="https://wa.me/524443042129" target="_blank" class="help-button whatsapp">
+                +52 444 304 2129
+            </a>
+            </div>
+        </div>
     </div>
 </div>
 

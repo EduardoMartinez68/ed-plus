@@ -78,6 +78,10 @@ table {
     background-color: var(--color-hover);
     border-color: white;
     box-shadow: none;
+    
+    margin-top: 32px;
+    padding: 12px 24px;
+    font-size: 15px;
 }
 
 /* Contenedor del ícono */

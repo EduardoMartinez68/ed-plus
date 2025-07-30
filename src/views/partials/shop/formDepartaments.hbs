@@ -8,14 +8,6 @@
   --white: #ffffff;
 }
 
-/* Global */
-body {
-  font-family: 'Inter', sans-serif;
-  background: #f3f4f6;
-  color: var(--text-gray);
-  padding: 40px;
-}
-
 /* Contenedor general */
 .selector-container {
   display: flex;
@@ -44,7 +36,7 @@ body {
 }
 
 .select-button:hover {
-  border-color: var(--main-blue);
+  border-color: var(--color-company);
   box-shadow: 0 4px 10px rgba(0,0,0,0.06);
 }
 
@@ -53,6 +45,10 @@ body {
   cursor: not-allowed;
 }
 
+.select-button i{
+    transform: translateY(8px);
+    font-family: 5rem;
+}
 /* Dropdown moderno */
 .dropdown {
   background-color: var(--white);
@@ -81,7 +77,7 @@ body {
 
 .dropdown li:hover {
   background-color: var(--light-gray);
-  color: var(--main-blue);
+  color: var(--color-company);
 }
 
 /* Scroll moderno */
@@ -100,41 +96,52 @@ body {
 .accept-button {
   margin-top: 32px;
   padding: 12px 24px;
-  background-color: var(--main-blue);
+  font-size: 15px;
+
+  background-color: var(--color-company);
   color: var(--white);
   border: none;
   border-radius: 10px;
-  font-size: 15px;
   cursor: pointer;
   transition: background 0.2s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .accept-button:hover {
-  background-color: var(--hover-blue);
+  background-color: var(--color-hover);
 }
 </style>
 
-
 <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons/regular-rounded/css/uicons-regular-rounded.css">
+
+<!--her we will save the information of the id of the departament and the category-->
+<input type="hidden" id="id_departament" name="id_departament">
+<input type="hidden" id="id_category" name="id_category">
+
+
+
+
+
 
 <div class="selector-container">
   <!-- Departamento -->
   <div class="selector">
-    <button class="select-button" id="select-department">
+    <label for="">Departamento</label>
+    <button class="select-button" id="select-department" type="button">
       Selecciona departamento
       <i class="fi fi-rr-angle-right"></i>
     </button>
     <ul class="dropdown" id="department-options">
-      <li data-department="Electronico">Electronico</li>
-      <li data-department="Ropa">Ropa</li>
-      <li data-department="Hogar">Hogar</li>
+      <li data-department="Electronico" id-departament="0">Electronico</li>
+      <li data-department="Ropa" id-departament="1">Ropa</li>
+      <li data-department="Hogar" id-departament="2">Hogar</li>
     </ul>
   </div>
 
   <!-- Categoría -->
   <div class="selector">
-    <button class="select-button" id="select-category" disabled>
+    <label for="">Categoria</label>
+    <button class="select-button" id="select-category" disabled type="button">
       Selecciona categoría
       <i class="fi fi-rr-angle-right"></i>
     </button>
@@ -144,9 +151,16 @@ body {
   </div>
 </div>
 
-<button class="accept-button">Aceptar</button>
+<button class="accept-button btn btn-success" type="button" onclick="select_departament_and_category()">Aceptar</button>
 
 <script>
+//in this variable we will save the name of the departament and the category 
+//for after update the information of the button for open the pop of the category and departament
+let nameDepartamentSave='Departamento';
+let nameCategorySave='Categoría';
+
+
+//get the id of the element of the html
 const departmentBtn = document.getElementById('select-department');
 const departmentList = document.getElementById('department-options');
 const categoryBtn = document.getElementById('select-category');
@@ -157,6 +171,10 @@ const categories = {
   Ropa: ['Camisas', 'Pantalones', 'Zapatos'],
   Hogar: ['Muebles', 'Electrodomésticos', 'Decoración']
 };
+
+
+
+
 
 // Toggle dropdowns
 departmentBtn.onclick = () => {
@@ -181,6 +199,10 @@ departmentList.addEventListener('click', (e) => {
   categoryList.innerHTML = cats.map(cat => `<li>${cat}</li>`).join('');
   categoryBtn.disabled = false;
   categoryBtn.innerHTML = `Selecciona categoría <i class="fi fi-rr-angle-right"></i>`;
+
+  //save the id of the departament and his name
+  nameDepartamentSave=e.target.getAttribute('data-department');
+  document.getElementById('id_departament').value=e.target.getAttribute('id-departament');
 });
 
 // Selección de categoría
@@ -189,6 +211,19 @@ categoryList.addEventListener('click', (e) => {
   if (!cat) return;
   categoryBtn.innerHTML = `${cat} <i class="fi fi-rr-angle-right"></i>`;
   categoryList.style.display = 'none';
-});
-</script>
 
+  nameCategorySave=cat;
+  document.getElementById('id_category').value=e.target.getAttribute('id-departament');
+});
+
+function select_departament_and_category(){
+    //now her we will update the information of the button for that the user know the departament and category of the product
+    const btn=document.getElementById('select-category-and-departament')
+    if(btn){
+        btn.innerHTML = `${nameDepartamentSave} &gt; ${nameCategorySave} <i class='fi fi-rr-angle-right'></i>`;
+    }
+
+    //close the pop of the message pop
+    close_my_pop('informationAddress');
+}
+</script>
