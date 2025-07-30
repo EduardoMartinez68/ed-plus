@@ -158,6 +158,7 @@
 </div>
 
 <script>
+  document.addEventListener('DOMContentLoaded', function () {
   // Preview instantáneo de la imagen seleccionada
   document.getElementById('inputImg').addEventListener('change', function () {
     const file = this.files[0];
@@ -169,8 +170,7 @@
     };
     reader.readAsDataURL(file);
   });
-</script>
-<script>
+
   const loadingOverlay = document.getElementById('loadingOverlay');
   //update the inputs of email and password 
   const savedEmail = localStorage.getItem('user_email');
@@ -198,7 +198,7 @@
   });
 
   //her we will send this infotmation to the api of plus
-  async function send_information_to_the_server() {
+  window.send_information_to_the_server = async function () {
     const messageDiv = document.getElementById('loginMessage') || document.createElement('div');
     loadingOverlay.style.display = 'flex';
 
@@ -245,8 +245,6 @@
 
     loadingOverlay.style.display = 'none';
   }
-
-
 
   async function load_data_store_from_the_server() {
     const email = localStorage.getItem('user_email');
@@ -308,6 +306,21 @@
         document.getElementById('show_address').checked = data.show_address == 1;
         document.getElementById('googleMaps').disabled = data.show_address != 1;
 
+
+        //get the image of the ad that is show in the web
+        const imgUrlAd = data.img;
+        const defaultImgAd = '/img/ad-web.webp';
+
+        const testImgAd = new Image();
+        testImgAd.onload = function () {
+          // Si carga correctamente, asigna la imagen
+          document.getElementById('img-ad-footer').src = imgUrlAd;
+        };
+        testImgAd.onerror = function () {
+          // Si falla, asigna la imagen por defecto
+          document.getElementById('img-ad-footer').src = defaultImgAd;
+        };
+
         notificationMessage('✅', 'Datos de la tienda cargados correctamente.')
       } else {
         console.warn("❌ No se pudieron obtener los datos: " + result.message);
@@ -321,5 +334,6 @@
     loadingOverlay.style.display = 'none';
   }
 
-  document.addEventListener('DOMContentLoaded', load_data_store_from_the_server);
+  load_data_store_from_the_server();
+  });
 </script>
