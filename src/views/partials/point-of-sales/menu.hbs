@@ -15,7 +15,7 @@
     }
 
     .div-ad img {
-    max-width: 120px;
+    width: 100%;
     height: auto;
     border-radius: 0.5rem;
     object-fit: contain;
@@ -54,6 +54,19 @@
 
     .information-sale .btn-sale:hover {
         background-color: #2b6cb0;
+    }
+
+    @media (max-width: 600px) {
+    .div-ad img {
+        max-width: 120px;
+        border-radius: 0.75rem;
+        margin: 0 auto;
+    }
+
+    .div-ad {
+        padding: 0.5rem;
+        text-align: center;
+    }
     }
 </style>
 <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-straight/css/uicons-solid-straight.css'>
@@ -438,7 +451,9 @@
 
         <div class="my-pop-content">
             <div class="div-ad">
-                <img src="https://pluspuntodeventa.com/img/recargas-pagos.png" alt="">
+                <a href="https://tusitio.com/compra" target="_blank">
+                    <img src="/img/ad/ad-sale.webp" alt="Publicidad" loading="lazy">
+                </a>
             </div>
             <br>
             <div class="information-sale">
