@@ -26,10 +26,10 @@
     font-family: monospace;
   }
 </style>
-<div class="container mt-4">
+<div class="tab-pane fade show active" id="navbar-company" role="tabpanel" aria-labelledby="navbar-company-tab">
   <div class="card">
-    <div class="card-body">
-      <label><i class="fi fi-sr-store-alt"></i> <strong>Configuración de Tienda Online</strong></label>
+    <div class="card-body sat-form-container">
+      <label><i class="fi fi-sr-store-alt"></i> Configuración de Tienda Online</label>
       <hr>
       <div id="loginMessage"></div>
       <form id="formDataBranch" enctype="multipart/form-data">
@@ -53,34 +53,60 @@
             <a href="https://pluspuntodeventa.com/app/store/store.php?token={{token}}" target="_blank">👉 Vista previa
               de tu web</a>
 
-            <div class="form-group text-center">
-              <img src="https://cdn.pixabay.com/photo/2017/01/25/17/35/picture-2008484_1280.png" id="imgEmployee"
-                class="img-fluid rounded" style="max-height: 160px;">
+            <div class="row">
+              <div class="col-3">
+                <div class="form-group text-center">
+                  <div style="
+                    background-color: #f3f4f6;
+                    display: inline-block;
+                    padding: 1rem;
+                    border-radius: 1rem;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                  ">
+                    <img src="/img/your_logo.webp" id="imgEmployee"
+                      class="img-fluid rounded" style="
+                      width: 160px;
+                      height: 160px;
+                      object-fit: contain;
+                      border-radius: 0.5rem;
+                      background-color: #cacaca;
+                      box-shadow: 0 0 0 3px rgba(0,0,0,0.1);
+                    ">
+
+                    <label for="inputImg" class="custom-file-upload mt-2 d-block"
+                      style="cursor:pointer; color:#1649FF;">
+                      <input type="file" name="image" accept="image/*" id="inputImg" style="display:none;">
+                      <i class="fas fa-upload"></i> Subir imagen
+                    </label>
+                  </div>
+                </div>
+
+              </div>
+              <div class="col-9">
+                <div class="mb-3">
+                  <label for="paypalKey" class="form-label">Titulo de la web</label>
+                  <input type="text" class="form-control" name="title_web" placeholder="Ejemplo: Mi Tienda Online">
+                </div>
+
+                <div class="mb-3">
+                  <label for="nombreSitio" class="form-label">Nombre de la tienda</label>
+                  <input type="text" class="form-control" id="nombreSitio" name="name"
+                    placeholder="Ejemplo: Super Pepe Market">
+                </div>
+
+                <div class="mb-3">
+                  <label for="direccion" class="form-label">Dirección del negocio</label>
+                  <input type="text" class="form-control" id="direccion" name="address"
+                    placeholder="Ejemplo: Calle 123, Ciudad, Estado">
+                </div>
+                <div class="mb-3">
+                  <label for="color" class="form-label">Color principal de la tienda</label>
+                  <input type="color" class="form-control form-control-color" id="color" name="color" value="#1649FF"
+                    title="Elige tu color">
+                </div>
+              </div>
             </div>
 
-            <center>
-              <label for="inputImg" class="custom-file-upload" style="cursor:pointer; color:#1649FF;">
-                <input type="file" name="image" accept="image/*" id="inputImg" style="display:none;">
-                <i class="fas fa-upload"></i> Subir imagen
-              </label>
-            </center>
-
-            <div class="mb-3">
-              <label for="paypalKey" class="form-label">Titulo de la web</label>
-              <input type="text" class="form-control" name="title_web" placeholder="Ejemplo: Mi Tienda Online">
-            </div>
-
-            <div class="mb-3">
-              <label for="nombreSitio" class="form-label">Nombre de la tienda</label>
-              <input type="text" class="form-control" id="nombreSitio" name="name"
-                placeholder="Ejemplo: Super Pepe Market">
-            </div>
-
-            <div class="mb-3">
-              <label for="direccion" class="form-label">Dirección del negocio</label>
-              <input type="text" class="form-control" id="direccion" name="address"
-                placeholder="Ejemplo: Calle 123, Ciudad, Estado">
-            </div>
 
             <div class="form-check">
               <input type="checkbox" class="form-check-input" id="checkWhatsapp" name="enable_whatsapp">
@@ -118,17 +144,11 @@
             <div class="mb-3">
               <label for="nombreSitio" class="form-label">Email para notificar los pagos</label>
               <input type="text" class="form-control" id="email_pay" name="email_pay"
-                placeholder="Ejemplo: email@123hotmail.com" required>
-            </div>
-
-            <div class="mb-3">
-              <label for="color" class="form-label">Color principal de la tienda</label>
-              <input type="color" class="form-control form-control-color" id="color" name="color" value="#1649FF"
-                title="Elige tu color">
+                placeholder="Ejemplo: email@123hotmail.com">
             </div>
 
 
-            <button type="button" class="btn btn-success w-100" onclick="send_information_to_the_server()">Guardar
+            <button type="button" class="btn btn-edit" onclick="send_information_to_the_server()">Guardar
               Cambios</button>
           </div>
         </div>
@@ -199,7 +219,8 @@
       const result = await response.json();
 
       if (result.success) {
-        messageDiv.innerHTML = `<div class="alert alert-success">✅ ${result.message || 'Cambios guardados correctamente.'}</div>`;
+        //messageDiv.innerHTML = `<div class="alert alert-success">✅ ${result.message || 'Cambios guardados correctamente.'}</div>`;
+        confirmationMessage('✅ Datos Actualizados', `Cambios guardados correctamente.`);
 
         // Si el backend responde con la ruta de imagen, actualizar la interfaz
         if (result.imageUrl) {
@@ -207,11 +228,14 @@
           document.getElementById('imageUrl').value = result.imageUrl;
         }
       } else {
+        errorMessage('Error', 'No se pudieron guardar tus datos.')
         messageDiv.innerHTML = `<div class="alert alert-danger">❌ ${result.message || 'No se pudo guardar.'}</div>`;
       }
     } catch (error) {
       console.error('Error:', error);
+      errorMessage('Error', error);
       messageDiv.innerHTML = '<div class="alert alert-danger">❌ Error de conexión con el servidor.</div>';
+
     }
 
     if (!document.getElementById('loginMessage')) {
@@ -249,7 +273,21 @@
 
         // Rellenar campos con los datos obtenidos
         //document.querySelector('input[name="image"]').value = data.img;
-        document.getElementById('imgEmployee').src = data.img;
+        const imgUrl = data.img;
+        const defaultImg = '/img/your_logo.webp';
+
+        const testImg = new Image();
+        testImg.onload = function () {
+          // Si carga correctamente, asigna la imagen
+          document.getElementById('imgEmployee').src = imgUrl;
+        };
+        testImg.onerror = function () {
+          // Si falla, asigna la imagen por defecto
+          document.getElementById('imgEmployee').src = defaultImg;
+        };
+
+        // Intenta cargar la imagen
+        testImg.src = imgUrl;
 
         document.querySelector('input[name="name"]').value = data.name || '';
         document.querySelector('input[name="address"]').value = data.address || '';
@@ -270,12 +308,14 @@
         document.getElementById('show_address').checked = data.show_address == 1;
         document.getElementById('googleMaps').disabled = data.show_address != 1;
 
-        console.log("✅ Datos de la tienda cargados correctamente.");
+        notificationMessage('✅', 'Datos de la tienda cargados correctamente.')
       } else {
         console.warn("❌ No se pudieron obtener los datos: " + result.message);
+        warningMessage('❌ No se pudieron obtener los datos', result.message)
       }
     } catch (error) {
       console.error("❌ Error al cargar los datos:", error);
+      warningMessage('❌ Error al cargar los datos', error);
     }
 
     loadingOverlay.style.display = 'none';

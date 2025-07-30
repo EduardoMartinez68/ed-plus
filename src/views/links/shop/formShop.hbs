@@ -1,2 +1,41 @@
 {{>loading}}
-{{>shop/from_shop}}
+
+
+<br><br>
+{{#if user.edit_shop_online}}
+<div class="container">
+  <div class="row">
+    <div class="nav flex-column col-4 nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+        <a class="nav-link active" id="navbar-navbar-tab" data-toggle="pill" href="#navbar-company" role="tab"
+            aria-controls="navbar-navbar" aria-selected="true"><i class="fi-icon fi-sr-store-alt"></i> Configuración de Tienda Online</a>
+
+        <a class="nav-link" id="navbar-navbar-tab" data-toggle="pill" href="#navbar-ad" role="tab"
+            aria-controls="navbar-navbar" aria-selected="true"><i class="fi-icon fi-sr-megaphone"></i> Anuncios de la Tienda Online</a>
+
+        <a class="nav-link" id="navbar-navbar-tab" data-toggle="pill" href="#navbar-departaments" role="tab"
+            aria-controls="navbar-navbar" aria-selected="true"><i class="fi-icon fi-ss-department-structure"></i> Departamentos y Categorias Online</a>
+    </div>
+
+    <div class="tab-content col" id="v-pills-tabContent">
+      {{>shop/from_shop}}
+      {{>shop/adShop}}
+      {{>shop/departamentsOnline}}
+    </div>
+  </div>
+</div>
+{{/if}}
+{{>loading}}
+
+
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="/js/desktop/jquery-3.2.1.slim.min.js"
+  integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="/js/desktop/popper.min.js"
+  integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src="/js/desktop/bootstrap.min.js"
+  integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+
+
+
