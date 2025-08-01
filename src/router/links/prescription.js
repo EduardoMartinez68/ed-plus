@@ -31,6 +31,8 @@ router.get('/:id_company/:id_branch/report-prescription', isLoggedIn, async (req
     res.render('links/prescription/prescription.hbs',{branchFree});
 })
 
+
+const {get_path_folder_upload, get_path_folder_plus}=require('../../initialAppForDesktop.js');
 router.get('/report-prescription', isLoggedIn, async (req, res) => {
     try {
 
@@ -173,7 +175,8 @@ router.get('/report-prescription', isLoggedIn, async (req, res) => {
         /*------------------her is for save and download the file--------------------------------- */
 
         // Generar un archivo Excel en memoria
-        const filePath = path.join(__dirname, fileName);
+        const pathFolderUpload = get_path_folder_upload();
+        const filePath = path.join(pathFolderUpload, fileName);
         XLSX.writeFile(wb, filePath);
 
         // Enviar el archivo Excel al cliente
