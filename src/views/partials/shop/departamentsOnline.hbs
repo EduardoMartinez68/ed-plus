@@ -1,16 +1,348 @@
+  <style>
+    .container-departaments{
+      display: flex;
+      height: 100vh;
+    }
+
+    .departments {
+      width: 28%;
+      background-color: #f1f3f5;
+      border-right: 1px solid #d1d5db;
+      overflow-y: auto;
+      padding: 24px 16px;
+    }
+
+    .departments h2 {
+      font-size: 18px;
+      margin-bottom: 16px;
+      color: #1f2937;
+      font-weight: 600;
+    }
+
+    .departments ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .departments li {
+      padding: 10px 14px;
+      margin-bottom: 6px;
+      background-color: #ffffff;
+      border: 1px solid #dcdfe4;
+      border-left: 4px solid transparent;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.1s, border-left 0.1s;
+      font-size: 15px;
+    }
+
+    .departments li:hover {
+      background-color: #e4e9f0;
+    }
+
+    .departments li.active {
+      background-color: #dde7f5;
+      border-left: 4px solid #2563eb;
+      font-weight: 600;
+    }
+
+    .categories {
+      flex: 1;
+      padding: 30px 40px;
+      background-color: #ffffff;
+    }
+
+    .categories h2 {
+      margin: 0;
+      font-size: 20px;
+      color: #1e293b;
+    }
+
+    .categories p {
+      margin-top: 6px;
+      margin-bottom: 24px;
+      font-size: 14px;
+      color: #6b7280;
+    }
+
+    .category-card {
+      background-color: #f9fafb;
+      border: 1px solid #d1d5db;
+      padding: 16px 18px;
+      margin-bottom: 20px;
+      border-radius: 6px;
+    }
+
+    .category-card h4 {
+      margin: 0 0 6px;
+      font-size: 16px;
+      color: #111827;
+    }
+
+    .category-card p {
+      margin: 0 0 12px;
+      font-size: 14px;
+      color: #4b5563;
+    }
+
+    .buttons{
+      display: flex;
+      gap: 10px;
+    }
+
+    .buttons button {
+      padding: 6px 14px;
+      font-size: 13px;
+      border: 1px solid transparent;
+      border-radius: 4px;
+      background-color: #e5e7eb;
+      color: #111;
+      cursor: pointer;
+      transition: background-color 0.15s;
+    }
+
+    .buttons button:hover {
+      background-color: #d1d5db;
+    }
+
+    .edit-btn {
+      background-color: #e0ecff;
+      border-color: #93c5fd;
+      color: #1d4ed8;
+    }
+
+    .edit-btn:hover {
+      background-color: #d0e1ff;
+    }
+
+    .delete-btn {
+      background-color: #fde2e2;
+      border-color: #fca5a5;
+      color: #b91c1c;
+    }
+
+    .delete-btn:hover {
+      background-color: #fcdada;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+
+      .departments {
+        width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid #ccc;
+      }
+
+      .categories {
+        padding: 20px;
+      }
+    }
+  </style>
 <div class="tab-pane fade show" id="navbar-departaments" role="tabpanel" aria-labelledby="navbar-departaments-tab">
   <div class="card">
     <div class="card-body sat-form-container">
       <label><i class="fi-icon fi-ss-department-structure"></i> Departamentos y Categorias Online</label>
       <hr>
-      <div id="loginMessage"></div>
-      <form id="formDataBranch" enctype="multipart/form-data">
-        <!---information for in the web--->
-        <input type="hidden" value="{{token}}" name="token" id="token">
-        <input type="hidden" value="{{token}}" name="user_email" id="user_email">
-        <input type="hidden" value="{{token}}" name="password" id="password">
 
-      </form>
+
+
+      <div class="container-departaments">
+        <div class="departments">
+          <h2>Departamentos</h2>
+          <div class="row">
+            <div class="input-group mb-3">
+              <input type="text" class="form-control" placeholder="Buscar por nombre">
+              <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="btn btn-edit" onclick="open_my_pop('addNewDepartament')">+</button>
+              </div>
+            </div>
+          </div>
+          <ul id="departmentList"></ul>
+        </div>
+
+        <div class="categories">
+          <h2 id="selectedDepartmentName">Selecciona un departamento</h2>
+          <p id="selectedDepartmentDescription"></p>
+          
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Buscar categoria por nombre">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary" type="btn btn-edit" onclick="open_my_pop('addNewCategory')">+</button>
+            </div>
+          </div>
+
+          <div id="categoryList"></div>
+        </div>
+      </div>
+
+
+
+
+
+
+
+
+
+
+
     </div>
   </div>
 </div>
+
+
+
+
+
+
+
+<div id="addNewDepartament" class="my-pop">  
+    <div class="my-pop-content-wrapper">
+        <div class="my-pop-header">
+            <h4 class="my-pop-title">Crear un nuevo departamento Online    </h4>
+            <button class="close-btn" onclick="close_my_pop('addNewDepartament')" type="button">×</button>
+        </div>  
+        <div class="my-pop-content">
+          <div class="form-group">
+            <label for="">Nombre del departamento *</label>
+            <input type="text" class="form-control" placeholder="Escribe el nombre del departamento" id="nameNewDepartament">
+          </div>
+
+          <div class="form-group">
+            <label for="">Descripción</label>
+            <textarea name="" id="descriptionNewDepartament" placeholder="Escribe una descripción..." class="form-control"></textarea>
+          </div>
+
+          <button class="btn btn-add" onclick="addNewCategoriaToTheServer()">Agregar</button>
+        </div>
+    </div>
+</div>
+
+
+<div id="addNewCategory" class="my-pop">  
+    <div class="my-pop-content-wrapper">
+        <div class="my-pop-header">
+            <h4 class="my-pop-title">Crear una nueva cetegoria del departamento    </h4>
+            <button class="close-btn" onclick="close_my_pop('addNewCategory')" type="button">×</button>
+        </div>  
+        <div class="my-pop-content">
+          <div class="form-group">
+            <label for="">Nombre de la Categoria *</label>
+            <input type="text" class="form-control" placeholder="Escribe el nombre de la categoria">
+          </div>
+
+          <div class="form-group">
+            <label for="">Descripción</label>
+            <textarea name="" id="" placeholder="Escribe una descripción..." class="form-control"></textarea>
+          </div>
+
+          <button class="btn btn-add">Agregar</button>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+<script>
+  const departamentos = [
+    { id: 1, name: "Electrónica", description: "Dispositivos y gadgets electrónicos." },
+    { id: 2, name: "Ropa", description: "Prendas de vestir para todas las edades." },
+    { id: 3, name: "Hogar", description: "Artículos para el hogar y decoración." },
+  ];
+
+  const categorias = [
+    { id: 1, id_departament: 1, name: "Celulares", description: "Smartphones de todas las marcas." },
+    { id: 2, id_departament: 1, name: "Computadoras", description: "Laptops y PCs." },
+    { id: 3, id_departament: 2, name: "Camisetas", description: "Camisetas para hombre y mujer." },
+    { id: 4, id_departament: 2, name: "Pantalones", description: "Variedad de estilos y tallas." },
+    { id: 5, id_departament: 3, name: "Muebles", description: "Sillas, mesas, sofás, etc." },
+    { id: 6, id_departament: 3, name: "Decoración", description: "Cuadros, lámparas y más." }
+  ];
+
+  const departmentList = document.getElementById('departmentList');
+  const selectedDepartmentName = document.getElementById('selectedDepartmentName');
+  const selectedDepartmentDescription = document.getElementById('selectedDepartmentDescription');
+  const categoryList = document.getElementById('categoryList');
+
+  departamentos.forEach(dept => {
+    const li = document.createElement('li');
+    li.textContent = dept.name;
+    li.addEventListener('click', () => {
+      mostrarCategorias(dept);
+      document.querySelectorAll('#departmentList li').forEach(el => el.classList.remove('active'));
+      li.classList.add('active');
+    });
+    departmentList.appendChild(li);
+  });
+
+  function mostrarCategorias(departamento) {
+    selectedDepartmentName.textContent = departamento.name;
+    //selectedDepartmentName.innerHTML=`<h4>${departamento.name}</h4>`
+
+    //selectedDepartmentDescription.textContent = departamento.description;
+    selectedDepartmentDescription.innerHTML = `
+    <label>${departamento.description}</label> 
+        <div class="buttons">
+          <button class="edit-btn">Editar</button>
+          <button class="delete-btn">Eliminar</button>
+        </div>
+        <hr>
+    `;
+    categoryList.innerHTML = '';
+
+    const categoriasFiltradas = categorias.filter(cat => cat.id_departament === departamento.id);
+
+    categoriasFiltradas.forEach(cat => {
+      const div = document.createElement('div');
+      div.className = 'category-card';
+
+      div.innerHTML = `
+        <h4>${cat.name}</h4>
+        <p>${cat.description}</p>
+        <div class="buttons">
+          <button class="edit-btn">Editar</button>
+          <button class="delete-btn">Eliminar</button>
+        </div>
+      `;
+
+      categoryList.appendChild(div);
+    });
+  }
+</script>
+<script>
+
+
+
+async function addNewCategoriaToTheServer(){
+  //first we will get all the information of the form for know if have all the information that the server need
+  const nameNewDepartament=document.getElementById('nameNewDepartament').value;
+  const descriptionNewDepartament=document.getElementById('descriptionNewDepartament').value;
+
+  //now we will see if the input have the information success
+  if(this_input_have_a_value(nameNewDepartament)){
+    await send_information_to_the_server_for_add_a_new_deprtament();
+  }else{
+    //if not the user not have information save in the input of the name, we will show a message of error
+    warningMessage('Espera un minuto','Necesitas llenar todos los campos obligatorios');
+  }
+}
+
+function this_input_have_a_value(input){
+  return input && typeof input.value === 'string' && input.value.trim() !== '';
+}
+
+function send_information_to_the_server_for_add_a_new_deprtament(){
+
+}
+
+</script>

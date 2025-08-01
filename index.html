@@ -1,194 +1,179 @@
-<style>
-:root {
-  --main-blue: #2563eb;
-  --hover-blue: #1e40af;
-  --light-gray: #f9fafb;
-  --gray: #e5e7eb;
-  --text-gray: #374151;
-  --white: #ffffff;
-}
+<!DOCTYPE html>
+<html lang="en">
 
-/* Global */
-body {
-  font-family: 'Inter', sans-serif;
-  background: #f3f4f6;
-  color: var(--text-gray);
-  padding: 40px;
-}
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
 
-/* Contenedor general */
-.selector-container {
-  display: flex;
-  gap: 30px;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  max-width: 800px;
-}
-
-/* Botones selectores */
-.select-button {
-  background-color: var(--white);
-  color: var(--text-gray);
-  border: 1.5px solid var(--gray);
-  padding: 14px 18px;
-  font-size: 15px;
-  border-radius: 12px;
-  width: 260px;
-  text-align: left;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
-}
-
-.select-button:hover {
-  border-color: var(--main-blue);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
-}
-
-.select-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* Dropdown moderno */
-.dropdown {
-  background-color: var(--white);
-  border: 1.5px solid var(--gray);
-  border-radius: 12px;
-  margin-top: 8px;
-  padding: 8px 0;
-  list-style: none;
-  max-height: 220px;
-  overflow-y: auto;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
-  display: none;
-  width: 260px;
-  transition: all 0.2s ease;
-  z-index: 100;
-  position: absolute;
-}
-
-/* Items de lista */
-.dropdown li {
-  padding: 10px 16px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  font-size: 15px;
-}
-
-.dropdown li:hover {
-  background-color: var(--light-gray);
-  color: var(--main-blue);
-}
-
-/* Scroll moderno */
-.dropdown::-webkit-scrollbar {
-  width: 6px;
-}
-.dropdown::-webkit-scrollbar-thumb {
-  background-color: #cbd5e1;
-  border-radius: 10px;
-}
-.dropdown::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-/* Botón aceptar */
-.accept-button {
-  margin-top: 32px;
-  padding: 12px 24px;
-  background-color: var(--main-blue);
-  color: var(--white);
-  border: none;
-  border-radius: 10px;
-  font-size: 15px;
-  cursor: pointer;
-  transition: background 0.2s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.accept-button:hover {
-  background-color: var(--hover-blue);
-}
-</style>
+<body>
 
 
-<link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons/regular-rounded/css/uicons-regular-rounded.css">
 
-<div class="selector-container">
-  <!-- Departamento -->
-  <div class="selector">
-    <button class="select-button" id="select-department">
-      Selecciona departamento
-      <i class="fi fi-rr-angle-right"></i>
-    </button>
-    <ul class="dropdown" id="department-options">
-      <li data-department="Electronico">Electronico</li>
-      <li data-department="Ropa">Ropa</li>
-      <li data-department="Hogar">Hogar</li>
+  <plus-modules>
+    <plus-module name="Perfil">
+      <h2>Perfil del Despacho</h2>
+      <p>Información general y datos fiscales del despacho.</p>
+    </plus-module>
+
+    <plus-module name="Clientes" icon="👨‍💼">
+      <h2>Administración de Clientes</h2>
+      <p>Listado de clientes, historial y contratos.</p>
+    </plus-module>
+
+    <plus-module name="Casos" icon='<i class="fi fi-sr-shopping-cart"></i>'>
+      <h2>Gestión de Casos</h2>
+      <p>Seguimiento de expedientes y citas judiciales.</p>
+    </plus-module>
+  </plus-modules>
+
+
+
+
+
+
+  <script>
+
+    
+    class PlusModules extends HTMLElement {
+      constructor() {
+        super();
+        this.attachShadow({ mode: 'open' });
+      }
+
+      connectedCallback() {
+        const col = parseInt(this.getAttribute('col')) || 3;
+        const colSidebar = Math.max(1, Math.min(col, 11));
+        const colContent = 12 - colSidebar;
+
+        const modules = Array.from(this.querySelectorAll('plus-module'));
+        const names = modules.map(m => m.getAttribute('name'));
+        const icons = modules.map(m => m.getAttribute('icon') || '');
+        const contents = modules.map(m => m.innerHTML);
+
+        this.shadowRoot.innerHTML = `
+  <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-solid-straight/css/uicons-solid-straight.css'>
+  <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
+<link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
+  <style>
+    :host {
+      --highlight-color: #E6F3FF;
+      --highlight-border: #C2D9EC;
+      --icon-color: #3C6A90;
+      --bg-panel: #ffffff;
+      --border-color: #dcdcdc;
+      --font-color: #222;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      height: 100vh;
+      background: #f4f4f4;
+      color: var(--font-color);
+    }
+
+    .sidebar {
+      width: ${(colSidebar / 12) * 100}%;
+      padding: 1rem;
+      border-right: 1px solid var(--border-color);
+      background: transparent;
+      box-sizing: border-box;
+    }
+
+    .content {
+      width: ${(colContent / 12) * 100}%;
+      padding: 2rem;
+      background: transparent;
+      overflow-y: auto;
+      box-sizing: border-box;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .sidebar li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 15px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      background: #fff;
+      margin-bottom: 10px;
+    }
+
+    .sidebar li:hover {
+      background: #f0f0f0;
+    }
+
+    .sidebar li.active {
+      background: var(--highlight-color);
+      border: 1px solid var(--highlight-border);
+      font-weight: 600;
+    }
+
+    .sidebar li .icon {
+      color: var(--icon-color);
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .module-panel {
+      padding: 1rem;
+      border-radius: 3px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 20px;
+      color: #333;
+    }
+
+    p {
+      font-size: 14px;
+      line-height: 1.6;
+    }
+  </style>
+
+  <div class="sidebar">
+    <ul>
+      ${names.map((name, i) => `
+        <li class="${i === 0 ? 'active' : ''}" data-index="${i}">
+          <span class="icon" data-icon="${i}"></span>
+          <span>${name}</span>
+        </li>
+      `).join('')}
     </ul>
   </div>
-
-  <!-- Categoría -->
-  <div class="selector">
-    <button class="select-button" id="select-category" disabled>
-      Selecciona categoría
-      <i class="fi fi-rr-angle-right"></i>
-    </button>
-    <ul class="dropdown" id="category-options">
-      <!-- Llenado dinámico -->
-    </ul>
+  <div class="content">
+    <div class="module-panel">${contents[0]}</div>
   </div>
-</div>
+        `;
 
-<button class="accept-button">Aceptar</button>
 
-<script>
-const departmentBtn = document.getElementById('select-department');
-const departmentList = document.getElementById('department-options');
-const categoryBtn = document.getElementById('select-category');
-const categoryList = document.getElementById('category-options');
+        this.shadowRoot.querySelectorAll('.icon').forEach((el, idx) => {
+          el.innerHTML = icons[idx];
+        });
 
-const categories = {
-  Electronico: ['PC', 'Consola videojuegos', 'Bocinas'],
-  Ropa: ['Camisas', 'Pantalones', 'Zapatos'],
-  Hogar: ['Muebles', 'Electrodomésticos', 'Decoración']
-};
 
-// Toggle dropdowns
-departmentBtn.onclick = () => {
-  departmentList.style.display = departmentList.style.display === 'block' ? 'none' : 'block';
-  categoryList.style.display = 'none';
-};
+        const listItems = this.shadowRoot.querySelectorAll('.sidebar li');
+        const content = this.shadowRoot.querySelector('.module-panel');
 
-categoryBtn.onclick = () => {
-  categoryList.style.display = categoryList.style.display === 'block' ? 'none' : 'block';
-  departmentList.style.display = 'none';
-};
+        listItems.forEach(item => {
+          item.addEventListener('click', () => {
+            const index = item.getAttribute('data-index');
+            listItems.forEach(i => i.classList.remove('active'));
+            item.classList.add('active');
+            content.innerHTML = contents[index];
+          });
+        });
+      }
+    }
 
-// Selección de departamento
-departmentList.addEventListener('click', (e) => {
-  const dep = e.target.dataset.department;
-  if (!dep) return;
-  departmentBtn.innerHTML = `${dep} <i class="fi fi-rr-angle-right"></i>`;
-  departmentList.style.display = 'none';
-
-  // Cargar categorías
-  const cats = categories[dep] || [];
-  categoryList.innerHTML = cats.map(cat => `<li>${cat}</li>`).join('');
-  categoryBtn.disabled = false;
-  categoryBtn.innerHTML = `Selecciona categoría <i class="fi fi-rr-angle-right"></i>`;
-});
-
-// Selección de categoría
-categoryList.addEventListener('click', (e) => {
-  const cat = e.target.textContent;
-  if (!cat) return;
-  categoryBtn.innerHTML = `${cat} <i class="fi fi-rr-angle-right"></i>`;
-  categoryList.style.display = 'none';
-});
-</script>
-
+    customElements.define('plus-modules', PlusModules);
+    customElements.define('plus-module', class extends HTMLElement { });
+  </script>

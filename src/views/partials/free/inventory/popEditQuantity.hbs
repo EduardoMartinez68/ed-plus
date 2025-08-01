@@ -178,9 +178,9 @@
 
     function popGuardarDiferenciaOnlyOne() {
         const input = document.getElementById('pop-edit-cant-inventory-input');
-        const cantInput = parseInt(input.value);
-        const min = parseInt(input.min); // Obtenemos el valor mínimo
-        const max = parseInt(input.max); // Obtenemos el valor máximo
+        const cantInput = parseFloat(input.value);
+        const min = parseFloat(input.min); // Obtenemos el valor mínimo
+        const max = parseFloat(input.max); // Obtenemos el valor máximo
 
         let nuevaCantidad = cantInput;
 
@@ -188,7 +188,7 @@
 
 
         if (popCeldaSeleccionada) {
-            const cantidadActual = parseInt(popCeldaSeleccionada.innerText) || 0; // La diferencia actual
+            const cantidadActual = parseFloat(popCeldaSeleccionada.innerText) || 0; // La diferencia actual
             const cantidadFinal = nuevaCantidad; // Nueva diferencia
 
             popCeldaSeleccionada.innerText = cantidadFinal; // Actualiza la diferencia
@@ -201,7 +201,7 @@
             const tdQuantity = fila.querySelector('.diferencia');
 
             if (tdExistencia) {
-                const existenciaActual = parseInt(tdExistencia.textContent) || 0;
+                const existenciaActual = parseFloat(tdExistencia.textContent) || 0;
 
 
                 let nuevaExistencia = existenciaActual + nuevaCantidad;
@@ -349,5 +349,66 @@
         } else {
             fila.style.backgroundColor = ""; // Sin color
         }
+    }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div id="editNewQuantity" class="my-pop">  
+    <div class="my-pop-content-wrapper">
+        <div class="my-pop-header">
+            <h4 class="my-pop-title">Editar Cantidad</h4>
+            <button class="close-btn" onclick="close_my_pop('editNewQuantity')" type="button">×</button>
+        </div>  
+        <div class="my-pop-content">
+            <label id="notePopNewQuantity">Cantidad actual:</label><input type="number" value="0" readonly id="oldExistencePopQuantity">
+
+            <div class="pop-edit-cant-inventory-controls">
+                <button onclick="popChangeNewQuantity(-1)">-</button>
+                <input type="number" value="0" id="newQuantityPop">
+                <button onclick="popChangeNewQuantity(1)">+</button>
+            </div>
+            <button class="btn btn-success" onclick="update_new_exist_with_pop()">Actualizar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function popChangeNewQuantity(value){
+        const input=document.getElementById('newQuantityPop');
+        let newQuantity = parseFloat(input.value) + value;
+        input.value = newQuantity;
+    }
+
+    function update_new_exist_with_pop(){
+        //get the new exist that the user added
+        const input = document.getElementById('newQuantityPop');
+        let valueExistence = parseFloat(input.value);
+
+        //
+        const oldExistencePopQuantity=document.getElementById('oldExistencePopQuantity').value;
+        const newExistence=valueExistence-oldExistencePopQuantity;
+        document.getElementById('pop-edit-cant-inventory-input').value=newExistence;
+
+
+        //change the 
+        popGuardarDiferencia()
+
+        close_my_pop('editNewQuantity');
     }
 </script>

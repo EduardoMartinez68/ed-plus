@@ -254,7 +254,7 @@ function addProductToInventoryTable(product) {
     </td>
     <td class="existence">${product.existence}</td>
     <td>${product.sale_unity}</td>
-    <td class="newExistence">${product.existence}</td>
+    <td class="newExistence" onclick="open_pop_edit_quantity(this, ${product.existence})">${product.existence}</td>
     <td class="diferencia" onclick="openPopEditQuantity(this,${product.id},${product.max_inventory},${product.min_inventory})">0</td>
     <td>$${parseFloat(product.sale_price).toFixed(2)}</td>
     <td class="importe" total="0">$0</td>
@@ -265,7 +265,19 @@ function addProductToInventoryTable(product) {
   tbodyInventory.appendChild(row);
 }
 
+//------------------------------open pop change new exist----------------------------//
+function open_pop_edit_quantity(tdElement,existence){
+  popCeldaSeleccionada=tdElement; //save the cell that the user do click
 
+  const value = tdElement.textContent.trim(); //get the new exist in the table
+  const quantity = parseInt(value, 10); //convert the text to number
+  document.getElementById('newQuantityPop').value=quantity; //update the information of the message pop
+
+  //get the exist original of the product
+  const notePopNewQuantity=document.getElementById('oldExistencePopQuantity');
+  notePopNewQuantity.value=existence; //update the message of the message pop
+  open_my_pop('editNewQuantity');
+}
 
 //-----------------------her is for search---------------------//
 const tbody = document.getElementById('search-product-body');
