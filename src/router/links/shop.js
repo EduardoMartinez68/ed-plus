@@ -110,6 +110,12 @@ router.get('/:id_company/:id_branch/:id_product/edit-products-shop', isLoggedIn,
     }
 });
 
+router.get('/rederict/:id_product/edit-products-shop', isLoggedIn, async (req, res) => {
+    const { id_product } = req.params;
+    const {id_company, id_branch }=req.user;
+    res.redirect(`/links/${id_company}/${id_branch}/${id_product}/edit-products-shop`);
+});
+
 
 
 module.exports = router;

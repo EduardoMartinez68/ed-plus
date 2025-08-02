@@ -107,12 +107,66 @@ select:focus {
         padding: 20px;
     }
 }
+
+
+/*BUTTONS FOR AFTER AND BEFOR*/
+.product-nav-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    background-color: var(--color-company);
+    width: 36px;
+    height: 36px;
+    text-align: center;
+    line-height: 36px;
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    user-select: none;
+    font-family: Arial, sans-serif;
+}
+
+.product-nav-button.left {
+    left: -18px;
+}
+
+.product-nav-button.right {
+    right: -18px;
+}
+
+/* Responsive simple para móviles */
+@media (max-width: 576px) {
+    .product-nav-button {
+        width: 32px;
+        height: 32px;
+        font-size: 16px;
+        line-height: 32px;
+    }
+    .product-nav-button.left {
+        left: -12px;
+    }
+    .product-nav-button.right {
+        right: -12px;
+    }
+}
 </style>
 <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-thin-rounded/css/uicons-thin-rounded.css'>
 <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-thin-rounded/css/uicons-thin-rounded.css'>
+<link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-bold-straight/css/uicons-bold-straight.css'>
 
 <div class="container mt-4">
     <div class="card">
+        <!--this button is for change of product after or before-->
+        <div class="product-nav-button left" id="product-nav-left" onclick="change_product(-1)">
+            <i class="fi-icon fi-br-angle-small-left"></i>
+        </div>
+        <div class="product-nav-button right" id="product-nav-right" onclick="change_product(1)">
+            <i class="fi-icon fi-sr-angle-small-right"></i>
+        </div>
+
         <div class="card-body">
             <label><i class="fi fi-rr-marketplace-store"></i> Editar producto online</label>
             <hr>
@@ -127,10 +181,11 @@ select:focus {
 
                 <!-- Vista previa -->
                 <div class="row">
-                    <div class="col-3">
+                    <div class="col-3 position-relative">
                         <img id="editPreviewImage" src="" alt="Vista previa" class="img-fluid rounded shadow-sm">
                         <button type="button" id="removeImageBtn" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1" style="display: none;">✕</button>
                     </div>
+                    
                     <div class="col-9">
                         <div class="form-group">
                             <label for="name">Nombre del producto</label>
@@ -338,4 +393,28 @@ select:focus {
 
     //load_information_of_the_product();
     window.addEventListener('DOMContentLoaded', load_information_of_the_product);
+
+
+
+
+    //---------------------this script is for change of product-------------------------------
+    async function change_product(number){
+        //get the information of the product for change
+        const id_product=document.getElementById('id_product').value;
+        const formData = get_key_of_my_api();
+        formData.append('id_product', id_product);
+        formData.append('number', number);
+
+        const response = await send_data_to_my_api_in_the_server(
+        'https://pluspuntodeventa.com/api/branch_online/get_new_id_product.php',
+        formData
+        );
+
+        if (response.success) {
+            nextWeb(`rederict/${response.id_product}/edit-products-shop`);
+        } else {
+            notificationMessageError('💥 ¡Oh no!', 'Algo falló al intentar cambiar de producto.');
+            console.error(response);
+        }
+    }
 </script>
