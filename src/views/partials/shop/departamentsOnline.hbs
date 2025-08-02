@@ -217,7 +217,28 @@
             <textarea name="" id="descriptionNewDepartament" placeholder="Escribe una descripción..." class="form-control"></textarea>
           </div>
 
-          <button class="btn btn-add" onclick="addNewCategoriaToTheServer()">Agregar</button>
+          <button class="btn btn-add" onclick="add_new_departament_to_the_server()">Agregar</button>
+        </div>
+    </div>
+</div>
+
+<div id="editDepartamentPop" class="my-pop">  
+    <div class="my-pop-content-wrapper">
+        <div class="my-pop-header">
+            <h4 class="my-pop-title">Edita un departamento Online    </h4>
+            <button class="close-btn" onclick="close_my_pop('editDepartamentPop')" type="button">×</button>
+        </div>  
+        <div class="my-pop-content">
+          <div class="form-group">
+            <label for="">Nombre del departamento *</label>
+            <input type="text" class="form-control" placeholder="Escribe el nombre del departamento" id="nameEditDepartament">
+          </div>
+
+          <div class="form-group">
+            <label for="">Descripción</label>
+            <textarea name="" id="descriptionEditDepartament" placeholder="Escribe una descripción..." class="form-control"></textarea>
+          </div>
+          <button class="btn btn-add" onclick="edit_departament_to_the_server()">Actualizar</button>
         </div>
     </div>
 </div>
@@ -387,11 +408,47 @@
     return key;
   }
 
-  async function edit_departament(){
-    const key=create_user_key();
-    key.append('id', dataDepartamentEdit.id);
+  function edit_departament(){
+    //update the information of the form of the pop
+    document.getElementById('nameEditDepartament').value=dataDepartamentEdit.name;
+    document.getElementById('descriptionEditDepartament').value=dataDepartamentEdit.description;
 
-    
+    open_my_pop('editDepartamentPop');
+  }
+
+  async function edit_departament_to_the_server(){
+    //first we will get all the information of the form for know if have all the information that the server need
+    const newName=document.getElementById('nameEditDepartament').value;
+    const newDescription=document.getElementById('descriptionEditDepartament').value;
+
+    //now we will see if the input have the information success
+    if(this_input_have_a_value(newName)){
+      const departament=create_a_new_departament(newName, newDescription);
+      departament.append('id', dataDepartamentEdit.id);
+
+      //we will see that answer the server
+      const answer=await send_data_to_my_api_in_the_server('https://pluspuntodeventa.com/api/branch_online/edit_departament.php',departament);
+
+      //we will see if the server can save the new category 
+      if(answer.success){
+        //if the user can delete the departament, we will update the list of the UI
+        await get_category_and_departament_from_my_api();
+
+        //clear the form 
+        document.getElementById('nameEditDepartament').value='';
+        document.getElementById('descriptionEditDepartament').value='';
+        close_my_pop('editDepartamentPop');
+
+
+        confirmationMessage('Departamento Editado', `El departamento '${newName}' fue actualizado`);
+      }else{
+        warningMessage('💥 ¡Oh no!',`Algo falló al editar el departamento... Mensaje:${answer.message} Error: ${answer.error}. `);
+        console.log(answer);
+      }
+    }else{
+      //if not the user not have information save in the input of the name, we will show a message of error
+      warningMessage('😅 Uy, casi...', 'Te faltaron algunos campos obligatorios. ¡No lo dejes a la imaginación del servidor!');
+    }
   }
 
   async function delete_departament(){
@@ -422,7 +479,7 @@
 
 
 
-async function addNewCategoriaToTheServer(){
+async function add_new_departament_to_the_server(){
   //first we will get all the information of the form for know if have all the information that the server need
   const nameNewDepartament=document.getElementById('nameNewDepartament').value;
   const descriptionNewDepartament=document.getElementById('descriptionNewDepartament').value;
