@@ -337,8 +337,8 @@
     selectedDepartmentDescription.innerHTML = `
       <label>${departamento.description}</label>
       <div class="buttons">
-        <button class="edit-btn">Editar</button>
-        <button class="delete-btn">Eliminar</button>
+        <button class="edit-btn" onclick="edit_departament()">Editar</button>
+        <button class="delete-btn" onclick="delete_departament()">Eliminar</button>
       </div>
       <hr>
     `;
@@ -369,6 +369,54 @@
 
   //load all the departament when all the HTML is load 
   window.addEventListener('DOMContentLoaded', get_category_and_departament_from_my_api);
+
+
+  //-----------------------------------------
+  function create_user_key(){
+    //her we will get the data of his account PLUS
+    const formData = new FormData();
+    formData.append('token', document.getElementById('token').value);
+    formData.append('user_email', localStorage.getItem('user_email'));
+    formData.append('password', localStorage.getItem('user_password'));
+    return formData;
+  }
+
+  function create_data_form_departament(){
+    const key=create_user_key();
+    key.append('id', dataDepartamentEdit.id);
+    return key;
+  }
+
+  async function edit_departament(){
+    const key=create_user_key();
+    key.append('id', dataDepartamentEdit.id);
+
+    
+  }
+
+  async function delete_departament(){
+    const nameDepartament=dataDepartamentEdit.name;
+    if(await questionMessage('🗑️ Eliminar Departamento',`¿Estás seguro de eliminar el departamento '${nameDepartament}' o fue un dedazo? 😬`)){
+      const dataForm=create_data_form_departament();
+
+      //we will see that answer the server
+      const answer=await send_data_to_my_api_in_the_server('https://pluspuntodeventa.com/api/branch_online/delete_departament.php',dataForm);
+
+      //we will see if the server can save the new category 
+      if(answer.success){
+        dataDepartamentEdit={} //clear the information of the departament
+
+        //if the user can delete the departament, we will update the list of the UI
+        await get_category_and_departament_from_my_api();
+        confirmationMessage('Departamento eliminado 💀', `El departamento '${nameDepartament}' ha sido eliminado. Nunca lo olvidaremos... bueno, sí. 😅`);
+      }else{
+        warningMessage('💥 ¡Oh no!',`Algo falló al eliminar el departamento... Mensaje:${answer.message} Error: ${answer.error}. `);
+        console.log(answer);
+      }
+    }
+  }
+
+
 </script>
 <script>
 
