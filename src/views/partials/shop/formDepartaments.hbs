@@ -306,7 +306,8 @@ function render_departaments_and_categories(data) {
       // Cargar sus categorías
       const cats = categoriesMap[departamento.name] || [];
       categoryList.innerHTML = cats.map(cat => {
-        return `<li id-departament="${cat.id}">${cat.name}</li>`;
+       // return `<li id-departament="${cat.id}">${cat.name}</li>`;
+       return `<li data-category="${cat.name}" data-category-id="${cat.id}">${cat.name}</li>`
       }).join('');
       categoryBtn.disabled = false;
 
@@ -356,12 +357,14 @@ departmentList.addEventListener('click', (e) => {
   categoryBtn.innerHTML = `Selecciona categoría <i class="fi fi-rr-angle-right"></i>`;
 });
 
+
+
 // Delegación de eventos para seleccionar categoría
 categoryList.addEventListener('click', (e) => {
   const cat = e.target.dataset.category;
   const catId = e.target.dataset.categoryId;
   if (!cat || !catId) return;
-
+  
   categoryBtn.innerHTML = `${cat} <i class="fi fi-rr-angle-right"></i>`;
   categoryList.style.display = 'none';
   nameCategorySave = cat;
