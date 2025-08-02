@@ -166,16 +166,47 @@ const departmentList = document.getElementById('department-options');
 const categoryBtn = document.getElementById('select-category');
 const categoryList = document.getElementById('category-options');
 
-const categories = {
-  Electronico: ['PC', 'Consola videojuegos', 'Bocinas'],
-  Ropa: ['Camisas', 'Pantalones', 'Zapatos'],
-  Hogar: ['Muebles', 'Electrodomésticos', 'Decoración']
-};
+
+
+
+//this function is for save the data of the departament and category for that the software not send solict to the server forever that
+//the user load the web.
+function saveCategoriesInCookie(categories) {
+  const now = new Date();
+  now.setTime(now.getTime() + (60 * 60 * 1000)); // 1 hora
+  const expires = "expires=" + now.toUTCString();
+  const value = btoa(JSON.stringify(categories)); // codifica en base64
+
+  document.cookie = `cachedCategories=${value}; ${expires}; path=/`;
+}
+
+//her we will get the category and departament save in the web 
+function getCategoriesFromCookie() {
+  const name = "cachedCategories=";
+  const decodedCookie = decodeURIComponent(document.cookie);
+  const ca = decodedCookie.split(';');
+
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i].trim();
+    if (c.indexOf(name) === 0) {
+      const value = c.substring(name.length, c.length);
+      try {
+        return JSON.parse(atob(value)); // decodify and convert to object
+      } catch (e) {
+        return null;
+      }
+    }
+  }
+  return null;
+}
+
+
+let categories = getCategoriesFromCookie();;
 
 
 
 
-
+/*
 // Toggle dropdowns
 departmentBtn.onclick = () => {
   departmentList.style.display = departmentList.style.display === 'block' ? 'none' : 'block';
@@ -215,7 +246,7 @@ categoryList.addEventListener('click', (e) => {
   nameCategorySave=cat;
   document.getElementById('id_category').value=e.target.getAttribute('id-departament');
 });
-
+*/
 function select_departament_and_category(){
     //now her we will update the information of the button for that the user know the departament and category of the product
     const btn=document.getElementById('select-category-and-departament')
@@ -226,4 +257,152 @@ function select_departament_and_category(){
     //close the pop of the message pop
     close_my_pop('informationAddress');
 }
+
+
+
+
+
+
+
+
+
+
+function render_departaments_and_categories(data) {
+  // Obtener los IDs seleccionados previamente (si existen)
+  const id_departament = document.getElementById('id_departament').value;
+  const id_category = document.getElementById('id_category').value;
+
+  // Limpiar los elementos
+  departmentList.innerHTML = '';
+  categoryList.innerHTML = '';
+  categoryBtn.disabled = true;
+  categoryBtn.innerHTML = `Selecciona categoría <i class="fi fi-rr-angle-right"></i>`;
+
+  // Reconstruir estructura y mapa
+  const categoriesMap = {};
+  let selectedDepartmentName = null;
+
+  data.forEach(departamento => {
+    const li = document.createElement('li');
+    li.textContent = departamento.name;
+    li.dataset.department = departamento.name;
+    li.dataset.departmentId = departamento.id;
+    departmentList.appendChild(li);
+
+    categoriesMap[departamento.name] = departamento.categories.map(c => ({
+      name: c.name,
+      id: c.id
+    }));
+
+    // Verificar si este departamento debe seleccionarse
+    if (departamento.id === parseInt(id_departament)) {
+      selectedDepartmentName = departamento.name;
+
+      // Simular selección del departamento
+      departmentBtn.innerHTML = `${departamento.name} <i class="fi fi-rr-angle-right"></i>`;
+      nameDepartamentSave = departamento.name;
+      document.getElementById('id_departament').value = departamento.id;
+
+      // Cargar sus categorías
+      const cats = categoriesMap[departamento.name] || [];
+      categoryList.innerHTML = cats.map(cat => {
+        return `<li id-departament="${cat.id}">${cat.name}</li>`;
+      }).join('');
+      categoryBtn.disabled = false;
+
+      // Seleccionar la categoría si corresponde
+      const selectedCategory = departamento.categories.find(c => c.id === parseInt(id_category));
+      if (selectedCategory) {
+        categoryBtn.innerHTML = `${selectedCategory.name} <i class="fi fi-rr-angle-right"></i>`;
+        nameCategorySave = selectedCategory.name;
+        document.getElementById('id_category').value = selectedCategory.id;
+      }
+    }
+  });
+
+  // Guardar en variable global para uso futuro
+  window._categoriesMap = categoriesMap;
+  select_departament_and_category();
+}
+
+// Mostrar u ocultar dropdowns
+departmentBtn.onclick = () => {
+  departmentList.style.display = departmentList.style.display === 'block' ? 'none' : 'block';
+  categoryList.style.display = 'none';
+};
+
+categoryBtn.onclick = () => {
+  categoryList.style.display = categoryList.style.display === 'block' ? 'none' : 'block';
+  departmentList.style.display = 'none';
+};
+
+// Delegación de eventos para seleccionar departamento
+departmentList.addEventListener('click', (e) => {
+  const dep = e.target.dataset.department;
+  const depId = e.target.dataset.departmentId;
+  if (!dep || !depId) return;
+
+  departmentBtn.innerHTML = `${dep} <i class="fi fi-rr-angle-right"></i>`;
+  departmentList.style.display = 'none';
+  nameDepartamentSave = dep;
+  document.getElementById('id_departament').value = depId;
+
+  // Mostrar categorías correspondientes
+  const cats = window._categoriesMap[dep] || [];
+  categoryList.innerHTML = cats.map(cat => 
+    `<li data-category="${cat.name}" data-category-id="${cat.id}">${cat.name}</li>`
+  ).join('');
+  categoryBtn.disabled = false;
+  categoryBtn.innerHTML = `Selecciona categoría <i class="fi fi-rr-angle-right"></i>`;
+});
+
+// Delegación de eventos para seleccionar categoría
+categoryList.addEventListener('click', (e) => {
+  const cat = e.target.dataset.category;
+  const catId = e.target.dataset.categoryId;
+  if (!cat || !catId) return;
+
+  categoryBtn.innerHTML = `${cat} <i class="fi fi-rr-angle-right"></i>`;
+  categoryList.style.display = 'none';
+  nameCategorySave = cat;
+  document.getElementById('id_category').value = catId;
+});
+</script>
+<script>
+  async function load_all_the_departament_and_category(){
+    const formData = get_key_of_my_api();
+
+    const response = await send_data_to_my_api_in_the_server(
+      'https://pluspuntodeventa.com/api/branch_online/get_departaments_and_categories.php',
+      formData
+    );
+
+    if (response.success && Array.isArray(response.data)) {
+      categories = response.data;
+      saveCategoriesInCookie(categories);
+      render_departaments_and_categories(categories);
+    } else {
+      notificationMessageError('💥 ¡Oh no!', 'Algo falló al obtener los departamentos y categorías');
+      console.error(response);
+    }
+  }
+
+  function get_key_of_my_api(){
+    const formData = new FormData();
+    formData.append('token', document.getElementById('token').value);
+    formData.append('user_email', localStorage.getItem('user_email'));
+    formData.append('password', localStorage.getItem('user_password'));
+    return formData;
+  }
+
+/*
+  //we will see if exist data save in the web 
+  if(categories==null){
+    //if not exist data save in the web, we will get the departament and category and after render all the information
+    window.addEventListener('DOMContentLoaded', load_all_the_departament_and_category);
+  }else{
+    //but if exist data save, we will show this information
+    window.addEventListener('DOMContentLoaded', render_departaments_and_categories(categories));
+  }
+  */
 </script>

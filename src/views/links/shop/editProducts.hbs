@@ -228,15 +228,18 @@ select:focus {
 
             const result = await response.json();
             if (result.success) {
-                messageDiv.innerHTML = `<div class="alert alert-success">✅ Producto actualizado correctamente.</div>`;
+                //messageDiv.innerHTML = `<div class="alert alert-success">✅ Producto actualizado correctamente.</div>`;
+                confirmationMessage('🥳 ¡Listo!','Tu producto fue actualizado con éxito.')
                 //form.reset();
                 //previewImage.style.display = 'none';
             } else {
-                messageDiv.innerHTML = `<div class="alert alert-danger">❌ ${result.message || 'Error al actualizar el producto.'}</div>`;
+                //messageDiv.innerHTML = `<div class="alert alert-danger">❌ ${result.message || 'Error al actualizar el producto.'}</div>`;
+                warningMessage('Error al actualizar el producto.',`${result.message}`)
             }
         } catch (error) {
             console.error('Error:', error);
-            messageDiv.innerHTML = `<div class="alert alert-danger">❌ Error de red al actualizar el producto.</div>`;
+            //messageDiv.innerHTML = `<div class="alert alert-danger">❌ Error de red al actualizar el producto.</div>`;
+            errorMessage('Error', error)
         }
 
         loadingOverlay.style.display = 'none';
@@ -308,6 +311,18 @@ select:focus {
                     previewImage.style.display = 'block';
                 }
 
+                //update the inputs of the departament and category
+                form.id_departament.value=product.id_departament;
+                form.id_category.value=product.id_category;
+
+                //we will see if exist data save in the web 
+                if(categories==null){
+                    //if not exist data save in the web, we will get the departament and category and after render all the information
+                    load_all_the_departament_and_category();
+                }else{
+                    //but if exist data save, we will show this information
+                    render_departaments_and_categories(categories);
+                }
             } else {
                 messageDiv.innerHTML = `<div class="alert alert-danger">❌ ${result.message || 'No se pudo obtener el producto.'}</div>`;
             }
@@ -321,6 +336,6 @@ select:focus {
         loadingOverlay.style.display = 'none';
     }
 
-    load_information_of_the_product();
-
+    //load_information_of_the_product();
+    window.addEventListener('DOMContentLoaded', load_information_of_the_product);
 </script>
