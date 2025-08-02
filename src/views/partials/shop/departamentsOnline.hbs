@@ -254,55 +254,82 @@
 
 
 <script>
-  const departamentos = [
-    { id: 1, name: "Electrónica", description: "Dispositivos y gadgets electrónicos." },
-    { id: 2, name: "Ropa", description: "Prendas de vestir para todas las edades." },
-    { id: 3, name: "Hogar", description: "Artículos para el hogar y decoración." },
-  ];
-
-  const categorias = [
-    { id: 1, id_departament: 1, name: "Celulares", description: "Smartphones de todas las marcas." },
-    { id: 2, id_departament: 1, name: "Computadoras", description: "Laptops y PCs." },
-    { id: 3, id_departament: 2, name: "Camisetas", description: "Camisetas para hombre y mujer." },
-    { id: 4, id_departament: 2, name: "Pantalones", description: "Variedad de estilos y tallas." },
-    { id: 5, id_departament: 3, name: "Muebles", description: "Sillas, mesas, sofás, etc." },
-    { id: 6, id_departament: 3, name: "Decoración", description: "Cuadros, lámparas y más." }
-  ];
-
   const departmentList = document.getElementById('departmentList');
   const selectedDepartmentName = document.getElementById('selectedDepartmentName');
   const selectedDepartmentDescription = document.getElementById('selectedDepartmentDescription');
   const categoryList = document.getElementById('categoryList');
 
-  departamentos.forEach(dept => {
-    const li = document.createElement('li');
-    li.textContent = dept.name;
-    li.addEventListener('click', () => {
-      mostrarCategorias(dept);
-      document.querySelectorAll('#departmentList li').forEach(el => el.classList.remove('active'));
-      li.classList.add('active');
+  let departamentos = [];
+
+  async function get_category_and_departament_from_my_api() {
+    const formData = get_key_of_my_api();
+
+    const response = await send_data_to_my_api_in_the_server(
+      'https://pluspuntodeventa.com/api/branch_online/get_departaments_and_categories.php',
+      formData
+    );
+
+    if (response.success && Array.isArray(response.data)) {
+      departamentos = response.data;
+      renderDepartments();
+    } else {
+      notificationMessageError('💥 ¡Oh no!', 'Algo falló al obtener los departamentos y categorías');
+      console.error(response);
+    }
+  }
+
+  function get_key_of_my_api() {
+    const formData = new FormData();
+    formData.append('token', document.getElementById('token').value);
+    formData.append('user_email', localStorage.getItem('user_email'));
+    formData.append('password', localStorage.getItem('user_password'));
+    return formData;
+  }
+
+  function renderDepartments() {
+    departmentList.innerHTML = ''; // limpia lista
+
+    departamentos.forEach(dept => {
+      const li = document.createElement('li');
+      li.textContent = dept.name;
+      li.classList.add('department-item');
+
+      li.addEventListener('click', () => {
+        mostrarCategorias(dept);
+        document.querySelectorAll('#departmentList li').forEach(el => el.classList.remove('active'));
+        li.classList.add('active');
+      });
+
+      departmentList.appendChild(li);
     });
-    departmentList.appendChild(li);
-  });
+
+    // Mostrar primero por defecto
+    if (departamentos.length > 0) {
+      mostrarCategorias(departamentos[0]);
+      departmentList.querySelector('li').classList.add('active');
+    }
+  }
 
   function mostrarCategorias(departamento) {
     selectedDepartmentName.textContent = departamento.name;
-    //selectedDepartmentName.innerHTML=`<h4>${departamento.name}</h4>`
 
-    //selectedDepartmentDescription.textContent = departamento.description;
     selectedDepartmentDescription.innerHTML = `
-    <label>${departamento.description}</label> 
-        <div class="buttons">
-          <button class="edit-btn">Editar</button>
-          <button class="delete-btn">Eliminar</button>
-        </div>
-        <hr>
+      <label>${departamento.description}</label>
+      <div class="buttons">
+        <button class="edit-btn">Editar</button>
+        <button class="delete-btn">Eliminar</button>
+      </div>
+      <hr>
     `;
+
     categoryList.innerHTML = '';
 
-    const categoriasFiltradas = categorias.filter(cat => cat.id_departament === departamento.id);
+    if (!Array.isArray(departamento.categories) || departamento.categories.length === 0) {
+      categoryList.innerHTML = '<p>No hay categorías para este departamento.</p>';
+      return;
+    }
 
-    categoriasFiltradas.forEach(cat => {
+    departamento.categories.forEach(cat => {
       const div = document.createElement('div');
       div.className = 'category-card';
 
@@ -318,6 +345,9 @@
       categoryList.appendChild(div);
     });
   }
+
+  //load all the departament when all the HTML is load 
+  window.addEventListener('DOMContentLoaded', get_category_and_departament_from_my_api);
 </script>
 <script>
 
