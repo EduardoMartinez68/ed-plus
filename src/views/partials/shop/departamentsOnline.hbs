@@ -267,7 +267,26 @@
 </div>
 
 
+<div id="editCategoryPop" class="my-pop">  
+    <div class="my-pop-content-wrapper">
+        <div class="my-pop-header">
+            <h4 class="my-pop-title">Edita una Categoria Online</h4>
+            <button class="close-btn" onclick="close_my_pop('editCategoryPop')" type="button">×</button>
+        </div>  
+        <div class="my-pop-content">
+          <div class="form-group">
+            <label for="">Nombre del departamento *</label>
+            <input type="text" class="form-control" placeholder="Escribe el nombre de la categoria" id="nameEditCategory">
+          </div>
 
+          <div class="form-group">
+            <label for="">Descripción</label>
+            <textarea name="" id="descriptionEditCategory" placeholder="Escribe una descripción..." class="form-control"></textarea>
+          </div>
+          <button class="btn btn-add" onclick="edit_category_to_the_server()">Actualizar</button>
+        </div>
+    </div>
+</div>
 
 
 
@@ -379,8 +398,8 @@
         <h4>${cat.name}</h4>
         <p>${cat.description}</p>
         <div class="buttons">
-          <button class="edit-btn">Editar</button>
-          <button class="delete-btn">Eliminar</button>
+          <button class="edit-btn" onclick="edit_category('${cat.id}','${cat.name}','${cat.description}')">Editar</button>
+          <button class="delete-btn" onclick="delete_category('${cat.id}','${cat.name}')">Eliminar</button>
         </div>
       `;
 
@@ -424,7 +443,7 @@
     //now we will see if the input have the information success
     if(this_input_have_a_value(newName)){
       const departament=create_a_new_departament(newName, newDescription);
-      departament.append('id', dataDepartamentEdit.id);
+      departament.append('id', dataDepartamentEdit.id); //add the id of the departament that we will edit
 
       //we will see that answer the server
       const answer=await send_data_to_my_api_in_the_server('https://pluspuntodeventa.com/api/branch_online/edit_departament.php',departament);
@@ -578,4 +597,81 @@ async function add_a_new_category_from_the_pop(){
   }
   
 }
+
+
+
+
+let idCategory=null;
+function edit_category(id, nameCategory, descriptionCategory){
+  //update the information of the form of the pop
+  document.getElementById('nameEditCategory').value=nameCategory;
+  document.getElementById('descriptionEditCategory').value=descriptionCategory;
+  idCategory=id;
+
+  open_my_pop('editCategoryPop');
+}
+
+async function edit_category_to_the_server(){
+  //first we will get all the information of the form for know if have all the information that the server need
+  const newName=document.getElementById('nameEditCategory').value;
+  const newDescription=document.getElementById('descriptionEditCategory').value;
+
+  //now we will see if the input have the information success
+  if(this_input_have_a_value(newName)){
+    const departament=create_new_category(newName, newDescription);
+    departament.append('id', idCategory); //add the id of the category that we will edit
+
+    //we will see that answer the server
+    const answer=await send_data_to_my_api_in_the_server('https://pluspuntodeventa.com/api/branch_online/edit_category.php',departament);
+
+    //we will see if the server can save the new category 
+    if(answer.success){
+      //if the user can delete the departament, we will update the list of the UI
+      await get_category_and_departament_from_my_api();
+
+      //clear the form 
+      document.getElementById('nameEditCategory').value='';
+      document.getElementById('descriptionEditCategory').value='';
+      close_my_pop('editCategoryPop');
+
+
+      confirmationMessage('Categoria Editada', `La categoria  '${newName}' fue actualizada`);
+    }else{
+      warningMessage('💥 ¡Oh no!',`Algo falló al editar la categoria... Mensaje:${answer.message} Error: ${answer.error}. `);
+      console.log(answer);
+    }
+  }else{
+    //if not the user not have information save in the input of the name, we will show a message of error
+    warningMessage('😅 Uy, casi...', 'Te faltaron algunos campos obligatorios. ¡No lo dejes a la imaginación del servidor!');
+  }
+}
+
+
+async function delete_category(idCategory, nameCategory){
+  const nameDepartament=dataDepartamentEdit.name;
+  if(await questionMessage('🗑️ Eliminar Categoria',`¿Estás seguro de eliminar la Categoria '${nameCategory}' del departamento '${nameDepartament}' ? `)){
+    const dataForm=create_new_category(nameCategory, ''); //get the key of the user
+    dataForm.append('id', idCategory); //add the id of the category that we will delete
+
+    //we will see that answer the server
+    const answer=await send_data_to_my_api_in_the_server('https://pluspuntodeventa.com/api/branch_online/delete_category.php',dataForm);
+
+    //we will see if the server can delete the category 
+    if(answer.success){
+      //if the user can delete the departament, we will update the list of the UI
+      await get_category_and_departament_from_my_api();
+      confirmationMessage('Categoria eliminada 🗑️', `La categoria '${nameCategory}' ha sido eliminada.`);
+    }else{
+      warningMessage('💥 ¡Oh no!',`Algo falló al eliminar la categoria... Mensaje:${answer.message} Error: ${answer.error}. `);
+      console.log(answer);
+    }
+  }
+}
+
+
+
+
+
+
+
 </script>
