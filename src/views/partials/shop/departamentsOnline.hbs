@@ -330,19 +330,46 @@ async function addNewCategoriaToTheServer(){
 
   //now we will see if the input have the information success
   if(this_input_have_a_value(nameNewDepartament)){
-    await send_information_to_the_server_for_add_a_new_deprtament();
+    const departament=create_a_new_departament(nameNewDepartament,descriptionNewDepartament);
+    await send_information_to_the_server_for_add_a_new_deprtament(nameNewDepartament, departament);
   }else{
     //if not the user not have information save in the input of the name, we will show a message of error
-    warningMessage('Espera un minuto','Necesitas llenar todos los campos obligatorios');
+    warningMessage('😅 Uy, casi...', 'Te faltaron algunos campos obligatorios. ¡No lo dejes a la imaginación del servidor!');
   }
 }
 
-function this_input_have_a_value(input){
-  return input && typeof input.value === 'string' && input.value.trim() !== '';
+function create_a_new_departament(nameNewDepartament,descriptionNewDepartament){
+  //her we will get the data of his account PLUS
+  const formData = new FormData();
+  formData.append('token', document.getElementById('token').value);
+  formData.append('user_email', localStorage.getItem('user_email'));
+  formData.append('password', localStorage.getItem('user_password'));
+
+  formData.append('name', nameNewDepartament);
+  formData.append('description', descriptionNewDepartament);
+
+  return formData;
 }
 
-function send_information_to_the_server_for_add_a_new_deprtament(){
+function this_input_have_a_value(input){
+  return input && input.trim() !== '';
+}
 
+async function send_information_to_the_server_for_add_a_new_deprtament(nameNewDepartament, departament){
+  //get the information of the form for add departament
+  const answer=await send_data_to_my_api_in_the_server('https://pluspuntodeventa.com/api/branch_online/add_new_departament.php', departament);
+  if(answer.success){
+    //clear the form of the departament
+    document.getElementById('nameNewDepartament').value='';
+    document.getElementById('descriptionNewDepartament').value='';
+    close_my_pop('addNewDepartament');
+
+    //show a message of success
+    confirmationMessage('🎉 ¡Departamento agregado!',`El departamento '${nameNewDepartament}' fue agregado con éxito.`)
+  }else{
+    warningMessage('💥 ¡Oh no!',`Algo falló al agregar el departamento... Error: ${answer.error}.`);
+    console.log(answer)
+  }
 }
 
 </script>

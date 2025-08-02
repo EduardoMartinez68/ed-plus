@@ -106,6 +106,41 @@
                 }
             }
         }
+
+        async function send_data_to_my_api_in_the_server(url, data, load = true) {
+            //her we will see if exist the bar load and if the user would like activate the load bar
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            if (loadingOverlay && load) {
+                //if exist the load bar, we will activate the load
+                loadingOverlay.style.display = 'flex';
+            }
+
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    body: data
+                });
+
+                // Verificamos si la respuesta fue exitosa
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${response.statusText}`);
+                }
+
+                // Convertimos la respuesta en JSON
+                const result = await response.json();
+                return result;
+
+            } catch (error) {
+                console.error('Error al enviar los datos al servidor:', error);
+                return { success: false, error: error.message };
+            } finally {
+                //if exist the load bar, and the user the activate, we will off the bar 
+                if (loadingOverlay && load) {
+                    loadingOverlay.style.display = 'none';
+                }
+            }
+        }
     </script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {

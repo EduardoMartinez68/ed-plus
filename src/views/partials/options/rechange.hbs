@@ -1,18 +1,18 @@
 <style>
   .div-reference {
-    font-size: 2rem;
-    font-weight: bold;
-    color: #ffffff;
-    background: linear-gradient(45deg, #4facfe, #00f2fe);
-    padding: 15px 30px;
-    border-radius: 15px;
-    box-shadow: 0 0 15px rgba(0, 242, 255, 0.7);
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    background-color: #e6f0fa; /* Azul claro, neutral y moderno */
+    padding: 12px 20px;
+    border-radius: 8px;
+    border: 1px solid #c0d4e6;
     text-align: center;
-    margin: 20px 0;
-    border: 3px solid #ffffff;
-    animation: pulse 2s infinite;
-    width: 50%;
+    margin: 20px auto;
+    width: 90%;
+    max-width: 600px;
   }
+
 
   @keyframes pulse {
     0% {
@@ -150,7 +150,8 @@
               {{#each branchFree}}
                 <label for="">{{user_prontipagos}}</label>
               {{/each}}
-              <button onclick="openPopupRechange()" class="btn">Vincular cuenta de prontiPagos</button>
+              <br>
+              <button onclick="openPopupRechange()" class="btn btn-edit">Vincular cuenta de prontiPagos</button>
             </div>
 
             <div class="form-section">
