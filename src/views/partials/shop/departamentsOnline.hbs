@@ -226,21 +226,21 @@
 <div id="addNewCategory" class="my-pop">  
     <div class="my-pop-content-wrapper">
         <div class="my-pop-header">
-            <h4 class="my-pop-title">Crear una nueva cetegoria del departamento    </h4>
+            <h4 class="my-pop-title" id="titleAddNewCategory">Crear una nueva cetegoria a    </h4>
             <button class="close-btn" onclick="close_my_pop('addNewCategory')" type="button">×</button>
         </div>  
         <div class="my-pop-content">
           <div class="form-group">
             <label for="">Nombre de la Categoria *</label>
-            <input type="text" class="form-control" placeholder="Escribe el nombre de la categoria">
+            <input type="text" class="form-control" placeholder="Escribe el nombre de la categoria" id="nameCategory">
           </div>
 
           <div class="form-group">
             <label for="">Descripción</label>
-            <textarea name="" id="" placeholder="Escribe una descripción..." class="form-control"></textarea>
+            <textarea name=""  placeholder="Escribe una descripción..." class="form-control" id="descriptionCategory"></textarea>
           </div>
 
-          <button class="btn btn-add">Agregar</button>
+          <button class="btn btn-add" onclick="add_a_new_category_from_the_pop()">Agregar</button>
         </div>
     </div>
 </div>
@@ -260,6 +260,8 @@
   const categoryList = document.getElementById('categoryList');
 
   let departamentos = [];
+
+  let dataDepartamentEdit={};
 
   async function get_category_and_departament_from_my_api() {
     const formData = get_key_of_my_api();
@@ -310,9 +312,28 @@
     }
   }
 
+  function update_information_of_departament_to_edit(departamento){
+    const name=departamento.name;
+    const id=departamento.id;
+     const description=departamento.description;
+    return {
+      id,
+      name,
+      description
+    };
+  }
+  
   function mostrarCategorias(departamento) {
-    selectedDepartmentName.textContent = departamento.name;
 
+    //her update the information of the departament that our is edit
+    dataDepartamentEdit=update_information_of_departament_to_edit(departamento);
+
+    //update the title of the pop of the category
+    document.getElementById('titleAddNewCategory').textContent=`Crear una nueva categoría en '${dataDepartamentEdit.name}'`;
+
+
+    //show all the departaments
+    selectedDepartmentName.textContent = departamento.name;
     selectedDepartmentDescription.innerHTML = `
       <label>${departamento.description}</label>
       <div class="buttons">
@@ -392,14 +413,64 @@ async function send_information_to_the_server_for_add_a_new_deprtament(nameNewDe
     //clear the form of the departament
     document.getElementById('nameNewDepartament').value='';
     document.getElementById('descriptionNewDepartament').value='';
+
+    await get_category_and_departament_from_my_api();
     close_my_pop('addNewDepartament');
 
     //show a message of success
     confirmationMessage('🎉 ¡Departamento agregado!',`El departamento '${nameNewDepartament}' fue agregado con éxito.`)
   }else{
-    warningMessage('💥 ¡Oh no!',`Algo falló al agregar el departamento... Error: ${answer.error}.`);
+    warningMessage('💥 ¡Oh no!',`Algo falló al agregar el departamento... Mensaje:${answer.message} Error: ${answer.error}.`);
     console.log(answer)
   }
 }
 
+function create_new_category(nameCategory,descriptionCategory){
+  //her we will get the data of his account PLUS
+  const formData = new FormData();
+  formData.append('token', document.getElementById('token').value);
+  formData.append('user_email', localStorage.getItem('user_email'));
+  formData.append('password', localStorage.getItem('user_password'));
+
+  //save the id of the departamen that we is editing 
+  const idDepartament=dataDepartamentEdit.id;
+  formData.append('id_departament', idDepartament);
+
+  //save the information of the category
+  formData.append('name', nameCategory);
+  formData.append('description', descriptionCategory);
+
+  return formData;
+}
+
+async function add_a_new_category_from_the_pop(){
+  //get the information of the form
+  const nameCategory=document.getElementById('nameCategory').value;
+  const descriptionCategory=document.getElementById('descriptionCategory').value;
+
+  if(this_input_have_a_value(nameCategory)){
+    const category=create_new_category(nameCategory,descriptionCategory);
+    const answer=await send_data_to_my_api_in_the_server('https://pluspuntodeventa.com/api/branch_online/add_category.php',category);
+
+    //we will see if the server can save the new category 
+    if(answer.success){
+      //if the user can add a new category, we will update the list of the UI
+      await get_category_and_departament_from_my_api();
+
+      //clear the form
+      document.getElementById('nameCategory').value='';
+      document.getElementById('descriptionCategory').value='';
+      close_my_pop('addNewCategory');
+
+      confirmationMessage('🎉 Categoria agregada!',`La Categoria '${nameCategory}' fue agregado con éxito al departamento ${dataDepartamentEdit.name}.`)
+    }else{
+      warningMessage('💥 ¡Oh no!',`Algo falló al agregar la categoria... Mensaje:${answer.message} Error: ${answer.error}. `);
+      console.log(answer);
+    }
+  }else{
+    //if not the user not have information save in the input of the name, we will show a message of error
+    warningMessage('😅 Uy, casi...', 'Te faltaron algunos campos obligatorios. ¡No lo dejes a la imaginación del servidor!');
+  }
+  
+}
 </script>
