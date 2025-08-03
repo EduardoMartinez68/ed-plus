@@ -89,27 +89,26 @@
 </style>
 
 <div class="container mt-4">
+    <label for=""><i class="fi-icon fi-ss-file-invoice-dollar"></i> Genera una factura Global</label>
+    <hr>
     <div class="card p-3">
         <div class="row">
             <div class="col">
-                <label for="serieInput">Serie</label>
-                <input type="text" id="serieInput" placeholder="Serie: ABC" class="form-control">
-            </div>
-            <div class="col">
                 <div class="form-group form-section">
-                    <label for="dateRangeSelect">Selecciona los Documentos a Facturar</label>
+                    <info-label label="Selecciona los Documentos a Facturar *"
+                        message="Solo se incluirán los tickets que aún no han sido facturados.">
+                    </info-label>
                     <select id="dataTypeFactureGlobal" class="form-select">
                         <option value="1">Facturar las ventas de todos los clientes</option>
                         <option value="2">Facturar las ventas solo del publico en general</option>
                     </select>
                 </div>
             </div>
-        </div>
-
-        <div class="row">
             <div class="col">
                 <div class="form-group form-section">
-                    <label for="dateRangeSelect">Rango de Fechas *</label>
+                    <info-label label="Selecciona el periodo de tiempo de los tickets que deseas facturar. *"
+                        message="Solo se incluirán los tickets generados dentro de este rango de fechas.">
+                    </info-label>
                     <select id="dateRangeSelect" class="form-select">
                         <option value="1">Hoy</option>
                         <option value="2">Últimos 7 días</option>
@@ -118,23 +117,14 @@
                         <option value="5">Personalizado</option>
                     </select>
                 </div>
-                <div class="form-group">
-                    <label for="">Desde </label><input type="date" id="dateFrom" readonly disabled class="input-date"><label for="">Hasta </label><input type="date" id="dateTo" readonly disabled class="input-date">
-                </div>
-            </div>
-            <div class="col">
-                <div class="form-group form-section">
-                    <label for="currencySelect">Moneda *</label>
-                    <select id="currencySelect" class="form-select">
-                        <option value="1">🇲🇽 MXN (peso Mexicano)</option>
-                        <option value="2">🇺🇸 USD (dólar Estadounidense)</option>
-                        <option value="3">🇪🇺 EUR (Euro)</option>
-                    </select>
-                </div>
             </div>
         </div>
-
         <hr>
+        <div class="form-group">
+            <label for="">Desde </label><input type="date" id="dateFrom" readonly disabled class="input-date"><label for="">Hasta </label><input type="date" id="dateTo" readonly disabled class="input-date">
+            <br>
+            <label for="">Meses a Facturar: </label><label for="" id="Months"></label>
+        </div>
         <div id="settingFacture" class="my-pop">
             <div class="my-pop-content-wrapper">
                 <div class="my-pop-header">
@@ -174,23 +164,28 @@
             </div>
             <i class="fi fi-rr-angle-right"></i>
         </div>
-
+        <br><br><br><br><br><br><br>
         <div class="row">
             <div class="col">
                 <div class="form-group form-section">
-                    <label for="dateRangeSelect">Periodicidad</label>
-                    <select id="dataTypeFactureGlobal" class="form-select">
-                        <option value="01">01-Diario</option>
-                        <option value="02">01-Semanal</option>
-                        <option value="03">03-Quincenal</option>
-                        <option value="04">04-Mensual</option>
+                    <info-label label="Periodicidad *"
+                        message="Campo requerido para registrar el período al que corresponde la información del comprobante global">
+                    </info-label>
+                    <select id="Periodicity" class="form-select">
+                        <option value="01">01 - Diario</option>
+                        <option value="02">02 - Semanal</option>
+                        <option value="03">03 - Quincenal</option>
+                        <option value="04">04 - Mensual</option>
+                        <option value="05">05 - Bimestral</option>
                     </select>
                 </div>
             </div>
             <div class="col">
                 <div class="form-group form-section">
-                    <label for="invoiceYear">Año de la factura</label>
-                    <input type="number" id="invoiceYear" class="form-control" min="1900" max="2100" placeholder="Ej: 2025">
+                    <info-label label="Año de la factura *"
+                        message="Se debe registrar el año al que corresponde la información del comprobante global">
+                    </info-label>
+                    <input type="number" id="Year" class="form-control" min="1900" max="2100" placeholder="Ej: 2025">
                 </div>
             </div>
         </div>
@@ -198,13 +193,31 @@
         <div class="row">
             <div class="col">
                 <div class="form-group form-section">
-                    <label for="dateRangeSelect">Forma de Pago</label>
-                    <select id="dataTypeFactureGlobal" class="form-select">
-                        <option value="01">01-Efectivo</option>
-                        <option value="02">02-Cheque</option>
-                        <option value="03">03-Transferencia</option>
-                        <option value="04">04-Tarjeta de Crédito</option>
-                        <option value="08">08-Vale</option>
+                    <info-label label="Forma de Pago *"
+                        message="Clave de la forma de pago con la que se liquidó el comprobante de operaciones con el público en general de mayor monto de entre los contenidos en el CFDI global">
+                    </info-label>
+                    <select name="formaPago" class="form-select" required id="formaPago">
+                        <option value="01">01 - Efectivo</option>
+                        <option value="02">02 - Cheque nominativo</option>
+                        <option value="03">03 - Transferencia electrónica de fondos</option>
+                        <option value="04">04 - Tarjeta de crédito</option>
+                        <option value="05">05 - Monedero electrónico</option>
+                        <option value="06">06 - Dinero electrónico</option>
+                        <option value="08">08 - Vales de despensa</option>
+                        <option value="12">12 - Dación en pago</option>
+                        <option value="13">13 - Pago por subrogación</option>
+                        <option value="14">14 - Pago por consignación</option>
+                        <option value="15">15 - Condonación</option>
+                        <option value="17">17 - Compensación</option>
+                        <option value="23">23 - Novación</option>
+                        <option value="24">24 - Confusión</option>
+                        <option value="25">25 - Remisión de deuda</option>
+                        <option value="26">26 - Prescripción o caducidad</option>
+                        <option value="27">27 - A satisfacción del acreedor</option>
+                        <option value="28">28 - Tarjeta de débito</option>
+                        <option value="29">29 - Tarjeta de servicios</option>
+                        <option value="30">30 - Aplicación de anticipos</option>
+                        <option value="99">99 - Por definir</option>
                     </select>
                 </div>
             </div>
@@ -234,11 +247,20 @@
             <div class="modal-footer">
                 <button class="btn btn-success" id="applyCustomRange">Aceptar</button>
             </div>
+            <br><br>
         </div>
     </div>
 </div>
-
+<br><br><br>
 <script>
+    document.getElementById('Year').value = new Date().getFullYear();
+
+    //her update the data of the month
+    const now = new Date();
+    const currentMonth = String(now.getMonth() + 1).padStart(2, '0'); // getMonth() es de 0 a 11
+    document.getElementById('Months').textContent = currentMonth;
+
+
     const dateRangeSelect = document.getElementById("dateRangeSelect");
     const dateFrom = document.getElementById("dateFrom");
     const dateTo = document.getElementById("dateTo");
@@ -252,6 +274,7 @@
         switch (this.value) {
             case "1": // Hoy
                 startDate = endDate = today;
+                update_date_today();
                 break;
             case "2": // Últimos 7 días
                 endDate = today;
@@ -271,6 +294,7 @@
                 open_my_pop('selectDatePersonality');
                 return;
         }
+        update_data_month(startDate, endDate)
 
         if (this.value !== "5") {
             const format = (d) => d.toISOString().split('T')[0];
@@ -280,6 +304,35 @@
             close_my_pop('selectDatePersonality');
         }
     });
+
+    function update_data_month(startDate, endDate) {
+        const months = [];
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+
+        // Normalizar al primer día del mes
+        start.setDate(1);
+        end.setDate(1);
+
+        // Recorrer cada mes entre startDate y endDate
+        while (start <= end) {
+            const month = String(start.getMonth() + 1).padStart(2, '0');
+            if (!months.includes(month)) months.push(month);
+            start.setMonth(start.getMonth() + 1);
+        }
+
+        // Unir los meses por coma si hay más de uno
+        document.getElementById('Months').textContent = months.join(',');
+    }
+
+    function update_date_today(){
+        const today = new Date();
+        const formattedDate = today.toISOString().split('T')[0]; // Formato YYYY-MM-DD
+
+        document.getElementById('dateFrom').value = formattedDate;
+        document.getElementById('dateTo').value = formattedDate;
+    }
+    update_date_today();
 
     applyCustomBtn.addEventListener("click", () => {
         const start = document.getElementById("customStart").value;
@@ -299,5 +352,115 @@
         dateTo.value = end;
         //customModal.style.display = "none";
         close_my_pop('selectDatePersonality');
+
+         const dateStart = new Date(start);
+         dateStart.setMonth(dateStart.getMonth() + 1);
+         //const nextMonth = dateStart.toISOString().split("T")[0];
+
+
+        update_data_month(dateStart, end)
     });
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const Periodicity = document.getElementById("Periodicity");
+    const fiscalInput = document.getElementById("FiscalRegime");
+
+    if (!Periodicity || !fiscalInput) {
+        console.warn("No se encontraron los elementos necesarios");
+        return;
+    }
+
+    const originalFiscalValue = fiscalInput.value;
+
+    // Asignar valor inicial si ya está en 05
+    if (Periodicity.value === "05") {
+        fiscalInput.value = "621";
+    }
+
+    Periodicity.addEventListener("change", function () {
+        if (Periodicity.value === "05") {
+            fiscalInput.value = "621";
+        } else {
+            fiscalInput.value = originalFiscalValue;
+        }
+    });
+});
+</script>
+<script>
+    async function create_data_facture(){
+        /*
+        {	    
+            "Items": [{        
+                "ProductCode": "25173108",
+                "Description": "GPS estandar pruebas",
+                "UnitCode": "E48",
+                "Quantity": 1.0,
+                "UnitPrice": 100.0,
+                "Subtotal": 100.00,
+                "TaxObject" : "02",
+                "Taxes": [{
+                    "Total": 16,
+                    "Name": "IVA",
+                    "Base": 100,
+                    "Rate": 0.16,
+                    "IsRetention": false
+                }],
+                "Total": 116
+            }]	
+        }
+        */
+        const allTheItems=await get_all_the_tickets();
+
+        const dataCFDI={
+            CfdiType:'I',
+            PaymentForm: document.getElementById('PaymentForm').value,
+            PaymentMethod: "PUE",
+            ExpeditionPlace : document.getElementById('ExpeditionPlace').value,
+            Date:create_date_folio(),
+            Folio: create_folio(),
+            GlobalInformation: get_global_information(),
+            Receiver: get_data_receiver(),
+            Items: allTheItems
+        }
+    }
+
+    function create_folio(){
+        return 120
+    }
+
+    function create_date_folio(){
+        const now = new Date();
+
+        const formattedDate = now.getFullYear() + '-' +
+            String(now.getMonth() + 1).padStart(2, '0') + '-' +
+            String(now.getDate()).padStart(2, '0') + ' ' +
+            String(now.getHours()).padStart(2, '0') + ':' +
+            String(now.getMinutes()).padStart(2, '0') + ':' +
+            String(now.getSeconds()).padStart(2, '0');
+
+        return formattedDate;
+    }
+
+    function get_global_information(){
+        return {
+            Periodicity:document.getElementById('Periodicity').value,
+            Months:document.getElementById('Months').textContent,
+            Year:document.getElementById('Year').value,
+        }
+    }
+
+    function get_data_receiver(){
+        return {
+            Rfc: "XAXX010101000",
+            CfdiUse: "S01",
+            Name: "PUBLICO EN GENERAL",
+            FiscalRegime: document.getElementById('FiscalRegime').value,
+            TaxZipCode : document.getElementById('ExpeditionPlace').value
+        }
+    }
+
+    function get_all_the_tickets(){
+
+    }
 </script>

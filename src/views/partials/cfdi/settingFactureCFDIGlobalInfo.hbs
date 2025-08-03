@@ -1,38 +1,94 @@
+{{#each branchFree}}
 <hr>
+<label for="">Datos de facturación del Cliente</label>
 <div class="row">
     <div class="col">
         <div class="form-group form-section">
             <label for="dateRangeSelect">Cliente *</label>
-            <input type="text" value="XAXX010101000" class="form-control">
+            <input type="text" value="XAXX010101000" class="form-control" readonly>
         </div>
     </div>
     <div class="col">
         <div class="form-group form-section">
             <label for="dateRangeSelect">Nombre o Razón Social *</label>
-            <input type="text" value="PUBLICO EN GENERAL" class="form-control">
+            <input type="text" value="PUBLICO EN GENERAL" class="form-control" readonly>
         </div>
     </div>
     <div class="col">
         <div class="form-group form-section">
             <label for="dateRangeSelect">Uso de la Factura *</label>
-            <input type="text" value="Sin efectos fiscales" class="form-control">
+            <input type="text" value="(S01) Sin efectos fiscales" class="form-control" readonly>
+            <input type="hidden" value="S01" id="CfdiUse"  readonly>
+        </div>
+    </div>
+
+    
+</div>
+<div class="row">
+    <div class="col">
+        <div class="form-group form-section">
+            <label for="dateRangeSelect">Regimen Fiscal *</label>
+            <input type="text" value="616" id="FiscalRegime" class="form-control" readonly>
+        </div>
+    </div>
+    <div class="col">
+        <div class="form-group form-section">
+            <label for="dateRangeSelect">Tipo de Factura *</label>
+            <!--the value 'I' is because the facture global is ingresos-->
+            <input type="text" id="CfdiType" value="I (ingresos)" class="form-control" readonly>
+            <input type="hidden" id="CfdiType" value="I"  readonly>
+        </div>
+    </div>
+    <div class="col">
+        <div class="form-group form-section">
+            <label for="dateRangeSelect">Metodo de pago *</label>
+            <input type="text" value="PUE (Pago en una sola exhibición)" class="form-control" readonly>
+            <!--Se debe registrar siempre la clave "PUE" (Pago en una sola exhibición)-->
+            <input type="hidden" id="PaymentMethod" value="PUE"  readonly>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-3">
+        <div class="form-group form-section">
+            <label for="dateRangeSelect">Codigo Postal *</label>
+            <input type="text" value="{{postal_code}}"class="form-control" readonly id="TaxZipCode">
         </div>
     </div>
 </div>
 <hr>
+<label for="">Mis datos de facturación</label>
+<input type="hidden" value="{{linkCFDI}}" id="linkCFDI" readonly>
+<div class="row">
+    <div class="col">
+        <div class="form-group form-section">
+            <label for="dateRangeSelect">Mi nombre o Razón Social *</label>
+            <input type="text" value="{{name_branch}}" class="form-control"  readonly>
+        </div>
+    </div>
+    <div class="col">
+        <div class="form-group form-section">
+            <label for="dateRangeSelect">RFC *</label>
+            <input type="text" value="{{rfc}}" class="form-control"  readonly>
+        </div>
+    </div>
+</div>
 <div class="row">
     <div class="col">
         <div class="form-group form-section">
             <label for="dateRangeSelect">Codigo Postal *</label>
-            <input type="text" value="XAXX010101000" class="form-control">
+            <input type="text" value="{{postal_code}}" class="form-control" id="ExpeditionPlace"  readonly>
+            <input type="hidden" value="{{TaxZipCode}}" id="TaxZipCode"  readonly>
         </div>
     </div>
     <div class="col">
         <div class="form-group form-section">
             <label for="dateRangeSelect">Regimen Fiscal *</label>
-            <input type="text" value="PUBLICO EN GENERAL" class="form-control">
+            <input type="text" value="{{fiscalRegime}}" class="form-control" id="fiscalRegime"  readonly>
         </div>
     </div>
 </div>
+{{/each}}
+
 <br>
 <button class="btn btn-success" onclick="close_my_pop('settingFacture')">Aceptar</button>
