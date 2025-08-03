@@ -315,6 +315,4 @@ async function get_factures_by_company_with_search(id_company, query) {
 }
 
 
-
-
 module.exports = router;

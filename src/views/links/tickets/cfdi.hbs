@@ -41,7 +41,7 @@
 <div class="container">
     <div class="card">
         <div class="card-body">
-            <label>Mis Facturas CFDI</label>
+            <label><i class="fi-icon fi-ss-file-invoice-dollar"></i> Mis Facturas CFDI</label>
             <hr>
             <div style="margin-bottom: 16px;">
               <label>Filtrar por estado:</label>
@@ -52,7 +52,8 @@
                 <option value="expired">Expiradas</option>
               </select>
             </div>
-
+            <button class="btn btn-edit" onclick="nextWeb('create_cfdi_global')">Crear Factura Global o por Periodo</button>
+            <br><br>
             <div class="loading" id="loadingMsg">Cargando facturas...</div>
 
             <table id="tablaFacturas" style="display: none;">

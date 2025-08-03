@@ -1,0 +1,303 @@
+<style>
+    .card {
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: #fff;
+    }
+
+    label {
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+
+    input[readonly],
+    input[disabled] {
+        background-color: #e9ecef;
+        cursor: not-allowed;
+    }
+
+    .form-section {
+        margin-bottom: 15px;
+    }
+
+    #selectDatePersonality .btn {
+        width: 100%;
+    }
+
+    .modal-header {
+        font-weight: bold;
+        font-size: 16px;
+        margin-bottom: 10px;
+    }
+
+    .modal-footer {
+        margin-top: 10px;
+    }
+
+    .input-date {
+        background-color: white !important;
+        border: none;
+        outline: none;
+        box-shadow: none;
+        color: #212529;
+        /* texto oscuro (puedes cambiarlo) */
+        padding: 0;
+        font-size: 1rem;
+        pointer-events: none;
+        /* evita que el usuario intente interactuar */
+    }
+</style>
+<style>
+    table.simple-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        background-color: #fff;
+        color: #333;
+    }
+
+    .simple-table th,
+    .simple-table td {
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+        padding: 8px 10px;
+    }
+
+    .simple-table th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+    }
+
+    .summary {
+        margin-top: 15px;
+        font-family: Arial, sans-serif;
+        color: #333;
+    }
+
+    .summary h6 {
+        font-size: 14px;
+        margin: 0;
+        font-weight: normal;
+    }
+
+    .summary h4 {
+        font-size: 18px;
+        margin: 4px 0 0 0;
+        font-weight: bold;
+    }
+</style>
+
+<div class="container mt-4">
+    <div class="card p-3">
+        <div class="row">
+            <div class="col">
+                <label for="serieInput">Serie</label>
+                <input type="text" id="serieInput" placeholder="Serie: ABC" class="form-control">
+            </div>
+            <div class="col">
+                <div class="form-group form-section">
+                    <label for="dateRangeSelect">Selecciona los Documentos a Facturar</label>
+                    <select id="dataTypeFactureGlobal" class="form-select">
+                        <option value="1">Facturar las ventas de todos los clientes</option>
+                        <option value="2">Facturar las ventas solo del publico en general</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <div class="form-group form-section">
+                    <label for="dateRangeSelect">Rango de Fechas *</label>
+                    <select id="dateRangeSelect" class="form-select">
+                        <option value="1">Hoy</option>
+                        <option value="2">Últimos 7 días</option>
+                        <option value="3">Mes actual</option>
+                        <option value="4">Mes anterior</option>
+                        <option value="5">Personalizado</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="">Desde </label><input type="date" id="dateFrom" readonly disabled class="input-date"><label for="">Hasta </label><input type="date" id="dateTo" readonly disabled class="input-date">
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group form-section">
+                    <label for="currencySelect">Moneda *</label>
+                    <select id="currencySelect" class="form-select">
+                        <option value="1">🇲🇽 MXN (peso Mexicano)</option>
+                        <option value="2">🇺🇸 USD (dólar Estadounidense)</option>
+                        <option value="3">🇪🇺 EUR (Euro)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+        <div id="settingFacture" class="my-pop">
+            <div class="my-pop-content-wrapper">
+                <div class="my-pop-header">
+                    <h4 class="my-pop-title">Ajuste de Facturación</h4>
+                    <button class="close-btn" onclick="close_my_pop('settingFacture')" type="button">×</button>
+                </div>
+                <div class="my-pop-content">
+                    {{>cfdi/settingFactureCFDIGlobalInfo}}
+                </div>
+            </div>
+        </div>
+        <div class="btn-div" onclick="open_my_pop('settingFacture')">
+            <div class="btn-div-content">
+                <label><i class="fi fi-ss-file-invoice-dollar"></i> Datos de la Factura</label>
+                <p>Mis Datos personales de facturación</p>
+            </div>
+            <i class="fi fi-rr-angle-right"></i>
+        </div>
+
+
+
+        <div id="settingFactureTicket" class="my-pop">
+            <div class="my-pop-content-wrapper">
+                <div class="my-pop-header">
+                    <h4 class="my-pop-title">Ajuste de Facturación</h4>
+                    <button class="close-btn" onclick="close_my_pop('settingFactureTicket')" type="button">×</button>
+                </div>
+                <div class="my-pop-content">
+                    {{>cfdi/settingFactureCFDIGlobal}}
+                </div>
+            </div>
+        </div>
+        <div class="btn-div" onclick="open_my_pop('settingFactureTicket')">
+            <div class="btn-div-content">
+                <label><i class="fi-icon fi-rr-settings-sliders"></i> Filtra los documentos a facturar</label>
+                <p>Todos</p>
+            </div>
+            <i class="fi fi-rr-angle-right"></i>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <div class="form-group form-section">
+                    <label for="dateRangeSelect">Periodicidad</label>
+                    <select id="dataTypeFactureGlobal" class="form-select">
+                        <option value="01">01-Diario</option>
+                        <option value="02">01-Semanal</option>
+                        <option value="03">03-Quincenal</option>
+                        <option value="04">04-Mensual</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group form-section">
+                    <label for="invoiceYear">Año de la factura</label>
+                    <input type="number" id="invoiceYear" class="form-control" min="1900" max="2100" placeholder="Ej: 2025">
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <div class="form-group form-section">
+                    <label for="dateRangeSelect">Forma de Pago</label>
+                    <select id="dataTypeFactureGlobal" class="form-select">
+                        <option value="01">01-Efectivo</option>
+                        <option value="02">02-Cheque</option>
+                        <option value="03">03-Transferencia</option>
+                        <option value="04">04-Tarjeta de Crédito</option>
+                        <option value="08">08-Vale</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn btn-add">Crear Factura Global</button>
+    </div>
+
+</div>
+
+<!-- Modal personalizado -->
+<div id="selectDatePersonality" class="my-pop">
+    <div class="my-pop-content-wrapper">
+        <div class="my-pop-header">
+            <h4 class="my-pop-title">Seleccionar Rango Personalizado</h4>
+            <button class="close-btn" onclick="close_my_pop('selectDatePersonality')" type="button">×</button>
+        </div>
+        <div class="my-pop-content">
+            <div class="form-group">
+                <label for="customStart">Fecha inicial</label>
+                <input type="date" id="customStart" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="customEnd">Fecha final</label>
+                <input type="date" id="customEnd" class="form-control">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success" id="applyCustomRange">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const dateRangeSelect = document.getElementById("dateRangeSelect");
+    const dateFrom = document.getElementById("dateFrom");
+    const dateTo = document.getElementById("dateTo");
+    const customModal = document.getElementById("customRangeModal");
+    const applyCustomBtn = document.getElementById("applyCustomRange");
+
+    dateRangeSelect.addEventListener("change", function () {
+        const today = new Date();
+        let startDate, endDate;
+
+        switch (this.value) {
+            case "1": // Hoy
+                startDate = endDate = today;
+                break;
+            case "2": // Últimos 7 días
+                endDate = today;
+                startDate = new Date();
+                startDate.setDate(endDate.getDate() - 6);
+                break;
+            case "3": // Mes actual
+                startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+                endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+                break;
+            case "4": // Mes anterior
+                startDate = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+                endDate = new Date(today.getFullYear(), today.getMonth(), 0);
+                break;
+            case "5": // Personalizado
+                //customModal.style.display = "block";
+                open_my_pop('selectDatePersonality');
+                return;
+        }
+
+        if (this.value !== "5") {
+            const format = (d) => d.toISOString().split('T')[0];
+            dateFrom.value = format(startDate);
+            dateTo.value = format(endDate);
+            customModal.style.display = "none";
+            close_my_pop('selectDatePersonality');
+        }
+    });
+
+    applyCustomBtn.addEventListener("click", () => {
+        const start = document.getElementById("customStart").value;
+        const end = document.getElementById("customEnd").value;
+
+        if (!start || !end) {
+            alert("Por favor selecciona ambas fechas.");
+            return;
+        }
+
+        if (start > end) {
+            alert("La fecha inicial no puede ser mayor que la final.");
+            return;
+        }
+
+        dateFrom.value = start;
+        dateTo.value = end;
+        //customModal.style.display = "none";
+        close_my_pop('selectDatePersonality');
+    });
+</script>

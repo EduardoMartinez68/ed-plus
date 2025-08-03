@@ -122,8 +122,6 @@ function create_a_new_ticket(id_company,id_branch,bodyForm){
     }
 }
 
-
-
 router.post('/synchronized-ticket', isLoggedIn, async (req, res) => {
     //get the information of the software desktop 
     const id_company = req.user.id_company;
@@ -142,5 +140,14 @@ router.post('/synchronized-ticket', isLoggedIn, async (req, res) => {
     res.redirect(`/links/${id_company}/${id_branch}/tickets`);
 });
 
+
+
+//---------------------------facture CFDI GLOBAL-------------------------------------------
+router.get('/create_cfdi_global', isLoggedIn, async (req, res) => {
+    const { id_company, id_branch } = req.user;
+    const branchFree = await get_data_branch(id_branch);
+    const dataCompany=await get_data_company_with_id(id_company)
+    res.render('links/tickets/cfdiGlobal', {branchFree, dataCompany});
+});
 
 module.exports = router;
