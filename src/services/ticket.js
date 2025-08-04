@@ -167,8 +167,174 @@ async function add_a_new_ticket(ticket) {
     }
 }
 
+function formatDateRange(startDate, endDate) {
+    const formatStart = startDate.split(" ")[0] + " 00:00:00";
+    const formatEnd = endDate.split(" ")[0] + " 23:59:59";
+    return [formatStart, formatEnd];
+}
+
+async function get_tickets_by_date_range(id_branch, startDate, endDate) {
+    if (!id_branch || !startDate || !endDate) {
+        console.error("Faltan parámetros requeridos");
+        return [];
+    }
+    const [startFormatted, endFormatted]=formatDateRange(startDate,endDate)
+    if (TYPE_DATABASE === 'mysqlite') {
+        return new Promise((resolve, reject) => {
+            const query = `
+                SELECT * FROM ticket 
+                WHERE id_branches = ? 
+                  AND date_sale BETWEEN ? AND ? 
+                  AND cfdi_create = 0
+            `;
+            database.all(query, [id_branch, startFormatted, endFormatted], (err, rows) => {
+                if (err) {
+                    console.error("Error al obtener tickets (SQLite):", err);
+                    return reject(err);
+                }
+                resolve(rows);
+            });
+        });
+    } else {
+        try {
+            const query = `
+                SELECT * FROM "Box".ticket 
+                WHERE id_branches = $1 
+                  AND date_sale BETWEEN $2 AND $3 
+                  AND cfdi_create = false
+            `;
+            const result = await database.query(query, [id_branch, startFormatted, endFormatted]);
+            return result.rows;
+        } catch (error) {
+            console.error("Error al obtener tickets (PostgreSQL):", error);
+            return [];
+        }
+    }
+}
+
+async function get_tickets_for_facture_by_date_range(id_branch, startDate, endDate) {
+    const tickets = await get_tickets_by_date_range(id_branch, startDate, endDate);
+    let totalGlobal = 0;
+    const products = [];
+
+    for (let i = 0; i < tickets.length; i++) {
+        const dataTicket = tickets[i];
+        const totalTicket = parseFloat(dataTicket.total || 0);
+        let current_ticket = [];
+
+        try {
+            current_ticket = JSON.parse(dataTicket.current_ticket);
+        } catch (e) {
+            console.error(`Error al parsear current_ticket del ticket ID ${dataTicket.id}:`, e);
+            continue; // Salta este ticket si falla el parseo
+        }
+
+        for (let j = 0; j < current_ticket.length; j++) {
+            const dataProduct = current_ticket[j];
+
+            let taxes = [];
+            try {
+                taxes = Array.isArray(dataProduct.taxes)
+                    ? dataProduct.taxes
+                    : JSON.parse(dataProduct.taxes);
+            } catch (e) {
+                console.warn(`Error al parsear impuestos del producto "${dataProduct.name}" en ticket ${dataTicket.id}:`, e);
+            }
+
+            //we will see if this product have a clave SAT
+            //let sat_key='01010101';//dataProduct.sat_key;
+            //if(sat_key==''){
+                //sat_key='01010101'; //if the product not have a clave SAT, we will save this in his product
+            //}
+            console.log(dataProduct)
+
+            //we will see like is sale this product
+            let unitCode='KGM'; //this is when the product is sale for kilogram
+            if(dataProduct.purchaseUnit=='Pza'){
+                unitCode='H87'; //this is when the product is sale for pza
+            }
+
+            products.push({
+                ProductCode: '01010101',
+                Description:'VENTA',
+                UnitCode: unitCode,
+                priceWithoutTaxes: parseFloat(dataProduct.priceWithoutTaxes || 0),
+                priceWithTaxes: parseFloat(dataProduct.price || 0),
+                taxes,
+                Quantity: parseFloat(dataProduct.quantity || 0),
+                discount: parseFloat(dataProduct.discount || 0),
+                total: parseFloat(dataProduct.itemTotal || 0)
+            });
+        }
+
+        //console.log(`Productos del ticket #${dataTicket.id}:`, products);
+        totalGlobal += totalTicket;
+    }
+    console.log("Total global de todos los tickets:", totalGlobal);
+    return {
+        products,
+        totalGlobal
+    }
+}
+
+async function get_tickets_for_facture_global_by_date_range(id_branch, startDate, endDate) {
+    const tickets = await get_tickets_by_date_range(id_branch, startDate, endDate);
+    let totalGlobal = 0;
+    const products = [];
+
+    for (let i = 0; i < tickets.length; i++) {
+        const dataTicket = tickets[i];
+        const totalTicket = parseFloat(dataTicket.total || 0);
+        let current_ticket = [];
+
+        try {
+            current_ticket = JSON.parse(dataTicket.current_ticket);
+        } catch (e) {
+            console.error(`Error al parsear current_ticket del ticket ID ${dataTicket.id}:`, e);
+            continue; // Salta este ticket si falla el parseo
+        }
+
+        for (let j = 0; j < current_ticket.length; j++) {
+            const dataProduct = current_ticket[j];
+
+            let taxes = [];
+            try {
+                taxes = Array.isArray(dataProduct.taxes)
+                    ? dataProduct.taxes
+                    : JSON.parse(dataProduct.taxes);
+            } catch (e) {
+                console.warn(`Error al parsear impuestos del producto "${dataProduct.name}" en ticket ${dataTicket.id}:`, e);
+            }
+
+            const priceWithoutTaxes=parseFloat(dataProduct.priceWithoutTaxes || 0);
+            const priceWithTaxes=parseFloat(dataProduct.price || 0)
+            products.push({
+                ProductCode: '01010101',
+                Description:'VENTA',
+                UnitCode: 'ACT',
+                Quantity: parseFloat(dataProduct.quantity || 0),
+                UnitPrice: priceWithoutTaxes,
+                Subtotal: parseFloat(priceWithoutTaxes*dataProduct.quantity),
+                TaxObject : "02",
+                Taxes: taxes,
+                Total: parseFloat(dataProduct.itemTotal || 0)            
+            });
+        }
+
+        totalGlobal += totalTicket;
+    }
+
+    return {
+        products,
+        totalGlobal
+    }
+}
+
+
 
 module.exports = {
     get_the_setting_of_the_ticket,
-    update_setting_ticket
+    update_setting_ticket,
+    get_tickets_by_date_range,
+    get_tickets_for_facture_global_by_date_range
 };

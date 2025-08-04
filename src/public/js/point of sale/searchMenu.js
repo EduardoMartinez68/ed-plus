@@ -113,112 +113,112 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-function updateProductCards(products) {
-  const container = document.querySelector('.product-cards-point-of-sales');
-  container.innerHTML = ''; // Limpiar tarjetas anteriores
+  function updateProductCards(products) {
+    const container = document.querySelector('.product-cards-point-of-sales');
+    container.innerHTML = ''; // Limpiar tarjetas anteriores
 
-  products.forEach(product => {
-    const card = document.createElement('div');
-    card.className = 'product-card-point-of-sales';
-    card.id = product.barcode;
-    card.setAttribute('id-product', product.id);
-    card.setAttribute('data-price-1', product.price_1);
-    card.setAttribute('data-price-2', product.price_2);
-    card.setAttribute('data-price-3', product.price_3);
-    card.setAttribute('purchase_unit', product.purchase_unit);
-    card.setAttribute('this_product_is_sold_in_bulk', product.this_product_is_sold_in_bulk);
-    card.setAttribute('id_dishes_and_combos', product.id_dishes_and_combos);
+    products.forEach(product => {
+      const card = document.createElement('div');
+      card.className = 'product-card-point-of-sales';
+      card.id = product.barcode;
+      card.setAttribute('id-product', product.id);
+      card.setAttribute('data-price-1', product.price_1);
+      card.setAttribute('data-price-2', product.price_2);
+      card.setAttribute('data-price-3', product.price_3);
+      card.setAttribute('purchase_unit', product.purchase_unit);
+      card.setAttribute('this_product_is_sold_in_bulk', product.this_product_is_sold_in_bulk);
+      card.setAttribute('id_dishes_and_combos', product.id_dishes_and_combos);
 
-    const tax=JSON.stringify(product.taxes).replace(/'/g, "\\'");
-    card.setAttribute('taxes', tax);
-    card.setAttribute('sat_key', product.sat_key);
+      const tax=JSON.stringify(product.taxes).replace(/'/g, "\\'");
+      card.setAttribute('taxes', tax);
+      card.setAttribute('sat_key', product.sat_key);
 
-    //${JSON.stringify(product.taxes).replace(/'/g, "\\'")}
-    //price_1 == price with taxes
-    //price_2 == price out taxes
-    card.setAttribute('onclick', `
-      addToCart(
-        'product-${product.id}', 
-        '${product.name}', 
-        '${product.barcode}', 
-        ${product.price_1}, 
-        '${product.purchase_unit}', 
-        '${product.this_product_is_sold_in_bulk}', 
-        '${product.id_dishes_and_combos}',
-          true, 
-        '${product.this_product_need_recipe}',
-      )
-    `);
-    const imgSrc = product.img ? product.img : '/img/icons_first/product.webp';
+      //${JSON.stringify(product.taxes).replace(/'/g, "\\'")}
+      //price_1 == price with taxes
+      //price_2 == price out taxes
+      card.setAttribute('onclick', `
+        addToCart(
+          'product-${product.id}', 
+          '${product.name}', 
+          '${product.barcode}', 
+          ${product.price_1}, 
+          '${product.purchase_unit}', 
+          '${product.this_product_is_sold_in_bulk}', 
+          '${product.id_dishes_and_combos}',
+            true, 
+          '${product.this_product_need_recipe}',
+        )
+      `);
+      const imgSrc = product.img ? product.img : '/img/icons_first/product.webp';
 
-    card.innerHTML = `
-      <img src="${imgSrc}" alt="Producto" id="product-${product.id}" loading="lazy">
-      <br>
-      <label class="card-text">$${product.price_1}</label>
-      <div class="product-name-point-of-sales">${product.name}</div>
-      <div class="product-barcode-point-of-sales">${product.barcode}</div>
-      <input type="hidden" class="this_product_is_sold_in_bulk" value="${product.this_product_is_sold_in_bulk}">
-    `;
-
-    // --- Procesar lotes de manera universal (PG o SQLite/MySQL) ---
-    let lots = [];
-
-    try {
-      if (Array.isArray(product.lots)) {
-        lots = product.lots;
-      } else if (typeof product.lots === 'string' && product.lots.trim().length > 0) {
-        lots = JSON.parse(product.lots);
-      }
-    } catch (err) {
-      console.warn('Error al procesar lots:', err);
-    }
-
-    // Filtrar lotes válidos (que tengan un id no nulo)
-    const validLots = Array.isArray(lots)
-      ? lots.filter(lot => lot.id !== null && lot.id !== undefined)
-      : [];
-
-    // Si hay lotes válidos, agregarlos
-    if (validLots.length > 0) {
-      const lotsDiv = document.createElement('div');
-      lotsDiv.className = 'lots-info';
-      lotsDiv.innerHTML = `
-        <strong>Lotes:</strong>
-        <ul class="lot-list">
-          ${validLots.map(lot => `
-            <li class="lot-item"
-                data-lot-number="${lot.number_lote}"
-                data-current-existence="${lot.current_existence}"
-                data-manufacture-date="${lot.date_of_manufacture}"
-                data-expiration-date="${lot.expiration_date}"
-                data-lot-id="${lot.id}">
-                
-                <strong>Lote:</strong> ${lot.number_lote} <br>
-                <strong>Existencia:</strong> ${lot.current_existence} <br>
-                <strong>Fabricado:</strong> ${lot.date_of_manufacture} <br>
-                <strong>Expira:</strong> ${lot.expiration_date} <br>
-                <strong>Id:</strong> ${lot.id} <br>
-            </li>
-          `).join('')}
-        </ul>
+      card.innerHTML = `
+        <img src="${imgSrc}" alt="Producto" id="product-${product.id}" loading="lazy">
+        <br>
+        <label class="card-text">$${product.price_1}</label>
+        <div class="product-name-point-of-sales">${product.name}</div>
+        <div class="product-barcode-point-of-sales">${product.barcode}</div>
+        <input type="hidden" class="this_product_is_sold_in_bulk" value="${product.this_product_is_sold_in_bulk}">
       `;
-      card.appendChild(lotsDiv);
-    }
 
-    // Íconos: receta o lote válido
-    if (product.this_product_need_recipe === true || product.this_product_need_recipe === 'true') {
-      const icon = document.createElement('i');
-      icon.className = 'fi fi-ss-pharmacy icon-lot';
-      card.appendChild(icon);
-    } else if (validLots.length > 0) {
-      const icon = document.createElement('i');
-      icon.className = 'fi fi-ss-dolly-flatbed icon-lot';
-      card.appendChild(icon);
-    }
+      // --- Procesar lotes de manera universal (PG o SQLite/MySQL) ---
+      let lots = [];
 
-    container.appendChild(card);
-  });
-}
+      try {
+        if (Array.isArray(product.lots)) {
+          lots = product.lots;
+        } else if (typeof product.lots === 'string' && product.lots.trim().length > 0) {
+          lots = JSON.parse(product.lots);
+        }
+      } catch (err) {
+        console.warn('Error al procesar lots:', err);
+      }
+
+      // Filtrar lotes válidos (que tengan un id no nulo)
+      const validLots = Array.isArray(lots)
+        ? lots.filter(lot => lot.id !== null && lot.id !== undefined)
+        : [];
+
+      // Si hay lotes válidos, agregarlos
+      if (validLots.length > 0) {
+        const lotsDiv = document.createElement('div');
+        lotsDiv.className = 'lots-info';
+        lotsDiv.innerHTML = `
+          <strong>Lotes:</strong>
+          <ul class="lot-list">
+            ${validLots.map(lot => `
+              <li class="lot-item"
+                  data-lot-number="${lot.number_lote}"
+                  data-current-existence="${lot.current_existence}"
+                  data-manufacture-date="${lot.date_of_manufacture}"
+                  data-expiration-date="${lot.expiration_date}"
+                  data-lot-id="${lot.id}">
+                  
+                  <strong>Lote:</strong> ${lot.number_lote} <br>
+                  <strong>Existencia:</strong> ${lot.current_existence} <br>
+                  <strong>Fabricado:</strong> ${lot.date_of_manufacture} <br>
+                  <strong>Expira:</strong> ${lot.expiration_date} <br>
+                  <strong>Id:</strong> ${lot.id} <br>
+              </li>
+            `).join('')}
+          </ul>
+        `;
+        card.appendChild(lotsDiv);
+      }
+
+      // Íconos: receta o lote válido
+      if (product.this_product_need_recipe === true || product.this_product_need_recipe === 'true') {
+        const icon = document.createElement('i');
+        icon.className = 'fi fi-ss-pharmacy icon-lot';
+        card.appendChild(icon);
+      } else if (validLots.length > 0) {
+        const icon = document.createElement('i');
+        icon.className = 'fi fi-ss-dolly-flatbed icon-lot';
+        card.appendChild(icon);
+      }
+
+      container.appendChild(card);
+    });
+  }
 
 
 

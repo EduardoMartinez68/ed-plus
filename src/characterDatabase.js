@@ -221,6 +221,7 @@ async function create_update_of_the_database(adminPool) {
                 credit numeric(10,2),
                 total numeric(10,2) DEFAULT 0,
                 note text,
+                cfdi_create boolean NOT NULL DEFAULT false,
                 id_customers bigint,
                 id_employees bigint,
                 id_branches bigint,
@@ -592,7 +593,10 @@ async function create_update_of_the_database_mysqlite(db) {
     await create_table_mysqlite(db,queryPermition)
 
 
-
+    queryPermition=`
+        ALTER TABLE ticket ADD cfdi_create boolean NOT NULL DEFAULT false;
+    `
+    await create_table_mysqlite(db,queryPermition)
 
     db.close();
 }

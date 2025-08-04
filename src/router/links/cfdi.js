@@ -315,4 +315,45 @@ async function get_factures_by_company_with_search(id_company, query) {
 }
 
 
+router.post('/get-info-facture-cfdi', isLoggedIn, async (req, res) => {
+    const { id_company } = req.user;
+    const {id_customer,query }=req.body;
+    
+    //first we will see if can get all the data of the form with success
+    if(query){
+        let data=null;
+
+        //her we will see if the user is creation a facture for a customer or the facture not have a customer save
+        if(exist_id_customer(id_customer)){
+            data=await get_factures_by_customer_with_search(id_customer, query)
+        }else{
+            data=await get_factures_by_company_with_search(id_company,query)
+        }
+
+        res.json({ success: true, message: 'Datos de busqueda obtenidos' , data});
+    }else{
+        res.json({ success: false, message: 'No enviaste nada en la barra de busqueda' , data:null});
+    }
+});
+
+
+
+
+const {
+    get_tickets_for_facture_global_by_date_range
+} = require('../../services/ticket');
+router.post('/get_data_of_tickets_for_date', isLoggedIn, async (req, res) => {
+    const { id_company, id_branch} = req.user;
+    const {date_start, date_finish }=req.body;
+    
+    const data=await get_tickets_for_facture_global_by_date_range(id_branch, date_start, date_finish);
+    console.log(data)
+    if(data){
+        res.json({ success: true, message: 'Datos de busqueda obtenidos' , data});
+    }else{
+        res.json({ success: false, message: 'No enviaste nada en la barra de busqueda' , data:null});
+    }
+});
+
+
 module.exports = router;

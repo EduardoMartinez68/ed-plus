@@ -89,9 +89,9 @@
 </style>
 
 <div class="container mt-4">
-    <label for=""><i class="fi-icon fi-ss-file-invoice-dollar"></i> Genera una factura Global</label>
-    <hr>
     <div class="card p-3">
+        <label for="">🧾 Genera una factura Global</label>
+        <hr>
         <div class="row">
             <div class="col">
                 <div class="form-group form-section">
@@ -196,7 +196,7 @@
                     <info-label label="Forma de Pago *"
                         message="Clave de la forma de pago con la que se liquidó el comprobante de operaciones con el público en general de mayor monto de entre los contenidos en el CFDI global">
                     </info-label>
-                    <select name="formaPago" class="form-select" required id="formaPago">
+                    <select name="formaPago" class="form-select" required id="PaymentForm">
                         <option value="01">01 - Efectivo</option>
                         <option value="02">02 - Cheque nominativo</option>
                         <option value="03">03 - Transferencia electrónica de fondos</option>
@@ -223,7 +223,7 @@
             </div>
         </div>
 
-        <button class="btn btn-add">Crear Factura Global</button>
+        <button class="btn btn-add" onclick="create_data_facture()">Crear Factura Global</button>
     </div>
 
 </div>
@@ -300,7 +300,7 @@
             const format = (d) => d.toISOString().split('T')[0];
             dateFrom.value = format(startDate);
             dateTo.value = format(endDate);
-            customModal.style.display = "none";
+            //customModal.style.display = "none";
             close_my_pop('selectDatePersonality');
         }
     });
@@ -460,7 +460,22 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    function get_all_the_tickets(){
+    async function get_all_the_tickets(){
+        const range_date=get_range_date()
+        const answer=await send_data_to_server('/links/get_data_of_tickets_for_date', range_date);
+        if(answer.success){
+            return answer.data;
+        }else{
+            return null;
+        }
+    }
 
+    function get_range_date(){
+        const date_start=document.getElementById('dateFrom').value;
+        const date_finish=document.getElementById('dateTo').value;
+        return {
+            date_start,
+            date_finish
+        }
     }
 </script>
