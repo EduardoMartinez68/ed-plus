@@ -77,9 +77,6 @@ async function delete_all_car(total, moneyReceived, exchange, comment) {
     }
 }
 
-
-
-
 async function get_answer_server_store(combos, link) {
     try {
         const url = link;

@@ -1,8 +1,8 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async ()=> {
   //her is for get all the products that the user has in the menu when start the website
   let originalProductHTML = '';
-  const container = document.querySelector('.product-cards-point-of-sales');
-  originalProductHTML = container.innerHTML;
+  //const container = document.querySelector('.product-cards-point-of-sales');
+  //originalProductHTML = container.innerHTML;
 
   //this is for get the id of the branch that the user is using
   const searchInput = document.getElementById('search');
@@ -42,7 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   let debounceTimeout; //this is for the debounce
-
 
   function clear_the_menu() {
     // if the input is empty, we will show all the cards
@@ -422,4 +421,16 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
   });
+
+  async function get_the_first_product_of_my_store(){
+    const answer=await send_data_to_server('/links/search-products',{id_branch: ID_BRANCH})
+      if (answer.success) {
+        updateProductCards(answer.products);
+        console.log(answer.products)
+        const container = document.querySelector('.product-cards-point-of-sales');
+        originalProductHTML = container.innerHTML;
+      }
+  }
+
+  await get_the_first_product_of_my_store();
 });

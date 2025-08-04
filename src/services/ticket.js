@@ -328,7 +328,7 @@ async function get_tickets_for_facture_global_by_date_range(id_branch, startDate
                         Name: dataTax.name,
                         Base: priceWithoutTaxes,
                         Rate: rate,
-                        IsRetention: IsRetention
+                        IsRetention: false//IsRetention
                     }
                     
                     //save the information of the taxes
