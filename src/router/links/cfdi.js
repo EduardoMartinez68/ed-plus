@@ -347,7 +347,6 @@ router.post('/get_data_of_tickets_for_date', isLoggedIn, async (req, res) => {
     const {date_start, date_finish }=req.body;
     
     const data=await get_tickets_for_facture_global_by_date_range(id_branch, date_start, date_finish);
-    console.log(data)
     if(data){
         res.json({ success: true, message: 'Datos de busqueda obtenidos' , data});
     }else{

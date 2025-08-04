@@ -284,7 +284,6 @@ async function get_tickets_for_facture_global_by_date_range(id_branch, startDate
 
     for (let i = 0; i < tickets.length; i++) {
         const dataTicket = tickets[i];
-        const totalTicket = parseFloat(dataTicket.total || 0);
         let current_ticket = [];
 
         try {
@@ -297,33 +296,79 @@ async function get_tickets_for_facture_global_by_date_range(id_branch, startDate
         for (let j = 0; j < current_ticket.length; j++) {
             const dataProduct = current_ticket[j];
 
-            let taxes = [];
-            try {
-                taxes = Array.isArray(dataProduct.taxes)
-                    ? dataProduct.taxes
-                    : JSON.parse(dataProduct.taxes);
-            } catch (e) {
-                console.warn(`Error al parsear impuestos del producto "${dataProduct.name}" en ticket ${dataTicket.id}:`, e);
+            //now we will see if this produc have taxes in the ticket, if not have taxes, we will know that the product is free of tax
+            let infoTaxes = [];
+            const thisProductNotIsFreeOfTax=dataProduct.taxes.length>0;
+
+            const quantityProduct=parseFloat(parseFloat(dataProduct.quantity || 0).toFixed(2));
+            const priceWithoutTaxes=parseFloat(parseFloat(dataProduct.priceWithoutTaxes || 0).toFixed(2));
+            const priceWithTaxes=parseFloat(parseFloat(dataProduct.price || 0).toFixed(2))
+            const totalProduct=parseFloat(parseFloat(dataProduct.itemTotal || 0).toFixed(2));
+
+            //update the formt of the taxes
+            let taxes=[]
+            if(thisProductNotIsFreeOfTax){
+                //if this product not is free of tax, we will get all the tax that have save in the ticket
+                try {
+                    infoTaxes = dataProduct.taxes;//JSON.parse(dataProduct.taxes);
+                } catch (e) {
+                    console.error(`Error al parsear taxes del producto`, e);
+                    continue;
+                }
+
+                //her we will read all the taxes
+                for(var k=0;k<infoTaxes.length;k++){
+                    //get the information of all the taxes and do the calculate of the taxes
+                    const dataTax=infoTaxes[k];
+                    const IsRetention = !!(dataTax.is_retention == 1 || dataTax.is_retention);
+                    const rate=parseFloat((parseFloat(dataTax.rate/100)).toFixed(2));
+                    const totalTaxe=parseFloat(parseFloat((priceWithoutTaxes*quantityProduct)*(dataTax.rate/100))).toFixed(2);
+                    const infoTax={
+                        Total: totalTaxe,
+                        Name: dataTax.name,
+                        Base: priceWithoutTaxes,
+                        Rate: rate,
+                        IsRetention: IsRetention
+                    }
+                    
+                    //save the information of the taxes
+                    taxes.push(infoTax)
+                }
+
+                //now if this product have taxes, we will save this product with taxes TaxObject:'02'
+                products.push({
+                    ProductCode: '01010101',
+                    Description:'VENTA',
+                    UnitCode: 'ACT',
+                    Quantity: parseFloat((parseFloat(dataProduct.quantity)).toFixed(2)),
+                    UnitPrice: priceWithoutTaxes,
+                    Subtotal: parseFloat((parseFloat(priceWithoutTaxes*dataProduct.quantity)).toFixed(2)),
+                    TaxObject : "02",
+                    Taxes: infoTaxes,
+                    Total: totalProduct          
+                });
+            }else{
+                //now if this product not have taxes, we will save this product with TaxObject:'01'
+                products.push({
+                    ProductCode: '01010101',
+                    Description:'VENTA',
+                    UnitCode: 'ACT',
+                    Quantity: parseFloat((parseFloat(dataProduct.quantity)).toFixed(2)),
+                    UnitPrice: priceWithoutTaxes,
+                    Subtotal: parseFloat((parseFloat(priceWithoutTaxes*dataProduct.quantity)).toFixed(2)),
+                    TaxObject : "01",
+                    Total: totalProduct          
+                });
             }
 
-            const priceWithoutTaxes=parseFloat(dataProduct.priceWithoutTaxes || 0);
-            const priceWithTaxes=parseFloat(dataProduct.price || 0)
-            products.push({
-                ProductCode: '01010101',
-                Description:'VENTA',
-                UnitCode: 'ACT',
-                Quantity: parseFloat(dataProduct.quantity || 0),
-                UnitPrice: priceWithoutTaxes,
-                Subtotal: parseFloat(priceWithoutTaxes*dataProduct.quantity),
-                TaxObject : "02",
-                Taxes: taxes,
-                Total: parseFloat(dataProduct.itemTotal || 0)            
-            });
+        
+
+            totalGlobal+=totalProduct;
         }
 
-        totalGlobal += totalTicket;
     }
 
+    totalGlobal=parseFloat(totalGlobal.toFixed(2))
     return {
         products,
         totalGlobal
