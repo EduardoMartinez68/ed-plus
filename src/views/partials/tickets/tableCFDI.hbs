@@ -33,3 +33,36 @@
         </tfoot>
     </table>
 </div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+function calcularTotalGeneral() {
+  let total = 0;
+
+  // Selecciona todas las celdas con clase 'total' dentro del tbody
+  const filas = document.querySelectorAll('#tabla-productos tbody tr');
+
+  filas.forEach((fila) => {
+    const celdaTotal = fila.querySelector('.total');
+    if (celdaTotal) {
+      // Limpia el símbolo de pesos y comas si existen
+      const valor = parseFloat(celdaTotal.textContent.replace(/[^\d.-]/g, ''));
+      if (!isNaN(valor)) {
+        total += valor;
+      }
+    }
+  });
+
+  // Redondea a 2 decimales
+  total = Math.round(total * 100) / 100;
+
+  // Actualiza el contenido del total general
+  const totalGeneral = document.getElementById('total-general');
+  if (totalGeneral) {
+    totalGeneral.innerHTML = `<strong>$ ${total.toFixed(2)}</strong>`;
+  }
+}
+calcularTotalGeneral()
+});
+</script>

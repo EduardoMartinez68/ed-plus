@@ -426,7 +426,6 @@ document.addEventListener('DOMContentLoaded', async ()=> {
     const answer=await send_data_to_server('/links/search-products',{id_branch: ID_BRANCH})
       if (answer.success) {
         updateProductCards(answer.products);
-        console.log(answer.products)
         const container = document.querySelector('.product-cards-point-of-sales');
         originalProductHTML = container.innerHTML;
       }
