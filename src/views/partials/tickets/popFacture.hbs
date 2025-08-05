@@ -143,7 +143,8 @@
   </div>
 </div>
 
-
+<!---this is for dowload the pdf--->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <script>
   //-------------------------------------------------script for dowload facture--------------------------------------
@@ -218,80 +219,126 @@
 
 
 /**-------------------------------------------------------------*/
+
 function extraer_datos_de_factura(html) {
   // Parseamos el html a un documento DOM para manipularlo
   const parser = new DOMParser();
   const doc = parser.parseFromString(html, 'text/html');
-
+  const imgLogo=get_path_logo()
   return {
-    tipoYfolio: extraerTipoYFolio(doc),
+    imgLogo,
+    tipoYfolio: extraerTipoYFolio(doc), //falta codigo postal
     datosFiscales: extraerDatosFiscales(doc),
     InfoGlobalFactura: extraerInfoGlobalFactura(doc),
     TotalesYConceptos: extraerTotalesYConceptos(doc),
     DatosDePago:extraerDatosDePago(doc),
-    CadenaYSellos:extraerCadenaYSellos(doc)
+    FormaDePago:extraerDatosDePago2(doc),
+    CadenaYSellos:extraerCadenaYSellos(doc),
+    codigoPostalReceptor:obtenerCodigoPostalReceptor(doc),
+    EfectoDelComprobante:obtenerEfectoDelComprobante(doc)
   };
 }
+
+function get_path_logo(){
+  return 'https://mir-s3-cdn-cf.behance.net/projects/404/5f7a7768859071.Y3JvcCwzMDM3LDIzNzYsMzE1LDA.jpg'
+}
+
+// Utils robustos
+function normalizarLineasDesdeHTML(el) {
+  if (!el) return [];
+  // 1) Tomar innerHTML (no textContent), 2) quitar comentarios, 3) convertir <br> a \n,
+  // 4) quitar etiquetas, 5) normalizar espacios, 6) split por líneas y filtrar vacíos
+  const html = el.innerHTML || '';
+  const sinComentarios = html.replace(/<!--[\s\S]*?-->/g, '');
+  const conSaltos = sinComentarios.replace(/<br\s*\/?>/gi, '\n');
+  const sinTags = conSaltos.replace(/<[^>]*>/g, '');
+  return sinTags
+    .split('\n')
+    .map(s => s.replace(/\s+/g, ' ').trim())
+    .filter(Boolean);
+}
+
+/**
+ * Devuelve el valor textual que aparece inmediatamente DESPUÉS de una etiqueta <b> cuyo
+ * contenido (sin espacios) coincide con labelRegex, concatenando hasta el siguiente <br> o <b>.
+ */
+function valorDespuesDeEtiquetaB(container, labelRegex) {
+  if (!container) return null;
+  // Recorremos los <b> dentro del contenedor y buscamos el que matchee el label
+  const bs = Array.from(container.querySelectorAll('b'));
+  const b = bs.find(bEl => labelRegex.test(bEl.textContent.replace(/\s+/g, ' ').trim()));
+  if (!b) return null;
+
+  // Acumular texto entre b y el siguiente <br> o <b>
+  let texto = '';
+  let node = b.nextSibling;
+  while (node) {
+    // cortar si llega un <b> (otra etiqueta) o un <br>
+    if (node.nodeType === Node.ELEMENT_NODE) {
+      const tag = node.tagName ? node.tagName.toUpperCase() : '';
+      if (tag === 'B' || tag === 'BR') break;
+      // Si es otro elemento, añadimos su texto y seguimos
+      texto += ' ' + node.textContent;
+    } else if (node.nodeType === Node.TEXT_NODE) {
+      texto += ' ' + node.textContent;
+    }
+    node = node.nextSibling;
+  }
+  const limpio = texto.replace(/\s+/g, ' ').trim();
+  return limpio || null;
+}
+
 function extraerTipoYFolio(doc) {
   const result = {};
 
-  // Tipo de factura
+  // Tipo y folio
   const tipoFacturaEl = doc.querySelector('b.i-type');
   result.tipoFactura = tipoFacturaEl ? tipoFacturaEl.textContent.trim() : null;
 
-  // Folio de factura (texto dentro de <b class="i-folio">)
   const folioEl = doc.querySelector('b.i-folio');
   if (folioEl) {
-    const folioTexto = folioEl.textContent.trim();
+    const folioTexto = folioEl.textContent.replace(/\s+/g, ' ').trim();
     const folioMatch = folioTexto.match(/Folio:\s*(\d+)/i);
     result.folio = folioMatch ? folioMatch[1] : null;
   } else {
     result.folio = null;
   }
 
-  // Emisor: nombre y RFC
+  // ===== Emisor =====
   const emisorP = doc.querySelector('p.lead.issuer');
   if (emisorP) {
-    // Para obtener el nombre del emisor, buscamos el nodo de texto que sigue al primer <br>
-    // El DOM es: <b class="rfc">Emisor:</b><br> ESCUELA KEMPER URGATE <br> <span class="rfc">EKU9003173C9</span>
-    // Así que:
-    let nombreEmisor = null;
-    const children = Array.from(emisorP.childNodes);
-    for (let i = 0; i < children.length; i++) {
-      const node = children[i];
-      if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'BR') {
-        // El siguiente nodo texto después del primer <br> es el nombre del emisor
-        const nextNode = children[i + 1];
-        if (nextNode && nextNode.nodeType === Node.TEXT_NODE) {
-          nombreEmisor = nextNode.textContent.trim();
-          break;
-        }
-      }
-    }
-    result.emisorNombre = nombreEmisor;
+    // Normalizamos líneas: deberían salir ["Emisor:", "ESCUELA KEMPER URGATE", "EKU9003173C9"]
+    const lineas = normalizarLineasDesdeHTML(emisorP);
 
-    // RFC emisor: es el span.rfc dentro de ese <p>
+    // Nombre del emisor = primera línea que no sea "Emisor:" ni RFC (12/13 chars alfanum)
+    let emisorNombre = null;
+    for (const ln of lineas) {
+      if (/^Emisor:$/i.test(ln)) continue;
+      if (/^[A-Z0-9]{12,13}$/i.test(ln)) continue;
+      if (ln) { emisorNombre = ln; break; }
+    }
+    result.emisorNombre = emisorNombre || null;
+
+    // RFC emisor: buscar en span.rfc o en líneas por patrón de RFC (12/13)
     const rfcSpan = emisorP.querySelector('span.rfc');
-    result.emisorRfc = rfcSpan ? rfcSpan.textContent.trim() : null;
+    result.emisorRfc = rfcSpan
+      ? rfcSpan.textContent.trim()
+      : (lineas.find(x => /^[A-Z0-9]{12,13}$/i.test(x)) || null);
   } else {
     result.emisorNombre = null;
     result.emisorRfc = null;
   }
 
-  // Lugar de expedición, régimen fiscal y efecto del comprobante (están en div.columns.five > p que no es .lead)
+  // Datos emisor (lugar, régimen, efecto)
   const pDatosEmisor = doc.querySelector('div.columns.five > p:not(.lead)');
   if (pDatosEmisor) {
     const texto = pDatosEmisor.textContent.replace(/\s+/g, ' ');
-
-    // Lugar de Expedición
     const lugarMatch = texto.match(/Lugar de Expedici[oó]n:\s*(\d+)/i);
     result.lugarExpedicion = lugarMatch ? lugarMatch[1] : null;
 
-    // Régimen Fiscal
-    const regimenMatch = texto.match(/R[eé]gimen Fiscal:\s*([\d]+ - [^\n\r]+)/i);
+    const regimenMatch = texto.match(/R[eé]gimen Fiscal:\s*([\d]+ - [^]*?)(?:\s+Efecto|\s*$)/i);
     result.regimenFiscal = regimenMatch ? regimenMatch[1].trim() : null;
 
-    // Efecto del comprobante
     const efectoMatch = texto.match(/Efecto del comprobante:\s*([A-Z] - [^\n\r]+)/i);
     result.efectoComprobante = efectoMatch ? efectoMatch[1].trim() : null;
   } else {
@@ -300,58 +347,34 @@ function extraerTipoYFolio(doc) {
     result.efectoComprobante = null;
   }
 
-  // Datos receptor: div.columns.four > p
+  // ===== Receptor =====
   const pReceptor = doc.querySelector('div.columns.four > p');
   if (pReceptor) {
-    // El texto está así:
-    // <b><span class="rfc">Receptor:</span><br>PUBLICO EN GENERAL<br><span class="rfc">XAXX010101000</span></b>
-    // Además tiene Código postal, Uso CFDI y Régimen Fiscal en texto plano
-    const rfcSpans = pReceptor.querySelectorAll('span.rfc');
-
-    // Nombre del receptor: texto justo después del primer <br> dentro de <b>, que no sea el span
-    let nombreReceptor = null;
+    // Nombre del receptor: dentro del <b> superior, usar normalización por líneas
     const bEl = pReceptor.querySelector('b');
+    let receptorNombre = null;
     if (bEl) {
-      const bChildren = Array.from(bEl.childNodes);
-      for (let i = 0; i < bChildren.length; i++) {
-        const node = bChildren[i];
-        if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'BR') {
-          // El siguiente nodo texto después del primer <br> es nombre receptor
-          const nextNode = bChildren[i + 1];
-          if (nextNode && nextNode.nodeType === Node.TEXT_NODE) {
-            nombreReceptor = nextNode.textContent.trim();
-            break;
-          }
-        }
+      const lineasB = normalizarLineasDesdeHTML(bEl);
+      // lineasB típicamente: ["Receptor:", "PUBLICO EN GENERAL", "XAXX010101000"]
+      for (const ln of lineasB) {
+        if (/^Receptor:$/i.test(ln)) continue;
+        if (/^[A-Z0-9]{12,13}$/i.test(ln)) continue; // RFC
+        if (ln) { receptorNombre = ln; break; }
       }
     }
+    result.receptorNombre = receptorNombre || null;
 
-    // RFC receptor es el segundo span.rfc
-    let rfcReceptor = null;
-    if (rfcSpans.length >= 2) {
-      rfcReceptor = rfcSpans[1].textContent.trim();
-    } else if (rfcSpans.length === 1) {
-      // Si sólo hay uno, asumimos es el RFC receptor
-      rfcReceptor = rfcSpans[0].textContent.trim();
-    }
+    // RFC receptor: segundo span.rfc si existe, si no, detectar por patrón
+    const rfcSpans = pReceptor.querySelectorAll('span.rfc');
+    result.receptorRfc = rfcSpans.length >= 2
+      ? rfcSpans[1].textContent.trim()
+      : (Array.from(rfcSpans)[0]?.textContent.trim() ||
+         (normalizarLineasDesdeHTML(pReceptor).find(x => /^[A-Z0-9]{12,13}$/i.test(x)) ?? null));
 
-    // Texto plano para buscar Código Postal, Uso CFDI y Régimen Fiscal receptor
-    const texto = pReceptor.textContent.replace(/\s+/g, ' ');
-
-    const cpMatch = texto.match(/Código postal:\s*(\d+)/i);
-    const codigoPostal = cpMatch ? cpMatch[1] : null;
-
-    const usoMatch = texto.match(/Uso del CFDI:\s*([A-Z0-9 -]+)/i);
-    const usoCFDI = usoMatch ? usoMatch[1].trim() : null;
-
-    const regimenRecMatch = texto.match(/Regimen Fiscal:\s*([\d]+ - [^\n\r]+)/i);
-    const regimenFiscalReceptor = regimenRecMatch ? regimenRecMatch[1].trim() : null;
-
-    result.receptorNombre = nombreReceptor;
-    result.receptorRfc = rfcReceptor;
-    result.receptorCodigoPostal = codigoPostal;
-    result.receptorUsoCFDI = usoCFDI;
-    result.receptorRegimenFiscal = regimenFiscalReceptor;
+    // Código postal, Uso CFDI, Régimen: mejor leer con valorDespuesDeEtiquetaB
+    result.receptorCodigoPostal = valorDespuesDeEtiquetaB(pReceptor, /^Código postal:$/i); //--------------esta falta
+    result.receptorUsoCFDI     = valorDespuesDeEtiquetaB(pReceptor, /^Uso del CFDI:$/i);
+    result.receptorRegimenFiscal = valorDespuesDeEtiquetaB(pReceptor, /^Regimen Fiscal:$/i);
   } else {
     result.receptorNombre = null;
     result.receptorRfc = null;
@@ -636,6 +659,270 @@ function extraerDatosDePago(doc) {
   return result;
 }
 
+
+
+
+
+function valorEnParrafoDespuesDeB(pEl, labelRegex) {
+  if (!pEl) return null;
+
+  // Buscar el <b> cuyo texto matchee el label (tolerante a espacios)
+  const b = Array.from(pEl.querySelectorAll('b')).find(bEl => {
+    const t = limpiarTexto(bEl.textContent);
+    return labelRegex.test(t);
+  });
+  if (!b) return null;
+
+  // Intento 1: recorrer hermanos después del <b>, hasta <br> o otro <b>
+  let txt = '';
+  let node = b.nextSibling;
+  while (node) {
+    if (node.nodeType === Node.COMMENT_NODE) { node = node.nextSibling; continue; }
+    if (node.nodeType === Node.ELEMENT_NODE) {
+      const tag = node.tagName ? node.tagName.toUpperCase() : '';
+      if (tag === 'B' || tag === 'BR') break; // fin del valor
+      txt += ' ' + node.textContent;
+    } else if (node.nodeType === Node.TEXT_NODE) {
+      txt += ' ' + node.textContent;
+    }
+    node = node.nextSibling;
+  }
+  const limpio = limpiarTexto(txt);
+  if (limpio) return limpio;
+
+  // Intento 2: normalizar a líneas y tomar la línea siguiente al label
+  const lineas = normalizarLineasDesdeHTMLDeP(pEl);
+  const idx = lineas.findIndex(l => labelRegex.test(l));
+  if (idx !== -1 && idx + 1 < lineas.length) {
+    return lineas[idx + 1] || null;
+  }
+
+  return null;
+}
+
+/**
+ * Obtiene el Código Postal del bloque del Receptor.
+ * Incluye un Fallback #2 basado en innerHTML por si el parser devuelve algo raro.
+ */
+function obtenerCodigoPostalReceptor(doc) {
+  // 1) Tomar el <p> del bloque receptor
+  const pReceptor = doc.querySelector('div.columns.four > p');
+  if (!pReceptor) return null;
+
+  // 2) Intento principal: leer el valor después del <b>Código postal:</b>
+  //    (acepta posibles espacios / variaciones de mayúsculas / NBSP)
+  const cpText = valorEnParrafoDespuesDeB(pReceptor, /^C[óo]digo postal:$/i);
+  if (cpText) {
+    const m = cpText.match(/(\d{4,6})/); // CP MX normalmente 5 dígitos; dejamos 4-6 por tolerancia
+    if (m) return m[1];
+  }
+
+  // 3) Fallback #1: usar textContent completo del <p> y regex
+  const textoPlano = limpiarTexto(pReceptor.textContent);
+  let m = textoPlano.match(/CÃ³digo postal:\s*(\d{4,6})/i);
+  if (m) return m[1];
+
+  // 4) Fallback #2: usar innerHTML para capturar justo después del </b>
+  //    Reemplazamos entidades y NBSP, luego buscamos </b> ... <br>
+  const html = (pReceptor.innerHTML || '')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&oacute;|&#243;|&\#x00F3;/gi, 'ó') // asegurar "Código"
+    .replace(/<!--[\s\S]*?-->/g, '');
+
+  // Buscar el segmento <b>...Código postal...</b> [valor] <br
+  m = html.match(/<b[^>]*>\s*C[óo]digo\s+postal:\s*<\/b>\s*([^\n<]+?)(?:<br|$)/i);
+  if (m) {
+    const val = limpiarTexto(m[1]);
+    const d = val.match(/(\d{4,6})/);
+    if (d) return d[1];
+  }
+
+  // 5) Como último recurso, normalizar líneas (ya sin etiquetas) y buscar línea con "Código postal:"
+  const lineas = normalizarLineasDesdeHTMLDeP(pReceptor);
+  const idx = lineas.findIndex(l => /C[óo]digo postal:/i.test(l));
+  if (idx !== -1) {
+    // La línea puede incluir el número (p.ej. "Código postal: 42501")
+    const linea = lineas[idx];
+    const mm = linea.match(/C[óo]digo postal:\s*(\d{4,6})/i);
+    if (mm) return mm[1];
+    // O puede estar en la siguiente línea
+    const next = lineas[idx + 1];
+    if (next) {
+      const nn = next.match(/(\d{4,6})/);
+      if (nn) return nn[1];
+    }
+  }
+
+  return null;
+}
+
+//---------
+function limpiarTexto(s) {
+  return (s || '').replace(/\s+/g, ' ').trim();
+}
+
+
+
+function normalizarLineasDesdeHTMLDeP(pEl) {
+  if (!pEl) return [];
+  const html = pEl.innerHTML || '';
+  const sinComentarios = html.replace(/<!--[\s\S]*?-->/g, '');
+  const conSaltos = sinComentarios.replace(/<br\s*\/?>/gi, '\n');
+  const sinTags = conSaltos.replace(/<[^>]*>/g, '');
+  return sinTags
+    .split('\n')
+    .map(l => limpiarTexto(l))
+    .filter(Boolean);
+}
+
+/**
+ * Extrae el valor dentro del MISMO <p> que aparece después de un <b> cuyo texto coincide con labelRegex.
+ * 1) Intenta caminando nodos hermano por hermano hasta encontrar el texto previo al próximo <br> o <b>.
+ * 2) Si no encuentra, normaliza a líneas y toma la línea siguiente al label.
+ */
+function valorEnParrafoDespuesDeB(pEl, labelRegex) {
+  if (!pEl) return null;
+
+  // Buscar el <b> con el label
+  const b = Array.from(pEl.querySelectorAll('b')).find(bEl => {
+    const t = limpiarTexto(bEl.textContent);
+    return labelRegex.test(t);
+  });
+  if (!b) return null;
+
+  // --- Intento 1: recorrer nodos dentro del mismo <p> después del <b> ---
+  let txt = '';
+  let node = b.nextSibling;
+  while (node) {
+    if (node.nodeType === Node.COMMENT_NODE) { node = node.nextSibling; continue; }
+    if (node.nodeType === Node.ELEMENT_NODE) {
+      const tag = node.tagName ? node.tagName.toUpperCase() : '';
+      if (tag === 'B' || tag === 'BR') break;                 // fin del valor
+      txt += ' ' + node.textContent;
+    } else if (node.nodeType === Node.TEXT_NODE) {
+      txt += ' ' + node.textContent;
+    }
+    node = node.nextSibling;
+  }
+  const limpio = limpiarTexto(txt);
+  if (limpio) return limpio;
+
+  // --- Intento 2: normalizar a líneas y tomar la siguiente al label ---
+  const lineas = normalizarLineasDesdeHTMLDeP(pEl);
+  const idx = lineas.findIndex(l => labelRegex.test(l));
+  if (idx !== -1 && idx + 1 < lineas.length) {
+    return lineas[idx + 1] || null;
+  }
+
+  return null;
+}
+
+// --- Función principal robusta ---
+function extraerDatosDePago2(doc) {
+  const res = {
+    formaPago: null,
+    metodoPago: null,
+    banco: null,
+    cuenta: null,
+    condicionesPago: null,
+  };
+
+  // Buscar TODOS los <p> del documento (sin depender de estructura)
+  const parrafos = Array.from(doc.querySelectorAll('p'));
+  if (parrafos.length === 0) return res;
+
+  // Buscamos en cualquier <p> que tenga el label indicado
+  for (const p of parrafos) {
+    // Forma de Pago
+    if (res.formaPago === null) {
+      const v = valorEnParrafoDespuesDeB(p, /^Forma de Pago:$/i);
+      if (v) res.formaPago = v;
+    }
+    // Método de Pago (acepta acento real o entidad HTML ya decodificada por el parser)
+    if (res.metodoPago === null) {
+      const v = valorEnParrafoDespuesDeB(p, /^M[eé]todo de Pago:$/i);
+      if (v) res.metodoPago = v;
+    }
+    // Banco
+    if (res.banco === null) {
+      const v = valorEnParrafoDespuesDeB(p, /^Banco:$/i);
+      if (v) res.banco = v;
+    }
+    // Cuenta
+    if (res.cuenta === null) {
+      const v = valorEnParrafoDespuesDeB(p, /^Cuenta:$/i);
+      if (v) res.cuenta = v;
+    }
+    // Condiciones de Pago
+    if (res.condicionesPago === null) {
+      const v = valorEnParrafoDespuesDeB(p, /^Condiciones de Pago:$/i);
+      if (v) res.condicionesPago = v;
+    }
+  }
+
+  return res;
+}
+
+
+
+function obtenerEfectoDelComprobante(doc) {
+  // 1) Ubicar el <p> de "Datos Emisor" (el que NO es .lead dentro de div.columns.five)
+  const pDatosEmisor = doc.querySelector('div.columns.five > p:not(.lead)');
+  if (!pDatosEmisor) return null;
+
+  // 2) Intento principal: leer el valor justo después de <b>Efecto del comprobante:</b>
+  let valor = valorEnParrafoDespuesDeB(pDatosEmisor, /^Efecto del comprobante:$/i);
+  if (valor) return valor;
+
+  // 3) Fallback #1: regex sobre textContent (por si el parser aplanó el DOM)
+  const textoPlano = limpiarTexto(pDatosEmisor.textContent);
+  let m = textoPlano.match(/Efecto del comprobante:\s*([A-Z]\s*-\s*[^\n\r]+)/i);
+  if (m) return limpiarTexto(m[1]);
+
+  // 4) Fallback #2: buscar en innerHTML justo después del </b> de ese label
+  const html = (pDatosEmisor.innerHTML || '')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/<!--[\s\S]*?-->/g, '');
+  m = html.match(/<b[^>]*>\s*Efecto del comprobante:\s*<\/b>\s*([^<\n\r]+)(?:<br|$)/i);
+  if (m) return limpiarTexto(m[1]);
+
+  // 5) Último recurso: normalizar a líneas y tomar la siguiente a la del label
+  const lineas = normalizarLineasDesdeHTMLDeP(pDatosEmisor);
+  const idx = lineas.findIndex(l => /^Efecto del comprobante:$/i.test(l));
+  if (idx !== -1 && idx + 1 < lineas.length) {
+    return lineas[idx + 1] || null;
+  }
+
+  return null;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 function extraerCadenaYSellos(doc) {
   const resultado = {
     cadenaOriginal: null,
@@ -687,12 +974,16 @@ function extraerCadenaYSellos(doc) {
 function renderizarFacturaHTML(datos) {
   // Extraemos de datos para facilitar acceso
   const {
+    imgLogo,
     tipoYfolio,
     datosFiscales,
     InfoGlobalFactura,
     TotalesYConceptos,
     DatosDePago,
     CadenaYSellos,
+    FormaDePago,
+    codigoPostalReceptor,
+    EfectoDelComprobante
   } = datos;
 
   // Construimos filas de conceptos/productos
@@ -721,22 +1012,22 @@ function renderizarFacturaHTML(datos) {
   const uuid = datosFiscales?.folioFiscal || 'N/A';
   const fechaEmision = datosFiscales?.fechaEmision || 'N/A';
   const tipoComprobante = tipoYfolio?.tipoFactura || 'N/A';
-  const lugarExpedicion = datosFiscales?.lugarExpedicion || 'N/A';
+  const lugarExpedicion = tipoYfolio?.lugarExpedicion || 'N/A';
 
   // Forma y método de pago
-  const formaPago = DatosDePago?.formaPago || 'N/A';
-  const metodoPago = DatosDePago?.metodoPago || 'N/A';
+  const formaPago = FormaDePago?.formaPago || 'N/A';
+  const metodoPago = FormaDePago?.metodoPago || 'N/A';
 
   // Datos emisor y receptor
-  const emisorRFC = tipoYfolio?.rfcEmisor || 'N/A';
-  const emisorNombre = tipoYfolio?.nombreEmisor || 'N/A';
-  const regimenFiscal = tipoYfolio?.regimenFiscalEmisor || 'N/A';
+  const emisorRFC = tipoYfolio?.emisorRfc || 'N/A';
+  const emisorNombre = tipoYfolio?.emisorNombre || 'N/A';
+  const regimenFiscal = tipoYfolio?.regimenFiscal || 'N/A';
 
-  const receptorRFC = tipoYfolio?.rfcReceptor || 'N/A';
-  const receptorNombre = tipoYfolio?.nombreReceptor || 'N/A';
-  const usoCFDI = tipoYfolio?.usoCFDI || 'N/A';
-  const regimenFiscalReceptor = tipoYfolio?.regimenFiscalReceptor || 'N/A';
-  const codigoPostal = tipoYfolio?.codigoPostalReceptor || 'N/A';
+  const receptorRFC = tipoYfolio?.receptorRfc || 'N/A';
+  const receptorNombre = tipoYfolio?.receptorNombre || 'N/A';
+  const usoCFDI = tipoYfolio?.receptorUsoCFDI || 'N/A';
+  const regimenFiscalReceptor = tipoYfolio?.receptorRegimenFiscal || 'N/A';
+  const codigoPostal = codigoPostalReceptor || 'N/A'; //-falta
 
   // Totales
   const subtotal = TotalesYConceptos?.subtotal || 'N/A';
@@ -863,8 +1154,12 @@ function renderizarFacturaHTML(datos) {
 
     .info-section .title-cfdi{
       color: var(--color-principal);
-      margin-top: 20px;
-      margin-bottom: 5px;
+      display: block;
+      text-align: left;   /* por si hereda otro alineado */
+      margin: 0;          /* elimina el margen propio del h3 */
+      padding: 0;
+      font-weight: bold;
+      font-size: 1rem;
     }
 
     .info-section td {
@@ -872,7 +1167,7 @@ function renderizarFacturaHTML(datos) {
       padding: 4px 8px;
     }
 
-    .nota {
+    .note{
       font-size: 12px;
       color: #666;
       margin-top: 30px;
@@ -900,20 +1195,35 @@ function renderizarFacturaHTML(datos) {
       border: 1px solid #ddd;
       flex: 1;
     }
+
+    .total-number{
+      text-align: right;
+      margin: 0;
+      padding: 0;
+    }
+
+    .text-left{
+      text-align: left;
+      margin: 0;
+      padding: 0;
+    }
+
+    .info-cfdi-sat{
+      width:100%;
+    }
   </style>
 </head>
 <body>
   <div class="factura">
     <div class="encabezado">
       <div class="logo">
-        <img src="https://mir-s3-cdn-cf.behance.net/projects/404/5e6e0b205025935.Y3JvcCw0NTAwLDM1MTksMCw0OTA.jpg" alt="Logo Empresa">
+        <img src=${imgLogo} alt="Logo Empresa">
       </div>
       <div class="titulo">
         <h1 class='title-cfdi'>Factura CFDI 4.0</h1>
-        <div class="subtitulo">Vista previa sin timbrar</div>
+        <div class="subtitulo">Folio ${tipoYfolio.folio}</div>
       </div>
     </div>
-
     <div class="info-section">
       <h3 class='title-cfdi'>Información fiscal</h3>
       <table>
@@ -941,6 +1251,9 @@ function renderizarFacturaHTML(datos) {
         </tr>
         <tr>
           <td><strong>Régimen Fiscal:</strong> ${regimenFiscal}</td>
+        </tr>
+        <tr>
+          <td><strong>Efecto del comprobante:</strong> ${EfectoDelComprobante}</td>
         </tr>
       </table>
     </div>
@@ -995,12 +1308,22 @@ function renderizarFacturaHTML(datos) {
         </tr>
       </table>
     </div>
+    <h6 class='total-number'>${TotalesYConceptos.totalLetra}</h6>
+    <br>
 
-    <div class="qr-sello">
+    <div class='note text-left'>
+      numero serie certificado SAT: ${CadenaYSellos.numeroSerieCertificadoSAT}<br>
+      rfc PAC: ${CadenaYSellos.rfcPAC}<br>
+      certificado digital: ${datosFiscales.certificadoDigital}<br>
+      folio fiscal: ${datosFiscales.folioFiscal}<br>
+    </div>
+    <div class="qr-sello text-left">
       <div class="qr">
         <img src="${qrURL}" alt="QR CFDI">
       </div>
       <pre>
+
+<div class='info-cfdi-sat'>
 <b>Cadena original del complemento:</b>
 ${cadenaOriginal}
 
@@ -1009,10 +1332,15 @@ ${CadenaYSellos.selloDigitalCFDI}
 
 <b>Sello Digital del SAT:</b>
 ${CadenaYSellos.selloDigitalSAT} 
+</div>
 
       </pre>
     </div>
-
+    <div class='text-left'>
+      <label>Ver más detalles de la factura aquí</label><br>
+      <a href="${document.getElementById('facturaLink').textContent}" target="_blank">${document.getElementById('facturaLink').textContent}<a/>
+    </div>
+    <br>
     <div id="leyenda" style="
       text-align: center;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -1117,8 +1445,26 @@ ${CadenaYSellos.selloDigitalSAT}
     document.querySelector('.pop-cfdi-overlay').style.display = 'none';
   };
   */
+  function download_pdf_with_library(){
+    const elemento = document.getElementById('container-facture');
+
+    const opciones = {
+      margin:       0, // márgenes en pulgadas
+      filename:     'factura.pdf',
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2 }, // mejor resolución
+      jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+    };
+
+    html2pdf().set(opciones).from(elemento).save();
+  }
 
   async function descargarFactura(id, formato) {
+    if(formato=='pdf'){
+      //download_pdf_with_library();
+      //return;
+    }
+
     const loadingOverlay = document.getElementById('loadingOverlay');
     loadingOverlay.style.display = 'flex';
 
