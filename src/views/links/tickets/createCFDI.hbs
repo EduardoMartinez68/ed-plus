@@ -1,0 +1,30 @@
+{{>loading}}
+
+
+<input type="hidden" value="{{ticket.token_ticket}}" id="token_ticket">
+
+
+<div id="createFactureCFDI" class="my-pop">   
+    <div class="my-pop-content-wrapper">
+        <div class="my-pop-header">
+            <h4 class="my-pop-title">Generar Factura CFDI</h4>
+            <button class="close-btn" onclick="close_my_pop('createFactureCFDI')" type="button">×</button>
+        </div> 
+        <div class="my-pop-content">
+            {{>cfdi/createCFDI}}
+        </div>
+    </div>
+</div>
+
+
+<button onclick="open_my_pop('createFactureCFDI')">Open pop</button>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+    ///her we will load all the data of the ticket 
+    const token_ticket=document.getElementById('token_ticket').value;
+    await render_information_cfdi(token_ticket);
+
+});
+</script>

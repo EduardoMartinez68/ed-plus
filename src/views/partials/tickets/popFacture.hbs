@@ -173,7 +173,7 @@
     };
   }
 
-  async function update_container_facture() {
+  async function update_container_facture(){
       const id = currentFacturaId;
       const loadingOverlay = document.getElementById('loadingOverlay');
       loadingOverlay.style.display = 'flex';
@@ -195,15 +195,13 @@
 
           // Decodificamos base64 a texto HTML
           const decodedHtml = atob(result.base64);
-
           //her we will see if the facture is cancell or the facture is activate 
-          let datosFactura;
+          let datosFactura = await extraer_datos_de_factura(decodedHtml);
           let nuevoHTML;
           const statusFacture=document.getElementById('estadoFiltro');
           if(statusFacture){
             //if exist the select in the html, we will see if the user is see factures active or facture cancell
             if(statusFacture.value=='canceled'){
-              datosFactura = extraer_datos_de_factura(decodedHtml);
               nuevoHTML = renderizarFacturaHTMLCancell(datosFactura);
 
               //her we will change the text of the email if the user would like send for email 
@@ -212,7 +210,6 @@
                 message2Email.textContent='Lamentamos informarle que su factura ha sido cancelada. Si tiene alguna duda, por favor contáctenos. Puede descargar la factura cancelada en el siguiente enlace:'
               }
             }else{
-              datosFactura = extraer_datos_de_factura(decodedHtml);
               nuevoHTML = renderizarFacturaHTML(datosFactura);
 
               //her we will change the text of the email if the user would like send for email 
@@ -222,7 +219,6 @@
               }
             }
           }else{
-              datosFactura = extraer_datos_de_factura(decodedHtml);
               nuevoHTML = renderizarFacturaHTML(datosFactura);
 
               //her we will change the text of the email if the user would like send for email 
@@ -249,14 +245,13 @@
       loadingOverlay.style.display = 'none';
   }
 
-
 /**-------------------------------------------------------------*/
 
-function extraer_datos_de_factura(html) {
+async function extraer_datos_de_factura(html) {
   // Parseamos el html a un documento DOM para manipularlo
   const parser = new DOMParser();
   const doc = parser.parseFromString(html, 'text/html');
-  const imgLogo=get_path_logo()
+  const imgLogo=await get_path_logo()
   return {
     imgLogo,
     tipoYfolio: extraerTipoYFolio(doc), //falta codigo postal
@@ -271,9 +266,20 @@ function extraer_datos_de_factura(html) {
   };
 }
 
-function get_path_logo(){
-  return 'https://mir-s3-cdn-cf.behance.net/projects/404/5f7a7768859071.Y3JvcCwzMDM3LDIzNzYsMzE1LDA.jpg'
+
+let pathIconCFDI='https://pluspuntodeventa.com/img/logo-white-complete.webp';
+async function get_path_logo(){
+  if(pathIconCFDI=='https://pluspuntodeventa.com/img/logo-white-complete.webp'){
+    const answer=await send_data_to_server('/links/get_data_cfdi_branch',{pathIconCFDI})
+    if(answer.success){
+      pathIconCFDI=answer.data.linkCFDI;
+    }
+    console.log(answer.data)
+  }
+  
+  return pathIconCFDI;
 }
+
 
 // Utils robustos
 function normalizarLineasDesdeHTML(el) {
@@ -1115,7 +1121,8 @@ function renderizarFacturaHTML(datos) {
     }
 
     .logo img {
-      max-height: 80px;
+      width: 120px;
+      height: auto;
     }
 
     .titulo {
@@ -1501,7 +1508,8 @@ function renderizarFacturaHTMLCancell(datos){
     }
 
     .logo img {
-      max-height: 80px;
+      width: 120px;
+      height: auto;
     }
 
     .titulo {

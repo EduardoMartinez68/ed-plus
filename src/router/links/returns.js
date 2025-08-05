@@ -103,6 +103,7 @@ async function get_ticket_by_branch_and_key(id_branch, ticketKey) {
     }
   }
 }
+
 async function search_tickets_by_token(id_branch, ticketKey = '') {
   if (!id_branch) return null;
 
@@ -249,7 +250,6 @@ async function get_tickets_by_branch(id_branch) {
     }
   }
 }
-
 
 router.post('/get-data-ticket', isLoggedIn, async (req, res) => {
     //get the information of the user and of the ticket
@@ -707,13 +707,28 @@ router.get('/:id_company/:id_branch/tickets-sale', isLoggedIn, async (req, res) 
     res.render('links/tickets/viewTickets', {branchFree, tickets});
 });
 
+
+
+
+
+
 router.get('/:id_company/:id_branch/cfdi', isLoggedIn, async (req, res) => {
     const { id_company, id_branch } = req.params;
     const branchFree = await get_data_branch(id_branch);
     res.render('links/tickets/cfdi', {branchFree});
 });
 
+
+
 router.get('/:token_ticket/view_tickets_sale', isLoggedIn, async (req, res) => {
+  const {token_ticket} = req.params;
+  const {id_company, id_branch}=req.user;
+  const branchFree = await get_data_branch(id_branch);
+  const ticket={token_ticket}
+  res.render('links/tickets/createCFDI', {branchFree, ticket});
+});
+
+router.get('/:token_ticket/view_tickets_sale2', isLoggedIn, async (req, res) => {
     const {token_ticket} = req.params;
     const {id_company, id_branch}=req.user;
 

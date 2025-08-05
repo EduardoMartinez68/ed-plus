@@ -212,14 +212,73 @@ async function get_tickets_by_date_range(id_branch, startDate, endDate) {
     }
 }
 
-async function get_tickets_for_facture_by_date_range(id_branch, startDate, endDate) {
-    const tickets = await get_tickets_by_date_range(id_branch, startDate, endDate);
+/**
+ * Obtiene un ticket por su "key".
+ * @param {string|number} id_branch - (Opcional) Si deseas filtrar además por sucursal. Pásalo como null/undefined para ignorarlo.
+ * @param {string} ticketKey - Valor del campo "key" del ticket.
+ * @returns {Promise<object|null>} Un objeto ticket o null si no existe.
+ */
+/**
+ * Obtiene un ticket por su "key" y "id_branches".
+ * Devuelve un único registro o null si no existe.
+ * @param {number|string} id_branch
+ * @param {string} ticketKey
+ * @returns {Promise<object|null>}
+ */
+async function get_ticket_by_key_and_branch(id_branch, ticketKey) {
+  if (!id_branch || !ticketKey) {
+    console.error("Faltan parámetros requeridos: id_branch y ticketKey son obligatorios");
+    return null;
+  }
+
+  if (TYPE_DATABASE === 'mysqlite') {
+    // SQLite
+    return new Promise((resolve, reject) => {
+      // OJO: "key" es identificador reservado; en SQLite se puede entrecomillar con comillas dobles.
+      const query = `
+        SELECT *
+        FROM ticket
+        WHERE id_branches = ?
+          AND "key" = ?
+        LIMIT 1
+      `;
+      database.get(query, [id_branch, ticketKey], (err, row) => {
+        if (err) {
+          console.error("Error al obtener ticket (SQLite):", err);
+          return reject(err);
+        }
+        resolve(row || null);
+      });
+    });
+  } else {
+    // PostgreSQL
+    try {
+      // En Postgres, el identificador "key" debe ir con comillas dobles.
+      const query = `
+        SELECT *
+        FROM "Box".ticket
+        WHERE id_branches = $1
+          AND "key" = $2
+        LIMIT 1
+      `;
+      const result = await database.query(query, [id_branch, ticketKey]);
+      return result.rows[0] || null;
+    } catch (error) {
+      console.error("Error al obtener ticket (PostgreSQL):", error);
+      return null;
+    }
+  }
+}
+
+
+async function get_tickets_for_facture_individual_by_key_and_id_branch(id_branch, key) {
+    const tickets = [await get_ticket_by_key_and_branch(id_branch, key)];
+
     let totalGlobal = 0;
     const products = [];
 
     for (let i = 0; i < tickets.length; i++) {
         const dataTicket = tickets[i];
-        const totalTicket = parseFloat(dataTicket.total || 0);
         let current_ticket = [];
 
         try {
@@ -228,54 +287,96 @@ async function get_tickets_for_facture_by_date_range(id_branch, startDate, endDa
             console.error(`Error al parsear current_ticket del ticket ID ${dataTicket.id}:`, e);
             continue; // Salta este ticket si falla el parseo
         }
-
+        
         for (let j = 0; j < current_ticket.length; j++) {
             const dataProduct = current_ticket[j];
 
-            let taxes = [];
-            try {
-                taxes = Array.isArray(dataProduct.taxes)
-                    ? dataProduct.taxes
-                    : JSON.parse(dataProduct.taxes);
-            } catch (e) {
-                console.warn(`Error al parsear impuestos del producto "${dataProduct.name}" en ticket ${dataTicket.id}:`, e);
+            //now if this product have taxes, we will save this product with taxes TaxObject:'02'
+            let UnitCode;
+            if(dataProduct.name=='Pza'){
+                UnitCode='H87';
+            }else{
+                UnitCode='KGM';
             }
 
-            //we will see if this product have a clave SAT
-            //let sat_key='01010101';//dataProduct.sat_key;
-            //if(sat_key==''){
-                //sat_key='01010101'; //if the product not have a clave SAT, we will save this in his product
-            //}
-            console.log(dataProduct)
+            //now we will see if this produc have taxes in the ticket, if not have taxes, we will know that the product is free of tax
+            let infoTaxes = [];
+            const thisProductNotIsFreeOfTax = Array.isArray(dataProduct.taxes) && dataProduct.taxes.length > 0;
 
-            //we will see like is sale this product
-            let unitCode='KGM'; //this is when the product is sale for kilogram
-            if(dataProduct.purchaseUnit=='Pza'){
-                unitCode='H87'; //this is when the product is sale for pza
+            const quantityProduct=parseFloat(parseFloat(dataProduct.quantity || 0).toFixed(2));
+            const priceWithoutTaxes=parseFloat(parseFloat(dataProduct.priceWithoutTaxes || 0).toFixed(2));
+            const priceWithTaxes=parseFloat(parseFloat(dataProduct.price || 0).toFixed(2))
+            const totalProduct=parseFloat(parseFloat(dataProduct.itemTotal || 0).toFixed(2));
+
+            //update the formt of the taxes
+            let taxes=[]
+            if(thisProductNotIsFreeOfTax){
+                //if this product not is free of tax, we will get all the tax that have save in the ticket
+                try {
+                    infoTaxes = dataProduct.taxes;//JSON.parse(dataProduct.taxes);
+                } catch (e) {
+                    console.error(`Error al parsear taxes del producto`, e);
+                    continue;
+                }
+
+                //her we will read all the taxes
+                for(var k=0;k<infoTaxes.length;k++){
+                    //get the information of all the taxes and do the calculate of the taxes
+                    const dataTax=infoTaxes[k];
+                    const IsRetention = !!(dataTax.is_retention == 1 || dataTax.is_retention);
+                    const rate=parseFloat((parseFloat(dataTax.rate/100)).toFixed(2));
+                    const totalTaxe=parseFloat(parseFloat((priceWithoutTaxes*quantityProduct)*(dataTax.rate/100))).toFixed(2);
+                    const infoTax={
+                        Total: totalTaxe,
+                        Name: dataTax.name,
+                        Base: priceWithoutTaxes,
+                        Rate: rate,
+                        IsRetention: IsRetention//IsRetention
+                    }
+                    
+                    //save the information of the taxes
+                    taxes.push(infoTax)
+                }
+
+                products.push({
+                    ProductCode: dataProduct.sat_key,
+                    Description: dataProduct.name,
+                    UnitCode,
+                    Quantity: parseFloat((parseFloat(dataProduct.quantity)).toFixed(2)),
+                    UnitPrice: priceWithoutTaxes,
+                    Subtotal: parseFloat((parseFloat(priceWithoutTaxes*dataProduct.quantity)).toFixed(2)),
+                    TaxObject : "02",
+                    Taxes: infoTaxes,
+                    Total: totalProduct          
+                });
+            }else{
+                //now if this product not have taxes, we will save this product with TaxObject:'01'
+                products.push({
+                    ProductCode: '01010101',
+                    Description:'VENTA',
+                    UnitCode: UnitCode,
+                    Quantity: parseFloat((parseFloat(dataProduct.quantity)).toFixed(2)),
+                    UnitPrice: priceWithoutTaxes,
+                    Subtotal: parseFloat((parseFloat(priceWithoutTaxes*dataProduct.quantity)).toFixed(2)),
+                    TaxObject : "01",
+                    Total: totalProduct          
+                });
             }
 
-            products.push({
-                ProductCode: '01010101',
-                Description:'VENTA',
-                UnitCode: unitCode,
-                priceWithoutTaxes: parseFloat(dataProduct.priceWithoutTaxes || 0),
-                priceWithTaxes: parseFloat(dataProduct.price || 0),
-                taxes,
-                Quantity: parseFloat(dataProduct.quantity || 0),
-                discount: parseFloat(dataProduct.discount || 0),
-                total: parseFloat(dataProduct.itemTotal || 0)
-            });
+        
+
+            totalGlobal+=totalProduct;
         }
 
-        //console.log(`Productos del ticket #${dataTicket.id}:`, products);
-        totalGlobal += totalTicket;
     }
-    console.log("Total global de todos los tickets:", totalGlobal);
+
+    totalGlobal=parseFloat(totalGlobal.toFixed(2))
     return {
         products,
         totalGlobal
     }
 }
+
 
 async function get_tickets_for_facture_global_by_date_range(id_branch, startDate, endDate) {
     const tickets = await get_tickets_by_date_range(id_branch, startDate, endDate);
@@ -381,5 +482,7 @@ module.exports = {
     get_the_setting_of_the_ticket,
     update_setting_ticket,
     get_tickets_by_date_range,
-    get_tickets_for_facture_global_by_date_range
+    get_tickets_for_facture_global_by_date_range,
+    get_ticket_by_key_and_branch,
+    get_tickets_for_facture_individual_by_key_and_id_branch
 };

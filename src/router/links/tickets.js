@@ -150,4 +150,39 @@ router.get('/create_cfdi_global', isLoggedIn, async (req, res) => {
     res.render('links/tickets/cfdiGlobal', {branchFree, dataCompany});
 });
 
+router.post('/get_data_cfdi_branch', isLoggedIn, async (req, res) => {
+    const { id_company, id_branch } = req.user;
+    const branchFreeList = await get_data_branch(id_branch);
+    const branchFree=branchFreeList[0];
+
+    //we will see if can get all the informacion of the cfdi of the branch
+    if(branchFree){
+        //get the data of the cfdi of the branch with the form of the api of facturama
+        const Address={
+			Street : branchFree.address,
+			ExteriorNumber : branchFree.num_ext,
+			InteriorNumber : branchFree.num_int,
+			Neighborhood: branchFree.cologne,
+			ZipCode : branchFree.postal_code,
+			Municipality :branchFree.municipality,
+			State : branchFree.city,
+			Country : "México"
+        }
+
+        const data= {
+            linkCFDI:branchFree.linkCFDI,
+            Name: branchFree.name_branch,
+            TaxZipCode:branchFree.postal_code,
+            Rfc:branchFree.rfc,
+            FiscalRegime:branchFree.fiscalRegime,
+            ExpeditionPlace: branchFree.postal_code,
+            Address
+        }
+        console.log(data)
+        res.json({ success: true, message: 'Datos de busqueda obtenidos' , data});
+    }else{
+        res.json({ success: false, message: 'Datos de busqueda no encontrados'});
+    }
+});
+
 module.exports = router;

@@ -12,23 +12,11 @@
                 <th>Total</th>
             </tr>
         </thead>
-        <tbody>
-            {{#each dataTicketOld.current_ticket}}
-            <tr>
-                <td>{{this.sat_key}}</td>
-                <td>{{this.name}}</td>
-                <td>{{this.barcode}}</td>
-                <td class="cantidad">{{this.quantity}}</td>
-                <td class="priceWithoutTaxes">{{this.priceWithoutTaxes}}</td>
-                <td class="precio">{{this.price}}</td>
-                <td class="total">{{this.itemTotal}}</td>
-            </tr>
-            {{/each}}
-        </tbody>
+        <tbody id="container-product-ticket"></tbody>
         <tfoot>
             <tr style="background: #e9e9e9;">
                 <td colspan="6" style="text-align: right;"><strong>Total General:</strong></td>
-                <td id="total-general"><strong>$ {{dataTicketOld.total}}</strong></td>
+                <td id="total-general"><strong>$</strong></td>
             </tr>
         </tfoot>
     </table>

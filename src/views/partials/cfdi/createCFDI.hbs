@@ -1,0 +1,257 @@
+<style>
+    .btn-div {
+        width: 100%;
+        background-color: #ffffff;
+        border: 1px solid #ccc;
+        padding: 10px 12px;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        margin-bottom: 8px;
+    }
+
+    .btn-div-content {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .btn-div label {
+        font-weight: bold;
+        margin-bottom: 8px;
+        color: #333;
+    }
+
+    .btn-div p {
+        margin: 0;
+        color: #666;
+        font-size: 13px;
+    }
+
+    .btn-div i {
+        font-size: 20px;
+        color: #999;
+        margin-top: 13px;
+    }
+</style>
+
+
+
+            {{#each infoCustomer}}
+                <input type="hidden" value="{{id}}" id="id_customer">
+            {{/each}}
+
+            <form id="formCreateFactureCFDI">
+                <label>🧾 Generar Factura CFDI</label>
+                <hr>
+
+
+
+                {{>tickets/formCFDI}}
+                <br>
+                <div id="informationSales" class="my-pop">   
+                    <div class="my-pop-content-wrapper">
+                        <div class="my-pop-header">
+                            <h4 class="my-pop-title">Datos de la Venta</h4>
+                            <button class="close-btn" onclick="close_my_pop('informationSales')" type="button">×</button>
+                        </div> 
+                        <div class="my-pop-content">
+                            {{>tickets/informationSales}}
+                        </div>
+                    </div>
+                </div>
+                <div class="btn-div" onclick="open_my_pop('informationSales')">
+                    <div class="btn-div-content">
+                        <label>Datos de la Venta</label>
+                        <p>Total de Venta: ${{dataTicketOld.total}}</p>
+                    </div>
+                    <i class="fi fi-rr-angle-right"></i>
+                </div>
+
+
+
+
+
+
+                <div id="informationAddress" class="my-pop">  
+                    <div class="my-pop-content-wrapper">
+                        <div class="my-pop-header">
+                            <h4 class="my-pop-title">Datos de Facturación</h4>
+                            <button class="close-btn" onclick="close_my_pop('informationAddress')" type="button">×</button>
+                        </div>  
+                        <div class="my-pop-content">
+                            {{>tickets/formAddress}}
+                        </div>
+                    </div>
+                </div>
+                <div class="btn-div" onclick="open_my_pop('informationAddress')">
+                    <div class="btn-div-content">
+                        <label>Datos de Facturación</label>
+                        <p>XAXX010101000</p>
+                    </div>
+                    <i class="fi fi-rr-angle-right"></i>
+                </div>
+
+                <br><br><br><br><br><br><br><br>
+                <div class="row mt-3">
+                    <div class="col">
+                        {{>tickets/useCFDI}}
+                    </div>
+                    <div class="col">
+                        {{>tickets/metpay}}
+                    </div>
+                </div>
+
+                <button type="button" class="btn btn-add mt-4" onclick="create_my_facture_cfdi()">Generar Factura por ${{dataTicketOld.total}}</button>
+            </form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+    let dataFactureCFDI={}
+    async function render_information_cfdi(key){
+        const dataBranchCFDI=await send_data_to_server('/links/get_data_cfdi_branch',{n:null});
+        const dataTicket=await send_data_to_server('/links/get-info-ticket-by-ticket',{key});
+
+
+        //when get the data of the server, we will show in the frontend
+        render_html_of_the_table(dataTicket.data);
+    }
+
+    async function get_data_ticket(key){
+
+    }
+
+
+
+function fmtNumber(n) {
+  if (n === null || n === undefined || isNaN(n)) return '0';
+  return Number(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function formatToMXN(num) {
+  if (num === null || num === undefined || isNaN(num)) return '0';
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function render_html_of_the_table(dataTicket) {
+  if (!dataTicket || !Array.isArray(dataTicket.products)) {
+    console.error('[render] dataTicket.products no es un arreglo', dataTicket);
+    return;
+  }
+
+  const products = dataTicket.products;
+  const tbody = document.getElementById('container-product-ticket');
+  const taxesContainer = document.getElementById('container-taxes-products');
+
+  if (!tbody) {
+    console.error('[render] No existe #container-product-ticket en el DOM');
+    return;
+  }
+  if (!taxesContainer) {
+    console.error('[render] No existe #container-taxes-products en el DOM');
+    return;
+  }
+
+  // Limpia
+  tbody.innerHTML = '';
+  taxesContainer.innerHTML = '';
+
+  products.forEach((p, idx) => {
+    // Campos con fallback
+    const sat_key = p.ProductCode ?? '';
+    const name = p.Description ?? '';
+    const barcode = p.Barcode ?? '';   // No viene en tu payload; por si lo agregas luego
+    const quantity = p.Quantity ?? 0;
+    const priceWithoutTaxes = p.UnitPrice ?? 0;
+
+    // Precio unitario con impuestos (si quieres mostrarlo): si el total viene por línea
+    const itemTotal = p.Total ?? (Number(priceWithoutTaxes) * Number(quantity));
+    const priceWithTaxesUnit = quantity ? (Number(itemTotal) / Number(quantity)) : 0;
+
+    // Fila de productos
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${sat_key}</td>
+      <td>${name}</td>
+      <td>${barcode}</td>
+      <td class="cantidad">${fmtNumber(quantity)}</td>
+      <td class="priceWithoutTaxes">${fmtNumber(priceWithoutTaxes)}</td>
+      <td class="precio">${fmtNumber(priceWithTaxesUnit)}</td>
+      <td class="total">${fmtNumber(itemTotal)}</td>
+    `;
+    tbody.appendChild(tr);
+
+    // ===== Impuestos por producto =====
+    const taxes = Array.isArray(p.Taxes) ? p.Taxes : [];
+    // Estructura de cada impuesto: depende de tu backend. Asumo:
+    // { name, taxId, rate, is_retention }
+    // Si tu backend trae otra forma (ej: {Type, Rate, Amount, Withholding}), adapta el mapeo abajo.
+
+    const tableId = `table-tax-${(barcode || sat_key || `idx${idx}`)}`.replace(/[^a-zA-Z0-9_-]/g, '');
+    const wrapper = document.createElement('div');
+    wrapper.className = 'table-responsive mb-3';
+    wrapper.innerHTML = `
+      <h6 class="mb-1">${name || 'Producto'}</h6>
+      <label class="d-block mb-2">${barcode || sat_key || ''}</label>
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Código</th>
+            <th>Tasa</th>
+            <th>¿Retención?</th>
+          </tr>
+        </thead>
+        <tbody id="${tableId}">
+          ${taxes.length === 0 ? `
+            <tr><td colspan="4" class="text-muted">Sin impuestos</td></tr>
+          ` : ''}
+        </tbody>
+      </table>
+    `;
+    taxesContainer.appendChild(wrapper);
+
+    const tbodyTaxes = wrapper.querySelector(`#${tableId}`);
+    taxes.forEach(tax => {
+      // Mapeo flexible
+      const taxName = tax.name ?? tax.Name ?? tax.Type ?? 'Impuesto';
+      const taxCode = tax.taxId ?? tax.Id ?? tax.Code ?? '';
+      const taxRate = tax.rate ?? tax.Rate ?? tax.Percentage ?? tax.Factor ?? 0;
+      const taxIsRetention = (tax.is_retention ?? tax.Withholding ?? tax.IsRetention ?? false) ? 'Sí' : 'No';
+
+      const trTax = document.createElement('tr');
+      trTax.innerHTML = `
+        <td>${taxName}</td>
+        <td>${taxCode}</td>
+        <td>${fmtNumber(taxRate)}</td>
+        <td>${taxIsRetention}</td>
+      `;
+      tbodyTaxes.appendChild(trTax);
+    });
+  });
+
+  document.getElementById('total-general').textContent= '$' + formatToMXN(dataTicket.totalGlobal);
+}
+
+
+</script>
+
+
+
+
+
+
+

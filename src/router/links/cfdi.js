@@ -10,6 +10,11 @@ const {
     get_branch
 } = require('../../services/branch');
 
+const {
+    get_tickets_for_facture_global_by_date_range,
+    get_tickets_for_facture_individual_by_key_and_id_branch
+} = require('../../services/ticket');
+
 router.post('/update-data-cfdi', isLoggedIn, async (req, res) => {
     const {id_branch}=req.user;
     if(await update_information_of_the_cfdi_of_the_branch(id_branch, req.body)){
@@ -233,6 +238,16 @@ router.post('/get-info-facture-cfdi', isLoggedIn, async (req, res) => {
     }
 });
 
+router.post('/get-info-ticket-by-ticket', isLoggedIn, async (req, res) => {
+    const { id_company , id_branch} = req.user;
+    const {key}=req.body;
+    const data=await get_tickets_for_facture_individual_by_key_and_id_branch(id_branch, key);
+    console.log(data);
+    res.json({ success: true, message: 'No enviaste nada en la barra de busqueda' , data:data});
+});
+
+
+
 function exist_id_customer(id_customer){
     const parsedId = parseInt(id_customer, 10);
     return (isNaN(parsedId) || parsedId < 0) 
@@ -338,10 +353,6 @@ router.post('/get-info-facture-cfdi', isLoggedIn, async (req, res) => {
 
 
 
-
-const {
-    get_tickets_for_facture_global_by_date_range
-} = require('../../services/ticket');
 router.post('/get_data_of_tickets_for_date', isLoggedIn, async (req, res) => {
     const { id_company, id_branch} = req.user;
     const {date_start, date_finish }=req.body;
