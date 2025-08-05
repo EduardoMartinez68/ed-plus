@@ -195,17 +195,876 @@
           // Decodificamos base64 a texto HTML
           const decodedHtml = atob(result.base64);
 
+
+          const datosFactura = extraer_datos_de_factura(decodedHtml);
+          console.log(datosFactura);
+          const nuevoHTML = renderizarFacturaHTML(datosFactura);
+
           // Mostramos el contenido HTML en el div "factura-html"
           const facturaDiv = document.getElementById('container-facture');
-          facturaDiv.innerHTML = decodedHtml;
+          facturaDiv.innerHTML = nuevoHTML;//decodedHtml;
 
       } catch (error) {
           console.error('❌ Error al obtener la factura HTML:', error);
           alert('❌ Error al obtener la factura:\n' + error.message);
       }
 
+      // Ejemplo de uso:
+      
+      //actualizarFacturaHtml(datosFactura)
+
       loadingOverlay.style.display = 'none';
   }
+
+
+/**-------------------------------------------------------------*/
+function extraer_datos_de_factura(html) {
+  // Parseamos el html a un documento DOM para manipularlo
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, 'text/html');
+
+  return {
+    tipoYfolio: extraerTipoYFolio(doc),
+    datosFiscales: extraerDatosFiscales(doc),
+    InfoGlobalFactura: extraerInfoGlobalFactura(doc),
+    TotalesYConceptos: extraerTotalesYConceptos(doc),
+    DatosDePago:extraerDatosDePago(doc),
+    CadenaYSellos:extraerCadenaYSellos(doc)
+  };
+}
+function extraerTipoYFolio(doc) {
+  const result = {};
+
+  // Tipo de factura
+  const tipoFacturaEl = doc.querySelector('b.i-type');
+  result.tipoFactura = tipoFacturaEl ? tipoFacturaEl.textContent.trim() : null;
+
+  // Folio de factura (texto dentro de <b class="i-folio">)
+  const folioEl = doc.querySelector('b.i-folio');
+  if (folioEl) {
+    const folioTexto = folioEl.textContent.trim();
+    const folioMatch = folioTexto.match(/Folio:\s*(\d+)/i);
+    result.folio = folioMatch ? folioMatch[1] : null;
+  } else {
+    result.folio = null;
+  }
+
+  // Emisor: nombre y RFC
+  const emisorP = doc.querySelector('p.lead.issuer');
+  if (emisorP) {
+    // Para obtener el nombre del emisor, buscamos el nodo de texto que sigue al primer <br>
+    // El DOM es: <b class="rfc">Emisor:</b><br> ESCUELA KEMPER URGATE <br> <span class="rfc">EKU9003173C9</span>
+    // Así que:
+    let nombreEmisor = null;
+    const children = Array.from(emisorP.childNodes);
+    for (let i = 0; i < children.length; i++) {
+      const node = children[i];
+      if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'BR') {
+        // El siguiente nodo texto después del primer <br> es el nombre del emisor
+        const nextNode = children[i + 1];
+        if (nextNode && nextNode.nodeType === Node.TEXT_NODE) {
+          nombreEmisor = nextNode.textContent.trim();
+          break;
+        }
+      }
+    }
+    result.emisorNombre = nombreEmisor;
+
+    // RFC emisor: es el span.rfc dentro de ese <p>
+    const rfcSpan = emisorP.querySelector('span.rfc');
+    result.emisorRfc = rfcSpan ? rfcSpan.textContent.trim() : null;
+  } else {
+    result.emisorNombre = null;
+    result.emisorRfc = null;
+  }
+
+  // Lugar de expedición, régimen fiscal y efecto del comprobante (están en div.columns.five > p que no es .lead)
+  const pDatosEmisor = doc.querySelector('div.columns.five > p:not(.lead)');
+  if (pDatosEmisor) {
+    const texto = pDatosEmisor.textContent.replace(/\s+/g, ' ');
+
+    // Lugar de Expedición
+    const lugarMatch = texto.match(/Lugar de Expedici[oó]n:\s*(\d+)/i);
+    result.lugarExpedicion = lugarMatch ? lugarMatch[1] : null;
+
+    // Régimen Fiscal
+    const regimenMatch = texto.match(/R[eé]gimen Fiscal:\s*([\d]+ - [^\n\r]+)/i);
+    result.regimenFiscal = regimenMatch ? regimenMatch[1].trim() : null;
+
+    // Efecto del comprobante
+    const efectoMatch = texto.match(/Efecto del comprobante:\s*([A-Z] - [^\n\r]+)/i);
+    result.efectoComprobante = efectoMatch ? efectoMatch[1].trim() : null;
+  } else {
+    result.lugarExpedicion = null;
+    result.regimenFiscal = null;
+    result.efectoComprobante = null;
+  }
+
+  // Datos receptor: div.columns.four > p
+  const pReceptor = doc.querySelector('div.columns.four > p');
+  if (pReceptor) {
+    // El texto está así:
+    // <b><span class="rfc">Receptor:</span><br>PUBLICO EN GENERAL<br><span class="rfc">XAXX010101000</span></b>
+    // Además tiene Código postal, Uso CFDI y Régimen Fiscal en texto plano
+    const rfcSpans = pReceptor.querySelectorAll('span.rfc');
+
+    // Nombre del receptor: texto justo después del primer <br> dentro de <b>, que no sea el span
+    let nombreReceptor = null;
+    const bEl = pReceptor.querySelector('b');
+    if (bEl) {
+      const bChildren = Array.from(bEl.childNodes);
+      for (let i = 0; i < bChildren.length; i++) {
+        const node = bChildren[i];
+        if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'BR') {
+          // El siguiente nodo texto después del primer <br> es nombre receptor
+          const nextNode = bChildren[i + 1];
+          if (nextNode && nextNode.nodeType === Node.TEXT_NODE) {
+            nombreReceptor = nextNode.textContent.trim();
+            break;
+          }
+        }
+      }
+    }
+
+    // RFC receptor es el segundo span.rfc
+    let rfcReceptor = null;
+    if (rfcSpans.length >= 2) {
+      rfcReceptor = rfcSpans[1].textContent.trim();
+    } else if (rfcSpans.length === 1) {
+      // Si sólo hay uno, asumimos es el RFC receptor
+      rfcReceptor = rfcSpans[0].textContent.trim();
+    }
+
+    // Texto plano para buscar Código Postal, Uso CFDI y Régimen Fiscal receptor
+    const texto = pReceptor.textContent.replace(/\s+/g, ' ');
+
+    const cpMatch = texto.match(/Código postal:\s*(\d+)/i);
+    const codigoPostal = cpMatch ? cpMatch[1] : null;
+
+    const usoMatch = texto.match(/Uso del CFDI:\s*([A-Z0-9 -]+)/i);
+    const usoCFDI = usoMatch ? usoMatch[1].trim() : null;
+
+    const regimenRecMatch = texto.match(/Regimen Fiscal:\s*([\d]+ - [^\n\r]+)/i);
+    const regimenFiscalReceptor = regimenRecMatch ? regimenRecMatch[1].trim() : null;
+
+    result.receptorNombre = nombreReceptor;
+    result.receptorRfc = rfcReceptor;
+    result.receptorCodigoPostal = codigoPostal;
+    result.receptorUsoCFDI = usoCFDI;
+    result.receptorRegimenFiscal = regimenFiscalReceptor;
+  } else {
+    result.receptorNombre = null;
+    result.receptorRfc = null;
+    result.receptorCodigoPostal = null;
+    result.receptorUsoCFDI = null;
+    result.receptorRegimenFiscal = null;
+  }
+
+  return result;
+}
+
+function extraerDatosFiscales(doc) {
+  const result = {};
+
+  // Buscamos el contenedor principal del bloque de impuestos
+  const container = doc.querySelector('div.invoice-row.taxes > div.invoice-row');
+  if (!container) {
+    return {
+      folioFiscal: null,
+      fechaEmision: null,
+      certificadoDigital: null,
+    };
+  }
+
+  // Folio Fiscal (dentro del div.columns.five > p)
+  const folioFiscalP = container.querySelector('div.columns.five > p');
+  if (folioFiscalP) {
+    // El texto está en el <p>, después del <b> y un <br>, así que tomamos el texto del nodo de texto después
+    const folioTexto = folioFiscalP.childNodes;
+    // Normalmente el texto que queremos está después del <br>, o en el segundo nodo de texto
+    // Por eso buscamos el nodo de texto que no sea vacío ni el <b>
+    let folioFiscal = null;
+    folioTexto.forEach(node => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const txt = node.textContent.trim();
+        if (txt.length > 0) folioFiscal = txt;
+      }
+    });
+    result.folioFiscal = folioFiscal || null;
+  } else {
+    result.folioFiscal = null;
+  }
+
+  // Fecha / Hora de Emisión (div.columns.three > p)
+  const fechaP = container.querySelector('div.columns.three > p');
+  if (fechaP) {
+    let fechaEmision = null;
+    fechaP.childNodes.forEach(node => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const txt = node.textContent.trim();
+        if (txt.length > 0) fechaEmision = txt;
+      }
+    });
+    result.fechaEmision = fechaEmision || null;
+  } else {
+    result.fechaEmision = null;
+  }
+
+  // Número de Certificado Digital (div.columns.four > p)
+  const certP = container.querySelector('div.columns.four > p');
+  if (certP) {
+    let certificadoDigital = null;
+    certP.childNodes.forEach(node => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const txt = node.textContent.trim();
+        if (txt.length > 0) certificadoDigital = txt;
+      }
+    });
+    result.certificadoDigital = certificadoDigital || null;
+  } else {
+    result.certificadoDigital = null;
+  }
+
+  return result;
+}
+
+function extraerInfoGlobalFactura(doc) {
+  const result = {};
+
+  // Contenedor principal (div.invoice-row) que contiene los bloques de Exportación e Información Global
+  const container = doc.querySelector('div.invoice-row');
+
+  if (!container) {
+    return {
+      exportacion: null,
+      anio: null,
+      mes: null,
+      periodicidad: null,
+    };
+  }
+
+  // Exportación (div.columns.four > p que tiene <b>Exportacion:</b>)
+  const exportacionP = Array.from(container.querySelectorAll('div.columns.four > p')).find(p =>
+    p.querySelector('b')?.textContent.trim().toLowerCase().startsWith('exportacion')
+  );
+  if (exportacionP) {
+    // El texto que queremos está después del <br>
+    let exportacion = null;
+    exportacionP.childNodes.forEach(node => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const txt = node.textContent.trim();
+        if (txt.length > 0) exportacion = txt;
+      }
+    });
+    result.exportacion = exportacion || null;
+  } else {
+    result.exportacion = null;
+  }
+
+  // Información Global (div.columns.four > p que contiene 'Año:', 'Mes:' y 'Periodicidad:')
+  const infoGlobalP = Array.from(container.querySelectorAll('div.columns.four > p')).find(p =>
+    p.textContent.includes('Año:') && p.textContent.includes('Mes:') && p.textContent.includes('Periodicidad:')
+  );
+
+  if (infoGlobalP) {
+    const text = infoGlobalP.textContent.replace(/\u00A0/g, ' ').replace(/\s+/g, ' ').trim();
+
+    // Regex para extraer Año, Mes y Periodicidad
+    const anioMatch = text.match(/Año:\s*(\d{4})/i);
+    const mesMatch = text.match(/Mes:\s*([A-Za-záéíóúñ]+)/i);
+    const periodicidadMatch = text.match(/Periodicidad:\s*([A-Za-z]+)/i);
+
+    result.anio = anioMatch ? anioMatch[1] : null;
+    result.mes = mesMatch ? mesMatch[1] : null;
+    result.periodicidad = periodicidadMatch ? periodicidadMatch[1] : null;
+  } else {
+    result.anio = null;
+    result.mes = null;
+    result.periodicidad = null;
+  }
+
+  return result;
+}
+
+function extraerTotalesYConceptos(doc) {
+  const resultado = {
+    conceptos: [],
+    subtotal: null,
+    impuestos: [],
+    totalLetra: null,
+    total: null,
+    moneda: null,
+  };
+
+  // Buscar la tabla de conceptos (productos)
+  const tablaConceptos = doc.querySelector('div.invoice-row > table.invoice-table');
+  if (!tablaConceptos) return resultado;
+
+  // Saltar la fila de encabezados (primer <tr>)
+  const filas = Array.from(tablaConceptos.querySelectorAll('tr')).slice(1);
+
+  filas.forEach(fila => {
+    // Si la fila tiene celdas, asumimos que es un concepto/producto
+    const celdas = fila.querySelectorAll('td');
+    if (celdas.length >= 6) {
+      const producto = celdas[0].textContent.trim();
+      const cantidad = celdas[1].textContent.trim();
+      const unidad = celdas[2].textContent.trim();
+      const conceptoHtml = celdas[3].innerHTML.trim(); // Contiene también <br> y etiquetas para impuestos
+      const precioUnitario = celdas[4].textContent.trim();
+      const importe = celdas[5].textContent.trim();
+
+      // Extraer detalle de traslados dentro del concepto (ej. IVA, base, tasa, importe)
+      // Buscamos etiquetas con clase smaller-text dentro del concepto (puede haber varias)
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = conceptoHtml;
+      const trasladosElems = tempDiv.querySelectorAll('span.smaller-text');
+
+      const traslados = [];
+      trasladosElems.forEach(span => {
+        // El texto es tipo "IVA: 002, Base: $300.00,"
+        const texto = span.textContent.trim().replace(/,$/, '');
+        traslados.push(texto);
+      });
+
+      resultado.conceptos.push({
+        producto,
+        cantidad,
+        unidad,
+        conceptoTexto: tempDiv.textContent.trim(), // texto plano con todo
+        precioUnitario,
+        importe,
+        traslados
+      });
+    }
+  });
+
+  // Buscar subtotal e impuestos (tabla dentro de div.invoice-row.taxes .table-totals)
+  const tablaTotales = doc.querySelector('div.invoice-row.taxes .table-totals table.invoice-table');
+  if (tablaTotales) {
+    const filasTotales = tablaTotales.querySelectorAll('tr');
+
+    filasTotales.forEach(fila => {
+      const celdas = fila.querySelectorAll('td');
+      if (celdas.length === 2) {
+        const label = celdas[0].textContent.trim();
+        const valor = celdas[1].textContent.trim();
+
+        if (/subtotal/i.test(label)) {
+          resultado.subtotal = valor;
+        } else if (/total/i.test(label)) {
+          resultado.total = valor;
+        } else if (/iva|impuesto/i.test(label)) {
+          resultado.impuestos.push({ impuesto: label, importe: valor });
+        }
+      }
+    });
+  }
+
+  // Total en número y letra (tabla final)
+  const tablaFinal = doc.querySelector('div.invoice-row > table.invoice-table.u-full-width');
+  if (tablaFinal) {
+    // Moneda está en la primera celda de la primera fila
+    const monedaTd = tablaFinal.querySelector('tr > td:first-child');
+    resultado.moneda = monedaTd ? monedaTd.textContent.trim() : null;
+
+    // Total en letras
+    const totalLetraTd = tablaFinal.querySelector('td.payment-in-words b');
+    resultado.totalLetra = totalLetraTd ? totalLetraTd.textContent.trim() : null;
+
+    // Total numérico
+    const totalNumTd = tablaFinal.querySelector('td.total.currency.totals b');
+    resultado.total = totalNumTd ? totalNumTd.textContent.trim() : resultado.total;
+  }
+
+  return resultado;
+}
+
+function extraerDatosDePago(doc) {
+  const result = {
+    formaPago: null,
+    metodoPago: null,
+    banco: null,
+    cuenta: null,
+    condicionesPago: null,
+  };
+
+  // Buscamos el contenedor principal que tenga el bloque Datos de Pago
+  // En tu ejemplo está en un div.invoice-row > div.invoice-row > varios div.column.one-fifth
+  const contenedorPago = doc.querySelector('div.invoice-row > div.invoice-row');
+  if (!contenedorPago) return result;
+
+  const columnas = contenedorPago.querySelectorAll('div.column.one-fifth');
+
+  if (columnas.length >= 1) {
+    // Forma de Pago
+    const fpP = columnas[0].querySelector('p');
+    if (fpP) {
+      // El texto que interesa está después del <b> y el <br>
+      const textos = Array.from(fpP.childNodes).filter(n => n.nodeType === Node.TEXT_NODE).map(n => n.textContent.trim()).filter(t => t);
+      result.formaPago = textos.length > 0 ? textos[0] : null;
+    }
+  }
+
+  if (columnas.length >= 2) {
+    // Método de Pago
+    const mpP = columnas[1].querySelector('p');
+    if (mpP) {
+      const textos = Array.from(mpP.childNodes).filter(n => n.nodeType === Node.TEXT_NODE).map(n => n.textContent.trim()).filter(t => t);
+      result.metodoPago = textos.length > 0 ? textos[0] : null;
+    }
+  }
+
+  if (columnas.length >= 3) {
+    // Banco (puede estar vacío)
+    const bancoP = columnas[2].querySelector('p');
+    result.banco = bancoP ? bancoP.textContent.trim() || null : null;
+  }
+
+  if (columnas.length >= 4) {
+    // Cuenta (puede estar vacío)
+    const cuentaP = columnas[3].querySelector('p');
+    result.cuenta = cuentaP ? cuentaP.textContent.trim() || null : null;
+  }
+
+  if (columnas.length >= 5) {
+    // Condiciones de Pago (puede estar vacío)
+    const condicionesP = columnas[4].querySelector('p');
+    result.condicionesPago = condicionesP ? condicionesP.textContent.trim() || null : null;
+  }
+
+  return result;
+}
+
+function extraerCadenaYSellos(doc) {
+  const resultado = {
+    cadenaOriginal: null,
+    selloDigitalCFDI: null,
+    selloDigitalSAT: null,
+    fechaHoraCertificacion: null,
+    numeroSerieCertificadoSAT: null,
+    rfcPAC: null,
+  };
+
+  // Contenedor donde están cadena y sellos (div.columns.smaller-text.break-words)
+  const cadenaSellosDiv = doc.querySelector('div.columns.smaller-text.break-words');
+  if (cadenaSellosDiv) {
+    // Extraemos textos que están en los <p> que siguen a cada <b> correspondiente
+    // La estructura es: <b>Texto</b> seguido de <p>...</p>
+    // El orden es: Cadena Original, Sello Digital CFDI, Sello Digital SAT
+    const bs = cadenaSellosDiv.querySelectorAll('b');
+    const ps = cadenaSellosDiv.querySelectorAll('p');
+
+    if (bs.length >= 3 && ps.length >= 3) {
+      resultado.cadenaOriginal = ps[0].textContent.trim() || null;
+      resultado.selloDigitalCFDI = ps[1].textContent.trim() || null;
+      resultado.selloDigitalSAT = ps[2].textContent.trim() || null;
+    }
+  }
+
+  // Contenedor de Fecha y Número de Certificado del CFDI (div.invoice-row.smaller-text)
+  const certRow = doc.querySelector('div.invoice-row.smaller-text');
+  if (certRow) {
+    const columnas = certRow.querySelectorAll('div.columns.three');
+    if (columnas.length >= 3) {
+      // Fecha / Hora de Certificación
+      const fechaSpan = columnas[0].querySelector('span.break-words');
+      resultado.fechaHoraCertificacion = fechaSpan ? fechaSpan.textContent.trim() : null;
+
+      // Número de Serie Certificado del SAT
+      const numSerieSpan = columnas[1].querySelector('span.break-words');
+      resultado.numeroSerieCertificadoSAT = numSerieSpan ? numSerieSpan.textContent.trim() : null;
+
+      // RFC del PAC
+      const rfcPACSpan = columnas[2].querySelector('span.break-words');
+      resultado.rfcPAC = rfcPACSpan ? rfcPACSpan.textContent.trim() : null;
+    }
+  }
+
+  return resultado;
+}
+
+function renderizarFacturaHTML(datos) {
+  // Extraemos de datos para facilitar acceso
+  const {
+    tipoYfolio,
+    datosFiscales,
+    InfoGlobalFactura,
+    TotalesYConceptos,
+    DatosDePago,
+    CadenaYSellos,
+  } = datos;
+
+  // Construimos filas de conceptos/productos
+  const filasConceptos = (TotalesYConceptos?.conceptos || []).map(concepto => {
+    // Para mostrar impuestos en una celda (ej. "IVA 16% = $16.00"), juntamos los traslados
+    const impuestosStr = concepto.traslados.length > 0
+      ? concepto.traslados.join(', ')
+      : '';
+
+    return `
+      <tr>
+        <td>${concepto.producto}</td>
+        <td>${concepto.conceptoTexto}</td>
+        <td>${concepto.unidad}</td>
+        <td class="text-right">${concepto.cantidad}</td>
+        <td class="text-right">${concepto.precioUnitario}</td>
+        <td class="text-right">${concepto.importe}</td>
+        <td>${impuestosStr}</td>
+        <td class="text-right">${concepto.importe /* aquí puedes ajustar si tienes un total distinto */}</td>
+      </tr>
+    `;
+  }).join('');
+
+  // Obtener UUID y Fecha de emisión del objeto datosFiscales (o donde lo tengas)
+  // Aquí deberás ajustar según cómo estructuraste la extracción
+  const uuid = datosFiscales?.folioFiscal || 'N/A';
+  const fechaEmision = datosFiscales?.fechaEmision || 'N/A';
+  const tipoComprobante = tipoYfolio?.tipoFactura || 'N/A';
+  const lugarExpedicion = datosFiscales?.lugarExpedicion || 'N/A';
+
+  // Forma y método de pago
+  const formaPago = DatosDePago?.formaPago || 'N/A';
+  const metodoPago = DatosDePago?.metodoPago || 'N/A';
+
+  // Datos emisor y receptor
+  const emisorRFC = tipoYfolio?.rfcEmisor || 'N/A';
+  const emisorNombre = tipoYfolio?.nombreEmisor || 'N/A';
+  const regimenFiscal = tipoYfolio?.regimenFiscalEmisor || 'N/A';
+
+  const receptorRFC = tipoYfolio?.rfcReceptor || 'N/A';
+  const receptorNombre = tipoYfolio?.nombreReceptor || 'N/A';
+  const usoCFDI = tipoYfolio?.usoCFDI || 'N/A';
+  const regimenFiscalReceptor = tipoYfolio?.regimenFiscalReceptor || 'N/A';
+  const codigoPostal = tipoYfolio?.codigoPostalReceptor || 'N/A';
+
+  // Totales
+  const subtotal = TotalesYConceptos?.subtotal || 'N/A';
+  const impuestos = TotalesYConceptos?.impuestos || [];
+  const totalLetra = TotalesYConceptos?.totalLetra || 'N/A';
+  const total = TotalesYConceptos?.total || 'N/A';
+
+  // Para mostrar impuestos en Totales
+  const filasImpuestos = impuestos.map(imp => `
+    <tr>
+      <td><strong>${imp.impuesto}</strong></td>
+      <td>${imp.importe}</td>
+    </tr>
+  `).join('');
+
+  // QR y sellos (muestra un QR con el UUID y el sello digital en texto)
+  const qrURL = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=UUID:${uuid}`;
+  const selloDigitalCortado = (CadenaYSellos?.selloDigitalCFDI || '').slice(0, 50) + '...';
+  const cadenaOriginal = CadenaYSellos?.cadenaOriginal || '';
+
+  // Finalmente, retornamos el string completo con template literals
+  return `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Vista previa de factura - CFDI 4.0</title>
+  <style>
+    /* aquí va el CSS que mostraste (puedes moverlo a un CSS externo si prefieres) */
+    :root {
+      --color-principal: #0669D0;
+      --color-texto: #333;
+      --color-fondo: #f9f9f9;
+      --color-borde: #ccc;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--color-fondo);
+      padding: 40px;
+      color: var(--color-texto);
+      position: relative;
+    }
+
+    .factura {
+      background: white;
+      padding: 40px;
+      max-width: 900px;
+      margin: 0 auto;
+      border: 1px solid var(--color-borde);
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+      position: relative;
+      z-index: 1;
+    }
+
+    .encabezado {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .logo img {
+      max-height: 80px;
+    }
+
+    .titulo {
+      text-align: right;
+    }
+
+    .titulo .title-cfdi{
+      font-size: 24px;
+      color: var(--color-principal);
+      margin: 0;
+    }
+
+    .subtitulo {
+      font-size: 14px;
+      color: #888;
+    }
+
+    .marca-agua {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-30deg);
+      font-size: 70px;
+      color: rgba(22, 73, 255, 0.1);
+      font-weight: bold;
+      z-index: 0;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    th {
+      background-color: var(--color-principal);
+      color: white;
+      padding: 8px;
+      text-align: left;
+    }
+
+    td {
+      border: 1px solid var(--color-borde);
+      padding: 8px;
+    }
+
+    .text-right {
+      text-align: right;
+    }
+
+    .totales td {
+      border: none;
+      text-align: right;
+      padding: 5px;
+      font-size: 15px;
+    }
+
+    .info-section .title-cfdi{
+      color: var(--color-principal);
+      margin-top: 20px;
+      margin-bottom: 5px;
+    }
+
+    .info-section td {
+      border: none;
+      padding: 4px 8px;
+    }
+
+    .nota {
+      font-size: 12px;
+      color: #666;
+      margin-top: 30px;
+      text-align: center;
+    }
+
+    .qr-sello {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 30px;
+      gap: 20px;
+    }
+
+    .qr-sello img {
+      max-width: 150px;
+      height: auto;
+    }
+
+    .qr-sello pre {
+      font-size: 10px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      background: #f4f4f4;
+      padding: 10px;
+      border: 1px solid #ddd;
+      flex: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="factura">
+    <div class="encabezado">
+      <div class="logo">
+        <img src="https://mir-s3-cdn-cf.behance.net/projects/404/5e6e0b205025935.Y3JvcCw0NTAwLDM1MTksMCw0OTA.jpg" alt="Logo Empresa">
+      </div>
+      <div class="titulo">
+        <h1 class='title-cfdi'>Factura CFDI 4.0</h1>
+        <div class="subtitulo">Vista previa sin timbrar</div>
+      </div>
+    </div>
+
+    <div class="info-section">
+      <h3 class='title-cfdi'>Información fiscal</h3>
+      <table>
+        <tr>
+          <td><strong>Folio fiscal (UUID):</strong> ${uuid}</td>
+          <td><strong>Fecha de emisión:</strong> ${fechaEmision}</td>
+        </tr>
+        <tr>
+          <td><strong>Tipo de comprobante:</strong> ${tipoComprobante}</td>
+          <td><strong>Lugar de expedición:</strong> ${lugarExpedicion}</td>
+        </tr>
+        <tr>
+          <td><strong>Forma de pago:</strong> ${formaPago}</td>
+          <td><strong>Método de pago:</strong> ${metodoPago}</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="info-section">
+      <h3 class='title-cfdi'>Emisor</h3>
+      <table>
+        <tr>
+          <td><strong>RFC:</strong> ${emisorRFC}</td>
+          <td><strong>Nombre o Razón Social:</strong> ${emisorNombre}</td>
+        </tr>
+        <tr>
+          <td><strong>Régimen Fiscal:</strong> ${regimenFiscal}</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="info-section">
+      <h3 class='title-cfdi'>Receptor</h3>
+      <table>
+        <tr>
+          <td><strong>RFC:</strong> ${receptorRFC}</td>
+          <td><strong>Nombre:</strong> ${receptorNombre}</td>
+        </tr>
+        <tr>
+          <td><strong>Uso del CFDI:</strong> ${usoCFDI}</td>
+          <td><strong>Régimen Fiscal:</strong> ${regimenFiscalReceptor}</td>
+          <td><strong>Código Postal:</strong> ${codigoPostal}</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="info-section">
+      <h3 class='title-cfdi'>Conceptos</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Clave SAT</th>
+            <th>Descripción</th>
+            <th>Unidad</th>
+            <th>Cantidad</th>
+            <th>Precio Unitario</th>
+            <th>Subtotal</th>
+            <th>Impuestos</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${filasConceptos}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-section">
+      <h3 class='title-cfdi'>Totales</h3>
+      <table class="totales">
+        <tr>
+          <td><strong>Subtotal:</strong></td>
+          <td>${subtotal}</td>
+        </tr>
+        ${filasImpuestos}
+        <tr>
+          <td><strong>Total:</strong></td>
+          <td><strong>${total}</strong></td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="qr-sello">
+      <div class="qr">
+        <img src="${qrURL}" alt="QR CFDI">
+      </div>
+      <pre>
+<b>Cadena original del complemento:</b>
+${cadenaOriginal}
+
+<b>Sello digital CFDI:</b>
+${CadenaYSellos.selloDigitalCFDI}
+
+<b>Sello Digital del SAT:</b>
+${CadenaYSellos.selloDigitalSAT} 
+
+      </pre>
+    </div>
+
+    <div id="leyenda" style="
+      text-align: center;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 13px;
+      color: #777;
+      margin-top: 40px;
+      letter-spacing: 0.4px;
+    ">
+      <span style="color: #1649FF; font-weight: 600;">Powered by</span>
+      <a href="https://pluspuntodeventa.com" target="_blank" style="
+        color: #1649FF;
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.3s ease;
+      " onmouseover="this.style.color='#0f3bd1'" onmouseout="this.style.color='#1649FF'">
+        PLUS Punto de Venta
+      </a>
+    </div>
+  </div>
+</body>
+</html>
+  `;
+}
+/*--------------------------------------------------------------**/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   function cerrarPopup() {
     document.getElementById('facturaPopup').style.display = 'none';

@@ -298,7 +298,7 @@ async function get_tickets_for_facture_global_by_date_range(id_branch, startDate
 
             //now we will see if this produc have taxes in the ticket, if not have taxes, we will know that the product is free of tax
             let infoTaxes = [];
-            const thisProductNotIsFreeOfTax=dataProduct.taxes.length>0;
+            const thisProductNotIsFreeOfTax = Array.isArray(dataProduct.taxes) && dataProduct.taxes.length > 0;
 
             const quantityProduct=parseFloat(parseFloat(dataProduct.quantity || 0).toFixed(2));
             const priceWithoutTaxes=parseFloat(parseFloat(dataProduct.priceWithoutTaxes || 0).toFixed(2));

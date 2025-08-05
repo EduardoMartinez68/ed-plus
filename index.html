@@ -1,179 +1,291 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-</head>
+  <title>Vista previa de factura - CFDI 4.0</title>
+  <style>
+    :root {
+      --color-principal: #0669D0;
+      --color-texto: #333;
+      --color-fondo: #f9f9f9;
+      --color-borde: #ccc;
+    }
 
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--color-fondo);
+      padding: 40px;
+      color: var(--color-texto);
+      position: relative;
+    }
+
+    .factura {
+      background: white;
+      padding: 40px;
+      max-width: 900px;
+      margin: 0 auto;
+      border: 1px solid var(--color-borde);
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+      position: relative;
+      z-index: 1;
+    }
+
+    .encabezado {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .logo img {
+      max-height: 80px;
+    }
+
+    .titulo {
+      text-align: right;
+    }
+
+    .titulo h1 {
+      font-size: 24px;
+      color: var(--color-principal);
+      margin: 0;
+    }
+
+    .subtitulo {
+      font-size: 14px;
+      color: #888;
+    }
+
+    .marca-agua {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-30deg);
+      font-size: 70px;
+      color: rgba(22, 73, 255, 0.1);
+      font-weight: bold;
+      z-index: 0;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    th {
+      background-color: var(--color-principal);
+      color: white;
+      padding: 8px;
+      text-align: left;
+    }
+
+    td {
+      border: 1px solid var(--color-borde);
+      padding: 8px;
+    }
+
+    .text-right {
+      text-align: right;
+    }
+
+    .totales td {
+      border: none;
+      text-align: right;
+      padding: 5px;
+      font-size: 15px;
+    }
+
+    .info-section h3 {
+      color: var(--color-principal);
+      margin-top: 20px;
+      margin-bottom: 5px;
+    }
+
+    .info-section td {
+      border: none;
+      padding: 4px 8px;
+    }
+
+    .nota {
+      font-size: 12px;
+      color: #666;
+      margin-top: 30px;
+      text-align: center;
+    }
+
+    .qr-sello {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 30px;
+      gap: 20px;
+    }
+
+    .qr-sello img {
+      max-width: 150px;
+      height: auto;
+    }
+
+    .qr-sello pre {
+      font-size: 10px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      background: #f4f4f4;
+      padding: 10px;
+      border: 1px solid #ddd;
+      flex: 1;
+    }
+
+  </style>
+</head>
 <body>
 
+  <div class="marca-agua">PRUEBA DE FACTURA</div>
 
+  <div class="factura">
+    <div class="encabezado">
+      <div class="logo">
+        <img src="https://mir-s3-cdn-cf.behance.net/projects/404/5e6e0b205025935.Y3JvcCw0NTAwLDM1MTksMCw0OTA.jpg" alt="Logo Empresa">
+      </div>
+      <div class="titulo">
+        <h1>Factura CFDI 4.0</h1>
+        <div class="subtitulo">Vista previa sin timbrar</div>
+      </div>
+    </div>
 
-  <plus-modules>
-    <plus-module name="Perfil">
-      <h2>Perfil del Despacho</h2>
-      <p>Información general y datos fiscales del despacho.</p>
-    </plus-module>
+    <div class="info-section">
+      <h3>Información fiscal</h3>
+      <table>
+        <tr>
+          <td><strong>Folio fiscal (UUID):</strong> 123e4567-e89b-12d3-a456-426614174000</td>
+          <td><strong>Fecha de emisión:</strong> 2025-08-04T12:30:00</td>
+        </tr>
+        <tr>
+          <td><strong>Tipo de comprobante:</strong> I (Ingreso)</td>
+          <td><strong>Lugar de expedición:</strong> 78240</td>
+        </tr>
+        <tr>
+          <td><strong>Forma de pago:</strong> 01 (Efectivo)</td>
+          <td><strong>Método de pago:</strong> PUE (Pago en una sola exhibición)</td>
+        </tr>
+      </table>
+    </div>
 
-    <plus-module name="Clientes" icon="👨‍💼">
-      <h2>Administración de Clientes</h2>
-      <p>Listado de clientes, historial y contratos.</p>
-    </plus-module>
+    <div class="info-section">
+      <h3>Emisor</h3>
+      <table>
+        <tr>
+          <td><strong>RFC:</strong> ABC123456T89</td>
+          <td><strong>Nombre o Razón Social:</strong> Empresa Ejemplo S.A. de C.V.</td>
+        </tr>
+        <tr>
+          <td><strong>Régimen Fiscal:</strong> 601 (General de Ley Personas Morales)</td>
+        </tr>
+      </table>
+    </div>
 
-    <plus-module name="Casos" icon='<i class="fi fi-sr-shopping-cart"></i>'>
-      <h2>Gestión de Casos</h2>
-      <p>Seguimiento de expedientes y citas judiciales.</p>
-    </plus-module>
-  </plus-modules>
+    <div class="info-section">
+      <h3>Receptor</h3>
+      <table>
+        <tr>
+          <td><strong>RFC:</strong> XAXX010101000</td>
+          <td><strong>Nombre:</strong> Público en General</td>
+        </tr>
+        <tr>
+          <td><strong>Uso del CFDI:</strong> S01 (Sin efectos fiscales)</td>
+          <td><strong>Régimen Fiscal:</strong> 616 (Sin obligaciones fiscales)</td>
+          <td><strong>Código Postal:</strong> 78240</td>
+        </tr>
+      </table>
+    </div>
 
+    <div class="info-section">
+      <h3>Conceptos</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Clave SAT</th>
+            <th>Descripción</th>
+            <th>Unidad</th>
+            <th>Cantidad</th>
+            <th>Precio Unitario</th>
+            <th>Subtotal</th>
+            <th>Impuestos</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>25173108</td>
+            <td>GPS estándar pruebas</td>
+            <td>E48</td>
+            <td class="text-right">1.00</td>
+            <td class="text-right">$100.00</td>
+            <td class="text-right">$100.00</td>
+            <td>IVA 16% = $16.00</td>
+            <td class="text-right">$116.00</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
+    <div class="info-section">
+      <h3>Totales</h3>
+      <table class="totales">
+        <tr>
+          <td><strong>Subtotal:</strong></td>
+          <td>$100.00</td>
+        </tr>
+        <tr>
+          <td><strong>IVA (16%):</strong></td>
+          <td>$16.00</td>
+        </tr>
+        <tr>
+          <td><strong>Total:</strong></td>
+          <td><strong>$116.00</strong></td>
+        </tr>
+      </table>
+    </div>
 
+    <div class="qr-sello">
+      <div class="qr">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=UUID:123e4567-e89b-12d3-a456-426614174000" alt="QR CFDI">
+      </div>
+      <pre>
+Sello digital (cortado):
+vJYzj3YJh9c5TrhO7rPv3XyXkkGnVn+MwU5RE8FkRmx...
+      
+Cadena original del complemento:
+||1.1|123e4567-e89b-12d3-a456-426614174000|2025-08-04T12:30:00|ABC123456T89|...
+      </pre>
+    </div>
 
+<div id="leyenda" style="
+  text-align: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 13px;
+  color: #777;
+  margin-top: 40px;
+  letter-spacing: 0.4px;
+">
+  <span style="color: #1649FF; font-weight: 600;">Powered by</span>
+  <a href="https://pluspuntodeventa.com" target="_blank" style="
+    color: #1649FF;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+  " onmouseover="this.style.color='#0f3bd1'" onmouseout="this.style.color='#1649FF'">
+    PLUS Punto de Venta
+  </a>
+</div>
+    <div class="nota">
+      Esta es una vista previa de la factura CFDI 4.0 generada con fines informativos. <br>
+      No tiene validez fiscal hasta que sea debidamente timbrada por el PAC autorizado ante el SAT.
+    </div>
 
-
-  <script>
-
-    
-    class PlusModules extends HTMLElement {
-      constructor() {
-        super();
-        this.attachShadow({ mode: 'open' });
-      }
-
-      connectedCallback() {
-        const col = parseInt(this.getAttribute('col')) || 3;
-        const colSidebar = Math.max(1, Math.min(col, 11));
-        const colContent = 12 - colSidebar;
-
-        const modules = Array.from(this.querySelectorAll('plus-module'));
-        const names = modules.map(m => m.getAttribute('name'));
-        const icons = modules.map(m => m.getAttribute('icon') || '');
-        const contents = modules.map(m => m.innerHTML);
-
-        this.shadowRoot.innerHTML = `
-  <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-solid-straight/css/uicons-solid-straight.css'>
-  <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
-<link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
-  <style>
-    :host {
-      --highlight-color: #E6F3FF;
-      --highlight-border: #C2D9EC;
-      --icon-color: #3C6A90;
-      --bg-panel: #ffffff;
-      --border-color: #dcdcdc;
-      --font-color: #222;
-      font-family: 'Segoe UI', sans-serif;
-      display: flex;
-      height: 100vh;
-      background: #f4f4f4;
-      color: var(--font-color);
-    }
-
-    .sidebar {
-      width: ${(colSidebar / 12) * 100}%;
-      padding: 1rem;
-      border-right: 1px solid var(--border-color);
-      background: transparent;
-      box-sizing: border-box;
-    }
-
-    .content {
-      width: ${(colContent / 12) * 100}%;
-      padding: 2rem;
-      background: transparent;
-      overflow-y: auto;
-      box-sizing: border-box;
-    }
-
-    .sidebar ul {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
-
-    .sidebar li {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 12px;
-      border-radius: 8px;
-      font-size: 15px;
-      border: 1px solid transparent;
-      cursor: pointer;
-      background: #fff;
-      margin-bottom: 10px;
-    }
-
-    .sidebar li:hover {
-      background: #f0f0f0;
-    }
-
-    .sidebar li.active {
-      background: var(--highlight-color);
-      border: 1px solid var(--highlight-border);
-      font-weight: 600;
-    }
-
-    .sidebar li .icon {
-      color: var(--icon-color);
-      display: inline-flex;
-      align-items: center;
-    }
-
-    .module-panel {
-      padding: 1rem;
-      border-radius: 3px;
-    }
-
-    h2 {
-      margin-top: 0;
-      font-size: 20px;
-      color: #333;
-    }
-
-    p {
-      font-size: 14px;
-      line-height: 1.6;
-    }
-  </style>
-
-  <div class="sidebar">
-    <ul>
-      ${names.map((name, i) => `
-        <li class="${i === 0 ? 'active' : ''}" data-index="${i}">
-          <span class="icon" data-icon="${i}"></span>
-          <span>${name}</span>
-        </li>
-      `).join('')}
-    </ul>
   </div>
-  <div class="content">
-    <div class="module-panel">${contents[0]}</div>
-  </div>
-        `;
-
-
-        this.shadowRoot.querySelectorAll('.icon').forEach((el, idx) => {
-          el.innerHTML = icons[idx];
-        });
-
-
-        const listItems = this.shadowRoot.querySelectorAll('.sidebar li');
-        const content = this.shadowRoot.querySelector('.module-panel');
-
-        listItems.forEach(item => {
-          item.addEventListener('click', () => {
-            const index = item.getAttribute('data-index');
-            listItems.forEach(i => i.classList.remove('active'));
-            item.classList.add('active');
-            content.innerHTML = contents[index];
-          });
-        });
-      }
-    }
-
-    customElements.define('plus-modules', PlusModules);
-    customElements.define('plus-module', class extends HTMLElement { });
-  </script>
+</body>
+</html>
