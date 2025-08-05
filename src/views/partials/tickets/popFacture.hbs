@@ -196,10 +196,42 @@
           // Decodificamos base64 a texto HTML
           const decodedHtml = atob(result.base64);
 
+          //her we will see if the facture is cancell or the facture is activate 
+          let datosFactura;
+          let nuevoHTML;
+          const statusFacture=document.getElementById('estadoFiltro');
+          if(statusFacture){
+            //if exist the select in the html, we will see if the user is see factures active or facture cancell
+            if(statusFacture.value=='canceled'){
+              datosFactura = extraer_datos_de_factura(decodedHtml);
+              nuevoHTML = renderizarFacturaHTMLCancell(datosFactura);
 
-          const datosFactura = extraer_datos_de_factura(decodedHtml);
-          console.log(datosFactura);
-          const nuevoHTML = renderizarFacturaHTML(datosFactura);
+              //her we will change the text of the email if the user would like send for email 
+              const message2Email=document.getElementById('message2Email');
+              if(message2Email){
+                message2Email.textContent='Lamentamos informarle que su factura ha sido cancelada. Si tiene alguna duda, por favor contáctenos. Puede descargar la factura cancelada en el siguiente enlace:'
+              }
+            }else{
+              datosFactura = extraer_datos_de_factura(decodedHtml);
+              nuevoHTML = renderizarFacturaHTML(datosFactura);
+
+              //her we will change the text of the email if the user would like send for email 
+              const message2Email=document.getElementById('message2Email');
+              if(message2Email){
+                message2Email.textContent='Gracias por su compra. Puede descargar su factura en el siguiente enlace:'
+              }
+            }
+          }else{
+              datosFactura = extraer_datos_de_factura(decodedHtml);
+              nuevoHTML = renderizarFacturaHTML(datosFactura);
+
+              //her we will change the text of the email if the user would like send for email 
+              const message2Email=document.getElementById('message2Email');
+              if(message2Email){
+                message2Email.textContent='Gracias por su compra. Puede descargar su factura en el siguiente enlace:'
+              }
+          }
+
 
           // Mostramos el contenido HTML en el div "factura-html"
           const facturaDiv = document.getElementById('container-facture');
@@ -1064,14 +1096,6 @@ function renderizarFacturaHTML(datos) {
       --color-borde: #ccc;
     }
 
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: var(--color-fondo);
-      padding: 40px;
-      color: var(--color-texto);
-      position: relative;
-    }
-
     .factura {
       background: white;
       padding: 40px;
@@ -1215,6 +1239,407 @@ function renderizarFacturaHTML(datos) {
 </head>
 <body>
   <div class="factura">
+    <div class="encabezado">
+      <div class="logo">
+        <img src=${imgLogo} alt="Logo Empresa">
+      </div>
+      <div class="titulo">
+        <h1 class='title-cfdi'>Factura CFDI 4.0</h1>
+        <div class="subtitulo">Folio ${tipoYfolio.folio}</div>
+      </div>
+    </div>
+    <div class="info-section">
+      <h3 class='title-cfdi'>Información fiscal</h3>
+      <table>
+        <tr>
+          <td><strong>Folio fiscal (UUID):</strong> ${uuid}</td>
+          <td><strong>Fecha de emisión:</strong> ${fechaEmision}</td>
+        </tr>
+        <tr>
+          <td><strong>Tipo de comprobante:</strong> ${tipoComprobante}</td>
+          <td><strong>Lugar de expedición:</strong> ${lugarExpedicion}</td>
+        </tr>
+        <tr>
+          <td><strong>Forma de pago:</strong> ${formaPago}</td>
+          <td><strong>Método de pago:</strong> ${metodoPago}</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="info-section">
+      <h3 class='title-cfdi'>Emisor</h3>
+      <table>
+        <tr>
+          <td><strong>RFC:</strong> ${emisorRFC}</td>
+          <td><strong>Nombre o Razón Social:</strong> ${emisorNombre}</td>
+        </tr>
+        <tr>
+          <td><strong>Régimen Fiscal:</strong> ${regimenFiscal}</td>
+        </tr>
+        <tr>
+          <td><strong>Efecto del comprobante:</strong> ${EfectoDelComprobante}</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="info-section">
+      <h3 class='title-cfdi'>Receptor</h3>
+      <table>
+        <tr>
+          <td><strong>RFC:</strong> ${receptorRFC}</td>
+          <td><strong>Nombre:</strong> ${receptorNombre}</td>
+        </tr>
+        <tr>
+          <td><strong>Uso del CFDI:</strong> ${usoCFDI}</td>
+          <td><strong>Régimen Fiscal:</strong> ${regimenFiscalReceptor}</td>
+          <td><strong>Código Postal:</strong> ${codigoPostal}</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="info-section">
+      <h3 class='title-cfdi'>Conceptos</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Clave SAT</th>
+            <th>Descripción</th>
+            <th>Unidad</th>
+            <th>Cantidad</th>
+            <th>Precio Unitario</th>
+            <th>Subtotal</th>
+            <th>Impuestos</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${filasConceptos}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-section">
+      <h3 class='title-cfdi'>Totales</h3>
+      <table class="totales">
+        <tr>
+          <td><strong>Subtotal:</strong></td>
+          <td>${subtotal}</td>
+        </tr>
+        ${filasImpuestos}
+        <tr>
+          <td><strong>Total:</strong></td>
+          <td><strong>${total}</strong></td>
+        </tr>
+      </table>
+    </div>
+    <h6 class='total-number'>${TotalesYConceptos.totalLetra}</h6>
+    <br>
+
+    <div class='note text-left'>
+      numero serie certificado SAT: ${CadenaYSellos.numeroSerieCertificadoSAT}<br>
+      rfc PAC: ${CadenaYSellos.rfcPAC}<br>
+      certificado digital: ${datosFiscales.certificadoDigital}<br>
+      folio fiscal: ${datosFiscales.folioFiscal}<br>
+    </div>
+    <div class="qr-sello text-left">
+      <div class="qr">
+        <img src="${qrURL}" alt="QR CFDI">
+      </div>
+      <pre>
+
+<div class='info-cfdi-sat'>
+<b>Cadena original del complemento:</b>
+${cadenaOriginal}
+
+<b>Sello digital CFDI:</b>
+${CadenaYSellos.selloDigitalCFDI}
+
+<b>Sello Digital del SAT:</b>
+${CadenaYSellos.selloDigitalSAT} 
+</div>
+
+      </pre>
+    </div>
+    <div class='text-left'>
+      <label>Ver más detalles de la factura aquí</label><br>
+      <a href="${document.getElementById('facturaLink').textContent}" target="_blank">${document.getElementById('facturaLink').textContent}<a/>
+    </div>
+    <br>
+    <div id="leyenda" style="
+      text-align: center;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 13px;
+      color: #777;
+      margin-top: 40px;
+      letter-spacing: 0.4px;
+    ">
+      <span style="color: #1649FF; font-weight: 600;">Powered by</span>
+      <a href="https://pluspuntodeventa.com" target="_blank" style="
+        color: #1649FF;
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.3s ease;
+      " onmouseover="this.style.color='#0f3bd1'" onmouseout="this.style.color='#1649FF'">
+        PLUS Punto de Venta
+      </a>
+    </div>
+  </div>
+</body>
+</html>
+  `;
+}
+
+function renderizarFacturaHTMLCancell(datos){
+  // Extraemos de datos para facilitar acceso
+  const {
+    imgLogo,
+    tipoYfolio,
+    datosFiscales,
+    InfoGlobalFactura,
+    TotalesYConceptos,
+    DatosDePago,
+    CadenaYSellos,
+    FormaDePago,
+    codigoPostalReceptor,
+    EfectoDelComprobante
+  } = datos;
+
+  // Construimos filas de conceptos/productos
+  const filasConceptos = (TotalesYConceptos?.conceptos || []).map(concepto => {
+    // Para mostrar impuestos en una celda (ej. "IVA 16% = $16.00"), juntamos los traslados
+    const impuestosStr = concepto.traslados.length > 0
+      ? concepto.traslados.join(', ')
+      : '';
+
+    return `
+      <tr>
+        <td>${concepto.producto}</td>
+        <td>${concepto.conceptoTexto}</td>
+        <td>${concepto.unidad}</td>
+        <td class="text-right">${concepto.cantidad}</td>
+        <td class="text-right">${concepto.precioUnitario}</td>
+        <td class="text-right">${concepto.importe}</td>
+        <td>${impuestosStr}</td>
+        <td class="text-right">${concepto.importe /* aquí puedes ajustar si tienes un total distinto */}</td>
+      </tr>
+    `;
+  }).join('');
+
+  // Obtener UUID y Fecha de emisión del objeto datosFiscales (o donde lo tengas)
+  // Aquí deberás ajustar según cómo estructuraste la extracción
+  const uuid = datosFiscales?.folioFiscal || 'N/A';
+  const fechaEmision = datosFiscales?.fechaEmision || 'N/A';
+  const tipoComprobante = tipoYfolio?.tipoFactura || 'N/A';
+  const lugarExpedicion = tipoYfolio?.lugarExpedicion || 'N/A';
+
+  // Forma y método de pago
+  const formaPago = FormaDePago?.formaPago || 'N/A';
+  const metodoPago = FormaDePago?.metodoPago || 'N/A';
+
+  // Datos emisor y receptor
+  const emisorRFC = tipoYfolio?.emisorRfc || 'N/A';
+  const emisorNombre = tipoYfolio?.emisorNombre || 'N/A';
+  const regimenFiscal = tipoYfolio?.regimenFiscal || 'N/A';
+
+  const receptorRFC = tipoYfolio?.receptorRfc || 'N/A';
+  const receptorNombre = tipoYfolio?.receptorNombre || 'N/A';
+  const usoCFDI = tipoYfolio?.receptorUsoCFDI || 'N/A';
+  const regimenFiscalReceptor = tipoYfolio?.receptorRegimenFiscal || 'N/A';
+  const codigoPostal = codigoPostalReceptor || 'N/A'; //-falta
+
+  // Totales
+  const subtotal = TotalesYConceptos?.subtotal || 'N/A';
+  const impuestos = TotalesYConceptos?.impuestos || [];
+  const totalLetra = TotalesYConceptos?.totalLetra || 'N/A';
+  const total = TotalesYConceptos?.total || 'N/A';
+
+  // Para mostrar impuestos en Totales
+  const filasImpuestos = impuestos.map(imp => `
+    <tr>
+      <td><strong>${imp.impuesto}</strong></td>
+      <td>${imp.importe}</td>
+    </tr>
+  `).join('');
+
+  // QR y sellos (muestra un QR con el UUID y el sello digital en texto)
+  const qrURL = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=UUID:${uuid}`;
+  const selloDigitalCortado = (CadenaYSellos?.selloDigitalCFDI || '').slice(0, 50) + '...';
+  const cadenaOriginal = CadenaYSellos?.cadenaOriginal || '';
+
+  // Finalmente, retornamos el string completo con template literals
+  return `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Vista previa de factura - CFDI 4.0</title>
+  <style>
+    /* aquí va el CSS que mostraste (puedes moverlo a un CSS externo si prefieres) */
+    :root {
+      --color-principal: #0669D0;
+      --color-texto: #333;
+      --color-fondo: #f9f9f9;
+      --color-borde: #ccc;
+    }
+
+    .factura {
+      background: white;
+      padding: 40px;
+      max-width: 900px;
+      margin: 0 auto;
+      border: 1px solid var(--color-borde);
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+      position: relative;
+      z-index: 1;
+    }
+
+    .encabezado {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .logo img {
+      max-height: 80px;
+    }
+
+    .titulo {
+      text-align: right;
+    }
+
+    .titulo .title-cfdi{
+      font-size: 24px;
+      color: var(--color-principal);
+      margin: 0;
+    }
+
+    .subtitulo {
+      font-size: 14px;
+      color: #888;
+    }
+
+    .marca-agua {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-30deg);
+      font-size: 70px;
+      color: rgba(22, 73, 255, 0.1);
+      font-weight: bold;
+      z-index: 0;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    th {
+      background-color: var(--color-principal);
+      color: white;
+      padding: 8px;
+      text-align: left;
+    }
+
+    td {
+      border: 1px solid var(--color-borde);
+      padding: 8px;
+    }
+
+    .text-right {
+      text-align: right;
+    }
+
+    .totales td {
+      border: none;
+      text-align: right;
+      padding: 5px;
+      font-size: 15px;
+    }
+
+    .info-section .title-cfdi{
+      color: var(--color-principal);
+      display: block;
+      text-align: left;   /* por si hereda otro alineado */
+      margin: 0;          /* elimina el margen propio del h3 */
+      padding: 0;
+      font-weight: bold;
+      font-size: 1rem;
+    }
+
+    .info-section td {
+      border: none;
+      padding: 4px 8px;
+    }
+
+    .note{
+      font-size: 12px;
+      color: #666;
+      margin-top: 30px;
+      text-align: center;
+    }
+
+    .qr-sello {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 30px;
+      gap: 20px;
+    }
+
+    .qr-sello img {
+      max-width: 150px;
+      height: auto;
+    }
+
+    .qr-sello pre {
+      font-size: 10px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      background: #f4f4f4;
+      padding: 10px;
+      border: 1px solid #ddd;
+      flex: 1;
+    }
+
+    .total-number{
+      text-align: right;
+      margin: 0;
+      padding: 0;
+    }
+
+    .text-left{
+      text-align: left;
+      margin: 0;
+      padding: 0;
+    }
+
+    .info-cfdi-sat{
+      width:100%;
+    }
+
+.marca-agua.cancelada {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-30deg);
+  font-size: 80px;
+  color: rgba(255, 0, 0, 0.2); /* rojo transparente */
+  font-weight: 900;
+  z-index: 10;
+  pointer-events: none;
+  user-select: none;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+}
+  </style>
+</head>
+<body>
+  <div class="factura">
+    <div class="marca-agua cancelada">CANCELADA</div>
     <div class="encabezado">
       <div class="logo">
         <img src=${imgLogo} alt="Logo Empresa">
