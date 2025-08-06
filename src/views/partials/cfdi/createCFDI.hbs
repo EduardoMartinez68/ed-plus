@@ -195,7 +195,7 @@
       console.error('Error al enviar los datos al servidor:', error);
     }
 
-    document.getElementById('number-timbres-user').textContent=result.timbres;
+    document.getElementById('number-timbres-user').textContent=result.timbres || 0;
   }
 
   function get_credetial_user(){
@@ -445,7 +445,7 @@
       Items
     }
     dataForTheServer=dataForTheServerFunction;
-    console.log(JSON.stringify(dataForTheServer, null, 2));
+    //console.log(JSON.stringify(dataForTheServer, null, 2));
     render_preview_view_of_my_facture();
     //await create_my_facture_cfdi(dataForTheServer);
   }
@@ -675,59 +675,85 @@
 
   /**--------------------HER GET ALL THE DATA OF CREATE THE FACTURE---------------------*/
   async function create_my_facture_cfdi() {
-    //now if the user have all the input success and have the permition for create a factue, we will do a question 
     if (!await questionMessage('🤔 ¿Deseas generar esta factura?', 'Una vez creada, solo podrás cancelarla pero no modificarla. ¡Asegúrate de que todo esté correcto!')) {
       return;
     }
 
-    if(!credentials_exist()){
-      errorMessage('⚠️ ERROR','No tienes una cuenta PLUS asignada');
+    if (!credentials_exist()) {
+      errorMessage('⚠️ ERROR', 'No tienes una cuenta PLUS asignada');
       return;
     }
 
-    //now we will send the information save to the api of facturama
-    const loadingOverlay = document.getElementById('loadingOverlay')
-    if(loadingOverlay){
-      loadingOverlay.style.display = 'flex';
-    }
-    
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    if (loadingOverlay) loadingOverlay.style.display = 'flex';
+
+    const dataToServer = {
+      token: document.getElementById('token-for-facturama').value,
+      user_email: localStorage.getItem('user_email'),
+      password: localStorage.getItem('user_password'),
+      cfdi: dataForTheServer
+    };
+
+    //dataToServer.cfdi = cleanTaxes(dataToServer.cfdi); //her clear the container of the taxes.
+    console.log(JSON.stringify(dataToServer, null, 2));
     try {
-        const response = await fetch('https://pluspuntodeventa.com/api/factura/factura.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(dataForTheServer)
-        });
+      const resp = await fetch('https://pluspuntodeventa.com/api/factura/factura.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dataToServer)
+      });
 
-        const responseText = await response.json();
+      const raw = await resp.text();            // SIEMPRE texto primero
+      let data;
+      try {
+        data = JSON.parse(raw);                 // intenta JSON
+      } catch (e) {
+        console.error('Respuesta no es JSON. RAW:', raw);
+        throw new Error('Respuesta no es JSON');
+      }
 
-        if (response.ok && responseText.success) {
-            close_all_the_pop();
-            confirmationMessage("✅ ¡Factura creada!", responseText.message);
+      if (resp.ok && data?.success) {
+        close_all_the_pop();
+        confirmationMessage("✅ ¡Factura creada!", data.message);
 
-            const idFactura = responseText.response.Id; // <-- ID de la factura
-            mostrarPopupFactura(idFactura); // <-- mostrar el popup y guardar
+        const idFactura = data?.response?.Id;
+        if (idFactura) mostrarPopupFactura(idFactura);
 
-            
-        } else {
-          warningMessage("❌ Error al generar factura", responseText.error || "Algo salió mal.");
-          console.error(responseText.error || responseText);
-        }
-    } catch (error) {
-        errorMessage("❌ Error de conexión", error.message);
+        dataForTheServer = null;
+      } else {
+        const msg = data?.message || data?.error || 'Algo salió mal.';
+        warningMessage("❌ Error al generar factura", msg);
+        console.error('Respuesta API:', data);
+      }
+    } catch (err) {
+      console.error('Error de conexión o parseo:', err);
+      errorMessage("❌ Error de conexión", err.message || String(err));
+    } finally {
+      if (loadingOverlay) loadingOverlay.style.display = 'none';
     }
+  }
 
-   
-    if(loadingOverlay){
-      loadingOverlay.style.display = 'none';
-    }
+  function cleanTaxes(cfdi) {
+    if (!cfdi.Items) return cfdi;
 
+    cfdi.Items = cfdi.Items.map(item => {
+      if (!item.Taxes) return item;
 
-    //clear the information former
-    dataForTheServer=null;
+      // Crear un nuevo array con solo las propiedades necesarias
+      item.Taxes = item.Taxes.map(tax => {
+        return {
+          Base: tax.base ?? tax.Base ?? 0,
+          Tax: tax.taxId ?? tax.Tax ?? '',
+          Factor: "Tasa",         // normalmente es "Tasa", o "Exento", "Cuota" según tu caso
+          Rate: (tax.rate ? tax.rate / 100 : 0),  // convertir porcentaje a decimal, ej 16 => 0.16
+          Amount: (tax.amount ?? 0) || (item.Subtotal * (tax.rate ? tax.rate / 100 : 0))
+        };
+      });
 
+      return item;
+    });
 
+    return cfdi;
   }
 
   function close_all_the_pop(){
@@ -804,6 +830,14 @@
         TaxZipCode: TaxZipCodeCFDI, //this is the zip code of the company
       }
     } else {
+      return {
+        Rfc: document.getElementById('rfcReceptor').value,
+        CfdiUse: document.getElementById('usoCfdi').value,
+        Name: document.getElementById('nombreReceptor').value,
+        FiscalRegime: document.getElementById('regimenFiscalReceptor').value,
+        TaxZipCode: document.getElementById('codigoPostalReceptor').value
+      }
+      
       //if this facture no is to PUBLICO EN GENRAL get his address and other data
       const Address = get_data_addres_data_customer_cfdi()
       return {

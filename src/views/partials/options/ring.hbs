@@ -93,7 +93,7 @@
   
 <div class="tab-pane fade show" id="navbar-ring" role="tabpanel" aria-labelledby="navbar-company-tab">
     <label><i class="fi-icon fi-sr-bell-ring"></i> Elige tu paquete de timbres CFDI</label>
-   <p class="timbres-texto">Tienes <strong>0 timbres</strong></p>
+   <p class="timbres-texto">Tienes <strong id="number-timbres-user">0</strong> timbres</p>
   <div class="cupones">
 
     <div class="cupon azul">
@@ -136,3 +136,42 @@
   <br>
   <center><label for="">Puedes enviar un mensaje a nuestro whatsapp +52 1 444 304 2129 para adquirir tu paquete</label></center>
 </div>
+
+
+<script>
+  async function update_information_of_timbres(){
+    const payload=get_credetial_user();
+    let result;
+    try {
+      const response = await fetch('https://pluspuntodeventa.com/api/factura/get_timbres.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const text = await response.text(); // para depurar si la respuesta no es JSON
+      try {
+        result = JSON.parse(text);
+      } catch {
+        throw new Error('Respuesta no es JSON. Body: ' + text.slice(0, 300));
+      }
+    } catch (error) {
+      console.error('Error al enviar los datos al servidor:', error);
+    }
+
+    document.getElementById('number-timbres-user').textContent=result.timbres || 0;
+  }
+
+  function get_credetial_user(){
+    const payload = {
+      token: document.getElementById('user-token').textContent,
+      user_email: localStorage.getItem('user_email'),
+      password: localStorage.getItem('user_password')
+    };
+    return payload;
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    update_information_of_timbres();
+  });
+</script>

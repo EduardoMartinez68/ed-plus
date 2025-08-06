@@ -346,14 +346,14 @@ async function get_tickets_for_facture_individual_by_key_and_id_branch(id_branch
                     UnitPrice: priceWithoutTaxes,
                     Subtotal: parseFloat((parseFloat(priceWithoutTaxes*dataProduct.quantity)).toFixed(2)),
                     TaxObject : "02",
-                    Taxes: infoTaxes,
+                    Taxes: taxes,
                     Total: totalProduct          
                 });
             }else{
                 //now if this product not have taxes, we will save this product with TaxObject:'01'
                 products.push({
-                    ProductCode: '01010101',
-                    Description:'VENTA',
+                    ProductCode: dataProduct.sat_key,
+                    Description: dataProduct.name,
                     UnitCode: UnitCode,
                     Quantity: parseFloat((parseFloat(dataProduct.quantity)).toFixed(2)),
                     UnitPrice: priceWithoutTaxes,
@@ -371,6 +371,8 @@ async function get_tickets_for_facture_individual_by_key_and_id_branch(id_branch
     }
 
     totalGlobal=parseFloat(totalGlobal.toFixed(2))
+    console.log('products')
+    console.log(products[0].Taxes)
     return {
         products,
         totalGlobal
