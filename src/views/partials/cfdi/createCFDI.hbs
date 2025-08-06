@@ -59,7 +59,7 @@
   <div class="btn-div" onclick="open_my_pop('informationSales')">
     <div class="btn-div-content">
       <label>Datos de la Venta</label>
-      <p>Total de Venta: ${{dataTicketOld.total}}</p>
+      <p id="total-message-cfdi-show">Total de Venta: ${{dataTicketOld.total}}</p>
     </div>
     <i class="fi fi-rr-angle-right"></i>
   </div>
@@ -83,7 +83,7 @@
   <div class="btn-div" onclick="open_my_pop('informationAddress')">
     <div class="btn-div-content">
       <label>Datos de Facturación</label>
-      <p>XAXX010101000</p>
+      <p id="p-rfc-customer">XAXX010101000</p>
     </div>
     <i class="fi fi-rr-angle-right"></i>
   </div>
@@ -119,6 +119,7 @@
   /**--------------------THIS SCRIPT IS FOR LOAD ALL THE INFORMATION OF THE TICKET AND SHOW THE PRODUCT THAT THE USER WOULD LIKE FACTURE---------------------*/
   let dataFactureCFDI = {}
   let keyTicketFacture=null;
+  let pathLogoRFCFacture='https://pluspuntodeventa.com/img/logo-white-complete.webp';
 
   function update_information_of_the_form_to_publico_en_general(zipCode){
     /*
@@ -364,6 +365,7 @@
     const totalFacture=formatToMXN(dataTicket.totalGlobal);
     document.getElementById('total-general').textContent = '$' + totalFacture;
     document.getElementById('btn-create-facture').textContent = 'Generar Factura por $'+totalFacture;
+    document.getElementById('total-message-cfdi-show').textContent='Total de Venta: $'+totalFacture;
   }
 
 
@@ -389,6 +391,7 @@
       PaymentForm: document.getElementById('paymentForm').value,
       PaymentMethod: document.getElementById('paymentMethod').value,
       ExpeditionPlace : TaxZipCodeCFDI,
+      LogoUrl:"https://www.ejemplos.co/wp-content/uploads/2015/11/Logo-Chanel.jpg",
       Date : getCurrentDateTimeForCFDI(),
       Folio: Math.floor(Math.random() * 10000),
 
@@ -417,22 +420,22 @@
   }
 
   function this_user_can_create_a_facture(){
-    if(document.getElementById('rfcReceptor').value!==''){
+    if(document.getElementById('rfcReceptor').value==''){
       errorMessage('Necesitas el RFC del cliente');
       return false;
     }
 
-    if(document.getElementById('regimenFiscalReceptor').value!==''){
+    if(document.getElementById('regimenFiscalReceptor').value==''){
       errorMessage('Necesitas el Regimen Fiscal o el Nombre de tu cliente');
       return false;
     }
 
-    if(document.getElementById('nombreReceptor').value!==''){
+    if(document.getElementById('nombreReceptor').value==''){
       errorMessage('Necesitas el Nombre de tu cliente');
       return false;
     }
 
-    if(document.getElementById('codigoPostalReceptor').value!==''){
+    if(document.getElementById('codigoPostalReceptor').value==''){
       errorMessage('Necesitas el codigo postal de tu cliente');
       return false;
     }
@@ -442,6 +445,8 @@
   async function create_data_issuer(){
     const dataBranchCFDI = await send_data_to_server('/links/get_data_cfdi_branch', { n: null });
     TaxZipCodeCFDI=dataBranchCFDI.data.TaxZipCode;
+    pathLogoRFCFacture=dataBranchCFDI.data.linkCFDI; //get the link of the logo of the company
+    
     return{
       FiscalRegime: dataBranchCFDI.data.FiscalRegime,
       Rfc: dataBranchCFDI.data.Rfc,

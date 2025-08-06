@@ -83,15 +83,58 @@
 
 
 
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const rfcInput = document.getElementById("rfcReceptor");
 
+  // IDs de los campos de domicilio
+  const addressFields = [
+    "calleReceptor",
+    "numeroExteriorReceptor",
+    "numeroInteriorReceptor",
+    "coloniaReceptor",
+    "municipioReceptor",
+    "estadoReceptor",
+    "paisReceptor"
+  ];
 
+  function setAddressSectionEnabled(enabled) {
+    addressFields.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (enabled) {
+        el.removeAttribute("disabled");
+      } else {
+        el.setAttribute("disabled", "disabled");
+        el.value = ""; // limpia
+      }
+    });
+  }
+
+  function handleRFCChange() {
+    const rfc = (rfcInput.value || "").trim().toUpperCase();
+    if (rfc === "XAXX010101000") {
+      setAddressSectionEnabled(false); // bloquea y limpia
+    } else {
+      setAddressSectionEnabled(true);  // reactiva
+    }
+  }
+
+  // Listener en tiempo real
+  rfcInput.addEventListener("input", handleRFCChange);
+
+  // Aplica la regla al cargar
+  handleRFCChange();
+  setAddressSectionEnabled(false);
+});
+</script>
+<!--
 <div class="dropdown-toggle-box">
     <div class="dropdown-header" onclick="watch_most('infoPublicGeneral')">
         <label class="mb-0 fw-semibold">Publico en General</label>
         <i class="fi fi-rr-angle-down" id="icon-addressSection"></i>
     </div>
 
-    <!-- Contenido oculto con animación -->
     <div id="infoPublicGeneral" class="dropdown-content collapsed">
 
       <div class="row">
@@ -139,3 +182,4 @@
 
     </div>
 </div>
+-->
