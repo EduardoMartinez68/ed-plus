@@ -37,12 +37,14 @@
 </style>
 
 
+<input type="hidden" value="{{token}}" id="token-for-facturama">
 
 {{#each infoCustomer}}
 <input type="hidden" value="{{id}}" id="id_customer">
 {{/each}}
 
 <form id="formCreateFactureCFDI">
+  <b><i class="fi-icon fi-ss-bell"></i> Timbres: <label for="" id="number-timbres-user">0</label></b>
   {{>tickets/formCFDI}}
   <br>
   <div id="informationSales" class="my-pop">
@@ -119,8 +121,8 @@
 </div>
 
 
-
-
+<!---this pop is when the facture was create a the user neeed see and send for email, pdf, download--->
+{{>tickets/popFacture}}
 
 
 
@@ -152,6 +154,15 @@
   }
 
   async function render_information_cfdi(key) {
+    //first we will see if the user have a acount of PLUS, if not have, not seacrh information for the facture
+    if(!credentials_exist()){
+      errorMessage('⚠️ ERROR','No tienes una cuenta PLUS asignada');
+      return;
+    }
+
+    //get the number of timbres that the user have in his count 
+    await update_information_of_timbres();
+
     keyTicketFacture = key;
     const dataBranchCFDI = await send_data_to_server('/links/get_data_cfdi_branch', { n: null });
     const dataTicket = await send_data_to_server('/links/get-info-ticket-by-ticket', { key });
@@ -162,6 +173,46 @@
     render_html_of_the_table(dataTicket.data);
     renderFactureCards(infoFactureSave.data);
     update_information_of_the_form_to_publico_en_general(dataBranchCFDI.data.TaxZipCode);
+  }
+
+  async function update_information_of_timbres(){
+    const payload=get_credetial_user();
+    let result;
+    try {
+      const response = await fetch('https://pluspuntodeventa.com/api/factura/get_timbres.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const text = await response.text(); // para depurar si la respuesta no es JSON
+      try {
+        result = JSON.parse(text);
+      } catch {
+        throw new Error('Respuesta no es JSON. Body: ' + text.slice(0, 300));
+      }
+    } catch (error) {
+      console.error('Error al enviar los datos al servidor:', error);
+    }
+
+    document.getElementById('number-timbres-user').textContent=result.timbres;
+  }
+
+  function get_credetial_user(){
+    const payload = {
+      token: document.getElementById('token-for-facturama').value,
+      user_email: localStorage.getItem('user_email'),
+      password: localStorage.getItem('user_password')
+    };
+    return payload;
+  }
+
+  function credentials_exist() {
+      const token = document.getElementById('token-for-facturama')?.value || '';
+      const email = localStorage.getItem('user_email') || '';
+      const password = localStorage.getItem('user_password') || '';
+
+      return token.trim() !== '' && email.trim() !== '' && password.trim() !== '';
   }
 
   function renderFactureCards(dataFacture) {
@@ -383,7 +434,7 @@
       PaymentForm: document.getElementById('paymentForm').value,
       PaymentMethod: document.getElementById('paymentMethod').value,
       ExpeditionPlace: TaxZipCodeCFDI,
-      LogoUrl: "https://www.ejemplos.co/wp-content/uploads/2015/11/Logo-Chanel.jpg",
+      LogoUrl: pathLogoRFCFacture,
       Date: getCurrentDateTimeForCFDI(),
       Folio: Math.floor(Math.random() * 10000),
 
@@ -625,8 +676,69 @@
   /**--------------------HER GET ALL THE DATA OF CREATE THE FACTURE---------------------*/
   async function create_my_facture_cfdi() {
     //now if the user have all the input success and have the permition for create a factue, we will do a question 
-    if (await questionMessage('🤔 ¿Deseas generar esta factura?', 'Una vez creada, solo podrás cancelarla pero no modificarla. ¡Asegúrate de que todo esté correcto!')) {
+    if (!await questionMessage('🤔 ¿Deseas generar esta factura?', 'Una vez creada, solo podrás cancelarla pero no modificarla. ¡Asegúrate de que todo esté correcto!')) {
       return;
+    }
+
+    if(!credentials_exist()){
+      errorMessage('⚠️ ERROR','No tienes una cuenta PLUS asignada');
+      return;
+    }
+
+    //now we will send the information save to the api of facturama
+    const loadingOverlay = document.getElementById('loadingOverlay')
+    if(loadingOverlay){
+      loadingOverlay.style.display = 'flex';
+    }
+    
+    try {
+        const response = await fetch('https://pluspuntodeventa.com/api/factura/factura.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataForTheServer)
+        });
+
+        const responseText = await response.json();
+
+        if (response.ok && responseText.success) {
+            close_all_the_pop();
+            confirmationMessage("✅ ¡Factura creada!", responseText.message);
+
+            const idFactura = responseText.response.Id; // <-- ID de la factura
+            mostrarPopupFactura(idFactura); // <-- mostrar el popup y guardar
+
+            
+        } else {
+          warningMessage("❌ Error al generar factura", responseText.error || "Algo salió mal.");
+          console.error(responseText.error || responseText);
+        }
+    } catch (error) {
+        errorMessage("❌ Error de conexión", error.message);
+    }
+
+   
+    if(loadingOverlay){
+      loadingOverlay.style.display = 'none';
+    }
+
+
+    //clear the information former
+    dataForTheServer=null;
+
+
+  }
+
+  function close_all_the_pop(){
+    //close all the pop of the UI 
+    close_my_pop('viewPreviuCFDI');
+    close_my_pop('informationAddress');
+    close_my_pop('informationSales');
+
+    //her we will see if exist a message pop of facture
+    if(document.getElementById('createFactureCFDI')){
+      close_my_pop('createFactureCFDI')
     }
   }
 

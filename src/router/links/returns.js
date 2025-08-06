@@ -693,6 +693,7 @@ function create_new_history_move(id_branches,id_employees, move, comment, date_m
 
 
 //** -----------------------------------------CFDI----------------------------------- */
+const {getToken}=require('../../middleware/tokenCheck.js');
 router.get('/:id_company/:id_branch/tickets-sale', isLoggedIn, async (req, res) => {
     const { id_company, id_branch } = req.params;
 
@@ -725,7 +726,8 @@ router.get('/:token_ticket/view_tickets_sale', isLoggedIn, async (req, res) => {
   const {id_company, id_branch}=req.user;
   const branchFree = await get_data_branch(id_branch);
   const ticket={token_ticket}
-  res.render('links/tickets/createCFDI', {branchFree, ticket});
+  const token=getToken();
+  res.render('links/tickets/createCFDI', {branchFree, ticket, token});
 });
 
 router.get('/:token_ticket/view_tickets_sale2', isLoggedIn, async (req, res) => {
