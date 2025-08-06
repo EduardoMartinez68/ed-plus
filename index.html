@@ -138,7 +138,19 @@
       border: 1px solid #ddd;
       flex: 1;
     }
-
+    .marca-agua {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-25deg);
+      font-size: 120px;            /* grande y claro */
+      color: rgba(6, 105, 208, 0.10); /* usa var(--color-principal) con ~10% opacidad */
+      font-weight: 800;
+      z-index: 0;                  /* detrás del contenido */
+      pointer-events: none;
+      user-select: none;
+      white-space: nowrap;         /* evita salto de línea */
+    }
   </style>
 </head>
 <body>
@@ -155,7 +167,7 @@
         <div class="subtitulo">Vista previa sin timbrar</div>
       </div>
     </div>
-
+    <div class="marca-agua">Prueba</div>
     <div class="info-section">
       <h3>Información fiscal</h3>
       <table>

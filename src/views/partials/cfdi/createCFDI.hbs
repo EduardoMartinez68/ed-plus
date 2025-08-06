@@ -98,11 +98,25 @@
     </div>
   </div>
 
-  <button type="button" class="btn btn-add mt-4" onclick="create_my_facture_cfdi()" id="btn-create-facture">Generar Factura por</button>
+  <button type="button" class="btn btn-add mt-4" onclick="create_preview_view_facture_cfdi()" id="btn-create-facture">Generar
+    Factura por</button>
 </form>
 
 
-
+<div id="viewPreviuCFDI" class="my-pop">
+  <div class="my-pop-content-wrapper">
+    <div class="my-pop-header">
+      <h4 class="my-pop-title">Vista previa del CFDI</h4>
+      <button class="close-btn" onclick="close_my_pop('viewPreviuCFDI')" type="button">×</button>
+    </div>
+    <div class="my-pop-content">
+      <div id="cfdi-preview"></div>
+      <br>
+      <button onclick="create_my_facture_cfdi()" class="btn btn-add">Generar Factura</button>
+      <br>
+    </div>
+  </div>
+</div>
 
 
 
@@ -118,10 +132,10 @@
 
   /**--------------------THIS SCRIPT IS FOR LOAD ALL THE INFORMATION OF THE TICKET AND SHOW THE PRODUCT THAT THE USER WOULD LIKE FACTURE---------------------*/
   let dataFactureCFDI = {}
-  let keyTicketFacture=null;
-  let pathLogoRFCFacture='https://pluspuntodeventa.com/img/logo-white-complete.webp';
+  let keyTicketFacture = null;
+  let pathLogoRFCFacture = 'https://pluspuntodeventa.com/img/logo-white-complete.webp';
 
-  function update_information_of_the_form_to_publico_en_general(zipCode){
+  function update_information_of_the_form_to_publico_en_general(zipCode) {
     /*
       Rfc: 'XAXX010101000', /
       CfdiUse: 'S01',
@@ -130,15 +144,15 @@
       TaxZipCode: TaxZipCodeCFDI, //this is the zip code of the company /
     */
 
-    document.getElementById('regimenFiscalReceptor').value='616';
-    document.getElementById('codigoPostalReceptor').value=zipCode;
-    document.getElementById('rfcReceptor').value='XAXX010101000';
-    document.getElementById('nombreReceptor').value='PUBLICO EN GENERAL'; 
+    document.getElementById('regimenFiscalReceptor').value = '616';
+    document.getElementById('codigoPostalReceptor').value = zipCode;
+    document.getElementById('rfcReceptor').value = 'XAXX010101000';
+    document.getElementById('nombreReceptor').value = 'PUBLICO EN GENERAL';
     document.getElementById("usoCfdi").value = "S01";
   }
 
   async function render_information_cfdi(key) {
-    keyTicketFacture=key;
+    keyTicketFacture = key;
     const dataBranchCFDI = await send_data_to_server('/links/get_data_cfdi_branch', { n: null });
     const dataTicket = await send_data_to_server('/links/get-info-ticket-by-ticket', { key });
     const infoFactureSave = await send_data_to_server('/links/get-info-facture-cfdi', { id_customer: null, query: '' }) //her we will get the information of factura of the customer if exist or of all the company
@@ -190,6 +204,7 @@
           <label>RFC del Cliente: ${rfc}</label><br>
           <label>Nombre o Razón Social: ${company_name}</label><br>
           <button
+            type='button'
             class="btn btn-edit"
             onclick="use_data_for_the_facture(this)"
             data-id="${id}"
@@ -221,30 +236,6 @@
     return String(v).replace(/"/g, '&quot;');
   }
 
-  // Ejemplo de función para usar los datos seleccionados y llenar un formulario
-  function use_data_for_the_facture(btn) {
-    const d = btn.dataset;
-
-    // Aquí mapea a tus inputs reales:
-    setValue('#rfc', d.rfc);
-    setValue('#company_name', d.company_name);
-    setValue('#use_cfdi', d.use_cfdi);
-    setValue('#fiscal_regime', d.fiscal_regime);
-    setValue('#postal_code', d.postal_code);
-    setValue('#street', d.street);
-    setValue('#num_i', d.num_i);
-    setValue('#num_e', d.num_e);
-    setValue('#cologne', d.cologne);
-    setValue('#municipy', d.municipy);
-    setValue('#state', d.state);
-    setValue('#country', d.country);
-
-    // Si tienes selects con opciones, quizá quieras disparar change:
-    // document.querySelector('#use_cfdi')?.dispatchEvent(new Event('change'));
-
-    // Feedback rápido
-    console.log('[CFDI] Datos fiscales cargados para:', d.company_name);
-  }
 
   // Helper para asignar valores con seguridad
   function setValue(selector, value) {
@@ -362,37 +353,38 @@
       });
     });
 
-    const totalFacture=formatToMXN(dataTicket.totalGlobal);
+    const totalFacture = formatToMXN(dataTicket.totalGlobal);
     document.getElementById('total-general').textContent = '$' + totalFacture;
-    document.getElementById('btn-create-facture').textContent = 'Generar Factura por $'+totalFacture;
-    document.getElementById('total-message-cfdi-show').textContent='Total de Venta: $'+totalFacture;
+    document.getElementById('btn-create-facture').textContent = 'Generar Factura por $' + totalFacture;
+    document.getElementById('total-message-cfdi-show').textContent = 'Total de Venta: $' + totalFacture;
   }
 
 
+  /**--------------------HER WE WILL CREATE A FACTURE OF PREVIEW VIEW---------------------*/
+  let TaxZipCodeCFDI = null;
+  let dataForTheServer=null;
 
-  /**--------------------HER GET ALL THE DATA OF CREATE THE FACTURE---------------------*/
-  let TaxZipCodeCFDI=null;
-  async function create_my_facture_cfdi(){
+  async function create_preview_view_facture_cfdi() {
     //first we will see that the user not have information empty
-    if(!this_user_can_create_a_facture()){
+    if (!this_user_can_create_a_facture()) {
       return;
     }
 
     //if the user have the permition of create a facture and all the inputs that the API need, now get the data and create the body
     const Issuer = await create_data_issuer(); //this is get from the server (data of the SAT of the company)
     const Receiver = create_data_receiver(); //(data of the SAT of the customer)
-    const key=keyTicketFacture;
-    const itemFromTheServer= await send_data_to_server('/links/get-info-ticket-by-ticket', { key:key }); //this is get from the server (product that the send to SAT that you sold)
+    const key = keyTicketFacture;
+    const itemFromTheServer = await send_data_to_server('/links/get-info-ticket-by-ticket', { key: key }); //this is get from the server (product that the send to SAT that you sold)
     const Items = itemFromTheServer.data.products;
 
     //her we will to create the item that send to the API of prontipagos
-    const dataForTheServer={
+    const dataForTheServerFunction = {
       CfdiType: document.getElementById('cfdiType').value,
       PaymentForm: document.getElementById('paymentForm').value,
       PaymentMethod: document.getElementById('paymentMethod').value,
-      ExpeditionPlace : TaxZipCodeCFDI,
-      LogoUrl:"https://www.ejemplos.co/wp-content/uploads/2015/11/Logo-Chanel.jpg",
-      Date : getCurrentDateTimeForCFDI(),
+      ExpeditionPlace: TaxZipCodeCFDI,
+      LogoUrl: "https://www.ejemplos.co/wp-content/uploads/2015/11/Logo-Chanel.jpg",
+      Date: getCurrentDateTimeForCFDI(),
       Folio: Math.floor(Math.random() * 10000),
 
 
@@ -401,8 +393,241 @@
       Receiver,
       Items
     }
-
+    dataForTheServer=dataForTheServerFunction;
     console.log(JSON.stringify(dataForTheServer, null, 2));
+    render_preview_view_of_my_facture();
+    //await create_my_facture_cfdi(dataForTheServer);
+  }
+
+  function render_preview_view_of_my_facture() {
+    renderCfdiPreview(dataForTheServer, 'cfdi-preview');
+    open_my_pop('viewPreviuCFDI');
+  }
+
+
+  function escapeHtml(s) {
+    return String(s ?? '')
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+  }
+
+  // Agrega comas de miles sin alterar decimales
+  function formatNumberWithCommas(n) {
+    if (n === null || n === undefined || n === '' || isNaN(n)) return '0';
+    const [intPart, decPart] = String(n).split('.');
+    const intFmt = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return decPart ? `${intFmt}.${decPart}` : intFmt;
+  }
+
+  function formatMoney(n) {
+    return '$' + formatNumberWithCommas(
+      // aseguramos máximo 2 decimales *visuales* sin redondear en exceso
+      (Math.floor(Number(n) * 100) / 100).toFixed(2)
+    );
+  }
+
+  function toIsoLike(dateStr) {
+    // Convierte "YYYY-MM-DD HH:mm:ss" a "YYYY-MM-DDTHH:mm:ss"
+    return String(dateStr).replace(' ', 'T');
+  }
+
+  // ===== Render principal =====
+  function renderCfdiPreview(cfdi, containerId = 'cfdi-preview') {
+    const el = document.getElementById(containerId);
+    if (!el) {
+      console.error('[renderCfdiPreview] No existe #' + containerId);
+      return;
+    }
+
+    // Desestructuración segura
+    const {
+      CfdiType, PaymentForm, PaymentMethod, ExpeditionPlace,
+      LogoUrl, Date, Folio, Issuer = {}, Receiver = {}, Items = []
+    } = cfdi || {};
+
+    // Totales a partir de Items
+    let subtotalGlobal = 0;
+    let totalGlobal = 0;
+    Items.forEach(it => {
+      subtotalGlobal += Number(it.Subtotal || 0);
+      totalGlobal += Number(it.Total || 0);
+    });
+    const impuestosGlobales = totalGlobal - subtotalGlobal;
+
+    const htmlItems = Items.map(it => {
+      const taxesText = Array.isArray(it.Taxes) && it.Taxes.length
+        ? it.Taxes.map(t => {
+          const rate = (t.rate ?? t.Rate ?? 0);
+          // Si viene 16, mostramos 16%; si viniera 0.16, ajusta a (rate*100)
+          const rateShow = (rate > 1 ? rate : rate * 100);
+          return `${escapeHtml(t.name ?? 'Impuesto')} ${formatNumberWithCommas(rateShow)}%`;
+        }).join(', ')
+        : '—';
+      return `
+      <tr>
+        <td>${escapeHtml(it.ProductCode)}</td>
+        <td>${escapeHtml(it.Description)}</td>
+        <td>${escapeHtml(it.UnitCode)}</td>
+        <td class="text-right">${formatNumberWithCommas(it.Quantity ?? 0)}</td>
+        <td class="text-right">${formatMoney(it.UnitPrice ?? 0)}</td>
+        <td class="text-right">${formatMoney(it.Subtotal ?? 0)}</td>
+        <td>${escapeHtml(taxesText)}</td>
+        <td class="text-right">${formatMoney(it.Total ?? 0)}</td>
+      </tr>
+    `;
+    }).join('');
+
+    const html = `
+    <style>
+      .cfdi-card{background:#fff;border:1px solid #ccc;box-shadow:0 0 15px rgba(0,0,0,.05);padding:24px;max-width:960px;margin:auto;position:relative}
+      .cfdi-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+      .cfdi-head .logo img{max-height:64px}
+      .cfdi-title{color:#0669D0;font-size:22px;font-weight:700}
+      .cfdi-sub{color:#888;font-size:13px}
+      .cfdi-water{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:0}
+      .cfdi-water span{transform:rotate(-25deg);font-size:100px;color:rgba(6,105,208,.10);font-weight:800;white-space:nowrap}
+      .cfdi-body{position:relative;z-index:1}
+      .cfdi-sec h3{color:#0669D0;margin:16px 0 6px 0;font-size:18px}
+      .cfdi-table{width:100%;border-collapse:collapse;margin-bottom:12px;font-size:14px}
+      .cfdi-table th{background:#0669D0;color:#fff;text-align:left;padding:8px}
+      .cfdi-table td{border:1px solid #ccc;padding:8px}
+      .text-right{text-align:right}
+      .totals td{border:none;text-align:right;padding:4px 0;font-size:15px}
+      .nota {
+        font-size: 12px;
+        color: #666;
+        margin-top: 30px;
+        text-align: center;
+      }
+    </style>
+
+    <div class="cfdi-card">
+      <div class="cfdi-water"><span>Prueba</span></div>
+      <div class="cfdi-body">
+        <div class="cfdi-head">
+          <div class="logo">
+            ${pathLogoRFCFacture ? `<img src="${escapeHtml(pathLogoRFCFacture)}" alt="Logo">` : ''}
+          </div>
+          <div class="t">
+            <div class="cfdi-title">Factura CFDI 4.0</div>
+            <div class="cfdi-sub">Vista previa sin timbrar</div>
+          </div>
+        </div>
+
+        <div class="cfdi-sec">
+          <h3>Información fiscal</h3>
+          <table class="cfdi-table">
+            <tr>
+              <td><strong>Folio:</strong> ${escapeHtml(Folio ?? '')}</td>
+              <td><strong>Fecha de emisión:</strong> ${escapeHtml(toIsoLike(Date ?? ''))}</td>
+            </tr>
+            <tr>
+              <td><strong>Tipo de comprobante:</strong> ${escapeHtml(CfdiType ?? '')}</td>
+              <td><strong>Lugar de expedición (CP):</strong> ${escapeHtml(ExpeditionPlace ?? '')}</td>
+            </tr>
+            <tr>
+              <td><strong>Forma de pago:</strong> ${escapeHtml(PaymentForm ?? '')}</td>
+              <td><strong>Método de pago:</strong> ${escapeHtml(PaymentMethod ?? '')}</td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="cfdi-sec">
+          <h3>Emisor</h3>
+          <table class="cfdi-table">
+            <tr>
+              <td><strong>RFC:</strong> ${escapeHtml(Issuer.Rfc)}</td>
+              <td><strong>Nombre o Razón Social:</strong> ${escapeHtml(Issuer.Name)}</td>
+            </tr>
+            <tr>
+              <td><strong>Régimen Fiscal:</strong> ${escapeHtml(Issuer.FiscalRegime)}</td>
+              <td></td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="cfdi-sec">
+          <h3>Receptor</h3>
+          <table class="cfdi-table">
+            <tr>
+              <td><strong>RFC:</strong> ${escapeHtml(Receiver.Rfc)}</td>
+              <td><strong>Nombre:</strong> ${escapeHtml(Receiver.Name)}</td>
+            </tr>
+            <tr>
+              <td><strong>Uso del CFDI:</strong> ${escapeHtml(Receiver.CfdiUse)}</td>
+              <td><strong>Régimen Fiscal:</strong> ${escapeHtml(Receiver.FiscalRegime)}</td>
+            </tr>
+            <tr>
+              <td><strong>Código Postal:</strong> ${escapeHtml(Receiver.TaxZipCode)}</td>
+              <td></td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="cfdi-sec">
+          <h3>Conceptos</h3>
+          <table class="cfdi-table">
+            <thead>
+              <tr>
+                <th>Clave SAT</th>
+                <th>Descripción</th>
+                <th>Unidad</th>
+                <th>Cantidad</th>
+                <th>Precio Unitario</th>
+                <th>Subtotal</th>
+                <th>Impuestos</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${htmlItems || `<tr><td colspan="8" class="text-right">Sin conceptos</td></tr>`}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="cfdi-sec">
+          <h3>Totales</h3>
+          <table class="totals" style="width:100%">
+            <tr>
+              <td><strong>Subtotal:</strong></td>
+              <td>${formatMoney(subtotalGlobal)}</td>
+            </tr>
+            <tr>
+              <td><strong>Impuestos:</strong></td>
+              <td>${formatMoney(impuestosGlobales)}</td>
+            </tr>
+            <tr>
+              <td><strong>Total:</strong></td>
+              <td><strong>${formatMoney(totalGlobal)}</strong></td>
+            </tr>
+          </table>
+        </div>
+
+            <div class="qr-sello">
+              <div class="qr">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=UUID:123e4567-e89b-12d3-a456-426614174000" alt="QR CFDI">
+              </div>
+            </div>
+            <br>
+            <div class="nota">
+              Esta es una vista previa de la factura CFDI 4.0 generada con fines informativos. <br>
+              No tiene validez fiscal hasta que sea debidamente timbrada por el PAC autorizado ante el SAT.
+            </div>
+
+      </div>
+    </div>
+  `;
+
+    el.innerHTML = html;
+  }
+
+
+  /**--------------------HER GET ALL THE DATA OF CREATE THE FACTURE---------------------*/
+  async function create_my_facture_cfdi() {
+    //now if the user have all the input success and have the permition for create a factue, we will do a question 
+    if (await questionMessage('🤔 ¿Deseas generar esta factura?', 'Una vez creada, solo podrás cancelarla pero no modificarla. ¡Asegúrate de que todo esté correcto!')) {
+      return;
+    }
   }
 
   function getCurrentDateTimeForCFDI() {
@@ -419,68 +644,68 @@
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   }
 
-  function this_user_can_create_a_facture(){
-    if(document.getElementById('rfcReceptor').value==''){
+  function this_user_can_create_a_facture() {
+    if (document.getElementById('rfcReceptor').value == '') {
       errorMessage('Necesitas el RFC del cliente');
       return false;
     }
 
-    if(document.getElementById('regimenFiscalReceptor').value==''){
+    if (document.getElementById('regimenFiscalReceptor').value == '') {
       errorMessage('Necesitas el Regimen Fiscal o el Nombre de tu cliente');
       return false;
     }
 
-    if(document.getElementById('nombreReceptor').value==''){
+    if (document.getElementById('nombreReceptor').value == '') {
       errorMessage('Necesitas el Nombre de tu cliente');
       return false;
     }
 
-    if(document.getElementById('codigoPostalReceptor').value==''){
+    if (document.getElementById('codigoPostalReceptor').value == '') {
       errorMessage('Necesitas el codigo postal de tu cliente');
       return false;
     }
     return true;
   }
 
-  async function create_data_issuer(){
+  async function create_data_issuer() {
     const dataBranchCFDI = await send_data_to_server('/links/get_data_cfdi_branch', { n: null });
-    TaxZipCodeCFDI=dataBranchCFDI.data.TaxZipCode;
-    pathLogoRFCFacture=dataBranchCFDI.data.linkCFDI; //get the link of the logo of the company
-    
-    return{
+    TaxZipCodeCFDI = dataBranchCFDI.data.TaxZipCode;
+    pathLogoRFCFacture = dataBranchCFDI.data.linkCFDI; //get the link of the logo of the company
+
+    return {
       FiscalRegime: dataBranchCFDI.data.FiscalRegime,
       Rfc: dataBranchCFDI.data.Rfc,
       Name: dataBranchCFDI.data.Name
     }
   }
 
-  function create_data_receiver(){
+  function create_data_receiver() {
     //her we will see if the user would like do a facture a PUBLICO EN GENERAL
-    const RFC=document.getElementById('rfcReceptor').value;
-    if(RFC=='XAXX010101000'){
+    const RFC = document.getElementById('rfcReceptor').value;
+    if (RFC == 'XAXX010101000') {
       //if the customer would like create a facture to PUBLICO EN GENERAL, we will create the information of FACTURA A PUBLICO EN GENERAL
       return {
-          Rfc: 'XAXX010101000',
-          CfdiUse: 'S01',
-          Name: 'PUBLICO EN GENERAL',
-          FiscalRegime: '616',
-          TaxZipCode: TaxZipCodeCFDI, //this is the zip code of the company
+        Rfc: 'XAXX010101000',
+        CfdiUse: 'S01',
+        Name: 'PUBLICO EN GENERAL',
+        FiscalRegime: '616',
+        TaxZipCode: TaxZipCodeCFDI, //this is the zip code of the company
       }
-    }else{
+    } else {
       //if this facture no is to PUBLICO EN GENRAL get his address and other data
-      const Address=get_data_addres_data_customer_cfdi()
+      const Address = get_data_addres_data_customer_cfdi()
       return {
-          Rfc: document.getElementById('rfcReceptor').value,
-          CfdiUse: document.getElementById('usoCfdi').value,
-          Name: document.getElementById('nombreReceptor').value,
-          FiscalRegime: document.getElementById('regimenFiscalReceptor').value,
-          TaxZipCode: document.getElementById('codigoPostalReceptor').value,
-          Address: Address
+        Rfc: document.getElementById('rfcReceptor').value,
+        CfdiUse: document.getElementById('usoCfdi').value,
+        Name: document.getElementById('nombreReceptor').value,
+        FiscalRegime: document.getElementById('regimenFiscalReceptor').value,
+        TaxZipCode: document.getElementById('codigoPostalReceptor').value,
+        Address: Address
       }
     }
   }
 
-  function get_data_addres_data_customer_cfdi(){
+  function get_data_addres_data_customer_cfdi() {
     return {
       Street: document.getElementById('calleReceptor').value,
       ExteriorNumber: document.getElementById('numeroExteriorReceptor').value,

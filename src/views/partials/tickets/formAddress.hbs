@@ -87,18 +87,17 @@
 document.addEventListener("DOMContentLoaded", () => {
   const rfcInput = document.getElementById("rfcReceptor");
 
-  // IDs de los campos de domicilio
-  const addressFields = [
-    "calleReceptor",
-    "numeroExteriorReceptor",
-    "numeroInteriorReceptor",
-    "coloniaReceptor",
-    "municipioReceptor",
-    "estadoReceptor",
-    "paisReceptor"
-  ];
+  window.setAddressSectionEnabled = function(enabled) {
+    const addressFields = [
+      "calleReceptor",
+      "numeroExteriorReceptor",
+      "numeroInteriorReceptor",
+      "coloniaReceptor",
+      "municipioReceptor",
+      "estadoReceptor",
+      "paisReceptor"
+    ];
 
-  function setAddressSectionEnabled(enabled) {
     addressFields.forEach(id => {
       const el = document.getElementById(id);
       if (!el) return;
@@ -109,15 +108,18 @@ document.addEventListener("DOMContentLoaded", () => {
         el.value = ""; // limpia
       }
     });
-  }
+  };
 
-  function handleRFCChange() {
+  window.handleRFCChange = function () {
     const rfc = (rfcInput.value || "").trim().toUpperCase();
     if (rfc === "XAXX010101000") {
       setAddressSectionEnabled(false); // bloquea y limpia
     } else {
       setAddressSectionEnabled(true);  // reactiva
     }
+
+    //now update the 
+    document.getElementById('p-rfc-customer').textContent=rfc;
   }
 
   // Listener en tiempo real
@@ -126,6 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Aplica la regla al cargar
   handleRFCChange();
   setAddressSectionEnabled(false);
+  document.getElementById('p-rfc-customer').textContent='XAXX010101000';
 });
 </script>
 <!--
