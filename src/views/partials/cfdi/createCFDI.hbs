@@ -830,37 +830,47 @@
         TaxZipCode: TaxZipCodeCFDI, //this is the zip code of the company
       }
     } else {
-      return {
-        Rfc: document.getElementById('rfcReceptor').value,
-        CfdiUse: document.getElementById('usoCfdi').value,
-        Name: document.getElementById('nombreReceptor').value,
-        FiscalRegime: document.getElementById('regimenFiscalReceptor').value,
-        TaxZipCode: document.getElementById('codigoPostalReceptor').value
-      }
-      
+
       //if this facture no is to PUBLICO EN GENRAL get his address and other data
       const Address = get_data_addres_data_customer_cfdi()
-      return {
-        Rfc: document.getElementById('rfcReceptor').value,
-        CfdiUse: document.getElementById('usoCfdi').value,
-        Name: document.getElementById('nombreReceptor').value,
-        FiscalRegime: document.getElementById('regimenFiscalReceptor').value,
-        TaxZipCode: document.getElementById('codigoPostalReceptor').value,
-        Address: Address
+      if(Address){
+        return {
+          Rfc: document.getElementById('rfcReceptor').value,
+          CfdiUse: document.getElementById('usoCfdi').value,
+          Name: document.getElementById('nombreReceptor').value,
+          FiscalRegime: document.getElementById('regimenFiscalReceptor').value,
+          TaxZipCode: document.getElementById('codigoPostalReceptor').value,
+          Address: Address
+        }
+      }else{
+        return {
+          Rfc: document.getElementById('rfcReceptor').value,
+          CfdiUse: document.getElementById('usoCfdi').value,
+          Name: document.getElementById('nombreReceptor').value,
+          FiscalRegime: document.getElementById('regimenFiscalReceptor').value,
+          TaxZipCode: document.getElementById('codigoPostalReceptor').value
+        }
       }
     }
   }
 
   function get_data_addres_data_customer_cfdi() {
-    return {
-      Street: document.getElementById('calleReceptor').value,
-      ExteriorNumber: document.getElementById('numeroExteriorReceptor').value,
-      InteriorNumber: document.getElementById('numeroInteriorReceptor').value,
-      Neighborhood: document.getElementById('coloniaReceptor').value,
-      ZipCode: document.getElementById('codigoPostalReceptor').value,
-      Municipality: document.getElementById('municipioReceptor').value,
-      State: document.getElementById('estadoReceptor').value,
-      Country: document.getElementById('paisReceptor').value
-    }
+    const address = {
+      Street:          (document.getElementById('calleReceptor')?.value || '').trim(),
+      ExteriorNumber:  (document.getElementById('numeroExteriorReceptor')?.value || '').trim(),
+      InteriorNumber:  (document.getElementById('numeroInteriorReceptor')?.value || '').trim(), // opcional
+      Neighborhood:    (document.getElementById('coloniaReceptor')?.value || '').trim(),
+      ZipCode:         (document.getElementById('codigoPostalReceptor')?.value || '').trim(),
+      Municipality:    (document.getElementById('municipioReceptor')?.value || '').trim(),
+      State:           (document.getElementById('estadoReceptor')?.value || '').trim(),
+      Country:         (document.getElementById('paisReceptor')?.value || '').trim()
+    };
+
+    // Campos obligatorios
+    const requiredKeys = ['Street','ExteriorNumber','Neighborhood','Municipality','State','Country','ZipCode'];
+    const hasAllRequired = requiredKeys.every(k => address[k] && address[k].length > 0);
+
+    if (!hasAllRequired) return null;
+    return address;
   }
 </script>
