@@ -222,27 +222,21 @@ router.post('/get-info-facture-cfdi', isLoggedIn, async (req, res) => {
     const {id_customer,query }=req.body;
     
     //first we will see if can get all the data of the form with success
-    if(query){
-        let data=null;
+    let data=null;
 
-        //her we will see if the user is creation a facture for a customer or the facture not have a customer save
-        if(exist_id_customer(id_customer)){
-            data=await get_factures_by_customer_with_search(id_customer, query)
-        }else{
-            data=await get_factures_by_company_with_search(id_company,query)
-        }
-
-        res.json({ success: true, message: 'Datos de busqueda obtenidos' , data});
+    //her we will see if the user is creation a facture for a customer or the facture not have a customer save
+    if(exist_id_customer(id_customer) && id_customer!==null){
+        data=await get_factures_by_customer_with_search(id_customer, query)
     }else{
-        res.json({ success: false, message: 'No enviaste nada en la barra de busqueda' , data:null});
+        data=await get_factures_by_company_with_search(id_company,query)
     }
+    res.json({ success: true, message: 'Datos de busqueda obtenidos' , data});
 });
 
 router.post('/get-info-ticket-by-ticket', isLoggedIn, async (req, res) => {
     const { id_company , id_branch} = req.user;
     const {key}=req.body;
     const data=await get_tickets_for_facture_individual_by_key_and_id_branch(id_branch, key);
-    console.log(data);
     res.json({ success: true, message: 'No enviaste nada en la barra de busqueda' , data:data});
 });
 
@@ -293,40 +287,84 @@ async function get_factures_by_customer_with_search(id_customer, query) {
 }
 
 async function get_factures_by_company_with_search(id_company, query) {
-    const searchPattern = `%${query}%`;
+  // Normaliza query
+  const q = (query ?? '').trim();
 
-    if (TYPE_DATABASE === 'mysqlite') {
-        const sql = `
-            SELECT * FROM facture_cfdi
-            WHERE id_companies = ?
-              AND (rfc LIKE ? OR company_name LIKE ?)
-            LIMIT 20
-        `;
-        return new Promise((resolve) => {
-            database.all(sql, [id_company, searchPattern, searchPattern], (err, rows) => {
-                if (err) {
-                    console.error('Error consultando facture_cfdi en SQLite:', err);
-                    resolve([]);
-                } else {
-                    resolve(rows);
-                }
-            });
+  if (TYPE_DATABASE === 'mysqlite') {
+    if (!q) {
+      // Sin búsqueda: solo por company, primeros 20
+      const sql = `
+        SELECT *
+        FROM facture_cfdi
+        WHERE id_companies = ?
+        LIMIT 20
+      `;
+      return new Promise((resolve) => {
+        database.all(sql, [id_company], (err, rows) => {
+          if (err) {
+            console.error('Error consultando facture_cfdi en SQLite (sin búsqueda):', err);
+            resolve([]);
+          } else {
+            resolve(rows);
+          }
         });
+      });
     } else {
-        const sql = `
-            SELECT * FROM "Company".facture_cfdi
-            WHERE id_companies = $1
-              AND (rfc ILIKE $2 OR company_name ILIKE $3)
-            LIMIT 20
-        `;
-        try {
-            const result = await database.query(sql, [id_company, searchPattern, searchPattern]);
-            return result.rows || [];
-        } catch (error) {
-            console.error('Error consultando facture_cfdi en PostgreSQL:', error);
-            return [];
-        }
+      // Con búsqueda
+      const searchPattern = `%${q}%`;
+      const sql = `
+        SELECT *
+        FROM facture_cfdi
+        WHERE id_companies = ?
+          AND (rfc LIKE ? OR company_name LIKE ?)
+        LIMIT 20
+      `;
+      return new Promise((resolve) => {
+        database.all(sql, [id_company, searchPattern, searchPattern], (err, rows) => {
+          if (err) {
+            console.error('Error consultando facture_cfdi en SQLite (con búsqueda):', err);
+            resolve([]);
+          } else {
+            resolve(rows);
+          }
+        });
+      });
     }
+  } else {
+    if (!q) {
+      // Sin búsqueda: solo por company, primeros 20
+      const sql = `
+        SELECT *
+        FROM "Company".facture_cfdi
+        WHERE id_companies = $1
+        LIMIT 20
+      `;
+      try {
+        const result = await database.query(sql, [id_company]);
+        return result.rows || [];
+      } catch (error) {
+        console.error('Error consultando facture_cfdi en PostgreSQL (sin búsqueda):', error);
+        return [];
+      }
+    } else {
+      // Con búsqueda (ILIKE)
+      const searchPattern = `%${q}%`;
+      const sql = `
+        SELECT *
+        FROM "Company".facture_cfdi
+        WHERE id_companies = $1
+          AND (rfc ILIKE $2 OR company_name ILIKE $3)
+        LIMIT 20
+      `;
+      try {
+        const result = await database.query(sql, [id_company, searchPattern, searchPattern]);
+        return result.rows || [];
+      } catch (error) {
+        console.error('Error consultando facture_cfdi en PostgreSQL (con búsqueda):', error);
+        return [];
+      }
+    }
+  }
 }
 
 

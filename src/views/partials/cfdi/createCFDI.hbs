@@ -1,110 +1,105 @@
 <style>
-    .btn-div {
-        width: 100%;
-        background-color: #ffffff;
-        border: 1px solid #ccc;
-        padding: 10px 12px;
-        box-sizing: border-box;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        cursor: pointer;
-        margin-bottom: 8px;
-    }
+  .btn-div {
+    width: 100%;
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    padding: 10px 12px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    margin-bottom: 8px;
+  }
 
-    .btn-div-content {
-        display: flex;
-        flex-direction: column;
-    }
+  .btn-div-content {
+    display: flex;
+    flex-direction: column;
+  }
 
-    .btn-div label {
-        font-weight: bold;
-        margin-bottom: 8px;
-        color: #333;
-    }
+  .btn-div label {
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #333;
+  }
 
-    .btn-div p {
-        margin: 0;
-        color: #666;
-        font-size: 13px;
-    }
+  .btn-div p {
+    margin: 0;
+    color: #666;
+    font-size: 13px;
+  }
 
-    .btn-div i {
-        font-size: 20px;
-        color: #999;
-        margin-top: 13px;
-    }
+  .btn-div i {
+    font-size: 20px;
+    color: #999;
+    margin-top: 13px;
+  }
 </style>
 
 
 
-            {{#each infoCustomer}}
-                <input type="hidden" value="{{id}}" id="id_customer">
-            {{/each}}
+{{#each infoCustomer}}
+<input type="hidden" value="{{id}}" id="id_customer">
+{{/each}}
 
-            <form id="formCreateFactureCFDI">
-                <label>🧾 Generar Factura CFDI</label>
-                <hr>
-
-
-
-                {{>tickets/formCFDI}}
-                <br>
-                <div id="informationSales" class="my-pop">   
-                    <div class="my-pop-content-wrapper">
-                        <div class="my-pop-header">
-                            <h4 class="my-pop-title">Datos de la Venta</h4>
-                            <button class="close-btn" onclick="close_my_pop('informationSales')" type="button">×</button>
-                        </div> 
-                        <div class="my-pop-content">
-                            {{>tickets/informationSales}}
-                        </div>
-                    </div>
-                </div>
-                <div class="btn-div" onclick="open_my_pop('informationSales')">
-                    <div class="btn-div-content">
-                        <label>Datos de la Venta</label>
-                        <p>Total de Venta: ${{dataTicketOld.total}}</p>
-                    </div>
-                    <i class="fi fi-rr-angle-right"></i>
-                </div>
+<form id="formCreateFactureCFDI">
+  {{>tickets/formCFDI}}
+  <br>
+  <div id="informationSales" class="my-pop">
+    <div class="my-pop-content-wrapper">
+      <div class="my-pop-header">
+        <h4 class="my-pop-title">Datos de la Venta</h4>
+        <button class="close-btn" onclick="close_my_pop('informationSales')" type="button">×</button>
+      </div>
+      <div class="my-pop-content">
+        {{>tickets/informationSales}}
+      </div>
+    </div>
+  </div>
+  <div class="btn-div" onclick="open_my_pop('informationSales')">
+    <div class="btn-div-content">
+      <label>Datos de la Venta</label>
+      <p>Total de Venta: ${{dataTicketOld.total}}</p>
+    </div>
+    <i class="fi fi-rr-angle-right"></i>
+  </div>
 
 
 
 
 
 
-                <div id="informationAddress" class="my-pop">  
-                    <div class="my-pop-content-wrapper">
-                        <div class="my-pop-header">
-                            <h4 class="my-pop-title">Datos de Facturación</h4>
-                            <button class="close-btn" onclick="close_my_pop('informationAddress')" type="button">×</button>
-                        </div>  
-                        <div class="my-pop-content">
-                            {{>tickets/formAddress}}
-                        </div>
-                    </div>
-                </div>
-                <div class="btn-div" onclick="open_my_pop('informationAddress')">
-                    <div class="btn-div-content">
-                        <label>Datos de Facturación</label>
-                        <p>XAXX010101000</p>
-                    </div>
-                    <i class="fi fi-rr-angle-right"></i>
-                </div>
+  <div id="informationAddress" class="my-pop">
+    <div class="my-pop-content-wrapper">
+      <div class="my-pop-header">
+        <h4 class="my-pop-title">Datos de Facturación</h4>
+        <button class="close-btn" onclick="close_my_pop('informationAddress')" type="button">×</button>
+      </div>
+      <div class="my-pop-content">
+        {{>tickets/formAddress}}
+      </div>
+    </div>
+  </div>
+  <div class="btn-div" onclick="open_my_pop('informationAddress')">
+    <div class="btn-div-content">
+      <label>Datos de Facturación</label>
+      <p>XAXX010101000</p>
+    </div>
+    <i class="fi fi-rr-angle-right"></i>
+  </div>
 
-                <br><br><br><br><br><br><br><br>
-                <div class="row mt-3">
-                    <div class="col">
-                        {{>tickets/useCFDI}}
-                    </div>
-                    <div class="col">
-                        {{>tickets/metpay}}
-                    </div>
-                </div>
+  <br><br><br><br><br><br><br><br>
+  <div class="row mt-3">
+    <div class="col">
+      {{>tickets/useCFDI}}
+    </div>
+    <div class="col">
+      {{>tickets/metpay}}
+    </div>
+  </div>
 
-                <button type="button" class="btn btn-add mt-4" onclick="create_my_facture_cfdi()">Generar Factura por ${{dataTicketOld.total}}</button>
-            </form>
+  <button type="button" class="btn btn-add mt-4" onclick="create_my_facture_cfdi()" id="btn-create-facture">Generar Factura por</button>
+</form>
 
 
 
@@ -120,70 +115,193 @@
 
 
 <script>
-    let dataFactureCFDI={}
-    async function render_information_cfdi(key){
-        const dataBranchCFDI=await send_data_to_server('/links/get_data_cfdi_branch',{n:null});
-        const dataTicket=await send_data_to_server('/links/get-info-ticket-by-ticket',{key});
+
+  /**--------------------THIS SCRIPT IS FOR LOAD ALL THE INFORMATION OF THE TICKET AND SHOW THE PRODUCT THAT THE USER WOULD LIKE FACTURE---------------------*/
+  let dataFactureCFDI = {}
+  let keyTicketFacture=null;
+
+  function update_information_of_the_form_to_publico_en_general(zipCode){
+    /*
+      Rfc: 'XAXX010101000', /
+      CfdiUse: 'S01',
+      Name: 'PUBLICO EN GENERAL', /
+      FiscalRegime: '616', /
+      TaxZipCode: TaxZipCodeCFDI, //this is the zip code of the company /
+    */
+
+    document.getElementById('regimenFiscalReceptor').value='616';
+    document.getElementById('codigoPostalReceptor').value=zipCode;
+    document.getElementById('rfcReceptor').value='XAXX010101000';
+    document.getElementById('nombreReceptor').value='PUBLICO EN GENERAL'; 
+    document.getElementById("usoCfdi").value = "S01";
+  }
+
+  async function render_information_cfdi(key) {
+    keyTicketFacture=key;
+    const dataBranchCFDI = await send_data_to_server('/links/get_data_cfdi_branch', { n: null });
+    const dataTicket = await send_data_to_server('/links/get-info-ticket-by-ticket', { key });
+    const infoFactureSave = await send_data_to_server('/links/get-info-facture-cfdi', { id_customer: null, query: '' }) //her we will get the information of factura of the customer if exist or of all the company
 
 
-        //when get the data of the server, we will show in the frontend
-        render_html_of_the_table(dataTicket.data);
+    //when get the data of the server, we will show in the frontend
+    render_html_of_the_table(dataTicket.data);
+    renderFactureCards(infoFactureSave.data);
+    update_information_of_the_form_to_publico_en_general(dataBranchCFDI.data.TaxZipCode);
+  }
+
+  function renderFactureCards(dataFacture) {
+    const container = document.getElementById('card-info-fiscal');
+    if (!container) {
+      console.error('[renderFactureCards] No existe #card-info-fiscal');
+      return;
     }
 
-    async function get_data_ticket(key){
-
+    const list = Array.isArray(dataFacture) ? dataFacture : [];
+    if (list.length === 0) {
+      container.innerHTML = `
+      <div class="info-row">
+        <div class="info-value text-muted">Sin resultados</div>
+      </div>
+    `;
+      return;
     }
 
+    // Construye el HTML
+    const html = list.map(item => {
+      // Sanitiza valores básicos (evita 'undefined' en pantalla)
+      const id = item.id ?? '';
+      const rfc = item.rfc ?? '';
+      const company_name = item.company_name ?? '';
+      const use_cfdi = item.use_cfdi ?? '';
+      const fiscalRegime = item.fiscalRegime ?? '';
+      const postal_code = item.postal_code ?? '';
+      const street = item.street ?? '';
+      const num_i = item.num_i ?? '';
+      const num_e = item.num_e ?? '';
+      const cologne = item.cologne ?? '';
+      const municipy = item.municipy ?? '';
+      const state = item.state ?? '';
+      const country = item.country ?? '';
 
+      return `
+      <div class="info-row">
+        <div class="info-value">
+          <label>RFC del Cliente: ${rfc}</label><br>
+          <label>Nombre o Razón Social: ${company_name}</label><br>
+          <button
+            class="btn btn-edit"
+            onclick="use_data_for_the_facture(this)"
+            data-id="${id}"
+            data-rfc="${escapeAttr(rfc)}"
+            data-company_name="${escapeAttr(company_name)}"
+            data-use_cfdi="${escapeAttr(use_cfdi)}"
+            data-fiscal_regime="${escapeAttr(fiscalRegime)}"
+            data-postal_code="${escapeAttr(postal_code)}"
+            data-street="${escapeAttr(street)}"
+            data-num_i="${escapeAttr(num_i)}"
+            data-num_e="${escapeAttr(num_e)}"
+            data-cologne="${escapeAttr(cologne)}"
+            data-municipy="${escapeAttr(municipy)}"
+            data-state="${escapeAttr(state)}"
+            data-country="${escapeAttr(country)}"
+          >
+            Usar
+          </button>
+        </div>
+      </div>
+    `;
+    }).join('');
 
-function fmtNumber(n) {
-  if (n === null || n === undefined || isNaN(n)) return '0';
-  return Number(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
-
-function formatToMXN(num) {
-  if (num === null || num === undefined || isNaN(num)) return '0';
-  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
-
-function render_html_of_the_table(dataTicket) {
-  if (!dataTicket || !Array.isArray(dataTicket.products)) {
-    console.error('[render] dataTicket.products no es un arreglo', dataTicket);
-    return;
+    container.innerHTML = html;
   }
 
-  const products = dataTicket.products;
-  const tbody = document.getElementById('container-product-ticket');
-  const taxesContainer = document.getElementById('container-taxes-products');
-
-  if (!tbody) {
-    console.error('[render] No existe #container-product-ticket en el DOM');
-    return;
-  }
-  if (!taxesContainer) {
-    console.error('[render] No existe #container-taxes-products en el DOM');
-    return;
+  // Escapa comillas en atributos HTML
+  function escapeAttr(v) {
+    return String(v).replace(/"/g, '&quot;');
   }
 
-  // Limpia
-  tbody.innerHTML = '';
-  taxesContainer.innerHTML = '';
+  // Ejemplo de función para usar los datos seleccionados y llenar un formulario
+  function use_data_for_the_facture(btn) {
+    const d = btn.dataset;
 
-  products.forEach((p, idx) => {
-    // Campos con fallback
-    const sat_key = p.ProductCode ?? '';
-    const name = p.Description ?? '';
-    const barcode = p.Barcode ?? '';   // No viene en tu payload; por si lo agregas luego
-    const quantity = p.Quantity ?? 0;
-    const priceWithoutTaxes = p.UnitPrice ?? 0;
+    // Aquí mapea a tus inputs reales:
+    setValue('#rfc', d.rfc);
+    setValue('#company_name', d.company_name);
+    setValue('#use_cfdi', d.use_cfdi);
+    setValue('#fiscal_regime', d.fiscal_regime);
+    setValue('#postal_code', d.postal_code);
+    setValue('#street', d.street);
+    setValue('#num_i', d.num_i);
+    setValue('#num_e', d.num_e);
+    setValue('#cologne', d.cologne);
+    setValue('#municipy', d.municipy);
+    setValue('#state', d.state);
+    setValue('#country', d.country);
 
-    // Precio unitario con impuestos (si quieres mostrarlo): si el total viene por línea
-    const itemTotal = p.Total ?? (Number(priceWithoutTaxes) * Number(quantity));
-    const priceWithTaxesUnit = quantity ? (Number(itemTotal) / Number(quantity)) : 0;
+    // Si tienes selects con opciones, quizá quieras disparar change:
+    // document.querySelector('#use_cfdi')?.dispatchEvent(new Event('change'));
 
-    // Fila de productos
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
+    // Feedback rápido
+    console.log('[CFDI] Datos fiscales cargados para:', d.company_name);
+  }
+
+  // Helper para asignar valores con seguridad
+  function setValue(selector, value) {
+    const el = document.querySelector(selector);
+    if (!el) return;
+    // Soporta input, select, textarea o label/span
+    if ('value' in el) el.value = value ?? '';
+    else el.textContent = value ?? '';
+  }
+
+  function fmtNumber(n) {
+    if (n === null || n === undefined || isNaN(n)) return '0';
+    return Number(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function formatToMXN(num) {
+    if (num === null || num === undefined || isNaN(num)) return '0';
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+
+  function render_html_of_the_table(dataTicket) {
+    if (!dataTicket || !Array.isArray(dataTicket.products)) {
+      console.error('[render] dataTicket.products no es un arreglo', dataTicket);
+      return;
+    }
+
+    const products = dataTicket.products;
+    const tbody = document.getElementById('container-product-ticket');
+    const taxesContainer = document.getElementById('container-taxes-products');
+
+    if (!tbody) {
+      console.error('[render] No existe #container-product-ticket en el DOM');
+      return;
+    }
+    if (!taxesContainer) {
+      console.error('[render] No existe #container-taxes-products en el DOM');
+      return;
+    }
+
+    // Limpia
+    tbody.innerHTML = '';
+    taxesContainer.innerHTML = '';
+
+    products.forEach((p, idx) => {
+      // Campos con fallback
+      const sat_key = p.ProductCode ?? '';
+      const name = p.Description ?? '';
+      const barcode = p.Barcode ?? '';   // No viene en tu payload; por si lo agregas luego
+      const quantity = p.Quantity ?? 0;
+      const priceWithoutTaxes = p.UnitPrice ?? 0;
+
+      // Precio unitario con impuestos (si quieres mostrarlo): si el total viene por línea
+      const itemTotal = p.Total ?? (Number(priceWithoutTaxes) * Number(quantity));
+      const priceWithTaxesUnit = quantity ? (Number(itemTotal) / Number(quantity)) : 0;
+
+      // Fila de productos
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
       <td>${sat_key}</td>
       <td>${name}</td>
       <td>${barcode}</td>
@@ -192,18 +310,18 @@ function render_html_of_the_table(dataTicket) {
       <td class="precio">${fmtNumber(priceWithTaxesUnit)}</td>
       <td class="total">${fmtNumber(itemTotal)}</td>
     `;
-    tbody.appendChild(tr);
+      tbody.appendChild(tr);
 
-    // ===== Impuestos por producto =====
-    const taxes = Array.isArray(p.Taxes) ? p.Taxes : [];
-    // Estructura de cada impuesto: depende de tu backend. Asumo:
-    // { name, taxId, rate, is_retention }
-    // Si tu backend trae otra forma (ej: {Type, Rate, Amount, Withholding}), adapta el mapeo abajo.
+      // ===== Impuestos por producto =====
+      const taxes = Array.isArray(p.Taxes) ? p.Taxes : [];
+      // Estructura de cada impuesto: depende de tu backend. Asumo:
+      // { name, taxId, rate, is_retention }
+      // Si tu backend trae otra forma (ej: {Type, Rate, Amount, Withholding}), adapta el mapeo abajo.
 
-    const tableId = `table-tax-${(barcode || sat_key || `idx${idx}`)}`.replace(/[^a-zA-Z0-9_-]/g, '');
-    const wrapper = document.createElement('div');
-    wrapper.className = 'table-responsive mb-3';
-    wrapper.innerHTML = `
+      const tableId = `table-tax-${(barcode || sat_key || `idx${idx}`)}`.replace(/[^a-zA-Z0-9_-]/g, '');
+      const wrapper = document.createElement('div');
+      wrapper.className = 'table-responsive mb-3';
+      wrapper.innerHTML = `
       <h6 class="mb-1">${name || 'Producto'}</h6>
       <label class="d-block mb-2">${barcode || sat_key || ''}</label>
       <table class="table table-hover">
@@ -222,36 +340,151 @@ function render_html_of_the_table(dataTicket) {
         </tbody>
       </table>
     `;
-    taxesContainer.appendChild(wrapper);
+      taxesContainer.appendChild(wrapper);
 
-    const tbodyTaxes = wrapper.querySelector(`#${tableId}`);
-    taxes.forEach(tax => {
-      // Mapeo flexible
-      const taxName = tax.name ?? tax.Name ?? tax.Type ?? 'Impuesto';
-      const taxCode = tax.taxId ?? tax.Id ?? tax.Code ?? '';
-      const taxRate = tax.rate ?? tax.Rate ?? tax.Percentage ?? tax.Factor ?? 0;
-      const taxIsRetention = (tax.is_retention ?? tax.Withholding ?? tax.IsRetention ?? false) ? 'Sí' : 'No';
+      const tbodyTaxes = wrapper.querySelector(`#${tableId}`);
+      taxes.forEach(tax => {
+        // Mapeo flexible
+        const taxName = tax.name ?? tax.Name ?? tax.Type ?? 'Impuesto';
+        const taxCode = tax.taxId ?? tax.Id ?? tax.Code ?? '';
+        const taxRate = tax.rate ?? tax.Rate ?? tax.Percentage ?? tax.Factor ?? 0;
+        const taxIsRetention = (tax.is_retention ?? tax.Withholding ?? tax.IsRetention ?? false) ? 'Sí' : 'No';
 
-      const trTax = document.createElement('tr');
-      trTax.innerHTML = `
+        const trTax = document.createElement('tr');
+        trTax.innerHTML = `
         <td>${taxName}</td>
         <td>${taxCode}</td>
         <td>${fmtNumber(taxRate)}</td>
         <td>${taxIsRetention}</td>
       `;
-      tbodyTaxes.appendChild(trTax);
+        tbodyTaxes.appendChild(trTax);
+      });
     });
-  });
 
-  document.getElementById('total-general').textContent= '$' + formatToMXN(dataTicket.totalGlobal);
-}
+    const totalFacture=formatToMXN(dataTicket.totalGlobal);
+    document.getElementById('total-general').textContent = '$' + totalFacture;
+    document.getElementById('btn-create-facture').textContent = 'Generar Factura por $'+totalFacture;
+  }
 
 
+
+  /**--------------------HER GET ALL THE DATA OF CREATE THE FACTURE---------------------*/
+  let TaxZipCodeCFDI=null;
+  async function create_my_facture_cfdi(){
+    //first we will see that the user not have information empty
+    if(!this_user_can_create_a_facture()){
+      return;
+    }
+
+    //if the user have the permition of create a facture and all the inputs that the API need, now get the data and create the body
+    const Issuer = await create_data_issuer(); //this is get from the server (data of the SAT of the company)
+    const Receiver = create_data_receiver(); //(data of the SAT of the customer)
+    const key=keyTicketFacture;
+    const itemFromTheServer= await send_data_to_server('/links/get-info-ticket-by-ticket', { key:key }); //this is get from the server (product that the send to SAT that you sold)
+    const Items = itemFromTheServer.data.products;
+
+    //her we will to create the item that send to the API of prontipagos
+    const dataForTheServer={
+      CfdiType: document.getElementById('cfdiType').value,
+      PaymentForm: document.getElementById('paymentForm').value,
+      PaymentMethod: document.getElementById('paymentMethod').value,
+      ExpeditionPlace : TaxZipCodeCFDI,
+      Date : getCurrentDateTimeForCFDI(),
+      Folio: Math.floor(Math.random() * 10000),
+
+
+
+      Issuer,
+      Receiver,
+      Items
+    }
+
+    console.log(JSON.stringify(dataForTheServer, null, 2));
+  }
+
+  function getCurrentDateTimeForCFDI() {
+    const now = new Date();
+
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0'); // Mes 01-12
+    const day = String(now.getDate()).padStart(2, '0');        // Día 01-31
+
+    const hours = String(now.getHours()).padStart(2, '0');     // Hora 00-23
+    const minutes = String(now.getMinutes()).padStart(2, '0');// Minutos 00-59
+    const seconds = String(now.getSeconds()).padStart(2, '0');// Segundos 00-59
+
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  }
+
+  function this_user_can_create_a_facture(){
+    if(document.getElementById('rfcReceptor').value!==''){
+      errorMessage('Necesitas el RFC del cliente');
+      return false;
+    }
+
+    if(document.getElementById('regimenFiscalReceptor').value!==''){
+      errorMessage('Necesitas el Regimen Fiscal o el Nombre de tu cliente');
+      return false;
+    }
+
+    if(document.getElementById('nombreReceptor').value!==''){
+      errorMessage('Necesitas el Nombre de tu cliente');
+      return false;
+    }
+
+    if(document.getElementById('codigoPostalReceptor').value!==''){
+      errorMessage('Necesitas el codigo postal de tu cliente');
+      return false;
+    }
+    return true;
+  }
+
+  async function create_data_issuer(){
+    const dataBranchCFDI = await send_data_to_server('/links/get_data_cfdi_branch', { n: null });
+    TaxZipCodeCFDI=dataBranchCFDI.data.TaxZipCode;
+    return{
+      FiscalRegime: dataBranchCFDI.data.FiscalRegime,
+      Rfc: dataBranchCFDI.data.Rfc,
+      Name: dataBranchCFDI.data.Name
+    }
+  }
+
+  function create_data_receiver(){
+    //her we will see if the user would like do a facture a PUBLICO EN GENERAL
+    const RFC=document.getElementById('rfcReceptor').value;
+    if(RFC=='XAXX010101000'){
+      //if the customer would like create a facture to PUBLICO EN GENERAL, we will create the information of FACTURA A PUBLICO EN GENERAL
+      return {
+          Rfc: 'XAXX010101000',
+          CfdiUse: 'S01',
+          Name: 'PUBLICO EN GENERAL',
+          FiscalRegime: '616',
+          TaxZipCode: TaxZipCodeCFDI, //this is the zip code of the company
+      }
+    }else{
+      //if this facture no is to PUBLICO EN GENRAL get his address and other data
+      const Address=get_data_addres_data_customer_cfdi()
+      return {
+          Rfc: document.getElementById('rfcReceptor').value,
+          CfdiUse: document.getElementById('usoCfdi').value,
+          Name: document.getElementById('nombreReceptor').value,
+          FiscalRegime: document.getElementById('regimenFiscalReceptor').value,
+          TaxZipCode: document.getElementById('codigoPostalReceptor').value,
+          Address: Address
+      }
+    }
+  }
+
+  function get_data_addres_data_customer_cfdi(){
+    return {
+      Street: document.getElementById('calleReceptor').value,
+      ExteriorNumber: document.getElementById('numeroExteriorReceptor').value,
+      InteriorNumber: document.getElementById('numeroInteriorReceptor').value,
+      Neighborhood: document.getElementById('coloniaReceptor').value,
+      ZipCode: document.getElementById('codigoPostalReceptor').value,
+      Municipality: document.getElementById('municipioReceptor').value,
+      State: document.getElementById('estadoReceptor').value,
+      Country: document.getElementById('paisReceptor').value
+    }
+  }
 </script>
-
-
-
-
-
-
-
