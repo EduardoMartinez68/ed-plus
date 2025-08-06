@@ -101,6 +101,93 @@ function normalizeTicketData(data) {
     return normalized;
 }
 
+router.post('/change_status_of_ticket', isLoggedIn, async (req, res) => {
+    const {id_company, id_branch} = req.user;
+    const {keyTicketFacture, idFactura, status}=req.body;
+
+    //we will see if exist the id of the ticket
+    if(keyTicketFacture){
+        //if exist the id of the ticket, is because the ticket was timbrado now 
+        await update_cfdi_status_by_key_branch(id_branch, keyTicketFacture, idFactura, true)
+    }else{
+        //if not exist the id of the ticket, is because the user would like cancell the facture 
+        await update_cfdi_status_by_idcfdi_branch(id_branch, idFactura, false)
+    }
+    return res.json({
+      success: true,
+      message: 'Estado actualizado correctamente.',
+    });
+});
+
+async function update_cfdi_status_by_idcfdi_branch(id_branch, id_cfdi, cfdi_create) {
+    const queryParams = [cfdi_create, id_branch, id_cfdi];
+
+    if (TYPE_DATABASE === 'mysqlite') {
+        const query = `
+            UPDATE ticket
+            SET cfdi_create = ?
+            WHERE id_branches = ? AND id_cfdi = ?
+        `;
+        return new Promise((resolve) => {
+            database.run(query, queryParams, function (err) {
+                if (err) {
+                    console.error('❌ Error actualizando cfdi en SQLite:', err);
+                    resolve(false);
+                } else {
+                    resolve(true);
+                }
+            });
+        });
+    } else {
+        const query = `
+            UPDATE "Box".ticket
+            SET cfdi_create = $1
+            WHERE id_branches = $2 AND id_cfdi = $3
+        `;
+        try {
+            const result = await database.query(query, queryParams);
+            return result.rowCount > 0;
+        } catch (error) {
+            console.error('❌ Error actualizando cfdi en PostgreSQL:', error);
+            return false;
+        }
+    }
+}
+
+async function update_cfdi_status_by_key_branch(id_branch, key, cfdi_create, id_cfdi) {
+    const queryParams = [cfdi_create, id_cfdi, id_branch, key];
+
+    if (TYPE_DATABASE === 'mysqlite') {
+        const query = `
+            UPDATE ticket
+            SET cfdi_create = ?, id_cfdi = ?
+            WHERE id_branches = ? AND key = ?
+        `;
+        return new Promise((resolve) => {
+            database.run(query, queryParams, function (err) {
+                if (err) {
+                    console.error('❌ Error actualizando cfdi en SQLite:', err);
+                    resolve(false);
+                } else {
+                    resolve(true);
+                }
+            });
+        });
+    } else {
+        const query = `
+            UPDATE "Box".ticket
+            SET cfdi_create = $1, id_cfdi = $2
+            WHERE id_branches = $3 AND key = $4
+        `;
+        try {
+            const result = await database.query(query, queryParams);
+            return result.rowCount > 0;
+        } catch (error) {
+            console.error('❌ Error actualizando cfdi en PostgreSQL:', error);
+            return false;
+        }
+    }
+}
 
 //---------------------------her we will save the tickets in the software desktop-------------------------------------------
 const {getToken}=require('../../middleware/tokenCheck.js');

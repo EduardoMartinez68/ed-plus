@@ -709,7 +709,7 @@
     dataToServer.cfdi = cleanTaxes(dataToServer.cfdi)
     console.log(JSON.stringify(dataToServer, null, 2));
     try {
-      const resp = await fetch('https://pluspuntodeventa.com/api/factura/factura-prueba.php', {
+      const resp = await fetch('https://pluspuntodeventa.com/api/factura/factura.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dataToServer)
@@ -731,7 +731,7 @@
         const idFactura = data?.response?.Id;
         if (idFactura) mostrarPopupFactura(idFactura);
         //if we can create the facture, now we will change the status of the ticket to 
-        await change_status_facture(keyTicketFacture, idFactura, true);
+        await change_status_facture(keyTicketFacture, idFactura, true); //this is for save the ticket like facture
 
         dataForTheServer = null;
       } else {
@@ -894,7 +894,7 @@
   //this function is for that when the user do a facture, the ticket have a status of that was facture 
   //this is for avoid facturer two times a ticket 
   async function change_status_facture(keyTicketFacture, idFactura, status=true){
-
+    await send_data_to_server('/links/change_status_of_ticket',{keyTicketFacture, idFactura, status},false);
   }
 
 

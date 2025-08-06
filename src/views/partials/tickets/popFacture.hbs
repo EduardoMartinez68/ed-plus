@@ -155,7 +155,7 @@
     document.getElementById('facturaLink').innerText = `https://pluspuntodeventa.com/api/factura/watch_facture.php?id=${idFactura}`;
     document.getElementById('facturaPopup').style.display = 'flex';
     await update_container_facture();
-
+    /*
     document.getElementById('popCfdiBtnPdf').onclick = () => {
       descargarFactura(idFactura, 'pdf');
     };
@@ -171,6 +171,7 @@
     document.getElementById('popBtnCancell').onclick = () => {
       mostrarCancelPopup(idFactura);
     };
+    */
   }
 
   async function update_container_facture(){
@@ -1978,9 +1979,11 @@ async function enviarCancelacion() {
 
       const data = await res.json();
       if (data.success) {
+        await change_status_facture_calcell(null, facturaIdCancelar, false); //this is for save the ticket like facture cancell
         cerrarCancelPopup();
         confirmationMessage('✅ Cancelación exitosa', `Factura cancelada correctamente (estado: ${data.status}).`);
         reiniciarPaginaYFiltrar(); // recargar lista si quieres
+        
       } else {
         errorMessage("❌ Error",data.message)
       }
@@ -1990,6 +1993,12 @@ async function enviarCancelacion() {
     }
   }
 }
+
+
+async function change_status_facture_calcell(keyTicketFacture, idFactura, status=true){
+  await send_data_to_server('/links/change_status_of_ticket',{keyTicketFacture, idFactura, status}, false);
+}
+
 </script>
 
 

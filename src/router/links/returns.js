@@ -49,6 +49,7 @@ router.get('/:id_company/:id_branch/returns', isLoggedIn, async (req, res) => {
     }
 
     const tickets=await get_tickets_by_branch(id_branch);
+    console.log(tickets)
     const branchFree = await get_data_branch(id_branch);
     res.render('links/returns/returns', {branchFree, tickets});
 });
@@ -204,7 +205,7 @@ async function get_tickets_by_branch(id_branch) {
   if (TYPE_DATABASE === 'mysqlite') {
     return new Promise((resolve) => {
       const queryText = `
-        SELECT id, key, original_ticket, current_ticket, date_sale, cash, debit, credit, total, note,
+        SELECT id, key, original_ticket, current_ticket, date_sale, cash, debit, credit, total, note, cfdi_create
                id_customers, id_employees, id_branches, id_companies
         FROM ticket
         WHERE id_branches = ?
@@ -229,7 +230,7 @@ async function get_tickets_by_branch(id_branch) {
     });
   } else {
     const queryText = `
-      SELECT id, key, original_ticket, current_ticket, date_sale, cash, debit, credit, total, note,
+      SELECT id, key, original_ticket, current_ticket, date_sale, cash, debit, credit, total, note, cfdi_create
              id_customers, id_employees, id_branches, id_companies
       FROM "Box".ticket
       WHERE id_branches = $1
