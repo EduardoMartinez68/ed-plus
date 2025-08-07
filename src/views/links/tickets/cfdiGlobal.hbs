@@ -93,13 +93,13 @@
 <div class="container mt-4">
     <div class="card p-3">
         <label for="">🧾 Genera una factura Global</label>
-        
+
         <div class="row">
             <div class="col">
                 <label for="">Timbres: </label><b id="number-timbres-user">0</b>
             </div>
         </div>
-        <label  onclick="update_information_timbres()" style="cursor: pointer;">Recargar</label>
+        <label onclick="update_information_timbres()" style="cursor: pointer;">Recargar</label>
 
 
         <hr>
@@ -134,7 +134,8 @@
         </div>
         <hr>
         <div class="form-group">
-            <label for="">Desde </label><input type="date" id="dateFrom" readonly disabled class="input-date"><label for="">Hasta </label><input type="date" id="dateTo" readonly disabled class="input-date">
+            <label for="">Desde </label><input type="date" id="dateFrom" readonly disabled class="input-date"><label
+                for="">Hasta </label><input type="date" id="dateTo" readonly disabled class="input-date">
             <br>
             <label for="">Meses a Facturar: </label><label for="" id="Months"></label>
         </div>
@@ -265,38 +266,56 @@
     </div>
 </div>
 <br><br><br>
+
+
+<div id="viewPreviuCFDI" class="my-pop">
+  <div class="my-pop-content-wrapper">
+    <div class="my-pop-header">
+      <h4 class="my-pop-title">Vista previa del CFDI</h4>
+      <button class="close-btn" onclick="close_my_pop('viewPreviuCFDI')" type="button">×</button>
+    </div>
+    <div class="my-pop-content">
+      <div id="cfdi-preview"></div>
+      <br>
+      <button onclick="create_my_facture_cfdi()" class="btn btn-add">Generar Factura</button>
+      <br>
+    </div>
+  </div>
+</div>
+
+
 <script>
-  function get_credetial_user(){
-    const payload = {
-      token: document.getElementById('token-for-facturama').value,
-      user_email: localStorage.getItem('user_email'),
-      password: localStorage.getItem('user_password')
-    };
-    return payload;
-  }
-
-  async function update_information_timbres(){
-    const payload=get_credetial_user();
-    let result;
-    try {
-      const response = await fetch('https://pluspuntodeventa.com/api/factura/get_timbres.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      const text = await response.text(); // para depurar si la respuesta no es JSON
-      try {
-        result = JSON.parse(text);
-      } catch {
-        throw new Error('Respuesta no es JSON. Body: ' + text.slice(0, 300));
-      }
-    } catch (error) {
-      console.error('Error al enviar los datos al servidor:', error);
+    function get_credetial_user() {
+        const payload = {
+            token: document.getElementById('token-for-facturama').value,
+            user_email: localStorage.getItem('user_email'),
+            password: localStorage.getItem('user_password')
+        };
+        return payload;
     }
 
-    document.getElementById('number-timbres-user').textContent=result.timbres || 0;
-  }
+    async function update_information_timbres() {
+        const payload = get_credetial_user();
+        let result;
+        try {
+            const response = await fetch('https://pluspuntodeventa.com/api/factura/get_timbres.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const text = await response.text(); // para depurar si la respuesta no es JSON
+            try {
+                result = JSON.parse(text);
+            } catch {
+                throw new Error('Respuesta no es JSON. Body: ' + text.slice(0, 300));
+            }
+        } catch (error) {
+            console.error('Error al enviar los datos al servidor:', error);
+        }
+
+        document.getElementById('number-timbres-user').textContent = result.timbres || 0;
+    }
 
 
 </script>
@@ -373,7 +392,7 @@
         document.getElementById('Months').textContent = months.join(',');
     }
 
-    function update_date_today(){
+    function update_date_today() {
         const today = new Date();
         const formattedDate = today.toISOString().split('T')[0]; // Formato YYYY-MM-DD
 
@@ -401,42 +420,47 @@
         //customModal.style.display = "none";
         close_my_pop('selectDatePersonality');
 
-         const dateStart = new Date(start);
-         dateStart.setMonth(dateStart.getMonth() + 1);
-         //const nextMonth = dateStart.toISOString().split("T")[0];
+        const dateStart = new Date(start);
+        dateStart.setMonth(dateStart.getMonth() + 1);
+        //const nextMonth = dateStart.toISOString().split("T")[0];
 
 
         update_data_month(dateStart, end)
     });
 </script>
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    const Periodicity = document.getElementById("Periodicity");
-    const fiscalInput = document.getElementById("FiscalRegime");
+    document.addEventListener("DOMContentLoaded", function () {
+        const Periodicity = document.getElementById("Periodicity");
+        const fiscalInput = document.getElementById("FiscalRegime");
 
-    if (!Periodicity || !fiscalInput) {
-        console.warn("No se encontraron los elementos necesarios");
-        return;
-    }
+        if (!Periodicity || !fiscalInput) {
+            console.warn("No se encontraron los elementos necesarios");
+            return;
+        }
 
-    const originalFiscalValue = fiscalInput.value;
+        const originalFiscalValue = fiscalInput.value;
 
-    // Asignar valor inicial si ya está en 05
-    if (Periodicity.value === "05") {
-        fiscalInput.value = "621";
-    }
-
-    Periodicity.addEventListener("change", function () {
+        // Asignar valor inicial si ya está en 05
         if (Periodicity.value === "05") {
             fiscalInput.value = "621";
-        } else {
-            fiscalInput.value = originalFiscalValue;
         }
+
+        Periodicity.addEventListener("change", function () {
+            if (Periodicity.value === "05") {
+                fiscalInput.value = "621";
+            } else {
+                fiscalInput.value = originalFiscalValue;
+            }
+        });
     });
-});
 </script>
 <script>
-    async function create_data_facture(){
+    let pathLogoRFCFacture = 'https://pluspuntodeventa.com/img/logo-white-complete.webp';
+    async function create_my_facture_cfdi(){
+
+    }
+
+    async function create_data_facture() {
         /*
         {	    
             "Items": [{        
@@ -458,28 +482,61 @@ document.addEventListener("DOMContentLoaded", function () {
             }]	
         }
         */
-        const allTheItems=await get_all_the_tickets();
+        const allTheItems = await get_all_the_tickets();
 
-        const dataCFDI={
-            CfdiType:'I',
+        const dataCFDI = {
+            CfdiType: 'I',
             PaymentForm: document.getElementById('PaymentForm').value,
             PaymentMethod: "PUE",
-            ExpeditionPlace : document.getElementById('ExpeditionPlace').value,
-            Date:create_date_folio(),
+            ExpeditionPlace: document.getElementById('ExpeditionPlace').value,
+            Date: create_date_folio(),
             Folio: create_folio(),
             GlobalInformation: get_global_information(),
             Receiver: get_data_receiver(),
             Items: allTheItems
         }
-
-        console.log(JSON.stringify(dataCFDI, null, 2));
+        const dataUser = get_credetial_user()
+        const dataToTheServer = {
+            dataUser,
+            dataCFDI
+        }
+        renderCfdiPreview(dataToTheServer.dataCFDI)
+        open_my_pop('viewPreviuCFDI')
+        
+        console.log(JSON.stringify(dataToTheServer, null, 2));
     }
 
-    function create_folio(){
+    function escapeHtml(s) {
+        return String(s ?? '')
+        .replace(/&/g, "&amp;").replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+  // Agrega comas de miles sin alterar decimales
+  function formatNumberWithCommas(n) {
+    if (n === null || n === undefined || n === '' || isNaN(n)) return '0';
+    const [intPart, decPart] = String(n).split('.');
+    const intFmt = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return decPart ? `${intFmt}.${decPart}` : intFmt;
+  }
+
+  function formatMoney(n) {
+    return '$' + formatNumberWithCommas(
+      // aseguramos máximo 2 decimales *visuales* sin redondear en exceso
+      (Math.floor(Number(n) * 100) / 100).toFixed(2)
+    );
+  }
+
+  function toIsoLike(dateStr) {
+    // Convierte "YYYY-MM-DD HH:mm:ss" a "YYYY-MM-DDTHH:mm:ss"
+    return String(dateStr).replace(' ', 'T');
+  }
+
+
+    function create_folio() {
         return 120
     }
 
-    function create_date_folio(){
+    function create_date_folio() {
         const now = new Date();
 
         const formattedDate = now.getFullYear() + '-' +
@@ -492,40 +549,256 @@ document.addEventListener("DOMContentLoaded", function () {
         return formattedDate;
     }
 
-    function get_global_information(){
+    function get_global_information() {
         return {
-            Periodicity:document.getElementById('Periodicity').value,
-            Months:document.getElementById('Months').textContent,
-            Year:document.getElementById('Year').value,
+            Periodicity: document.getElementById('Periodicity').value,
+            Months: document.getElementById('Months').textContent,
+            Year: document.getElementById('Year').value,
         }
     }
 
-    function get_data_receiver(){
+    function get_data_receiver() {
         return {
             Rfc: "XAXX010101000",
             CfdiUse: "S01",
             Name: "PUBLICO EN GENERAL",
             FiscalRegime: document.getElementById('FiscalRegime').value,
-            TaxZipCode : document.getElementById('ExpeditionPlace').value
+            TaxZipCode: document.getElementById('ExpeditionPlace').value
         }
     }
 
-    async function get_all_the_tickets(){
-        const range_date=get_range_date()
-        const answer=await send_data_to_server('/links/get_data_of_tickets_for_date', range_date);
-        if(answer.success){
+    async function get_all_the_tickets() {
+        const range_date = get_range_date()
+        const answer = await send_data_to_server('/links/get_data_of_tickets_for_date', range_date);
+        if (answer.success) {
             return answer.data;
-        }else{
+        } else {
             return null;
         }
     }
 
-    function get_range_date(){
-        const date_start=document.getElementById('dateFrom').value;
-        const date_finish=document.getElementById('dateTo').value;
+    function get_range_date() {
+        const date_start = document.getElementById('dateFrom').value;
+        const date_finish = document.getElementById('dateTo').value;
         return {
             date_start,
             date_finish
         }
     }
+
+
+    function renderCfdiPreview(cfdi, containerId = 'cfdi-preview') {
+        const el = document.getElementById(containerId);
+        if (!el) {
+            console.error('[renderCfdiPreview] No existe #' + containerId);
+            return;
+        }
+
+        // Desestructuración segura con soporte para factura global
+        const {
+            CfdiType, PaymentForm, PaymentMethod, ExpeditionPlace,
+            LogoUrl, Date, Folio, Issuer = {}, Receiver = {}, Items = {},
+            GlobalInformation = {}
+        } = cfdi || {};
+
+        // Para factura global, los productos están dentro de Items.products
+        const products = Array.isArray(Items.products) ? Items.products : [];
+
+        // Calcular totales (subtotal, total, impuestos) con productos
+        let subtotalGlobal = 0;
+        let totalGlobal = 0;
+        products.forEach(it => {
+            subtotalGlobal += Number(it.Subtotal || 0);
+            totalGlobal += Number(it.Total || 0);
+        });
+        // Si totalGlobal viene en GlobalInformation, puedes usarlo en lugar de totalGlobal calculado
+        if (GlobalInformation.totalGlobal) {
+            totalGlobal = Number(GlobalInformation.totalGlobal);
+        }
+        const impuestosGlobales = totalGlobal - subtotalGlobal;
+
+        // Renderizar filas de productos
+        const htmlItems = products.map(it => {
+            const taxesText = Array.isArray(it.Taxes) && it.Taxes.length
+                ? it.Taxes.map(t => {
+                    const rate = (t.rate ?? t.Rate ?? 0);
+                    const rateShow = (rate > 1 ? rate : rate * 100);
+                    return `${escapeHtml(t.name ?? 'Impuesto')} ${formatNumberWithCommas(rateShow)}%`;
+                }).join(', ')
+                : '—';
+
+            return `
+      <tr>
+        <td>${escapeHtml(it.ProductCode)}</td>
+        <td>${escapeHtml(it.Description)}</td>
+        <td>${escapeHtml(it.UnitCode ?? '')}</td>
+        <td class="text-right">${formatNumberWithCommas(it.Quantity ?? 0)}</td>
+        <td class="text-right">${formatMoney(it.UnitPrice ?? 0)}</td>
+        <td class="text-right">${formatMoney(it.Subtotal ?? 0)}</td>
+        <td>${escapeHtml(taxesText)}</td>
+        <td class="text-right">${formatMoney(it.Total ?? 0)}</td>
+      </tr>
+    `;
+        }).join('');
+
+        // Mostrar información de GlobalInformation (periodicidad, meses, año) en una sección aparte
+        const htmlGlobalInfo = `
+    <div class="cfdi-sec">
+      <h3>Información Global</h3>
+      <table class="cfdi-table">
+        <tr>
+          <td><strong>Periodicidad:</strong> ${escapeHtml(GlobalInformation.Periodicity ?? '')}</td>
+          <td><strong>Meses:</strong> ${escapeHtml(GlobalInformation.Months ?? '')}</td>
+          <td><strong>Año:</strong> ${escapeHtml(GlobalInformation.Year ?? '')}</td>
+        </tr>
+      </table>
+    </div>
+  `;
+
+        const html = `
+    <style>
+      /* Tu CSS igual que antes, o extrae y pon fuera para reutilizar */
+      .cfdi-card{background:#fff;border:1px solid #ccc;box-shadow:0 0 15px rgba(0,0,0,.05);padding:24px;max-width:960px;margin:auto;position:relative}
+      .cfdi-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+      .cfdi-head .logo img{max-height:64px}
+      .cfdi-title{color:#0669D0;font-size:22px;font-weight:700}
+      .cfdi-sub{color:#888;font-size:13px}
+      .cfdi-water{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:0}
+      .cfdi-water span{transform:rotate(-25deg);font-size:100px;color:rgba(6,105,208,.10);font-weight:800;white-space:nowrap}
+      .cfdi-body{position:relative;z-index:1}
+      .cfdi-sec h3{color:#0669D0;margin:16px 0 6px 0;font-size:18px}
+      .cfdi-table{width:100%;border-collapse:collapse;margin-bottom:12px;font-size:14px}
+      .cfdi-table th{background:#0669D0;color:#fff;text-align:left;padding:8px}
+      .cfdi-table td{border:1px solid #ccc;padding:8px}
+      .text-right{text-align:right}
+      .totals td{border:none;text-align:right;padding:4px 0;font-size:15px}
+      .nota {
+        font-size: 12px;
+        color: #666;
+        margin-top: 30px;
+        text-align: center;
+      }
+    </style>
+
+    <div class="cfdi-card">
+      <div class="cfdi-water"><span>Prueba</span></div>
+      <div class="cfdi-body">
+        <div class="cfdi-head">
+          <div class="logo">
+            ${pathLogoRFCFacture ? `<img src="${escapeHtml(pathLogoRFCFacture)}" alt="Logo">` : ''}
+          </div>
+          <div class="t">
+            <div class="cfdi-title">Factura CFDI 4.0</div>
+            <div class="cfdi-sub">Vista previa sin timbrar</div>
+          </div>
+        </div>
+
+        <div class="cfdi-sec">
+          <h3>Información fiscal</h3>
+          <table class="cfdi-table">
+            <tr>
+              <td><strong>Folio:</strong> ${escapeHtml(Folio ?? '')}</td>
+              <td><strong>Fecha de emisión:</strong> ${escapeHtml(toIsoLike(Date ?? ''))}</td>
+            </tr>
+            <tr>
+              <td><strong>Tipo de comprobante:</strong> ${escapeHtml(CfdiType ?? '')}</td>
+              <td><strong>Lugar de expedición (CP):</strong> ${escapeHtml(ExpeditionPlace ?? '')}</td>
+            </tr>
+            <tr>
+              <td><strong>Forma de pago:</strong> ${escapeHtml(PaymentForm ?? '')}</td>
+              <td><strong>Método de pago:</strong> ${escapeHtml(PaymentMethod ?? '')}</td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="cfdi-sec">
+          <h3>Emisor</h3>
+          <table class="cfdi-table">
+            <tr>
+              <td><strong>RFC:</strong> ${escapeHtml(Issuer.Rfc ?? '')}</td>
+              <td><strong>Nombre o Razón Social:</strong> ${escapeHtml(Issuer.Name ?? '')}</td>
+            </tr>
+            <tr>
+              <td><strong>Régimen Fiscal:</strong> ${escapeHtml(Issuer.FiscalRegime ?? '')}</td>
+              <td></td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="cfdi-sec">
+          <h3>Receptor</h3>
+          <table class="cfdi-table">
+            <tr>
+              <td><strong>RFC:</strong> ${escapeHtml(Receiver.Rfc ?? '')}</td>
+              <td><strong>Nombre:</strong> ${escapeHtml(Receiver.Name ?? '')}</td>
+            </tr>
+            <tr>
+              <td><strong>Uso del CFDI:</strong> ${escapeHtml(Receiver.CfdiUse ?? '')}</td>
+              <td><strong>Régimen Fiscal:</strong> ${escapeHtml(Receiver.FiscalRegime ?? '')}</td>
+            </tr>
+            <tr>
+              <td><strong>Código Postal:</strong> ${escapeHtml(Receiver.TaxZipCode ?? '')}</td>
+              <td></td>
+            </tr>
+          </table>
+        </div>
+
+        ${htmlGlobalInfo}
+
+        <div class="cfdi-sec">
+          <h3>Conceptos</h3>
+          <table class="cfdi-table">
+            <thead>
+              <tr>
+                <th>Clave SAT</th>
+                <th>Descripción</th>
+                <th>Unidad</th>
+                <th>Cantidad</th>
+                <th>Precio Unitario</th>
+                <th>Subtotal</th>
+                <th>Impuestos</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${htmlItems || `<tr><td colspan="8" class="text-right">Sin conceptos</td></tr>`}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="cfdi-sec">
+          <h3>Totales</h3>
+          <table class="totals" style="width:100%">
+            <tr>
+              <td><strong>Subtotal:</strong></td>
+              <td>${formatMoney(subtotalGlobal)}</td>
+            </tr>
+            <tr>
+              <td><strong>Impuestos:</strong></td>
+              <td>${formatMoney(impuestosGlobales)}</td>
+            </tr>
+            <tr>
+              <td><strong>Total:</strong></td>
+              <td><strong>${formatMoney(totalGlobal)}</strong></td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="qr-sello">
+          <div class="qr">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=UUID:123e4567-e89b-12d3-a456-426614174000" alt="QR CFDI">
+          </div>
+        </div>
+        <br>
+        <div class="nota">
+          Esta es una vista previa de la factura CFDI 4.0 generada con fines informativos. <br>
+          No tiene validez fiscal hasta que sea debidamente timbrada por el PAC autorizado ante el SAT.
+        </div>
+      </div>
+    </div>
+  `;
+
+        el.innerHTML = html;
+    }
+
 </script>
