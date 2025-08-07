@@ -125,13 +125,13 @@
                     <h5 class="card-title">💵 Total Dinero</h5>
 
                     <div class="form-floating">
-                        <input type="text" class="form-control money" id="money" name="name" placeholder="Efectivo"
+                        <input type="number" class="form-control money" id="money" name="name" placeholder="Efectivo"
                             required>
                         <label for="nombre">Efectivo contado *</label>
                     </div>
 
                     <hr>
-                    <label class="fw-bold">Calculado por el sistema: ${{total_cash_sales}}</label><br>
+                    <label class="fw-bold" id="calculate-for-the-system">Calculado por el sistema: ${{total_cash_sales}}</label><br>
                     <input type="hidden" value="{{total_cash_sales}}" id="total_cash_sales">
                     <label for="">Diferencia: $</label><label for="" id="cash-difference">0</label>
                 </div>
@@ -144,7 +144,7 @@
                     <h5 class="card-title">💳 Total Tarjeta de Crédito</h5>
 
                     <div class="form-floating">
-                        <input type="text" class="form-control credit" id="credit" name="name" placeholder="Efectivo"
+                        <input type="number" class="form-control credit" id="credit" name="name" placeholder="Efectivo"
                             required>
                         <label for="nombre">Efectivo contado *</label>
                     </div>
@@ -164,7 +164,7 @@
                     <h5 class="card-title">💳 Total Tarjeta de Débito</h5>
 
                     <div class="form-floating">
-                        <input type="text" class="form-control debit" id="debit" name="name" placeholder="Debito"
+                        <input type="number" class="form-control debit" id="debit" name="name" placeholder="Debito"
                             required>
                         <label for="nombre">Efectivo contado *</label>
                     </div>
@@ -385,7 +385,13 @@
 <br><br><br>
 
 <script>
-    const total_cash_sales = parseFloat(document.getElementById('total_cash_sales').value) || 0;
+    
+    let total_cash_sales = parseFloat(document.getElementById('total_cash_sales').value) || 0;
+
+    document.getElementById('total-change').textContent=parseFloat(document.getElementById('total-change').textContent).toFixed(2);
+    const totalChange = parseFloat(document.getElementById('total-change').textContent) || 0;
+
+
     const total_credit_sales = parseFloat(document.getElementById('total_credit_sales').value) || 0;
     const total_debit_sales = parseFloat(document.getElementById('total_debit_sales').value) || 0;
 
@@ -393,7 +399,7 @@
     const totalOutput = parseFloat(document.getElementById('total-output').textContent) || 0;
     const totalDevolution = parseFloat(document.getElementById('total-devolution').textContent) || 0;
 
-    const totalChange = parseFloat(document.getElementById('total-change').textContent) || 0;
+    
 
     const totalSales = total_cash_sales + total_credit_sales + total_debit_sales;
     const totalSalesMoney = totalSales + totalChange;
@@ -404,6 +410,14 @@
     document.getElementById('total-money-in-box').textContent = `$${total.toFixed(2)}`;
     document.getElementById('total-for-system').textContent = `$${total.toFixed(2)}`;
     document.getElementById('total-money-recibed').textContent = `$${totalSales.toFixed(2)}`;
+
+
+    //now we will update the information of the money for box
+    const changeMoneyInBox = Math.round((totalSales + totalChange) * 100) / 100;
+    const formattedChangeMoneyInBox = changeMoneyInBox.toFixed(2);
+    document.getElementById('calculate-for-the-system').textContent='Calculado por el sistema: $'+formattedChangeMoneyInBox;
+    total_cash_sales=formattedChangeMoneyInBox;
+    document.getElementById('cash-difference').textContent=formattedChangeMoneyInBox;
 
     function calculate_the_total() {
         document.getElementById('total-for-system').textContent = `$${total.toFixed(2)}`;
@@ -447,7 +461,7 @@
         const differenceTotalCash = efectivo - total_cash_sales;
         const diferenciaElementoCash = document.getElementById('cash-difference')
         diferenciaElementoCash.textContent = (differenceTotalCash).toFixed(2);
-
+        
         if (differenceTotalCash < 0) {
             diferenciaElementoCash.classList.add('text-danger');
             diferenciaElementoCash.classList.remove('text-success');
