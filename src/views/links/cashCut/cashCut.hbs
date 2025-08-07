@@ -45,7 +45,119 @@
         border-radius: 8px 0 0 8px;
     }
 </style>
+<style>
+    :root {
+        --cut-box-azul: #1a73e8;
+        --cut-box-gris: #666;
+        --cut-box-gris-claro: #e0e0e0;
+        --cut-box-gris-bg: #f5f5f5;
+        --cut-box-rojo: #d93025;
+        --cut-box-verde: #188038;
+        --cut-box-fondo: #f9f9f9;
+        --cut-box-borde: #ddd;
+    }
 
+    .cut-box-card {
+        background: #fff;
+        border: 1px solid var(--cut-box-borde);
+        border-radius: 14px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        padding: 20px;
+        margin-bottom: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .cut-box-card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .cut-box-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .cut-box-header h2 {
+        font-size: 18px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0;
+    }
+
+    .cut-box-contado {
+        text-align: right;
+        font-size: 14px;
+        color: var(--cut-box-azul);
+        min-width: 90px;
+    }
+
+    .cut-box-contador-link {
+        font-size: 13px;
+        color: var(--cut-box-azul);
+        text-decoration: underline;
+        cursor: pointer;
+        text-align: left;
+    }
+
+    .cut-box-input-row {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 4px;
+    }
+
+    .cut-box-input-row label {
+        font-size: 16px;
+        color: #444;
+    }
+
+    .cut-box-input-money {
+        border: none;
+        border-bottom: 1px solid var(--cut-box-gris-claro);
+        background: transparent;
+        font-size: 18px;
+        text-align: right;
+        padding: 6px 8px;
+        width: 120px;
+        transition: border-color 0.2s ease;
+        color: #333;
+    }
+
+    .cut-box-input-money:focus {
+        outline: none;
+        border-color: var(--cut-box-azul);
+    }
+
+    .cut-box-info-container {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        font-size: 13px;
+        line-height: 1.5;
+        color: #444;
+    }
+
+    .cut-box-info-container .cut-box-diferencia {
+        font-weight: bold;
+    }
+
+    .cut-box-negativa {
+        color: var(--cut-box-rojo);
+    }
+
+    .cut-box-positiva {
+        color: var(--cut-box-verde);
+    }
+
+    .cut-box-cero {
+        color: var(--cut-box-azul);
+    }
+</style>
 {{#each branchFree}}
 {{#if notification_for_email}}
 {{#if notification_cut_box}}
@@ -115,82 +227,75 @@
         </div>
     </div>
     <br>
-    <div class="row">
-
-        {{#each salesForMoney}}
-        <div class="col">
-            <!-- Tarjeta Efectivo -->
-            <div class="card mb-3 bg-efectivo">
-                <div class="card-body">
-                    <h5 class="card-title">💵 Total Dinero</h5>
-
-                    <div class="form-floating">
-                        <input type="number" class="form-control money" id="money" name="name" placeholder="Efectivo"
-                            required>
-                        <label for="nombre">Efectivo contado *</label>
-                    </div>
-
-                    <hr>
-                    <label class="fw-bold" id="calculate-for-the-system">Calculado por el sistema: ${{total_cash_sales}}</label><br>
-                    <input type="hidden" value="{{total_cash_sales}}" id="total_cash_sales">
-                    <label for="">Diferencia: $</label><label for="" id="cash-difference">0</label>
-                </div>
-            </div>
-        </div>
-        <div class="col">
-            <!-- Tarjeta Tarjeta de Crédito -->
-            <div class="card mb-3 bg-efectivo">
-                <div class="card-body">
-                    <h5 class="card-title">💳 Total Tarjeta de Crédito</h5>
-
-                    <div class="form-floating">
-                        <input type="number" class="form-control credit" id="credit" name="name" placeholder="Efectivo"
-                            required>
-                        <label for="nombre">Efectivo contado *</label>
-                    </div>
-
-                    <hr>
-                    <label class="fw-bold">Calculado por el sistema: ${{total_credit_sales}}</label><br>
-                    <input type="hidden" value="{{total_credit_sales}}" id="total_credit_sales">
-                    <label for="">Diferencia: $</label><label for="" id="credit-difference">0</label>
-                </div>
-            </div>
+    {{#each salesForMoney}}
+    <div class="cut-box-card">
+        <div class="cut-box-header">
+            <h2><i class="fi fi-sr-money-bill-wave"></i> Efectivo</h2>
         </div>
 
-        <div class="col">
-            <!-- Tarjeta Tarjeta de Débito -->
-            <div class="card mb-3 bg-efectivo">
-                <div class="card-body">
-                    <h5 class="card-title">💳 Total Tarjeta de Débito</h5>
 
-                    <div class="form-floating">
-                        <input type="number" class="form-control debit" id="debit" name="name" placeholder="Debito"
-                            required>
-                        <label for="nombre">Efectivo contado *</label>
-                    </div>
-
-                    <hr>
-                    <label class="fw-bold">Calculado por el sistema: ${{total_debit_sales}}</label><br>
-                    <input type="hidden" value="{{total_debit_sales}}" id="total_debit_sales">
-                    <label for="">Diferencia: $</label><label for="" id="debit-difference">0</label>
-                </div>
-            </div>
+        <div class="cut-box-input-row">
+            <button class="btn btn-edit" onclick="count_money('money','total_cash_sales')">Contado</button>
+            <label>$</label>
+            <input type="number" class="cut-box-input-money" id="money" name="name" placeholder="0.00"
+                required>
+            <input type="hidden" value="{{total_cash_sales}}" id="total_cash_sales">
         </div>
-        {{/each}}
+
+        <div class="cut-box-info-container">
+            <div id="calculate-for-the-system">Calculado por el sistema: ${{total_cash_sales}}</div>
+            <div class="cut-box-diferencia ">Diferencia: $<label id="cash-difference">0</label></div>
+        </div>
+
     </div>
 
-    <div class="ror">
-        <div class="card">
-            <div class="card-body">
-                <div class="form-floating">
-                    <textarea type="text" class="form-control" name="note" placeholder="Nota para el corte"
-                        id="comment"></textarea>
-                    <label for="nombre">Comentario</label>
-                </div>
-            </div>
+    <div class="cut-box-card">
+        <div class="cut-box-header">
+            <h2><i class="fi fi-sr-credit-card"></i> Tarjeta de débito</h2>
+        </div>
+
+
+        <div class="cut-box-input-row">
+            <button class="btn btn-edit" onclick="count_money('debit','total_debit_sales')">Contado</button>
+            <label>$</label>
+            <input type="number" class="cut-box-input-money" placeholder="0.00"  id="debit" required/>
+            <input type="hidden" value="{{total_debit_sales}}" id="total_debit_sales">
+        </div>
+
+        <div class="cut-box-info-container">
+            <div>Calculado por el sistema: ${{total_debit_sales}}</div>
+            <div class="cut-box-diferencia">Diferencia: $<label id="debit-difference">0</label></div>
         </div>
     </div>
+
+    <div class="cut-box-card">
+        <div class="cut-box-header">
+            <h2><i class="fi fi-sr-credit-card"></i> Tarjeta de crédito</h2>
+        </div>
+
+
+        <div class="cut-box-input-row">
+            <button class="btn btn-edit" onclick="count_money('credit','total_credit_sales')">Contado</button>
+            <label>$</label>
+            <input type="number" class="cut-box-input-money" placeholder="0.00" id="credit" required/>
+            <input type="hidden" value="{{total_credit_sales}}" id="total_credit_sales">
+        </div>
+
+        <div class="cut-box-info-container">
+            <div>Calculado por el sistema: ${{total_credit_sales}}</div>
+            <div class="cut-box-diferencia">Diferencia: $<label id="credit-difference">0</label></div>
+        </div>
+    </div>
+    {{/each}}
     <br>
+
+
+
+
+
+
+
+    
     <!-- Resumen -->
     <div class="card summary-card">
         <div class="card-body">
@@ -381,14 +486,25 @@
         </div>
     </div>
     <br>
+    <div class="row">
+        <div class="card">
+            <div class="card-body">
+                <div class="form-floating">
+                    <textarea type="text" class="form-control" name="note" placeholder="Nota para el corte"
+                        id="comment"></textarea>
+                    <label for="nombre">Comentario</label>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <br><br><br>
 
 <script>
-    
+
     let total_cash_sales = parseFloat(document.getElementById('total_cash_sales').value) || 0;
 
-    document.getElementById('total-change').textContent=parseFloat(document.getElementById('total-change').textContent).toFixed(2);
+    document.getElementById('total-change').textContent = parseFloat(document.getElementById('total-change').textContent).toFixed(2);
     const totalChange = parseFloat(document.getElementById('total-change').textContent) || 0;
 
 
@@ -399,7 +515,7 @@
     const totalOutput = parseFloat(document.getElementById('total-output').textContent) || 0;
     const totalDevolution = parseFloat(document.getElementById('total-devolution').textContent) || 0;
 
-    
+
 
     const totalSales = total_cash_sales + total_credit_sales + total_debit_sales;
     const totalSalesMoney = totalSales + totalChange;
@@ -415,9 +531,10 @@
     //now we will update the information of the money for box
     const changeMoneyInBox = Math.round((totalSales + totalChange) * 100) / 100;
     const formattedChangeMoneyInBox = changeMoneyInBox.toFixed(2);
-    document.getElementById('calculate-for-the-system').textContent='Calculado por el sistema: $'+formattedChangeMoneyInBox;
-    total_cash_sales=formattedChangeMoneyInBox;
-    document.getElementById('cash-difference').textContent=formattedChangeMoneyInBox;
+    document.getElementById('calculate-for-the-system').textContent = 'Calculado por el sistema: $' + formattedChangeMoneyInBox;
+    total_cash_sales = formattedChangeMoneyInBox;
+    document.getElementById('cash-difference').textContent = formattedChangeMoneyInBox;
+    document.getElementById('total_cash_sales').value=total_cash_sales;
 
     function calculate_the_total() {
         document.getElementById('total-for-system').textContent = `$${total.toFixed(2)}`;
@@ -461,7 +578,7 @@
         const differenceTotalCash = efectivo - total_cash_sales;
         const diferenciaElementoCash = document.getElementById('cash-difference')
         diferenciaElementoCash.textContent = (differenceTotalCash).toFixed(2);
-        
+
         if (differenceTotalCash < 0) {
             diferenciaElementoCash.classList.add('text-danger');
             diferenciaElementoCash.classList.remove('text-success');
@@ -525,7 +642,12 @@
 
 </script>
 
-
+<script>
+    function count_money(id_input,money_total){
+        document.getElementById(id_input).value=document.getElementById(money_total).value;
+        calcularDiferencia();
+    }
+</script>
 
 <!--this is for create a PDF--->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
@@ -669,7 +791,7 @@
         </div>
         `;
 
-        const message=create_message();
+        const message = create_message();
         const response = await fetch('/links/notification/cash-cut', {
             method: 'POST',
             headers: {
