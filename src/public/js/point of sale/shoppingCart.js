@@ -254,7 +254,9 @@ async function buy_my_car() {
 
         //we will see if the user can buy all the shooping cart
         const token = generarTokenUnicoTicket();
+
         if (await send_buy_to_the_server(total, moneyReceived, change, comment, id_customer, cash, credit, debit, token)) {
+            document.getElementById('key-old-ticket').textContent=token; //update the token of the ticket in the UI for if the user would like create facture CFDI, print the ticket or send the ticket for email
             await update_the_lots_of_the_product_in_the_car(id_customer);
 
             //this is for delete all the shooping cart

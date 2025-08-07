@@ -17,7 +17,7 @@
 </div>
 
 
-<button onclick="open_my_pop('createFactureCFDI')">Open pop</button>
+<button onclick="open_pop_cfdi_creation_point_sales()">Open pop</button>
 
 
 <script>
@@ -25,5 +25,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     ///her we will load all the data of the ticket 
     const token_ticket=document.getElementById('token_ticket').value;
     await render_information_cfdi(token_ticket);
+
+
+    async function open_pop_cfdi_creation_point_sales(){
+        await update_information_of_timbres();
+        open_my_pop('createFactureCFDI')
+    }
 });
 </script>

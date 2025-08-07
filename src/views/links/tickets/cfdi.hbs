@@ -81,6 +81,19 @@
 
 
 {{>loading}}
+
+
+<input type="hidden" id="token-for-facturama" value="{{token}}">
+<script>
+  function get_credetial_user(){
+    const payload = {
+      token: document.getElementById('token-for-facturama').value,
+      user_email: localStorage.getItem('user_email'),
+      password: localStorage.getItem('user_password')
+    };
+    return payload;
+  }
+</script>
 {{>tickets/popFacture}}
 
 

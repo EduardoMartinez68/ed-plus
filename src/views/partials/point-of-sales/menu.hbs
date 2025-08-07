@@ -48,7 +48,6 @@
         border: none;
         transition: background-color 0.3s ease;
         width: 100%;
-        min-width: 500px;
         max-width: 100%;
     }
 
@@ -68,7 +67,72 @@
         text-align: center;
     }
     }
+
+
+
+/*----------------------buttons actions----------------------------*/
+.div-buttons-most {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 10px;
+  justify-content: center;
+  width: 100%;
+}
+
+.button-most {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 120px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.icon-box {
+  width: 60px;
+  height: 60px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+  transition: background-color 0.3s;
+  text-align: center;
+  padding: 0;
+  line-height: 1;
+}
+
+.icon-box i {
+  font-size: 24px;
+  color: var(--color-company);
+  display: inline-block;
+  line-height: 1;
+  vertical-align: middle;
+  transform: translateY(8px);
+}
+
+.button-most label {
+  font-size: 13px;
+  text-align: center;
+  color: var(--color-company);
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+/* Responsive: botones apilados en móviles */
+@media (max-width: 600px) {
+  .div-buttons-most {
+    justify-content: center;
+  }
+  .button-most {
+    width: 100px;
+  }
+}
 </style>
+<link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-brands/css/uicons-brands.css'>
 <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-straight/css/uicons-solid-straight.css'>
 
 <!-- menu (left) -->
@@ -456,13 +520,68 @@
                 </a>
             </div>
             <br>
+
+
+
+
             <div class="information-sale">
                 <h6>Vuelve pronto 😄</h6>
                 <h1 id="change-pop">Cambio: $200</h1>
                 <h5 id="total-pop">Total: $100</h5>
+                <br><br><br>
+                <label for="">Documento de venta</label>
+                <label for="" id="key-old-ticket"></label>
+                <div class="div-buttons-most">
+                <div class="button-most" onclick="print_ticket_for_btn()">
+                    <div class="icon-box">
+                    <i class="fi fi-sr-print"></i>
+                    </div>
+                    <label>Imprimir</label>
+                </div>
+
+                <!---
+                <div class="button-most">
+                    <div class="icon-box">
+                    <i class="fi fi-sr-envelope"></i>
+                    </div>
+                    <label>Enviar por Email</label>
+                </div>
+                --->
+
+                <div class="button-most" onclick="open_pop_cfdi_creation_point_sales()">
+                    <div class="icon-box">
+                    <i class="fi fi-sr-file-invoice-dollar"></i>
+                    </div>
+                    <label>CFDI</label>
+                </div>
+
+                <div class="button-most" onclick="download_ticket_pdf()">
+                    <div class="icon-box">
+                    <i class="fi fi-sr-download"></i>
+                    </div>
+                    <label>Descargar</label>
+                </div>
+
+                <!---
+                <div class="button-most">
+                    <div class="icon-box">
+                    <i class="fi fi-brands-whatsapp"></i>
+                    </div>
+                    <label>WhatsApp</label>
+                </div>
+                --->
+                </div>
+               
                 <br>
                 <button class="btn-sale btn-add" onclick="close_my_pop('pop-data-sale-ticket')">Acpetar</button>
+
+
+
             </div>
+
+
+
+
         </div>
     </div>
 </div>
@@ -643,3 +762,59 @@
     background-color: var(--color-hover);
 }
 </style>
+
+
+
+
+
+<!-----------her is for open a pop for create the facture CFDI----------------->
+<div id="createFactureCFDI" class="my-pop">   
+    <div class="my-pop-content-wrapper">
+        <div class="my-pop-header">
+            <h4 class="my-pop-title">Generar Factura CFDI</h4>
+            <button class="close-btn" onclick="close_my_pop('createFactureCFDI')" type="button">×</button>
+        </div> 
+        <div class="my-pop-content">
+            {{>cfdi/createCFDI}}
+        </div>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+    //this function was call when the user would like create a facture CFDI from the POS
+    async function open_pop_cfdi_creation_point_sales(){
+        ///her we will load all the data of the ticket 
+        const token_ticket=document.getElementById('key-old-ticket').textContent;
+        
+        await render_information_cfdi(token_ticket);
+        open_my_pop('createFactureCFDI')
+    }
+
+
+    async function print_ticket_for_btn(){
+        await print_ticket_with_html();
+    }
+
+    async function download_ticket_pdf() {
+        const ticket = document.getElementById('vistaTicket');
+
+        ticket.style.display = 'block'; // Asegura visibilidad
+
+        // Espera a que el contenido se renderice
+        setTimeout(async () => {
+            const canvas = await html2canvas(ticket, { scale: 2 });
+
+            const imgData = canvas.toDataURL('image/png');
+
+            const pdf = new jspdf.jsPDF({
+            orientation: 'portrait',
+            unit: 'px',
+            format: [canvas.width, canvas.height]
+            });
+
+            pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+            pdf.save('ticket.pdf');
+        }, 300);
+    }
+
+</script>

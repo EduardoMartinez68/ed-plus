@@ -156,9 +156,9 @@
       TaxZipCode: TaxZipCodeCFDI, //this is the zip code of the company /
     */
 
+    document.getElementById('rfcReceptor').value = 'XAXX010101000';
     document.getElementById('regimenFiscalReceptor').value = '616';
     document.getElementById('codigoPostalReceptor').value = zipCode;
-    document.getElementById('rfcReceptor').value = 'XAXX010101000';
     document.getElementById('nombreReceptor').value = 'PUBLICO EN GENERAL';
     document.getElementById("usoCfdi").value = "S01";
   }
@@ -455,9 +455,7 @@
       Items
     }
     dataForTheServer=dataForTheServerFunction;
-    //console.log(JSON.stringify(dataForTheServer, null, 2));
     render_preview_view_of_my_facture();
-    //await create_my_facture_cfdi(dataForTheServer);
   }
 
   function render_preview_view_of_my_facture() {
@@ -704,10 +702,8 @@
       cfdi: dataForTheServer
     };
 
-    //dataToServer.cfdi = cleanTaxes(dataToServer.cfdi); //her clear the container of the taxes.
-    //console.log(JSON.stringify(dataToServer, null, 2));
     dataToServer.cfdi = cleanTaxes(dataToServer.cfdi)
-    console.log(JSON.stringify(dataToServer, null, 2));
+    //console.log(JSON.stringify(dataToServer, null, 2));
     try {
       const resp = await fetch('https://pluspuntodeventa.com/api/factura/factura.php', {
         method: 'POST',
@@ -725,7 +721,7 @@
       }
 
       if (resp.ok && data?.success) {
-        close_all_the_pop();
+        //close_all_the_pop();
         confirmationMessage("✅ ¡Factura creada!", data.message);
 
         const idFactura = data?.response?.Id;

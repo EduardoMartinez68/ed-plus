@@ -717,7 +717,8 @@ router.get('/:id_company/:id_branch/tickets-sale', isLoggedIn, async (req, res) 
 router.get('/:id_company/:id_branch/cfdi', isLoggedIn, async (req, res) => {
     const { id_company, id_branch } = req.params;
     const branchFree = await get_data_branch(id_branch);
-    res.render('links/tickets/cfdi', {branchFree});
+    const token=getToken();
+    res.render('links/tickets/cfdi', {branchFree, token});
 });
 
 

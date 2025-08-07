@@ -1970,11 +1970,18 @@ async function enviarCancelacion() {
       ...(motive === '01' && uuidReplacement ? { uuidReplacement } : {})
     };
 
+    const dataUser=get_credetial_user(); //get the count PLUS of the user 
+
+    const dataForTheServer = {
+      payload,
+      dataUser
+    };
+    console.log(JSON.stringify(dataForTheServer, null, 2));
     try {
       const res = await fetch('https://pluspuntodeventa.com/api/factura/cancelar_factura.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(dataForTheServer)
       });
 
       const data = await res.json();

@@ -56,6 +56,8 @@ const {
     get_the_setting_of_the_ticket
 } = require('../../services/ticket');
 
+const {getToken}=require('../../middleware/tokenCheck.js');
+
 router.get('/:id_user/:id_company/:id_branch/:id_employee/:id_role/store-home', isLoggedIn, async (req, res) => {
     try {
 
@@ -69,7 +71,7 @@ router.get('/:id_user/:id_company/:id_branch/:id_employee/:id_role/store-home', 
 
         const branchFree = await get_data_branch(id_branch);
         const dataEmployee = await get_data_employee(req);
-
+        const token=getToken();
         const dishAndCombo = null;//await get_all_dish_and_combo_without_lots(id_branch) //get_the_products_most_sales_additions(id_branch);
         
         /*
@@ -90,7 +92,7 @@ router.get('/:id_user/:id_company/:id_branch/:id_employee/:id_role/store-home', 
         const templateData = {
             branchFree,
             dataEmployee,
-
+            token,
             /*
             mostSold,
             newCombos,
@@ -105,7 +107,6 @@ router.get('/:id_user/:id_company/:id_branch/:id_employee/:id_role/store-home', 
             promotions,
             addition: JSON.stringify(addition)
         };
-
         res.render('links/store/home/home', templateData);
     } catch (error) {
         console.error('Error en la ruta store-home:', error);
@@ -144,7 +145,7 @@ router.get('/:id_company/:id_branch/point-sales', isLoggedIn, async (req, res) =
         //const productsSales=await get_all_products_in_sales(id_branch);
         const dataCompany=await get_data_company_with_id(id_company);
         const dataTicket=await get_the_setting_of_the_ticket(id_company, id_branch);
-
+        const token=getToken();
         const templateData = {
             branchFree,
             dishAndCombo,
@@ -153,6 +154,7 @@ router.get('/:id_company/:id_branch/point-sales', isLoggedIn, async (req, res) =
             dataCompany,
             promotions,
             dataTicket,
+            token,
             addition: JSON.stringify(addition)
         };
 
@@ -191,13 +193,10 @@ router.post('/search-products', isLoggedIn, async (req, res) => {
   try {
     //her we will see if the user would like search a barcode
     let products;
-    console.log('-----------------------------------------------------------')
-    console.log(barcode)
     if(barcode){
       products = await get_the_products_with_barcode(id_branch, barcode);
     }else{
       products = await get_first_products_by_branch(id_branch);
-      console.log(products)
     }
     res.json({ success: true, products });
   } catch (error) {
