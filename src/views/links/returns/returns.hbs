@@ -1,5 +1,10 @@
 {{>loading}}
 {{>returns/formReturn}}
+<style>
+  .icon-green{
+    color: #2ecc71;
+  }
+</style>
 <br><br>
 <div class="container">
     <div class="card">
@@ -33,7 +38,13 @@
                 <tbody>
                     {{#each tickets}}
                         <tr>
-                            <td><button class="btn btn" onclick="nextWeb('/{{key}}/view_tickets_sale')"><i class="fi-icon fi-ss-file-invoice-dollar"></i></button></td>
+                            <!---her we will see if the user create a facture or not-->
+                            {{#if cfdi_create}}
+                              <td><button class="btn btn"><i class="fi-icon icon-green fi-ss-file-invoice-dollar"></i></button></td>
+                            {{else}}
+                              <td><button class="btn btn" onclick="nextWeb('/{{key}}/view_tickets_sale')"><i class="fi-icon fi-ss-file-invoice-dollar"></i></button></td>
+                            {{/if}}
+
                             <td>{{key}}</td>
                             <td>{{date_sale}}</td>
                             <td>${{cash}}</td>

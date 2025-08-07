@@ -371,8 +371,6 @@ async function get_tickets_for_facture_individual_by_key_and_id_branch(id_branch
     }
 
     totalGlobal=parseFloat(totalGlobal.toFixed(2))
-    console.log('products')
-    console.log(products[0].Taxes)
     return {
         products,
         totalGlobal
