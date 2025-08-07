@@ -27,14 +27,17 @@ router.get('/:id_company/:id_branch/cashCut', isLoggedIn, async (req, res) => {
 
 
     //now if exist the table, we will get all the information of the user
-    const dateStart = new Date();
-    dateStart.setHours(0, 0, 0, 0); // Establece hora en 00:00:00.000
     const idEmployee=req.user.id_employee;
 
-    const dateFinish = new Date();
-    dateFinish.setHours(23, 59, 59, 999);
+    const now = new Date();
+    const dateStart=new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+    const dateFinish=new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+    const dateStartString=dateToString(dateStart);
+    const dateFinishString=dateToString(dateFinish);
 
-    const salesForMoney=[await get_all_the_buy(idEmployee,dateStart,dateFinish)];
+    const salesForMoney=[await get_all_the_buy(idEmployee,dateStartString,dateFinishString)];
+
+
     const moveUser=await get_total_movements_by_employee(idEmployee,dateStart,dateFinish);
     const movePositive=await get_all_the_movements_positive(idEmployee,dateStart,dateFinish);
     const moveNegative=await get_all_the_movements_negative(idEmployee,dateStart,dateFinish);
@@ -48,6 +51,16 @@ router.get('/:id_company/:id_branch/cashCut', isLoggedIn, async (req, res) => {
     const dataEmployee=[{first_name:req.user.first_name,second_name:req.user.second_name,last_name:req.user.last_name}];
     res.render('links/cashCut/cashCut.hbs',{branchFree, salesForMoney,moveUser,movePositive,moveNegative,numberOfSales,numberInputOutput,employees,datesCut,dataEmployee});
 })
+
+function dateToString(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  const hh = String(date.getHours()).padStart(2, '0');
+  const mm = String(date.getMinutes()).padStart(2, '0');
+  const ss = String(date.getSeconds()).padStart(2, '0');
+  return `${y}-${m}-${d} ${hh}:${mm}:${ss}`;
+}
 
 async function get_all_the_user_of_the_branch(id_branch) {
     try {
@@ -196,9 +209,10 @@ async function get_the_number_input_and_output(id_employee, dateStart, dateFinis
 
 async function get_all_the_buy(id_employee, dateStart, dateFinish) {
   // Formato ISO para fechas
-  const start = new Date(dateStart).toISOString();
-  const end = new Date(dateFinish).toISOString();
-
+  const start = dateStart//new Date(dateStart).toISOString();
+  const end =dateFinish// new Date(dateFinish).toISOString();
+  console.log(start)
+  console.log(end)
   if (TYPE_DATABASE === 'mysqlite') {
     return new Promise((resolve) => {
       const query = `
@@ -545,6 +559,7 @@ router.post('/:id_company/:id_branch/cash-cut-date', isLoggedIn, async (req, res
     const idEmployee = req.body.idEmployee;
 
     const salesForMoney=[await get_all_the_buy(idEmployee,dateStart,dateFinish)];
+    
     const moveUser=await get_total_movements_by_employee(idEmployee,dateStart,dateFinish);
     const movePositive=await get_all_the_movements_positive(idEmployee,dateStart,dateFinish);
     const moveNegative=await get_all_the_movements_negative(idEmployee,dateStart,dateFinish);

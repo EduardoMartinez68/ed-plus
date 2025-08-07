@@ -442,6 +442,7 @@
                                         <tr>
                                             <td><b>TOTAL: </b></td>
                                             <td class="text-success">${{entries}}</td>
+                                            <input type="hidden" id="inside-money-total" value="{{entries}}">
                                         </tr>
                                         {{/each}}
                                     </tbody>
@@ -473,6 +474,7 @@
                                         <tr>
                                             <td><b>TOTAL: </b></td>
                                             <td class="text-danger">${{exits}}</td>
+                                            <input type="hidden" id="outside-money-total" value="{{exits}}">
                                         </tr>
                                         {{/each}}
                                     </tbody>
@@ -528,11 +530,14 @@
     document.getElementById('total-money-recibed').textContent = `$${totalSales.toFixed(2)}`;
 
 
-    //now we will update the information of the money for box
-    const changeMoneyInBox = Math.round((totalSales + totalChange) * 100) / 100;
+    //now we will update the information of the money for box 
+    const outSideMoneyTotal=parseFloat(document.getElementById('outside-money-total').value);
+    const insideMoneyTotal=parseFloat(document.getElementById('inside-money-total').value);
+    const changeMoneyInBox = Math.round((totalSales + totalChange + outSideMoneyTotal+insideMoneyTotal) * 100) / 100;
     const formattedChangeMoneyInBox = changeMoneyInBox.toFixed(2);
     document.getElementById('calculate-for-the-system').textContent = 'Calculado por el sistema: $' + formattedChangeMoneyInBox;
     total_cash_sales = formattedChangeMoneyInBox;
+
     document.getElementById('cash-difference').textContent = formattedChangeMoneyInBox;
     document.getElementById('total_cash_sales').value=total_cash_sales;
 

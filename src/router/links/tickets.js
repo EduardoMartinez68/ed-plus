@@ -234,7 +234,8 @@ router.get('/create_cfdi_global', isLoggedIn, async (req, res) => {
     const { id_company, id_branch } = req.user;
     const branchFree = await get_data_branch(id_branch);
     const dataCompany=await get_data_company_with_id(id_company)
-    res.render('links/tickets/cfdiGlobal', {branchFree, dataCompany});
+    const token=getToken()
+    res.render('links/tickets/cfdiGlobal', {branchFree, dataCompany, token});
 });
 
 router.post('/get_data_cfdi_branch', isLoggedIn, async (req, res) => {

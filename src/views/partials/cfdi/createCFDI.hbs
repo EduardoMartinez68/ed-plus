@@ -722,6 +722,7 @@
 
       if (resp.ok && data?.success) {
         //close_all_the_pop();
+        close_my_pop('viewPreviuCFDI');
         confirmationMessage("✅ ¡Factura creada!", data.message);
 
         const idFactura = data?.response?.Id;
