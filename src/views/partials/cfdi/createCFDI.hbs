@@ -159,7 +159,7 @@
     document.getElementById('rfcReceptor').value = 'XAXX010101000';
     document.getElementById('regimenFiscalReceptor').value = '616';
     document.getElementById('codigoPostalReceptor').value = zipCode;
-    document.getElementById('nombreReceptor').value = 'PUBLICO EN GENERAL';
+    document.getElementById('nombreReceptor').value = 'PÚBLICO EN GENERAL';
     document.getElementById("usoCfdi").value = "S01";
   }
 
@@ -703,7 +703,7 @@
     };
 
     dataToServer.cfdi = cleanTaxes(dataToServer.cfdi)
-    //console.log(JSON.stringify(dataToServer, null, 2));
+    //console.log(JSON.stringify(dataToServer.cfdi, null, 2));
     try {
       const resp = await fetch('https://pluspuntodeventa.com/api/factura/factura.php', {
         method: 'POST',
@@ -838,7 +838,7 @@
       return {
         Rfc: 'XAXX010101000',
         CfdiUse: 'S01',
-        Name: 'PUBLICO EN GENERAL',
+        Name: 'PÚBLICO EN GENERAL',
         FiscalRegime: '616',
         TaxZipCode: TaxZipCodeCFDI, //this is the zip code of the company
       }
