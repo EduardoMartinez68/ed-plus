@@ -2,7 +2,7 @@
 {{>returns/formReturn}}
 <style>
   .icon-green{
-    color: #2ecc71;
+    color:var(--color-company);
   }
 </style>
 <br><br>
@@ -51,7 +51,14 @@
                             <td>${{debit}}</td>
                             <td>${{credit}}</td>
                             <td><strong>${{total}}</strong></td>
-                            <td><button class="btn btn-edit" onclick="open_edit_ticket_table('{{key}}')">Devolver</button></td>
+
+                            {{#if cfdi_create}}
+                              <td>
+                              <button class="btn btn-edit" disabled>Devolver</button>
+                              </td>
+                            {{else}}
+                              <td><button class="btn btn-edit" onclick="open_edit_ticket_table('{{key}}')">Devolver</button></td>
+                            {{/if}}
                         </tr>
                     {{/each}}
                 </tbody>

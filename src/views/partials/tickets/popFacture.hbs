@@ -1959,6 +1959,7 @@ function toggleUUIDField() {
 }
 
 async function enviarCancelacion() {
+  
   //first we will confirm the cancell 
   if (await questionMessage('¿Cancelar factura?', '¿Estás seguro de que deseas anular esta factura? Esta acción no se puede deshacer.')) {
     const motive = document.getElementById('cancelMotive').value;
@@ -1976,7 +1977,7 @@ async function enviarCancelacion() {
       payload,
       dataUser
     };
-    console.log(JSON.stringify(dataForTheServer, null, 2));
+    
     try {
       const res = await fetch('https://pluspuntodeventa.com/api/factura/cancelar_factura.php', {
         method: 'POST',

@@ -171,6 +171,7 @@
                 </div>
             </div>
         </div>
+        <!---
         <div class="btn-div" onclick="open_my_pop('settingFactureTicket')">
             <div class="btn-div-content">
                 <label><i class="fi-icon fi-rr-settings-sliders"></i> Filtra los documentos a facturar</label>
@@ -178,6 +179,7 @@
             </div>
             <i class="fi fi-rr-angle-right"></i>
         </div>
+        --->
         <br><br><br><br><br><br><br>
         <div class="row">
             <div class="col">
@@ -269,20 +271,23 @@
 
 
 <div id="viewPreviuCFDI" class="my-pop">
-  <div class="my-pop-content-wrapper">
-    <div class="my-pop-header">
-      <h4 class="my-pop-title">Vista previa del CFDI</h4>
-      <button class="close-btn" onclick="close_my_pop('viewPreviuCFDI')" type="button">×</button>
+    <div class="my-pop-content-wrapper">
+        <div class="my-pop-header">
+            <h4 class="my-pop-title">Vista previa del CFDI</h4>
+            <button class="close-btn" onclick="close_my_pop('viewPreviuCFDI')" type="button">×</button>
+        </div>
+        <div class="my-pop-content">
+            <div id="cfdi-preview"></div>
+            <br>
+            <button onclick="create_facture_global()" class="btn btn-add">Generar Factura</button>
+            <br>
+        </div>
     </div>
-    <div class="my-pop-content">
-      <div id="cfdi-preview"></div>
-      <br>
-      <button onclick="create_my_facture_cfdi()" class="btn btn-add">Generar Factura</button>
-      <br>
-    </div>
-  </div>
 </div>
 
+
+{{>loading}}
+{{>tickets/popFacture}}
 
 <script>
     function get_credetial_user() {
@@ -456,10 +461,7 @@
 </script>
 <script>
     let pathLogoRFCFacture = 'https://pluspuntodeventa.com/img/logo-white-complete.webp';
-    async function create_my_facture_cfdi(){
-
-    }
-
+    let dataForTheServer = null;
     async function create_data_facture() {
         /*
         {	    
@@ -483,7 +485,7 @@
         }
         */
         const allTheItems = await get_all_the_tickets();
-
+        const Items = allTheItems.products;
         const dataCFDI = {
             CfdiType: 'I',
             PaymentForm: document.getElementById('PaymentForm').value,
@@ -491,49 +493,62 @@
             ExpeditionPlace: document.getElementById('ExpeditionPlace').value,
             Date: create_date_folio(),
             Folio: create_folio(),
+            Issuer: {
+                FiscalRegime: document.getElementById('fiscalRegimeUsuario').value, 
+                Rfc: document.getElementById('RFC').value,
+                Name: document.getElementById('nameCompanyCFDI').value
+            },
             GlobalInformation: get_global_information(),
             Receiver: get_data_receiver(),
-            Items: allTheItems
+            Items: Items
         }
-        const dataUser = get_credetial_user()
-        const dataToTheServer = {
-            dataUser,
-            dataCFDI
-        }
-        renderCfdiPreview(dataToTheServer.dataCFDI)
-        open_my_pop('viewPreviuCFDI')
         
-        console.log(JSON.stringify(dataToTheServer, null, 2));
+        
+        //const dataUser = get_credetial_user()
+
+        dataForTheServer = {
+            token: document.getElementById('token-for-facturama').value,
+            user_email: localStorage.getItem('user_email'),
+            password: localStorage.getItem('user_password'),
+            cfdi: dataCFDI
+        };
+
+        dataForTheServer.cfdi = cleanTaxes(dataForTheServer.cfdi);
+        console.log(JSON.stringify(dataForTheServer, null, 2));
+        renderCfdiPreview(dataCFDI)
+        open_my_pop('viewPreviuCFDI')
+
+        //console.log(JSON.stringify(dataForTheServer, null, 2));
     }
 
     function escapeHtml(s) {
         return String(s ?? '')
-        .replace(/&/g, "&amp;").replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+            .replace(/&/g, "&amp;").replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
     }
-  // Agrega comas de miles sin alterar decimales
-  function formatNumberWithCommas(n) {
-    if (n === null || n === undefined || n === '' || isNaN(n)) return '0';
-    const [intPart, decPart] = String(n).split('.');
-    const intFmt = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    return decPart ? `${intFmt}.${decPart}` : intFmt;
-  }
+    // Agrega comas de miles sin alterar decimales
+    function formatNumberWithCommas(n) {
+        if (n === null || n === undefined || n === '' || isNaN(n)) return '0';
+        const [intPart, decPart] = String(n).split('.');
+        const intFmt = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        return decPart ? `${intFmt}.${decPart}` : intFmt;
+    }
 
-  function formatMoney(n) {
-    return '$' + formatNumberWithCommas(
-      // aseguramos máximo 2 decimales *visuales* sin redondear en exceso
-      (Math.floor(Number(n) * 100) / 100).toFixed(2)
-    );
-  }
+    function formatMoney(n) {
+        return '$' + formatNumberWithCommas(
+            // aseguramos máximo 2 decimales *visuales* sin redondear en exceso
+            (Math.floor(Number(n) * 100) / 100).toFixed(2)
+        );
+    }
 
-  function toIsoLike(dateStr) {
-    // Convierte "YYYY-MM-DD HH:mm:ss" a "YYYY-MM-DDTHH:mm:ss"
-    return String(dateStr).replace(' ', 'T');
-  }
+    function toIsoLike(dateStr) {
+        // Convierte "YYYY-MM-DD HH:mm:ss" a "YYYY-MM-DDTHH:mm:ss"
+        return String(dateStr).replace(' ', 'T');
+    }
 
 
     function create_folio() {
-        return 120
+        return Math.floor(Math.random() * 10000)
     }
 
     function create_date_folio() {
@@ -601,8 +616,10 @@
             GlobalInformation = {}
         } = cfdi || {};
 
+
+
         // Para factura global, los productos están dentro de Items.products
-        const products = Array.isArray(Items.products) ? Items.products : [];
+        const products = Items;// Array.isArray(Items.products) ? Items.products : [];
 
         // Calcular totales (subtotal, total, impuestos) con productos
         let subtotalGlobal = 0;
@@ -612,10 +629,10 @@
             totalGlobal += Number(it.Total || 0);
         });
         // Si totalGlobal viene en GlobalInformation, puedes usarlo en lugar de totalGlobal calculado
-        if (GlobalInformation.totalGlobal) {
-            totalGlobal = Number(GlobalInformation.totalGlobal);
+        if (cfdi.Items.totalGlobal) {
+            totalGlobal = Number(cfdi.Items.totalGlobal);
         }
-        const impuestosGlobales = totalGlobal - subtotalGlobal;
+        const impuestosGlobales = (totalGlobal - subtotalGlobal).toFixed(2);
 
         // Renderizar filas de productos
         const htmlItems = products.map(it => {
@@ -801,4 +818,104 @@
         el.innerHTML = html;
     }
 
+
+    function credentials_exist() {
+        const token = document.getElementById('token-for-facturama')?.value || '';
+        const email = localStorage.getItem('user_email') || '';
+        const password = localStorage.getItem('user_password') || '';
+
+        return token.trim() !== '' && email.trim() !== '' && password.trim() !== '';
+    }
+
+    function cleanTaxes(cfdi) {
+        if (!cfdi.Items) return cfdi;
+
+        cfdi.Items = cfdi.Items.map(item => {
+            if (!item.Taxes) return item;
+
+            const isRetention = false;
+
+            item.Taxes = item.Taxes.map(tax => {
+                const base = Number(item.Subtotal || 0);
+                const rate = Number(tax.rate || 0) / 100; // 0.16 si viene 16
+                const total = parseFloat((base * rate).toFixed(2));
+
+                return {
+                    Total: total,
+                    Name: tax.name,
+                    Base: base,
+                    Rate: rate,
+                    IsRetention: isRetention
+                };
+            });
+
+            return item;
+        });
+
+        return cfdi;
+    }
+
+    async function create_facture_global() {
+        if (!await questionMessage('🤔 ¿Deseas generar esta factura?', 'Una vez creada, solo podrás cancelarla pero no modificarla. ¡Asegúrate de que todo esté correcto!')) {
+            return;
+        }
+
+        if (!credentials_exist()) {
+            errorMessage('⚠️ ERROR', 'No tienes una cuenta PLUS asignada');
+            return;
+        }
+
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        if (loadingOverlay) loadingOverlay.style.display = 'flex';
+
+        //her clear the taxes for not have retentions
+        //dataForTheServer.dataCFDI = cleanTaxes(dataForTheServer.dataCFDI);
+
+        try {
+            const resp = await fetch('https://pluspuntodeventa.com/api/factura/factura-global.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dataForTheServer)
+            });
+
+            const raw = await resp.text();            // SIEMPRE texto primero
+            let data;
+            try {
+                data = JSON.parse(raw);                 // intenta JSON
+            } catch (e) {
+                console.error('Respuesta no es JSON. RAW:', raw);
+                throw new Error('Respuesta no es JSON');
+            }
+
+            if (resp.ok && data?.success) {
+                //close_all_the_pop();
+                close_my_pop('viewPreviuCFDI');
+                confirmationMessage("✅ ¡Factura creada!", data.message);
+
+                const idFactura = data?.response?.Id;
+                //if we can create the facture, now we will change the status of the ticket to 
+                await update_ticket_and_save_the_id_of_the_facture(idFactura); //this is for save the ticket like facture
+
+                //show the data of the facture
+                if (idFactura) mostrarPopupFactura(idFactura);
+                dataForTheServer = null;
+            } else {
+                const msg = data?.message || data?.error || 'Algo salió mal.';
+                warningMessage("❌ Error al generar factura", msg);
+                console.error('Respuesta API:', data);
+            }
+        } catch (err) {
+            console.error('Error de conexión o parseo:', err);
+            errorMessage("❌ Error de conexión", err.message || String(err));
+        } finally {
+            if (loadingOverlay) loadingOverlay.style.display = 'none';
+        }
+    }
+
+
+    async function update_ticket_and_save_the_id_of_the_facture(idFacture) {
+        //get the range of date that the user would like facturar
+        const range_date = get_range_date()
+        const answer = await send_data_to_server('/links/update_all_the_tickets_in_a_range_of_time_for_create_facture', {idFacture, range_date});
+    }
 </script>

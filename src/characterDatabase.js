@@ -222,7 +222,7 @@ async function create_update_of_the_database(adminPool) {
                 total numeric(10,2) DEFAULT 0,
                 note text,
                 cfdi_create boolean NOT NULL DEFAULT false,
-                id_cfdi smallint,
+                id_cfdi text,
                 id_customers bigint,
                 id_employees bigint,
                 id_branches bigint,
@@ -600,7 +600,7 @@ async function create_update_of_the_database_mysqlite(db) {
     await create_table_mysqlite(db,queryPermition)
 
     queryPermition=`
-        ALTER TABLE ticket ADD id_cfdi integer;
+        ALTER TABLE ticket ADD id_cfdi text;
     `
     await create_table_mysqlite(db,queryPermition)
 

@@ -119,13 +119,14 @@ router.post('/change_status_of_ticket', isLoggedIn, async (req, res) => {
     });
 });
 
+
 async function update_cfdi_status_by_idcfdi_branch(id_branch, id_cfdi, cfdi_create) {
-    const queryParams = [cfdi_create, id_branch, id_cfdi];
+    const queryParams = [cfdi_create, null, id_branch, id_cfdi];
 
     if (TYPE_DATABASE === 'mysqlite') {
         const query = `
             UPDATE ticket
-            SET cfdi_create = ?
+            SET cfdi_create = ?, id_cfdi = ?
             WHERE id_branches = ? AND id_cfdi = ?
         `;
         return new Promise((resolve) => {
@@ -141,8 +142,8 @@ async function update_cfdi_status_by_idcfdi_branch(id_branch, id_cfdi, cfdi_crea
     } else {
         const query = `
             UPDATE "Box".ticket
-            SET cfdi_create = $1
-            WHERE id_branches = $2 AND id_cfdi = $3
+            SET cfdi_create = $1, id_cfdi = $2
+            WHERE id_branches = $3 AND id_cfdi = $4
         `;
         try {
             const result = await database.query(query, queryParams);
@@ -154,7 +155,7 @@ async function update_cfdi_status_by_idcfdi_branch(id_branch, id_cfdi, cfdi_crea
     }
 }
 
-async function update_cfdi_status_by_key_branch(id_branch, key, cfdi_create, id_cfdi) {
+async function update_cfdi_status_by_key_branch(id_branch, key, id_cfdi, cfdi_create) {
     const queryParams = [cfdi_create, id_cfdi, id_branch, key];
 
     if (TYPE_DATABASE === 'mysqlite') {
@@ -189,6 +190,71 @@ async function update_cfdi_status_by_key_branch(id_branch, key, cfdi_create, id_
     }
 }
 
+
+router.post('/update_all_the_tickets_in_a_range_of_time_for_create_facture', isLoggedIn, async (req, res) => {
+    const {id_company, id_branch} = req.user;
+
+    //first we will get the iformation from the frontend
+    const {idFacture, range_date}=req.body;
+    await update_all_the_ticket_for_range_of_time(id_branch, idFacture, range_date.date_start,range_date.date_finish)
+    return res.json({
+      success: true,
+      message: 'Estado actualizado correctamente.',
+    });
+});
+
+function formatDateRange(startDate, endDate) {
+    const formatStart = startDate.split(" ")[0] + " 00:00:00";
+    const formatEnd = endDate.split(" ")[0] + " 23:59:59";
+    return [formatStart, formatEnd];
+}
+
+async function update_all_the_ticket_for_range_of_time(id_branch, idFacture, startDate, endDate) {
+    if (!id_branch || !startDate || !endDate) {
+        console.error("Faltan parámetros requeridos");
+        return [];
+    }
+
+    const [startFormatted, endFormatted] = formatDateRange(startDate, endDate);
+
+    if (TYPE_DATABASE === 'mysqlite') {
+        return new Promise((resolve, reject) => {
+            const query = `
+                UPDATE ticket
+                SET cfdi_create = 1,
+                    id_cfdi = ?
+                WHERE id_branches = ?
+                  AND date_sale BETWEEN ? AND ?
+                  AND cfdi_create = 0
+            `;
+            database.run(query, [idFacture, id_branch, startFormatted, endFormatted], function (err) {
+                if (err) {
+                    console.error("❌ Error actualizando tickets (SQLite):", err);
+                    return reject(err);
+                }
+                console.log(`✅ ${this.changes} tickets actualizados en SQLite`);
+                resolve(this.changes); // devuelve cuántos registros se actualizaron
+            });
+        });
+    } else {
+        try {
+            const query = `
+                UPDATE "Box".ticket
+                SET cfdi_create = true,
+                    id_cfdi = $1
+                WHERE id_branches = $2
+                  AND date_sale BETWEEN $3 AND $4
+                  AND cfdi_create = false
+            `;
+            const result = await database.query(query, [idFacture, id_branch, startFormatted, endFormatted]);
+            console.log(`✅ ${result.rowCount} tickets actualizados en PostgreSQL`);
+            return result.rowCount; // devuelve cuántos registros se actualizaron
+        } catch (error) {
+            console.error("❌ Error actualizando tickets (PostgreSQL):", error);
+            return 0;
+        }
+    }
+}
 //---------------------------her we will save the tickets in the software desktop-------------------------------------------
 const {getToken}=require('../../middleware/tokenCheck.js');
 
@@ -266,7 +332,6 @@ router.post('/get_data_cfdi_branch', isLoggedIn, async (req, res) => {
             ExpeditionPlace: branchFree.postal_code,
             Address
         }
-        console.log(data)
         res.json({ success: true, message: 'Datos de busqueda obtenidos' , data});
     }else{
         res.json({ success: false, message: 'Datos de busqueda no encontrados'});
