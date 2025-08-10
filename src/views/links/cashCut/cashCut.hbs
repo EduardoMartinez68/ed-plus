@@ -503,19 +503,36 @@
 <br><br><br>
 
 <script>
+    //---------------------------------BOX-----------------------------------------------------
+    //get the cash in box out change 
+    const total_cash_sales = parseFloat(document.getElementById('total_cash_sales').value) || 0;
 
-    let total_cash_sales = parseFloat(document.getElementById('total_cash_sales').value) || 0;
-
+    //get all the change that the user gave to the customer 
     document.getElementById('total-change').textContent = parseFloat(document.getElementById('total-change').textContent).toFixed(2);
     const totalChange = parseFloat(document.getElementById('total-change').textContent) || 0;
 
+    //now we will get all inside and outside of money 
+    const insideMoneyTotal=parseFloat(document.getElementById('inside-money-total').value);
+    const outSideMoneyTotal=parseFloat(document.getElementById('outside-money-total').value);
 
+    //get all the money that was return to the customer
+    const totalDevolution = parseFloat(document.getElementById('total-devolution').textContent) || 0;
+
+    //update the money that the box have 
+    const totalBox=(total_cash_sales+insideMoneyTotal+totalChange+outSideMoneyTotal+totalDevolution).toFixed(2);
+
+    document.getElementById('total_cash_sales').value=totalBox;
+    document.getElementById('calculate-for-the-system').textContent = 'Calculado por el sistema: $' + totalBox;
+    document.getElementById('cash-difference').textContent = totalBox;
+
+    //---------------------------------BOX-----------------------------------------------------
+    //get the money 
     const total_credit_sales = parseFloat(document.getElementById('total_credit_sales').value) || 0;
     const total_debit_sales = parseFloat(document.getElementById('total_debit_sales').value) || 0;
 
     const totalEntered = parseFloat(document.getElementById('total-entered').textContent) || 0;
     const totalOutput = parseFloat(document.getElementById('total-output').textContent) || 0;
-    const totalDevolution = parseFloat(document.getElementById('total-devolution').textContent) || 0;
+    
 
 
 
@@ -528,18 +545,7 @@
     document.getElementById('total-money-in-box').textContent = `$${total.toFixed(2)}`;
     document.getElementById('total-for-system').textContent = `$${total.toFixed(2)}`;
     document.getElementById('total-money-recibed').textContent = `$${totalSales.toFixed(2)}`;
-
-
-    //now we will update the information of the money for box 
-    const outSideMoneyTotal=parseFloat(document.getElementById('outside-money-total').value);
-    const insideMoneyTotal=parseFloat(document.getElementById('inside-money-total').value);
-    const changeMoneyInBox = Math.round((totalSales + totalChange + outSideMoneyTotal+insideMoneyTotal) * 100) / 100;
-    const formattedChangeMoneyInBox = changeMoneyInBox.toFixed(2);
-    document.getElementById('calculate-for-the-system').textContent = 'Calculado por el sistema: $' + formattedChangeMoneyInBox;
-    total_cash_sales = formattedChangeMoneyInBox;
-
-    document.getElementById('cash-difference').textContent = formattedChangeMoneyInBox;
-    document.getElementById('total_cash_sales').value=total_cash_sales;
+   
 
     function calculate_the_total() {
         document.getElementById('total-for-system').textContent = `$${total.toFixed(2)}`;
@@ -580,7 +586,7 @@
 
 
         //this is for calculate the difference in each input CASH
-        const differenceTotalCash = efectivo - total_cash_sales;
+        const differenceTotalCash = efectivo - totalBox;
         const diferenciaElementoCash = document.getElementById('cash-difference')
         diferenciaElementoCash.textContent = (differenceTotalCash).toFixed(2);
 

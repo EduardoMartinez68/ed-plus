@@ -242,11 +242,14 @@ async function buy_my_car() {
     const credit = parseFloat(document.getElementById('credit').value) || 0;
     const debit = parseFloat(document.getElementById('debit').value) || 0;
     const moneyReceived = (cash + credit + debit).toFixed(2);
-    const total = parseFloat(document.getElementById('total').textContent);
-    const change = moneyReceived - total;
+
+    const total = (parseFloat(document.getElementById('total').textContent)).toFixed(2);
+    const change = (parseFloat(moneyReceived) - parseFloat(total)).toFixed(2);
 
     //we will see if the user can buy all the shooping cart
-    if (change >= 0) {
+    if (parseFloat(change) >= 0) {
+
+
         //we will to get the email of the client 
         const comment = document.getElementById('comment-sales').value;
         const emailClient = document.getElementById('emailClient');
