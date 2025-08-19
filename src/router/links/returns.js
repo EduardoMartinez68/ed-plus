@@ -40,24 +40,24 @@ const {
 const database = require('../../database');
 
 router.get('/:id_company/:id_branch/returns', isLoggedIn, async (req, res) => {
-    const { id_company, id_branch } = req.params;
+  const { id_company, id_branch } = req.params;
 
-    //we will see if the user not have the permission for this App.
-    if (!this_user_have_this_permission(req.user, id_company, id_branch, 'return_ticket')) {
-        req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
-        return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
-    }
+  //we will see if the user not have the permission for this App.
+  if (!this_user_have_this_permission(req.user, id_company, id_branch, 'return_ticket')) {
+      req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
+      return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
+  }
 
-    const tickets=await get_tickets_by_branch(id_branch);
-    const branchFree = await get_data_branch(id_branch);
-    res.render('links/returns/returns', {branchFree, tickets});
+  const tickets=construct_the_news_tickets(await get_tickets_by_branch(id_branch));
+  const branchFree = await get_data_branch(id_branch);
+  res.render('links/returns/returns', {branchFree, tickets});
 });
-
 
 router.post('/get_page/:page/returns', isLoggedIn, async (req, res) => {
     const { id_company, id_branch} = req.user;
     const {page} = req.params;
-    const tickets=await get_tickets_by_branch(id_branch, page);
+    const tickets=construct_the_news_tickets(await get_tickets_by_branch(id_branch, page));
+
     
     return res.json({
       success: true,
@@ -66,6 +66,48 @@ router.post('/get_page/:page/returns', isLoggedIn, async (req, res) => {
     });
 });
 
+function construct_the_news_tickets(ticketsDb){
+  const list=[];
+  ticketsDb.forEach(ticket => {
+
+    // Si quieres recorrer también el array 'original_ticket'
+    let newTotal=0;
+    if (ticket.current_ticket && ticket.current_ticket.length > 0) {
+      // Si tiene elementos, empezamos la suma desde cero
+      newTotal = 0;
+
+      // Recorremos cada producto en el ticket actual
+      ticket.current_ticket.forEach(product => {
+        // Sumamos el total del producto al nuevo total
+        newTotal += product.itemTotal;
+      });
+    }
+
+    const totalReturn = (newTotal -  parseFloat(ticket.total)).toFixed(2);
+    list.push({
+      id: ticket.id,
+      key: ticket.key,
+      original_ticket: ticket.original_ticket,
+      current_ticket: ticket.current_ticket,
+      date_sale: ticket.date_sale,
+      cash: ticket.cash,
+      debit: ticket.debit,
+      credit: ticket.credit,
+      oldTotal: ticket.total,
+      totalReturn: totalReturn,
+      total: newTotal,
+      note: ticket.note,
+      cfdi_create: ticket.cfdi_create,
+      id_cfdi: ticket.id_cfdi,
+      id_customers: ticket.id_customers,
+      id_employees: ticket.id_employees,
+      id_branches: ticket.id_branches,
+      id_companies: ticket.id_companies
+    })
+  });
+
+  return list;
+}
 
 
 async function get_tickets_by_branch(id_branch, page = 0) {
@@ -408,7 +450,8 @@ router.post('/filter-sales-for-token', isLoggedIn, async (req, res) => {
     const id_branch=req.user.id_branch;
     const id_company=req.user.id_company;
     const {token}=req.body;
-    const dataTicket=await search_tickets_by_token(id_branch, token)
+    //const dataTicket=await search_tickets_by_token(id_branch, token)
+    const dataTicket=construct_the_news_tickets(await search_tickets_by_token(id_branch, token));
     return res.json({
       dataTicket
     });

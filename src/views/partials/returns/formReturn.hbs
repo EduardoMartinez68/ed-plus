@@ -346,6 +346,7 @@
             const discountedPrice = unitPrice * (1 - discount / 100);
 
             // Producto que aún se conserva en el ticket
+            //-----------------------------FALTA MEJORAR ESTO PARA QUE SE PASEN LOS INPUESTOS Y LA CLAVE SAT-------------------------------
             if (remainingQuantity > 0) {
                 const newTotal = discountedPrice * remainingQuantity;
 
