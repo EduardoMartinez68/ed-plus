@@ -54,7 +54,7 @@
     containerTicket.style.display = 'none';
 
     let tokenTicketEdit = null;
-    function viewHistoryTicket(){
+    function viewHistoryTicket() {
         //we will see if exist a token of ticket
         if (tokenTicketEdit) {
             window.location.href = `/links/view_history_ticket/${tokenTicketEdit}`;
@@ -193,7 +193,7 @@
 
         //her we will add the information and event of the
         document.getElementById('total-devolucion').textContent = '0.00';
-        mostrarPopup('pop-returns');
+        open_my_pop('pop-returns');
         addListenerQuantity();
     }
 
@@ -209,6 +209,7 @@
 
 
     function addListenerQuantity() {
+        /*
         const inputs = document.querySelectorAll('[id^="input-prod-"]');
         inputs.forEach(input => {
             input.addEventListener('input', () => {
@@ -226,7 +227,7 @@
         });
 
         // Filtro por nombre o código
-        const filtro = document.getElementById('filtro-productos');
+        const filtro = document.getElementById('filter-products');
         filtro.addEventListener('input', () => {
             const valor = filtro.value.toLowerCase();
             document.querySelectorAll('#body-productos tr').forEach(row => {
@@ -234,6 +235,8 @@
                 row.style.display = coincide ? '' : 'none';
             });
         });
+    
+        */
     }
 
     function actualizarTotales() {
@@ -330,13 +333,13 @@
 
         rows.forEach((row, index) => {
             const input = row.querySelector(`#input-prod-${index}`);
-            
+
 
             const quantityToReturn = parseFloat(input.value) || 0;
             const maxQuantity = parseFloat(input.getAttribute('data-max')) || 0;
             const unitPrice = parseFloat(input.getAttribute('data-precio')) || 0;
             const discount = parseFloat(input.getAttribute('discount')) || 0;
-            
+
 
             const remainingQuantity = maxQuantity - quantityToReturn;
 
@@ -376,10 +379,10 @@
 
 
         //her save the information of this history 
-        let totalReturn=parseFloat(document.getElementById('total-devolucion').textContent);
-        totalReturn=totalReturn.toFixed(2);
+        let totalReturn = parseFloat(document.getElementById('total-devolucion').textContent);
+        totalReturn = totalReturn.toFixed(2);
 
-        const note=document.getElementById('note-general').value;
+        const note = document.getElementById('note-general').value;
 
         return {
             newTicket,
@@ -412,9 +415,9 @@
             }
 
             // Devolver los datos
-            tokenTicketEdit=null;
-            document.getElementById('note-general').value='';
-            
+            tokenTicketEdit = null;
+            document.getElementById('note-general').value = '';
+
             return data.ticket;
         } catch (error) {
             console.error('Error al obtener el ticket:', error.message);

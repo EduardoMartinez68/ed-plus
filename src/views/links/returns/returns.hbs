@@ -1,151 +1,274 @@
 {{>loading}}
 {{>returns/formReturn}}
 <style>
-  .icon-green{
-    color:var(--color-company);
+  .icon-green {
+    color: var(--color-company);
   }
 </style>
 <br><br>
 <div class="container">
-    <div class="card">
-        <div class="card-body">
-            <label for=""><i class="fi-icon fi-ss-receipt"></i> Tickets</label>
-            <hr>
-            <div class="row">
-                <div class="col-10">
-                    <input type="text" id="search-ticket-bar" placeholder="Buscar un Ticket" class="form-control">
-                </div>
-                <div class="col-2">
-                    <button onclick="open_pop_returns('pop-returns')" class="btn btn-edit">Devolver un producto</button>
-                </div>
-            </div> 
-
-
-            <div class="row">
-                <table border="1" cellspacing="0" cellpadding="6" style="width: 100%; font-family: monospace; font-size: 13px;">
-                <thead>
-                    <tr style="background-color: #f2f2f2;">
-                        <th></th>
-                        <th>Token</th>
-                        <th>Fecha</th>
-                        <th>Efectivo</th>
-                        <th>Débito</th>
-                        <th>Crédito</th>
-                        <th>Total</th>
-                        <th style="width: 200px;"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{#each tickets}}
-                        <tr>
-                            <!---her we will see if the user create a facture or not-->
-                            {{#if cfdi_create}}
-                              <td><button class="btn btn"><i class="fi-icon icon-green fi-ss-file-invoice-dollar"></i></button></td>
-                            {{else}}
-                              <td><button class="btn btn" onclick="nextWeb('/{{key}}/view_tickets_sale')"><i class="fi-icon fi-ss-file-invoice-dollar"></i></button></td>
-                            {{/if}}
-
-                            <td>{{key}}</td>
-                            <td>{{date_sale}}</td>
-                            <td>${{cash}}</td>
-                            <td>${{debit}}</td>
-                            <td>${{credit}}</td>
-                            <td><strong>${{total}}</strong></td>
-
-                            {{#if cfdi_create}}
-                              <td>
-                              <button class="btn btn-edit" disabled>Devolver</button>
-                              </td>
-                            {{else}}
-                              <td><button class="btn btn-edit" onclick="open_edit_ticket_table('{{key}}')">Devolver</button></td>
-                            {{/if}}
-                        </tr>
-                    {{/each}}
-                </tbody>
-                </table>
-
-            </div>
+  <div class="card">
+    <div class="card-body">
+      <label for=""><i class="fi-icon fi-ss-receipt"></i> Tickets</label>
+      <hr>
+      <div class="row">
+        <div class="col-10">
+          <input type="text" id="search-ticket-bar" placeholder="Buscar un Ticket" class="form-control">
         </div>
-    </div>
+        <div class="col-2">
+          <button onclick="open_pop_returns('pop-returns')" class="btn btn-edit">Devolver un producto</button>
+        </div>
+      </div>
 
+
+      <div class="row" id="tickets-container">
+        <table border="1" cellspacing="0" cellpadding="6" style="width: 100%; font-family: monospace; font-size: 13px;">
+          <thead>
+            <tr style="background-color: #f2f2f2;">
+              <th></th>
+              <th>Token</th>
+              <th>Fecha</th>
+              <th>Efectivo</th>
+              <th>Débito</th>
+              <th>Crédito</th>
+              <th>Total</th>
+              <th style="width: 200px;"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each tickets}}
+            <tr>
+              <!---her we will see if the user create a facture or not-->
+              {{#if cfdi_create}}
+              <td><button class="btn btn"><i class="fi-icon icon-green fi-ss-file-invoice-dollar"></i></button></td>
+              {{else}}
+              <td><button class="btn btn" onclick="nextWeb('/{{key}}/view_tickets_sale')"><i
+                    class="fi-icon fi-ss-file-invoice-dollar"></i></button></td>
+              {{/if}}
+
+              <td>{{key}}</td>
+              <td>{{date_sale}}</td>
+              <td>${{cash}}</td>
+              <td>${{debit}}</td>
+              <td>${{credit}}</td>
+              <td><strong>${{total}}</strong></td>
+
+              {{#if cfdi_create}}
+              <td>
+                <button class="btn btn-edit" disabled>Devolver</button>
+              </td>
+              {{else}}
+              <td><button class="btn btn-edit" onclick="open_edit_ticket_table('{{key}}')">Devolver</button></td>
+              {{/if}}
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+  </div>
+
+
+
+<div class="pagination-controls" style="margin-top: 10px; display: flex; justify-content: space-between;">
+  <button id="btn-prev" class="btn btn-edit" disabled>← Anterior</button>
+  <button id="btn-next" class="btn btn-edit">Siguiente →</button>
+</div>
 </div>
 
-
 <script>
-function debounce(func, delay) {
-  let timeout;
-  return function (...args) {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func.apply(this, args), delay);
-  };
+let currentPage = 0;
+let lastTicketsCount = 0;
+
+function updatePaginationButtons() {
+  const btnPrev = document.getElementById('btn-prev');
+  const btnNext = document.getElementById('btn-next');
+
+  btnPrev.disabled = currentPage <= 0;
+  // Asumimos que si la página tiene menos de 20 tickets no hay siguiente página
+  btnNext.disabled = lastTicketsCount < 20;
 }
 
-// Escuchar el evento de input y aplicar debounce
-document.addEventListener('DOMContentLoaded', () => {
-  const searchInput = document.getElementById('search-ticket-bar');
-  if (searchInput) {
-    searchInput.addEventListener('input', debounce(searchTicketByToken, 500));
-  }
-});
-
-async function searchTicketByToken() {
-  const token = document.getElementById('search-ticket-bar').value.trim();
-  const tableBody = document.querySelector('table tbody');
-
+async function fetchTicketsPage(page = 0) {
   try {
-    const response = await fetch('/links/filter-sales-for-token', {
+    const response = await fetch(`/links/get_page/${page}/returns`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ token })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({})
     });
 
     const result = await response.json();
-
-    if (!Array.isArray(result.dataTicket)) {
-      tableBody.innerHTML = '<tr><td colspan="8">No se encontraron resultados</td></tr>';
+    if (!result.success) {
+      alert('Error al obtener tickets');
       return;
     }
 
-    tableBody.innerHTML = '';
-
-    result.dataTicket.forEach(ticket => {
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td><button class="btn btn" onclick="nextWeb('/${ticket.key}/view_tickets_sale')"><i class="fi-icon fi-ss-file-invoice-dollar"></i></button></td>
-        <td>${ticket.key}</td>
-        <td>${ticket.date_sale}</td>
-        <td>$${ticket.cash}</td>
-        <td>$${ticket.debit}</td>
-        <td>$${ticket.credit}</td>
-        <td><strong>$${ticket.total}</strong></td>
-        <td><button class="btn btn-edit" onclick="open_edit_ticket_table('${ticket.key}')">Devolver</button></td>
-      `;
-      tableBody.appendChild(row);
-    });
-
+    lastTicketsCount = result.tickets.length;
+    renderTickets(result.tickets);
+    currentPage = page;
+    updatePaginationButtons();
   } catch (error) {
-    console.error('Error al buscar ticket:', error);
+    console.error('Error al cargar tickets:', error);
   }
 }
+
+
+
+function renderTickets(tickets) {
+  const tableBody = document.querySelector('#tickets-container tbody');
+  tableBody.innerHTML = ''; // limpiar tabla
+
+  if (!tickets.length) {
+    tableBody.innerHTML = '<tr><td colspan="8">No se encontraron resultados</td></tr>';
+    return;
+  }
+
+  tickets.forEach(ticket => {
+    const row = document.createElement('tr');
+
+    const cfdiButton = ticket.cfdi_create
+      ? `<td><button class="btn btn"><i class="fi-icon icon-green fi-ss-file-invoice-dollar"></i></button></td>`
+      : `<td><button class="btn btn" onclick="nextWeb('/${ticket.key}/view_tickets_sale')"><i class="fi-icon fi-ss-file-invoice-dollar"></i></button></td>`;
+
+    const devolverButton = ticket.cfdi_create
+      ? `<td><button class="btn btn-edit" disabled>Devolver</button></td>`
+      : `<td><button class="btn btn-edit" onclick="open_edit_ticket_table('${ticket.key}')">Devolver</button></td>`;
+
+    row.innerHTML = `
+      ${cfdiButton}
+      <td>${ticket.key}</td>
+      <td>${ticket.date_sale}</td>
+      <td>$${parseFloat(ticket.cash).toFixed(2)}</td>
+      <td>$${parseFloat(ticket.debit).toFixed(2)}</td>
+      <td>$${parseFloat(ticket.credit).toFixed(2)}</td>
+      <td><strong>$${parseFloat(ticket.total).toFixed(2)}</strong></td>
+      ${devolverButton}
+    `;
+
+    tableBody.appendChild(row);
+  });
+}
+
+
+
+
+document.getElementById('btn-prev').addEventListener('click', () => {
+  if (currentPage > 0) fetchTicketsPage(currentPage - 1);
+});
+
+document.getElementById('btn-next').addEventListener('click', () => {
+  if (!document.getElementById('btn-next').disabled) fetchTicketsPage(currentPage + 1);
+});
+
+
+
+</script>
+<script>
+  function debounce(func, delay) {
+    let timeout;
+    return function (...args) {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func.apply(this, args), delay);
+    };
+  }
+
+
+  // Escuchar el evento de input y aplicar debounce
+  document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('search-ticket-bar');
+    if (searchInput) {
+      searchInput.addEventListener('input', debounce(searchTicketByToken, 500));
+    }
+  });
+
+  async function searchTicketByToken() {
+    const token = document.getElementById('search-ticket-bar').value.trim();
+    const tableBody = document.querySelector('table tbody');
+
+    try {
+      const response = await fetch('/links/filter-sales-for-token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ token })
+      });
+
+      const result = await response.json();
+
+      if (!Array.isArray(result.dataTicket)) {
+        tableBody.innerHTML = '<tr><td colspan="8">No se encontraron resultados</td></tr>';
+        return;
+      }
+
+      if (result.dataTicket.lengh==0) {
+        const row = '<tr><td colspan="8">No se encontraron resultados</td></tr>';
+        tableBody.appendChild(row);
+        return;
+      }
+
+      tableBody.innerHTML = '';
+
+      result.dataTicket.forEach(ticket => {
+        const row = document.createElement('tr');
+
+        // Construcción del botón de factura
+        const cfdiButton = ticket.cfdi_create
+          ? `<td><button class="btn btn"><i class="fi-icon icon-green fi-ss-file-invoice-dollar"></i></button></td>`
+          : `<td><button class="btn btn" onclick="nextWeb('/${ticket.key}/view_tickets_sale')"><i class="fi-icon fi-ss-file-invoice-dollar"></i></button></td>`;
+
+        // Construcción del botón de devolución
+        const devolverButton = ticket.cfdi_create
+          ? `<td><button class="btn btn-edit" disabled>Devolver</button></td>`
+          : `<td><button class="btn btn-edit" onclick="open_edit_ticket_table('${ticket.key}')">Devolver</button></td>`;
+
+        // Rellenar la fila completa
+        row.innerHTML = `
+          ${cfdiButton}
+          <td>${ticket.key}</td>
+          <td>${ticket.date_sale}</td>
+          <td>$${parseFloat(ticket.cash).toFixed(2)}</td>
+          <td>$${parseFloat(ticket.debit).toFixed(2)}</td>
+          <td>$${parseFloat(ticket.credit).toFixed(2)}</td>
+          <td><strong>$${parseFloat(ticket.total).toFixed(2)}</strong></td>
+          ${devolverButton}
+        `;
+
+        tableBody.appendChild(row);
+      });
+
+    } catch (error) {
+      console.error('Error al buscar ticket:', error);
+    }
+    
+  }
+
+
 </script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', () => {
     // Aquí defines o asignas la función para que esté lista después del DOM
     async function open_pop_returns(id) {
-        show_message_pop(id);
-        document.getElementById('search-ticket').focus();
+      show_message_pop(id);
+      document.getElementById('search-ticket').focus();
     }
 
     // Opcional: asignar a window si quieres que sea global
     window.open_pop_returns = open_pop_returns;
-    });
 
-    async function open_edit_ticket_table(tokenTicket){
-        document.getElementById('search-ticket').value=tokenTicket;
-        open_pop_returns('pop-returns')
-        await search_ticket();
-    }
+
+
+
+
+
+  });
+
+  async function open_edit_ticket_table(tokenTicket) {
+    document.getElementById('search-ticket').value = tokenTicket;
+    open_pop_returns('pop-returns')
+    await search_ticket();
+  }
+
 </script>

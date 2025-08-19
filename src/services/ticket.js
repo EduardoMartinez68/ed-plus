@@ -273,7 +273,7 @@ async function get_ticket_by_key_and_branch(id_branch, ticketKey) {
 
 async function get_tickets_for_facture_individual_by_key_and_id_branch(id_branch, key) {
     const tickets = [await get_ticket_by_key_and_branch(id_branch, key)];
-
+    
     let totalGlobal = 0;
     const products = [];
 
@@ -371,6 +371,7 @@ async function get_tickets_for_facture_individual_by_key_and_id_branch(id_branch
     }
 
     totalGlobal=parseFloat(totalGlobal.toFixed(2))
+
     return {
         products,
         totalGlobal

@@ -49,10 +49,78 @@ router.get('/:id_company/:id_branch/returns', isLoggedIn, async (req, res) => {
     }
 
     const tickets=await get_tickets_by_branch(id_branch);
-    console.log(tickets)
     const branchFree = await get_data_branch(id_branch);
     res.render('links/returns/returns', {branchFree, tickets});
 });
+
+
+router.post('/get_page/:page/returns', isLoggedIn, async (req, res) => {
+    const { id_company, id_branch} = req.user;
+    const {page} = req.params;
+    const tickets=await get_tickets_by_branch(id_branch, page);
+    
+    return res.json({
+      success: true,
+      message: 'Ticket obtenido correctamente.',
+      tickets: tickets
+    });
+});
+
+
+
+async function get_tickets_by_branch(id_branch, page = 0) {
+  const limit = 20;
+  const offset = page * limit;
+
+  if (TYPE_DATABASE === 'mysqlite') {
+    return new Promise((resolve) => {
+      const queryText = `
+        SELECT id, key, original_ticket, current_ticket, date_sale, cash, debit, credit, total, note, cfdi_create, id_cfdi,
+               id_customers, id_employees, id_branches, id_companies
+        FROM ticket
+        WHERE id_branches = ?
+        ORDER BY date_sale DESC
+        LIMIT ? OFFSET ?
+      `;
+      database.all(queryText, [id_branch, limit, offset], (err, rows) => {
+        if (err) {
+          console.error('Error get_tickets_by_branch (SQLite):', err);
+          return resolve([]);
+        }
+
+        const tickets = rows.map(row => ({
+          ...row,
+          original_ticket: JSON.parse(row.original_ticket),
+          current_ticket: JSON.parse(row.current_ticket),
+        }));
+
+        resolve(tickets);
+      });
+    });
+  } else {
+    const queryText = `
+      SELECT id, key, original_ticket, current_ticket, date_sale, cash, debit, credit, total, note, cfdi_create, id_cfdi,
+             id_customers, id_employees, id_branches, id_companies
+      FROM "Box".ticket
+      WHERE id_branches = $1
+      ORDER BY date_sale DESC
+      LIMIT $2 OFFSET $3
+    `;
+    try {
+      const result = await database.query(queryText, [id_branch, limit, offset]);
+
+      return result.rows.map(row => ({
+        ...row,
+        original_ticket: JSON.parse(row.original_ticket),
+        current_ticket: JSON.parse(row.current_ticket),
+      }));
+    } catch (error) {
+      console.error('Error get_tickets_by_branch (PostgreSQL):', error);
+      return [];
+    }
+  }
+}
+
 
 async function get_ticket_by_branch_and_key(id_branch, ticketKey) {
   if (!id_branch || !ticketKey) return null;
@@ -201,7 +269,7 @@ async function search_tickets_by_token(id_branch, ticketKey = '') {
   }
 }
 
-async function get_tickets_by_branch(id_branch) {
+async function get_tickets_by_branch22(id_branch) {
   if (TYPE_DATABASE === 'mysqlite') {
     return new Promise((resolve) => {
       const queryText = `
@@ -581,6 +649,80 @@ async function save_ticket_return_history(id_employee, id_ticket, old_ticket, pr
   }
 }
 
+
+
+
+
+async function search_tickets_by_key(key, id_branch) {
+  const likeKey = `%${key}%`; // Patrón para búsqueda parcial
+
+  if (TYPE_DATABASE === 'mysqlite') {
+    return new Promise((resolve) => {
+      const queryText = `
+        SELECT id, key, original_ticket, current_ticket, date_sale, cash, debit, credit, total, note, cfdi_create, id_cfdi,
+               id_customers, id_employees, id_branches, id_companies
+        FROM ticket
+        WHERE id_branches = ?
+          AND key LIKE ?
+        ORDER BY date_sale DESC
+        LIMIT 20
+      `;
+      database.all(queryText, [id_branch, likeKey], (err, rows) => {
+        if (err) {
+          console.error('Error search_tickets_by_key (SQLite):', err);
+          return resolve([]);
+        }
+
+        const tickets = rows.map(row => ({
+          ...row,
+          original_ticket: JSON.parse(row.original_ticket),
+          current_ticket: JSON.parse(row.current_ticket),
+        }));
+
+        resolve(tickets);
+      });
+    });
+  } else {
+    const queryText = `
+      SELECT id, key, original_ticket, current_ticket, date_sale, cash, debit, credit, total, note, cfdi_create, id_cfdi,
+             id_customers, id_employees, id_branches, id_companies
+      FROM "Box".ticket
+      WHERE id_branches = $1
+        AND key ILIKE $2
+      ORDER BY date_sale DESC
+      LIMIT 20
+    `;
+    try {
+      const result = await database.query(queryText, [id_branch, likeKey]);
+
+      return result.rows.map(row => ({
+        ...row,
+        original_ticket: JSON.parse(row.original_ticket),
+        current_ticket: JSON.parse(row.current_ticket),
+      }));
+    } catch (error) {
+      console.error('Error search_tickets_by_key (PostgreSQL):', error);
+      return [];
+    }
+  }
+}
+
+router.post('/tickets/get_data_ticket', isLoggedIn, async (req, res) => {
+    const { id_company, id_branch } = req.user;
+    const {query}=req.body;
+    let tickets;
+    if(query==''){
+      tickets=await get_tickets_by_branch(id_branch);
+    }else{
+      tickets=await search_tickets_by_key(query, id_branch);
+    }
+
+    return res.json({
+      success: true,
+      message: 'Ticket obtenigo correctamente.',
+      tickets:tickets
+    });
+});
 
 //**history ticket**/
 router.get('/view_history_ticket/:token_ticket', isLoggedIn, async (req, res) => {
