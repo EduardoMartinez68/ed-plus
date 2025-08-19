@@ -35,7 +35,7 @@
               <th style="width: 200px;"></th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="dataBodyAllTickets">
             {{#each tickets}}
             <tr>
               <!---her we will see if the user create a facture or not-->
@@ -91,6 +91,7 @@ function updatePaginationButtons() {
 }
 
 async function fetchTicketsPage(page = 0) {
+  document.getElementById('search-ticket-bar').value='';
   try {
     const response = await fetch(`/links/get_page/${page}/returns`, {
       method: 'POST',
@@ -184,7 +185,7 @@ document.getElementById('btn-next').addEventListener('click', () => {
 
   async function searchTicketByToken() {
     const token = document.getElementById('search-ticket-bar').value.trim();
-    const tableBody = document.querySelector('table tbody');
+    const tableBody = document.getElementById('dataBodyAllTickets');
 
     try {
       const response = await fetch('/links/filter-sales-for-token', {
@@ -196,7 +197,6 @@ document.getElementById('btn-next').addEventListener('click', () => {
       });
 
       const result = await response.json();
-
       if (!Array.isArray(result.dataTicket)) {
         tableBody.innerHTML = '<tr><td colspan="8">No se encontraron resultados</td></tr>';
         return;
@@ -237,7 +237,6 @@ document.getElementById('btn-next').addEventListener('click', () => {
 
         tableBody.appendChild(row);
       });
-
     } catch (error) {
       console.error('Error al buscar ticket:', error);
     }
