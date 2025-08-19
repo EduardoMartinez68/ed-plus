@@ -90,7 +90,7 @@ function construct_the_news_tickets(ticketsDb){
       key: ticket.key,
       original_ticket: ticket.original_ticket,
       current_ticket: ticket.current_ticket,
-      date_sale: ticket.date_sale,
+      date_sale: formate_date_ticket(ticket.date_sale),
       cash: ticket.cash,
       debit: ticket.debit,
       credit: ticket.credit,
@@ -109,6 +109,22 @@ function construct_the_news_tickets(ticketsDb){
   });
 
   return list;
+}
+
+function formate_date_ticket(fechaOriginal) {
+  const fecha = new Date(fechaOriginal);
+
+  const opciones = {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  };
+
+  return fecha.toLocaleString('es-MX', opciones);
 }
 
 
