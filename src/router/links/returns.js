@@ -84,6 +84,7 @@ function construct_the_news_tickets(ticketsDb){
     }
 
     const totalReturn = (newTotal -  parseFloat(ticket.total)).toFixed(2);
+    const change=((ticket.cash+ticket.debit+ticket.credit)-ticket.total).toFixed(2);;
     list.push({
       id: ticket.id,
       key: ticket.key,
@@ -93,6 +94,7 @@ function construct_the_news_tickets(ticketsDb){
       cash: ticket.cash,
       debit: ticket.debit,
       credit: ticket.credit,
+      change:change,
       oldTotal: ticket.total,
       totalReturn: totalReturn,
       total: newTotal,
