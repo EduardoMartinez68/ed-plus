@@ -2323,6 +2323,90 @@ router.post('/links/:id_company/:id_branch/upload-products', async (req, res) =>
     res.redirect(`/links/${id_company}/${id_branch}/upload-products`);
 });
 
+
+router.post('/links/:id_company/:id_branch/upload-inventory-products-with-excel', async (req, res) => {
+    const { id_company, id_branch } = req.params;
+
+    //get the file excle and save the file in the folder upload
+    const filePath = req.file.path;
+    const products = read_file_product(filePath);
+
+    //this is for delete the file when read all the container
+    fs.unlink(filePath, (err) => {
+        if (err) {
+            console.error('Error al eliminar el archivo:', err);
+        } else {
+            console.log('Archivo eliminado correctamente');
+        }
+    });
+
+
+    //we will see if exist all the column need for create the new product
+    const requiredColumns = [
+        "Barcode", "Producto", "Description", 'Precio', 'Cantidad', 'UsaInventario', 'EsUnInsumo',
+        'MontoDeCompra', 'UnidadDeCompra', 'PrecioDeCompra', 'MontoDeVenta', 'UnidadDeVenta', 'InventarioMáximo', 'InventarioMínimo', 'UnidadDeMedida'
+    ];
+    const fileColumns = Object.keys(products[0]); // get the key of the first object 
+
+    const isValid = requiredColumns.every(column => fileColumns.includes(column));
+
+    //we will see if the file excel is success
+    if (!isValid) {
+        fs.unlink(filePath, (err) => {
+            if (err) console.error('Error al eliminar el archivo:', err);
+        });
+
+        req.flash('message', 'El archivo Excel no tiene el formato correcto. Asegúrate de incluir las columnas: ' + requiredColumns.join(', '));
+        return res.redirect(`/links/${id_company}/${id_branch}/upload-inventory-products-with-excel`);
+    }
+
+    let canAdd = true;
+    let productsThatNoWasAdd = '';
+
+    //we will read all the products that is in the file
+    for (const product of products) {
+        //get all the data of the product
+        const barcode = product.Barcode;
+        const name = product.Producto;
+        const description = product.Description;
+        const use_inventory = product.UsaInventario;
+        const this_is_a_supplies = product.EsUnInsumo;
+        const newProducts = create_new_product_with_excel(id_company, barcode, name, description, use_inventory, this_is_a_supplies);
+        const infoSupplies = await addDatabase.add_supplies_company(newProducts);
+        const idSupplies = infoSupplies.id;
+
+        //we will see if the product can be save in the database
+        if (idSupplies) {
+            //get the data of the combo in the file excel 
+            const purchase_amount = product.MontoDeCompra;
+            const purchase_unity = product.UnidadDeCompra;
+            const purchase_price = product.PrecioDeCompra;
+
+            const sale_amount = product.MontoDeVenta;
+            const sale_unity = product.UnidadDeVenta;
+            const sale_price = product.Precio;
+
+            const max_inventory = product.InventarioMáximo;
+            const minimum_inventory = product.InventarioMínimo;
+            const unit_inventory = product.UnidadDeMedida;
+            const existence = product.Cantidad;
+        } else {
+            productsThatNoWasAdd += name + ',';
+            canAdd = false;
+        }
+
+    };
+
+    //we will see if can save all the products 
+    if (canAdd) {
+        req.flash('success', 'Productos actualizados con éxito 😉');
+    } else {
+        req.flash('message', `Ocurrio un error al momento de actualizar los siguientes productos:  ${productsThatNoWasAdd}. Tal vez su barcode y nombres no existen en la base de datos 😬.`);
+    }
+
+    res.redirect(`/links/${id_company}/${id_branch}/upload-inventory-products-with-excel`);
+});
+
 function read_file_product(path) {
     const libro = XLSX.readFile(path);
     const hoja = libro.Sheets[libro.SheetNames[0]];
@@ -4781,7 +4865,7 @@ function create_move(req) {
     const data = req.body;
     const cash = data[0]
     const comment = data[1]
-    const moveDtae = new Date();
+    const moveDtae = new Date().toISOString();
 
     const move = {
         id_branch,

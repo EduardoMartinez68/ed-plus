@@ -714,7 +714,6 @@ async function create_table_lot() {
     }
 }
 
-
 async function get_lots_by_dish_and_combo_features(idDishAndComboFeatures) {
     try {
         if (TYPE_DATABASE === 'mysqlite') {
@@ -1053,7 +1052,6 @@ async function get_all_the_promotions(id_dish_and_combo_features) {
         return [];
     }
 }
-
 
 router.post('/:id_dish_and_combo_features/add-promotion-free', isLoggedIn, async (req, res) => {
     const { newPromotion } = req.body;

@@ -6,6 +6,10 @@
     <br>
     <label for=""><i class="fi-icon fi-sr-inventory-alt"></i> Ajuste de inventario de forma masiva</label>
     <hr>
+    {{#each branchFree}}
+      <button class="btn btn-edit" onclick="nextWeb('{{id_companies}}/{{id}}/upload-inventory-products-with-excel')"><i
+              class="fi-icon fi-br-upload"></i> Ajustar con archivo de Excel</button>
+    {{/each}}
     {{>free/inventory/table}}
     {{>free/inventory/popSearch}}
     {{>free/inventory/popEditQuantity}}

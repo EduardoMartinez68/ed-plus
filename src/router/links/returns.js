@@ -497,7 +497,7 @@ router.post('/update_ticket', isLoggedIn, async (req, res) => {
           await save_ticket_return_history(id_employee, idTicket, dataTicketOld.current_ticket, dataTicket.returnedProducts, dataTicket.totalReturn, dataTicket.note);
 
           //now we will create a new move in the history for that the move show in the cut box
-          const date_move = new Date();
+          const date_move = new Date().toISOString();
           const move = `Se realizó una devolución del ticket con folio "${tokenTicket}", con un total devuelto de $${dataTicket.totalReturn}. NOTA: ${dataTicket.note}`;
           const newHistoryMove = create_new_history_move(id_branch, id_employee, -dataTicket.totalReturn, move, date_move);
           await add_movement_history(newHistoryMove);

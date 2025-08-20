@@ -38,9 +38,9 @@ router.get('/:id_company/:id_branch/cashCut', isLoggedIn, async (req, res) => {
     const salesForMoney=[await get_all_the_buy(idEmployee,dateStartString,dateFinishString)];
 
 
-    const moveUser=await get_total_movements_by_employee(idEmployee,dateStart,dateFinish);
-    const movePositive=await get_all_the_movements_positive(idEmployee,dateStart,dateFinish);
-    const moveNegative=await get_all_the_movements_negative(idEmployee,dateStart,dateFinish);
+    const moveUser=await get_total_movements_by_employee(idEmployee,dateStart.toISOString(),dateFinish.toISOString());
+    const movePositive=await get_all_the_movements_positive(idEmployee,dateStart.toISOString(),dateFinish.toISOString());
+    const moveNegative=await get_all_the_movements_negative(idEmployee,dateStart.toISOString(),dateFinish.toISOString());
 
     const numberOfSales=await get_the_number_of_sales(idEmployee,dateStart);
     const numberInputOutput=await get_the_number_input_and_output(idEmployee,dateStart,dateFinish);
@@ -49,6 +49,7 @@ router.get('/:id_company/:id_branch/cashCut', isLoggedIn, async (req, res) => {
 
     const datesCut=[{dateStart:formatDate(dateStart),dateFinish:formatDate(dateFinish)}];
     const dataEmployee=[{first_name:req.user.first_name,second_name:req.user.second_name,last_name:req.user.last_name}];
+
     res.render('links/cashCut/cashCut.hbs',{branchFree, salesForMoney,moveUser,movePositive,moveNegative,numberOfSales,numberInputOutput,employees,datesCut,dataEmployee});
 })
 
@@ -563,6 +564,7 @@ router.post('/:id_company/:id_branch/cash-cut-date', isLoggedIn, async (req, res
     const moveUser=await get_total_movements_by_employee(idEmployee,dateStart,dateFinish);
     const movePositive=await get_all_the_movements_positive(idEmployee,dateStart,dateFinish);
     const moveNegative=await get_all_the_movements_negative(idEmployee,dateStart,dateFinish);
+
 
 
     const numberOfSales=await get_the_number_of_sales(idEmployee,dateStart);

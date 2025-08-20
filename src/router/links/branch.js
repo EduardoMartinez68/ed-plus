@@ -1206,7 +1206,9 @@ router.get('/:id_company/:id_branch/:number_page/movements', isLoggedIn, async (
     const oldNumberPage=pageNumber -1;
 
     const dataMovent=[{id_company,id_branch,oldNumberPage,newNumberPage,pageNumber}]
-    const movements = await get_movement_history_with_id_branch(id_branch,movementsStart,movementsEnd);
+    const movementsDb = await get_movement_history_with_id_branch(id_branch,movementsStart,movementsEnd);
+    console.log(movementsDb)
+    const movements=transform_date_move(movementsDb)
     if(req.user.rol_user==rolFree){
         const branchFree = await get_data_branch(req);
         res.render('links/manager/movements/movements', { branchFree, movements , dataMovent});
@@ -1216,6 +1218,28 @@ router.get('/:id_company/:id_branch/:number_page/movements', isLoggedIn, async (
     }
     
 })
+
+function transform_date_to_mx(fechaISO) {
+  const opciones = {
+    timeZone: 'America/Mexico_City',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  };
+
+  const fecha = new Date(fechaISO);
+  return fecha.toLocaleString('es-MX', opciones);
+}
+
+function transform_date_move(array) {
+  return array.map(item => ({
+    ...item,
+    date_move: transform_date_to_mx(item.date_move)
+  }));
+}
 
 async function get_movement_history_with_id_branch(idBranch, start, end) {
     try {

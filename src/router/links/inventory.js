@@ -137,4 +137,19 @@ async function update_product_existence(id_product, newExistence) {
     }
 }
 
+
+router.get('/:id_company/:id_branch/upload-inventory-products-with-excel', isLoggedIn, async (req, res) => {
+    const {id_company,id_branch}=req.params;
+
+    //we will see if the user have the permission for this App.
+    if(!this_user_have_this_permission(req.user,id_company, id_branch,'edit_inventory')){
+        req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
+        return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
+    }
+    const branchFree = await get_data_branch(id_branch);
+    res.render('links/free/inventory/inventoryWithExcel.hbs',{branchFree});
+})
+
+
+
 module.exports = router;
