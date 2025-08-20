@@ -387,6 +387,53 @@ router.get('/:id_company/:id_branch/:id_combo_features/edit-products-free', isLo
     }
 })
 
+router.get('/:step/:id_combo_features/next-edit-products-free', isLoggedIn, async (req, res) => {
+    const { id_combo_features, step} = req.params; //get the index 
+    const { id_company, id_branch } = req.user;
+    const newIdComboFacture=await get_next_or_previous_combo_facture(id_branch, id_combo_features, step)
+    res.redirect(`/links/${id_company}/${id_branch}/${newIdComboFacture}/edit-products-free`)
+})
+
+async function get_next_or_previous_combo_facture(id_branch, id_combo_facture, step) {
+  if (TYPE_DATABASE === 'mysqlite') {
+    return new Promise((resolve, reject) => {
+      let query = `
+        SELECT id 
+        FROM dish_and_combo_features 
+        WHERE id_branches = ? 
+          AND id ${step > 0 ? '>' : '<'} ? 
+        ORDER BY id ${step > 0 ? 'ASC' : 'DESC'} 
+        LIMIT 1
+      `;
+      database.get(query, [id_branch, id_combo_facture], (err, row) => {
+        if (err) {
+          console.error("❌ Error en get_next_or_previous_combo_facture (SQLite):", err);
+          return resolve(null);
+        }
+        resolve(row ? row.id : null);
+      });
+    });
+
+  } else {
+    try {
+      const query = `
+        SELECT id 
+        FROM "Inventory".dish_and_combo_features 
+        WHERE id_branches = $1 
+          AND id ${step > 0 ? '>' : '<'} $2 
+        ORDER BY id ${step > 0 ? 'ASC' : 'DESC'} 
+        LIMIT 1
+      `;
+      const result = await database.query(query, [id_branch, id_combo_facture]);
+      return result.rows.length ? result.rows[0].id : null;
+    } catch (err) {
+      console.error("❌ Error en get_next_or_previous_combo_facture (PostgreSQL):", err);
+      return null;
+    }
+  }
+}
+
+
 async function get_all_taxes_by_branch(idBranch) {
   if (TYPE_DATABASE === 'mysqlite') {
     return new Promise((resolve, reject) => {

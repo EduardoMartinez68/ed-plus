@@ -473,7 +473,7 @@
                                         {{#each moveUser}}
                                         <tr>
                                             <td><b>TOTAL: </b></td>
-                                            <td class="text-danger">${{exits}}</td>
+                                            <td class="text-danger" id="outsideMoneyTotal">${{exits}}</td>
                                             <input type="hidden" id="outside-money-total" value="{{exits}}">
                                         </tr>
                                         {{/each}}
@@ -545,7 +545,11 @@
     document.getElementById('total-money-in-box').textContent = `$${total.toFixed(2)}`;
     document.getElementById('total-for-system').textContent = `$${total.toFixed(2)}`;
     document.getElementById('total-money-recibed').textContent = `$${totalSales.toFixed(2)}`;
-   
+    
+
+    const textTotalOutside=outSideMoneyTotal.toFixed(2);
+    document.getElementById('outsideMoneyTotal').textContent = `$${textTotalOutside}`;
+    document.getElementById('total-output').textContent = `$${textTotalOutside}`;
 
     function calculate_the_total() {
         document.getElementById('total-for-system').textContent = `$${total.toFixed(2)}`;

@@ -1,175 +1,228 @@
 <link rel="stylesheet" href="/css/manager/combo/combo.css">
 <br>
+
+<style>
+.arrow-change {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  background-color: transparent;
+  border: 1px solid #999;
+  border-radius: 4px;
+  padding: 4px 10px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.arrow-change:hover {
+  background-color: #f0f0f0;
+  color: #000;
+  border-color: #777;
+}
+
+.arrow-change-left {
+  left: -40px;
+}
+
+.arrow-change-right {
+  right: -40px;
+}
+</style>
 <div class="container">
-    <div class="row">
-        <div class="card">
-            <div class="card-body">
-                {{#each comboFeactures}}
-                <form action="/fud/{{id_companies}}/{{id_branches}}/{{id}}/update-product-branch" method="POST" id="myForm" enctype="multipart/form-data">
-                {{/each}}
+        
+        <div class="row">
+            <div class="card"  style="position: relative;">
+                <button class="arrow-change arrow-change-left" onclick="change_product_index(-1)">&larr;</button>
+                <button class="arrow-change arrow-change-right" onclick="change_product_index(1)">&rarr;</button>
+                <div class="card-body">
+                    {{#each comboFeactures}}
+                    <form action="/fud/{{id_companies}}/{{id_branches}}/{{id}}/update-product-branch" method="POST"
+                        id="myForm" enctype="multipart/form-data">
+                        {{/each}}
 
-                <!---this is for get tha data of the combo and supplies--->
-                {{#each comboFeactures}}
-                    <input type="hidden" value="{{id}}" name="id_comboFeactures" id="id_comboFeactures">
-                    <input type="hidden" value="{{id_dishes_and_combos}}" name="id_dishes_and_combos">
-                {{/each}}
-                {{#each productFacture}}
-                    <input type="hidden" value="{{id}}" name="id_productFacture" id="id_productFacture">
-                {{/each}}
+                        <!---this is for get tha data of the combo and supplies--->
+                        {{#each comboFeactures}}
+                        <input type="hidden" value="{{id}}" name="id_comboFeactures" id="id_comboFeactures">
+                        <input type="hidden" value="{{id_dishes_and_combos}}" name="id_dishes_and_combos">
+                        {{/each}}
+                        {{#each productFacture}}
+                        <input type="hidden" value="{{id}}" name="id_productFacture" id="id_productFacture">
+                        {{/each}}
 
-                {{#each comboFeactures}}
-                    <label for=""><i class="fi-icon fi-ss-box"></i> Información adicional del producto</label>
-                    <hr>
-                    
-                    <div class="row">
-                        <div class="col-4">
-                            {{#if dish_img}}
+                        {{#each comboFeactures}}
+                        <label for=""><i class="fi-icon fi-ss-box"></i> Información adicional del producto</label>
+                        <hr>
+
+                        <div class="row">
+                            <div class="col-4">
+                                {{#if dish_img}}
                                 <img src="{{dish_img}}" alt="" class="icon-combo" id="imgEmployee">
-                            {{else}}
+                                {{else}}
                                 <img src="/img/icons_first/product.webp" alt="" class="icon-combo" id="imgEmployee">
-                            {{/if}}
-                            <div class="form-group">
-                                <center>
-                                    <label for="inputImg" class="custom-file-upload">
-                                        <input type="file" name="image" accept="image/*" id="inputImg" style="display: none;">
-                                        <i class="fas fa-upload"></i> Subir imagen
-                                    </label>
-                                </center>
+                                {{/if}}
+                                <div class="form-group">
+                                    <center>
+                                        <label for="inputImg" class="custom-file-upload">
+                                            <input type="file" name="image" accept="image/*" id="inputImg"
+                                                style="display: none;">
+                                            <i class="fas fa-upload"></i> Subir imagen
+                                        </label>
+                                    </center>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="row mt-3">
+                                    <h4>Nombre: </h4>
+                                    <input type="text" value="{{dish_name}}" name="name" class="form-control">
+                                </div>
+                                <div class="row mt-3">
+                                    <h5>Código de barras:</h5>
+                                    <input type="text" value="{{dish_barcode}}" name="barcode" class="form-control">
+                                </div>
+                                <div class="row mt-3">
+                                    <label for="">Description:</label>
+                                    <textarea for="" name="description"
+                                        class="form-control">{{dish_description}}</textarea>
+                                </div>
+                                {{/each}}
+
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="">Categoria</label>
+                                        {{#each comboFeactures}}
+                                        <select class="form-control" name="category" value="{{dish_product_category}}">
+                                            {{/each}}
+                                            {{#each category}}
+                                            <option value="{{id}}">{{name}}</option>
+                                            {{/each}}
+                                        </select>
+                                    </div>
+                                    <div class="col">
+                                        <label for="">Departamento</label>
+                                        {{#each comboFeactures}}
+                                        <select class="form-control" name="department"
+                                            value="{{dish_product_department}}">
+                                            {{/each}}
+                                            {{#each departments}}
+                                            <option value="{{id}}">{{name}}</option>
+                                            {{/each}}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                {{#each comboFeactures}}
+                                <div class="form-group">
+                                    <div class="form-check" name="">
+                                        {{#if this_product_need_recipe}}
+                                        <input class="form-check-input" type="checkbox" id="this_product_need_recipe"
+                                            name="this_product_need_recipe" checked>
+                                        {{else}}
+                                        <input class="form-check-input" type="checkbox" id="this_product_need_recipe"
+                                            name="this_product_need_recipe">
+                                        {{/if}}
+                                        <label class="form-check-label" for="invalidCheck2">
+                                            Este producto Necesita Receta
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="form-check" name="">
+                                        {{#if this_product_is_sold_in_bulk}}
+                                        <input class="form-check-input" type="checkbox"
+                                            id="this_product_is_sold_in_bulk" name="thisProductIsSoldInBulk" checked>
+                                        {{else}}
+                                        <input class="form-check-input" type="checkbox"
+                                            id="this_product_is_sold_in_bulk" name="thisProductIsSoldInBulk">
+                                        {{/if}}
+                                        <label class="form-check-label" for="invalidCheck2">
+                                            Este producto se vende a granel
+                                        </label>
+                                    </div>
+                                </div>
+                                <br><br>
+                                <button class="btn btn-danger" id="{{id}}"
+                                    onclick="delete_product('{{id_dishes_and_combos}}','{{id_companies}}','{{id_branches}}')"
+                                    type="button">🗑️ Eliminar Producto</button>
                             </div>
                         </div>
-                        <div class="col">
-                            <div class="row mt-3">
-                                <h4>Nombre: </h4>
-                                <input type="text" value="{{dish_name}}" name="name" class="form-control">
+                        <br><br>
+                        <!---this is the start favorites--->
+                        <div class="container-start">
+                            <div class="star-checkbox">
+                                <input class="form-check-input" type="checkbox" {{#if favorites}}checked{{/if}}
+                                    id="invalidCheck" onclick="read_check_box()" name="favorites">
+                                <label for="invalidCheck"></label>
                             </div>
-                            <div class="row mt-3">
-                                <h5>Código de barras:</h5>
-                                <input type="text" value="{{dish_barcode}}" name="barcode" class="form-control">
-                            </div>
-                            <div class="row mt-3">
-                                <label for="">Description:</label>
-                                <textarea for="" name="description" class="form-control">{{dish_description}}</textarea>
+                        </div>
+                        <label for=""><i class="fi fi-sr-ballot-check"></i> Información de facturación</label>
+                        <hr>
+
+                        <!---dashboard--->
+                        <div class="btn-group">
+                            <button class="btn-select btn-active" onclick="showSection('select-1', this)"
+                                type="button"><i class="fi-icon fi-sr-usd-circle"></i> Precios de venta</button>
+                            <button class="btn-select" onclick="showSection('select-2', this)" type="button"><i
+                                    class="fi-icon fi-sr-file-invoice-dollar"></i> Inventario</button>
+                            <button class="btn-select" onclick="showSection('select-3', this)" type="button"><i
+                                    class="fi-icon fi-sr-box-alt"></i> Lista de Producto</button>
+                            <button class="btn-select" onclick="showSection('select-4', this)" type="button"><i
+                                    class="fi fi-sr-truck-loading"></i> Lotes y Series</button>
+                            <button class="btn-select" onclick="showSection('select-6', this)" type="button"><i
+                                    class="fi fi-sr-badge-percent"></i> Promociones</button>
+
+
+                            <button class="btn-select" onclick="showSection('select-5', this)" type="button"><i
+                                    class="fi-icon fi-ss-settings"></i> Otro</button>
+                        </div>
+
+
+                        <!---container navbar--->
+                        <div class="tab-content" id="myTabContent">
+                            <div id="select-1" class="content-section active">
+                                {{>manager/combo/prices}}
                             </div>
                             {{/each}}
 
-                            <div class="row">
-                                <div class="col">
-                                    <label for="">Categoria</label>
-                                    {{#each comboFeactures}}
-                                    <select class="form-control" name="category"  value="{{dish_product_category}}">
-                                    {{/each}}
-                                        {{#each category}}
-                                            <option value="{{id}}">{{name}}</option>
-                                        {{/each}}
-                                    </select>
-                                </div>
-                                <div class="col">
-                                    <label for="">Departamento</label>
-                                    {{#each comboFeactures}}
-                                    <select class="form-control"  name="department"  value="{{dish_product_department}}">
-                                    {{/each}}
-                                        {{#each departments}}
-                                            <option value="{{id}}">{{name}}</option>
-                                        {{/each}}
-                                    </select>
-                                </div>
+
+                            <div id="select-2" class="content-section">
+                                <hr>
+                                {{>products/informationSuppliesForm}}
                             </div>
-                        
-                        {{#each comboFeactures}}
-                            <div class="form-group">
-                                <div class="form-check" name="">
-                                    {{#if this_product_need_recipe}}
-                                        <input class="form-check-input" type="checkbox" id="this_product_need_recipe" name="this_product_need_recipe" checked>
-                                    {{else}}
-                                        <input class="form-check-input" type="checkbox" id="this_product_need_recipe" name="this_product_need_recipe">
-                                    {{/if}}
-                                    <label class="form-check-label" for="invalidCheck2">
-                                        Este producto Necesita Receta
-                                    </label>
-                                </div>
+
+                            <div id="select-3" class="content-section">
+                                <hr>
+                                {{>manager/combo/supplies}}
                             </div>
-                            
-                            <div class="form-group">
-                                <div class="form-check" name="">
-                                    {{#if this_product_is_sold_in_bulk}}
-                                        <input class="form-check-input" type="checkbox" id="this_product_is_sold_in_bulk" name="thisProductIsSoldInBulk" checked>
-                                    {{else}}
-                                        <input class="form-check-input" type="checkbox" id="this_product_is_sold_in_bulk" name="thisProductIsSoldInBulk">
-                                    {{/if}}
-                                    <label class="form-check-label" for="invalidCheck2">
-                                        Este producto se vende a granel
-                                    </label>
-                                </div>
+
+                            <div id="select-4" class="content-section">
+                                <hr>
+                                {{>products/lote}}
                             </div>
-                            <br><br>
-                            <button class="btn btn-danger" id="{{id}}" onclick="delete_product('{{id_dishes_and_combos}}','{{id_companies}}','{{id_branches}}')" type="button">🗑️ Eliminar Producto</button>
+
+                            <div id="select-6" class="content-section">
+                                {{>products/promotions}}
+                            </div>
+
+                            <div id="select-5" class="content-section">
+                                {{>manager/combo/other}}
+                            </div>
                         </div>
-                    </div>
+
+                        <br>
+                        <button class="btn btn-success" id="myForm" type="submit">Guardar</button>
+                    </form>
+
                     <br><br>
-                    <!---this is the start favorites--->
-                    <div class="container-start">
-                        <div class="star-checkbox">
-                            <input class="form-check-input" type="checkbox" {{#if favorites}}checked{{/if}} id="invalidCheck"
-                                onclick="read_check_box()" name="favorites">
-                            <label for="invalidCheck"></label>
-                        </div>
-                    </div>
-                    <label for=""><i class="fi fi-sr-ballot-check"></i> Información de facturación</label>
-                    <hr>
-
-                    <!---dashboard--->
-                    <div class="btn-group">
-                        <button class="btn-select btn-active" onclick="showSection('select-1', this)" type="button"><i class="fi-icon fi-sr-usd-circle"></i> Precios de venta</button>
-                        <button class="btn-select" onclick="showSection('select-2', this)" type="button"><i class="fi-icon fi-sr-file-invoice-dollar"></i> Inventario</button>
-                        <button class="btn-select" onclick="showSection('select-3', this)" type="button"><i class="fi-icon fi-sr-box-alt"></i> Lista de Producto</button>
-                        <button class="btn-select" onclick="showSection('select-4', this)" type="button"><i class="fi fi-sr-truck-loading"></i> Lotes y Series</button>
-                        <button class="btn-select" onclick="showSection('select-6', this)" type="button"><i class="fi fi-sr-badge-percent"></i> Promociones</button>
-                        
-
-                        <button class="btn-select" onclick="showSection('select-5', this)" type="button"><i class="fi-icon fi-ss-settings"></i> Otro</button>
-                    </div>
-
-
-                    <!---container navbar--->
-                    <div class="tab-content" id="myTabContent">
-                        <div id="select-1" class="content-section active">
-                            {{>manager/combo/prices}}
-                        </div>
-                {{/each}}
-
-
-                    <div id="select-2" class="content-section">
-                        <hr>
-                        {{>products/informationSuppliesForm}}
-                    </div>
-
-                    <div id="select-3" class="content-section">
-                        <hr>
-                        {{>manager/combo/supplies}}
-                    </div>
-
-                    <div id="select-4" class="content-section">
-                        <hr>
-                        {{>products/lote}}
-                    </div>
-                   
-                    <div id="select-6" class="content-section">
-                        {{>products/promotions}}
-                    </div>
-                   
-                        <div id="select-5" class="content-section">
-                            {{>manager/combo/other}}
-                        </div>
-                    </div>
-                    
-                    <br>
-                    <button class="btn btn-success" id="myForm" type="submit">Guardar</button>
-                </form>
-                
-                <br><br>
+                </div>
             </div>
         </div>
-    </div>
+
+        
+
 </div>
 <br><br><br>
 {{>updateSelects}}
@@ -204,18 +257,18 @@
     }
 
 
-    async function delete_product(id_combo,id_company,id_branch){
+    async function delete_product(id_combo, id_company, id_branch) {
         //id_combo delete the combo
         //id_comboFeactures delete combo in the facture
         //id_productFacture delete supplies
-        if(this_product_have_lot()){
-            if(await questionMessage('Eliminar Producto  😳','¿Quieres eliminar este Producto?')){
-                const id_comboFeactures=document.getElementById('id_comboFeactures').value;
-                const id_productFacture=document.getElementById('id_productFacture').value;
+        if (this_product_have_lot()) {
+            if (await questionMessage('Eliminar Producto  😳', '¿Quieres eliminar este Producto?')) {
+                const id_comboFeactures = document.getElementById('id_comboFeactures').value;
+                const id_productFacture = document.getElementById('id_productFacture').value;
                 window.location.href = `/links/${id_company}/${id_branch}/${id_combo}/${id_comboFeactures}/${id_productFacture}/delete-product-free`
             }
-        }else{
-            warningMessage('Ups! 😅',"No puedes eliminar este producto porque aún tiene lotes.");
+        } else {
+            warningMessage('Ups! 😅', "No puedes eliminar este producto porque aún tiene lotes.");
         }
     }
 
@@ -229,7 +282,7 @@
         return false; // La tabla tiene datos
     }
 
-    function update_inventory(){
+    function update_inventory() {
         const input = document.getElementById('input-ammount');
         const hasLot = this_product_have_lot(); // Verificar si hay lote para el producto
 
@@ -258,4 +311,12 @@
     }
 
     update_inventory();
+</script>
+
+
+<script>
+    function change_product_index(step) {
+        const id_comboFeactures=document.getElementById('id_comboFeactures').value;
+        window.location.href = `/links/${step}/${id_comboFeactures}/next-edit-products-free`;
+    }
 </script>
