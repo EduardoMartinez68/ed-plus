@@ -487,6 +487,9 @@ router.post('/update_ticket', isLoggedIn, async (req, res) => {
     //first we will get the old information of the ticket
     const dataTicketOld=await get_ticket_by_branch_and_key(id_branch, tokenTicket);
     if(dataTicketOld){
+      //refactor the information of the new ticket for that after the user can create a facture CFDI
+      dataTicket.newTicket=refactor_the_data_of_the_new_ticket(dataTicketOld,dataTicket);
+
         //update the information of ticket for change the variable 'current_ticket'
         const idTicket=await update_current_ticket(tokenTicket,id_branch,dataTicket.newTicket);
         if(idTicket){
@@ -516,6 +519,7 @@ router.post('/update_ticket', isLoggedIn, async (req, res) => {
           }
           flag=true;
         }
+
     }
 
 
@@ -533,6 +537,64 @@ router.post('/update_ticket', isLoggedIn, async (req, res) => {
       });
     }
 });
+
+
+function refactor_the_data_of_the_new_ticket(dataTicketOld,dataTicket){
+  // Creamos un arreglo vacío donde vamos a guardar los productos que coinciden
+  const matchedProducts = [];
+
+  // Recorremos los productos originales del ticket
+  dataTicketOld.original_ticket.forEach(productsOrigin => {
+    const productOriginName = productsOrigin.name;
+    const productOriginBarcode = productsOrigin.barcode;
+
+    // Recorremos los productos del nuevo ticket
+    dataTicket.newTicket.forEach(productNew => {
+      const newProductName = productNew.name;
+      const newProductBarcode = productNew.barcode;
+
+      // Verificamos si el nombre y el código de barras coinciden
+      if (productOriginName === newProductName && productOriginBarcode === newProductBarcode) {
+        const totalTaxes=productsOrigin.priceWithoutTaxes*productNew.quantity;
+        const newTaxes=[]
+        productsOrigin.taxes.forEach(tax => {
+          const newTax={
+            tax_id: tax.tax_id,
+            name: tax.name,
+            taxId: tax.taxId,
+            base: totalTaxes,
+            rate: tax.rate,
+            is_retention: tax.is_retention,
+            activate: tax.activate,
+            this_taxes_is_in_all: tax.this_taxes_is_in_all,
+            id_branches: tax.id_branches
+          }
+
+          newTaxes.push(newTax)
+        });
+
+        // Si hay coincidencia, agregamos un objeto con la información deseada
+        matchedProducts.push({
+          img: productsOrigin.img,
+          sat_key: productsOrigin.sat_key,
+          name: productsOrigin.name,
+          barcode: productsOrigin.barcode,
+          price: productsOrigin.price,
+          priceWithoutTaxes: productsOrigin.priceWithoutTaxes, // Este valor parece fijo, considera calcularlo (falta cambiar esto)
+          quantity: productNew.quantity, // Puedes ajustar esto dinámicamente si necesitas
+          discount: productsOrigin.discount,
+          purchaseUnit: productsOrigin.purchaseUnit,
+          this_product_is_sold_in_bulk: productsOrigin.this_product_is_sold_in_bulk,
+          id_dishes_and_combos: productsOrigin.id_dishes_and_combos,
+          taxes: newTaxes,
+          itemTotal: productNew.itemTotal // Considera calcularlo dinámicamente con price y quantity
+        });
+      }
+    });
+  });
+
+  return matchedProducts;
+}
 
 async function change_the_inventory(idBranch, idSupplies, quantityToAdd = 0) {
   if (TYPE_DATABASE === 'mysqlite') {

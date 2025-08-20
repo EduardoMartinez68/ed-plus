@@ -753,11 +753,13 @@
       // Crear un nuevo array con solo las propiedades necesarias
       // Crear un nuevo array con solo las propiedades necesarias
       const IsRetention=document.getElementById('IsRetention').checked;
+      const base=item.Subtotal;
+
       item.Taxes = item.Taxes.map(tax => {
         return {
           Total: tax.Total,
           Name: tax.Name,
-          Base: tax.Base,
+          Base: base,//tax.Base,
           Rate: tax.Rate, 
           IsRetention: IsRetention
         };
