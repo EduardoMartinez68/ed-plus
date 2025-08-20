@@ -391,7 +391,11 @@ router.get('/:step/:id_combo_features/next-edit-products-free', isLoggedIn, asyn
     const { id_combo_features, step} = req.params; //get the index 
     const { id_company, id_branch } = req.user;
     const newIdComboFacture=await get_next_or_previous_combo_facture(id_branch, id_combo_features, step)
-    res.redirect(`/links/${id_company}/${id_branch}/${newIdComboFacture}/edit-products-free`)
+    if (newIdComboFacture==null){
+        res.redirect(`/links/${id_company}/${id_branch}/${id_combo_features}/edit-products-free`)
+    }else{
+        res.redirect(`/links/${id_company}/${id_branch}/${newIdComboFacture}/edit-products-free`)
+    }
 })
 
 async function get_next_or_previous_combo_facture(id_branch, id_combo_facture, step) {

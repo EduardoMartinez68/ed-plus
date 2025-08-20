@@ -251,9 +251,10 @@ async function get_combo_features(idBranche, is_a_product, barcode = '') {
                 params.push(likeParam, likeParam);
             } else {
                 queryText += `
-                    ORDER BY d.name ASC
+                    ORDER BY f.id ASC
                     LIMIT 50
                 `;
+                //ORDER BY d.name ASC
             }
 
             database.all(queryText, params, (err, rows) => {
