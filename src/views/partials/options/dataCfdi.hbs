@@ -154,7 +154,7 @@ document.getElementById('formDataCfdi').addEventListener('submit', async functio
     const data = get_data_form_data_cfdi(event);
 
     //her we will send this information to the server for update the data of the branch and update his data
-    const answer=await send_data_to_server('/links/update-data-cfdi', data);
+    const answer=await send_data_to_server('/links/update-data-cfdi', data, true);
     if (answer.success) {
         confirmationMessage('🎉 ¡Actualización Exitosa!', 'Tus datos de facturación han sido actualizados correctamente. ¡Gracias por mantener todo al día!');
     } else {

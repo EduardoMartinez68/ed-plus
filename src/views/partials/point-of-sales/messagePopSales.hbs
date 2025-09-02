@@ -215,6 +215,94 @@
             display: none;
         }
     }
+
+
+    /*-------------------------------------------*/
+/* Fondo del popup */
+.pop-points-user-popup {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  font-family: Arial, sans-serif;
+}
+
+/* Contenido del popup */
+.pop-points-user-popup-content {
+  background: #fff;
+  border-radius: 10px;
+  width: 45%;
+  max-width: 90%;
+  margin: 10% auto;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+/* Header azul */
+.pop-points-user-popup-header {
+  background-color: var(--color-company);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+}
+.pop-points-user-popup-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: white;
+}
+.pop-points-user-close {
+  font-size: 22px;
+  cursor: pointer;
+  color: white;
+}
+
+/* Cuerpo */
+.pop-points-user-popup-body {
+  padding: 20px;
+}
+.pop-points-user-info p {
+  margin: 6px 0;
+  font-size: 14px;
+}
+
+/* Calculadora */
+.pop-points-user-calculator {
+  display: flex;
+  justify-content: space-between;
+  margin: 15px 0;
+  gap: 10px;
+}
+.pop-points-user-calculator-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.pop-points-user-calculator-group input {
+  padding: 6px;
+  font-size: 14px;
+  margin-top: 4px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+/* Botón Usar */
+.pop-points-user-btn-use {
+  width: 100%;
+  padding: 10px;
+  background-color: var(--color-company);
+  border: none;
+  color: white;
+  font-size: 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.pop-points-user-btn-use:hover {
+  background-color: var(--color-hover);
+}
 </style>
 <div class="popup-overlay" id="popupOverlay">
     <div class="popup" id="popup">
@@ -255,6 +343,14 @@
                 <input type="number" id="debit" placeholder="Tarjeta de Débito" onfocus="setSelected(this)"
                     oninput="calculateChange()" class="input-pop-sales">
 
+                <label for="">Puntos del Cliente</label>
+                <div class="input-group mb-3">
+                    <input type="number" class="form-control"  id="points" placeholder="Puntos del cliente"  aria-label="Recipient's username" aria-describedby="basic-addon2" oninput="calculateChange()" readonly value="0">               
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button" onclick="popPointsUser_openPopup()">Usar Puntos</button>
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <label for="exampleFormControlTextarea1">Comentario</label>
                     <textarea class="form-control" id="comment-sales" rows="3"></textarea>
@@ -265,6 +361,50 @@
         </div>
     </div>
 </div>
+
+
+
+
+<div class="pop-points-user-popup" id="popPointsUser_popup">
+  <div class="pop-points-user-popup-content">
+    <!-- Header azul -->
+    <div class="pop-points-user-popup-header">
+      <h3>Usar puntos del usuario</h3>
+      <span class="pop-points-user-close" onclick="popPointsUser_closePopup()">&times;</span>
+    </div>
+
+    <!-- Cuerpo del popup -->
+    <div class="pop-points-user-popup-body">
+      <div class="pop-points-user-info">
+        <p><strong>Nombre:</strong> <span id="popPointsUser_name">Juan Pérez</span></p>
+        <p><strong>Puntos actuales:</strong> <span id="popPointsUser_points">400</span></p>
+        <p><em>1$ = 200 puntos</em></p>
+      </div>
+
+      <!-- Calculadora -->
+      <div class="pop-points-user-calculator">
+        <div class="pop-points-user-calculator-group">
+          <label for="popPointsUser_pointsInput">Puntos que quiero usar:</label>
+          <input type="number" id="popPointsUser_pointsInput" min="0" step="1" value="0">
+        </div>
+        <div class="pop-points-user-calculator-group">
+          <label for="popPointsUser_moneyInput">Dinero que quiero usar ($):</label>
+          <input type="number" id="popPointsUser_moneyInput" min="0" step="0.01" value="0">
+        </div>
+      </div>
+
+      <button class="pop-points-user-btn-use" onclick="popPointsUser_usePoints()">Usar</button>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
 
 <script>
     let selectedInput = null;
@@ -427,4 +567,39 @@
         const totalText = numberToWords(total);
         document.getElementById('total-text').innerText = totalText;
     }
+</script>
+<script>
+const POINTS_RATE = 200; // 1$ = 200 puntos
+
+function popPointsUser_openPopup() {
+  document.getElementById('popPointsUser_popup').style.display = 'block';
+}
+
+function popPointsUser_closePopup() {
+  document.getElementById('popPointsUser_popup').style.display = 'none';
+}
+
+// Sincronización de la calculadora
+const pointsInput = document.getElementById('popPointsUser_pointsInput');
+const moneyInput = document.getElementById('popPointsUser_moneyInput');
+
+pointsInput.addEventListener('input', () => {
+  const points = parseFloat(pointsInput.value) || 0;
+  moneyInput.value = (points / POINTS_RATE).toFixed(2);
+});
+
+moneyInput.addEventListener('input', () => {
+  const money = parseFloat(moneyInput.value) || 0;
+  pointsInput.value = Math.round(money * POINTS_RATE);
+});
+
+function popPointsUser_usePoints() {
+  const points = parseFloat(pointsInput.value) || 0;
+  const money = parseFloat(moneyInput.value) || 0;
+
+  console.log(`Se usarán ${points} puntos equivalentes a $${money}`);
+
+  // Aquí puedes hacer fetch al backend para registrar el uso de puntos
+  popPointsUser_closePopup();
+}
 </script>

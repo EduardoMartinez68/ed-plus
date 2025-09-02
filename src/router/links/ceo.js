@@ -1678,7 +1678,7 @@ async function update_customer_points(id_customer, id_company, new_points) {
                     console.error('Error en update_customer_points (SQLite):', err);
                     return resolve(false);
                 }
-                resolve(this.changes > 0); // true si se actualizó al menos 1 registro
+                resolve(this.changes > 0); // true if can update only a customer
             });
         });
     } else {
