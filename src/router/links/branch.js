@@ -1510,7 +1510,7 @@ async function delete_box_branch(id) {
 router.post('/points_to_money', isLoggedIn, async (req, res) => {
     try {
         const { id_branch, id_company } = req.user;
-        const { points_to_money } = req.body;
+        const { points_to_money, money_to_points} = req.body;
 
         if (!this_user_have_this_permission(req.user, id_company, id_branch, 'update_information_of_points_to_money')) {
             return res.status(403).json({
@@ -1519,7 +1519,7 @@ router.post('/points_to_money', isLoggedIn, async (req, res) => {
             });
         }
 
-        if(await update_the_information_of_point_to_money(id_branch, points_to_money)){
+        if(await update_the_information_of_point_to_money(id_branch, points_to_money, money_to_points)){
             return res.json({
                 success: true,
                 message: 'La configuración de puntos se actualizó correctamente.',
@@ -1539,15 +1539,15 @@ router.post('/points_to_money', isLoggedIn, async (req, res) => {
     }
 })
 
-async function update_the_information_of_point_to_money(id_branch, new_point) {
+async function update_the_information_of_point_to_money(id_branch, new_point, money_to_points) {
     if (TYPE_DATABASE === 'mysqlite') {
         // SQLite
         const queryText = `
             UPDATE branches
-            SET points_to_money = ?
+            SET points_to_money = ?, money_to_points = ?
             WHERE id = ?
         `;
-        const values = [new_point, id_branch];
+        const values = [new_point, money_to_points, id_branch];
 
         return new Promise((resolve, reject) => {
             database.run(queryText, values, function (err) {
@@ -1567,11 +1567,11 @@ async function update_the_information_of_point_to_money(id_branch, new_point) {
         // PostgreSQL
         const queryText = `
             UPDATE "Company".branches
-            SET points_to_money = $1
-            WHERE id = $2
-            RETURNING id, points_to_money;
+            SET points_to_money = $1, money_to_points = $2
+            WHERE id = $3
+            RETURNING id, points_to_money, money_to_points;
         `;
-        const values = [new_point, id_branch];
+        const values = [new_point, money_to_points, id_branch];
         try {
             const result = await database.query(queryText, values);
             return {
@@ -1585,6 +1585,7 @@ async function update_the_information_of_point_to_money(id_branch, new_point) {
         }
     }
 }
+
 
 
 

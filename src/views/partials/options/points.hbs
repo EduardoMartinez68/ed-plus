@@ -4,16 +4,25 @@
         <div class="card-body">
             <label for=""><i class="fi-icon fi-sr-review"></i> Programa de Puntos</label>
             <hr>
+            {{#each branchFree}}
             <div class="row">
-                {{#each branchFree}}
                 <div class="col">
-                    <small class="text-muted">Cada $1 MXN que tu cliente compre en tu negocio equivale a </small>
+                    <small class="text-muted">Cada $1.00 MXN que tu cliente gaste en tu negocio equivale a </small>
+                    <input type="number" value="{{money_to_points}}" placeholder="0.00" style="text-align: center;"
+                        id="money_to_points">
+                    <small class="text-muted">puntos que tu cliente obtiene para usar en futuras compras.</small>
+                </div>
+            </div>
+            <br><br>
+            <div class="row">
+                <div class="col">
+                    <small class="text-muted">1 punto que tiene tu cliente equivale a </small>
                     <input type="number" value="{{points_to_money}}" placeholder="0.00" style="text-align: center;"
                         id="points_to_money">
-                    <small class="text-muted">puntos que tu cliente podra usar en futuras compras en tu negocio.</small>
+                    <small class="text-muted">$MXN pesos que tu cliente podra usar en tu negocio.</small>
                 </div>
-                {{/each}}
             </div>
+            {{/each}}
             <br>
             <button class="btn btn-edit" onclick="update_points_to_movey()">Guardar</button>
             <br><br><br>
@@ -34,10 +43,11 @@
 <script>
     async function update_points_to_movey() {
         const points_to_money = document.getElementById('points_to_money');
-        if (points_to_money) {
+        const money_to_points=document.getElementById('money_to_points')
+        if (points_to_money && money_to_points) {
             //send this information to the server and see if can update the information of the server
             //her we will send this information to the server for update the data of the branch and update his data
-            const answer = await send_data_to_server('/links/points_to_money', {points_to_money: points_to_money.value}, true);
+            const answer = await send_data_to_server('/links/points_to_money', {points_to_money: points_to_money.value, money_to_points:money_to_points.value}, true);
             if (answer.success) {
                 confirmationMessage('🎉 ¡Actualización Exitosa!', 'Tus datos de programas de puntos han sido actualizados correctamente.');
             } else {

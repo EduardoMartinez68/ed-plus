@@ -421,6 +421,7 @@ async function create_update_of_the_database(adminPool) {
         DO $$
         BEGIN
             ALTER TABLE "Company".branches ADD points_to_money numeric(10,2) DEFAULT 0;
+            ALTER TABLE "Company".branches ADD money_to_points numeric(10,2) DEFAULT 0;
         END
         $$;
 
@@ -640,6 +641,11 @@ async function create_update_of_the_database_mysqlite(db) {
         ALTER TABLE roles_employees ADD update_information_of_points_to_money boolean NOT NULL DEFAULT true;
         ALTER TABLE roles_employees ADD sale_by_points_to_money boolean NOT NULL DEFAULT true;
         ALTER TABLE roles_employees ADD update_points_of_the_user NOT NULL DEFAULT true;
+    `
+    await create_table_mysqlite(db,queryPermition)
+
+    queryPermition=`
+        ALTER TABLE branches ADD money_to_points numeric(10,2) DEFAULT 0;
     `
     await create_table_mysqlite(db,queryPermition)
     db.close();

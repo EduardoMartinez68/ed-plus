@@ -343,13 +343,15 @@
                 <input type="number" id="debit" placeholder="Tarjeta de Débito" onfocus="setSelected(this)"
                     oninput="calculateChange()" class="input-pop-sales">
 
-                <label for="">Puntos del Cliente</label>
+                <label for="">Dinero con Puntos del Cliente</label>
                 <div class="input-group mb-3">
                     <input type="number" class="form-control"  id="points" placeholder="Puntos del cliente"  aria-label="Recipient's username" aria-describedby="basic-addon2" oninput="calculateChange()" readonly value="0">               
                     <div class="input-group-append">
                         <button class="btn btn-outline-secondary" type="button" onclick="popPointsUser_openPopup()">Usar Puntos</button>
                     </div>
+                    <input type="hidden" id="points-user-to-use" value="0">
                 </div>
+                <label for="" id="into-points-user"></label>
 
                 <div class="form-group">
                     <label for="exampleFormControlTextarea1">Comentario</label>
@@ -376,9 +378,12 @@
     <!-- Cuerpo del popup -->
     <div class="pop-points-user-popup-body">
       <div class="pop-points-user-info">
-        <p><strong>Nombre:</strong> <span id="popPointsUser_name">Juan Pérez</span></p>
+        <p><strong>Cliente:</strong> <span id="popPointsUser_name">Juan Pérez</span></p>
         <p><strong>Puntos actuales:</strong> <span id="popPointsUser_points">400</span></p>
-        <p><em>1$ = 200 puntos</em></p>
+        {{#each branchFree}}
+            <p><em>1 punto = {{points_to_money}}$</em></p>
+            <input type="hidden" id="points_to_money" value="{{points_to_money}}">
+        {{/each}}
       </div>
 
       <!-- Calculadora -->
@@ -569,9 +574,21 @@
     }
 </script>
 <script>
-const POINTS_RATE = 200; // 1$ = 200 puntos
+const POINTS_RATE = parseFloat(document.getElementById('points_to_money').value); // this is for transform the points to money
 
 function popPointsUser_openPopup() {
+  const emailClient=true//document.getElementById('emailClient').textContent;
+  if(emailClient==''){
+    warningMessage(
+    '⚠️ Espera',
+    'Esta venta aún no tiene un cliente asignado. Debes seleccionar o crear un cliente antes de poder aplicar sus puntos de fidelidad 💳'
+    );
+
+    return;
+  }
+
+  document.getElementById('popPointsUser_name').textContent=emailClient;
+  document.getElementById('popPointsUser_points').value=0;
   document.getElementById('popPointsUser_popup').style.display = 'block';
 }
 
@@ -585,21 +602,30 @@ const moneyInput = document.getElementById('popPointsUser_moneyInput');
 
 pointsInput.addEventListener('input', () => {
   const points = parseFloat(pointsInput.value) || 0;
-  moneyInput.value = (points / POINTS_RATE).toFixed(2);
+  moneyInput.value = points*POINTS_RATE;//.toFixed(2);
 });
 
 moneyInput.addEventListener('input', () => {
   const money = parseFloat(moneyInput.value) || 0;
-  pointsInput.value = Math.round(money * POINTS_RATE);
+  pointsInput.value = Math.round(money/POINTS_RATE);
 });
 
 function popPointsUser_usePoints() {
+  const popPointsUser_points=parseFloat(document.getElementById('popPointsUser_points').textContent || 0)
   const points = parseFloat(pointsInput.value) || 0;
   const money = parseFloat(moneyInput.value) || 0;
 
-  console.log(`Se usarán ${points} puntos equivalentes a $${money}`);
-
-  // Aquí puedes hacer fetch al backend para registrar el uso de puntos
-  popPointsUser_closePopup();
+    //here  we will see if the points that the user would like user not be greater that the point of the user
+  if(points>popPointsUser_points){
+    warningMessage(
+    '🙃 ¡Ups!',
+    'Parece que estás intentando usar más puntos de los que tiene el cliente 😅 No podemos sacar puntos de la nada… ¡sería magia negra! '
+    );
+  }else{
+    document.getElementById('into-points-user').textContent=`Se usarán ${points} puntos equivalentes a $${money}`;
+    document.getElementById('points').value=money;
+    document.getElementById('points-user-to-use').value=points;
+    popPointsUser_closePopup();
+  }
 }
 </script>
