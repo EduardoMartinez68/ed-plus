@@ -10,7 +10,7 @@
                     <small class="text-muted">Cada $1 MXN que tu cliente compre en tu negocio equivale a </small>
                     <input type="number" value="{{points_to_money}}" placeholder="0.00" style="text-align: center;"
                         id="points_to_money">
-                    <small class="text-muted">puntos que tu cliente podra usar en futuras compras en tu negocio</small>
+                    <small class="text-muted">puntos que tu cliente podra usar en futuras compras en tu negocio.</small>
                 </div>
                 {{/each}}
             </div>
@@ -41,7 +41,7 @@
             if (answer.success) {
                 confirmationMessage('🎉 ¡Actualización Exitosa!', 'Tus datos de programas de puntos han sido actualizados correctamente.');
             } else {
-                errorMessage('😥 Ocurrió un problema', 'Hubo un error al actualizar tus programas de puntos. Por favor, intenta nuevamente más tarde.');
+                errorMessage('😥 Ocurrió un problema', answer.message);
             }
         }
     }

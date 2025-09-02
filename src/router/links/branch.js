@@ -1508,17 +1508,84 @@ async function delete_box_branch(id) {
 
 //----------------------------------------------------------------point of user
 router.post('/points_to_money', isLoggedIn, async (req, res) => {
-    
-    const { id_branch, id_company } = req.user;
-    const { points_to_money } = req.body;
+    try {
+        const { id_branch, id_company } = req.user;
+        const { points_to_money } = req.body;
 
-    //we will see if the user have the permission for this App.
-    if(!this_user_have_this_permission(req.user,id_company, id_branch,'update_information_of_points_to_money')){
-        return 
+        if (!this_user_have_this_permission(req.user, id_company, id_branch, 'update_information_of_points_to_money')) {
+            return res.status(403).json({
+                success: false,
+                message: 'No tienes permiso para actualizar la información de puntos.'
+            });
+        }
+
+        if(await update_the_information_of_point_to_money(id_branch, points_to_money)){
+            return res.json({
+                success: true,
+                message: 'La configuración de puntos se actualizó correctamente.',
+            });
+        }else{
+            return res.json({
+                success: false,
+                message: 'Tu información no se pudo actualizar. Intentalo otra vez.',
+            });
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: 'Ocurrió un error al actualizar la configuración de puntos.'
+        });
     }
-
-    
 })
+
+async function update_the_information_of_point_to_money(id_branch, new_point) {
+    if (TYPE_DATABASE === 'mysqlite') {
+        // SQLite
+        const queryText = `
+            UPDATE branches
+            SET points_to_money = ?
+            WHERE id = ?
+        `;
+        const values = [new_point, id_branch];
+
+        return new Promise((resolve, reject) => {
+            database.run(queryText, values, function (err) {
+                if (err) {
+                    console.error("Error SQLite en update_the_information_of_point_to_money:", err);
+                    reject(err);
+                } else {
+                    resolve({
+                        success: true,
+                        message: "points_to_money actualizado correctamente",
+                        changes: this.changes
+                    });
+                }
+            });
+        });
+    } else {
+        // PostgreSQL
+        const queryText = `
+            UPDATE "Company".branches
+            SET points_to_money = $1
+            WHERE id = $2
+            RETURNING id, points_to_money;
+        `;
+        const values = [new_point, id_branch];
+        try {
+            const result = await database.query(queryText, values);
+            return {
+                success: true,
+                message: "points_to_money actualizado correctamente",
+                data: result.rows[0]
+            };
+        } catch (err) {
+            console.error("Error PostgreSQL en update_the_information_of_point_to_money:", err);
+            throw err;
+        }
+    }
+}
+
 
 
 //----------------------------------------------------------------ad
