@@ -1506,6 +1506,20 @@ async function delete_box_branch(id) {
     }
 }
 
+//----------------------------------------------------------------point of user
+router.post('/points_to_money', isLoggedIn, async (req, res) => {
+    
+    const { id_branch, id_company } = req.user;
+    const { points_to_money } = req.body;
+
+    //we will see if the user have the permission for this App.
+    if(!this_user_have_this_permission(req.user,id_company, id_branch,'update_information_of_points_to_money')){
+        return 
+    }
+
+    
+})
+
 
 //----------------------------------------------------------------ad
 router.get('/:id_company/:id_branch/ad', isLoggedIn, async (req, res) => {
@@ -1856,7 +1870,6 @@ async function get_schedule_employees(idBranch) {
         return result.rows;
     }
 }
-
 
 async function create_new_schedule_of_the_week(idBranch, employees, idSchedule) {
     // get the day

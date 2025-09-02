@@ -1,0 +1,48 @@
+<div class="tab-pane fade show" id="navbar-point-customer" role="tabpanel"
+    aria-labelledby="navbar-navbar-point-customer">
+    <div class="card">
+        <div class="card-body">
+            <label for=""><i class="fi-icon fi-sr-review"></i> Programa de Puntos</label>
+            <hr>
+            <div class="row">
+                {{#each branchFree}}
+                <div class="col">
+                    <small class="text-muted">Cada $1 MXN que tu cliente compre en tu negocio equivale a </small>
+                    <input type="number" value="{{points_to_money}}" placeholder="0.00" style="text-align: center;"
+                        id="points_to_money">
+                    <small class="text-muted">puntos que tu cliente podra usar en futuras compras en tu negocio</small>
+                </div>
+                {{/each}}
+            </div>
+            <br>
+            <button class="btn btn-edit" onclick="update_points_to_movey()">Guardar</button>
+            <br><br><br>
+            <label>
+                Aquí defines cuántos puntos obtiene tu cliente por cada peso gastado en tu negocio.
+                Por ejemplo: si decides que <b>1 peso = 2 puntos</b>, un cliente que gaste $50 MXN acumulará <b>100
+                    puntos</b>.
+
+                Estos puntos no solo sirven para acumular, sino que también podrán usarse como forma de pago en tu
+                negocio.
+                Por ejemplo: si decides que <b>100 puntos = $10 MXN</b>, un cliente podrá usar 200 puntos para pagar
+                <b>$20 MXN</b> de su compra.
+            </label>
+        </div>
+    </div>
+</div>
+
+<script>
+    async function update_points_to_movey() {
+        const points_to_money = document.getElementById('points_to_money');
+        if (points_to_money) {
+            //send this information to the server and see if can update the information of the server
+            //her we will send this information to the server for update the data of the branch and update his data
+            const answer = await send_data_to_server('/links/points_to_money', {points_to_money: points_to_money.value}, true);
+            if (answer.success) {
+                confirmationMessage('🎉 ¡Actualización Exitosa!', 'Tus datos de programas de puntos han sido actualizados correctamente.');
+            } else {
+                errorMessage('😥 Ocurrió un problema', 'Hubo un error al actualizar tus programas de puntos. Por favor, intenta nuevamente más tarde.');
+            }
+        }
+    }
+</script>

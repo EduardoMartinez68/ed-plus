@@ -3972,14 +3972,13 @@ async function save_the_ticket(id_company,id_branch,id_employee, id_customer, to
   debit = parseToFloat(debit);
   change = parseToFloat(change);
 
-
   //now we will save in the database 
   if (TYPE_DATABASE === 'mysqlite') {
     return new Promise((resolve) => {
       const queryText = `
         INSERT INTO ticket 
-        (key, original_ticket, current_ticket, cash, debit, credit, total, note, id_customers, id_employees, id_branches, id_companies)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        (key, original_ticket, current_ticket, cash, debit, credit, total, note, id_customers, id_employees, id_branches, id_companies, date_sale)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `;
       database.run(
         queryText,
@@ -3995,7 +3994,8 @@ async function save_the_ticket(id_company,id_branch,id_employee, id_customer, to
           idCustomerParam,
           id_employee,
           id_branch,
-          id_company
+          id_company,
+          new Date().toISOString()
         ],
         function (err) {
           if (err) {

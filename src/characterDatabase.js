@@ -416,6 +416,26 @@ async function create_update_of_the_database(adminPool) {
             END IF;
         END
         $$;
+
+
+        DO $$
+        BEGIN
+            ALTER TABLE "Company".branches ADD points_to_money numeric(10,2) DEFAULT 0;
+        END
+        $$;
+
+        DO $$
+        BEGIN
+            ALTER TABLE "Employee".roles_employees ADD view_facture_cfdi boolean NOT NULL DEFAULT true;
+            ALTER TABLE "Employee".roles_employees ADD create_a_facture_cfdi boolean NOT NULL DEFAULT true;
+            ALTER TABLE "Employee".roles_employees ADD cancel_a_facture_cfdi boolean NOT NULL DEFAULT true;
+            ALTER TABLE "Employee".roles_employees ADD buy_token_for_create_facture_cfdi boolean NOT NULL DEFAULT true;
+
+            ALTER TABLE "Employee".roles_employees ADD update_information_of_points_to_money boolean NOT NULL DEFAULT true;
+            ALTER TABLE "Employee".roles_employees ADD sale_by_points_to_money boolean NOT NULL DEFAULT true;
+            ALTER TABLE "Employee".roles_employees ADD update_points_of_the_user NOT NULL DEFAULT true;
+        END
+        $$;
     `
     await adminPool.query(query);
     console.log('📂 La base de datos EDPLUS fue actualizada.');
@@ -604,6 +624,24 @@ async function create_update_of_the_database_mysqlite(db) {
     `
     await create_table_mysqlite(db,queryPermition)
 
+    //her create the data for the point of user
+    queryPermition=`
+        ALTER TABLE branches ADD points_to_money numeric(10,2) DEFAULT 0;
+    `
+    await create_table_mysqlite(db,queryPermition)
+
+    queryPermition=`
+        ALTER TABLE roles_employees ADD view_facture_cfdi boolean NOT NULL DEFAULT true;
+        ALTER TABLE roles_employees ADD create_a_facture_cfdi boolean NOT NULL DEFAULT true;
+        ALTER TABLE roles_employees ADD create_a_facture_cfdi_global boolean NOT NULL DEFAULT true;
+        ALTER TABLE roles_employees ADD cancel_a_facture_cfdi boolean NOT NULL DEFAULT true;
+        ALTER TABLE roles_employees ADD buy_token_for_create_facture_cfdi boolean NOT NULL DEFAULT true;
+
+        ALTER TABLE roles_employees ADD update_information_of_points_to_money boolean NOT NULL DEFAULT true;
+        ALTER TABLE roles_employees ADD sale_by_points_to_money boolean NOT NULL DEFAULT true;
+        ALTER TABLE roles_employees ADD update_points_of_the_user NOT NULL DEFAULT true;
+    `
+    await create_table_mysqlite(db,queryPermition)
     db.close();
 }
 

@@ -18,12 +18,14 @@
 <a class="nav-link" id="navbar-products-tab" data-toggle="pill" href="#navbar-products" role="tab"
     aria-controls="navbar-products" aria-selected="false"><i class="fi-icon fi-sr-hat-chef"></i> Cocina</a>
 
-
 <a class="nav-link" id="navbar-customer-tab" data-toggle="pill" href="#navbar-customer" role="tab"
-    aria-controls="navbar-customer" aria-selected="false"><i class="fi fi-sr-users-alt"></i> Cliente</a>
+    aria-controls="navbar-customer" aria-selected="false"><i class="fi-icon fi-sr-users-alt"></i> Cliente</a>
 
 <a class="nav-link" id="navbar-sales-tab" data-toggle="pill" href="#navbar-sales" role="tab"
     aria-controls="navbar-sales" aria-selected="false"><i class="fi-icon fi-ss-cash-register"></i> Ventas</a>
+
+<a class="nav-link" id="navbar-points-customer-tab" data-toggle="pill" href="#navbar-points-customer" role="tab"
+    aria-controls="navbar-customer" aria-selected="false"><i class="fi-icon fi-sr-review"></i> Puntos de Cliente</a>
 
 <a class="nav-link" id="navbar-sales-tab" data-toggle="pill" href="#navbar-label" role="tab"
     aria-controls="navbar-sales" aria-selected="false"><i class="fi-icon fi-ss-label"></i> Etiquetas</a>
@@ -33,6 +35,9 @@
 
 <a class="nav-link" id="navbar-providers-tab" data-toggle="pill" href="#navbar-providers" role="tab"
     aria-controls="navbar-providers" aria-selected="false"><i class="fi-icon fi-ss-truck-side"></i> Proveedores</a>
+
+<a class="nav-link" id="navbar-setting-tab" data-toggle="pill" href="#navbar-cfdi" role="tab"
+    aria-controls="navbar-setting" aria-selected="false"><i class="fi-icon fi-ss-file-invoice-dollar"></i> CFDI</a>
 
 <a class="nav-link" id="navbar-setting-tab" data-toggle="pill" href="#navbar-setting" role="tab"
     aria-controls="navbar-setting" aria-selected="false"><i class="fi-icon fi-ss-settings"></i> Configuración</a>
@@ -50,6 +55,8 @@
       {{>CEO/type_employee/providers}}
       {{>CEO/type_employee/Kitchen}}
       {{>CEO/type_employee/store}}
+      {{>CEO/type_employee/pointsCustomer}}
+      {{>CEO/type_employee/cfdi}}
       {{>CEO/type_employee/setting}}
       <hr>
       <button type="submit" class="btn btn-success btn-block" id="">Actualizar</button>
