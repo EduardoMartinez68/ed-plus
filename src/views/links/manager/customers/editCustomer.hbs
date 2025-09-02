@@ -7,6 +7,77 @@
     </link>
     <link rel="stylesheet" href="/css/report/sales.css">
     </link>
+<style>
+/* Fondo oscuro */
+.popup {
+  display: none; 
+  position: fixed; 
+  z-index: 999; 
+  left: 0; 
+  top: 0; 
+  width: 100%; 
+  height: 100%; 
+  background-color: rgba(0,0,0,0.5); 
+}
+
+/* Caja del popup */
+.popup-content {
+  background: #fff;
+  border-radius: 10px;
+  margin: 10% auto;
+  width: 320px;
+  overflow: hidden;
+  box-shadow: 0px 4px 8px rgba(0,0,0,0.3);
+}
+
+/* Header azul */
+.popup-header {
+  background-color: var(--color-company);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+}
+
+/* Título del header */
+.popup-header h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+/* Botón cerrar (X) */
+.close {
+  font-size: 22px;
+  cursor: pointer;
+}
+
+/* Cuerpo del popup */
+.popup-body {
+  padding: 20px;
+  text-align: center;
+}
+
+.popup-body input {
+  width: 100%;
+  padding: 8px;
+  margin: 10px 0;
+}
+
+.popup-body button {
+  background-color: var(--color-company);
+  border: none;
+  padding: 8px 15px;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.popup-body button:hover {
+  background-color: #0056b3;
+}
+</style>
+
 </head>
 
 <div class="container p-4">
@@ -40,6 +111,9 @@
                         </div>
                         <div id="select-1" class="content-section active">
                             <hr>
+                            {{#each customer}}
+                                <button class="btn btn-edit" type="button" onclick="open_pop_edit_point_user('{{id}}')">Tienes <u id="points-user">{{points}}</u> puntos</button>
+                            {{/each}}
                             {{>CEO/customers/formEdit1}}
                         </div>
                         <div id="select-2" class="content-section">
@@ -61,7 +135,19 @@
     </div>
 </div>
 
-
+<div id="popup" class="popup">
+  <div class="popup-content">
+    <div class="popup-header">
+      <h3><i class="fi-icon fi-sr-usd-circle"></i> Editar puntos</h3>
+      <span class="close" onclick="closePopup()">&times;</span>
+    </div>
+    <div class="popup-body">
+      <label for="editPoints">Nuevo valor de puntos:</label>
+      <input type="number" id="editPoints" min="0" step="0.01" placeholder="Ejemplo: 120.50" class="form-control">
+      <button onclick="save_new_point_user()">Actualizar</button>
+    </div>
+  </div>
+</div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
@@ -93,4 +179,42 @@
 
     // Assign the formatted date to the input field
     document.getElementById('birthday').value = formattedDate;
+</script>
+
+
+<script>
+    let labelPointUser = parseFloat(document.getElementById('points-user').textContent);
+    let id_customer;
+    if (isNaN(labelPointUser)) {
+        labelPointUser = 0;
+    }
+    document.getElementById('points-user').textContent = labelPointUser;
+
+
+    function open_pop_edit_point_user(id){
+        id_customer=id;
+        let labelPointUser = parseFloat(document.getElementById('points-user').textContent);
+        if (isNaN(labelPointUser)) {
+            labelPointUser = 0;
+        }
+        document.getElementById('editPoints').value=labelPointUser;
+        document.getElementById('popup').style.display = 'block';
+    }
+
+    async function save_new_point_user(){
+        const newPoints=document.getElementById('editPoints').value;
+        const answer=await send_data_to_server(`/links/${id_customer}/update-data-points-user`, {newPoints}, true);
+        if(answer.success){
+            closePopup();
+            confirmationMessage('🎉 ¡Actualización Exitosa!', 'Los datos del cliente fueron actualizados correctamente.');
+            document.getElementById('points-user').textContent=newPoints;
+        }else{
+            errorMessage('😥 Ocurrió un problema', answer.message || 'Hubo un error al actualizar tus datos. Por favor, intenta nuevamente más tarde.');
+        }
+    }
+
+
+    function closePopup() {
+        document.getElementById('popup').style.display = 'none';
+    }
 </script>

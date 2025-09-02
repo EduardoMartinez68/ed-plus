@@ -1428,6 +1428,9 @@ router.post('/fud/:id_company/:id_customer/editCustomer', isLoggedIn, async (req
     }
 })
 
+
+
+
 function create_new_customer(req) {
     const { id_company } = req.params;
     const { firstName, secondName, lastName, cellPhone, phone, email, states, city, street, num_o, num_i, postal_code, birthday,

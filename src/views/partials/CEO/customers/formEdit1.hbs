@@ -2,50 +2,50 @@
 <div class="content-sales active">
     <div class="row">
         <div class="col">
-            <label>First name *</label><br>
-            <input type="text" class="form-control" placeholder="First name" name="firstName" required
+            <label>Nombre *</label><br>
+            <input type="text" class="form-control" placeholder="Nombre" name="firstName" required
                 value="{{first_name}}">
         </div>
         <div class="col">
-            <label>Second name</label><br>
-            <input type="text" class="form-control" placeholder="Second name" name="secondName" value="{{second_name}}">
+            <label>Segundo nombre</label><br>
+            <input type="text" class="form-control" placeholder="Segundo nombre" name="secondName" value="{{second_name}}">
         </div>
     </div>
 
     <div class="row">
         <div class="col">
-            <label>Last name</label><br>
-            <input type="tex" class="form-control" name="lastName" placeholder="lastName" value="{{last_name}}">
+            <label>Apellido</label><br>
+            <input type="tex" class="form-control" name="lastName" placeholder="Apellido" value="{{last_name}}">
         </div>
     </div>
     <div class="row">
         <div class="col">
-            <label>Birthday</label><br>
+            <label>Cumpleaños</label><br>
             <input type="date" id="birthday" name="birthday" value="{{birthday}}">
         </div>
     </div>
 
     <div class="row">
         <div class="col">
-            <label>Cell Phone</label><br>
-            <input type="text" class="form-control" placeholder="Cell Phone" name="cellPhone" value="{{cell_phone}}">
+            <label>Celular</label><br>
+            <input type="text" class="form-control" placeholder="Celular" name="cellPhone" value="{{cell_phone}}">
         </div>
         <div class="col">
-            <label>Phone</label><br>
-            <input type="text" class="form-control" placeholder="Phone" name="phone" value="{{phone}}">
+            <label>Telefono</label><br>
+            <input type="text" class="form-control" placeholder="Telefono" name="phone" value="{{phone}}">
         </div>
     </div>
 
     <div class="row">
         <div class="col">
-            <label>E-mail *</label><br>
+            <label>Email *</label><br>
             <input type="email" class="form-control" name="email" placeholder="E-mail" required value="{{email}}">
         </div>
     </div>
 
     <div class="row">
         <div class="col">
-            <label>Country</label>
+            <label>Pais</label>
             <select id="country" class="form-control" name="country" value="{{id_country}}">
                 {{/each}}
                 {{#each country}}
@@ -56,19 +56,19 @@
 
         {{#each customer}}
         <div class="col">
-            <label>states *</label><br>
-            <input type="tex" class="form-control" name="states" placeholder="states" required value="{{states}}">
+            <label>Estado *</label><br>
+            <input type="tex" class="form-control" name="states" placeholder="Estado" required value="{{states}}">
         </div>
     </div>
 
     <div class="row">
         <div class="col">
-            <label>City *</label><br>
-            <input type="tex" class="form-control" name="city" placeholder="City" required value="{{city}}">
+            <label>Ciudad *</label><br>
+            <input type="tex" class="form-control" name="city" placeholder="Ciudad" required value="{{city}}">
         </div>
         <div class="col">
-            <label>Street *</label><br>
-            <input type="tex" class="form-control" name="street" placeholder="Street" maxlength="20" required
+            <label>Calle *</label><br>
+            <input type="tex" class="form-control" name="street" placeholder="Calle" maxlength="20" required
                 value="{{street}}">
         </div>
     </div>
@@ -76,18 +76,18 @@
 
     <div class="row">
         <div class="col">
-            <label>Outer Numbers</label><br>
-            <input type="tex" class="form-control" name="num_o" placeholder="Outer Number" maxlength="5"
+            <label>Num. Ext.</label><br>
+            <input type="tex" class="form-control" name="num_o" placeholder="Numero exterior" maxlength="5"
                 value="{{num_ext}}">
         </div>
         <div class="col">
-            <label>Interior Number</label><br>
-            <input type="tex" class="form-control" name="num_i" placeholder="Interior Number" maxlength="5"
+            <label>Num. Int.</label><br>
+            <input type="tex" class="form-control" name="num_i" placeholder="Numero Interior" maxlength="5"
                 value="{{num_int}}">
         </div>
         <div class="col">
-            <label>Postal Code</label><br>
-            <input type="tex" class="form-control" name="postal_code" placeholder="Postal Code" value="{{postal_code}}">
+            <label>Codigo Postal</label><br>
+            <input type="tex" class="form-control" name="postal_code" placeholder="Codigo Postal" value="{{postal_code}}">
         </div>
     </div>
 </div>

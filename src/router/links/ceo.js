@@ -1638,6 +1638,66 @@ router.get('/:id/:idCustomer/edit-customer', isLoggedIn, async (req, res) => {
     res.render("links/manager/customers/editCustomer", { customer, country, company });
 })
 
+router.post('/:id_customer/update-data-points-user', isLoggedIn, async (req, res) => {
+    const { id_customer } = req.params;
+    const {id_branch, id_company}=req.user;
+    const {newPoints}=req.body;
+
+    //we will see if the user have the permission for this App.
+    if(!this_user_have_this_permission(req.user,id_company, id_branch,'update_points_of_the_user')){
+        res.json({
+            success: false,
+            message: 'Lo siento, no tienes permiso para esta acción 😅'
+        });
+    }
+
+    if(await update_customer_points(id_customer,id_company, newPoints)){
+        res.json({
+            success: true,
+            message: 'Los puntos del cliente se actualizaron correctamente.'
+        });
+    }else{
+        res.json({
+            success: false,
+            message: 'Los puntos del cliente no se actualizaron.'
+        });
+    }
+})
+
+async function update_customer_points(id_customer, id_company, new_points) {
+    if (TYPE_DATABASE === 'mysqlite') {
+        return new Promise((resolve, reject) => {
+            const query = `
+                UPDATE customers
+                SET points = ?
+                WHERE id = ?
+                AND id_companies = ?;
+            `;
+            database.run(query, [new_points, id_customer, id_company], function (err) {
+                if (err) {
+                    console.error('Error en update_customer_points (SQLite):', err);
+                    return resolve(false);
+                }
+                resolve(this.changes > 0); // true si se actualizó al menos 1 registro
+            });
+        });
+    } else {
+        try {
+            const query = `
+                UPDATE "Company".customers c
+                SET points = $1
+                WHERE c.id = $2
+                AND c.id_companies = $3;
+            `;
+            const result = await database.query(query, [new_points, id_customer, id_company]);
+            return result.rowCount > 0; // true si actualizó registros
+        } catch (error) {
+            console.error('Error en update_customer_points (PostgreSQL):', error);
+            return false;
+        }
+    }
+}
+
 
 //-------------------------------------------------------------branch
 router.get('/:id/branches', isLoggedIn, async (req, res) => {

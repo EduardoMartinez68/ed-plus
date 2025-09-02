@@ -313,7 +313,6 @@ document.getElementById('formKeyCfdi').addEventListener('submit', async function
             });
 
             const resultText = await response.text();
-            console.log(resultText)
             if (response.ok){
                 if (resultText.includes('Operación realizada correctamente')) {
                     confirmationMessage('✅ ¡Listo!', 'Los datos se han enviado correctamente y fueron procesados exitosamente.');
