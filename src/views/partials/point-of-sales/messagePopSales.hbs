@@ -343,15 +343,17 @@
                 <input type="number" id="debit" placeholder="Tarjeta de Débito" onfocus="setSelected(this)"
                     oninput="calculateChange()" class="input-pop-sales">
 
-                <label for="">Dinero con Puntos del Cliente</label>
-                <div class="input-group mb-3">
-                    <input type="number" class="form-control"  id="points" placeholder="Puntos del cliente"  aria-label="Recipient's username" aria-describedby="basic-addon2" oninput="calculateChange()" readonly value="0">               
-                    <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" type="button" onclick="popPointsUser_openPopup()">Usar Puntos</button>
+                <div id="div-points-user">
+                    <label for="">Dinero con Puntos del Cliente</label>
+                    <div class="input-group mb-3">
+                        <input type="number" class="form-control"  id="points" placeholder="Puntos del cliente"  aria-label="Recipient's username" aria-describedby="basic-addon2" oninput="calculateChange()" readonly value="0">               
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="button" onclick="popPointsUser_openPopup()">Usar Puntos</button>
+                        </div>
+                        <input type="hidden" id="points-user-to-use" value="0">
                     </div>
-                    <input type="hidden" id="points-user-to-use" value="0">
+                    <label for="" id="into-points-user"></label>
                 </div>
-                <label for="" id="into-points-user"></label>
 
                 <div class="form-group">
                     <label for="exampleFormControlTextarea1">Comentario</label>
@@ -418,6 +420,19 @@
     function openPopSales() {
         //we will see if exist a product in the shopping cart
         if(cartItems.length > 0){
+            //we will see if need show the input of points of the user or need hidden 
+            const emailClient=document.getElementById('emailClient').textContent;
+            const divInputPointsUser=document.getElementById('div-points-user');
+            document.getElementById('points').value=0;
+            document.getElementById('points-user-to-use').value=0;
+
+            if(emailClient==''){
+                divInputPointsUser.style.display = 'none';
+            }else{
+                divInputPointsUser.style.display = 'block';
+            }
+
+
             //forever that the user open the UI, the default input is the cash
             setSelected(document.getElementById('cash'));
 
@@ -576,8 +591,8 @@
 <script>
 const POINTS_RATE = parseFloat(document.getElementById('points_to_money').value); // this is for transform the points to money
 
-function popPointsUser_openPopup() {
-  const emailClient=true//document.getElementById('emailClient').textContent;
+async function popPointsUser_openPopup() {
+  const emailClient=document.getElementById('emailClient').textContent;
   if(emailClient==''){
     warningMessage(
     '⚠️ Espera',
@@ -586,10 +601,23 @@ function popPointsUser_openPopup() {
 
     return;
   }
+  
+  //here we will get the information of the points of the customer <label id="emailClient" email="" idClient="null"></label>
+  const idCustomer=document.getElementById('emailClient').getAttribute('idClient')
 
-  document.getElementById('popPointsUser_name').textContent=emailClient;
-  document.getElementById('popPointsUser_points').value=0;
-  document.getElementById('popPointsUser_popup').style.display = 'block';
+    const answerServer = await send_data_to_server('/links/get_points_of_user', {idCustomer}, true);
+    const answer=answerServer.answer;
+
+    //here we will see if can get the information of the customer for show in the screen
+    if (answerServer.success) {
+        document.getElementById('popPointsUser_points').textContent=answer.points;
+        document.getElementById('popPointsUser_name').textContent=answer.first_name+' '+answer.last_name;
+        document.getElementById('popPointsUser_popup').style.display = 'block';
+    } else {
+        popPointsUser_closePopup();
+        errorMessage('😥 Ocurrió un problema', answerServer.message);
+        return;
+    }
 }
 
 function popPointsUser_closePopup() {

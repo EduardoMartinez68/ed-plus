@@ -1539,6 +1539,7 @@ router.post('/points_to_money', isLoggedIn, async (req, res) => {
     }
 })
 
+
 async function update_the_information_of_point_to_money(id_branch, new_point, money_to_points) {
     if (TYPE_DATABASE === 'mysqlite') {
         // SQLite
@@ -1586,8 +1587,65 @@ async function update_the_information_of_point_to_money(id_branch, new_point, mo
     }
 }
 
+router.post('/get_points_of_user', isLoggedIn, async (req, res) => {
+    const { id_branch, id_company } = req.user;
+    const { idCustomer } = req.body;
 
+    if (!this_user_have_this_permission(req.user, id_company, id_branch, 'sale_by_points_to_money')) {
+        return res.status(403).json({
+            success: false,
+            message: 'No tienes permiso para actualizar la información de puntos.'
+        });
+    }
 
+    const answer=await get_customer_points(idCustomer, id_company)
+    return res.status(200).json({
+        success: true,
+        message: 'Informacion obtenida',
+        answer: answer
+    });
+})
+
+async function get_customer_points(id_customer, id_company) {
+    if (TYPE_DATABASE === 'mysqlite') {
+        // SQLite
+        const queryText = `
+            SELECT id, first_name, last_name, points
+            FROM customers
+            WHERE id = ?
+            AND id_companies = ?
+        `;
+        const values = [id_customer, id_company];
+        const rows = await new Promise((resolve, reject) => {
+            database.all(queryText, values, (err, rows) => {
+                if (err) {
+                    console.error("Error SQLite en get_customer_points:", err);
+                    reject(err);
+                } else {
+                    resolve(rows);
+                }
+            });
+        });
+        // Retorna el primer registro o null si no existe
+        return rows[0] || null;
+    } else {
+        // PostgreSQL
+        const queryText = `
+            SELECT id, first_name, last_name, points
+            FROM "Company".customers
+            WHERE id = $1
+            AND id_companies = $2
+        `;
+        const values = [id_customer, id_company];
+        try {
+            const result = await database.query(queryText, values);
+            return result.rows[0] || null;
+        } catch (err) {
+            console.error("Error PostgreSQL en get_customer_points:", err);
+            return null;
+        }
+    }
+}
 
 //----------------------------------------------------------------ad
 router.get('/:id_company/:id_branch/ad', isLoggedIn, async (req, res) => {
@@ -1667,6 +1725,7 @@ async function get_all_ad(idBranch, type) {
         return result.rows;
     }
 }
+
 
 
 router.get('/:id_company/:id_branch/:id_ad/delete-ad', isLoggedIn, async (req, res) => {
