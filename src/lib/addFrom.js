@@ -3924,7 +3924,7 @@ router.post('/fud/car-post', isLoggedIn, async (req, res) => {
             const id_customer = req.body.id_customer;
 
             //get the day of sale
-            const day = new Date();
+            const day = new Date().toLocaleString("es-MX", { timeZone: "America/Mexico_City" });//new Date().toISOString()//new Date();
 
             const commanderDish = []
             for (const product of products) {
@@ -4058,7 +4058,7 @@ async function save_the_ticket(id_company,id_branch,id_employee, id_customer, to
           id_employee,
           id_branch,
           id_company,
-          new Date().toISOString(),
+          day,
           pointsThatUsedTheUser,
           pointMoney
         ],

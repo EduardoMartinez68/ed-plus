@@ -34,7 +34,6 @@ router.get('/:id_company/:id_branch/cashCut', isLoggedIn, async (req, res) => {
     const dateFinish=new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
     const dateStartString=dateToString(dateStart);
     const dateFinishString=dateToString(dateFinish);
-
     const salesForMoney=[await get_all_the_buy(idEmployee,dateStartString,dateFinishString)];
 
 
@@ -46,10 +45,9 @@ router.get('/:id_company/:id_branch/cashCut', isLoggedIn, async (req, res) => {
     const numberInputOutput=await get_the_number_input_and_output(idEmployee,dateStart,dateFinish);
 
     const employees=await get_all_the_user_of_the_branch(id_branch);
-
     const datesCut=[{dateStart:formatDate(dateStart),dateFinish:formatDate(dateFinish)}];
     const dataEmployee=[{first_name:req.user.first_name,second_name:req.user.second_name,last_name:req.user.last_name}];
-
+    console.log(salesForMoney)
     res.render('links/cashCut/cashCut.hbs',{branchFree, salesForMoney,moveUser,movePositive,moveNegative,numberOfSales,numberInputOutput,employees,datesCut,dataEmployee});
 })
 
@@ -212,8 +210,7 @@ async function get_all_the_buy(id_employee, dateStart, dateFinish) {
   // Formato ISO para fechas
   const start = dateStart//new Date(dateStart).toISOString();
   const end =dateFinish// new Date(dateFinish).toISOString();
-  console.log(start)
-  console.log(end)
+
   if (TYPE_DATABASE === 'mysqlite') {
     return new Promise((resolve) => {
       const query = `
@@ -221,7 +218,8 @@ async function get_all_the_buy(id_employee, dateStart, dateFinish) {
           COALESCE(SUM(cash), 0) AS total_cash_sales,
           COALESCE(SUM(credit), 0) AS total_credit_sales,
           COALESCE(SUM(debit), 0) AS total_debit_sales,
-          COALESCE(SUM(cash + credit + debit - total), 0) AS total_change_of_sale
+          COALESCE(SUM(moneyPoints), 0) AS total_points_money,
+          COALESCE(SUM(cash + credit + debit + moneyPoints - total), 0) AS total_change_of_sale
         FROM ticket
         WHERE id_employees = ?
           AND datetime(date_sale) BETWEEN datetime(?) AND datetime(?)
@@ -233,6 +231,7 @@ async function get_all_the_buy(id_employee, dateStart, dateFinish) {
             total_cash_sales: 0,
             total_credit_sales: 0,
             total_debit_sales: 0,
+            total_points_money: 0, 
             total_change_of_sale: 0
           });
         }
@@ -245,7 +244,8 @@ async function get_all_the_buy(id_employee, dateStart, dateFinish) {
         COALESCE(SUM(cash), 0) AS total_cash_sales,
         COALESCE(SUM(credit), 0) AS total_credit_sales,
         COALESCE(SUM(debit), 0) AS total_debit_sales,
-        COALESCE(SUM(cash + credit + debit - total), 0) AS total_change_of_sale
+        COALESCE(SUM(moneyPoints), 0) AS total_points_money,
+        COALESCE(SUM(cash + credit + debit + moneyPoints - total), 0) AS total_change_of_sale
       FROM "Box".ticket
       WHERE id_employees = $1
         AND date_sale BETWEEN $2 AND $3
@@ -259,6 +259,7 @@ async function get_all_the_buy(id_employee, dateStart, dateFinish) {
         total_cash_sales: 0,
         total_credit_sales: 0,
         total_debit_sales: 0,
+        total_points_money: 0, 
         total_change_of_sale: 0
       };
     }
@@ -441,6 +442,8 @@ async function add_table_box_history() {
                     buy_for_cash REAL NOT NULL,
                     buy_for_credit_card REAL NOT NULL,
                     buy_for_debit_card REAL NOT NULL,
+                    buy_for_points numeric(10,2) DEFAULT 0,
+                    points numeric(10,2) DEFAULT 0,
                     change_of_sale REAL DEFAULT 0,
                     comment TEXT,
                     date_sales TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -468,6 +471,8 @@ async function add_table_box_history() {
                     buy_for_credit_card NUMERIC(10,2) NOT NULL,
                     buy_for_debit_card NUMERIC(10,2) NOT NULL,
                     change_of_sale NUMERIC(10,2) DEFAULT 0,
+                    buy_for_points numeric(10,2) DEFAULT 0,
+                    points numeric(10,2) DEFAULT 0,
                     comment TEXT,
                     date_sales TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 );
@@ -573,7 +578,7 @@ router.post('/:id_company/:id_branch/cash-cut-date', isLoggedIn, async (req, res
     const employees=await get_all_the_user_of_the_branch(id_branch);
     const dataEmployee=await get_data_of_the_employee(idEmployee);
     const datesCut=[{dateStart:formatDate(dateStart),dateFinish:formatDate(dateFinish)}];
-    
+    console.log(salesForMoney)
     res.render('links/cashCut/cashCut.hbs',{branchFree, salesForMoney,moveUser,movePositive,moveNegative,numberOfSales,numberInputOutput,employees,datesCut,dataEmployee});
 })
 
