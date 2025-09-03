@@ -84,7 +84,8 @@ function construct_the_news_tickets(ticketsDb){
     }
 
     const totalReturn = (newTotal -  parseFloat(ticket.total)).toFixed(2);
-    const change=((ticket.cash+ticket.debit+ticket.credit)-ticket.total).toFixed(2);;
+    const points=parseFloat(ticket.moneyPoints) || 0;
+    const change=((ticket.cash+ticket.debit+ticket.credit+points)-ticket.total).toFixed(2);;
     list.push({
       id: ticket.id,
       key: ticket.key,
@@ -94,6 +95,8 @@ function construct_the_news_tickets(ticketsDb){
       cash: ticket.cash,
       debit: ticket.debit,
       credit: ticket.credit,
+      pointToMoney: ticket.moneyPoints,
+      pointsUsed: ticket.points,
       change:change,
       oldTotal: ticket.total,
       totalReturn: totalReturn,
@@ -136,7 +139,7 @@ async function get_tickets_by_branch(id_branch, page = 0) {
     return new Promise((resolve) => {
       const queryText = `
         SELECT id, key, original_ticket, current_ticket, date_sale, cash, debit, credit, total, note, cfdi_create, id_cfdi,
-               id_customers, id_employees, id_branches, id_companies
+               id_customers, id_employees, id_branches, id_companies, points, moneyPoints
         FROM ticket
         WHERE id_branches = ?
         ORDER BY date_sale DESC
@@ -160,7 +163,7 @@ async function get_tickets_by_branch(id_branch, page = 0) {
   } else {
     const queryText = `
       SELECT id, key, original_ticket, current_ticket, date_sale, cash, debit, credit, total, note, cfdi_create, id_cfdi,
-             id_customers, id_employees, id_branches, id_companies
+             id_customers, id_employees, id_branches, id_companies, points, moneyPoints
       FROM "Box".ticket
       WHERE id_branches = $1
       ORDER BY date_sale DESC

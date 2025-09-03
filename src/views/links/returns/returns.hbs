@@ -31,6 +31,7 @@
               <th>Efectivo</th>
               <th>Débito</th>
               <th>Crédito</th>
+              <th>Monedero</th>
               <th>Cambio</th>
               <th>Total Original</th>
               <th>Saldo Devuelto</th>
@@ -54,6 +55,7 @@
               <td>${{cash}}</td>
               <td>${{debit}}</td>
               <td>${{credit}}</td>
+              <td>${{pointToMoney}}</td>
               <td>${{change}}</td>
               <td>${{oldTotal}}</td>
               <td>${{totalReturn}}</td>
@@ -149,6 +151,7 @@ function renderTickets(tickets) {
       <td>$${parseFloat(ticket.cash).toFixed(2)}</td>
       <td>$${parseFloat(ticket.debit).toFixed(2)}</td>
       <td>$${parseFloat(ticket.credit).toFixed(2)}</td>
+      <td>$${parseFloat(ticket.pointToMoney).toFixed(2)}</td>
       <td>$${parseFloat(ticket.change).toFixed(2)}</td>
       <td>$${parseFloat(ticket.oldTotal).toFixed(2)}</td>
       <td>$${parseFloat(ticket.totalReturn).toFixed(2)}</td>
@@ -240,6 +243,7 @@ document.getElementById('btn-next').addEventListener('click', () => {
           <td>$${parseFloat(ticket.cash).toFixed(2)}</td>
           <td>$${parseFloat(ticket.debit).toFixed(2)}</td>
           <td>$${parseFloat(ticket.credit).toFixed(2)}</td>
+          <td>$${parseFloat(ticket.pointToMoney).toFixed(2)}</td>
           <td>$${parseFloat(ticket.change).toFixed(2)}</td>
           <td>$${parseFloat(ticket.oldTotal).toFixed(2)}</td>
           <td>$${parseFloat(ticket.totalReturn).toFixed(2)}</td>
