@@ -286,6 +286,24 @@
             <div class="cut-box-diferencia">Diferencia: $<label id="credit-difference">0</label></div>
         </div>
     </div>
+
+    <div class="cut-box-card">
+        <div class="cut-box-header">
+            <h2><i class="fi fi-sr-usd-circle"></i> Monedero Electronico</h2>
+        </div>
+
+
+        <div class="cut-box-input-row">
+            <label>$</label>
+            <input type="number" class="cut-box-input-money" placeholder="0.00" id="points_money" required value="{{total_points_money}}" disabled/>
+            <input type="hidden" value="{{total_points_money}}" id="total_points_money">
+        </div>
+
+        <div class="cut-box-info-container">
+            <div>Calculado por el sistema: ${{total_points_money}}</div>
+        </div>
+    </div>
+    
     {{/each}}
     <br>
 
@@ -327,11 +345,11 @@
                                             <td class="text-success" id="total-entered">{{entries}}</td>
                                         </tr>
                                         <tr>
-                                            <td>Salidas</td>
+                                            <td>Salidas y devoluciones</td>
                                             <td class="text-danger" id="total-output">{{exits}}</td>
                                         </tr>
                                         {{/each}}
-                                        <tr>
+                                        <tr style="display: none;">
                                             <td>Devoluciones</td>
                                             <td class="text-danger" id="total-devolution">$0</td>
                                         </tr>
@@ -359,23 +377,21 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {{#each numberOfSales}}
                                         <tr>
                                             <td>Numero de Ventas</td>
-                                            <td class="text-success">{{count}}</td>
+                                            <td class="text-success">{{numberOfSales}}</td>
                                         </tr>
-                                        <tr>
+                                        <tr style="display: none;">
                                             <td>Numero de devoluciones</td>
                                             <td class="text-danger">0</td>
                                         </tr>
-                                        {{/each}}
                                         {{#each numberInputOutput}}
                                         <tr>
                                             <td>Numero de Entradas</td>
                                             <td class="text-success">{{positive}}</td>
                                         </tr>
                                         <tr>
-                                            <td>Numero de Salidas</td>
+                                            <td>Numero de Salidas y devoluciones</td>
                                             <td class="text-danger">{{negative}}</td>
                                         </tr>
                                         {{/each}}
@@ -521,24 +537,23 @@
     //update the money that the box have 
     const totalBox=(total_cash_sales+insideMoneyTotal+totalChange+outSideMoneyTotal+totalDevolution).toFixed(2);
 
+
     document.getElementById('total_cash_sales').value=totalBox;
     document.getElementById('calculate-for-the-system').textContent = 'Calculado por el sistema: $' + totalBox;
     document.getElementById('cash-difference').textContent = totalBox;
 
     //---------------------------------BOX-----------------------------------------------------
     //get the money 
+    const total_points_money=parseFloat(document.getElementById('total_points_money').value)
     const total_credit_sales = parseFloat(document.getElementById('total_credit_sales').value) || 0;
     const total_debit_sales = parseFloat(document.getElementById('total_debit_sales').value) || 0;
 
     const totalEntered = parseFloat(document.getElementById('total-entered').textContent) || 0;
     const totalOutput = parseFloat(document.getElementById('total-output').textContent) || 0;
-    
-
-
 
     const totalSales = total_cash_sales + total_credit_sales + total_debit_sales;
-    const totalSalesMoney = totalSales + totalChange;
-    const total = totalSales + totalEntered + totalOutput + totalDevolution + totalChange;
+    const totalSalesMoney = totalSales + totalChange + total_points_money;
+    const total = totalSales + total_points_money + totalEntered + totalOutput + totalDevolution + totalChange;
 
     document.getElementById('total-sales').textContent = `$${totalSalesMoney.toFixed(2)}`;
 
@@ -568,10 +583,11 @@
         let efectivo = parseFloat(document.getElementById('money').value) || 0;
         let credito = parseFloat(document.getElementById('credit').value) || 0;
         let debito = parseFloat(document.getElementById('debit').value) || 0;
+        let total_points_money = parseFloat(document.getElementById('total_points_money').value) || 0;
 
 
         //this is for calculate the total for the user in all the inputs
-        let totalIngresado = efectivo + credito + debito;
+        let totalIngresado = efectivo + credito + debito + total_points_money;
         let calculado = total;
         let diferencia = totalIngresado - calculado;
 

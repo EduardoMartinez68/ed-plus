@@ -21,7 +21,7 @@ const { get } = require('node-persist');
 router.get('/:id_company/:id_branch/cashCut', isLoggedIn, async (req, res) => {
     const {id_company,id_branch}=req.params;
     const branchFree = await get_data_branch(id_branch);
-
+    //await delete_tickets_from_id(70)
     //this is for update the database of the user
     await add_table_box_history();
 
@@ -34,20 +34,17 @@ router.get('/:id_company/:id_branch/cashCut', isLoggedIn, async (req, res) => {
     const dateFinish=new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
     const dateStartString=dateToString(dateStart);
     const dateFinishString=dateToString(dateFinish);
-    const salesForMoney=[await get_all_the_buy(idEmployee,dateStartString,dateFinishString)];
+    const salesForMoney=[await get_all_the_buy(idEmployee,dateStart,dateFinish)];
 
 
     const moveUser=await get_total_movements_by_employee(idEmployee,dateStart.toISOString(),dateFinish.toISOString());
     const movePositive=await get_all_the_movements_positive(idEmployee,dateStart.toISOString(),dateFinish.toISOString());
     const moveNegative=await get_all_the_movements_negative(idEmployee,dateStart.toISOString(),dateFinish.toISOString());
-
-    const numberOfSales=await get_the_number_of_sales(idEmployee,dateStart);
-    const numberInputOutput=await get_the_number_input_and_output(idEmployee,dateStart,dateFinish);
-
+    const numberOfSales=await get_the_number_of_sales(idEmployee,dateStart,dateFinish);
+    const numberInputOutput=[{positive: movePositive.length, negative: moveNegative.length}] //await get_the_number_input_and_output(idEmployee,dateStart,dateFinish);
     const employees=await get_all_the_user_of_the_branch(id_branch);
     const datesCut=[{dateStart:formatDate(dateStart),dateFinish:formatDate(dateFinish)}];
     const dataEmployee=[{first_name:req.user.first_name,second_name:req.user.second_name,last_name:req.user.last_name}];
-    console.log(salesForMoney)
     res.render('links/cashCut/cashCut.hbs',{branchFree, salesForMoney,moveUser,movePositive,moveNegative,numberOfSales,numberInputOutput,employees,datesCut,dataEmployee});
 })
 
@@ -116,45 +113,41 @@ async function get_all_the_user_of_the_branch(id_branch) {
 }
 
 async function get_the_number_of_sales(id_employee, dateStart, dateFinish) {
-    try {
-        if (TYPE_DATABASE === 'mysqlite') {
-            // SQLite usa '?' para placeholders y no tiene schemas
-            const query = `
-                SELECT * FROM box_history
-                WHERE id_employee = ?
-                AND date_sales BETWEEN ? AND ?;
-            `;
-            return new Promise((resolve, reject) => {
-                database.all(query, [id_employee, dateStart, dateFinish], (err, rows) => {
-                    if (err) {
-                        console.error('SQLite error getting sales:', err.message);
-                        reject(err);
-                    } else {
-                        resolve([{
-                            count: rows.length,
-                            data: rows
-                        }]);
-                    }
-                });
-            });
-        } else {
-            // PostgreSQL usa $1, $2, $3 y schemas
-            const queryText = `
-                SELECT * FROM "Box".box_history
-                WHERE id_employee = $1
-                AND date_sales BETWEEN $2 AND $3;
-            `;
-            const values = [id_employee, dateStart, dateFinish];
-            const result = await database.query(queryText, values);
-            return [{
-                count: result.rowCount,
-                data: result.rows
-            }];
+ // Convertir las fechas al formato adecuado para la base de datos
+  const start = formatToMexicoDateTime(dateStart);
+  const end = formatToMexicoDateTime(dateFinish);
+
+  if (TYPE_DATABASE === 'mysqlite') {
+    return new Promise((resolve) => {
+      const query = `
+        SELECT COUNT(*) AS ticket_count
+        FROM ticket
+        WHERE id_employees = ?
+          AND datetime(date_sale) BETWEEN datetime(?) AND datetime(?)
+      `;
+      database.get(query, [id_employee, start, end], (err, row) => {
+        if (err) {
+          console.error('Error get_ticket_count_by_employee (SQLite):', err);
+          return resolve(0);
         }
+        resolve(row.ticket_count || 0);
+      });
+    });
+  } else {
+    const query = `
+      SELECT COUNT(*) AS ticket_count
+      FROM "Box".ticket
+      WHERE id_employees = $1
+        AND date_sale BETWEEN $2 AND $3
+    `;
+    try {
+      const result = await database.query(query, [id_employee, start, end]);
+      return result.rows[0]?.ticket_count || 0;
     } catch (error) {
-        console.error('Error getting total sales:', error);
-        return { cash: 0, credit: 0, debit: 0, total_change_of_sale: 0 };
+      console.error('Error get_ticket_count_by_employee (PostgreSQL):', error);
+      return 0;
     }
+  }
 }
 
 async function get_the_number_input_and_output(id_employee, dateStart, dateFinish) {
@@ -205,11 +198,29 @@ async function get_the_number_input_and_output(id_employee, dateStart, dateFinis
     }
 }
 
+function formatToMexicoDateTime(date) {
+  // Convertir a hora local de México
+  const options = {
+    timeZone: "America/Mexico_City",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false
+  };
+
+  // "03/09/2025, 08:24:16"
+  const parts = new Intl.DateTimeFormat("sv-SE", options).format(date);
+  // sv-SE me da formato "2025-09-03 08:24:16"
+  return parts.replace("T", " ");
+}
 
 async function get_all_the_buy(id_employee, dateStart, dateFinish) {
   // Formato ISO para fechas
-  const start = dateStart//new Date(dateStart).toISOString();
-  const end =dateFinish// new Date(dateFinish).toISOString();
+  const start = formatToMexicoDateTime(dateStart)//new Date(dateStart).toISOString();
+  const end = formatToMexicoDateTime(dateFinish) // new Date(dateFinish).toISOString();
 
   if (TYPE_DATABASE === 'mysqlite') {
     return new Promise((resolve) => {
@@ -430,6 +441,34 @@ async function get_all_the_movements_negative(id_employee, dateStart, dateFinish
         return [];
     }
 }
+
+async function delete_tickets_from_id(minId) {
+    try {
+        if (TYPE_DATABASE === 'mysqlite') {
+            return new Promise((resolve, reject) => {
+                const query = `DELETE FROM ticket WHERE id >= ?`;
+                database.run(query, [minId], function(err) {
+                    if (err) {
+                        console.error('SQLite error deleting tickets:', err.message);
+                        return resolve(false);
+                    }
+                    resolve(this.changes); // Devuelve la cantidad de filas eliminadas
+                });
+            });
+        } else {
+            const query = `
+                DELETE FROM "Box".ticket
+                WHERE id >= $1
+            `;
+            const result = await database.query(query, [minId]);
+            return result.rowCount; // Devuelve la cantidad de filas eliminadas
+        }
+    } catch (error) {
+        console.error('Error deleting tickets:', error);
+        return false;
+    }
+}
+
 
 async function add_table_box_history() {
     try {

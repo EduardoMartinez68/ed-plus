@@ -3924,7 +3924,8 @@ router.post('/fud/car-post', isLoggedIn, async (req, res) => {
             const id_customer = req.body.id_customer;
 
             //get the day of sale
-            const day = new Date().toLocaleString("es-MX", { timeZone: "America/Mexico_City" });//new Date().toISOString()//new Date();
+            const date=new Date()
+            const day = date.toLocaleString("es-MX", { timeZone: "America/Mexico_City" });//new Date().toISOString()//new Date();
 
             const commanderDish = []
             for (const product of products) {
@@ -3946,7 +3947,7 @@ router.post('/fud/car-post', isLoggedIn, async (req, res) => {
             }
 
             //her we will save the ticket in our database
-            await save_the_ticket(idCompany,idBranch,idEmployee, id_customer, req.body.total, req.body.cash, req.body.credit, req.body.debit, req.body.pointMoney ,req.body.pointsThatUsedTheUser, req.body.comment, day, req.body.change, req.body.token, products)
+            await save_the_ticket(idCompany,idBranch,idEmployee, id_customer, req.body.total, req.body.cash, req.body.credit, req.body.debit, req.body.pointMoney ,req.body.pointsThatUsedTheUser, req.body.comment, date, req.body.change, req.body.token, products)
 
             //save the comander
             commander = create_commander(idBranch, idEmployee, id_customer, commanderDish, req.body.total, req.body.moneyReceived, req.body.change, req.body.comment, day);
@@ -4034,7 +4035,12 @@ async function save_the_ticket(id_company,id_branch,id_employee, id_customer, to
   pointsThatUsedTheUser = parseToFloat(pointsThatUsedTheUser);
   pointMoney = parseToFloat(pointMoney);
   
-
+    const now = new Date();
+    const mexicoTime = new Date(
+    now.toLocaleString("en-US", { timeZone: "America/Mexico_City" })
+    );
+    const time =  mexicoTime.toISOString();
+    //new Date().toISOString(),
   //now we will save in the database 
   if (TYPE_DATABASE === 'mysqlite') {
     return new Promise((resolve) => {
@@ -4058,7 +4064,7 @@ async function save_the_ticket(id_company,id_branch,id_employee, id_customer, to
           id_employee,
           id_branch,
           id_company,
-          day,
+          day.toISOString(),
           pointsThatUsedTheUser,
           pointMoney
         ],
