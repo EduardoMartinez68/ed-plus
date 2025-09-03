@@ -16,11 +16,13 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.5); /* Fondo negro con opacidad */
+        background: rgba(0, 0, 0, 0.5);
+        /* Fondo negro con opacidad */
         display: flex;
         justify-content: center;
         align-items: center;
-        z-index: 999; /* Asegura que esté sobre otros elementos */
+        z-index: 999;
+        /* Asegura que esté sobre otros elementos */
         visibility: hidden;
         opacity: 0;
         transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
@@ -218,91 +220,99 @@
 
 
     /*-------------------------------------------*/
-/* Fondo del popup */
-.pop-points-user-popup {
-  display: none;
-  position: fixed;
-  z-index: 999;
-  left: 0; top: 0;
-  width: 100%; height: 100%;
-  background-color: rgba(0,0,0,0.5);
-  font-family: Arial, sans-serif;
-}
+    /* Fondo del popup */
+    .pop-points-user-popup {
+        display: none;
+        position: fixed;
+        z-index: 999;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        font-family: Arial, sans-serif;
+    }
 
-/* Contenido del popup */
-.pop-points-user-popup-content {
-  background: #fff;
-  border-radius: 10px;
-  width: 45%;
-  max-width: 90%;
-  margin: 10% auto;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-}
+    /* Contenido del popup */
+    .pop-points-user-popup-content {
+        background: #fff;
+        border-radius: 10px;
+        width: 45%;
+        max-width: 90%;
+        margin: 10% auto;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
 
-/* Header azul */
-.pop-points-user-popup-header {
-  background-color: var(--color-company);
-  color: white;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 15px;
-}
-.pop-points-user-popup-header h3 {
-  margin: 0;
-  font-size: 18px;
-  color: white;
-}
-.pop-points-user-close {
-  font-size: 22px;
-  cursor: pointer;
-  color: white;
-}
+    /* Header azul */
+    .pop-points-user-popup-header {
+        background-color: var(--color-company);
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 15px;
+    }
 
-/* Cuerpo */
-.pop-points-user-popup-body {
-  padding: 20px;
-}
-.pop-points-user-info p {
-  margin: 6px 0;
-  font-size: 14px;
-}
+    .pop-points-user-popup-header h3 {
+        margin: 0;
+        font-size: 18px;
+        color: white;
+    }
 
-/* Calculadora */
-.pop-points-user-calculator {
-  display: flex;
-  justify-content: space-between;
-  margin: 15px 0;
-  gap: 10px;
-}
-.pop-points-user-calculator-group {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-.pop-points-user-calculator-group input {
-  padding: 6px;
-  font-size: 14px;
-  margin-top: 4px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-}
+    .pop-points-user-close {
+        font-size: 22px;
+        cursor: pointer;
+        color: white;
+    }
 
-/* Botón Usar */
-.pop-points-user-btn-use {
-  width: 100%;
-  padding: 10px;
-  background-color: var(--color-company);
-  border: none;
-  color: white;
-  font-size: 16px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-.pop-points-user-btn-use:hover {
-  background-color: var(--color-hover);
-}
+    /* Cuerpo */
+    .pop-points-user-popup-body {
+        padding: 20px;
+    }
+
+    .pop-points-user-info p {
+        margin: 6px 0;
+        font-size: 14px;
+    }
+
+    /* Calculadora */
+    .pop-points-user-calculator {
+        display: flex;
+        justify-content: space-between;
+        margin: 15px 0;
+        gap: 10px;
+    }
+
+    .pop-points-user-calculator-group {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .pop-points-user-calculator-group input {
+        padding: 6px;
+        font-size: 14px;
+        margin-top: 4px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+
+    /* Botón Usar */
+    .pop-points-user-btn-use {
+        width: 100%;
+        padding: 10px;
+        background-color: var(--color-company);
+        border: none;
+        color: white;
+        font-size: 16px;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+
+    .pop-points-user-btn-use:hover {
+        background-color: var(--color-hover);
+    }
 </style>
 <div class="popup-overlay" id="popupOverlay">
     <div class="popup" id="popup">
@@ -334,8 +344,8 @@
             <p class="total-text" id="total-text">number</p>
             <div class="input-container">
                 <label for="">Efectivo</label>
-                <input type="number" id="cash" placeholder="Efectivo" onfocus="setSelected(this)" oninput="calculateChange()"
-                    class="input-pop-sales">
+                <input type="number" id="cash" placeholder="Efectivo" onfocus="setSelected(this)"
+                    oninput="calculateChange()" class="input-pop-sales">
                 <label for="">Tarjeta de Crédito</label>
                 <input type="number" id="credit" placeholder="Tarjeta de Crédito" onfocus="setSelected(this)"
                     oninput="calculateChange()" class="input-pop-sales">
@@ -346,9 +356,12 @@
                 <div id="div-points-user">
                     <label for="">Dinero con Puntos del Cliente</label>
                     <div class="input-group mb-3">
-                        <input type="number" class="form-control"  id="points" placeholder="Puntos del cliente"  aria-label="Recipient's username" aria-describedby="basic-addon2" oninput="calculateChange()" readonly value="0">               
+                        <input type="number" class="form-control" id="points" placeholder="Puntos del cliente"
+                            aria-label="Recipient's username" aria-describedby="basic-addon2"
+                            oninput="calculateChange()" readonly value="0">
                         <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="button" onclick="popPointsUser_openPopup()">Usar Puntos</button>
+                            <button class="btn btn-outline-secondary" type="button"
+                                onclick="popPointsUser_openPopup()">Usar Puntos</button>
                         </div>
                         <input type="hidden" id="points-user-to-use" value="0">
                     </div>
@@ -370,39 +383,39 @@
 
 
 <div class="pop-points-user-popup" id="popPointsUser_popup">
-  <div class="pop-points-user-popup-content">
-    <!-- Header azul -->
-    <div class="pop-points-user-popup-header">
-      <h3>Usar puntos del usuario</h3>
-      <span class="pop-points-user-close" onclick="popPointsUser_closePopup()">&times;</span>
-    </div>
-
-    <!-- Cuerpo del popup -->
-    <div class="pop-points-user-popup-body">
-      <div class="pop-points-user-info">
-        <p><strong>Cliente:</strong> <span id="popPointsUser_name">Juan Pérez</span></p>
-        <p><strong>Puntos actuales:</strong> <span id="popPointsUser_points">400</span></p>
-        {{#each branchFree}}
-            <p><em>1 punto = {{points_to_money}}$</em></p>
-            <input type="hidden" id="points_to_money" value="{{points_to_money}}">
-        {{/each}}
-      </div>
-
-      <!-- Calculadora -->
-      <div class="pop-points-user-calculator">
-        <div class="pop-points-user-calculator-group">
-          <label for="popPointsUser_pointsInput">Puntos que quiero usar:</label>
-          <input type="number" id="popPointsUser_pointsInput" min="0" step="1" value="0">
+    <div class="pop-points-user-popup-content">
+        <!-- Header azul -->
+        <div class="pop-points-user-popup-header">
+            <h3>Usar puntos del Cliente</h3>
+            <span class="pop-points-user-close" onclick="popPointsUser_closePopup()">&times;</span>
         </div>
-        <div class="pop-points-user-calculator-group">
-          <label for="popPointsUser_moneyInput">Dinero que quiero usar ($):</label>
-          <input type="number" id="popPointsUser_moneyInput" min="0" step="0.01" value="0">
-        </div>
-      </div>
 
-      <button class="pop-points-user-btn-use" onclick="popPointsUser_usePoints()">Usar</button>
+        <!-- Cuerpo del popup -->
+        <div class="pop-points-user-popup-body">
+            <div class="pop-points-user-info">
+                <p><strong>Cliente:</strong> <span id="popPointsUser_name">Juan Pérez</span></p>
+                <p><strong>Puntos actuales:</strong> <span id="popPointsUser_points">400</span></p>
+                {{#each branchFree}}
+                <p><em>1 punto = {{points_to_money}}$</em></p>
+                <input type="hidden" id="points_to_money" value="{{points_to_money}}">
+                {{/each}}
+            </div>
+
+            <!-- Calculadora -->
+            <div class="pop-points-user-calculator">
+                <div class="pop-points-user-calculator-group">
+                    <label for="popPointsUser_pointsInput">Puntos que quiero usar:</label>
+                    <input type="number" id="popPointsUser_pointsInput" min="0" step="1" value="0">
+                </div>
+                <div class="pop-points-user-calculator-group">
+                    <label for="popPointsUser_moneyInput">Dinero que quiero usar ($):</label>
+                    <input type="number" id="popPointsUser_moneyInput" min="0" step="0.01" value="0">
+                </div>
+            </div>
+
+            <button class="pop-points-user-btn-use" onclick="popPointsUser_usePoints()">Usar</button>
+        </div>
     </div>
-  </div>
 </div>
 
 
@@ -415,20 +428,21 @@
 
 <script>
     let selectedInput = null;
-    let finalTotal=0;
+    let finalTotal = 0;
 
     function openPopSales() {
         //we will see if exist a product in the shopping cart
-        if(cartItems.length > 0){
+        if (cartItems.length > 0) {
             //we will see if need show the input of points of the user or need hidden 
-            const emailClient=document.getElementById('emailClient').textContent;
-            const divInputPointsUser=document.getElementById('div-points-user');
-            document.getElementById('points').value=0;
-            document.getElementById('points-user-to-use').value=0;
+            const emailClient = document.getElementById('emailClient').textContent;
+            const divInputPointsUser = document.getElementById('div-points-user');
+            document.getElementById('points').value = 0;
+            document.getElementById('points-user-to-use').value = 0;
+            document.getElementById('into-points-user').textContent = '';
 
-            if(emailClient==''){
+            if (emailClient == '') {
                 divInputPointsUser.style.display = 'none';
-            }else{
+            } else {
                 divInputPointsUser.style.display = 'block';
             }
 
@@ -443,13 +457,13 @@
             finalTotal = parseFloat(formattedTotal); // Número final
 
             //update the data of the shopping cart
-            document.getElementById('total').textContent=finalTotal;
+            document.getElementById('total').textContent = finalTotal;
             calculateChange();
             updateTotalText();
 
             //when the data was updated, we will show the pop
             document.getElementById('popupOverlay').classList.add('active');
-        }else{
+        } else {
             //if not exist a product in the shopping car, we will show a message of error
             errorMessage('Ups 👉👈', 'No existe ningun producto en el carrito');
         }
@@ -460,13 +474,13 @@
         if (selectedInput) {
             selectedInput.classList.remove('selected');
         }
-        document.getElementById('cash').value='';
-        document.getElementById('debit').value='';
-        document.getElementById('credit').value='';
-        selectedInput=null;
+        document.getElementById('cash').value = '';
+        document.getElementById('debit').value = '';
+        document.getElementById('credit').value = '';
+        selectedInput = null;
 
         //close the pop
-        finalTotal=0;
+        finalTotal = 0;
         document.getElementById('popupOverlay').classList.remove('active');
     }
 
@@ -499,12 +513,14 @@
         }
     }
 
-    function calculateChange(){
-        const total=finalTotal;
+    function calculateChange() {
+        const total = finalTotal;
         let cash = parseFloat(document.getElementById('cash').value) || 0;
         let credit = parseFloat(document.getElementById('credit').value) || 0;
         let debit = parseFloat(document.getElementById('debit').value) || 0;
-        let paid = cash + credit + debit;
+        let pointMoney = parseFloat(document.getElementById('points').value) || 0;
+
+        let paid = cash + credit + debit + pointMoney;
         let change = paid - total;
         let changeText = document.getElementById('change');
         changeText.textContent = `Cambio: $${change.toFixed(2)}`;
@@ -583,77 +599,85 @@
     }
 
     function updateTotalText() {
-        const total=finalTotal;
+        const total = finalTotal;
         const totalText = numberToWords(total);
         document.getElementById('total-text').innerText = totalText;
     }
 </script>
 <script>
-const POINTS_RATE = parseFloat(document.getElementById('points_to_money').value); // this is for transform the points to money
+    const POINTS_RATE = parseFloat(document.getElementById('points_to_money').value); // this is for transform the points to money
 
-async function popPointsUser_openPopup() {
-  const emailClient=document.getElementById('emailClient').textContent;
-  if(emailClient==''){
-    warningMessage(
-    '⚠️ Espera',
-    'Esta venta aún no tiene un cliente asignado. Debes seleccionar o crear un cliente antes de poder aplicar sus puntos de fidelidad 💳'
-    );
+    async function popPointsUser_openPopup() {
+        //restart the information of point of the user
+        document.getElementById('into-points-user').textContent = ``;
+        document.getElementById('points').value = 0;
+        document.getElementById('points-user-to-use').value = 0;
 
-    return;
-  }
-  
-  //here we will get the information of the points of the customer <label id="emailClient" email="" idClient="null"></label>
-  const idCustomer=document.getElementById('emailClient').getAttribute('idClient')
+        //now we will see if the buy have a customer
+        const emailClient = document.getElementById('emailClient').textContent;
+        if (emailClient == '') {
+            warningMessage(
+                '⚠️ Espera',
+                'Esta venta aún no tiene un cliente asignado. Debes seleccionar o crear un cliente antes de poder aplicar sus puntos de fidelidad 💳'
+            );
 
-    const answerServer = await send_data_to_server('/links/get_points_of_user', {idCustomer}, true);
-    const answer=answerServer.answer;
+            return;
+        }
 
-    //here we will see if can get the information of the customer for show in the screen
-    if (answerServer.success) {
-        document.getElementById('popPointsUser_points').textContent=answer.points;
-        document.getElementById('popPointsUser_name').textContent=answer.first_name+' '+answer.last_name;
-        document.getElementById('popPointsUser_popup').style.display = 'block';
-    } else {
-        popPointsUser_closePopup();
-        errorMessage('😥 Ocurrió un problema', answerServer.message);
-        return;
+        //here we will get the information of the points of the customer <label id="emailClient" email="" idClient="null"></label>
+        const idCustomer = document.getElementById('emailClient').getAttribute('idClient')
+
+        const answerServer = await send_data_to_server('/links/get_points_of_user', { idCustomer }, true);
+        const answer = answerServer.answer;
+
+        //here we will see if can get the information of the customer for show in the screen
+        if (answerServer.success) {
+            //update the information of points that the user can use shw his information
+            document.getElementById('popPointsUser_points').textContent = answer.points;
+            document.getElementById('popPointsUser_name').textContent = answer.first_name + ' ' + answer.last_name;
+            document.getElementById('popPointsUser_popup').style.display = 'block';
+        } else {
+            popPointsUser_closePopup();
+            errorMessage('😥 Ocurrió un problema', answerServer.message);
+            return;
+        }
     }
-}
 
-function popPointsUser_closePopup() {
-  document.getElementById('popPointsUser_popup').style.display = 'none';
-}
+    function popPointsUser_closePopup() {
+        document.getElementById('popPointsUser_popup').style.display = 'none';
+    }
 
-// Sincronización de la calculadora
-const pointsInput = document.getElementById('popPointsUser_pointsInput');
-const moneyInput = document.getElementById('popPointsUser_moneyInput');
+    // Sincronización de la calculadora
+    const pointsInput = document.getElementById('popPointsUser_pointsInput');
+    const moneyInput = document.getElementById('popPointsUser_moneyInput');
 
-pointsInput.addEventListener('input', () => {
-  const points = parseFloat(pointsInput.value) || 0;
-  moneyInput.value = points*POINTS_RATE;//.toFixed(2);
-});
+    pointsInput.addEventListener('input', () => {
+        const points = parseFloat(pointsInput.value) || 0;
+        moneyInput.value = points * POINTS_RATE;//.toFixed(2);
+    });
 
-moneyInput.addEventListener('input', () => {
-  const money = parseFloat(moneyInput.value) || 0;
-  pointsInput.value = Math.round(money/POINTS_RATE);
-});
+    moneyInput.addEventListener('input', () => {
+        const money = parseFloat(moneyInput.value) || 0;
+        pointsInput.value = Math.round(money / POINTS_RATE);
+    });
 
-function popPointsUser_usePoints() {
-  const popPointsUser_points=parseFloat(document.getElementById('popPointsUser_points').textContent || 0)
-  const points = parseFloat(pointsInput.value) || 0;
-  const money = parseFloat(moneyInput.value) || 0;
+    function popPointsUser_usePoints() {
+        const popPointsUser_points = parseFloat(document.getElementById('popPointsUser_points').textContent || 0)
+        const points = parseFloat(pointsInput.value) || 0;
+        const money = parseFloat(moneyInput.value) || 0;
 
-    //here  we will see if the points that the user would like user not be greater that the point of the user
-  if(points>popPointsUser_points){
-    warningMessage(
-    '🙃 ¡Ups!',
-    'Parece que estás intentando usar más puntos de los que tiene el cliente 😅 No podemos sacar puntos de la nada… ¡sería magia negra! '
-    );
-  }else{
-    document.getElementById('into-points-user').textContent=`Se usarán ${points} puntos equivalentes a $${money}`;
-    document.getElementById('points').value=money;
-    document.getElementById('points-user-to-use').value=points;
-    popPointsUser_closePopup();
-  }
-}
+        //here  we will see if the points that the user would like user not be greater that the point of the user
+        if (points > popPointsUser_points) {
+            warningMessage(
+                '🙃 ¡Ups!',
+                'Parece que estás intentando usar más puntos de los que tiene el cliente 😅 No podemos sacar puntos de la nada… ¡sería magia negra! '
+            );
+        } else {
+            document.getElementById('into-points-user').textContent = `Se usarán ${points} puntos equivalentes a $${money}`;
+            document.getElementById('points').value = money;
+            document.getElementById('points-user-to-use').value = points;
+            calculateChange();
+            popPointsUser_closePopup();
+        }
+    }
 </script>

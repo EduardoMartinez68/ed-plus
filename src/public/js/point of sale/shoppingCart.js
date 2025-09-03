@@ -241,7 +241,9 @@ async function buy_my_car() {
     const cash = parseFloat(document.getElementById('cash').value) || 0;
     const credit = parseFloat(document.getElementById('credit').value) || 0;
     const debit = parseFloat(document.getElementById('debit').value) || 0;
-    const moneyReceived = (cash + credit + debit).toFixed(2);
+    const pointMoney = parseFloat(document.getElementById('points').value) || 0; //this are the point convert to money
+    const pointsThatUsedTheUser=parseFloat(document.getElementById('points-user-to-use').value || 0) //this are the points that the customer would like use
+    const moneyReceived = (cash + credit + debit + pointMoney).toFixed(2);
 
     const total = (parseFloat(document.getElementById('total').textContent)).toFixed(2);
     const change = (parseFloat(moneyReceived) - parseFloat(total)).toFixed(2);
@@ -258,7 +260,7 @@ async function buy_my_car() {
         //we will see if the user can buy all the shooping cart
         const token = generarTokenUnicoTicket();
 
-        if (await send_buy_to_the_server(total, moneyReceived, change, comment, id_customer, cash, credit, debit, token)) {
+        if (await send_buy_to_the_server(total, moneyReceived, change, comment, id_customer, cash, credit, debit, pointMoney, pointsThatUsedTheUser, token)) {
             document.getElementById('key-old-ticket').textContent=token; //update the token of the ticket in the UI for if the user would like create facture CFDI, print the ticket or send the ticket for email
             await update_the_lots_of_the_product_in_the_car(id_customer);
 
@@ -286,7 +288,12 @@ async function buy_my_car() {
             sound.play();
             
             //we will print ticket
-            await print_ticket(total, moneyReceived, change, comment, token);
+            await print_ticket(total, moneyReceived, change, pointMoney, comment, token);
+
+            //restart the information of the points of the customer 
+            document.getElementById('into-points-user').textContent=``;
+            document.getElementById('points').value=0;
+            document.getElementById('points-user-to-use').value=0;
 
             loadingOverlay.style.display = 'none';
         }
@@ -306,13 +313,13 @@ async function save_the_recipe_in_the_database(lotId, id_customer) {
     information_of_recipe_for_sned_to_the_server = [] //this is for remove all the recipe in the cart
 }
 
-async function send_buy_to_the_server(total, moneyReceived, exchange, comment, id_customer, cash, credit, debit, token) {
+async function send_buy_to_the_server(total, moneyReceived, exchange, comment, id_customer, cash, credit, debit, pointMoney, pointsThatUsedTheUser,token) {
     // Show loading overlay
     loadingOverlay.style.display = "flex";
 
     try {
         //we will watching if the server can complete the pay and setting the inventory
-        const answerServer = await get_answer_server({ products: cartItems, total: total, moneyReceived: moneyReceived, change: exchange, comment: comment, id_customer: id_customer, cash, credit, debit, token }, `/fud/car-post`);
+        const answerServer = await get_answer_server({ products: cartItems, total: total, moneyReceived: moneyReceived, change: exchange, comment: comment, id_customer: id_customer, cash, credit, debit, token, pointMoney, pointsThatUsedTheUser }, `/fud/car-post`);
 
         //we will see if save the commander 
         if (!isNaN(answerServer.message)) {

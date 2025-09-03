@@ -258,10 +258,9 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('selectedPrinter', printerSelected);
     });
 
-    async function print_ticket(total, moneyReceived, change, comment, token) {
-        //console.log(get_texto_ticket(total, moneyReceived, change, comment));
+    async function print_ticket(total, moneyReceived, change, pointMoney, comment, token) {
         const dateTicket = get_date_ticket()
-        const textoTicket = get_texto_ticket(total, moneyReceived, change, comment, dateTicket); // Aquí obtienes el texto del ticket, puedes personalizarlo
+        const textoTicket = get_texto_ticket(total, moneyReceived, pointMoney, change, comment, dateTicket); // Aquí obtienes el texto del ticket, puedes personalizarlo
         //await sned_information_to_the_server_for_print_the_ticket(textoTicket)
 
 
@@ -477,7 +476,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     create_info_ticket();
 
-    function get_texto_ticket(total, moneyReceived, change, comment = '', dateTicket) {
+    function get_texto_ticket(total, moneyReceived, pointMoney, change, comment = '', dateTicket) {
         moneyReceived = parseFloat(moneyReceived);
         change = parseFloat(change);
         total = parseFloat(total);
@@ -514,6 +513,7 @@ document.addEventListener('DOMContentLoaded', () => {
         texto += '-------------------------------\n';
         texto += `TOTAL:             ${total.toFixed(2).padStart(9)}\n`;
         texto += `Recibido:          ${moneyReceived.toFixed(2).padStart(9)}\n`;
+        texto += `${document.getElementById('into-points-user').textContent}\n`;
         texto += `Cambio:            ${change.toFixed(2).padStart(9)}\n`;
 
         if (comment && comment.trim() !== '') {

@@ -648,6 +648,17 @@ async function create_update_of_the_database_mysqlite(db) {
         ALTER TABLE branches ADD money_to_points numeric(10,2) DEFAULT 0;
     `
     await create_table_mysqlite(db,queryPermition)
+
+    queryPermition=`
+        ALTER TABLE ticket ADD points numeric(10,2) DEFAULT 0;
+        ALTER TABLE ticket ADD moneyPoints numeric(10,2) DEFAULT 0;
+
+        ALTER TABLE box_history ADD buy_for_points numeric(10,2) DEFAULT 0;
+        ALTER TABLE box_history ADD points numeric(10,2) DEFAULT 0;
+    `
+    await create_table_mysqlite(db,queryPermition)
+
+    
     db.close();
 }
 

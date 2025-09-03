@@ -3940,17 +3940,23 @@ router.post('/fud/car-post', isLoggedIn, async (req, res) => {
                     totalPrice
                 });
 
-                //save the buy in the database
+                //save the buy in the database req.boyd.pointMoney;    
                 await addDatabase.add_buy_history(idCompany, idBranch, idEmployee, id_customer, product.id_dishes_and_combos, product.price, product.quantity, totalPrice, day);
-                await save_box_history(idEmployee, id_customer, req.body.cash, req.body.credit, req.body.debit, req.body.comment, day, req.body.change);
+                await save_box_history(idEmployee, id_customer, req.body.cash, req.body.credit, req.body.debit, req.body.pointMoney ,req.body.pointsThatUsedTheUser,req.body.comment, day, req.body.change);
             }
 
             //her we will save the ticket in our database
-            await save_the_ticket(idCompany,idBranch,idEmployee, id_customer, req.body.total, req.body.cash, req.body.credit, req.body.debit, req.body.comment, day, req.body.change, req.body.token, products)
+            await save_the_ticket(idCompany,idBranch,idEmployee, id_customer, req.body.total, req.body.cash, req.body.credit, req.body.debit, req.body.pointMoney ,req.body.pointsThatUsedTheUser, req.body.comment, day, req.body.change, req.body.token, products)
 
             //save the comander
             commander = create_commander(idBranch, idEmployee, id_customer, commanderDish, req.body.total, req.body.moneyReceived, req.body.change, req.body.comment, day);
             text = await addDatabase.add_commanders(commander); //save the id commander
+
+
+            //here we will see if the sale have a user and used point of sale, we will update the information of points of the user
+            if(id_customer){
+                await update_points_of_the_customer(idCompany, id_customer, req.body.pointsThatUsedTheUser)
+            }
         }
 
         //send an answer to the customer
@@ -3961,7 +3967,58 @@ router.post('/fud/car-post', isLoggedIn, async (req, res) => {
     }
 })
 
-async function save_the_ticket(id_company,id_branch,id_employee, id_customer, total, cash, credit, debit, note, day, change, token, products){
+async function update_points_of_the_customer(id_company, id_customer, pointUsed) {
+    if (TYPE_DATABASE === 'mysqlite') {
+        // SQLite
+        const queryText = `
+            UPDATE customers
+            SET points = points - ?
+            WHERE id = ?
+            AND id_companies = ?
+            RETURNING id, first_name, last_name, points
+        `;
+        const values = [pointUsed, id_customer, id_company];
+
+        try {
+            const rows = await new Promise((resolve, reject) => {
+                database.all(queryText, values, (err, rows) => {
+                    if (err) {
+                        console.error("Error SQLite in update_points_of_the_customer:", err);
+                        reject(err);
+                    } else {
+                        resolve(rows);
+                    }
+                });
+            });
+            return true;
+        } catch (err) {
+            console.error("Error SQLite in update_points_of_the_customer:", err);
+            return null;
+        }
+
+    } else {
+        // PostgreSQL
+        const queryText = `
+            UPDATE "Company".customers
+            SET points = points - $3
+            WHERE id = $1
+            AND id_companies = $2
+            RETURNING id, first_name, last_name, points
+        `;
+        const values = [id_customer, id_company, pointUsed];
+
+        try {
+            const result = await database.query(queryText, values);
+            return true;
+        } catch (err) {
+            console.error("Error PostgreSQL in update_points_of_the_customer:", err);
+            return null;
+        }
+    }
+}
+
+
+async function save_the_ticket(id_company,id_branch,id_employee, id_customer, total, cash, credit, debit, pointMoney, pointsThatUsedTheUser, note, day, change, token, products){
   const idCustomerParam = id_customer === "null" ? null : id_customer;
 
   // Helper para convertir a número
@@ -3974,14 +4031,17 @@ async function save_the_ticket(id_company,id_branch,id_employee, id_customer, to
   credit = parseToFloat(credit);
   debit = parseToFloat(debit);
   change = parseToFloat(change);
+  pointsThatUsedTheUser = parseToFloat(pointsThatUsedTheUser);
+  pointMoney = parseToFloat(pointMoney);
+  
 
   //now we will save in the database 
   if (TYPE_DATABASE === 'mysqlite') {
     return new Promise((resolve) => {
       const queryText = `
         INSERT INTO ticket 
-        (key, original_ticket, current_ticket, cash, debit, credit, total, note, id_customers, id_employees, id_branches, id_companies, date_sale)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        (key, original_ticket, current_ticket, cash, debit, credit, total, note, id_customers, id_employees, id_branches, id_companies, date_sale, points, moneyPoints)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `;
       database.run(
         queryText,
@@ -3998,7 +4058,9 @@ async function save_the_ticket(id_company,id_branch,id_employee, id_customer, to
           id_employee,
           id_branch,
           id_company,
-          new Date().toISOString()
+          new Date().toISOString(),
+          pointsThatUsedTheUser,
+          pointMoney
         ],
         function (err) {
           if (err) {
@@ -4012,8 +4074,8 @@ async function save_the_ticket(id_company,id_branch,id_employee, id_customer, to
   } else {
     const queryText = `
       INSERT INTO "Box".ticket 
-      (key, original_ticket, current_ticket, cash, debit, credit, total, note, id_customers, id_employees, id_branches, id_companies)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+      (key, original_ticket, current_ticket, cash, debit, credit, total, note, id_customers, id_employees, id_branches, id_companies, points, moneyPoints)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
     `;
     try {
       await database.query(queryText, [
@@ -4028,7 +4090,9 @@ async function save_the_ticket(id_company,id_branch,id_employee, id_customer, to
         idCustomerParam,
         id_employee,
         id_branch,
-        id_company
+        id_company,
+        pointsThatUsedTheUser,
+        pointMoney
       ]);
       return true;
     } catch (error) {
@@ -4038,9 +4102,7 @@ async function save_the_ticket(id_company,id_branch,id_employee, id_customer, to
   }
 }
 
-
-
-async function save_box_history(idEmployee, id_customer, cash, credit, debit, comment, day, change) {
+async function save_box_history(idEmployee, id_customer, cash, credit, debit, pointMoney ,pointsThatUsedTheUser, comment, day, change) {
   const idCustomerParam = id_customer === "null" ? null : id_customer;
 
   // Helper para convertir a número
@@ -4053,15 +4115,17 @@ async function save_box_history(idEmployee, id_customer, cash, credit, debit, co
   credit = parseToFloat(credit);
   debit = parseToFloat(debit);
   change = parseToFloat(change);
+  pointMoney = parseToFloat(pointMoney);
+  pointsThatUsedTheUser = parseToFloat(pointsThatUsedTheUser);
 
   if (TYPE_DATABASE === 'mysqlite') {
     return new Promise((resolve) => {
       const queryText = `
         INSERT INTO box_history 
-        (id_employee, id_customers, buy_for_cash, buy_for_credit_card, buy_for_debit_card, comment, date_sales, change_of_sale)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        (id_employee, id_customers, buy_for_cash, buy_for_credit_card, buy_for_debit_card, buy_for_points, points, comment, date_sales, change_of_sale)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `;
-      database.run(queryText, [idEmployee, idCustomerParam, cash, credit, debit, comment, day, change], function(err) {
+      database.run(queryText, [idEmployee, idCustomerParam, cash, credit, debit, pointMoney, pointsThatUsedTheUser, comment, day, change], function(err) {
         if (err) {
           console.error('Error save_box_history (SQLite):', err);
           return resolve(false);
@@ -4072,11 +4136,11 @@ async function save_box_history(idEmployee, id_customer, cash, credit, debit, co
   } else {
     const queryText = `
       INSERT INTO "Box".box_history 
-      (id_employee, id_customers, buy_for_cash, buy_for_credit_card, buy_for_debit_card, comment, date_sales, change_of_sale)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      (id_employee, id_customers, buy_for_cash, buy_for_credit_card, buy_for_debit_card, buy_for_points, points, comment, date_sales, change_of_sale)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8,$9, $10)
     `;
     try {
-      await database.query(queryText, [idEmployee, idCustomerParam, cash, credit, debit, comment, day, change]);
+      await database.query(queryText, [idEmployee, idCustomerParam, cash, credit, debit, pointMoney, pointsThatUsedTheUser, comment, day, change]);
       return true;
     } catch (error) {
       console.error('Error save_box_history (PostgreSQL):', error);
@@ -4098,6 +4162,8 @@ async function add_table_box_history() {
           buy_for_cash REAL NOT NULL,
           buy_for_credit_card REAL NOT NULL,
           buy_for_debit_card REAL NOT NULL,
+          buy_for_points numeric(10,2) DEFAULT 0,
+          points numeric(10,2) DEFAULT 0,
           change_of_sale REAL DEFAULT 0,
           comment TEXT,
           date_sales DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -4121,6 +4187,8 @@ async function add_table_box_history() {
         buy_for_cash NUMERIC(10,2) NOT NULL,
         buy_for_credit_card NUMERIC(10,2) NOT NULL,
         buy_for_debit_card NUMERIC(10,2) NOT NULL,
+        buy_for_points numeric(10,2) DEFAULT 0,
+        points numeric(10,2) DEFAULT 0,
         change_of_sale NUMERIC(10,2) DEFAULT 0,
         comment TEXT,
         date_sales TIMESTAMP DEFAULT CURRENT_TIMESTAMP
