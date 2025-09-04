@@ -606,22 +606,21 @@ router.post('/:id_company/:id_branch/cash-cut-date', isLoggedIn, async (req, res
     await add_table_box_history();
 
     //now if exist the table, we will get all the information of the user
-    const dateStart = req.body.dateStart;
-    const dateFinish = req.body.dateFinish;
+    const dateStart = new Date(req.body.dateStart);
+    const dateFinish = new Date(req.body.dateFinish);
     const idEmployee = req.body.idEmployee;
 
     const salesForMoney=[await get_all_the_buy(idEmployee,dateStart,dateFinish)];
-    
+
+
     const moveUser=await get_total_movements_by_employee(idEmployee,dateStart.toISOString(),dateFinish.toISOString());
     const movePositive=await get_all_the_movements_positive(idEmployee,dateStart.toISOString(),dateFinish.toISOString());
     const moveNegative=await get_all_the_movements_negative(idEmployee,dateStart.toISOString(),dateFinish.toISOString());
     const numberOfSales=await get_the_number_of_sales(idEmployee,dateStart,dateFinish);
     const numberInputOutput=[{positive: movePositive.length, negative: moveNegative.length}] //await get_the_number_input_and_output(idEmployee,dateStart,dateFinish);
-
     const employees=await get_all_the_user_of_the_branch(id_branch);
-    const dataEmployee=await get_data_of_the_employee(idEmployee);
     const datesCut=[{dateStart:formatDate(dateStart),dateFinish:formatDate(dateFinish)}];
-    console.log(salesForMoney)
+    const dataEmployee=[{first_name:req.user.first_name,second_name:req.user.second_name,last_name:req.user.last_name}];
     res.render('links/cashCut/cashCut.hbs',{branchFree, salesForMoney,moveUser,movePositive,moveNegative,numberOfSales,numberInputOutput,employees,datesCut,dataEmployee});
 })
 
