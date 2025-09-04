@@ -32,14 +32,9 @@ router.get('/:id_company/:id_branch/cashCut', isLoggedIn, async (req, res) => {
     const now = new Date();
     const dateStart=new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
     const dateFinish=new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
-    console.log("Inicio del día STE:", dateStart);
-    console.log("Fin del día STE:   ", dateFinish); 
-
 
     const dateStartString=dateToString(dateStart);
     const dateFinishString=dateToString(dateFinish);
-    console.log("Inicio del día:", dateStartString);
-    console.log("Fin del día:   ", dateFinishString);
 
     const salesForMoney=[await get_all_the_buy(idEmployee,dateStart,dateFinish)];
 

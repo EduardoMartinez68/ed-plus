@@ -47,7 +47,7 @@ router.get('/:id_company/:id_branch/returns', isLoggedIn, async (req, res) => {
       req.flash('message', 'Lo siento, no tienes permiso para esta acción 😅');
       return res.redirect(`/links/${id_company}/${id_branch}/permission_denied`);
   }
-  console.log(await get_tickets_by_branch(id_branch))
+  
   const tickets=construct_the_news_tickets(await get_tickets_by_branch(id_branch));
   const branchFree = await get_data_branch(id_branch);
   res.render('links/returns/returns', {branchFree, tickets});
