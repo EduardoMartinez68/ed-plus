@@ -596,7 +596,8 @@
 
   async function searchProductByName() {
     const nameProduct = document.getElementById('nameProductForm').value;
-
+    const loadingOverlay = document.getElementById("loadingOverlay");
+    loadingOverlay.style.display = "flex";
     try {
       const res = await fetch(`/links/search-product-with-name?nameProduct=${encodeURIComponent(nameProduct)}`);
       const data = await res.json();
@@ -610,6 +611,9 @@
       console.error("Error buscando productos:", err);
       errorMessage("💥 Error", "No se pudo buscar los productos.");
     }
+
+
+    loadingOverlay.style.display = "none";
   }
 
   function showProductPopup(items) {
