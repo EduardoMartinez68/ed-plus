@@ -32,8 +32,15 @@ router.get('/:id_company/:id_branch/cashCut', isLoggedIn, async (req, res) => {
     const now = new Date();
     const dateStart=new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
     const dateFinish=new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+    console.log("Inicio del día STE:", dateStart);
+    console.log("Fin del día STE:   ", dateFinish); 
+
+
     const dateStartString=dateToString(dateStart);
     const dateFinishString=dateToString(dateFinish);
+    console.log("Inicio del día:", dateStartString);
+    console.log("Fin del día:   ", dateFinishString);
+
     const salesForMoney=[await get_all_the_buy(idEmployee,dateStart,dateFinish)];
 
 
@@ -219,8 +226,8 @@ function formatToMexicoDateTime(date) {
 
 async function get_all_the_buy(id_employee, dateStart, dateFinish) {
   // Formato ISO para fechas
-  const start = formatToMexicoDateTime(dateStart)//new Date(dateStart).toISOString();
-  const end = formatToMexicoDateTime(dateFinish) // new Date(dateFinish).toISOString();
+  const start = dateStart.toISOString()//formatToMexicoDateTime(dateStart)//new Date(dateStart).toISOString();
+  const end = dateFinish.toISOString()//formatToMexicoDateTime(dateFinish) // new Date(dateFinish).toISOString();
 
   if (TYPE_DATABASE === 'mysqlite') {
     return new Promise((resolve) => {
@@ -605,14 +612,11 @@ router.post('/:id_company/:id_branch/cash-cut-date', isLoggedIn, async (req, res
 
     const salesForMoney=[await get_all_the_buy(idEmployee,dateStart,dateFinish)];
     
-    const moveUser=await get_total_movements_by_employee(idEmployee,dateStart,dateFinish);
-    const movePositive=await get_all_the_movements_positive(idEmployee,dateStart,dateFinish);
-    const moveNegative=await get_all_the_movements_negative(idEmployee,dateStart,dateFinish);
-
-
-
-    const numberOfSales=await get_the_number_of_sales(idEmployee,dateStart);
-    const numberInputOutput=await get_the_number_input_and_output(idEmployee,dateStart,dateFinish);
+    const moveUser=await get_total_movements_by_employee(idEmployee,dateStart.toISOString(),dateFinish.toISOString());
+    const movePositive=await get_all_the_movements_positive(idEmployee,dateStart.toISOString(),dateFinish.toISOString());
+    const moveNegative=await get_all_the_movements_negative(idEmployee,dateStart.toISOString(),dateFinish.toISOString());
+    const numberOfSales=await get_the_number_of_sales(idEmployee,dateStart,dateFinish);
+    const numberInputOutput=[{positive: movePositive.length, negative: moveNegative.length}] //await get_the_number_input_and_output(idEmployee,dateStart,dateFinish);
 
     const employees=await get_all_the_user_of_the_branch(id_branch);
     const dataEmployee=await get_data_of_the_employee(idEmployee);
