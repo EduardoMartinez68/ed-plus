@@ -4092,8 +4092,6 @@ async function add_points_to_the_customer(id_company, id_customer, pointGet) {
     }
 }
 
-
-
 async function save_the_ticket(id_company,id_branch,id_employee, id_customer, total, cash, credit, debit, pointMoney, pointsThatUsedTheUser, note, day, change, token, products){
   const idCustomerParam = id_customer === "null" ? null : id_customer;
 
@@ -4229,7 +4227,6 @@ async function save_box_history(idEmployee, id_customer, cash, credit, debit, po
     }
   }
 }
-
 
 async function add_table_box_history() {
   if (TYPE_DATABASE === 'mysqlite') {

@@ -258,7 +258,7 @@ async function buy_my_car() {
         const id_customer = emailClient.getAttribute('idClient');
 
         //we will see if the user can buy all the shooping cart
-        const token = generarTokenUnicoTicket();
+        const token = window.generarTokenUnicoTicket();
 
         if (await send_buy_to_the_server(total, moneyReceived, change, comment, id_customer, cash, credit, debit, pointMoney, pointsThatUsedTheUser, token)) {
             document.getElementById('key-old-ticket').textContent=token; //update the token of the ticket in the UI for if the user would like create facture CFDI, print the ticket or send the ticket for email

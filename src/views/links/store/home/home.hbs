@@ -345,24 +345,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
         html += `<div style="text-align:center;">`;
         if (config.show_logo) {
-            const icon_company = document.getElementById('path-icon-company')?.value || 'https://pluspuntodeventa.com/img/logo-white-complete.webp';
-            html += `<img src="${icon_company}" style="max-width:80px; margin-bottom:5px;"><br>`;
+            const icon_company = document.getElementById('path-icon-company')?.value?.trim();
+            html += `<img src="${icon_company || 'https://pluspuntodeventa.com/img/logo-white-complete.webp'}" style="max-width:80px; margin-bottom:5px;"><br>`;
         }
 
         if (config.show_name_company) {
-            const name_company = document.getElementById('name-company').value;
-            html += `<strong style="font-size: 24px;">${name_company}</strong><br>`;
+            const name_company = document.getElementById('name-company')?.value?.trim();
+            if (name_company) {
+                html += `<strong style="font-size: 24px;">${name_company}</strong><br>`;
+            }
         }
 
         if (config.show_name_branch) {
-            const name_branch = document.getElementById('name_branch').value;
-            html += `${name_branch}<br>`;
+            const name_branch = document.getElementById('name_branch')?.value?.trim();
+            if (name_branch) {
+                html += `${name_branch}<br>`;
+            }
         }
 
         if (config.show_address) {
-            const address = document.getElementById('address_branch').value;
-            html += `${address}<br>`;
+            const address = document.getElementById('address_branch')?.value?.trim();
+            if (address) {
+                html += `${address}<br>`;
+            }
         }
+
         html += `</div>`;
 
         if (config.show_date) {
@@ -370,15 +377,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         html += `<div style="text-align:left;">`;
+
         if (config.show_name_employee) {
-            const nameEmployee = document.getElementById('employee-name').textContent;
-            html += `<small style="font-size: 16px;">Empleado: ${nameEmployee}</small><br>`;
+            const nameEmployee = document.getElementById('employee-name')?.textContent?.trim();
+            if (nameEmployee) {
+                html += `<small style="font-size: 16px;">Empleado: ${nameEmployee}</small><br>`;
+            }
         }
 
         if (config.show_name_customer) {
-            const customer = document.getElementById('emailClient').textContent;
-            html += `<small style="font-size: 16px;">Cliente: ${customer}</small><br>`;
+            const customer = document.getElementById('emailClient')?.textContent?.trim();
+            if (customer) {
+                html += `<small style="font-size: 16px;">Cliente: ${customer}</small><br>`;
+            }
         }
+
         html += `</div>`;
 
 
@@ -429,7 +442,10 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
         html += `<div style="text-align:center; margin-top:10px;">${config.message}</div>`;
-        document.getElementById('headerTicket').innerHTML = html;
+        const headerTicker=document.getElementById('headerTicket');
+        if(headerTicker){
+            headerTicker.innerHTML = html;
+        }
     }
 
     function create_qr(){
