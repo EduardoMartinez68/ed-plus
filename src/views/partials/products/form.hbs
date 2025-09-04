@@ -171,11 +171,13 @@
         const imageInput = document.getElementById('imageUrl');
         if(imageInput && imageInput.value === ''){
             //if have a image save with help of a url, we will save the product with flash
-            await create_new_product_flash();
+            //await create_new_product_flash();
         }else{
             //if not get a new image from the server with image flash, we will submit the form
-            document.getElementById('formAddProductFree').submit();
+            //document.getElementById('formAddProductFree').submit();
         }
+
+        document.getElementById('formAddProductFree').submit();
     }
 
 
