@@ -3955,8 +3955,13 @@ router.post('/fud/car-post', isLoggedIn, async (req, res) => {
 
 
             //here we will see if the sale have a user and used point of sale, we will update the information of points of the user
-            if(id_customer){
-                await update_points_of_the_customer(idCompany, id_customer, req.body.pointsThatUsedTheUser)
+            if(id_customer!=null){
+                //here is if the user use points
+                await update_points_of_the_customer(idCompany, id_customer, req.body.pointsThatUsedTheUser);
+
+                //this is for add point to the wallet of the customer
+                const pointsGet=await transform_diner_to_points(idBranch, req.body.cash, req.body.credit, req.body.debit, req.body.change);
+                await add_points_to_the_customer(idCompany, id_customer, pointsGet)
             }
         }
 
@@ -3967,6 +3972,25 @@ router.post('/fud/car-post', isLoggedIn, async (req, res) => {
         res.status(500).json({ error: 'Hubo un error al procesar la solicitud' });
     }
 })
+
+async function transform_diner_to_points(id_branch, cash, credit, debit, change){
+  const parseToFloat = (value) => {
+    if (value === null || value === undefined || value === '') return 0;
+    return parseFloat(value) || 0;
+  };
+
+  cash = parseToFloat(cash);
+  credit = parseToFloat(credit);
+  debit = parseToFloat(debit);
+  change = parseToFloat(change);
+  const total=cash+credit+debit-change;
+  const branchFree = await get_data_branch(id_branch);
+  const money_to_points= branchFree[0].money_to_points;
+  //1 point==money_to_points
+  //? points == total
+
+  return (total/money_to_points)
+}
 
 async function update_points_of_the_customer(id_company, id_customer, pointUsed) {
     if (TYPE_DATABASE === 'mysqlite') {
@@ -4017,6 +4041,57 @@ async function update_points_of_the_customer(id_company, id_customer, pointUsed)
         }
     }
 }
+
+async function add_points_to_the_customer(id_company, id_customer, pointGet) {
+    if (TYPE_DATABASE === 'mysqlite') {
+        // SQLite
+        const queryText = `
+            UPDATE customers
+            SET points = points + ?
+            WHERE id = ?
+            AND id_companies = ?
+            RETURNING id, first_name, last_name, points
+        `;
+        const values = [pointGet, id_customer, id_company];
+
+        try {
+            const rows = await new Promise((resolve, reject) => {
+                database.all(queryText, values, (err, rows) => {
+                    if (err) {
+                        console.error("Error SQLite in update_points_of_the_customer:", err);
+                        reject(err);
+                    } else {
+                        resolve(rows);
+                    }
+                });
+            });
+            return true;
+        } catch (err) {
+            console.error("Error SQLite in update_points_of_the_customer:", err);
+            return null;
+        }
+
+    } else {
+        // PostgreSQL
+        const queryText = `
+            UPDATE "Company".customers
+            SET points = points + $3
+            WHERE id = $1
+            AND id_companies = $2
+            RETURNING id, first_name, last_name, points
+        `;
+        const values = [id_customer, id_company, pointGet];
+
+        try {
+            const result = await database.query(queryText, values);
+            return true;
+        } catch (err) {
+            console.error("Error PostgreSQL in update_points_of_the_customer:", err);
+            return null;
+        }
+    }
+}
+
 
 
 async function save_the_ticket(id_company,id_branch,id_employee, id_customer, total, cash, credit, debit, pointMoney, pointsThatUsedTheUser, note, day, change, token, products){
@@ -4154,7 +4229,6 @@ async function save_box_history(idEmployee, id_customer, cash, credit, debit, po
     }
   }
 }
-
 
 
 async function add_table_box_history() {

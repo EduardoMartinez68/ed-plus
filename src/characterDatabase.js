@@ -422,6 +422,10 @@ async function create_update_of_the_database(adminPool) {
         BEGIN
             ALTER TABLE "Company".branches ADD points_to_money numeric(10,2) DEFAULT 0;
             ALTER TABLE "Company".branches ADD money_to_points numeric(10,2) DEFAULT 0;
+            ALTER TABLE "Box".ticket ADD points numeric(10,2) DEFAULT 0;
+            ALTER TABLE "Box".ticket ADD moneyPoints numeric(10,2) DEFAULT 0;
+            ALTER TABLE "Box".box_history ADD buy_for_points numeric(10,2) DEFAULT 0;
+            ALTER TABLE "Box".box_history ADD points numeric(10,2) DEFAULT 0;
         END
         $$;
 
@@ -438,6 +442,7 @@ async function create_update_of_the_database(adminPool) {
         END
         $$;
     `
+    
     await adminPool.query(query);
     console.log('📂 La base de datos EDPLUS fue actualizada.');
 }
