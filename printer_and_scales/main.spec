@@ -5,7 +5,7 @@ a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[],
-    datas=[('C:/Users/USER/AppData/Local/Programs/Python/Python311/Lib/site-packages/escpos/capabilities', 'escpos/capabilities')],
+    datas=[('C:\\\\Users\\\\USER\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\Lib\\\\site-packages\\\\escpos\\\\capabilities', 'escpos/capabilities')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

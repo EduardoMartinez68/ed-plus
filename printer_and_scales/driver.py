@@ -27,7 +27,16 @@ def impresoras():
     return jsonify(get_connected_printers())
 
 
-
+@app.route("/open_drawer", methods=["POST"])
+def open_drawer():
+    try:
+        data = request.get_json()
+        impresora_nombre = data.get("impresora", None)
+        abrir_cajon(impresora_nombre)
+        return jsonify({"ok": True})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)})
+  
 
 @app.route("/imprimir_odoo", methods=["POST"])
 def imprimir_odoo():

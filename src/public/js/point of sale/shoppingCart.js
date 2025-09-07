@@ -232,6 +232,11 @@ async function update_cart_in_wait(index) {
 }
 
 
+function generar_token_unico_ticket() {
+    const array = new Uint8Array(8); // 8 bytes = 16 hex chars
+    crypto.getRandomValues(array);
+    return Array.from(array, b => b.toString(16).padStart(2, '0')).join('').toUpperCase();
+}
 
 async function buy_my_car() {
     const loadingOverlay=document.getElementById('loadingOverlay');
@@ -258,7 +263,7 @@ async function buy_my_car() {
         const id_customer = emailClient.getAttribute('idClient');
 
         //we will see if the user can buy all the shooping cart
-        const token = window.generarTokenUnicoTicket();
+        const token = generar_token_unico_ticket();
 
         if (await send_buy_to_the_server(total, moneyReceived, change, comment, id_customer, cash, credit, debit, pointMoney, pointsThatUsedTheUser, token)) {
             document.getElementById('key-old-ticket').textContent=token; //update the token of the ticket in the UI for if the user would like create facture CFDI, print the ticket or send the ticket for email

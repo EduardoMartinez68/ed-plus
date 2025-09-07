@@ -1,3 +1,20 @@
+async function open_drawer(){
+    const savedPrinter = localStorage.getItem('selectedPrinter') || null;
+
+    try {
+        const response = await fetch("http://localhost:5000/open_drawer", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({impresora: savedPrinter})
+        })
+    } catch (err) {
+        console.error('Error al abrir el cajon:', err);
+    }
+}
+
+
 async function cash_movement(idEmployee,idBranch){
     //we will watching if the employee input a move 
     const data=await cash_movement_message();
@@ -5,6 +22,7 @@ async function cash_movement(idEmployee,idBranch){
         //we will see if the user input the cash and the comment 
         if(the_employee_entered_all_the_data(data)){
             await add_the_move_to_the_database(data,idEmployee,idBranch);
+            await open_drawer();
         }else{
             errorMessage('👁️ MUCHO OJO!!','Necesitas agregar todos los datos necesarios en el formulario');
         }
