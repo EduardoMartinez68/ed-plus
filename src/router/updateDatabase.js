@@ -518,7 +518,6 @@ async function update_customer(customerId, newCustomer) {
     email: newCustomer.email,
     phone: newCustomer.phone,
     cell_phone: newCustomer.cellPhone,
-    points: newCustomer.points,
     birthday: newCustomer.birthday,
     company_name: newCustomer.company_name,
     company_address: newCustomer.company_address,

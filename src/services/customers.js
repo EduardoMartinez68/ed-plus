@@ -30,7 +30,6 @@ async function search_all_customers(idCompany) {
     }
 }
 
-
 async function search_customers(idCustomer) {
     try {
         if (TYPE_DATABASE === 'mysqlite') {
